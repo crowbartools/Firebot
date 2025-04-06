@@ -25,6 +25,10 @@ class SettingsManager extends EventEmitter {
             return this.getSettingPath(settingName);
         });
 
+        frontendCommunicator.on("settings:get-plugin-setting-path", (request: { pluginName: string, settingName: string }) => {
+            return this.getPluginSettingPath(request.pluginName, request.settingName);
+        });
+
         frontendCommunicator.on("settings:get-setting", (settingName: keyof FirebotSettingsTypes) => {
             return this.getSetting(settingName);
         });
@@ -35,6 +39,18 @@ class SettingsManager extends EventEmitter {
 
         frontendCommunicator.on("settings:delete-setting", (settingName: keyof FirebotSettingsTypes) => {
             this.deleteSetting(settingName);
+        });
+
+        frontendCommunicator.on("settings:get-plugin-setting", (request: { pluginName: string, settingName: string }) => {
+            return this.getPluginSetting(request.pluginName, request.settingName);
+        });
+
+        frontendCommunicator.on("settings:save-plugin-setting", (request: { pluginName: string, settingName: string, data: unknown }) => {
+            this.savePluginSetting(request.pluginName, request.settingName, request.data);
+        });
+
+        frontendCommunicator.on("settings:delete-plugin-setting", (request: { pluginName: string, settingName: string }) => {
+            this.deletePluginSetting(request.pluginName, request.settingName);
         });
 
         frontendCommunicator.on("settings:flush-settings-cache", () => {
@@ -190,6 +206,24 @@ class SettingsManager extends EventEmitter {
     }
 
     /**
+     * Get the JSON data path for a specific plugin setting in the settings file
+     *
+     * @param settingName Name of the setting
+     * @returns String representing the full JSON path of the setting data
+     */
+    getPluginSettingPath(pluginName: string, settingName: string) {
+        if (pluginName == null || typeof pluginName !== "string" || pluginName.trim() === "") {
+            throw new Error("getPluginSettingPath called with empty or invalid pluginName");
+        }
+
+        if (settingName == null || typeof settingName !== "string" || settingName.trim() === "") {
+            throw new Error("getPluginSettingPath called with empty or invalid settingName");
+        }
+
+        return `/plugins/${pluginName}/${settingName}`;
+    }
+
+    /**
      * Get a Firebot setting value or its default
      *
      * @param settingName Name of the setting to get
@@ -257,7 +291,64 @@ class SettingsManager extends EventEmitter {
      * @returns The saved plugin setting value, or the default if it doesn't exist.
      */
     getPluginSetting(pluginName: string, settingName: string, forceCacheUpdate = false, defaultValue: unknown = undefined) {
-        return this.getDataFromFile(`/plugins/${pluginName}/${settingName}`, forceCacheUpdate, defaultValue);
+        if (pluginName == null || typeof pluginName !== "string" || pluginName.trim() === "") {
+            throw new Error("getPluginSetting called with empty or invalid pluginName");
+        }
+
+        if (settingName == null || typeof settingName !== "string" || settingName.trim() === "") {
+            throw new Error("getPluginSetting called with empty or invalid settingName");
+        }
+
+        const value = this.getDataFromFile(`/plugins/${pluginName}/${settingName}`, forceCacheUpdate, defaultValue);
+
+        // Eventually, when we upgrade node-json-db, the library will handle this for us
+        if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/m.exec(value)) {
+            // This is a load-bearing cast
+            return new Date(value);
+        }
+
+        return value;
+    }
+
+    /**
+     * Save a plugin setting
+     *
+     * @param pluginName Name of the plugin
+     * @param settingName Name of the setting
+     * @param data Setting data
+     */
+    savePluginSetting(pluginName: string, settingName: string, data: unknown) {
+        if (pluginName == null || typeof pluginName !== "string" || pluginName.trim() === "") {
+            throw new Error("savePluginSetting called with empty or invalid pluginName");
+        }
+
+        if (settingName == null || typeof settingName !== "string" || settingName.trim() === "") {
+            throw new Error("savePluginSetting called with empty or invalid settingName");
+        }
+
+        this.pushDataToFile(`/plugins/${pluginName}/${settingName}`, data);
+        frontendCommunicator.send(`settings:plugin-setting-updated:${pluginName}:${settingName}`, data);
+        this.emit(`settings:plugin-setting-updated:${pluginName}:${settingName}`, data);
+    }
+
+    /**
+     * Delete a plugin setting
+     *
+     * @param pluginName Name of the plugin
+     * @param settingName Name of the setting
+     */
+    deletePluginSetting(pluginName: string, settingName: string) {
+        if (pluginName == null || typeof pluginName !== "string" || pluginName.trim() === "") {
+            throw new Error("deletePluginSetting called with empty or invalid pluginName");
+        }
+
+        if (settingName == null || typeof settingName !== "string" || settingName.trim() === "") {
+            throw new Error("deletePluginSetting called with empty or invalid settingName");
+        }
+
+        this.deleteUserDataAtPath(`/plugins/${pluginName}/${settingName}`);
+        frontendCommunicator.send(`settings:plugin-setting-updated:${pluginName}:${settingName}`, null);
+        this.emit(`settings:plugin-setting-deleted:${pluginName}:${settingName}`);
     }
 
     /**
