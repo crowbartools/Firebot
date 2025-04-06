@@ -39,15 +39,11 @@
             }
 
             .queue-list-item:hover {
-                background-color: #4a4c52;
+                background-color: #60636c;
             }
 
             .queue-list-item.selected {
-                background-color: #4a4c52;
-            }
-
-            .queue-list-item.selected:hover {
-                background-color: #4a4c52;
+                background-color: #60636c;
             }
 
             .selected-queue-column {
@@ -85,6 +81,15 @@
                 fill: oklch(0.795 0.184 86.047);
                 background-color: oklch(0.852 0.199 91.936 / 0.1);
             }
+
+            .queue-item {
+                display: flex;
+                justify-content: space-between;
+                padding: 10px;
+                border-radius: 5px;
+                margin-bottom: 5px;
+                background-color: #43454B;
+            }
         </style>
     </head>
 
@@ -111,9 +116,54 @@
 
             <div class="selected-queue-column">
               <div v-if="selectedQueue">
-                <h2>Selected Queue</h2>
-                <p><strong>{{ selectedQueue.name }}</strong></p>
-                <pre> {{ selectedQueueJson }}</pre>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center;">
+                        <h2 style="margin: 0; margin-right: 5px">{{ selectedQueue.name }}</h2>
+                        <div>
+                            ({{ selectedQueue.mode }} - {{ selectedQueue.interval || "0" }}s)
+                        </div>
+                    </div>  
+                    <queue-status-badge :status="selectedQueue.state.status"></queue-status-badge>
+                </div>
+                <hr />
+                <div>
+                    <h3>Active</h3>
+                    <table style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th style="text-align: left;">Trigger</th>
+                                <th style="text-align: left;">Triggered By</th>
+                                <th style="text-align: left;">Effects Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <queue-item v-for="(queueItem, index) in selectedQueue.state.activeItems" :item="queueItem"></queue-item>
+                            <tr v-if="selectedQueue.state.activeItems.length === 0">
+                                <td colspan="3" style="opacity: 0.7;">No active items</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <hr />
+                <div>
+                    <h3>Queued</h3>
+                    <table style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th style="text-align: left;">Trigger</th>
+                                <th style="text-align: left;">Triggered By</th>
+                                <th style="text-align: left;">Effects Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <queue-item v-for="(queueItem, index) in selectedQueue.state.queuedItems" :item="queueItem"></queue-item>
+                            <tr v-if="selectedQueue.state.queuedItems.length === 0">
+                                <td  colspan="3" style="opacity: 0.7;">No queued items</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- <pre> {{ selectedQueueJson }}</pre> -->
               </div>
             </div>
         </div>
@@ -167,6 +217,51 @@
                 </div>
               `
             });
+           Vue.component("queue-status-badge", {
+              props: ["status"],
+              computed: {
+                  iconUrl() {
+                      const status_map = {
+                          running: "running.gif",
+                          paused: "pause.svg",
+                          idle: "clock-outline.svg",
+                          cancelled: "pause.svg",
+                      };
+                      return `./images/${status_map[this.status]}`;
+                  }
+              },
+              template: `
+                <div class="queue-status-badge" :class="status">
+                    <running-icon v-if="status === 'running'"></running-icon>
+                    <pause-icon v-if="status === 'paused' || status === 'cancelled'"></pause-icon>
+                    <clock-icon v-if="status === 'idle'"></clock-icon>
+                    <span style="text-transform: capitalize">{{ status }}</span>
+                </div>
+              `
+            });
+
+           Vue.component("queue-item", {
+              props: ["item"],
+              computed: {
+                  triggerType() {
+                      return this.item?.runEffectsContext?.trigger?.type ?? "Unknown";
+                  },
+                  triggeredBy() {
+                      return this.item?.runEffectsContext?.trigger?.metadata?.username ?? "Unknown";
+                  },
+                  numberOfEffects() {
+                      return this.item?.runEffectsContext?.effects?.list?.length ?? 0;
+                  }
+              },
+              template: `
+                <tr class="queue-item">
+                    <td class="trigger-type">{{ triggerType }}</td>
+                    <td class="triggered-by">{{ triggeredBy }}</td>
+                    <td class="effects-count">{{ numberOfEffects }}</td>
+                </tr>
+              `
+            });
+
             const app = new Vue({
                 el: "#app",
                 data: {

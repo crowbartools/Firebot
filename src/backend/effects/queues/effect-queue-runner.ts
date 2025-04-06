@@ -23,7 +23,7 @@ class EffectQueueRunner extends TypedEmitter<Events> {
         const queue = this._queues[config.id];
         if (queue == null) {
             return {
-                status: config.active ? "paused" : "idle",
+                status: config.active === false ? "paused" : "idle",
                 interval: config.interval,
                 mode: config.mode,
                 queuedItems: [],

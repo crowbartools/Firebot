@@ -35,6 +35,12 @@ setupTitlebar();
  */
 let variableInspectorWindow = null;
 
+
+/**
+ *@type {Electron.BrowserWindow}
+ */
+let effectQueueMonitorWindow = null;
+
 /**
  * The stream preview popout window.
  * Keeps a global reference of the window object, if you don't, the window will
@@ -276,10 +282,10 @@ async function createAppMenu() {
                     label: 'Effect Queue Monitor',
                     toolTip: "Open the effect queue monitor",
                     sublabel: "Open the effect queue monitor",
-                    click: () => {
-                        createEffectQueueMonitorWindow(exports.mainWindow);
+                    click: async () => {
+                        effectQueueMonitorWindow = await createEffectQueueMonitorWindow(exports.mainWindow);
                     },
-                    icon: await createIconImage("../../../gui/images/icons/mdi/text-search.png")
+                    icon: await createIconImage("../../../gui/images/icons/mdi/queue-first-in-last-out.png")
                 },
                 {
                     label: 'Open Overlay In Browser',
@@ -562,6 +568,11 @@ async function createMainWindow() {
         if (variableInspectorWindow?.isDestroyed() === false) {
             logger.debug("Closing variable inspector window");
             variableInspectorWindow.destroy();
+        }
+
+        if (effectQueueMonitorWindow?.isDestroyed() === false) {
+            logger.debug("Effect queue monitor window");
+            effectQueueMonitorWindow.destroy();
         }
 
         if (streamPreview?.isDestroyed() === false) {
