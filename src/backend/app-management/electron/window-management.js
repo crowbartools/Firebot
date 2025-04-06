@@ -14,6 +14,15 @@ const frontendCommunicator = require("../../common/frontend-communicator");
 const { SettingsManager } = require("../../common/settings-manager");
 const { BackupManager } = require("../../backup-manager");
 
+const EventEmitter = require("events");
+
+/**
+ * @type {import("tiny-typed-emitter").TypedEmitter<{
+*    "main-window-closed": () => void;
+*  }>}
+*/
+exports.events = new EventEmitter();
+
 // hold a reference to the effect queue monitor window module
 const { createEffectQueueMonitorWindow } = require("./windows/effect-queue-monitor-window");
 
@@ -548,6 +557,8 @@ async function createMainWindow() {
     });
 
     mainWindow.on("closed", () => {
+        exports.events.emit("main-window-closed");
+
         if (variableInspectorWindow?.isDestroyed() === false) {
             logger.debug("Closing variable inspector window");
             variableInspectorWindow.destroy();

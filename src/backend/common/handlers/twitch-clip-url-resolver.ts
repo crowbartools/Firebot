@@ -1,23 +1,34 @@
 import { HelixClip } from '@twurple/api';
 import { BrowserWindow } from 'electron';
 import { SettingsManager } from '../settings-manager';
+import windowManagement from '../../app-management/electron/window-management';
 
+let window: BrowserWindow = null;
 
-const window = new BrowserWindow({
-    show: false,
-    title: 'Firebot - Twitch Clip URL Resolver',
-    webPreferences: {
-        sandbox: true,
-        nodeIntegration: false,
-        contextIsolation: true
+windowManagement.events.on('main-window-closed', () => {
+    if (window != null && !window.isDestroyed()) {
+        window.close();
     }
 });
 
-// Prevent the window from doing various naughty things
-window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
-window.webContents.on('will-navigate', event => event.preventDefault());
-
 function attemptToAcquireDirectUrl(clipId: string): Promise<string | null> {
+
+    if (window == null) {
+        window = new BrowserWindow({
+            show: false,
+            title: 'Firebot - Twitch Clip URL Resolver',
+            webPreferences: {
+                sandbox: true,
+                nodeIntegration: false,
+                contextIsolation: true
+            }
+        });
+
+        // Prevent the window from doing various naughty things
+        window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
+        window.webContents.on('will-navigate', event => event.preventDefault());
+    }
+
     return new Promise((resolve) => {
         const sandbox: {
             finished: boolean,
