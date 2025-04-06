@@ -1,10 +1,11 @@
 import { TypedEmitter } from "tiny-typed-emitter";
-import { EffectQueue, RunEffectsContext } from "./effect-queue";
+import { EffectQueue, QueueState, RunEffectsContext } from "./effect-queue";
 import logger from "../../logwrapper";
 import type { EffectQueueConfig } from "./effect-queue-config-manager";
 
 type Events = {
     "length-updated": (queueData: { id: string, length: number }) => void;
+    "queue-state-updated": (queueId: string, newState: QueueState, changedState: Partial<QueueState>) => void;
 };
 
 class EffectQueueRunner extends TypedEmitter<Events> {
@@ -14,6 +15,24 @@ class EffectQueueRunner extends TypedEmitter<Events> {
         super();
     }
 
+    get queues(): Record<string, EffectQueue> {
+        return JSON.parse(JSON.stringify(this._queues));
+    }
+
+    getQueueStateForConfig(config: EffectQueueConfig): QueueState {
+        const queue = this._queues[config.id];
+        if (queue == null) {
+            return {
+                status: config.active ? "paused" : "idle",
+                interval: config.interval,
+                mode: config.mode,
+                queuedItems: [],
+                activeItems: []
+            };
+        }
+        return queue.state;
+    }
+
     private _getQueue(queueConfig: EffectQueueConfig) {
         let queue = this._queues[queueConfig.id];
         if (queue == null) {
@@ -21,11 +40,14 @@ class EffectQueueRunner extends TypedEmitter<Events> {
 
             queue = new EffectQueue(queueConfig);
 
-            queue.on("queue-state-updated", (_, newState) => {
-                if (newState.queue) {
+            queue.on("queue-state-updated", (newState, changedState) => {
+
+                this.emit("queue-state-updated", queue.id, newState, changedState);
+
+                if (changedState.queuedItems) {
                     this.emit("length-updated", {
                         id: queue.id,
-                        length: newState.queue.length
+                        length: changedState.queuedItems.length
                     });
                 }
             });

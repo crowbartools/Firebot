@@ -85,7 +85,7 @@
         "electron-gh-releases": "^2.0.4",
         "electron-oauth2": "^3.0.0",
         "electron-regedit": "^2.0.0",
-        "electron-window-state": "^4.1.1",
+        "electron-window-state": "^5.0.3",
         "eventsource": "^1.0.7",
         "express": "^4.21.2",
         "expressionish": "github:SReject/expressionish#d277e5d959e5b0cdf50a38a182016752a0de9dd6",

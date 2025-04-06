@@ -172,7 +172,7 @@ class WebSocketServerManager extends EventEmitter {
         });
     }
 
-    triggerEvent(eventType: string, payload: object) {
+    triggerEvent(eventType: string, payload: unknown) {
         if (this.server == null) {
             return;
         }

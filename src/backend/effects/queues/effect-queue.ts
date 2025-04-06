@@ -22,16 +22,16 @@ type QueueItem = {
     priority?: "none" | "high";
 }
 
-type QueueState = {
+export type QueueState = {
     status: QueueStatus;
-    queue: QueueItem[];
+    queuedItems: QueueItem[];
     activeItems: QueueItem[];
     interval: number;
     mode: string;
 }
 
 type Events = {
-    "queue-state-updated": (updatedState: QueueState, newState: Partial<QueueState>) => void;
+    "queue-state-updated": (newState: QueueState, changedState: Partial<QueueState>) => void;
 };
 
 export class EffectQueue extends TypedEmitter<Events> {
@@ -46,27 +46,31 @@ export class EffectQueue extends TypedEmitter<Events> {
         this.id = config.id;
 
         this._setState({
-            status: config.active ? "idle" : "paused",
+            status: config.active !== false ? "idle" : "paused",
             interval: config.interval,
             mode: config.mode,
-            queue: [],
+            queuedItems: [],
             activeItems: []
         });
     }
 
-    private _setState(newState: Partial<QueueState>) {
-        const updatedState = {
+    private _setState(stateUpdate: Partial<QueueState>) {
+        const newState = {
             ...this._state,
-            ...newState
+            ...stateUpdate
         };
 
-        this._state = updatedState;
+        this._state = newState;
 
-        this.emit("queue-state-updated", updatedState, newState);
+        this.emit("queue-state-updated", newState, stateUpdate);
+    }
+
+    get state(): QueueState {
+        return JSON.parse(JSON.stringify(this._state));
     }
 
     get queueLength() {
-        return this._state.queue.length;
+        return this._state.queuedItems.length;
     }
 
     private async _runEffects(queueItem: QueueItem) {
@@ -94,20 +98,20 @@ export class EffectQueue extends TypedEmitter<Events> {
     }
 
     private async _runQueue(): Promise<void> {
-        if (this._state.queue.length === 0 || this._state.status === "canceled" || this._state.status === "paused") {
+        if (this._state.queuedItems.length === 0 || this._state.status === "canceled" || this._state.status === "paused") {
             return;
         }
-        const [nextQueueEntry, ...restOfQueue] = this._state.queue;
+        const [nextQueueEntry, ...restOfQueue] = this._state.queuedItems;
 
         this._setState({
-            queue: restOfQueue
+            queuedItems: restOfQueue
         });
 
         if (nextQueueEntry.runEffectsContext == null) {
             return;
         }
 
-        logger.debug(`Running next effects for queue ${this.id}. Mode=${this._state.mode}, Interval?=${this._state.interval}, Remaining queue length=${this._state.queue.length}`);
+        logger.debug(`Running next effects for queue ${this.id}. Mode=${this._state.mode}, Interval?=${this._state.interval}, Remaining queue length=${this._state.queuedItems.length}`);
 
 
         if (this._state.mode === "interval") {
@@ -142,7 +146,7 @@ export class EffectQueue extends TypedEmitter<Events> {
             priority
         };
 
-        const queue = [...this._state.queue];
+        const queue = [...this._state.queuedItems];
 
         if (priority === "high") {
             const firstNonPriority = queue.findIndex(entry => entry.priority !== "high");
@@ -156,7 +160,7 @@ export class EffectQueue extends TypedEmitter<Events> {
         }
 
         this._setState({
-            queue
+            queuedItems: queue
         });
 
 
@@ -178,19 +182,19 @@ export class EffectQueue extends TypedEmitter<Events> {
             return;
         }
 
-        if (this._state.status === "idle" && this._state.queue.length > 0) {
+        if (this._state.status === "idle" && this._state.queuedItems.length > 0) {
             logger.debug(`Queue ${this.id} is idle... spinning up.`);
             this._setState({
                 status: "running"
             });
             this._runQueue().then(() => {
-                logger.debug(`Queue ${this.id} is ${this._state.status === "paused" && this._state.queue.length > 0 ? "paused" : "cleared"}... going idle.`);
+                logger.debug(`Queue ${this.id} is ${this._state.status === "paused" && this._state.queuedItems.length > 0 ? "paused" : "cleared"}... going idle.`);
                 if (this._state.status === "running") {
                     this._setState({
                         status: "idle"
                     });
                 }
-                if (this._state.queue.length === 0) {
+                if (this._state.queuedItems.length === 0) {
                     eventManager.triggerEvent("firebot", "effect-queue-cleared", {
                         effectQueueId: this.id
                     });
@@ -220,7 +224,7 @@ export class EffectQueue extends TypedEmitter<Events> {
 
         this._setState({
             status: "canceled",
-            queue: []
+            queuedItems: []
         });
 
         if (abortActiveEffectLists) {
@@ -266,7 +270,7 @@ export class EffectQueue extends TypedEmitter<Events> {
     toJSON() {
         return {
             id: this.id,
-            ...this._state
+            state: this._state
         };
     }
 }

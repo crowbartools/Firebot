@@ -14,13 +14,14 @@ const frontendCommunicator = require("../../common/frontend-communicator");
 const { SettingsManager } = require("../../common/settings-manager");
 const { BackupManager } = require("../../backup-manager");
 
+// hold a reference to the effect queue monitor window module
+const { createEffectQueueMonitorWindow } = require("./windows/effect-queue-monitor-window");
+
 const argv = require('../../common/argv-parser');
 
 setupTitlebar();
 
-
 /**
- * The variable inspector window.
  *@type {Electron.BrowserWindow}
  */
 let variableInspectorWindow = null;
@@ -259,6 +260,15 @@ async function createAppMenu() {
                     click: () => {
                         // eslint-disable-next-line no-use-before-define
                         createVariableInspectorWindow();
+                    },
+                    icon: await createIconImage("../../../gui/images/icons/mdi/text-search.png")
+                },
+                {
+                    label: 'Effect Queue Monitor',
+                    toolTip: "Open the effect queue monitor",
+                    sublabel: "Open the effect queue monitor",
+                    click: () => {
+                        createEffectQueueMonitorWindow(exports.mainWindow);
                     },
                     icon: await createIconImage("../../../gui/images/icons/mdi/text-search.png")
                 },

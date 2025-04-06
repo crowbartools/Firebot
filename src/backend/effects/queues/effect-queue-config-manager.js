@@ -79,6 +79,7 @@ class EffectQueueConfigManager extends JsonDbManager {
 
     /**
      * @override
+     * @returns {EffectQueueConfig[]}
      */
     getAllItems() {
         const items = JSON.parse(JSON.stringify(super.getAllItems()));
@@ -91,7 +92,7 @@ class EffectQueueConfigManager extends JsonDbManager {
     /**
      * @override
      * @param itemId
-     * @returns {T|null}
+     * @returns {EffectQueueConfig | null}
      */
     getItem(itemId) {
         const item = JSON.parse(JSON.stringify(super.getItem(itemId)));
