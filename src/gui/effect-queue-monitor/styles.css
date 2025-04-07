@@ -1,0 +1,110 @@
+[v-cloak] {
+    display: none;
+}
+
+body {
+    color: whitesmoke;
+    margin: 0;
+    padding: 0;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+}
+
+.queue-list-column {
+    flex: 1 1 auto;
+    padding: 10px;
+    min-width: 300px;
+}
+
+.queue-list-column h2 {
+    margin-top: 0;
+}
+
+.queue-list-item {
+    cursor: pointer;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    background-color: #43454b;
+}
+
+.queue-list-item:hover {
+    background-color: #60636c;
+}
+
+.queue-list-item.selected {
+    background-color: #60636c;
+}
+
+.selected-queue-column {
+    flex: 2 1 auto;
+    padding: 10px;
+    background-color: #292b2f;
+}
+
+.queue-status-badge {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    padding: 2px 8px;
+    border-radius: 15px;
+    height: 20px;
+}
+
+.queue-status-badge.paused,
+.queue-status-badge.cancelled {
+    border: 1px solid oklch(0.707 0.022 261.325 / 0.2);
+    color: oklch(0.707 0.022 261.325);
+    fill: oklch(0.707 0.022 261.325);
+    background-color: oklch(0.707 0.022 261.325 / 0.1);
+}
+
+.queue-status-badge.running {
+    border: 1px solid rgb(163 255 56 / 20%);
+    color: #a3ff38;
+    fill: #a3ff38;
+    background-color: rgb(163 255 56 / 10%);
+}
+
+.queue-status-badge.idle {
+    border: 1px solid oklch(0.852 0.199 91.936 / 0.2);
+    color: oklch(0.795 0.184 86.047);
+    fill: oklch(0.795 0.184 86.047);
+    background-color: oklch(0.852 0.199 91.936 / 0.1);
+}
+
+.queue-item {
+    background: #43454b;
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 10px;
+    margin-bottom: 5px;
+}
+
+.queue-item-cell {
+    flex: 1;
+    padding-right: 5px;
+    word-break: break-all;
+    word-wrap: break-word;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spin {
+    animation-name: spin;
+    animation-duration: 5000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}

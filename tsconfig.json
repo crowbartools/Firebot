@@ -1,24 +1,23 @@
 {
     "compilerOptions": {
-      "module": "CommonJS",
-      "noImplicitAny": false,
-      "esModuleInterop": true,
-      "allowSyntheticDefaultImports": true,
-      "sourceMap": true,
-      "outDir": "build",
-      "allowJs": true,
-      "baseUrl": ".",
-      "rootDir": "./src",
-      "moduleResolution": "node",
-      "skipLibCheck": true,
-      "experimentalDecorators": true,
-      "downlevelIteration": true,
-      "paths": {
-        "*": ["node_modules/*"]
-      },
-      "target": "ES2022"
+        "module": "CommonJS",
+        "noImplicitAny": false,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "sourceMap": true,
+        "outDir": "build",
+        "allowJs": true,
+        "baseUrl": ".",
+        "rootDir": "./src",
+        "moduleResolution": "node",
+        "skipLibCheck": true,
+        "experimentalDecorators": true,
+        "downlevelIteration": true,
+        "paths": {
+            "*": ["node_modules/*"]
+        },
+        "target": "ES2022"
     },
-    "include": [
-      "src/**/*",
-    ]
-  }
+    "include": ["src/**/*"],
+    "exclude": ["src/**/*.mjs"]
+}
