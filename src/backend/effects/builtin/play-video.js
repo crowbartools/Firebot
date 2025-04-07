@@ -14,6 +14,7 @@ const frontendCommunicator = require('../../common/frontend-communicator');
 const { wait } = require("../../utility");
 const { parseYoutubeId } = require("../../../shared/youtube-url-parser");
 const { v4: uuid } = require("uuid");
+const { resolveTwitchClipVideoUrl } = require("../../common/handlers/twitch-clip-url-resolver");
 
 /**
  * The Play Video effect
@@ -487,8 +488,12 @@ const playVideo = {
                 }
             }
 
-            //const clipVideoUrl = `${clip.thumbnailUrl.split("-preview-")[0]}.mp4`;
-            const clipVideoUrl = clip.embedUrl;
+            if (clip == null) {
+                logger.error("Unable to find clip");
+                return true;
+            }
+
+            const { url, useIframe } = await resolveTwitchClipVideoUrl(clip);
             const clipDuration = clip.duration;
             const volume = parseInt(effect.volume) / 10;
 
@@ -501,7 +506,8 @@ const playVideo = {
             }
 
             webServer.sendToOverlay("playTwitchClip", {
-                clipVideoUrl: clipVideoUrl,
+                clipVideoUrl: url,
+                useIframe,
                 volume: volume,
                 width: effect.width,
                 height: effect.height,
