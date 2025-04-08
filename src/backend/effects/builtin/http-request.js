@@ -267,6 +267,12 @@ const effect = {
                 throw error;
             }
 
+            try {
+                responseData = JSON.parse(responseData);
+            } catch (error) {
+                //ignore error
+            }
+
             /**
              * Deprecated
              */

@@ -4,7 +4,7 @@
 
     angular
         .module("firebotApp")
-        .controller("updatesController", function($scope, updatesService) {
+        .controller("updatesController", function($scope, $rootScope, updatesService) {
 
             $scope.getUpdateData = function() {
                 return updatesService.updateData;
@@ -18,7 +18,15 @@
             }
 
             $scope.downloadAndInstallUpdate = function() {
-                updatesService.downloadAndInstallUpdate();
+                if (process.platform === 'win32') {
+                    updatesService.downloadAndInstallUpdate();
+                } else {
+                    $rootScope.openLinkExternally(updatesService.updateData.gitLink);
+                }
+            };
+
+            $scope.canUpdateAutomatically = function() {
+                return process.platform === 'win32';
             };
         });
 }());
