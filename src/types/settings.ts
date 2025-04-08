@@ -46,7 +46,11 @@ export type FirebotSettingsTypes = {
     ClearChatFeedMode: "never" | "onlyStreamer" | "always";
     ClearCustomScriptCache: boolean;
     CopiedOverlayVersion: string;
-    DashboardLayout: object; //TODO
+    DashboardLayout: {
+        dashboardViewerList: string;
+        dashboardChatWindow: string;
+        dashboardActivityFeed: string;
+    };
     DebugMode: boolean;
     DefaultEffectLabelsEnabled: boolean;
     DefaultToAdvancedCommandMode: boolean;
@@ -156,7 +160,11 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     ClearChatFeedMode: "onlyStreamer",
     ClearCustomScriptCache: false,
     CopiedOverlayVersion: "",
-    DashboardLayout: {},
+    DashboardLayout: {
+        dashboardViewerList: "225px",
+        dashboardChatWindow: "100%",
+        dashboardActivityFeed: "275px"
+    },
     DebugMode: false,
     DefaultEffectLabelsEnabled: true,
     DefaultToAdvancedCommandMode: false,
