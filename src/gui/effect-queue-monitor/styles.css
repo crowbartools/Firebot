@@ -6,6 +6,7 @@ body {
     color: whitesmoke;
     margin: 0;
     padding: 0;
+    font-family: InterVariable, sans-serif;
 }
 
 .app-container {
@@ -78,12 +79,20 @@ body {
 }
 
 .queue-item {
-    background: #43454b;
     color: white;
-    padding: 10px;
+    padding: 0 10px;
     cursor: pointer;
-    border-radius: 10px;
     margin-bottom: 5px;
+}
+
+.queue-item:last-child > .queue-item-header {
+    border-bottom: none;
+}
+
+.queue-item-header {
+    display: flex;
+    padding: 10px 0;
+    border-bottom: 1px gray solid;
 }
 
 .queue-item-cell {
@@ -91,6 +100,18 @@ body {
     padding-right: 5px;
     word-break: break-all;
     word-wrap: break-word;
+}
+
+.trigger-type {
+    text-transform: capitalize;
+}
+
+.triggered-by {
+    opacity: 0.8;
+}
+
+.effects-count {
+    opacity: 0.8;
 }
 
 @keyframes spin {
@@ -107,4 +128,30 @@ body {
     animation-duration: 5000ms;
     animation-iteration-count: infinite;
     animation-timing-function: linear;
+}
+
+.label {
+    border-radius: 5px;
+    overflow: hidden;
+    display: flex;
+    font-size: 14px;
+    margin-right: 10px;
+    background: #43454b;
+    padding: 5px 8px;
+}
+
+.label-name {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-right: 4px;
+    opacity: 0.8;
+}
+
+.label-value {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 2px;
 }

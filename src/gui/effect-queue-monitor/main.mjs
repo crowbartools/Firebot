@@ -9,6 +9,7 @@ import { queueItem } from "./modules/queue-item.mjs";
 import { queueStatusBadge } from "./modules/queue-status-badge.mjs";
 import { queueHeader } from "./modules/queue-header.mjs";
 import { queueItemList } from "./modules/queue-item-list.mjs";
+import { queueLabel } from "./modules/queue-label.mjs";
 
 const app = createApp({
     data() {
@@ -50,7 +51,8 @@ app
     .component('QueueItem', queueItem)
     .component('QueueStatusBadge', queueStatusBadge)
     .component('QueueHeader', queueHeader)
-    .component('QueueItemList', queueItemList);
+    .component('QueueItemList', queueItemList)
+    .component('QueueLabel', queueLabel);
 
 
 const mountedApp = app.mount('#app');

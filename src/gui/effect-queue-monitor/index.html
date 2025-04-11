@@ -4,6 +4,7 @@
     <head>
         <meta charset="utf-8" />
         <title>Effect Queue Monitor</title>
+        <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
         <link rel="stylesheet" href="./styles.css">
         <script type="importmap">
             {
@@ -16,7 +17,7 @@
     </head>
 
     <body>
-        <div id="app" style="font-family: sans-serif" v-cloak>
+        <div id="app" v-cloak>
           <div class="app-container">
             <div class="queue-list-column">
                 <h2>Queues</h2>
@@ -39,13 +40,11 @@
             <div class="selected-queue-column">
               <div v-if="selectedQueue">
                 <queue-header :queue="selectedQueue"></queue-header>
-                <hr />
                 <queue-item-list 
                   :items="selectedQueueCombinedItems" 
                   list-name="Queued Items"
                   no-items-text="No queued items"
                 ></queue-item-list>
-                <!-- <pre> {{ selectedQueueJson }}</pre> -->
               </div>
             </div>
         </div>
