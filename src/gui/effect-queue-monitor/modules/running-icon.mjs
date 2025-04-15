@@ -15,7 +15,7 @@ const runningIcon = {
             alt="Running Icon"
             :width="width"
             :height="height"
-            style="transform: translateY(1px);"
+            style="transform: translateY(2px);"
         />
     `
 };

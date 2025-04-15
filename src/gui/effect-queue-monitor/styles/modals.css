@@ -1,0 +1,102 @@
+/* Modal Styles */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.modal-container {
+    background-color: #2c2e33;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    width: 80%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #1e2024;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.modal-close-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.6);
+    padding: 5px;
+    margin: -5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+
+.modal-close-button:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.modal-content {
+    padding: 20px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.json-content {
+    background-color: #1e2024;
+    border-radius: 6px;
+    padding: 15px;
+    margin: 0;
+    overflow-x: auto;
+    color: #e6e6e6;
+    font-family: "Courier New", monospace;
+    font-size: 13px;
+    white-space: pre-wrap;
+    max-height: 60vh;
+}
+
+/* Modal transitions */
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+    transition: opacity 0.3s;
+}
+
+.modal-fade-enter,
+.modal-fade-leave-to {
+    opacity: 0;
+}
+
+/* Effect Detail Modal */
+.effect-modal-container {
+    max-width: 700px;
+    width: 90%;
+}
+
+.effect-modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}

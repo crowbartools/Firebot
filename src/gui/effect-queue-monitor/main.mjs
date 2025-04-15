@@ -1,15 +1,12 @@
-
 import { createApp } from 'vue';
 
-import { clockIcon } from "./modules/clock-icon.mjs";
-import { pauseIcon } from "./modules/pause-icon.mjs";
 import { runningIcon } from "./modules/running-icon.mjs";
-import { cogSpinIcon } from './modules/cog-spin-icon.mjs';
+import { chevronIcon } from './modules/chevron-icon.mjs';
 import { queueItem } from "./modules/queue-item.mjs";
 import { queueStatusBadge } from "./modules/queue-status-badge.mjs";
 import { queueHeader } from "./modules/queue-header.mjs";
 import { queueItemList } from "./modules/queue-item-list.mjs";
-import { queueLabel } from "./modules/queue-label.mjs";
+import { chip } from "./modules/chip.mjs";
 
 const app = createApp({
     data() {
@@ -44,15 +41,13 @@ const app = createApp({
 });
 
 app
-    .component('ClockIcon', clockIcon)
-    .component('PauseIcon', pauseIcon)
     .component('RunningIcon', runningIcon)
-    .component('CogSpinIcon', cogSpinIcon)
+    .component('ChevronIcon', chevronIcon)
     .component('QueueItem', queueItem)
     .component('QueueStatusBadge', queueStatusBadge)
     .component('QueueHeader', queueHeader)
     .component('QueueItemList', queueItemList)
-    .component('QueueLabel', queueLabel);
+    .component('Chip', chip);
 
 
 const mountedApp = app.mount('#app');

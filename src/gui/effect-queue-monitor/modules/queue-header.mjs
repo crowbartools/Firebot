@@ -33,19 +33,18 @@ const queueHeader = {
         <div style="display: flex; align-items: center; justify-content: space-between;">
             <div style="display: flex; align-items: center;">
                 <h2 style="margin: 0; margin-right: 15px">{{ queue.name }}</h2>
-                <queue-label
-                    name="Mode:"
+            </div>
+            <div style="display: flex; gap: 5px;">
+                <chip
+                    label="Mode:"
                     :value="modeLabel"
                 />
-                <queue-label
+                <chip
                     v-if="shouldShowInterval"
-                    :name="intervalName"
+                    :label="intervalName"
                     :value="intervalValue"
                 />
             </div>
-            <queue-status-badge
-                :status="queue.state.status"
-            ></queue-status-badge>
         </div>
     `
 };

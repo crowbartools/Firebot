@@ -5,7 +5,20 @@
         <meta charset="utf-8" />
         <title>Effect Queue Monitor</title>
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
-        <link rel="stylesheet" href="./styles.css">
+        <link rel="stylesheet" href="./styles/main.css">
+        <script>
+            // Parse URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const fontAwesomeKitId = urlParams.get('fontAwesomeKitId');
+            
+            // Dynamically load Font Awesome if kit ID is provided
+            if (fontAwesomeKitId) {
+                const fontAwesomeScript = document.createElement('script');
+                fontAwesomeScript.src = `https://kit.fontawesome.com/${fontAwesomeKitId}.js`;
+                fontAwesomeScript.crossOrigin = 'anonymous';
+                document.head.appendChild(fontAwesomeScript);
+            }
+        </script>
         <script type="importmap">
             {
                 "imports": {
@@ -30,7 +43,7 @@
                   style="display: flex; align-items: center; justify-content: space-between;"
                 >
                     <div style="font-weight: 700;">{{ queue.name }}</div>
-                    <queue-status-badge :status="queue.state.status"></queue-status-badge>
+                    <queue-status-badge :queue="queue"></queue-status-badge>
                 </div>
                 <div v-if="queues.length === 0">
                     <p>No queues available.</p>

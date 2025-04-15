@@ -2,25 +2,24 @@ const queueItemList = {
     props: ["listName", "noItemsText", "items"],
     computed: {},
     template: `
-        <div style="border: 1px gray solid; border-radius: 10px; margin-top: 10px;">
-            <div
-                style="display: flex;color: rgba(255, 255, 255, 0.75);padding: 10px;font-size: 13px;border-bottom: 1px gray solid;"
-            >
-                <div style="width: 22px;"></div>
-                <div style="flex: 1">Trigger</div>
-                <div style="flex: 1">Triggered By</div>
-                <div style="flex: 1">Effects</div>
-                <div style="width: 15px"></div>
+        <div class="queue-list-container">
+            <div class="queue-list-header">
+                <div class="queue-list-header-icon-column"></div>
+                <div class="queue-list-header-column">Trigger</div>
+                <div class="queue-list-header-column">Triggered By</div>
+                <div class="queue-list-header-column">Effects</div>
+                <div class="queue-list-header-chevron-column"></div>
             </div>
-            <div>
+            <div class="queue-list-body">
                 <queue-item
                     v-for="queueItem in items"
                     :item="queueItem"
+                    :key="queueItem.id"
                 ></queue-item>
-                <div v-if="items.length === 0" style="opacity: 0.7;padding: 10px;">
+                <div v-if="items.length === 0" class="queue-list-empty-message">
                     {{ noItemsText }}
                 </div>
-            </div
+            </div>
         </div>
     `
 };

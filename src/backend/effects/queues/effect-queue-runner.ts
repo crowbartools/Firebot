@@ -2,6 +2,7 @@ import { TypedEmitter } from "tiny-typed-emitter";
 import { EffectQueue, QueueState, RunEffectsContext } from "./effect-queue";
 import logger from "../../logwrapper";
 import type { EffectQueueConfig } from "./effect-queue-config-manager";
+import effectManager from "../effectManager";
 
 type Events = {
     "length-updated": (queueData: { id: string, length: number }) => void;
@@ -63,6 +64,16 @@ class EffectQueueRunner extends TypedEmitter<Events> {
         }
 
         const queue = this._getQueue(queueConfig);
+
+        for (const effect of runEffectsContext.effects.list) {
+            if (!effect.effectLabel) {
+                const effectType = effectManager.getEffectById(effect.type);
+                if (effectType) {
+                    effect.effectLabel = effectType.getDefaultLabel?.(effect);
+                    effect["__definition"] = effectType.definition;
+                }
+            }
+        }
 
         queue.addEffects(runEffectsContext, duration, priority);
     }

@@ -283,7 +283,7 @@ async function createAppMenu() {
                     toolTip: "Open the effect queue monitor",
                     sublabel: "Open the effect queue monitor",
                     click: async () => {
-                        effectQueueMonitorWindow = await createEffectQueueMonitorWindow(exports.mainWindow);
+                        effectQueueMonitorWindow = await createEffectQueueMonitorWindow();
                     },
                     icon: await createIconImage("../../../gui/images/icons/mdi/queue-first-in-last-out.png")
                 },

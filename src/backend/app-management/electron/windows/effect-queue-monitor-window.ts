@@ -1,5 +1,6 @@
 import { BrowserWindow } from "electron";
 import windowStateKeeper from "electron-window-state";
+import { SecretsManager } from "../../../secrets-manager";
 import path from "path";
 import url from "url";
 
@@ -9,7 +10,7 @@ import type { QueueState } from "../../../effects/queues/effect-queue";
 
 let effectQueueMonitorWindow: BrowserWindow = null;
 
-export async function createEffectQueueMonitorWindow(mainWindow: BrowserWindow) {
+export async function createEffectQueueMonitorWindow() {
 
     if (effectQueueMonitorWindow != null && !effectQueueMonitorWindow.isDestroyed()) {
         if (effectQueueMonitorWindow.isMinimized()) {
@@ -27,10 +28,8 @@ export async function createEffectQueueMonitorWindow(mainWindow: BrowserWindow) 
 
     effectQueueMonitorWindow = new BrowserWindow({
         frame: true,
-        alwaysOnTop: true,
         backgroundColor: "#2F3137",
         title: "Effect Queue Monitor",
-        parent: mainWindow,
         width: effectQueueMonitorWindowState.width,
         height: effectQueueMonitorWindowState.height,
         x: effectQueueMonitorWindowState.x,
@@ -52,7 +51,10 @@ export async function createEffectQueueMonitorWindow(mainWindow: BrowserWindow) 
         url.format({
             pathname: path.join(__dirname, "../../../../gui/effect-queue-monitor/index.html"),
             protocol: "file:",
-            slashes: true
+            slashes: true,
+            query: {
+                fontAwesomeKitId: SecretsManager.secrets.fontAwesome5KitId
+            }
         }));
 
     const queueConfigs = effectQueueConfigManager.getAllItems();

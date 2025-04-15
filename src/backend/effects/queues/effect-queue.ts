@@ -5,14 +5,12 @@ import { timeout } from "../../utils";
 import eventManager from "../../events/EventManager";
 import { abortEffectList } from "../../common/effect-abort-helpers";
 import { EffectQueueConfig } from "./effect-queue-config-manager";
+import { EffectList } from "../../../types/effects";
 
 export type QueueStatus = "running" | "paused" | "idle" | "canceled";
 
 export type RunEffectsContext = {
-    effects?: {
-        id: string;
-        list: unknown[];
-    };
+    effects?: EffectList
     [key: string]: unknown;
 }
 

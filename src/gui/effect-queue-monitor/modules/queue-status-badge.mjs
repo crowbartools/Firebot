@@ -1,14 +1,13 @@
 const queueStatusBadge = {
-    props: ["status"],
+    props: ["queue"],
     computed: {
-        iconUrl() {
-            const statusMap = {
-                running: "running.gif",
-                paused: "pause.svg",
-                idle: "clock-outline.svg",
-                cancelled: "pause.svg"
-            };
-            return `./images/${statusMap[this.status]}`;
+        itemCount() {
+            const activeItemsCount = this.queue.state.activeItems ? this.queue.state.activeItems.length : 0;
+            const queuedItemsCount = this.queue.state.queuedItems ? this.queue.state.queuedItems.length : 0;
+            return activeItemsCount + queuedItemsCount;
+        },
+        status() {
+            return this.queue.state.status;
         }
     },
     template: `
@@ -16,9 +15,10 @@ const queueStatusBadge = {
             <div v-if="status === 'running'" style="margin-right: 5px;">
                 <running-icon></running-icon>
             </div>
-            <pause-icon v-if="status === 'paused' || status === 'cancelled'"></pause-icon>
-            <clock-icon v-if="status === 'idle'"></clock-icon>
+            <i v-if="status === 'paused' || status === 'cancelled'" class="far fa-pause-circle" style="font-size: 18px; margin-right: 5px;transform: translateY(1px);"></i>
+            <i v-if="status === 'idle'" class="far fa-clock" style="font-size: 18px; margin-right: 5px;transform: translateY(1px);"></i>
             <span style="text-transform: capitalize">{{ status }}</span>
+            <span v-if="itemCount && itemCount > 0" class="queue-item-count">{{ itemCount }}</span>
         </div>
     `
 };

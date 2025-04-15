@@ -47,12 +47,6 @@
                     sortable: true,
                     cellTemplate: `{{(data.mode === 'interval' || data.mode === 'auto') ? (data.interval || 0) + 's' : 'n/a'}}`,
                     cellController: () => {}
-                },
-                {
-                    name: "QUEUE LENGTH",
-                    icon: "fa-tally",
-                    cellTemplate: `{{data.length || 0}}`,
-                    cellController: () => {}
                 }
             ];
 
@@ -92,7 +86,7 @@
                                     confirmLabel: "Delete",
                                     confirmBtnType: "btn-danger"
                                 })
-                                .then(confirmed => {
+                                .then((confirmed) => {
                                     if (confirmed) {
                                         effectQueuesService.deleteEffectQueue(item.id);
                                     }
