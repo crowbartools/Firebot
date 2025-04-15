@@ -4,11 +4,16 @@ import { SecretsManager } from "../../../secrets-manager";
 import path from "path";
 import url from "url";
 
+import frontendCommunicator from "../../../common/frontend-communicator";
 import effectQueueConfigManager from "../../../effects/queues/effect-queue-config-manager";
 import effectQueueRunner from "../../../effects/queues/effect-queue-runner";
 import type { QueueState } from "../../../effects/queues/effect-queue";
 
 let effectQueueMonitorWindow: BrowserWindow = null;
+
+export function getEffectQueueMonitorWindow(): BrowserWindow | null {
+    return effectQueueMonitorWindow;
+}
 
 export async function createEffectQueueMonitorWindow() {
 
@@ -108,4 +113,8 @@ effectQueueRunner.on("queue-state-updated", (queueId, queueState: QueueState) =>
         ...queueConfig,
         state: queueState
     });
+});
+
+frontendCommunicator.on("open-effect-queue-monitor", () => {
+    createEffectQueueMonitorWindow();
 });

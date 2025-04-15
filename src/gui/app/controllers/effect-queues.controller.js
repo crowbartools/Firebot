@@ -5,7 +5,8 @@
         .controller("effectQueuesController", function(
             $scope,
             effectQueuesService,
-            utilityService
+            utilityService,
+            backendCommunicator
         ) {
             $scope.effectQueuesService = effectQueuesService;
 
@@ -97,6 +98,11 @@
                 ];
 
                 return options;
+            };
+
+
+            $scope.openEffectQueueMonitor = () => {
+                backendCommunicator.send("open-effect-queue-monitor");
             };
         });
 }());

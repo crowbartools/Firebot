@@ -24,7 +24,7 @@ const EventEmitter = require("events");
 exports.events = new EventEmitter();
 
 // hold a reference to the effect queue monitor window module
-const { createEffectQueueMonitorWindow } = require("./windows/effect-queue-monitor-window");
+const { createEffectQueueMonitorWindow, getEffectQueueMonitorWindow } = require("./windows/effect-queue-monitor-window");
 
 const argv = require('../../common/argv-parser');
 
@@ -35,11 +35,6 @@ setupTitlebar();
  */
 let variableInspectorWindow = null;
 
-
-/**
- *@type {Electron.BrowserWindow}
- */
-let effectQueueMonitorWindow = null;
 
 /**
  * The stream preview popout window.
@@ -282,9 +277,7 @@ async function createAppMenu() {
                     label: 'Effect Queue Monitor',
                     toolTip: "Open the effect queue monitor",
                     sublabel: "Open the effect queue monitor",
-                    click: async () => {
-                        effectQueueMonitorWindow = await createEffectQueueMonitorWindow();
-                    },
+                    click: createEffectQueueMonitorWindow,
                     icon: await createIconImage("../../../gui/images/icons/mdi/queue-first-in-last-out.png")
                 },
                 {
@@ -570,6 +563,7 @@ async function createMainWindow() {
             variableInspectorWindow.destroy();
         }
 
+        const effectQueueMonitorWindow = getEffectQueueMonitorWindow();
         if (effectQueueMonitorWindow?.isDestroyed() === false) {
             logger.debug("Effect queue monitor window");
             effectQueueMonitorWindow.destroy();
