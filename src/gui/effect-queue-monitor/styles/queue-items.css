@@ -3,7 +3,6 @@
 .queue-item {
     color: white;
     cursor: pointer;
-    margin-bottom: 5px;
     padding: 0;
     border-bottom: 1px solid rgba(128, 128, 128, 0.2);
     overflow: hidden;
@@ -23,7 +22,7 @@
 }
 
 .queue-item.expanded {
-    background-color: rgba(25, 25, 25, 0.5);
+    background-color: rgba(0, 0, 0, 0.2);
 }
 
 .queue-item-header {
