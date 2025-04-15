@@ -6,28 +6,28 @@ import commandManager from "../backend/chat/commands/command-manager";
 import { CounterManager } from "../backend/counters/counter-manager";
 import customRolesManager from "../backend/roles/custom-roles-manager";
 import { events as customVariablesEvents } from "../backend/common/custom-variable-manager";
-import effectQueueManager from "../backend/effects/queues/effect-queue-manager";
-import { events as effectQueueRunnerEvents } from "../backend/effects/queues/effect-queue-runner";
+import effectQueueManager from "../backend/effects/queues/effect-queue-config-manager";
+import effectQueueRunner from "../backend/effects/queues/effect-queue-runner";
 import presetEffectListManager from "../backend/effects/preset-lists/preset-effect-list-manager";
 import { events as quotesEvents } from "../backend/quotes/quotes-manager";
 import timerManager from "../backend/timers/timer-manager";
 import viewerMetadataManager from "../backend/viewers/viewer-metadata-manager";
 
 type ComponentEvents = {
-    "created-item": (item: object) => void;
-    "updated-item": (item: object) => void;
-    "deleted-item": (item: object) => void;
+    "created-item": (item: any) => void;
+    "updated-item": (item: any) => void;
+    "deleted-item": (item: any) => void;
 };
 
 type EffectQueueRunnerEvents = {
-    "length-updated": (item: object) => void;
+    "length-updated": (item: unknown) => void;
 }
 
 type Events = ComponentEvents & EffectQueueRunnerEvents;
 
 type ComponentManager = {
     componentName: string;
-    manager: TypedEmitter<Events>;
+    manager: TypedEmitter<any>;
     eventNameOverrides?: Array<[keyof Events, string]>;
 }
 
@@ -54,7 +54,7 @@ const FIREBOT_COMPONENT_MANAGERS: Array<ComponentManager> = [
     },
     {
         componentName: "effect-queue",
-        manager: effectQueueRunnerEvents,
+        manager: effectQueueRunner,
         eventNameOverrides: [
             ["length-updated", "length-updated"]
         ]

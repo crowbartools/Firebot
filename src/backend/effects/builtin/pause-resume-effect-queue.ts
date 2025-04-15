@@ -1,7 +1,6 @@
 import { EffectType } from "../../../types/effects";
 import { EffectCategory } from "../../../shared/effect-constants";
-import effectQueueManager, { EffectQueue } from "../queues/effect-queue-manager";
-import effectQueueRunner from "../queues/effect-queue-runner";
+import effectQueueManager, { EffectQueueConfig } from "../queues/effect-queue-config-manager";
 import logger from "../../logwrapper";
 
 const model: EffectType<{
@@ -64,7 +63,7 @@ const model: EffectType<{
             }
         }
 
-        $scope.selectEffectQueue = (queue: EffectQueue) => {
+        $scope.selectEffectQueue = (queue: EffectQueueConfig) => {
             $scope.effect.effectQueue = queue.id;
             $scope.effectQueueName = queue.name;
         };

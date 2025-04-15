@@ -1,7 +1,7 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { EffectTrigger } from "../../../../shared/effect-constants";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import effectQueueManager from "../../../effects/queues/effect-queue-manager";
+import effectQueueManager from "../../../effects/queues/effect-queue-config-manager";
 
 const triggers = {};
 triggers[EffectTrigger.EVENT] = ["firebot:effect-queue-cleared", "firebot:effect-queue-added", "firebot:effect-queue-status"];

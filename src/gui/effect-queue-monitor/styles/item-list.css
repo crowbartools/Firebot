@@ -1,0 +1,90 @@
+.item-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.item {
+    padding: 8px 10px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    background-color: rgba(70, 70, 75, 0.4);
+    transition: all 0.15s ease;
+}
+
+.item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.item-left {
+    display: flex;
+    align-items: center;
+}
+
+.item-right {
+    display: flex;
+    align-items: center;
+}
+
+.item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.item-icon {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background-color: rgba(60, 60, 65, 0.7);
+    color: #3498db;
+    margin-right: 10px;
+}
+
+.item-icon i {
+    font-size: 16px;
+}
+
+.item-content {
+    flex: 1;
+    min-height: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.item-name {
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 13px;
+}
+
+.item-description {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 350px;
+}
+
+.item-detail {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.item-expansion-container {
+    margin-top: 8px;
+    padding: 0;
+    background-color: rgba(30, 32, 40, 0.6);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    animation: fadeIn 0.2s ease-in-out;
+}

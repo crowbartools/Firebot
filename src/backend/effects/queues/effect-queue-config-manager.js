@@ -2,10 +2,10 @@
 
 const frontendCommunicator = require("../../common/frontend-communicator");
 const JsonDbManager = require("../../database/json-db-manager");
-const effectQueueRunner = require("./effect-queue-runner");
+const effectQueueRunner = require("./effect-queue-runner").default;
 
 /**
- * @typedef EffectQueue
+ * @typedef EffectQueueConfig
  * @prop {string} id - the id of the effect queue
  * @prop {string} name - the name of the effect queue
  * @prop {string} mode - the mode of the effect queue
@@ -17,11 +17,11 @@ const effectQueueRunner = require("./effect-queue-runner");
  */
 
 /**
- * @extends {JsonDbManager<EffectQueue>}
+ * @extends {JsonDbManager<EffectQueueConfig>}
  * {@link JsonDbManager}
  * @hideconstructor
  */
-class EffectQueueManager extends JsonDbManager {
+class EffectQueueConfigManager extends JsonDbManager {
     constructor() {
         super("Effect Queue", "/effects/effectqueues");
     }
@@ -49,17 +49,17 @@ class EffectQueueManager extends JsonDbManager {
 
     /**
      * @override
-     * @param {EffectQueue} effectQueue
-     * @returns {EffectQueue | null}
+     * @param {EffectQueueConfig} effectQueueConfig
+     * @returns {EffectQueueConfig | null}
      * */
-    saveItem(effectQueue) {
-        delete effectQueue.length;
-        delete effectQueue.queue;
-        const savedEffectQueue = super.saveItem(effectQueue);
+    saveItem(effectQueueConfig) {
+        delete effectQueueConfig.length;
+        delete effectQueueConfig.queue;
+        const savedEffectQueueConfig = super.saveItem(effectQueueConfig);
 
-        if (savedEffectQueue) {
-            effectQueueRunner.updateQueueConfig(savedEffectQueue);
-            return savedEffectQueue;
+        if (savedEffectQueueConfig) {
+            effectQueueRunner.updateQueue(savedEffectQueueConfig);
+            return savedEffectQueueConfig;
         }
 
         return null;
@@ -79,11 +79,12 @@ class EffectQueueManager extends JsonDbManager {
 
     /**
      * @override
+     * @returns {EffectQueueConfig[]}
      */
     getAllItems() {
         const items = JSON.parse(JSON.stringify(super.getAllItems()));
         for (const item of items) {
-            item.length = effectQueueRunner.getQueue(item.id).length;
+            item.length = effectQueueRunner.getQueueLength(item.id);
         }
         return items;
     }
@@ -91,7 +92,7 @@ class EffectQueueManager extends JsonDbManager {
     /**
      * @override
      * @param itemId
-     * @returns {T|null}
+     * @returns {EffectQueueConfig | null}
      */
     getItem(itemId) {
         const item = JSON.parse(JSON.stringify(super.getItem(itemId)));
@@ -100,8 +101,8 @@ class EffectQueueManager extends JsonDbManager {
             return null;
         }
 
-        item.queue = effectQueueRunner.getQueue(itemId);
-        item.length = item.queue.length;
+        item.length = effectQueueRunner.getQueueLength(itemId);
+
         return item;
     }
 
@@ -113,7 +114,7 @@ class EffectQueueManager extends JsonDbManager {
     }
 
     /** @private */
-    setQueueActivity(queue, status) {
+    setQueueActiveStatus(queue, status) {
         queue.active = status;
         this.saveItem(queue);
         frontendCommunicator.send("updateQueueStatus", {id: queue.id, active: status});
@@ -122,35 +123,35 @@ class EffectQueueManager extends JsonDbManager {
     pauseQueue(queueId) {
         const queue = this.getItem(queueId);
         if (queue != null && queue.active) {
-            this.setQueueActivity(queue, false);
+            this.setQueueActiveStatus(queue, false);
         }
     }
 
     resumeQueue(queueId) {
         const queue = this.getItem(queueId);
         if (queue != null && !queue.active) {
-            this.setQueueActivity(queue, true);
+            this.setQueueActiveStatus(queue, true);
         }
     }
 
     toggleQueue(queueId) {
         const queue = this.getItem(queueId);
         if (queue != null) {
-            this.setQueueActivity(queue, !queue.active);
+            this.setQueueActiveStatus(queue, !queue.active);
         }
     }
 }
 
-const effectQueueManager = new EffectQueueManager();
+const effectQueueManager = new EffectQueueConfigManager();
 
 frontendCommunicator.onAsync("getEffectQueues",
     async () => effectQueueManager.getAllItems());
 
 frontendCommunicator.onAsync("saveEffectQueue",
-    async (/** @type {EffectQueue} */ effectQueue) => effectQueueManager.saveItem(effectQueue));
+    async (/** @type {EffectQueueConfig} */ effectQueue) => effectQueueManager.saveItem(effectQueue));
 
 frontendCommunicator.onAsync("saveAllEffectQueues",
-    async (/** @type {EffectQueue[]} */ allEffectQueues) => effectQueueManager.saveAllItems(allEffectQueues));
+    async (/** @type {EffectQueueConfig[]} */ allEffectQueues) => effectQueueManager.saveAllItems(allEffectQueues));
 
 frontendCommunicator.on("deleteEffectQueue",
     (/** @type {string} */ effectQueueId) => effectQueueManager.deleteItem(effectQueueId));

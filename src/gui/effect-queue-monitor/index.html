@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Effect Queue Monitor</title>
+        <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+        <link rel="stylesheet" href="./styles/main.css">
+        <script>
+            // Parse URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const fontAwesomeKitId = urlParams.get('fontAwesomeKitId');
+            
+            // Dynamically load Font Awesome if kit ID is provided
+            if (fontAwesomeKitId) {
+                const fontAwesomeScript = document.createElement('script');
+                fontAwesomeScript.src = `https://kit.fontawesome.com/${fontAwesomeKitId}.js`;
+                fontAwesomeScript.crossOrigin = 'anonymous';
+                document.head.appendChild(fontAwesomeScript);
+            }
+        </script>
+        <script type="importmap">
+            {
+                "imports": {
+                    "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+                }
+            }
+        </script>
+        <script type="module" src="./main.mjs"></script>
+    </head>
+
+    <body>
+        <div id="app" v-cloak>
+          <div class="app-container">
+            <div class="queue-list-column">
+                <h2>Queues</h2>
+                <div 
+                  class="queue-list-item" 
+                  v-for="queue in queues" 
+                  :key="queue.id" 
+                  @click="selectedQueueId = queue.id"
+                  :class="{ selected: selectedQueueId === queue.id }"
+                  style="display: flex; align-items: center; justify-content: space-between;"
+                >
+                    <div style="font-weight: 700;">{{ queue.name }}</div>
+                    <queue-status-badge :queue="queue"></queue-status-badge>
+                </div>
+                <div v-if="queues.length === 0">
+                    <p>No queues available.</p>
+                </div>
+            </div>
+
+            <div class="selected-queue-column">
+              <div v-if="selectedQueue">
+                <queue-header :queue="selectedQueue"></queue-header>
+                <queue-item-list 
+                  :items="selectedQueueCombinedItems" 
+                  list-name="Queued Items"
+                  no-items-text="No queued items"
+                ></queue-item-list>
+              </div>
+            </div>
+        </div>
+    </body>
+</html>
