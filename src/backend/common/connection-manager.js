@@ -7,6 +7,7 @@ const { SettingsManager } = require("./settings-manager");
 const twitchApi = require("../twitch-api/api");
 const twitchChat = require("../chat/twitch-chat");
 const TwitchEventSubClient = require("../twitch-api/eventsub/eventsub-client");
+const twitchHermesClient = require("../twitch-api/hermes/hermes-client");
 const integrationManager = require("../integrations/integration-manager");
 const accountAccess = require("../common/account-access");
 
@@ -105,9 +106,11 @@ class ConnectionManager extends EventEmitter {
         if (shouldConnect) {
             twitchChat.connect();
             TwitchEventSubClient.createClient();
+            twitchHermesClient.connectToHermes();
         } else {
             twitchChat.disconnect();
             TwitchEventSubClient.disconnectEventSub();
+            twitchHermesClient.disconnectFromHermes();
         }
         return true;
     }
