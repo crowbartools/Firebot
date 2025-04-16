@@ -66,12 +66,9 @@ class EffectQueueRunner extends TypedEmitter<Events> {
         const queue = this._getQueue(queueConfig);
 
         for (const effect of runEffectsContext.effects.list) {
-            if (!effect.effectLabel) {
-                const effectType = effectManager.getEffectById(effect.type);
-                if (effectType) {
-                    effect.effectLabel = effectType.getDefaultLabel?.(effect);
-                    effect["__definition"] = effectType.definition;
-                }
+            const effectType = effectManager.getEffectById(effect.type);
+            if (effectType) {
+                effect["__definition"] = effectType.definition;
             }
         }
 
