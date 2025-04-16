@@ -46,6 +46,7 @@ const activeUsers = new NodeCache({ stdTTL: DEFAULT_ACTIVE_TIMEOUT, checkperiod:
 
 /**
  * Check if user is active
+ * @param {string} usernameOrId
  */
 exports.userIsActive = (usernameOrId) => {
     if (typeof usernameOrId === 'string') {
@@ -99,10 +100,17 @@ exports.getOnlineUserCount = () => {
     return onlineUsers.keys().length;
 };
 
+/**
+ * @param {string} ignoreUser
+ * @returns {UserDetails|null}
+ */
 exports.getRandomOnlineUser = (ignoreUser = "") => {
     const allOnlineUsers = exports.getAllOnlineUsers();
+    if (allOnlineUsers.length === 0) {
+        return null;
+    }
 
-    /**@type {User} */
+    /**@type {UserDetails} */
     let randomUser;
     do {
         const randomIndex = utils.getRandomInt(0, allOnlineUsers.length - 1);
@@ -117,15 +125,13 @@ exports.getRandomOnlineUser = (ignoreUser = "") => {
 };
 
 /**
-  * @returns {User[]}
+  * @returns {UserDetails[]}
   */
 exports.getAllOnlineUsers = () => {
     return onlineUsers.keys().filter(v => !isNaN(v)).map((id) => {
         return {
-            id: parseInt(id),
-            username: onlineUsers.get(id).username,
-            displayName: onlineUsers.get(id).displayName,
-            twitchRoles: onlineUsers.get(id).twitchRoles
+            id: id,
+            ...onlineUsers.get(id)
         };
     });
 };
@@ -149,7 +155,8 @@ async function updateUserOnlineStatus(userDetails, updateDb = false) {
             username: userDetails.username,
             displayName: userDetails.displayName,
             online: true,
-            twitchRoles: userDetails.twitchRoles
+            twitchRoles: userDetails.twitchRoles,
+            profilePicUrl: userDetails.profilePicUrl
         }, ONLINE_TIMEOUT);
 
         const roles = await chatRolesManager.getUsersChatRoles(userDetails.id);
@@ -282,6 +289,9 @@ exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = 
     }
 };
 
+/**
+ * @param {string} usernameOrId
+ */
 exports.removeActiveUser = async (usernameOrId) => {
     const isUsername = typeof usernameOrId === 'string';
     if (isUsername) {
@@ -295,7 +305,7 @@ exports.removeActiveUser = async (usernameOrId) => {
     frontendCommunicator.send("twitch:chat:user-inactive", isUsername ? other : usernameOrId);
 };
 
-activeUsers.on("expired", (usernameOrId) => {
+activeUsers.on("expired", (/** @type {string} */ usernameOrId) => {
     if (!isNaN(usernameOrId)) {
         frontendCommunicator.send("twitch:chat:user-inactive", usernameOrId);
     }
@@ -307,7 +317,7 @@ exports.clearAllActiveUsers = () => {
     frontendCommunicator.send("twitch:chat:clear-user-list");
 };
 
-onlineUsers.on("expired", async (userId) => {
+onlineUsers.on("expired", async (/** @type {string} */ userId) => {
     const viewerOnlineStatusManager = require("../../viewers/viewer-online-status-manager");
     await viewerOnlineStatusManager.setChatViewerOffline(userId);
     frontendCommunicator.send("twitch:chat:user-left", userId);
