@@ -148,8 +148,8 @@
                                         uib-tooltip="{{part.name}}"
                                         tooltip-append-to-body="true"
                                     >
-                                        <img ng-if="part.animatedUrl != '' && part.animatedUrl != null" ng-src="{{part.animatedUrl}}" style="height: 100%;">
-                                        <img ng-if="part.animatedUrl == '' || part.animatedUrl == null" ng-src="{{part.url}}" style="height: 100%;">
+                                        <img ng-if="part.animatedUrl != '' && part.animatedUrl != null" ng-src="{{part.animatedUrl}}" style="height: 100%;" alt="{{part.name || part.text || ''}}">
+                                        <img ng-if="part.animatedUrl == '' || part.animatedUrl == null" ng-src="{{part.url}}" style="height: 100%;" alt="{{part.name || part.text || ''}}">
                                     </span>
                                     <span ng-if="part.type === 'cheer'" style="{{$ctrl.chatSizeStyle}}{{$ctrl.fontFamilyStyle}}; font-weight: bold;" ng-style="{ color: part.color }" >{{part.amount}}</span>
 
@@ -159,8 +159,8 @@
                                         uib-tooltip="{{part.origin}}: {{part.name}}"
                                         tooltip-append-to-body="true"
                                     >
-                                        <img ng-if="part.animatedUrl != '' && part.animatedUrl != null" ng-src="{{part.animatedUrl}}" style="height: 100%;">
-                                        <img ng-if="part.animatedUrl == '' || part.animatedUrl == null" ng-src="{{part.url}}" style="height: 100%;">
+                                        <img ng-if="part.animatedUrl != '' && part.animatedUrl != null" ng-src="{{part.animatedUrl}}" style="height: 100%;" alt="{{part.name || part.text || ''}}">
+                                        <img ng-if="part.animatedUrl == '' || part.animatedUrl == null" ng-src="{{part.url}}" style="height: 100%;" alt="{{part.name || part.text || ''}}">
                                     </span>
 
                                     <span
@@ -169,7 +169,7 @@
                                         uib-tooltip="{{part.origin}}: {{part.name}}"
                                         tooltip-append-to-body="true"
                                     >
-                                        <img ng-src="{{part.url}}" style="height: 100%;" />
+                                        <img ng-src="{{part.url}}" style="height: 100%;" alt="{{part.name || part.text || ''}}" />
                                     </span>
                                     <span ng-if="part.origin === 'BTTV' && !$ctrl.showBttvEmotes" style="{{$ctrl.chatSizeStyle}}{{$ctrl.fontFamilyStyle}}">{{part.name}}</span>
 
@@ -179,7 +179,7 @@
                                         uib-tooltip="{{part.origin}}: {{part.name}}"
                                         tooltip-append-to-body="true"
                                     >
-                                        <img ng-src="{{part.url}}" style="height: 100%;" />
+                                        <img ng-src="{{part.url}}" style="height: 100%;" alt="{{part.name || part.text || ''}}" />
                                     </span>
                                     <span ng-if="part.origin === 'FFZ' && !$ctrl.showFfzEmotes" style="{{$ctrl.chatSizeStyle}}{{$ctrl.fontFamilyStyle}}">{{part.name}}</span>
 
@@ -189,7 +189,7 @@
                                         uib-tooltip="{{part.origin}}: {{part.name}}"
                                         tooltip-append-to-body="true"
                                     >
-                                        <img ng-src="{{part.url}}" style="height: 100%;" />
+                                        <img ng-src="{{part.url}}" style="height: 100%;" alt="{{part.name || part.text || ''}}" />
                                     </span>
                                     <span ng-if="part.origin === '7TV' && !$ctrl.showSevenTvEmotes" style="{{$ctrl.chatSizeStyle}}{{$ctrl.fontFamilyStyle}}">{{part.name}}</span>
                                 </span>
