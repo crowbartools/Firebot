@@ -105,11 +105,11 @@ const limitPerStreamRestriction: RestrictionType<RestrictionData> = {
             const usages = getUsages(commandId);
 
             if (globalLimit && usages.globalUsages >= globalLimit) {
-                return reject("This command cannot be used anymore this stream.");
+                return reject("Global per stream limit reached.");
             }
 
             if (perUserLimit && (usages.perUserUsages[username] ?? 0) >= perUserLimit) {
-                return reject("Sorry, you cannot use this command anymore this stream.");
+                return reject("You reached your per stream limit.");
             }
 
             return resolve(true);
