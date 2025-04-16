@@ -1,4 +1,5 @@
 import { FirebotChatMessage } from "./chat";
+import { CommandDefinition } from "./commands";
 
 export type TriggerType =
     | "command"
@@ -18,7 +19,7 @@ export type Trigger = {
     metadata: {
         username: string;
         hotkey?: unknown;
-        command?: unknown;
+        command?: CommandDefinition;
         userCommand?: { trigger: string; args: string[] };
         chatMessage?: FirebotChatMessage;
         event?: { id: string; name: string };

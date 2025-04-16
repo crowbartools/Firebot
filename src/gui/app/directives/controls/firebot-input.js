@@ -121,7 +121,7 @@
             $ctrl.cmEditor = null;
 
             $ctrl.onChange = (model) => {
-                if (!$ctrl.allowNewLines) {
+                if (typeof model === "string" && !$ctrl.allowNewLines) {
                     model = model.replace(/\n/gm, "");
                 }
                 $ctrl.model = model;

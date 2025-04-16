@@ -8,11 +8,14 @@ const twitchApi = require("../twitch-api/api");
 const twitchChat = require("../chat/twitch-chat");
 const TwitchEventSubClient = require("../twitch-api/eventsub/eventsub-client");
 const integrationManager = require("../integrations/integration-manager");
-const accountAccess = require("../common/account-access");
 
 const { ConnectionState } = require("../../shared/connection-constants");
 
-let isOnline = false;
+/**
+ * @type {import("@twurple/api").HelixStream | null}
+ */
+let currentStream = null;
+
 let onlineCheckIntervalId;
 
 /**
@@ -20,17 +23,13 @@ let onlineCheckIntervalId;
  */
 let manager;
 
-function updateOnlineStatus(online) {
-    if (online !== isOnline) {
-        isOnline = online === true;
-        manager.emit("streamerOnlineChange", isOnline);
-    }
-}
-
 async function checkOnline() {
-    const userId = accountAccess.getAccounts().streamer.userId;
-    const isOnline = await twitchApi.channels.getOnlineStatus(userId);
-    updateOnlineStatus(isOnline);
+    const stream = await twitchApi.streams.getStreamersCurrentStream();
+
+    if (stream?.id !== currentStream?.id) {
+        currentStream = stream;
+        manager.emit("streamerOnlineChange", stream != null, stream);
+    }
 }
 
 const serviceConnectionStates = {};
@@ -85,12 +84,12 @@ class ConnectionManager extends EventEmitter {
         onlineCheckIntervalId = setInterval(checkOnline, 30000);
     }
 
-    setOnlineStatus(online) {
-        updateOnlineStatus(online);
+    streamerIsOnline() {
+        return currentStream != null;
     }
 
-    streamerIsOnline() {
-        return isOnline;
+    get currentStream() {
+        return currentStream;
     }
 
     chatIsConnected() {
