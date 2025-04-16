@@ -17,15 +17,6 @@ const ONLINE_TIMEOUT = 450; // 7.50 mins
  * @property {string} username
  */
 
-/** A simple user, but with `displayName`, `online`, and `twitchRoles` properties added.
- * @typedef {Object} OnlineUser
- * @property {string} id
- * @property {string} username
- * @property {string} displayName
- * @property {boolean} online
- * @property {string[]} twitchRoles
- */
-
 /**
  * @typedef {Object} UserDetails
  * @property {string} id
@@ -111,7 +102,7 @@ exports.getOnlineUserCount = () => {
 
 /**
  * @param {string} ignoreUser
- * @returns {OnlineUser|null}
+ * @returns {UserDetails|null}
  */
 exports.getRandomOnlineUser = (ignoreUser = "") => {
     const allOnlineUsers = exports.getAllOnlineUsers();
@@ -119,7 +110,7 @@ exports.getRandomOnlineUser = (ignoreUser = "") => {
         return null;
     }
 
-    /**@type {OnlineUser} */
+    /**@type {UserDetails} */
     let randomUser;
     do {
         const randomIndex = utils.getRandomInt(0, allOnlineUsers.length - 1);
@@ -134,7 +125,7 @@ exports.getRandomOnlineUser = (ignoreUser = "") => {
 };
 
 /**
-  * @returns {OnlineUser[]}
+  * @returns {UserDetails[]}
   */
 exports.getAllOnlineUsers = () => {
     return onlineUsers.keys().filter(v => !isNaN(v)).map((id) => {
@@ -164,7 +155,8 @@ async function updateUserOnlineStatus(userDetails, updateDb = false) {
             username: userDetails.username,
             displayName: userDetails.displayName,
             online: true,
-            twitchRoles: userDetails.twitchRoles
+            twitchRoles: userDetails.twitchRoles,
+            profilePicUrl: userDetails.profilePicUrl
         }, ONLINE_TIMEOUT);
 
         const roles = await chatRolesManager.getUsersChatRoles(userDetails.id);
