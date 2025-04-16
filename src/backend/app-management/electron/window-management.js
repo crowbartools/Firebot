@@ -23,15 +23,18 @@ const EventEmitter = require("events");
 */
 exports.events = new EventEmitter();
 
+// hold a reference to the effect queue monitor window module
+const { createEffectQueueMonitorWindow, getEffectQueueMonitorWindow } = require("./windows/effect-queue-monitor-window");
+
 const argv = require('../../common/argv-parser');
 
 setupTitlebar();
 
 /**
- * The variable inspector window.
  *@type {Electron.BrowserWindow}
  */
 let variableInspectorWindow = null;
+
 
 /**
  * The stream preview popout window.
@@ -269,6 +272,13 @@ async function createAppMenu() {
                         createVariableInspectorWindow();
                     },
                     icon: await createIconImage("../../../gui/images/icons/mdi/text-search.png")
+                },
+                {
+                    label: 'Effect Queue Monitor',
+                    toolTip: "Open the effect queue monitor",
+                    sublabel: "Open the effect queue monitor",
+                    click: createEffectQueueMonitorWindow,
+                    icon: await createIconImage("../../../gui/images/icons/mdi/queue-first-in-last-out.png")
                 },
                 {
                     label: 'Open Overlay In Browser',
@@ -551,6 +561,12 @@ async function createMainWindow() {
         if (variableInspectorWindow?.isDestroyed() === false) {
             logger.debug("Closing variable inspector window");
             variableInspectorWindow.destroy();
+        }
+
+        const effectQueueMonitorWindow = getEffectQueueMonitorWindow();
+        if (effectQueueMonitorWindow?.isDestroyed() === false) {
+            logger.debug("Effect queue monitor window");
+            effectQueueMonitorWindow.destroy();
         }
 
         if (streamPreview?.isDestroyed() === false) {

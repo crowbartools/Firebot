@@ -6,7 +6,7 @@ const frontendCommunicator = require("../../common/frontend-communicator");
 
 const commandManager = require("../../chat/commands/command-manager");
 const { CounterManager } = require("../../counters/counter-manager");
-const effectQueueManager = require("../../effects/queues/effect-queue-manager");
+const effectQueueManager = require("../../effects/queues/effect-queue-config-manager");
 const eventsAccess = require("../../events/events-access");
 const timerManager = require("../../timers/timer-manager");
 const scheduledTaskManager = require("../../timers/scheduled-task-manager");

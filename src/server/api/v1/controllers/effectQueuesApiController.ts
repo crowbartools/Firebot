@@ -1,4 +1,4 @@
-import effectQueueManager from "../../../../backend/effects/queues/effect-queue-manager";
+import effectQueueManager from "../../../../backend/effects/queues/effect-queue-config-manager";
 import effectQueueRunner from "../../../../backend/effects/queues/effect-queue-runner";
 import { Request, Response } from "express";
 

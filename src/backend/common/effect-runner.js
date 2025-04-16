@@ -5,8 +5,6 @@ const effectManager = require("../effects/effectManager");
 const { EffectTrigger } = require("../../shared/effect-constants");
 const accountAccess = require('./account-access');
 const replaceVariableManager = require("./../variables/replace-variable-manager");
-const effectQueueManager = require("../effects/queues/effect-queue-manager");
-const effectQueueRunner = require("../effects/queues/effect-queue-runner");
 const webServer = require("../../server/http-server-manager");
 const util = require("../utility");
 const { v4: uuid } = require("uuid");
@@ -277,6 +275,10 @@ async function processEffects(processEffectsRequest) {
     }
 
     const queueId = processEffectsRequest.effects.queue;
+
+    const effectQueueManager = require("../effects/queues/effect-queue-config-manager");
+    const effectQueueRunner = require("../effects/queues/effect-queue-runner").default;
+
     const queue = effectQueueManager.getItem(queueId);
     if (queue != null) {
         logger.debug(`Sending effects for list ${processEffectsRequest.effects.id} to queue ${queueId}...`);
