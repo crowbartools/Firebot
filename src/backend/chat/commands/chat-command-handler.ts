@@ -214,11 +214,22 @@ class CommandHandler {
         }
 
         // Check if command passes all restrictions
-        const restrictionData =
-            triggeredSubcmd && triggeredSubcmd.restrictionData && triggeredSubcmd.restrictionData.restrictions
-                && triggeredSubcmd.restrictionData.restrictions.length > 0
-                ? triggeredSubcmd.restrictionData
-                : command.restrictionData;
+        let restrictionData = command.restrictionData;
+        let restrictionsAreInherited = false;
+        if (triggeredSubcmd) {
+            const subCommandHasRestrictions = triggeredSubcmd.restrictionData && triggeredSubcmd.restrictionData.restrictions
+                && triggeredSubcmd.restrictionData.restrictions.length > 0;
+
+            if (subCommandHasRestrictions) {
+                restrictionData = triggeredSubcmd.restrictionData;
+            } else {
+                // subcommand has no restrictions, inherit from base command
+                restrictionData = command.restrictionData;
+                restrictionsAreInherited = true;
+            }
+        } else {
+            restrictionData = command.restrictionData;
+        }
 
         if (restrictionData) {
             logger.debug("Command has restrictions...checking them.");
@@ -235,7 +246,7 @@ class CommandHandler {
                 }
             };
             try {
-                await restrictionsManager.runRestrictionPredicates(triggerData, restrictionData);
+                await restrictionsManager.runRestrictionPredicates(triggerData, restrictionData, restrictionsAreInherited);
                 logger.debug("Restrictions passed!");
             } catch (restrictionReason) {
                 let reason;

@@ -23,11 +23,13 @@ export type RestrictionType<RestrictionModel> = {
     ) => string;
     predicate(
         triggerData: Trigger,
-        restrictionData: RestrictionModel
+        restrictionData: RestrictionModel,
+        inherited?: boolean
     ): boolean | Promise<boolean>;
     onSuccessful?: (
         triggerData: Trigger,
-        restrictionData: RestrictionModel
+        restrictionData: RestrictionModel,
+        inherited?: boolean
     ) => void | Promise<void>;
 };
 

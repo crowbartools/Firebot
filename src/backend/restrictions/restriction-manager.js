@@ -62,7 +62,7 @@ class RestrictionsManager extends EventEmitter {
             .then(() => true, () => false);
     }
 
-    async runRestrictionPredicates(triggerData, restrictionData) {
+    async runRestrictionPredicates(triggerData, restrictionData, restrictionsAreInherited = false) {
         if (restrictionData == null || restrictionData.restrictions == null ||
             restrictionData.restrictions.length < 1) {
             return Promise.resolve();
@@ -76,10 +76,10 @@ class RestrictionsManager extends EventEmitter {
                 const restrictionDef = this.getRestrictionById(restriction.type);
                 if (restrictionDef && restrictionDef.predicate) {
                     try {
-                        await restrictionDef.predicate(triggerData, restriction);
+                        await restrictionDef.predicate(triggerData, restriction, restrictionsAreInherited);
                         restrictionPassed = true;
                         if (restrictionData.mode !== "none" && restrictionDef.onSuccessful) {
-                            restrictionDef.onSuccessful(triggerData, restriction);
+                            restrictionDef.onSuccessful(triggerData, restriction, restrictionsAreInherited);
                         }
                         break;
                     } catch (reason) {
@@ -108,7 +108,7 @@ class RestrictionsManager extends EventEmitter {
             for (const restriction of restrictions) {
                 const restrictionDef = this.getRestrictionById(restriction.type);
                 if (restrictionDef && restrictionDef.predicate) {
-                    predicatePromises.push(restrictionDef.predicate(triggerData, restriction));
+                    predicatePromises.push(restrictionDef.predicate(triggerData, restriction, restrictionsAreInherited));
                 }
             }
 
@@ -116,7 +116,7 @@ class RestrictionsManager extends EventEmitter {
                 for (const restriction of restrictions) {
                     const restrictionDef = this.getRestrictionById(restriction.type);
                     if (restrictionDef && restrictionDef.onSuccessful) {
-                        restrictionDef.onSuccessful(triggerData, restriction);
+                        restrictionDef.onSuccessful(triggerData, restriction, restrictionsAreInherited);
                     }
                 }
             });

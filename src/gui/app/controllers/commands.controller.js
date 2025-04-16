@@ -113,6 +113,14 @@
                 commandsService.resetCooldownsForCommand(command.id);
             };
 
+            $scope.resetAllPerStreamCommandUsages = () => {
+                commandsService.resetAllPerStreamCommandUsages();
+            };
+
+            $scope.resetPerStreamUsagesForCommand = (command) => {
+                commandsService.resetPerStreamUsagesForCommand(command.id);
+            };
+
             $scope.saveAllCommands = (commands) => {
                 commandsService.saveAllCustomCommands(commands ?? commandsService.commandsCache.customCommands);
             };
@@ -130,6 +138,12 @@
                         html: `<a href ><i class="iconify" data-icon="mdi:clock-fast" style="margin-right: 10px;"></i> Clear Cooldowns</a>`,
                         click: () => {
                             $scope.resetCooldownsForCommand(command);
+                        }
+                    },
+                    {
+                        html: `<a href ><i class="iconify" data-icon="mdi:tally-mark-5" style="margin-right: 10px;"></i> Clear Per-Stream Usages</a>`,
+                        click: () => {
+                            $scope.resetPerStreamUsagesForCommand(command);
                         }
                     },
                     {
