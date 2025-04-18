@@ -48,20 +48,20 @@
 
             service.queueModes = [
                 {
-                    id: "auto",
-                    display: "Sequential",
+                    value: "auto",
+                    label: "Sequential",
                     description: "Runs effect list in the queue sequentially. Priority items will be added before non-priority. Optional delay defaults to 0s.",
                     iconClass: "fa-sort-numeric-down"
                 },
                 {
-                    id: "custom",
-                    display: "Custom",
+                    value: "custom",
+                    label: "Custom",
                     description: "Wait the custom amount of time defined for each individual effect list.",
                     iconClass: "fa-clock"
                 },
                 {
-                    id: "interval",
-                    display: "Interval",
+                    value: "interval",
+                    label: "Interval",
                     description: "Runs effect lists on a set interval.",
                     iconClass: "fa-stopwatch"
                 }
@@ -145,7 +145,7 @@
 
                     utilityService.showModal({
                         component: "addOrEditEffectQueueModal",
-                        size: "sm",
+                        size: "md",
                         resolveObj: {
                             effectQueue: () => effectQueue
                         },
