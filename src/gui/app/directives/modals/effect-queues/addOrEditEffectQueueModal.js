@@ -1,5 +1,5 @@
 "use strict";
-(function() {
+(function () {
     angular.module("firebotApp").component("addOrEditEffectQueueModal", {
         template: `
             <scroll-sentinel element-class="edit-effect-queue-header"></scroll-sentinel>
@@ -66,14 +66,14 @@
             dismiss: "&",
             modalInstance: "<"
         },
-        controller: function(effectQueuesService, ngToast) {
+        controller: function (effectQueuesService, ngToast) {
             const $ctrl = this;
 
             $ctrl.isNewQueue = true;
 
             $ctrl.effectQueue = {
                 name: "",
-                mode: "custom",
+                mode: "auto",
                 sortTags: [],
                 active: true,
                 length: 0
