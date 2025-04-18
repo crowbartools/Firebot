@@ -20,7 +20,13 @@ export type Trigger = {
         username: string;
         hotkey?: unknown;
         command?: CommandDefinition;
-        userCommand?: { trigger: string; args: string[] };
+        userCommand?: {
+            trigger: string;
+            args: string[],
+            triggeredArg?: string,
+            triggeredSubcmd?: CommandDefinition,
+            subcommandId?: string
+        };
         chatMessage?: FirebotChatMessage;
         event?: { id: string; name: string };
         eventSource?: { id: string; name: string };

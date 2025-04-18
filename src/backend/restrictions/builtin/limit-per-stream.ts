@@ -1,6 +1,8 @@
+import { Trigger } from "../../../types/triggers";
 import { RestrictionType } from "../../../types/restrictions";
 import accountAccess from "../../common/account-access";
 import connectionManager from "../../common/connection-manager";
+import frontendCommunicator from "../../common/frontend-communicator";
 
 type RestrictionData = {
     perUserLimit?: number;
@@ -19,19 +21,28 @@ connectionManager.on("streamerOnlineChange", () => {
     usageCache = {};
 });
 
-function getUsages(commandId: string): CommandUsages {
-    const usages = usageCache[commandId];
+function getCommandKey(trigger: Trigger, inherited: boolean) {
+    const commandId = trigger.metadata.command?.id;
+    const subcommandId = trigger.metadata.userCommand?.subcommandId;
+    if (inherited || !subcommandId) {
+        return commandId;
+    }
+    return `${commandId}::${subcommandId}`;
+}
+
+function getUsages(commandKey: string): CommandUsages {
+    const usages = usageCache[commandKey];
 
     return usages ?? { globalUsages: 0, perUserUsages: {} };
 }
 
-function incrementUsages(commandId: string, userId: string) {
-    const usages = getUsages(commandId);
+function incrementUsages(commandKey: string, userKey: string) {
+    const usages = getUsages(commandKey);
 
     usages.globalUsages += 1;
-    usages.perUserUsages[userId] = (usages.perUserUsages[userId] ?? 0) + 1;
+    usages.perUserUsages[userKey] = (usages.perUserUsages[userKey] ?? 0) + 1;
 
-    usageCache[commandId] = usages;
+    usageCache[commandKey] = usages;
 }
 
 const limitPerStreamRestriction: RestrictionType<RestrictionData> = {
@@ -76,7 +87,7 @@ const limitPerStreamRestriction: RestrictionType<RestrictionData> = {
         }
         return limits.join(", ");
     },
-    predicate: async (triggerData, restrictionData) => {
+    predicate: async (triggerData, restrictionData, inherited) => {
         return new Promise((resolve, reject) => {
             const streamer = accountAccess.getAccounts().streamer;
 
@@ -102,20 +113,20 @@ const limitPerStreamRestriction: RestrictionType<RestrictionData> = {
 
             const { perUserLimit, globalLimit } = restrictionData;
 
-            const usages = getUsages(commandId);
+            const usages = getUsages(getCommandKey(triggerData, inherited));
 
             if (globalLimit && usages.globalUsages >= globalLimit) {
-                return reject("This command cannot be used anymore this stream.");
+                return reject("Global per-stream limit reached.");
             }
 
             if (perUserLimit && (usages.perUserUsages[username] ?? 0) >= perUserLimit) {
-                return reject("Sorry, you cannot use this command anymore this stream.");
+                return reject("You reached your per-stream limit.");
             }
 
             return resolve(true);
         });
     },
-    onSuccessful: async (triggerData) => {
+    onSuccessful: async (triggerData, _, inherited) => {
         const commandId = triggerData.metadata.command?.id;
         if (!commandId) {
             return;
@@ -126,8 +137,21 @@ const limitPerStreamRestriction: RestrictionType<RestrictionData> = {
             return;
         }
 
-        incrementUsages(commandId, username);
+        incrementUsages(getCommandKey(triggerData, inherited), username);
     }
 };
+
+frontendCommunicator.on("reset-all-per-stream-command-usages", () => {
+    usageCache = {};
+});
+
+frontendCommunicator.on("reset-per-stream-usages-for-command", (commandId: string) => {
+    if (!commandId) {
+        return;
+    }
+    // remove all usages for base command and subcommands
+    const commandKeys = Object.keys(usageCache).filter(key => key.startsWith(commandId));
+    commandKeys.forEach(key => delete usageCache[key]);
+});
 
 module.exports = limitPerStreamRestriction;
