@@ -1,8 +1,8 @@
 "use strict";
-(function() {
+(function () {
     angular
         .module("firebotApp")
-        .controller("effectQueuesController", function(
+        .controller("effectQueuesController", function (
             $scope,
             effectQueuesService,
             utilityService,
@@ -15,8 +15,8 @@
             };
 
             $scope.getQueueModeName = (modeId) => {
-                const mode = effectQueuesService.queueModes.find(m => m.id === modeId);
-                return mode ? mode.display : "Unknown";
+                const mode = effectQueuesService.queueModes.find(m => m.value === modeId);
+                return mode ? mode.label : "Unknown";
             };
 
             $scope.headers = [
@@ -26,7 +26,7 @@
                     dataField: "name",
                     sortable: true,
                     cellTemplate: `{{data.name}}`,
-                    cellController: () => {}
+                    cellController: () => { }
                 },
                 {
                     name: "MODE",
@@ -36,8 +36,8 @@
                     cellTemplate: `{{getQueueModeName(data.mode)}}`,
                     cellController: ($scope) => {
                         $scope.getQueueModeName = (modeId) => {
-                            const mode = effectQueuesService.queueModes.find(m => m.id === modeId);
-                            return mode ? mode.display : "Unknown";
+                            const mode = effectQueuesService.queueModes.find(m => m.value === modeId);
+                            return mode ? mode.label : "Unknown";
                         };
                     }
                 },
@@ -47,7 +47,7 @@
                     dataField: "interval",
                     sortable: true,
                     cellTemplate: `{{(data.mode === 'interval' || data.mode === 'auto') ? (data.interval || 0) + 's' : 'n/a'}}`,
-                    cellController: () => {}
+                    cellController: () => { }
                 }
             ];
 

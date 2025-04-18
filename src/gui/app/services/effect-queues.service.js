@@ -1,10 +1,10 @@
 "use strict";
 
-(function() {
+(function () {
 
     angular
         .module("firebotApp")
-        .factory("effectQueuesService", function(backendCommunicator, utilityService,
+        .factory("effectQueuesService", function (backendCommunicator, utilityService,
             objectCopyHelper, ngToast) {
             const service = {};
 
@@ -26,20 +26,20 @@
                 }
             };
 
-            backendCommunicator.on("all-queues", effectQueues => {
+            backendCommunicator.on("all-queues", (effectQueues) => {
                 if (effectQueues != null) {
                     service.effectQueues = effectQueues;
                 }
             });
 
-            backendCommunicator.on("updateQueueLength", queue => {
+            backendCommunicator.on("updateQueueLength", (queue) => {
                 const index = service.effectQueues.findIndex(eq => eq.id === queue.id);
                 if (service.effectQueues[index] != null) {
                     service.effectQueues[index].length = queue.length;
                 }
             });
 
-            backendCommunicator.on("updateQueueStatus", queue => {
+            backendCommunicator.on("updateQueueStatus", (queue) => {
                 const index = service.effectQueues.findIndex(eq => eq.id === queue.id);
                 if (service.effectQueues[index] != null) {
                     service.effectQueues[index].active = queue.active;
@@ -48,20 +48,20 @@
 
             service.queueModes = [
                 {
-                    id: "custom",
-                    display: "Custom",
-                    description: "Wait the custom amount of time defined for each individual effect list.",
-                    iconClass: "fa-clock"
-                },
-                {
-                    id: "auto",
-                    display: "Sequential",
+                    value: "auto",
+                    label: "Sequential",
                     description: "Runs effect list in the queue sequentially. Priority items will be added before non-priority. Optional delay defaults to 0s.",
                     iconClass: "fa-sort-numeric-down"
                 },
                 {
-                    id: "interval",
-                    display: "Interval",
+                    value: "custom",
+                    label: "Custom",
+                    description: "Wait the custom amount of time defined for each individual effect list.",
+                    iconClass: "fa-clock"
+                },
+                {
+                    value: "interval",
+                    label: "Interval",
                     description: "Runs effect lists on a set interval.",
                     iconClass: "fa-stopwatch"
                 }
@@ -118,7 +118,7 @@
                     copiedEffectQueue.name += " copy";
                 }
 
-                service.saveEffectQueue(copiedEffectQueue).then(successful => {
+                service.saveEffectQueue(copiedEffectQueue).then((successful) => {
                     if (successful) {
                         ngToast.create({
                             className: 'success',
@@ -136,7 +136,7 @@
             };
 
             service.showAddEditEffectQueueModal = (effectQueueId) => {
-                return new Promise(resolve => {
+                return new Promise((resolve) => {
                     let effectQueue;
 
                     if (effectQueueId != null) {
@@ -145,11 +145,11 @@
 
                     utilityService.showModal({
                         component: "addOrEditEffectQueueModal",
-                        size: "sm",
+                        size: "md",
                         resolveObj: {
                             effectQueue: () => effectQueue
                         },
-                        closeCallback: response => {
+                        closeCallback: (response) => {
                             resolve(response.effectQueue.id);
                         }
                     });
@@ -157,7 +157,7 @@
             };
 
             service.showDeleteEffectQueueModal = (effectQueueId) => {
-                return new Promise(resolve => {
+                return new Promise((resolve) => {
                     if (effectQueueId == null) {
                         resolve(false);
                     }
@@ -174,7 +174,7 @@
                             confirmLabel: "Delete",
                             confirmBtnType: "btn-danger"
                         })
-                        .then(confirmed => {
+                        .then((confirmed) => {
                             if (confirmed) {
                                 service.deleteEffectQueue(effectQueueId);
                             }

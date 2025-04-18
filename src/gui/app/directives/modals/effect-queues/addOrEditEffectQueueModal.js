@@ -1,5 +1,5 @@
 "use strict";
-(function() {
+(function () {
     angular.module("firebotApp").component("addOrEditEffectQueueModal", {
         template: `
             <scroll-sentinel element-class="edit-effect-queue-header"></scroll-sentinel>
@@ -23,27 +23,14 @@
                     </div>
                 </div>
 
-                <div class="mt-6">
-                    <div class="modal-subheader pb-2 pt-0 px-0">MODE</div>
-                    <div>
-                        <ui-select ng-model="$ctrl.effectQueue.mode" theme="bootstrap" class="control-type-list">
-                            <ui-select-match placeholder="Select queue mode">{{$select.selected.display}}</ui-select-match>
-                            <ui-select-choices repeat="mode.id as mode in $ctrl.queueModes | filter: { display: $select.search }" style="position:relative;">
-                                <div class="flex-row-center">
-                                    <div class="my-0 mx-5" style="width: 30px;height: 100%;font-size:20px;text-align: center;flex-shrink: 0;">
-                                        <i class="fas" ng-class="mode.iconClass"></i>
-                                    </div>
-                                    <div>
-                                        <div ng-bind-html="mode.display | highlight: $select.search"></div>
-                                        <small class="muted">{{mode.description}}</small>
-                                    </div>
-
-                                </div>
-
-                            </ui-select-choices>
-                        </ui-select>
-                    </div>
-                </div>
+                <div class="modal-subheader pb-2 pt-0 px-0">MODE</div>
+                <firebot-radio-cards
+                    options="$ctrl.queueModes"
+                    ng-model="$ctrl.effectQueue.mode"
+                    id="queueMode"
+                    name="queueMode"
+                    grid-columns="1"
+                ></firebot-radio-cards>
 
                 <div class="mt-6" ng-show="$ctrl.effectQueue.mode != null && ($ctrl.effectQueue.mode ==='interval' || $ctrl.effectQueue.mode ==='auto')">
                     <div class="modal-subheader pb-2 pt-0 px-0">Interval/Delay (secs)</div>
@@ -66,14 +53,14 @@
             dismiss: "&",
             modalInstance: "<"
         },
-        controller: function(effectQueuesService, ngToast) {
+        controller: function (effectQueuesService, ngToast) {
             const $ctrl = this;
 
             $ctrl.isNewQueue = true;
 
             $ctrl.effectQueue = {
                 name: "",
-                mode: "custom",
+                mode: "auto",
                 sortTags: [],
                 active: true,
                 length: 0
