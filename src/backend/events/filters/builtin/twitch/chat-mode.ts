@@ -1,4 +1,4 @@
-import { EventFilter } from "../../../../../types/events";
+import { EventFilter, PresetValue } from "../../../../../types/events";
 import { ComparisonType } from "../../../../../shared/filter-constants";
 
 const filter: EventFilter = {
@@ -34,8 +34,8 @@ const filter: EventFilter = {
             }
         ];
     },
-    getSelectedValueDisplay: async (filterSettings) => {
-        return (await filter.presetValues())
+    getSelectedValueDisplay: async (filterSettings, presetValues: PresetValue[]) => {
+        return presetValues
             .find(pv => pv.value === filterSettings.value || (filterSettings.value === "r9kbeta" && pv.value === "uniquechat"))?.display ?? "[Not Set]";
     },
     predicate: async (filterSettings, eventData) => {
