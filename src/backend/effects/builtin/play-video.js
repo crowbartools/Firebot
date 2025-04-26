@@ -32,9 +32,9 @@ const playVideo = {
         dependencies: [],
         outputs: [
             {
-                label: "Video Durration",
-                description: "The Durration of the playing video",
-                defaultName: "videoDurration"
+                label: "Video Duration",
+                description: "The Duration of the playing video",
+                defaultName: "videoDuration"
             }
         ]
     },
