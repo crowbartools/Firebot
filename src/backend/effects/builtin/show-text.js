@@ -259,7 +259,8 @@ const showText = {
             debugBorder: effect.debugBorder,
             dropShadow: effect.dropShadow,
             overlayInstance: effect.overlayInstance,
-            rotation: effect.rotation ? effect.rotation + effect.rotType : "0deg"
+            rotation: effect.rotation ? effect.rotation + effect.rotType : "0deg",
+            zIndex: effect.zIndex
         };
 
         const position = dto.position;
@@ -376,7 +377,7 @@ const showText = {
                 if (borderColor) {
                     styles += `border: 2px solid ${borderColor};`;
                 }
-
+                styles += data.zIndex ? `position: relative; z-index: ${data.zIndex};` : '';
                 const textDiv = `
                     <div class="text-container"
                         style="${styles}">

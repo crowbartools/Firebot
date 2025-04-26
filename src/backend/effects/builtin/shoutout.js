@@ -313,7 +313,7 @@ const effect = {
 
                 const shoutoutElement = `
                 <div>
-                    <div class="firebot-shoutout-wrapper" style="background: linear-gradient(0deg, ${data.bgColor2} 0%, ${data.bgColor1} 100%); transform: scale(${scale});">
+                    <div class="firebot-shoutout-wrapper" style="background: linear-gradient(0deg, ${data.bgColor2} 0%, ${data.bgColor1} 100%); transform: scale(${scale});${data.zIndex ? ` position: relative; z-index: ${data.zIndex};` : ''}">
 
                         <div style="position:relative;">
                             <div class="firebot-shoutout-avatar-wrapper firebot-shoutout-padding">
