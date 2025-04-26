@@ -274,8 +274,6 @@ const showImage = {
                     (data.imageHeight ? `height: ${data.imageHeight};` : "") +
                     (data.imageRotation ? `transform: rotate(${data.imageRotation});` : "") +
                     (data.zIndex ? `position: relative; z-index: ${data.zIndex};` : '');
-                console.log(data.imageRotation);
-                console.log(styles);
                 const imageTag = `<img src="${filepathNew}" style="${styles}" />`;
 
                 showElement(imageTag, positionData, animationData); // eslint-disable-line no-undef

@@ -115,10 +115,6 @@
                     }
                 };
 
-                // ctrl.updateZIndex = function() {
-                //     ctrl.effect.zIndex = ctrl.zIndex;
-                // };
-
                 ctrl.togglePresetCustom = function() {
                     if (ctrl.presetOrCustom === "custom") {
                         ctrl.effect.position = "Custom";
