@@ -1791,13 +1791,15 @@ thead th{
 
 .text-editor-black-bg {
   .note-editable {
-    background-color: black !important;
+    background-color: #25292a !important;
+    color: #f5f5f5 !important;
   }
 }
 
 .text-editor-white-bg {
   .note-editable {
-    background-color: white !important;
+    background-color: #f5f5f5 !important;
+    color: #25292a !important;
   }
 }
 
