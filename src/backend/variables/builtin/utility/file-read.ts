@@ -38,17 +38,25 @@ const model : ReplaceVariable = {
             {
                 usage: "readFile[path\\to\\file.txt, random, true]",
                 description: "Removes leading, trailing, and empty lines before grabbing a random line"
+            },
+            {
+                usage: "readFile[path\\to\\file.txt, array]",
+                description: "Read contents of a text file as an array."
+            },
+            {
+                usage: "readFile[path\\to\\file.txt, array, true]",
+                description: "Removes leading, trailing, and empty lines before grabbing the array."
             }
         ],
         categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.ARRAY]
     },
     evaluator: (
         trigger: Trigger,
         filePath: string,
-        lineOrRandom: null | number | "first" | "last" | "random",
+        lineOrRandom: null | number | "array" | "first" | "last" | "random",
         ignoreWhitespace?: string | boolean
-    ) : string => {
+    ) : string | string[] => {
 
         if (filePath === null) {
             return "[File Path Error]";
@@ -90,6 +98,9 @@ const model : ReplaceVariable = {
         }
 
         const lorStr = `${lineOrRandom}`.toLowerCase();
+        if (lorStr === 'array') {
+            return lines;
+        }
         if (lorStr === 'first') {
             return lines[0];
         }
