@@ -1,7 +1,6 @@
 import { EventFilter, FilterSettings, PresetValue } from "../../../types/events";
 import { ComparisonType } from "../../../shared/filter-constants";
 import { extractPropertyWithPath } from "../../utility";
-import { auto } from "angular";
 
 type EventData = {
     eventSourceId: string;
@@ -202,9 +201,8 @@ export function createPresetFilter({
         comparisonTypes.push(ComparisonType.IS_NOT);
     }
 
-    const valueDisplay = getSelectedValueDisplay ?? (async (filterSettings, filterType: any, $injector: auto.IInjectorService) => {
-        return (await $injector.invoke(filterType.getPresetValues, {}, {}))
-            .find(pv => pv.value === filterSettings.value)?.display ?? "[Not Set]";
+    const valueDisplay = getSelectedValueDisplay ?? (async (filterSettings, presetValues?: PresetValue[]) => {
+        return presetValues.find(pv => pv.value === filterSettings.value)?.display ?? "[Not Set]";
     });
 
     return {

@@ -1,4 +1,4 @@
-import { EventFilter } from "../../../../../types/events";
+import { EventFilter, PresetValue } from "../../../../../types/events";
 import { ComparisonType } from "../../../../../shared/filter-constants";
 
 const filter: EventFilter = {
@@ -20,15 +20,9 @@ const filter: EventFilter = {
             display: "Resub"
         }
     ],
-    getSelectedValueDisplay: (filterSettings) => {
-        switch (filterSettings.value) {
-            case "first":
-                return "First Sub";
-            case "resub":
-                return "Resub";
-            default:
-                return "[Not set]";
-        }
+    getSelectedValueDisplay: (filterSettings, presetValues: PresetValue[]) => {
+        return presetValues
+            .find(pv => pv.value === filterSettings.value)?.display ?? "[Not Set]";
     },
     predicate: (filterSettings, eventData) => {
         const { value } = filterSettings;
