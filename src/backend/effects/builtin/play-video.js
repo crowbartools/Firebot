@@ -29,7 +29,14 @@ const playVideo = {
         description: "Plays a local, Youtube, or Twitch video in the overlay.",
         icon: "fad fa-video",
         categories: [EffectCategory.COMMON, EffectCategory.OVERLAY, EffectCategory.TWITCH],
-        dependencies: []
+        dependencies: [],
+        outputs: [
+            {
+                label: "Video Duration",
+                description: "The Duration of the playing video",
+                defaultName: "videoDuration"
+            }
+        ]
     },
     /**
      * Global settings that will be available in the Settings tab
@@ -602,7 +609,13 @@ const playVideo = {
                 return false;
             }
         }
-        return true;
+
+        return {
+            success: true,
+            outputs: {
+                videoDuration: data.videoDuration != null ? data.videoDuration : 0
+            }
+        };
     },
     /**
      * Code to run in the overlay
