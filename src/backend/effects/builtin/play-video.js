@@ -180,7 +180,7 @@ const playVideo = {
             </eos-container>
         </div>
 
-        <eos-container ng-if="effect.videoType != 'Random Twitch Clip' && effect.videoType != 'Twitch Clip'" header="Volume" pad-top="true">
+        <eos-container ng-if="shouldShowVolumeControl()" header="Volume" pad-top="true">
             <div class="volume-slider-wrapper">
                 <i class="fal fa-volume-down volume-low"></i>
                 <rzslider rz-slider-model="effect.volume" rz-slider-options="{floor: 0, ceil: 10, hideLimitLabels: true}"></rzslider>
@@ -258,7 +258,7 @@ const playVideo = {
      * The controller for the front end Options
      * Port over from effectHelperService.js
      */
-    optionsController: ($scope, $rootScope, $timeout, utilityService) => {
+    optionsController: ($scope, $rootScope, $timeout, utilityService, settingsService) => {
         $scope.waitChange = () => {
             if ($scope.effect.videoType !== 'Random Twitch Clip' && $scope.effect.videoType !== 'Twitch Clip') {
                 if ($scope.effect.wait) {
@@ -269,6 +269,9 @@ const playVideo = {
         $scope.showOverlayInfoModal = function (overlayInstance) {
             utilityService.showOverlayInfoModal(overlayInstance);
         };
+
+        $scope.shouldShowVolumeControl = () => !['Random Twitch Clip', 'Twitch Clip'].includes($scope.effect.videoType) || settingsService.getSetting("UseExperimentalTwitchClipUrlResolver");
+
 
         $scope.videoPositions = [
             "Top Left",
