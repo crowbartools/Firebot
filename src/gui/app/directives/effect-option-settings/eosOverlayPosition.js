@@ -54,6 +54,17 @@
                         </div>
                     </form>
                 </div>
+                <div style="margin-top: 15px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">z-index <tooltip text="'Controls which items appear in front when things overlap. Items with a higher number are shown on top of items with a lower number.'"></tooltip></span>
+                        <input
+                            type="text"
+                            class="form-control"
+                            placeholder="Optional"
+                            replace-variables="number"
+                            ng-model="$ctrl.effect.zIndex">
+                    </div>
+                </div>
             </eos-container>
        `,
             controller: function() {

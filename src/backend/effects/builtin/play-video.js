@@ -375,7 +375,8 @@ const playVideo = {
             inbetweenRepeat: effect.inbetweenRepeat,
             customCoords: effect.customCoords,
             loop: effect.loop === true,
-            rotation: effect.rotation ? effect.rotation + effect.rotType : "0deg"
+            rotation: effect.rotation ? effect.rotation + effect.rotType : "0deg",
+            zIndex: effect.zIndex
         };
 
         // Get random sound
@@ -523,7 +524,8 @@ const playVideo = {
                 exitAnimation: effect.exitAnimation,
                 exitDuration: effect.exitDuration,
                 overlayInstance: data.overlayInstance,
-                rotation: effect.rotation ? effect.rotation + effect.rotType : "0deg"
+                rotation: effect.rotation ? effect.rotation + effect.rotType : "0deg",
+                zIndex: effect.zIndex
             });
 
             if (effect.wait) {
@@ -700,7 +702,9 @@ const playVideo = {
                 const sizeStyles =
                     (data.videoWidth ? `width: ${data.videoWidth}px;` : "") +
                     (data.videoHeight ? `height: ${data.videoHeight}px;` : "") +
-                    (data.rotation ? `transform: rotate(${data.rotation});` : '');
+                    (data.rotation ? `transform: rotate(${data.rotation});` : '') +
+                    (data.zIndex ? `position: relative; z-index: ${data.zIndex};` : '');
+
 
                 if (videoType === "Local Video") {
                     const loopAttribute = loop ? "loop" : "";
