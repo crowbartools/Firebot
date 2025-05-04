@@ -1,6 +1,6 @@
 "use strict";
 
-(function() {
+(function () {
     angular.module("firebotApp")
         .component("firebotItemTable", {
             bindings: {
@@ -30,7 +30,7 @@
                 toolbar: "?fbItemTableToolbar"
             },
             templateUrl: "./directives/misc/firebot-item-table/firebot-item-table.html",
-            controller: function($scope, sortTagsService, effectQueuesService) {
+            controller: function ($scope, sortTagsService, effectQueuesService) {
                 const $ctrl = this;
 
                 $scope.sts = sortTagsService;
@@ -59,7 +59,7 @@
                     $ctrl.order.reverse = !!$ctrl.sortInitiallyReversed;
 
                     $ctrl.showStatusIndicator = $ctrl.statusField != null;
-                    $ctrl.headerClass = `${$ctrl.sortTagContext.split(' ').join('-')}-header`;
+                    $ctrl.headerClass = `${($ctrl.sortTagContext ?? crypto.randomUUID()).split(' ').join('-')}-header`;
 
                     $ctrl.showAdvancedOptionsButton = $ctrl.customFilterName != null;
                 };
@@ -86,7 +86,7 @@
                     stop: (_e, ui) => {
                         //reset the width of the children that "ui-preserve-size" sets
                         const item = angular.element(ui.item);
-                        item.children().each(function() {
+                        item.children().each(function () {
                             const $el = angular.element(this);
                             $el.css("width", "");
                         });
@@ -151,11 +151,11 @@
                     return menuItems;
                 };
 
-                $ctrl.isOrderField = function(field) {
+                $ctrl.isOrderField = function (field) {
                     return field === $ctrl.order.field;
                 };
 
-                $ctrl.setOrderField = function(field) {
+                $ctrl.setOrderField = function (field) {
                     if ($ctrl.order.field !== field) {
                         $ctrl.order.reverse = false;
                         $ctrl.order.field = field;
@@ -167,7 +167,7 @@
                     }
                 };
 
-                $ctrl.dynamicOrder = function(data) {
+                $ctrl.dynamicOrder = function (data) {
                     const field = $ctrl.order.field;
 
                     if (field == null) {
