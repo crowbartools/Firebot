@@ -71,6 +71,7 @@ exports.loadEffects = () => {
         'twitch/create-stream-marker',
         'twitch/raid',
         'twitch/set-chat-mode',
+        'twitch/shield-mode',
         'twitch/shoutout',
         'twitch/snooze-ad-break',
         'twitch/stream-title',
