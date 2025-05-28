@@ -132,19 +132,19 @@
             };
 
             // Chat Alert Message
-            service.chatAlertMessage = function(message) {
-
+            service.chatAlertMessage = function(message, icon = "fad fa-exclamation-circle") {
                 const alertItem = {
                     id: uuid(),
                     type: "alert",
-                    data: message
+                    message: message,
+                    icon: icon
                 };
 
                 service.chatQueue.push(alertItem);
             };
 
-            backendCommunicator.on("chat-feed-system-message", (message) => {
-                service.chatAlertMessage(message);
+            backendCommunicator.on("chat-feed-system-message", (message, icon) => {
+                service.chatAlertMessage(message, icon);
             });
 
             // Chat Update Handler
@@ -194,7 +194,7 @@
                         break;
                     case "ChatAlert":
                         logger.debug("Chat alert from backend.");
-                        service.chatAlertMessage(data.message);
+                        service.chatAlertMessage(data.message, data.icon);
                         break;
                     default:
                     // Nothing
