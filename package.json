@@ -30,6 +30,7 @@
         "@typescript-eslint/eslint-plugin": "^5.62.0",
         "@typescript-eslint/parser": "^5.62.0",
         "electron": "^33.3.1",
+        "electron-installer-dmg": "^5.0.1",
         "electron-winstaller": "^5.4.0",
         "eslint": "^8.56.0",
         "eslint-plugin-angular": "^4.0.1",
