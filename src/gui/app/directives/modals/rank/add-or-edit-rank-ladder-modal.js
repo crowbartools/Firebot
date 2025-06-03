@@ -126,7 +126,7 @@
                             placeholder="Enter message (Leave blank for default)"
                             rows="4"
                             cols="40"
-                            ng-model="$ctrl.rankLadder.customPromotionMessageTemplate"
+                            ng-model="$ctrl.rankLadder.settings.customPromotionMessageTemplate"
                         />
                     </div>
 
