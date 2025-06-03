@@ -73,9 +73,9 @@ export interface ChatModerationSettings {
 class ChatModerationManager {
     bannedWords: BannedWords = { words: [] };
     bannedRegularExpressions: BannedRegularExpressions = { regularExpressions: [] };
-    allowlist: AllowList = { 
-        urls: [], 
-        users: [] 
+    allowlist: AllowList = {
+        urls: [],
+        users: []
     };
     chatModerationSettings: ChatModerationSettings = {
         bannedWordList: {
@@ -485,6 +485,10 @@ class ChatModerationManager {
         const inputWords = input.split(" ");
 
         for (const exp of expressions) {
+            if (exp.test(input)) {
+                return true;
+            }
+
             for (const word of inputWords) {
                 if (exp.test(word)) {
                     return true;
