@@ -237,7 +237,8 @@ class RankCommandManager {
                     if (userRank) {
                         const rankMessage =
                             commandOptions.selfRankMessageTemplate
-                                .replace("{rank}", userRank.name);
+                                .replace("{rank}", userRank.name)
+                                .replace("{user}", event.userCommand.commandSender);
                         await sendMessage(rankMessage);
                     } else {
                         await sendMessage("You are currently not ranked.");
