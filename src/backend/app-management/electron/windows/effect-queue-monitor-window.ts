@@ -40,6 +40,7 @@ export async function createEffectQueueMonitorWindow() {
         x: effectQueueMonitorWindowState.x,
         y: effectQueueMonitorWindowState.y,
         webPreferences: {
+            //nodeIntegration: true,
             preload: path.join(__dirname, "../../../../gui/effect-queue-monitor/preload.js")
         },
         icon: path.join(__dirname, "../../../../gui/images/logo_transparent_2.png")

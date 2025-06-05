@@ -7,6 +7,7 @@ import { queueStatusBadge } from "./modules/queue-status-badge.mjs";
 import { queueHeader } from "./modules/queue-header.mjs";
 import { queueItemList } from "./modules/queue-item-list.mjs";
 import { chip } from "./modules/chip.mjs";
+import { contextMenu } from "./modules/context-menu.mjs";
 
 const app = createApp({
     data() {
@@ -47,7 +48,8 @@ app
     .component('QueueStatusBadge', queueStatusBadge)
     .component('QueueHeader', queueHeader)
     .component('QueueItemList', queueItemList)
-    .component('Chip', chip);
+    .component('Chip', chip)
+    .component('ContextMenu', contextMenu);
 
 
 const mountedApp = app.mount('#app');
@@ -74,3 +76,11 @@ window.ipcRenderer.on("queue-deleted", (queueId) => {
     console.log("QUEUE DELETED", queueId);
     mountedApp.queues = mountedApp.queues.filter(q => q.id !== queueId);
 });
+
+function toggleQueue(queueID) {
+    window.ipcRenderer.send("toggleEffectQueue", queueID);
+}
+
+function clearQueue(queueID) {
+    window.ipcRenderer.send("clearEffectQueue", queueID);
+}
