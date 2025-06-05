@@ -174,24 +174,6 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
 
     streamerChatClient.onResub(async (_channel, _user, subInfo, msg) => {
         try {
-            if (subInfo.originalGiftInfo != null) {
-                twitchEventsHandler.sub.triggerSub(
-                    msg.userInfo.userName,
-                    subInfo.userId,
-                    subInfo.displayName,
-                    subInfo.plan,
-                    subInfo.months || 1,
-                    subInfo.message ?? "",
-                    subInfo.streak || 1,
-                    false,
-                    true
-                );
-            }
-        } catch (error) {
-            logger.error("Failed to parse resub message (multi-month gifted sub)", error);
-        }
-
-        try {
             if (subInfo.message != null && subInfo.message.length > 0) {
                 const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, subInfo.message);
 
