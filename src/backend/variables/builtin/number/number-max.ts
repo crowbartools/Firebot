@@ -3,7 +3,7 @@ import { OutputDataType, VariableCategory } from "../../../../shared/variable-co
 
 const normalizeNumber = (input) => {
     const value = Number(input);
-    return Number.isInteger(value) ? value : null;
+    return Number.isFinite(value) ? value : null;
 };
 
 const model : ReplaceVariable = {
