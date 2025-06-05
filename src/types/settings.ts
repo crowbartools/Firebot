@@ -67,6 +67,7 @@ export type FirebotSettingsTypes = {
     MaxBackupCount: number | "All";
     MinimizeToTray: boolean;
     NotifyOnBeta: boolean;
+    OpenEffectQueueMonitorOnLaunch: boolean;
     OpenStreamPreviewOnLaunch: boolean;
     OverlayInstances: string[];
     PersistCustomVariables: boolean;
@@ -184,6 +185,7 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     MaxBackupCount: 25,
     MinimizeToTray: false,
     NotifyOnBeta: false,
+    OpenEffectQueueMonitorOnLaunch: false,
     OpenStreamPreviewOnLaunch: false,
     OverlayInstances: [],
     PersistCustomVariables: false,
