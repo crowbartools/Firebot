@@ -30,7 +30,6 @@ export const contextMenu = {
             visible: false,
             hovered: null,
             contextQueue: null,
-            internalMenuItems: [],
             menuStyle: {
                 top: '0px',
                 left: '0px'
@@ -39,9 +38,7 @@ export const contextMenu = {
     },
     computed: {
         computedMenuItems() {
-            return this.menuItems && this.menuItems.length
-                ? this.menuItems
-                : this.internalMenuItems;
+            return this.menuItems;
         }
     },
     methods: {
@@ -51,23 +48,6 @@ export const contextMenu = {
             this.menuStyle.top = `${event.clientY}px`;
             this.menuStyle.left = `${event.clientX}px`;
             this.visible = true;
-            if (!this.menuItems || !this.menuItems.length) {
-                this.buildDefaultMenuItems();
-            }
-        },
-        buildMenuItems() {
-            this.menuItems = [
-                {
-                    label: 'Option 1',
-                    action: queue =>
-                        console.log(`Option 1 on ${queue.name}`)
-                },
-                {
-                    label: 'Option 2',
-                    action: queue =>
-                        console.log(`Option 2 on ${queue.name}`)
-                }
-            ];
         },
         handleItemClick(item) {
             if (item.action) {
