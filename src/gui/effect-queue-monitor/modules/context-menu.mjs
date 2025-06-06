@@ -15,9 +15,9 @@ export const contextMenu = {
        @click.stop
      >
        <li
-         v-for="item in menuItems"
+         v-for="item in computedMenuItems"
          :key="item.label"
-         @click="() => handleItemClick(item)"
+         @click="handleItemClick(item)"
          @mouseenter="hovered = item.label"
          :class="{ hovered: hovered === item.label }"
        >

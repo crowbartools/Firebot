@@ -46,10 +46,11 @@
                     <div style="font-weight: 700;">{{ queue.name }}</div>
                     <queue-status-badge :queue="queue"></queue-status-badge>
                 </div>
-                <context-menu ref="contextMenu" :menu-items="[
-                    { label: 'Open Queue', action: (q) => console.log('Open', q.name) },
-                    { label: 'Delete Queue', action: (q) => console.log('Delete', q.name) }
-                  ]" />
+                <context-menu ref="contextMenu" 
+                :menu-items="[
+                              { label: 'Clear Queue', action: (queue) => clearQueue(queue.id) },
+                              { label: 'Toggle Queue', action: (queue) => toggleQueue(queue.id) }
+                ]" />
                 <div v-if="queues.length === 0">
                     <p>No queues available.</p>
                 </div>

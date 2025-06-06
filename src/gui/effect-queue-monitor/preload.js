@@ -7,5 +7,11 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
         ipcRenderer.on(channel, (_, data) => {
             listener(data);
         });
+    },
+    clearQueue: (queueID) => {
+        ipcRenderer.send("clearEffectQueue", queueID);
+    },
+    toggleQueue: (queueID) => {
+        ipcRenderer.send("toggleEffectQueue", queueID);
     }
 });

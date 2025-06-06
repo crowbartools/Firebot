@@ -20,3 +20,6 @@
 
 .context-menu li:hover {
   background: gray;
+  border: 1px solid #ccc;
+  border-radius: 15px;
+}

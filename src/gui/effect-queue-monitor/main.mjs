@@ -38,6 +38,14 @@ const app = createApp({
                 }))
             ];
         }
+    },
+    methods: {
+        clearQueue(queueId) {
+            window.ipcRenderer.clearQueue(queueId);
+        },
+        toggleQueue(queueId) {
+            window.ipcRenderer.toggleQueue(queueId);
+        }
     }
 });
 
@@ -76,11 +84,3 @@ window.ipcRenderer.on("queue-deleted", (queueId) => {
     console.log("QUEUE DELETED", queueId);
     mountedApp.queues = mountedApp.queues.filter(q => q.id !== queueId);
 });
-
-function toggleQueue(queueID) {
-    window.ipcRenderer.send("toggleEffectQueue", queueID);
-}
-
-function clearQueue(queueID) {
-    window.ipcRenderer.send("clearEffectQueue", queueID);
-}
