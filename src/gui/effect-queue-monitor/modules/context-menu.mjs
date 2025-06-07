@@ -16,7 +16,6 @@ export const contextMenu = {
      >
        <li
          v-for="item in computedMenuItems"
-         v-if="item.visible == null ? true: item.visible(contextQueue)"
          :key="item.label"
          @click="handleItemClick(item)"
          @mouseenter="hovered = item.label"
