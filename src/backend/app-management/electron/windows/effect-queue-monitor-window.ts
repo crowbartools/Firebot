@@ -45,7 +45,6 @@ export async function createEffectQueueMonitorWindow() {
         icon: path.join(__dirname, "../../../../gui/images/logo_transparent_2.png")
     });
     effectQueueMonitorWindow.setMenu(null);
-
     effectQueueMonitorWindowState.manage(effectQueueMonitorWindow);
 
     effectQueueMonitorWindow.on("close", () => {
