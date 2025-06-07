@@ -14,16 +14,20 @@ export const contextMenu = {
        ref="contextMenu"
        @click.stop
      >
-       <li
-         v-for="item in computedMenuItems"
-         :key="item.label"
-         @click="handleItemClick(item)"
-         @mouseenter="hovered = item.label"
-         :class="{ hovered: hovered === item.label }"
-       >
-       <i :class="[ typeof item.icon === 'function' ? item.icon(contextQueue) : item.icon ]" :style="{ fontSize: '18px', marginRight: '5px', transform: 'translateY(1px)' }"></i>
-          {{ typeof item.label === 'function' ? item.label(contextQueue) : item.label }}
-       </li>
+      <template v-for="item in computedMenuItems" :key="item.label">
+        <li
+          v-if="item.visible == null ? true : item.visible(contextQueue)"
+          @click="handleItemClick(item)"
+          @mouseenter="hovered = item.label"
+          :class="{ hovered: hovered === item.label }"
+        >
+          <i
+            :class="[item.icon]"
+            :style="{ fontSize: '18px', marginRight: '5px', transform: 'translateY(1px)' }"
+          ></i>
+          {{ item.label }}
+        </li>
+      </template>
      </ul>
   `,
     data() {

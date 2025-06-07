@@ -49,7 +49,8 @@
                 <context-menu ref="contextMenu" 
                 :menu-items="[
                               { label: 'Clear Queue', action: (queue) => clearQueue(queue.id), icon: 'fad fa-minus-circle' },
-                              { label: (queue) => queue.active ? 'Pause Queue' : 'Resume Queue', action: (queue) => toggleQueue(queue.id), icon: (queue) => queue.active ? 'far fa-pause-circle' : 'far fa-clock'}
+                              { label: 'Resume Queue', action: (queue) => toggleQueue(queue.id), icon: 'far fa-clock', visible: (queue) => !queue.active },
+                              { label: 'Pause Queue', action: (queue) => toggleQueue(queue.id), icon: 'far fa-pause-circle', visible: (queue) => queue.active }
                 ]" />
                 <div v-if="queues.length === 0">
                     <p>No queues available.</p>
