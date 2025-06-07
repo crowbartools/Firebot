@@ -16,12 +16,14 @@ export const contextMenu = {
      >
        <li
          v-for="item in computedMenuItems"
+         v-if="item.visible == null ? true: item.visible(contextQueue)"
          :key="item.label"
          @click="handleItemClick(item)"
          @mouseenter="hovered = item.label"
          :class="{ hovered: hovered === item.label }"
        >
-         {{ item.label }}
+       <i :class="[ typeof item.icon === 'function' ? item.icon(contextQueue) : item.icon ]" :style="{ fontSize: '18px', marginRight: '5px', transform: 'translateY(1px)' }"></i>
+          {{ typeof item.label === 'function' ? item.label(contextQueue) : item.label }}
        </li>
      </ul>
   `,
