@@ -41,10 +41,10 @@ const app = createApp({
     },
     methods: {
         clearQueue(queueId) {
-            window.ipcRenderer.clearQueue(queueId);
+            window.queueManager.clearQueue(queueId);
         },
         toggleQueue(queueId) {
-            window.ipcRenderer.toggleQueue(queueId);
+            window.queueManager.toggleQueue(queueId);
         }
     }
 });
