@@ -34,6 +34,7 @@ type RunRequest = {
         };
         version: string;
     };
+    scriptDataDir: string;
     trigger: Trigger;
 };
 
