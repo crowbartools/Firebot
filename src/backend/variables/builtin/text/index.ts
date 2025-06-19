@@ -3,6 +3,8 @@ import regexMatches from './regex-matches';
 import regexMatchesRaw from './regex-matches-raw';
 import regexTest from './regex-test';
 
+import sprintf from './sprintf';
+
 import textCapitalize from './text-capitalize';
 import textConcat from './text-concat';
 import textContains from './text-contains';
@@ -31,6 +33,7 @@ export default [
     regexMatches,
     regexMatchesRaw,
     regexTest,
+    sprintf,
     textCapitalize,
     textConcat,
     textContains,
