@@ -384,6 +384,7 @@ class FirebotChatHelpers {
             customRewardId: msg.tags.get("custom-reward-id") || undefined,
             isHighlighted: msg.tags.get("msg-id") === "highlighted-message",
             isAnnouncement: false,
+            isHiddenFromChatFeed: false,
             isFirstChat: msg.isFirst ?? false,
             isReturningChatter: msg.isReturningChatter ?? false,
             isReply: msg.tags.has("reply-parent-msg-id"),

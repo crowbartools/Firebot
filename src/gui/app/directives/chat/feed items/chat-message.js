@@ -21,7 +21,7 @@
                 fontFamilyStyle: "@?"
             },
             template: `
-                <div class="chat-message-wrapper">
+                <div class="chat-message-wrapper" ng-if="$ctrl.message.isHiddenFromChatFeed !== true">
                     <div
                         ng-if="$ctrl.message.isAnnouncement"
                         class="announcement-bar"
