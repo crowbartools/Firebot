@@ -219,7 +219,7 @@ function removeSetupComponents(components) {
                         CounterManager.deleteItem(id);
                         break;
                     case "currencies":
-                        currencyAccess.deleteCurrency(id);
+                        currencyAccess.deleteCurrency({ id });
                         break;
                     case "effectQueues":
                         effectQueueManager.deleteItem(id);
