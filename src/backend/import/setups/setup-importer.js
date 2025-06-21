@@ -210,7 +210,7 @@ async function importSetup(setup, selectedCurrency) {
 function removeSetupComponents(components) {
     Object.entries(components)
         .forEach(([componentType, componentList]) => {
-            componentList.forEach((id) => {
+            componentList.forEach(({ id }) => {
                 switch (componentType) {
                     case "commands":
                         commandManager.deleteCustomCommand(id);
