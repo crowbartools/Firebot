@@ -8,6 +8,7 @@ const commandManager = require("../../chat/commands/command-manager");
 const { CounterManager } = require("../../counters/counter-manager");
 const effectQueueManager = require("../../effects/queues/effect-queue-config-manager");
 const eventsAccess = require("../../events/events-access");
+const { HotkeyManager } = require("../../hotkeys/hotkey-manager");
 const timerManager = require("../../timers/timer-manager");
 const scheduledTaskManager = require("../../timers/scheduled-task-manager");
 const presetEffectListManager = require("../../effects/preset-lists/preset-effect-list-manager");
@@ -36,7 +37,7 @@ function findAndReplaceCurrency(data, currency) {
             // check for currency effect
             if (value.type === "firebot:currency") {
                 value.currency = currency.id;
-            // check for currency restriction
+                // check for currency restriction
             } else if (value.type === "firebot:channelcurrency") {
                 value.selectedCurrency = currency.id;
             }
@@ -131,27 +132,9 @@ async function importSetup(setup, selectedCurrency) {
     eventsAccess.triggerUiRefresh();
 
     // hotkeys
-    const hotkeys = setup.components.hotkeys || [];
-    const hotkeyDb = profileManager.getJsonDbInProfile("/hotkeys");
-    try {
-        const hotkeyData = hotkeyDb.getData("/");
-        let currentHotkeys = [];
-        if (hotkeyData != null && hotkeyData.length > 0) {
-            currentHotkeys = hotkeyData;
-        }
-        for (const hotkey of hotkeys) {
-            const index = currentHotkeys.findIndex(h => h.id === hotkey.id);
-            if (index < 0) {
-                currentHotkeys.push(hotkey);
-            } else {
-                currentHotkeys[index] = hotkey;
-            }
-        }
-        hotkeyDb.push("/", currentHotkeys);
-    } catch (err) {
-        logger.error(err);
+    for (const hotkey of setup.components.hotkeys || []) {
+        HotkeyManager.addHotkey(hotkey);
     }
-    frontendCommunicator.send("import-hotkeys-update");
 
     // preset effect lists
     const presetEffectLists = setup.components.presetEffectLists || [];
@@ -231,7 +214,7 @@ function removeSetupComponents(components) {
                         eventsAccess.deleteGroup(id);
                         break;
                     case "hotkeys":
-                        frontendCommunicator.send("remove-hotkey", id);
+                        HotkeyManager.deleteHotkey(id);
                         break;
                     case "presetEffectLists":
                         presetEffectListManager.deleteItem(id);
@@ -288,11 +271,11 @@ function removeSetupComponents(components) {
 }
 
 function setupListeners() {
-    frontendCommunicator.onAsync("import-setup", async ({setup, selectedCurrency}) => {
+    frontendCommunicator.onAsync("import-setup", async ({ setup, selectedCurrency }) => {
         return importSetup(setup, selectedCurrency);
     });
 
-    frontendCommunicator.onAsync("remove-setup-components", async ({components}) => {
+    frontendCommunicator.onAsync("remove-setup-components", async ({ components }) => {
         return removeSetupComponents(components);
     });
 }
