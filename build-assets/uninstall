@@ -1,0 +1,21 @@
+#!/bin/sh
+
+icons="16"
+icons="${icons} 24"
+icons="${icons} 32"
+icons="${icons} 48"
+icons="${icons} 64"
+icons="${icons} 96"
+icons="${icons} 128"
+icons="${icons} 256"
+icons="${icons} 512"
+
+cd /usr/lib/firebotv5
+
+for icon in ${icons}; do
+    xdg-icon-resource uninstall --context mimetypes --size ${icon} application-x-firebotsetup
+done
+
+xdg-mime uninstall resources/linux/firebotsetup-mimetype.xml
+
+update-desktop-database &> /dev/null

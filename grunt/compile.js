@@ -28,6 +28,7 @@ module.exports = function (grunt) {
             productName: "Firebot v5",
             genericName: "Firebot v5",
             homepage: "https://firebot.app",
+            mimeType: ["application/x-firebotsetup"],
             icon: {
                 "48x48": "src/gui/images/macTrayIcon@3x.png",
                 "64x64": "src/gui/images/logo_64x.png",
@@ -36,6 +37,16 @@ module.exports = function (grunt) {
                 scalable: "src/gui/images/logo.svg"
             }
         }
+    };
+
+    const linuxScriptsDebian = {
+        postinst: 'build-assets/install',
+        prerm: 'build-assets/uninstall'
+    };
+
+    const linuxScriptsRedhat = {
+        post: 'build-assets/install',
+        preun: 'build-assets/uninstall'
     };
 
     // Bringing in from https://github.com/electron-archive/grunt-electron-installer/blob/master/tasks/index.js
@@ -60,8 +71,8 @@ module.exports = function (grunt) {
             ...config,
             contents: function (opts) {
                 return [
-                    { x: 448, y: 344, type: 'link', path: '/Applications'},
-                    { x: 192, y: 344, type: 'file', path: opts.appPath},
+                    { x: 448, y: 344, type: 'link', path: '/Applications' },
+                    { x: 192, y: 344, type: 'file', path: opts.appPath },
                     ...(config.installInstructionsPath
                         ? [{
                             x: 320, y: 240,
@@ -81,6 +92,10 @@ module.exports = function (grunt) {
         const installer = require('@dennisrijsdijk/electron-installer-redhat');
         installer({
             ...linuxInstallerConfig,
+            options: {
+                ...linuxInstallerConfig.options,
+                scripts: linuxScriptsRedhat
+            },
             strip: false,
             arch: "x86_64",
             rename: function (dest) {
@@ -94,6 +109,10 @@ module.exports = function (grunt) {
         const installer = require('electron-installer-debian');
         installer({
             ...linuxInstallerConfig,
+            options: {
+                ...linuxInstallerConfig.options,
+                scripts: linuxScriptsDebian
+            },
             arch: "amd64",
             rename: function (dest) {
                 return path.join(dest, `firebot-v${version}-linux-x64.deb`);
