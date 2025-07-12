@@ -14,8 +14,17 @@ cd /usr/lib/firebotv5
 
 for icon in ${icons}; do
     xdg-icon-resource install --context mimetypes --size ${icon} resources/linux/firebotsetup-icon/${icon}x${icon}.png application-x-firebotsetup
+    # This is a workaround for Ubuntu, where a generic icon in Humanity is used instead
+    if [ -d /usr/share/icons/Humanity/mimes/${icon} ]; then
+        cp resources/linux/firebotsetup-icon/${icon}x${icon}.png /usr/share/icons/Humanity/mimes/${icon}/application-x-firebotsetup.png
+    fi
 done
 
 xdg-mime install resources/linux/firebotsetup-mimetype.xml
+
+# ensure update-gtk-icon-cache and the Humanity icon theme are available
+if [ -x /usr/bin/gtk-update-icon-cache ] && [ -d /usr/share/icons/Humanity ]; then
+    gtk-update-icon-cache /usr/share/icons/Humanity &> /dev/null
+fi
 
 update-desktop-database &> /dev/null
