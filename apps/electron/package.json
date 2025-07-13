@@ -11,9 +11,9 @@
     "lint": "eslint --fix --ext .ts,.tsx src/**"
   },
   "devDependencies": {
-    "@nestjs/platform-fastify": "^10.3.0",
+    "@nestjs/platform-fastify": "^11.1.3",
     "cross-env": "^7.0.3",
-    "electron": "^32.1.2",
+    "electron": "^37.2.1",
     "eslint-config-custom": "*",
     "tsc-watch": "^6.2.0",
     "tsconfig": "*"

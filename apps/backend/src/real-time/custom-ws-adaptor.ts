@@ -5,7 +5,7 @@ import type { VerifyClientCallbackSync, Server as WsServer } from "ws";
 export class CustomWsAdaptor extends WsAdapter {
   constructor(
     private authToken: string,
-    appOrHttpServer?: INestApplicationContext | unknown
+    appOrHttpServer?: INestApplicationContext
   ) {
     super(appOrHttpServer);
   }
@@ -18,8 +18,8 @@ export class CustomWsAdaptor extends WsAdapter {
       path?: string;
     } & WsServer["options"]
   ) {
-    if(!options) {
-        options = {};
+    if (!options) {
+      options = {};
     }
 
     const verifyClient: VerifyClientCallbackSync = ({ req }) => {
