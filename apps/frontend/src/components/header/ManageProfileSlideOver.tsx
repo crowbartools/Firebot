@@ -12,7 +12,7 @@ import type {
   FirebotAccountType,
   PlatformLoginSetting,
 } from "firebot-types";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 import {
   FbSlideOverContent,
   useShowSlideOverBuilder,

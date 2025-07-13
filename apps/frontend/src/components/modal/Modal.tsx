@@ -1,5 +1,5 @@
 import { Dialog } from "@headlessui/react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 
 export const Modal: React.FC<{
   open: boolean;

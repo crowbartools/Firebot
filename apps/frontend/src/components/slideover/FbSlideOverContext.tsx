@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AnimatePresence, Variants, motion, useAnimate } from "framer-motion";
+import { AnimatePresence, Variants, motion, useAnimate } from "motion/react";
 import {
   createContext,
   useCallback,

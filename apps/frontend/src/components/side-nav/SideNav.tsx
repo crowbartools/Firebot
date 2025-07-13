@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 import clsx from "clsx";
-import { motion, Variants } from "framer-motion";
+import { motion, Variants } from "motion/react";
 import Image from 'next/image'
 import firebotLogo from "assets/images/firebot-logo.png";
 import Icon from "@mdi/react";

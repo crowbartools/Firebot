@@ -1,7 +1,7 @@
 import { Menu } from "@headlessui/react";
 import { ChevronDownIcon, TrashIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 import { PlusCircleIcon } from "@heroicons/react/16/solid";
 import { useCreateLogin } from "@/hooks/api/use-create-login";
 import { useLogins } from "@/hooks/api/use-logins";
