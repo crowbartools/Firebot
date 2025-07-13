@@ -1,6 +1,6 @@
 import Head from "next/head";
 
-import favIcon from "assets/images/favIcon.ico";
+import favIcon from "assets/images/favicon.ico";
 import { PageWrapper } from "@/components/PageWrapper";
 import { PageTitle } from "@/components/PageTitle";
 

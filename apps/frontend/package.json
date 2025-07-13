@@ -4,18 +4,18 @@
   "version": "6.0.0",
   "license": "GPL-3.0",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build && next export -o dist/",
     "start": "next start",
     "lint": "next lint"
   },
   "devDependencies": {
     "@types/node": "20.16.9",
-    "@types/react": "18.3.11",
-    "@types/react-dom": "18.3.0",
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6",
     "autoprefixer": "^10.4.20",
     "eslint-config-custom": "*",
-    "eslint-config-next": "14.2.14",
+    "eslint-config-next": "15.3.5",
     "postcss": "^8.5.2",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwind-scrollbar": "^4.0.0",
@@ -39,14 +39,19 @@
     "axios": "^1.7.9",
     "clsx": "^2.1.1",
     "firebot-types": "*",
+    "framer-motion": "^12.23.3",
     "howler": "^2.2.4",
     "mobx": "^6.13.3",
     "mobx-react-lite": "^4.0.7",
     "motion": "^12.23.3",
-    "next": "14.2.14",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
+    "next": "15.3.5",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
     "react-use": "^17.5.1",
     "reconnecting-websocket": "^4.4.0"
+  },
+  "overrides": {
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6"
   }
 }
