@@ -110,7 +110,7 @@ export function PaginationPage({
       aria-current={current ? "page" : undefined}
       className={clsx(
         className,
-        "min-w-[2.25rem] before:absolute before:-inset-px before:rounded-lg",
+        "min-w-9 before:absolute before:-inset-px before:rounded-lg",
         current && "before:bg-zinc-950/5 dark:before:bg-white/10"
       )}
     >
@@ -130,7 +130,7 @@ export function PaginationGap({
       {...props}
       className={clsx(
         className,
-        "w-[2.25rem] text-center text-sm/6 font-semibold text-zinc-950 select-none dark:text-white"
+        "w-9 text-center text-sm/6 font-semibold text-zinc-950 select-none dark:text-white"
       )}
     >
       {children}

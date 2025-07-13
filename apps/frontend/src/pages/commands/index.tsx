@@ -1,4 +1,4 @@
-import { SearchBar } from "@/components/controls/Searchbar";
+import { SearchBar } from "@/components/controls/SearchBar";
 import { PageTitle } from "@/components/PageTitle";
 import { PageWrapper } from "@/components/PageWrapper";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,10 @@ export const CommandsPage: React.FC = observer(() => {
         actions={
           <>
             <SearchBar />
-            <Button color="blue" href="/commands/new-command"><PlusIcon />Create Command</Button>
+            <Button color="blue" href="/commands/new-command">
+              <PlusIcon />
+              Create Command
+            </Button>
           </>
         }
       />
