@@ -40,13 +40,13 @@ module.exports = function (grunt) {
     };
 
     const linuxScriptsDebian = {
-        postinst: 'build-assets/install',
-        prerm: 'build-assets/uninstall'
+        postinst: 'build-assets/linux-install.sh',
+        prerm: 'build-assets/linux-uninstall.sh'
     };
 
     const linuxScriptsRedhat = {
-        post: 'build-assets/install',
-        preun: 'build-assets/uninstall'
+        post: 'build-assets/linux-install.sh',
+        preun: 'build-assets/linux-uninstall.sh'
     };
 
     // Bringing in from https://github.com/electron-archive/grunt-electron-installer/blob/master/tasks/index.js
