@@ -328,6 +328,73 @@ module.exports = {
             }
         },
         {
+            id: "bits-powerup-message-effect",
+            name: "Power-up: Message Effect",
+            description: "When a viewer uses a message effect power-up in your channel.",
+            cached: false,
+            manualMetadata: {
+                username: "firebot",
+                userDisplayName: "Firebot",
+                userId: "",
+                bits: 30,
+                totalBits: 1200,
+                cheerMessage: "Test Message"
+            },
+            activityFeed: {
+                icon: "fad fa-diamond",
+                getMessage: (eventData) => {
+                    const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
+                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""
+                        }** used a message effect power-up for **${eventData.bits}** bits.`;
+                }
+            }
+        },
+        {
+            id: "bits-powerup-celebration",
+            name: "Power-up: Celebration",
+            description: "When a viewer uses a celebration power-up in your channel.",
+            cached: false,
+            manualMetadata: {
+                username: "firebot",
+                userDisplayName: "Firebot",
+                userId: "",
+                bits: 50,
+                totalBits: 1200
+            },
+            activityFeed: {
+                icon: "fad fa-diamond",
+                getMessage: (eventData) => {
+                    const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
+                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""
+                        }** used a celebration power-up for **${eventData.bits}** bits.`;
+                }
+            }
+        },
+        {
+            id: "bits-powerup-gigantified-emote",
+            name: "Power-up: Gigantified Emote",
+            description: "When a viewer uses a gigantified emote power-up in your channel.",
+            cached: false,
+            manualMetadata: {
+                username: "firebot",
+                userDisplayName: "Firebot",
+                userId: "",
+                bits: 20,
+                totalBits: 1200,
+                cheerMessage: "Test Message",
+                emoteName: "PogChamp",
+                emoteUrl: "https://static-cdn.jtvnw.net/emoticons/v2/305954156/default/dark/3.0"
+            },
+            activityFeed: {
+                icon: "fad fa-diamond",
+                getMessage: (eventData) => {
+                    const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
+                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""
+                        }** gigantified the **${eventData.emoteName}** emote for **${eventData.bits}** bits.`;
+                }
+            }
+        },
+        {
             id: "viewer-arrived",
             name: "Viewer Arrived",
             description: "When a viewer initially chats in any given stream.",

@@ -4,7 +4,7 @@ import { OutputDataType, VariableCategory } from "../../../../../shared/variable
 const { EffectTrigger } = require("../../../../../shared/effect-constants");
 
 const triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:cheer"];
+triggers[EffectTrigger.EVENT] = ["twitch:cheer", "twitch:bits-powerup-message-effect", "twitch:bits-powerup-gigantified-emote"];
 triggers[EffectTrigger.MANUAL] = true;
 
 const model : ReplaceVariable = {

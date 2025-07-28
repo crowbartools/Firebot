@@ -49,21 +49,66 @@ class TwitchEventSubClient {
         });
         this._subscriptions.push(followSubscription);
 
-        // Cheers
-        const bitsSubscription = this._eventSubListener.onChannelCheer(streamer.userId, async (event) => {
-            const totalBits = event.isAnonymous
-                ? event.bits
-                : (await twitchApi.bits.getChannelBitsLeaderboard(1, "all", new Date(), event.userId))[0]?.amount ?? 0;
-
-            twitchEventsHandler.cheer.triggerCheer(
-                event.userName ?? "ananonymouscheerer",
-                event.userId,
-                event.userDisplayName ?? "An Anonymous Cheerer",
-                event.isAnonymous,
-                event.bits,
-                totalBits,
-                event.message ?? ""
-            );
+        // Bits Used
+        const bitsSubscription = this._eventSubListener.onChannelBitsUse(streamer.userId, async (event) => {
+            switch (event.type) {
+                case "cheer": {
+                    const totalBits = await twitchApi.bits.getChannelBitsLeaderboard(1, "all", new Date(), event.userId)[0]?.amount ?? 0;
+                    // Future: We could parse event.messageParts into a FirebotChatMessage
+                    // This would allow us to expose cheermotes to the cheer event,
+                    // rather than just chat messages which happen to be cheers.
+                    twitchEventsHandler.bits.triggerCheer(
+                        event.userName,
+                        event.userId,
+                        event.userDisplayName,
+                        event.bits,
+                        totalBits,
+                        event.messageText ?? ""
+                    );
+                    break;
+                }
+                case "combo":
+                    break;
+                case "power_up": {
+                    const totalBits = await twitchApi.bits.getChannelBitsLeaderboard(1, "all", new Date(), event.userId)[0]?.amount ?? 0;
+                    switch (event.powerUp.type) {
+                        case "celebration":
+                            twitchEventsHandler.bits.triggerPowerupCelebration(
+                                event.userName,
+                                event.userId,
+                                event.userDisplayName,
+                                event.bits,
+                                totalBits
+                            );
+                            break;
+                        case "gigantify_an_emote": {
+                            twitchEventsHandler.bits.triggerPowerupGigantifyEmote(
+                                event.userName,
+                                event.userId,
+                                event.userDisplayName,
+                                event.bits,
+                                totalBits,
+                                event.messageText ?? "",
+                                event.powerUp.emote.name,
+                                `https://static-cdn.jtvnw.net/emoticons/v2/${event.powerUp.emote.id}/default/dark/3.0`
+                            );
+                            break;
+                        }
+                        case "message_effect": {
+                            twitchEventsHandler.bits.triggerPowerupMessageEffect(
+                                event.userName,
+                                event.userId,
+                                event.userDisplayName,
+                                event.bits,
+                                totalBits,
+                                event.messageText ?? ""
+                            );
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
         });
         this._subscriptions.push(bitsSubscription);
 
@@ -616,7 +661,7 @@ class TwitchEventSubClient {
         const chatNotificationSubscription = this._eventSubListener.onChannelChatNotification(streamer.userId, streamer.userId, (event) => {
             switch (event.type) {
                 case "bits_badge_tier":
-                    twitchEventsHandler.cheer.triggerBitsBadgeUnlock(
+                    twitchEventsHandler.bits.triggerBitsBadgeUnlock(
                         event.chatterName ?? "ananonymouscheerer",
                         event.chatterId,
                         event.chatterDisplayName ?? "An Anonymous Cheerer",
