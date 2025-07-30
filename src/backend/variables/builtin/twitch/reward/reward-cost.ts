@@ -49,7 +49,7 @@ const model : ReplaceVariable = {
             return -1;
         }
 
-        return rewardData.rewardCost;
+        return rewardData.rewardCost || rewardData.channelPoints;
     }
 };
 
