@@ -1,4 +1,4 @@
-import type { StreamingPlatformIdName } from "@/api/resources/streaming-platform";
+import type { StreamingPlatformIdName } from "@/lib/api/resources/streaming-platform";
 import { ManageLoginDropdown } from "@/components/header/ManageLoginDropdown";
 import { useActiveProfile } from "@/hooks/api/use-active-profile";
 import { useCreateLogin } from "@/hooks/api/use-create-login";
@@ -36,7 +36,7 @@ const ManageProfileSlideOverContent: FbSlideOverContent = () => {
 
   return (
     <div>
-      <h3 className="text-lg font-bold text-primary-text">Platforms</h3>
+      <h3 className="text-lg font-bold text-primary-foreground">Platforms</h3>
       <div>
         {streamingPlatforms.map((platform) => {
           const loginsForPlatform = loginData?.[platform.id];
@@ -98,7 +98,7 @@ const StreamingPlatformConfig: React.FC<{
   );
   return (
     <div className="" key={platform.id}>
-      <div className="flex items-center justify-between p-4 rounded-lg bg-secondary-bg/50 rounded-b-none">
+      <div className="flex items-center justify-between p-4 rounded-lg bg-background/75 rounded-b-none">
         <div className="flex items-center">
           {platform.icon && (
             <FontAwesomeIcon
@@ -107,7 +107,7 @@ const StreamingPlatformConfig: React.FC<{
               icon={["fab", platform.icon as any]}
             />
           )}
-          <span className="text-xl text-primary-text font-bold">
+          <span className="text-xl text-card-foreground font-bold">
             {platform.name}
           </span>
         </div>
@@ -115,7 +115,7 @@ const StreamingPlatformConfig: React.FC<{
           <ManageLoginDropdown platformId={platform.id} />
         )}
       </div>
-      <div className="p-4 rounded-b-lg bg-secondary-bg/75">
+      <div className="p-4 rounded-b-lg bg-card">
         <AnimatePresence mode="popLayout" initial={false}>
           {activeLogin && (
             <motion.div
@@ -182,20 +182,20 @@ const Account: React.FC<{
   onDisconnectClick: () => void;
 }> = ({ type, account, onConnectClick, onDisconnectClick }) => (
   <div>
-    <div className="text-lg text-primary-text font-bold">
+    <div className="text-lg text-foreground font-bold">
       {type === "streamer" ? "Streamer" : "Bot"}
     </div>
     <div>
       {!account ? (
         <button
-          className="text-primary-text bg-primary-bg/25 py-1 px-2 rounded-lg flex items-center"
+          className="text-foreground bg-black/25 py-1 px-2 rounded-lg flex items-center"
           onClick={onConnectClick}
         >
           <PlusCircleIcon className="w-4 h-4 mr-1" />
           Connect account
         </button>
       ) : (
-        <div className="flex items-center justify-between text-primary-text pr-5">
+        <div className="flex items-center justify-between text-foreground pr-5">
           <div className="flex items-center gap-x-2">
             {account.avatarUrl && (
               // eslint-disable-next-line @next/next/no-img-element

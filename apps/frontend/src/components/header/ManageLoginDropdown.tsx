@@ -47,7 +47,7 @@ export const ManageLoginDropdown: React.FC<{ platformId: string }> = ({
               {open && (
                 <Menu.Items
                   static
-                  className="absolute right-0 z-10 mt-2.5 w-48 origin-top-right rounded-md divide-y divide-secondary-bg/50 bg-tertiary-bg shadow-lg ring-1 ring-gray-900/5 focus:outline-hidden"
+                  className="absolute right-0 z-10 mt-2.5 w-48 origin-top-right rounded-md divide-y divide-secondary/50 bg-accent shadow-lg ring-1 ring-gray-900/5 focus:outline-hidden"
                   as={motion.div}
                   initial={{ opacity: 0, scale: 1.0, y: "-50%" }}
                   animate={{
@@ -89,7 +89,7 @@ export const ManageLoginDropdown: React.FC<{ platformId: string }> = ({
                   </div>
                   {(loginForPlatform?.loginConfigs?.length ?? 0) > 1 && (
                     <div className="p-1">
-                      <div className="text-primary-text ml-3 mt-1 text-sm font-bold flex items-center">
+                      <div className="text-foreground ml-3 mt-1 text-sm font-bold flex items-center">
                         Switch to:
                       </div>
                       {loginForPlatform?.loginConfigs
@@ -145,7 +145,7 @@ const MenuItem: React.FC<{
       {({ active, disabled }) => (
         <button
           className={clsx(
-            active && !disabled ? "bg-secondary-bg/25" : "",
+            active && !disabled ? "bg-secondary/25" : "",
             "flex rounded-md w-full items-center px-3 py-1 text-sm leading-6",
             disabled ? "text-gray-400 cursor-not-allowed" : "text-gray-100"
           )}

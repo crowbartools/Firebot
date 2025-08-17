@@ -1,11 +1,17 @@
-import { MagnifyingGlassIcon } from "@heroicons/react/16/solid";
-import { Input, InputGroup } from "../ui/input";
+import { Search } from "lucide-react";
+import { Input } from "../ui/input";
+import { cn } from "@/lib/utils";
 
-export const SearchBar: React.FC<React.ComponentProps<typeof Input>> = (inputProps) => {
+export function SearchBar(inputProps: React.ComponentProps<typeof Input>) {
   return (
-    <InputGroup>
-      <MagnifyingGlassIcon />
-      <Input placeholder="Search&hellip;" aria-label="Search" {...inputProps} />
-    </InputGroup>
+    <div className="relative">
+      <Input
+        placeholder="Search&hellip;"
+        aria-label="Search"
+        {...inputProps}
+        className={cn("pl-8", inputProps.className)}
+      />
+      <Search className="pointer-events-none absolute top-1/2 left-2 size-4 -translate-y-1/2 opacity-50 select-none" />
+    </div>
   );
-};
+}

@@ -1,9 +1,8 @@
 import type { AppProps } from "next/app";
-import { initialStore, Provider as StoreProvider } from "../stores";
 import "@/styles/globals.css";
-import '@xyflow/react/dist/style.css';
+import "@xyflow/react/dist/style.css";
 import NoSSRWrapper from "@/components/NoSSRWrapper";
-import { FbApiProvider } from "@/api/FbApiContext";
+import { FbApiProvider } from "@/lib/api/FbApiContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
@@ -12,9 +11,12 @@ import { fab } from "@fortawesome/free-brands-svg-icons";
 import { FbModalProvider } from "@/components/modal/FbModalContext";
 import { FbSlideOverProvider } from "@/components/slideover/FbSlideOverContext";
 import { RealTimeWsProvider } from "@/realtime/realtime-websocket";
-import { SidebarLayout } from "@/components/ui/sidebar-layout";
-import { Navbar } from "@/components/ui/navbar";
-import { NewSideNav } from "@/components/side-nav/NewSideNav";
+import { NewSidebarLayout } from "@/components/sidebar-layout";
+import { NavigationGuardProvider } from "next-navigation-guard";
+// import { SidebarLayout } from "@/components/catalyst/sidebar-layout";
+// import { NewSideNav } from "@/components/side-nav/NewSideNav";
+// import { Navbar } from "@/components/catalyst/navbar";
+// import { Button } from "@/components/catalyst/button";
 
 export default function App({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient({
@@ -28,18 +30,19 @@ export default function App({ Component, pageProps }: AppProps) {
       <RealTimeWsProvider>
         <FbApiProvider>
           <QueryClientProvider client={queryClient}>
-            <StoreProvider value={initialStore}>
+            <NavigationGuardProvider>
               <FbModalProvider>
                 <FbSlideOverProvider>
-                  <SidebarLayout
-                    sidebar={<NewSideNav />}
-                    navbar={<Navbar>{/* Your navbar content */}</Navbar>}
-                  >
-                      <Component {...pageProps} />
-                  </SidebarLayout>
+                  <NewSidebarLayout>
+                    <Component {...pageProps} />
+                  </NewSidebarLayout>
+
+                  {/* <SidebarLayout sidebar={<NewSideNav />}>
+                  <Component {...pageProps} />
+                </SidebarLayout> */}
                 </FbSlideOverProvider>
               </FbModalProvider>
-            </StoreProvider>
+            </NavigationGuardProvider>
           </QueryClientProvider>
         </FbApiProvider>
       </RealTimeWsProvider>

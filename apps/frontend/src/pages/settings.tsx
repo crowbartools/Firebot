@@ -1,9 +1,5 @@
-import { PageTitle } from "@/components/PageTitle";
-import { PageWrapper } from "@/components/PageWrapper";
 import { SelectItem, SelectMenu } from "@/components/SelectMenu";
-import { useStores } from "@/stores";
-import { FirebotTheme } from "@/stores/settings-store";
-import { observer } from "mobx-react-lite";
+import useAppStore, { FirebotTheme } from "@/stores/app-store";
 
 const themes: SelectItem<FirebotTheme>[] = [
   { name: "Shadow", value: "shadow" },
@@ -12,21 +8,19 @@ const themes: SelectItem<FirebotTheme>[] = [
   { name: "Snow", value: "snow" },
 ];
 
-export const SettingsPage: React.FC = observer(() => {
-  const { settingsStore } = useStores();
+export function SettingsPage() {
+  const theme = useAppStore((state) => state.theme);
+  const setTheme = useAppStore((state) => state.setTheme);
   return (
-    <PageWrapper>
-      <PageTitle title="Settings" />
-      <div className="w-1/4">
-        <SelectMenu
-          label="Theme"
-          items={themes}
-          selected={settingsStore.theme}
-          setSelected={settingsStore.setTheme}
-        />
-      </div>
-    </PageWrapper>
+    <div className="w-1/4">
+      <SelectMenu
+        label="Theme"
+        items={themes}
+        selected={theme}
+        setSelected={setTheme}
+      />
+    </div>
   );
-});
+}
 
 export default SettingsPage;

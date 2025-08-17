@@ -1,4 +1,4 @@
-import { DeviceCodeResponse } from "@/api/resources/auth-provider";
+import { DeviceCodeResponse } from "@/lib/api/resources/auth-provider";
 import {
   FbSlideOverContent,
   useShowSlideOverBuilder,
@@ -33,16 +33,16 @@ const DcfInfoSlideOverContent: FbSlideOverContent<DcfInfoSlideOverParams> = ({
 
   return (
     <div>
-      <h3 className="text-lg font-bold text-primary-text">
+      <h3 className="text-lg font-bold text-primary-foreground">
         Let&apos;s log into your {params.streamingPlatformName}{" "}
         <b>{params.accountType}</b> account!
       </h3>
-      <p className="text-primary-text mt-2 mb-5">
+      <p className="text-primary-foreground mt-2 mb-5">
         Please copy the below URL into your browser to connect your{" "}
         {params.streamingPlatformName} {params.accountType} account.
       </p>
-      <div className="rounded-sm bg-secondary-bg overflow-hidden text-primary-text">
-        <div className="bg-[#54545d] text-sm h-12 flex items-center px-2">
+      <div className="rounded-sm bg-background overflow-hidden text-primary-foreground">
+        <div className="bg-card text-sm h-12 flex items-center px-2">
           <a
             href={params.dcfCodeDetails.verificationUri}
             target="_blank"
@@ -53,7 +53,7 @@ const DcfInfoSlideOverContent: FbSlideOverContent<DcfInfoSlideOverParams> = ({
           </a>
         </div>
         <div className="p-2 text-center gap-y-4 flex flex-col items-center justify-center">
-          <span className="block text-primary-text/50 text-sm">
+          <span className="block text-primary-foreground/50 text-sm">
             When you open the URL, please verify the code below:
           </span>
           <span className="block font-mono text-2xl">
@@ -65,7 +65,7 @@ const DcfInfoSlideOverContent: FbSlideOverContent<DcfInfoSlideOverParams> = ({
               icon={["fas", "circle-notch"]}
             />
           </div>
-          <span className="block text-primary-text/50 text-sm">
+          <span className="block text-primary-foreground/50 text-sm">
             Waiting for login confirmation...
           </span>
         </div>

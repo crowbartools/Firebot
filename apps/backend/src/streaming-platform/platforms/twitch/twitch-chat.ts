@@ -151,4 +151,23 @@ export class TwitchChat extends ChatProvider<{
   get connected() {
     return this.streamerClient?.isConnected ?? false;
   }
+
+  async sendMessage(message: string): Promise<void> {
+    console.log(`Sending message to Twitch chat: ${message}`);
+    console.log("connected:", this.connected);
+    console.log(
+      "streamer account:",
+      twitchAccountAuthProvider.streamerAccount?.username
+    );
+
+    if (this.connected && twitchAccountAuthProvider.streamerAccount) {
+      await this.streamerClient!.say(
+        twitchAccountAuthProvider.streamerAccount.username,
+        message
+      );
+      return;
+    }
+
+    throw new Error("Not connected to Twitch chat");
+  }
 }

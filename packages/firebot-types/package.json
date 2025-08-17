@@ -6,10 +6,11 @@
     "main": "./dist/index.js",
     "types": "src/index.ts",
     "devDependencies": {
-        "typescript": "^4.9.5",
-        "tiny-typed-emitter": "2.1.0",
         "eslint-config-custom": "*",
-        "tsconfig": "*"
+        "lucide-react": "^0.525.0",
+        "tiny-typed-emitter": "2.1.0",
+        "tsconfig": "*",
+        "typescript": "^4.9.5"
     },
     "scripts": {
         "build": "tsc",

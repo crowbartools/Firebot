@@ -77,7 +77,9 @@ interface ChatEvents {
   chatItem: (chatItem: ChatItem) => void;
 }
 
-export class ChatProvider<
+export abstract class ChatProvider<
   // eslint-disable-next-line @typescript-eslint/ban-types
   ExtraEvents extends ListenerSignature<ExtraEvents> = {},
-> extends TypedEmitter<ChatEvents & ExtraEvents> {}
+> extends TypedEmitter<ChatEvents & ExtraEvents> {
+  abstract sendMessage(message: string): Promise<void>;
+}

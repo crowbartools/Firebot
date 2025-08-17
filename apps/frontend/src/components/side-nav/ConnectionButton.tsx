@@ -1,3 +1,5 @@
+"use client";
+
 import { useConnectables } from "@/hooks/api/use-connectables";
 import { useRealTimeEvent } from "@/hooks/api/use-realtime-event";
 import { useToggleAllConnections } from "@/hooks/api/use-toggle-all-connections";
@@ -56,11 +58,12 @@ export const ConnectionButton = () => {
 
   return (
     <Button
-      outline
-      className="flex justify-start items-start mt-2"
+      variant="outline"
+      className="flex justify-start items-center pl-2"
+      size="lg"
       onClick={() => toggleConnection(someConnected ? false : true)}
     >
-      <div className="flex items-center justify-center bg-tertiary-bg rounded-full text-sm h-6 w-6 hover:bg-tertiary-bg">
+      <div className="flex items-center justify-center rounded-full text-sm h-6 w-6">
         {isConnecting ? (
           <ArrowPathIcon className="h-3 w-3 text-gray-200 animate-spin" />
         ) : (

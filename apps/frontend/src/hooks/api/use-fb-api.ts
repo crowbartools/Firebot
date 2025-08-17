@@ -1,4 +1,4 @@
-import { FbApiContext } from "@/api/FbApiContext";
+import { FbApiContext } from "@/lib/api/FbApiContext";
 import { useContext } from "react";
 
 export const useFbApi = () => {

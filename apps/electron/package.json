@@ -20,7 +20,8 @@
   },
   "dependencies": {
     "assets": "*",
-    "backend": "*"
+    "backend": "*",
+    "backend-context": "*"
   },
   "engines": {
     "node": ">=20.16.0",

@@ -18,7 +18,7 @@ export const SlideOver: React.FC<{
           open={open}
         >
           <motion.div
-            className="fixed inset-0 bg-primary-bg/75"
+            className="fixed inset-0 bg-background/75"
             initial={{
               opacity: 0,
             }}
@@ -49,7 +49,7 @@ export const SlideOver: React.FC<{
                       stiffness: 400,
                       damping: 32,
                     }}
-                    className="flex h-full flex-col overflow-y-scroll bg-tertiary-bg py-6 shadow-xl"
+                    className="flex h-full flex-col overflow-y-scroll bg-secondary py-6 shadow-xl"
                   >
                     <div className="px-4 sm:px-6">
                       <div className="flex items-start justify-between">
@@ -59,7 +59,7 @@ export const SlideOver: React.FC<{
                         <div className="ml-3 flex h-7 items-center">
                           <button
                             type="button"
-                            className="relative rounded-md bg-tertiary-bg text-gray-300 hover:text-gray-400 border-none outline-hidden focus:text-white"
+                            className="relative rounded-md bg-accent text-gray-300 hover:text-gray-400 border-none outline-hidden focus:text-white"
                             onClick={onClose}
                           >
                             <span className="absolute -inset-2.5" />

@@ -2,13 +2,23 @@ import path from 'path';
 
 import assetpath from 'assets';
 
-import { app, BrowserWindow, session, shell } from "electron";
+import {
+  app,
+  BrowserWindow,
+  dialog,
+  MessageBoxSyncOptions,
+  session,
+  shell,
+} from "electron";
 import { type NestFastifyApplication } from "@nestjs/platform-fastify";
+import { setBackendContext } from "backend-context";
 
 // ts/eslint will complain until apps/backend/ has been built
 const { default: backendStart } = require("backend");
 
-let backend: { app: NestFastifyApplication; authToken: string } | void;
+let backend: { app: NestFastifyApplication | undefined; authToken?: string } = {
+  app: undefined,
+};
 
 let mainWindow: BrowserWindow;
 const createWindow = () => {
@@ -42,6 +52,17 @@ const createWindow = () => {
     return { action: "deny" };
   });
 
+  mainWindow.webContents.on("will-prevent-unload", (event) => {
+    const options: MessageBoxSyncOptions = {
+      type: "question",
+      buttons: ["Cancel", "OK"],
+      defaultId: 1,
+      message: "You have unsaved changes. Do you want to leave?",
+    };
+    const response = dialog.showMessageBoxSync(mainWindow, options);
+    if (response === 1) event.preventDefault();
+  });
+
   if (process.env.NODE_ENV === "development") {
     mainWindow.loadURL("http://localhost:3000");
   } else {
@@ -49,47 +70,55 @@ const createWindow = () => {
   }
 };
 
-process.on('uncaughtException', async function (err) {
-    console.error(err.stack);
-    if (backend) {
-        await backend.app.close();
-    }
-    app.quit();
+process.on("uncaughtException", async function (err) {
+  console.error(err.stack);
+  if (backend.app != null) {
+    await backend.app.close();
+  }
+  app.quit();
 });
 
 (async () => {
+  setBackendContext({
+    playSound: async (filePath: string) => {
+      console.log(`Playing sound: ${filePath}`);
+    },
+  });
 
-    backend = await backendStart({
-      USER_DATA_PATH: app.getPath("userData")
-    });
-    if (backend == null) {
-        console.error('failed to start backend');
-        app.quit();
-        return;
+  backend = await backendStart({
+    USER_DATA_PATH: app.getPath("userData"),
+  });
+
+  if (backend == null) {
+    console.error("failed to start backend");
+    app.quit();
+    return;
+  }
+
+  await app.whenReady();
+
+  app.on("window-all-closed", async () => {
+    if (process.platform !== "darwin") {
+      if (backend.app != null) {
+        await backend.app.close();
+      }
+      app.quit();
     }
+  });
 
-    await app.whenReady();
-    app.on('window-all-closed', async () => {
-        if (process.platform !== 'darwin') {
-            if (backend) {
-                await backend.app.close();
-            }
-            app.quit();
-        }
-    });
-    app.on('activate', () => {
-        if (BrowserWindow.getAllWindows().length === 0) {
-            createWindow();
-        }
-    });
+  app.on("activate", () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
+  });
 
-    session.defaultSession.cookies.set({
-        url: 'http://localhost:3000',
-        name: 'auth',
-        value: backend?.authToken,
-        httpOnly: false,
-        secure: false,
-    })
+  session.defaultSession.cookies.set({
+    url: "http://localhost:3000",
+    name: "auth",
+    value: backend.authToken,
+    httpOnly: false,
+    secure: false,
+  });
 
-    createWindow();
+  createWindow();
 })();

@@ -16,7 +16,7 @@ export const Modal: React.FC<{
       initialFocus={initialFocusRef}
     >
       <motion.div
-        className="fixed inset-0 bg-primary-bg/75"
+        className="fixed inset-0 bg-background/75"
         initial={{
           opacity: 0,
         }}
@@ -32,7 +32,7 @@ export const Modal: React.FC<{
         <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
           <Dialog.Panel
             as={motion.div}
-            className="relative transform overflow-hidden rounded-lg bg-tertiary-bg px-4 pb-4 pt-5 text-left shadow-xl sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
+            className="relative transform overflow-hidden rounded-lg bg-accent px-4 pb-4 pt-5 text-left shadow-xl sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
             initial={{
               opacity: 0,
               scale: 0.95,

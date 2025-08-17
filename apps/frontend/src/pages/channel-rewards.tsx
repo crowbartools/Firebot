@@ -1,11 +1,5 @@
-import { PageTitle } from "@/components/PageTitle";
-import { PageWrapper } from "@/components/PageWrapper";
-import { observer } from "mobx-react-lite";
-
-export const ChannelRewardsPage: React.FC = observer(() => {
-    return <PageWrapper>
-        <PageTitle title="Channel Rewards" />
-    </PageWrapper>
-})
+export function ChannelRewardsPage() {
+  return <div></div>;
+}
 
 export default ChannelRewardsPage;

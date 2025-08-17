@@ -1,0 +1,17 @@
+{
+  "extends": "tsconfig/base.json",
+  "include": ["src/**/*.ts"],
+  "compilerOptions": {
+    "module": "commonjs",
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./src/",
+    "incremental": true,
+    "noImplicitAny": true,
+    "noFallthroughCasesInSwitch": true
+  }
+}

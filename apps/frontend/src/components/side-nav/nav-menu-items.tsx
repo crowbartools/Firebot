@@ -1,21 +1,21 @@
 import {
-  AdjustmentsHorizontalIcon,
-  BanknotesIcon,
-  ChatBubbleBottomCenterIcon,
-  ClipboardDocumentListIcon,
-  ClockIcon,
-  Cog6ToothIcon,
-  ExclamationCircleIcon,
-  FireIcon,
-  GiftIcon,
-  MegaphoneIcon,
-  PuzzlePieceIcon,
-  QueueListIcon,
-  RectangleGroupIcon,
-  Square2StackIcon,
-  TagIcon,
-  UserGroupIcon,
-} from "@heroicons/react/16/solid";
+  ClipboardList,
+  Coins,
+  Copy,
+  Dices,
+  Flame,
+  Gift,
+  LayoutDashboard,
+  ListOrdered,
+  Megaphone,
+  MessageCircleWarning,
+  Quote,
+  Settings,
+  SlidersHorizontal,
+  Tags,
+  Timer,
+  UsersRound,
+} from "lucide-react";
 
 export interface MenuItem {
   className?: string;
@@ -29,7 +29,7 @@ export interface MenuItem {
 export const menuItems: Record<string, MenuItem[]> = {
   [""]: [
     {
-      icon: <RectangleGroupIcon />,
+      icon: <LayoutDashboard data-slot="icon" />,
       iconClassName: "",
       title: "Dashboard",
       route: "/",
@@ -37,49 +37,49 @@ export const menuItems: Record<string, MenuItem[]> = {
   ],
   Automation: [
     {
-      icon: <ExclamationCircleIcon />,
+      icon: <MessageCircleWarning data-slot="icon" />,
       iconClassName: "",
       title: "Commands",
       route: "/commands",
     },
     {
-      icon: <Square2StackIcon />,
+      icon: <Copy data-slot="icon" />,
       iconClassName: "",
       title: "Events",
       route: "/events",
     },
     {
-      icon: <ClockIcon />,
+      icon: <Timer data-slot="icon" />,
       iconClassName: "",
       title: "Time-Based",
       route: "/time-based",
     },
     {
-      icon: <ClipboardDocumentListIcon />,
+      icon: <ClipboardList data-slot="icon" />,
       iconClassName: "",
       title: "Preset Actions",
       route: "/preset-actions",
     },
     {
-      icon: <FireIcon />,
+      icon: <Flame data-slot="icon" />,
       iconClassName: "",
       title: "Hotkeys",
       route: "/hotkeys",
     },
     {
-      icon: <AdjustmentsHorizontalIcon />,
+      icon: <SlidersHorizontal data-slot="icon" />,
       iconClassName: "",
       title: "Counters",
       route: "/counters",
     },
     {
-      icon: <GiftIcon />,
+      icon: <Gift data-slot="icon" />,
       iconClassName: "",
       title: "Channel Rewards",
       route: "/channel-rewards",
     },
     {
-      icon: <QueueListIcon />,
+      icon: <ListOrdered data-slot="icon" />,
       iconClassName: "",
       title: "Queues",
       route: "/queues",
@@ -87,19 +87,19 @@ export const menuItems: Record<string, MenuItem[]> = {
   ],
   Engagement: [
     {
-      icon: <PuzzlePieceIcon />,
+      icon: <Dices data-slot="icon" />,
       iconClassName: "",
       title: "Games",
       route: "/games",
     },
     {
-      icon: <BanknotesIcon />,
+      icon: <Coins data-slot="icon" />,
       iconClassName: "",
       title: "Currency",
       route: "/currency",
     },
     {
-      icon: <ChatBubbleBottomCenterIcon />,
+      icon: <Quote data-slot="icon" />,
       iconClassName: "",
       title: "Quotes",
       route: "/quotes",
@@ -107,25 +107,25 @@ export const menuItems: Record<string, MenuItem[]> = {
   ],
   Management: [
     {
-      icon: <MegaphoneIcon />,
+      icon: <Megaphone data-slot="icon" />,
       iconClassName: "",
       title: "Moderation",
       route: "/moderation",
     },
     {
-      icon: <UserGroupIcon />,
+      icon: <UsersRound data-slot="icon" />,
       iconClassName: "",
       title: "Viewers",
       route: "/viewers",
     },
     {
-      icon: <TagIcon />,
+      icon: <Tags data-slot="icon" />,
       iconClassName: "",
       title: "Viewer Roles",
       route: "/viewer-roles",
     },
     {
-      icon: <Cog6ToothIcon />,
+      icon: <Settings data-slot="icon" />,
       iconClassName: "",
       title: "Settings",
       route: "/settings",

@@ -1,12 +1,15 @@
-import { ActionFlow } from "./actions";
+import { FirebotActionWorkflow } from "../actions";
 
-export type TriggerType = "command";
+export type ActionTriggerType = "command" | "event-trigger";
 
-export interface Trigger<T extends TriggerType, Metadata extends object> {
+export interface ActionTrigger<
+  T extends ActionTriggerType,
+  Data extends object,
+> {
   type: T;
   id: string;
   name?: string;
   description?: string;
-  metadata: Metadata;
-  actionFlow: ActionFlow;
+  data?: Data;
+  actionWorkflow: FirebotActionWorkflow;
 }

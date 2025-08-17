@@ -12,12 +12,14 @@ import { StreamingPlatformConfig } from "./config/streaming-platform.config";
 import configSchema from "./config/config.schema";
 import { ConnectionModule } from "connection/connection.module";
 import { CommandsModule } from "commands/commands.module";
+import { WorkflowsModule } from "workflows/workflows.module";
+import { EventEmitterModule } from "@nestjs/event-emitter";
 
 @Module({
   imports: [
-    // EventEmitterModule.forRoot({
-    //   global: true,
-    // }),
+    EventEmitterModule.forRoot({
+      global: true,
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ["../backend/.env"],
@@ -42,6 +44,7 @@ import { CommandsModule } from "commands/commands.module";
     RealTimeModule,
     StreamingPlatformModule,
     ConnectionModule,
+    WorkflowsModule,
     CommandsModule,
   ],
   controllers: [ExampleController],

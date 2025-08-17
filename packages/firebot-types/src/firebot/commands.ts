@@ -1,11 +1,11 @@
-import { Trigger } from "./trigger";
+import { ActionTrigger } from "./trigger";
 
-export interface CommandConfigMetadata {
+export interface CommandConfigData {
   trigger: string;
   scanWholeMessage?: boolean;
 }
 
-export type CommandConfig = Trigger<"command", CommandConfigMetadata>;
+export type CommandConfig = ActionTrigger<"command", CommandConfigData>;
 
 export interface CommandConfigsSettings {
   commands: CommandConfig[];

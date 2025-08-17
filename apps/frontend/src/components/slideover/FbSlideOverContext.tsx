@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+
 import { AnimatePresence, Variants, motion, useAnimate } from "motion/react";
 import {
   createContext,
@@ -174,7 +176,7 @@ export const FbSlideOverProvider: React.FC<{ children: React.ReactNode }> = ({
               <motion.div
                 id="slideover-bg"
                 key="slideover-bg"
-                className="fixed inset-0 bg-primary-bg/75"
+                className="fixed inset-0 bg-black/50"
                 initial={{
                   opacity: 0,
                 }}
@@ -220,7 +222,7 @@ export const FbSlideOverProvider: React.FC<{ children: React.ReactNode }> = ({
                           stiffness: 400,
                           damping: 32,
                         }}
-                        className="flex h-full flex-col overflow-y-scroll bg-tertiary-bg py-6 shadow-xl"
+                        className="flex h-full flex-col overflow-y-scroll bg-secondary py-6 shadow-xl"
                       >
                         <div className="px-4 sm:px-6">
                           <div className="flex items-start justify-between">
@@ -228,7 +230,7 @@ export const FbSlideOverProvider: React.FC<{ children: React.ReactNode }> = ({
                               {slideOverConfigs.length > 1 && (
                                 <button
                                   type="button"
-                                  className="relative rounded-md bg-tertiary-bg text-gray-300 hover:text-gray-400 border-none outline-hidden focus:text-white"
+                                  className="relative rounded-md bg-secondary text-gray-300 hover:text-gray-400 border-none outline-hidden focus:text-white"
                                   onClick={() => onDismiss(currentSlideOver.id)}
                                 >
                                   <span className="sr-only">Go back</span>
@@ -245,7 +247,7 @@ export const FbSlideOverProvider: React.FC<{ children: React.ReactNode }> = ({
                               <div className="ml-3 flex h-7 items-center">
                                 <button
                                   type="button"
-                                  className="relative rounded-md bg-tertiary-bg text-gray-300 hover:text-gray-400 border-none outline-hidden focus:text-white"
+                                  className="relative rounded-md bg-secondary text-gray-300 hover:text-gray-400 border-none outline-hidden focus:text-white"
                                   onClick={dismissEverything}
                                 >
                                   <span className="absolute -inset-2.5" />

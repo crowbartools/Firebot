@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, useRef } from "react";
 import ReconnectingWebSocket from "reconnecting-websocket";
 

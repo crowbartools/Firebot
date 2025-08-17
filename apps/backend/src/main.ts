@@ -8,12 +8,13 @@ import fastifyCookie from "@fastify/cookie";
 import { AuthService } from "./auth/auth.service";
 import { AppModule } from "./app.module";
 import { CustomWsAdaptor } from "./real-time/custom-ws-adaptor";
+import { FirebotExceptionFilter } from "misc/firebot-exception.filter";
 
 type AppArgs = {
-    WORKING_DIRECTORY_PATH?: string;
-    USER_DATA_PATH?: string;
-    FIREBOT_DATA_PATH?: string;
-    TEMP_DATA_PATH?: string;
+  WORKING_DIRECTORY_PATH?: string;
+  USER_DATA_PATH?: string;
+  FIREBOT_DATA_PATH?: string;
+  TEMP_DATA_PATH?: string;
 };
 
 async function bootstrap(
@@ -40,7 +41,7 @@ async function bootstrap(
   app.setGlobalPrefix("api");
 
   app.enableCors({
-    allowedHeaders: "*",
+    allowedHeaders: ["Content-Type", "Authorization"],
     origin: "http://localhost:3000",
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
@@ -50,6 +51,8 @@ async function bootstrap(
     type: VersioningType.URI,
     defaultVersion: "1",
   });
+
+  app.useGlobalFilters(new FirebotExceptionFilter());
 
   await app.listen(3001);
   return {

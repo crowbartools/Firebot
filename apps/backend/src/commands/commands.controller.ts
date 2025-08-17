@@ -1,52 +1,45 @@
-import { Body, Get, NotFoundException, Param, Patch } from "@nestjs/common";
+import {
+  Body,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
+} from "@nestjs/common";
 import { FirebotController } from "../misc/firebot-controller.decorator";
-import { CommandConfigsStore } from "../data-access/stores/command-configs.store";
 import { CommandConfig } from "firebot-types";
+import { CommandsService } from "./commands.service";
 
 @FirebotController({
-  path: "command",
+  path: "commands",
 })
-export class CommandController {
-  constructor(private readonly commandConfigsStore: CommandConfigsStore) {}
+export class CommandsController {
+  constructor(private readonly commandsService: CommandsService) {}
 
   @Get()
   async getAllCommands() {
-    return this.commandConfigsStore.getRoot().commands;
+    return this.commandsService.getAllCommands();
   }
 
   @Get(":commandId")
   async getCommand(@Param("commandId") commandId: string) {
-    const commandIndex = this.getCommandIndexById(commandId);
-    return this.commandConfigsStore.get("commands")[commandIndex];
+    const command = await this.commandsService.getCommand(commandId);
+    if (!command) {
+      throw new NotFoundException(`Command with id ${commandId} not found`);
+    }
+    return command;
   }
 
   @Patch(":commandId")
-  async saveCommand(
+  async updateCommand(
     @Param("commandId") commandId: string,
-    @Body() commandUpdate: Partial<CommandConfig>
+    @Body() commandUpdate: Partial<Omit<CommandConfig, "id">>
   ) {
-    const commands = this.commandConfigsStore.get("commands");
-    const commandIndex = this.getCommandIndexById(commandId);
-
-    commands[commandIndex] = {
-      ...commands[commandIndex],
-      ...commandUpdate,
-    };
-
-    this.commandConfigsStore.set("commands", commands);
-    return commands[commandIndex];
+    return this.commandsService.updateCommand(commandId, commandUpdate);
   }
 
-  private getCommandIndexById(commandId: string) {
-    const index = this.commandConfigsStore
-      .get("commands")
-      .findIndex((c) => c.id === commandId);
-
-    if (index === -1) {
-      throw new NotFoundException("Command not found");
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return index!;
+  @Post()
+  async createCommand(@Body() command: Omit<CommandConfig, "id">) {
+    return this.commandsService.createCommand(command);
   }
 }

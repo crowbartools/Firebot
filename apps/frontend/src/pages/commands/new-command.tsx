@@ -1,22 +1,32 @@
-import { PageTitle } from "@/components/PageTitle";
-import { PageWrapper } from "@/components/PageWrapper";
-import { Button } from "@/components/ui/button";
-import { ArrowLeftIcon } from "@heroicons/react/16/solid";
-import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
+import { useSetTrailingBreadcrumb } from "@/hooks/use-set-trailing-breadcrumb";
+import { v4 as uuid } from "uuid";
+import AddOrEditCommand from "@/components/commands/AddOrEditCommand";
 
-export const NewCommandPage: React.FC = observer(() => {
-  const router = useRouter();
+export function NewCommandPage() {
+  useSetTrailingBreadcrumb("New Command");
+
   return (
-    <PageWrapper>
-      <Button outline onClick={() => router.back()} className="mb-2">
-        <ArrowLeftIcon />
-        Back
-      </Button>
-      <PageTitle title="New Command" />
-      {/* <Button>Edit Actions</Button> */}
-    </PageWrapper>
+    <AddOrEditCommand
+      isNew
+      config={{
+        type: "command",
+        actionWorkflow: {
+          id: uuid(),
+          nodes: [
+            {
+              id: uuid(),
+              type: "trigger",
+              position: { x: 0, y: 0 },
+              schema: {
+                outcomes: [{ slug: "triggered" }],
+              },
+            },
+          ],
+          edges: [],
+        },
+      }}
+    />
   );
-});
+}
 
 export default NewCommandPage;

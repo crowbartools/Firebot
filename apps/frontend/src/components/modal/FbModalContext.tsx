@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+
 import { AnimatePresence } from "motion/react";
 import { createContext, useCallback, useContext, useState } from "react";
 import { Modal } from "./Modal";
