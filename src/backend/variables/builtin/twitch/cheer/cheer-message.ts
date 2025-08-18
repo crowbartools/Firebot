@@ -18,7 +18,7 @@ const model : ReplaceVariable = {
     evaluator: (trigger: Trigger) => {
         const cheerMessage = <string>(trigger.metadata.eventData.cheerMessage || "");
         return cheerMessage
-            .replace(/( |\b)[a-zA-Z]+\d+( |\b)/g, "")
+            .replace(/[a-zA-Z]+\d+( |\b)/g, "")
             .trim();
     }
 };
