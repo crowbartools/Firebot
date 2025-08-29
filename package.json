@@ -25,11 +25,11 @@
         "@types/archiver": "^6.0.3",
         "@types/express": "^4.17.21",
         "@types/luxon": "^3.1.0",
-        "@types/node": "^20.17.12",
+        "@types/node": "^22.18.0",
         "@types/unzipper": "^0.10.11",
         "@typescript-eslint/eslint-plugin": "^5.62.0",
         "@typescript-eslint/parser": "^5.62.0",
-        "electron": "^33.3.1",
+        "electron": "^37.4.0",
         "electron-installer-dmg": "^5.0.1",
         "electron-winstaller": "^5.4.0",
         "eslint": "^8.56.0",
@@ -124,10 +124,12 @@
         "ws": "^8.2.2",
         "yargs-parser": "^21.1.1"
     },
+    "overrides": {
+        "appdmg": "github:SReject/node-appdmg#1f5eaeb054a74ec917db7c75a8619b6d009f0f73"
+    },
     "optionalDependencies": {
         "@dennisrijsdijk/electron-installer-redhat": "^3.5.0",
-        "electron-installer-debian": "^3.2.0",
-        "electron-installer-dmg": "github:SReject/electron-installer-dmg#9bdb5217b078c724918271549f34d362aecbf6bb"
+        "electron-installer-debian": "^3.2.0"
     },
     "volta": {
         "node": "20.18.1",
