@@ -85,11 +85,8 @@ jobs:
 
       - name: MacOS Build Prep
         if: runner.os == 'macOS'
-        # Force install this dep until node-appdmg then electron-installer-dmg gets updated
         # appdmg will fail to install without python setuptools since gh runners now use python 3.12. See: https://github.com/electron/forge/issues/3371
-        run: |
-          brew install python-setuptools
-          npm install github:SReject/electron-installer-dmg#9bdb5217b078c724918271549f34d362aecbf6bb
+        run: brew install python-setuptools
 
       - name: Install Global Dependencies
         run: npm install --global --production --omit=dev grunt-cli
