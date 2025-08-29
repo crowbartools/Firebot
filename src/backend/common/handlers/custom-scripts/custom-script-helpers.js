@@ -2,14 +2,12 @@
 const twitchChat = require("../../../chat/twitch-chat");
 const twitchApi = require("../../../twitch-api/api");
 const profileManager = require("../../profile-manager");
-const settings = require('../../settings-manager').SettingsManager;
+const settings = require("../../settings-manager").SettingsManager;
 const path = require("path");
 const logger = require("../../../logwrapper");
-const {
-    app
-} = require('electron');
+const { app } = require("electron");
 
-const accountAccess = require('../../account-access');
+const accountAccess = require("../../account-access");
 
 function buildModules(scriptManifest) {
     const streamerName = accountAccess.getAccounts().streamer.username || "Unknown Streamer";
@@ -19,28 +17,31 @@ function buildModules(scriptManifest) {
 
     const customRequest = request.defaults({
         headers: {
-            'User-Agent': `Firebot/${appVersion};CustomScript/${scriptManifest.name}/${scriptManifest.version};User/${streamerName}`
+            "User-Agent": `Firebot/${appVersion};CustomScript/${scriptManifest.name}/${scriptManifest.version};User/${streamerName}`
         }
     });
 
     // safe guard: enforce our user-agent
     customRequest.init = function init(options) {
         if (options != null && options.headers != null) {
-            delete options.headers['User-Agent'];
+            delete options.headers["User-Agent"];
         }
         customRequest.prototype.init.call(this, options);
     };
 
     const notificationManager = require("../../../notifications/notification-manager").default;
 
+    const scriptNameNormalized = scriptManifest.name.replace(/[#%&{}\\<>*?/$!'":@`|=\s-]+/g, "-").toLowerCase();
+    const scriptDataDir = path.resolve(profileManager.getPathInProfile("/script-data/"), `./${scriptNameNormalized}/`);
+
     return {
         request: customRequest,
-        spawn: require('child_process').spawn,
-        childProcess: require('child_process'),
-        fs: require('fs-extra'),
-        path: require('path'),
-        JsonDb: require('node-json-db').JsonDB,
-        moment: require('moment'),
+        spawn: require("child_process").spawn,
+        childProcess: require("child_process"),
+        fs: require("fs-extra"),
+        path: require("path"),
+        JsonDb: require("node-json-db").JsonDB,
+        moment: require("moment"),
         logger: logger,
         // thin chat shim for basic backwards compatibility
         chat: {
@@ -94,39 +95,52 @@ function buildModules(scriptManifest) {
 
         notificationManager: {
             addNotification: (notificationBase, permanentlySave = true) => {
-                return notificationManager.addNotification({
-                    ...notificationBase,
-                    source: "script",
-                    scriptName: scriptManifest.name ?? "unknown"
-                }, permanentlySave);
+                return notificationManager.addNotification(
+                    {
+                        ...notificationBase,
+                        source: "script",
+                        scriptName: scriptManifest.name ?? "unknown"
+                    },
+                    permanentlySave
+                );
             },
             getNotification: (id) => {
                 const notification = notificationManager.getNotification(id);
-                if (notification && notification.source === "script" && notification.scriptName === (scriptManifest.name ?? "unknown")) {
+                if (
+                    notification &&
+                    notification.source === "script" &&
+                    notification.scriptName === (scriptManifest.name ?? "unknown")
+                ) {
                     return notification;
                 }
                 return null;
             },
             getNotifications: () => {
-                return notificationManager.getNotifications()
-                    .filter(n => n.source === "script" && n.scriptName === (scriptManifest.name ?? "unknown"));
+                return notificationManager
+                    .getNotifications()
+                    .filter((n) => n.source === "script" && n.scriptName === (scriptManifest.name ?? "unknown"));
             },
             deleteNotification: (id) => {
                 const notification = notificationManager.getNotification(id);
-                if (notification && notification.source === "script" && notification.scriptName === (scriptManifest.name ?? "unknown")) {
+                if (
+                    notification &&
+                    notification.source === "script" &&
+                    notification.scriptName === (scriptManifest.name ?? "unknown")
+                ) {
                     notificationManager.deleteNotification(id);
                 }
             },
             clearAllNotifications: () => {
-                notificationManager.getNotifications()
-                    .filter(n => n.source === "script" && n.scriptName === (scriptManifest.name ?? "unknown"))
-                    .forEach(n => notificationManager.deleteNotification(n.id));
+                notificationManager
+                    .getNotifications()
+                    .filter((n) => n.source === "script" && n.scriptName === (scriptManifest.name ?? "unknown"))
+                    .forEach((n) => notificationManager.deleteNotification(n.id));
             }
         },
-        uiExtensionManager: require("../../../ui-extensions/ui-extension-manager")
+        uiExtensionManager: require("../../../ui-extensions/ui-extension-manager"),
+        scriptDataDir
     };
 }
-
 
 function buildRunRequest(scriptManifest, params, trigger) {
     return {
@@ -157,9 +171,7 @@ function mapParameters(parameterData) {
         Object.keys(parameterData).forEach((k) => {
             const param = parameterData[k];
             if (param != null) {
-                simpleParams[k] = param.value == null && param.value !== ""
-                    ? param.default
-                    : param.value;
+                simpleParams[k] = param.value == null && param.value !== "" ? param.default : param.value;
             }
         });
     }
