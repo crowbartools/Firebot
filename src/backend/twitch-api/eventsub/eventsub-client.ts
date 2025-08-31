@@ -9,8 +9,8 @@ import twitchApi from "../api";
 import twitchStreamInfoPoll from "../stream-info-manager";
 import rewardManager from "../../channel-rewards/channel-reward-manager";
 import chatRolesManager from "../../roles/chat-roles-manager";
-import { EventSubAutoModMessageHoldV2Subscription } from "./custom-subscriptions/automod-v2/automod-message-hold-v2-subscription";
-import { EventSubAutoModMessageUpdateV2Subscription } from "./custom-subscriptions/automod-v2/automod-message-update-v2-subscription";
+import chatHelpers from "../../chat/chat-helpers";
+import viewerDatabase from "../../viewers/viewer-database";
 
 class TwitchEventSubClient {
     private _eventSubListener: EventSubWsListener;
@@ -68,42 +68,24 @@ class TwitchEventSubClient {
         this._subscriptions.push(bitsSubscription);
 
         // AutoMod message hold v2
-        // @ts-ignore
-        const autoModMessageHoldSub = this._eventSubListener._genericSubscribe(
-            EventSubAutoModMessageHoldV2Subscription,
-            async (data) => {
-                const chatHelpers = require("../../chat/chat-helpers");
-                const firebotChatMessage = await chatHelpers.buildViewerFirebotChatMessageFromAutoModMessage(data);
-                frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
-            },
-            this._eventSubListener,
-            streamer.userId,
-            streamer.userId
-        );
+        const autoModMessageHoldSub = this._eventSubListener.onAutoModMessageHoldV2(streamer.userId, streamer.userId, async (event) => {
+            const firebotChatMessage = await chatHelpers.buildViewerFirebotChatMessageFromAutoModMessage(event);
+            frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
+        });
         this._subscriptions.push(autoModMessageHoldSub);
 
         // AutoMod message update v2
-        // @ts-ignore
-        const autoModMessageUpdateSub = this._eventSubListener._genericSubscribe(
-            EventSubAutoModMessageUpdateV2Subscription,
-            (data) => {
-                frontendCommunicator.send("twitch:chat:automod-update", {
-                    messageId: data.message_id,
-                    newStatus: data.status,
-                    resolverName: data.moderator_user_login,
-                    resolverId: data.moderator_user_id,
-                    flaggedPhrases: (data.reason === "automod"
-                        ? data.automod?.boundaries ?? []
-                        : data.blocked_term?.terms_found?.map(t => t.boundary) ?? []
-                    ).map((boundary) => {
-                        return data.message.text.substring(boundary.start_pos, boundary.end_pos + 1);
-                    })
-                });
-            },
-            this._eventSubListener,
-            streamer.userId,
-            streamer.userId
-        );
+        const autoModMessageUpdateSub = this._eventSubListener.onAutoModMessageUpdateV2(streamer.userId, streamer.userId, (event) => {
+            frontendCommunicator.send("twitch:chat:automod-update", {
+                messageId: event.messageId,
+                newStatus: event.status,
+                resolverName: event.moderatorName,
+                resolverId: event.moderatorId,
+                flaggedPhrases: event.reason === "automod"
+                    ? event.autoMod?.boundaries?.map(b => b.text) ?? []
+                    : event.blockedTerms?.map(b => b.text) ?? []
+            });
+        });
         this._subscriptions.push(autoModMessageUpdateSub);
 
         // Channel custom reward
@@ -588,6 +570,17 @@ class TwitchEventSubClient {
                     );
                     break;
 
+                case "delete":
+                    twitchEventsHandler.chatMessage.triggerChatMessageDeleted(
+                        event.userName,
+                        event.userId,
+                        event.userDisplayName,
+                        event.messageText,
+                        event.messageId
+                    );
+                    frontendCommunicator.send("twitch:chat:message:deleted", event.messageId);
+                    break;
+
                 // Reserving; already handled in bespoke events; less expensive to move those here.
                 case "ban":
                 case "unban":
@@ -602,7 +595,6 @@ class TwitchEventSubClient {
                 case "add_permitted_term":
                 case "approve_unban_request":
                 case "deny_unban_request":
-                case "delete":
                 case "remove_blocked_term":
                 case "remove_permitted_term":
                 case "warn":
@@ -613,7 +605,7 @@ class TwitchEventSubClient {
         this._subscriptions.push(channelModerateSubscription);
 
         // Chat notification
-        const chatNotificationSubscription = this._eventSubListener.onChannelChatNotification(streamer.userId, streamer.userId, (event) => {
+        const chatNotificationSubscription = this._eventSubListener.onChannelChatNotification(streamer.userId, streamer.userId, async (event) => {
             switch (event.type) {
                 case "bits_badge_tier":
                     twitchEventsHandler.cheer.triggerBitsBadgeUnlock(
@@ -624,6 +616,7 @@ class TwitchEventSubClient {
                         event.newTier
                     );
                     break;
+
                 case "resub":
                 case "sub":
                     twitchEventsHandler.sub.triggerSub(
@@ -638,7 +631,57 @@ class TwitchEventSubClient {
                         event.type === "resub"
                     );
                     break;
+
+                case "community_sub_gift":
+                    twitchEventsHandler.giftSub.triggerCommunitySubGift(
+                        event.chatterDisplayName ?? "An Anonymous Gifter",
+                        event.id,
+                        event.amount
+                    );
+                    break;
+
+                case "sub_gift":
+                    await twitchEventsHandler.giftSub.triggerSubGift(
+                        event.chatterDisplayName ?? "An Anonymous Gifter",
+                        event.chatterName,
+                        event.chatterId,
+                        event.chatterIsAnonymous,
+                        event.recipientDisplayName,
+                        event.tier,
+                        event.durationMonths,
+                        event.communityGiftId
+                    );
+                    await viewerDatabase.calculateAutoRanks(event.recipientId);
+                    break;
+
+                case "gift_paid_upgrade":
+                    {
+                        // IRC chat included this in the event payload. EventSub does not.
+                        const upgradeTier = (await (await event.getBroadcaster()).getSubscriber(event.chatterId)).tier;
+
+                        twitchEventsHandler.giftSub.triggerSubGiftUpgrade(
+                            event.chatterName,
+                            event.chatterId,
+                            event.chatterDisplayName,
+                            event.gifterDisplayName,
+                            upgradeTier
+                        );
+                    }
+                    await viewerDatabase.calculateAutoRanks(event.chatterId);
+                    break;
+
+                case "prime_paid_upgrade":
+                    twitchEventsHandler.sub.triggerPrimeUpgrade(
+                        event.chatterName,
+                        event.chatterId,
+                        event.chatterDisplayName,
+                        event.tier
+                    );
+                    await viewerDatabase.calculateAutoRanks(event.chatterId);
+                    break;
+
                 default:
+                    logger.debug(`Unknown EventSub chat notification type: ${event.type}. Metadata:`, event);
                     break;
             }
         });

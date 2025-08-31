@@ -160,7 +160,6 @@ module.exports = {
                     },
                     value: "1000"
                 },
-                giftSubMonths: 5,
                 giftDuration: 1,
                 gifteeUsername: "MageEnclave"
             },
@@ -171,7 +170,7 @@ module.exports = {
                         eventData.giftDuration > 1 ? ` **${eventData.giftDuration} month** ` : ""
                     } **Tier ${eventData.subPlan.replace("000", "")}** sub to **${
                         eventData.gifteeUsername
-                    }** (Subbed for ${eventData.giftSubMonths} month${eventData.giftSubMonths > 1 ? "s" : ""} total)`;
+                    }**`;
                 }
             }
         },
@@ -196,11 +195,11 @@ module.exports = {
                 giftReceivers: {
                     type: "gift-receivers-list",
                     value: [
-                        { gifteeUsername: "User1", giftSubMonths: 3 },
-                        { gifteeUsername: "User2", giftSubMonths: 5 },
-                        { gifteeUsername: "User3", giftSubMonths: 8 },
-                        { gifteeUsername: "User4", giftSubMonths: 10 },
-                        { gifteeUsername: "User5", giftSubMonths: 16 }
+                        { gifteeUsername: "User1" },
+                        { gifteeUsername: "User2" },
+                        { gifteeUsername: "User3" },
+                        { gifteeUsername: "User4" },
+                        { gifteeUsername: "User5" }
                     ]
                 }
             },
