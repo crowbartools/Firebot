@@ -7,6 +7,7 @@ import giftCount from "./gift-count";
 import giftDuration from "./gift-duration";
 import goldenKappaTrain from "./golden-kappa-train";
 import isAnonymous from "./is-anonymous";
+import lifetimeGiftCount from "./lifetime-gift-count";
 import message from "./message";
 import raidViewerCount from "./raid-viewer-count";
 import rewardName from "./reward-name";
@@ -29,6 +30,7 @@ export default [
     giftDuration,
     goldenKappaTrain,
     isAnonymous,
+    lifetimeGiftCount,
     message,
     raidViewerCount,
     rewardName,

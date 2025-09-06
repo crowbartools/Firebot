@@ -161,7 +161,8 @@ module.exports = {
                     value: "1000"
                 },
                 giftDuration: 1,
-                gifteeUsername: "MageEnclave"
+                gifteeUsername: "MageEnclave",
+                lifetimeGiftCount: 1
             },
             activityFeed: {
                 icon: "fad fa-gift",
@@ -201,7 +202,8 @@ module.exports = {
                         { gifteeUsername: "User4" },
                         { gifteeUsername: "User5" }
                     ]
-                }
+                },
+                lifetimeGiftCount: 5
             },
             activityFeed: {
                 icon: "fad fa-gifts",

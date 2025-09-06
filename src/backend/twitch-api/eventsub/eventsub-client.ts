@@ -650,6 +650,7 @@ class TwitchEventSubClient {
                         event.recipientDisplayName,
                         event.tier,
                         event.durationMonths,
+                        event.cumulativeAmount,
                         event.communityGiftId
                     );
                     await viewerDatabase.calculateAutoRanks(event.recipientId);

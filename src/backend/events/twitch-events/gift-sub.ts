@@ -33,6 +33,7 @@ export async function triggerSubGift(
     gifteeDisplayName: string,
     subPlan: string,
     giftDuration: number,
+    lifetimeGiftCount: number,
     communityGiftId: string = null
 ): Promise<void> {
     if (communityGiftId) {
@@ -68,7 +69,8 @@ export async function triggerSubGift(
                     subPlan,
                     isAnonymous,
                     gifterUsername: gifterDisplayName,
-                    giftReceivers: giftReceivers
+                    giftReceivers: giftReceivers,
+                    lifetimeGiftCount
                 });
 
                 logger.debug(`Community gift sub event triggered for ID ${communityGiftId}, deleting cache`);
@@ -86,7 +88,8 @@ export async function triggerSubGift(
             gifterUsername: gifterDisplayName,
             subPlan,
             isAnonymous,
-            giftDuration
+            giftDuration,
+            lifetimeGiftCount
         });
         logger.debug(`Gift Sub event triggered`);
     }
