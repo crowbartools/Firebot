@@ -167,30 +167,7 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
         );
     });
 
-    streamerChatClient.onMessageRemove((_channel, messageId, message) => {
-        twitchEventsHandler.chatMessage.triggerChatMessageDeleted(message);
-        frontendCommunicator.send("twitch:chat:message:deleted", messageId);
-    });
-
     streamerChatClient.onResub(async (_channel, _user, subInfo, msg) => {
-        try {
-            if (subInfo.originalGiftInfo != null) {
-                twitchEventsHandler.sub.triggerSub(
-                    msg.userInfo.userName,
-                    subInfo.userId,
-                    subInfo.displayName,
-                    subInfo.plan,
-                    subInfo.months || 1,
-                    subInfo.message ?? "",
-                    subInfo.streak || 1,
-                    false,
-                    true
-                );
-            }
-        } catch (error) {
-            logger.error("Failed to parse resub message (multi-month gifted sub)", error);
-        }
-
         try {
             if (subInfo.message != null && subInfo.message.length > 0) {
                 const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, subInfo.message);
@@ -202,50 +179,6 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
         } catch (error) {
             logger.error("Failed to parse resub message", error);
         }
-        viewerDatabase.calculateAutoRanks(subInfo.userId);
-    });
-
-    streamerChatClient.onCommunitySub((_channel, _user, subInfo) => {
-        twitchEventsHandler.giftSub.triggerCommunitySubGift(
-            subInfo.gifterDisplayName ?? "An Anonymous Gifter",
-            subInfo.plan,
-            subInfo.count
-        );
-    });
-
-    streamerChatClient.onSubGift((_channel, _user, subInfo) => {
-        twitchEventsHandler.giftSub.triggerSubGift(
-            subInfo.gifterDisplayName ?? "An Anonymous Gifter",
-            subInfo.gifter,
-            subInfo.gifterUserId,
-            !subInfo.gifterUserId,
-            subInfo.displayName,
-            subInfo.plan,
-            subInfo.giftDuration,
-            subInfo.months,
-            subInfo.streak ?? 1
-        );
-        viewerDatabase.calculateAutoRanks(subInfo.userId);
-    });
-
-    streamerChatClient.onGiftPaidUpgrade((_channel, _user, subInfo, msg) => {
-        twitchEventsHandler.giftSub.triggerSubGiftUpgrade(
-            msg.userInfo.userName,
-            subInfo.userId,
-            subInfo.displayName,
-            subInfo.gifterDisplayName,
-            subInfo.plan
-        );
-        viewerDatabase.calculateAutoRanks(subInfo.userId);
-    });
-
-    streamerChatClient.onPrimePaidUpgrade((_channel, _user, subInfo, msg) => {
-        twitchEventsHandler.sub.triggerPrimeUpgrade(
-            msg.userInfo.userName,
-            subInfo.userId,
-            subInfo.displayName,
-            subInfo.plan
-        );
         viewerDatabase.calculateAutoRanks(subInfo.userId);
     });
 };

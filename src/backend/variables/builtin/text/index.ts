@@ -1,3 +1,8 @@
+import atob from './atob';
+import base64Decode from './base64-decode';
+import base64Encode from './base64-encode';
+import btoa from './btoa';
+
 import regexExec from './regex-exec';
 import regexMatches from './regex-matches';
 import regexMatchesRaw from './regex-matches-raw';
@@ -29,6 +34,10 @@ import textWord from './text-word';
 
 
 export default [
+    atob,
+    base64Decode,
+    base64Encode,
+    btoa,
     regexExec,
     regexMatches,
     regexMatchesRaw,

@@ -534,7 +534,7 @@ frontendCommunicator.on("get-all-commands", () => {
     };
 });
 
-frontendCommunicator.onAsync("get-firebot-profile-token", () => {
+frontendCommunicator.onAsync("sync-profile-data-to-crowbar-api", () => {
     const cloudSync = require('../../cloud-sync/profile-sync');
     return cloudSync.syncProfileData({
         username: undefined,

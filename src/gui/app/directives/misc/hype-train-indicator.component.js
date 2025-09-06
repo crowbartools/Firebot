@@ -23,6 +23,12 @@
                         tooltip-append-to-body="true"
                         tooltip-placement="bottom"
                     >Golden Kappa</span>
+                    <span ng-if="hts.isTreasureTrain"
+                        class="level-pill golden"
+                        uib-tooltip="Congratulations, a Treasure Train is a rare event! Once the Treasure Train reaches a certain threshold, Twitch will discount tier 1 community gift subs for the remainder of the train."
+                        tooltip-append-to-body="true"
+                        tooltip-placement="bottom"
+                    >Treasure</span>
                     <span ng-if="!hts.hypeTrainEnded" class="pl-2 font-bold">{{hts.currentProgressPercentage}}%</span>
                     <span class="pl-2 time-left">({{!hts.hypeTrainEnded ? timeLeftDisplay : 'Ended'}})</span>
                 </div>
