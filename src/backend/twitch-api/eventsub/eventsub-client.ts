@@ -212,7 +212,7 @@ class TwitchEventSubClient {
         this._subscriptions.push(shoutoutReceivedSubscription);
 
         // Hype Train start
-        const hypeTrainBeginSubscription = this._eventSubListener.onChannelHypeTrainBegin(streamer.userId, (event) => {
+        const hypeTrainBeginSubscription = this._eventSubListener.onChannelHypeTrainBeginV2(streamer.userId, (event) => {
             twitchEventsHandler.hypeTrain.triggerHypeTrainStart(
                 event.total,
                 event.progress,
@@ -220,15 +220,15 @@ class TwitchEventSubClient {
                 event.level,
                 event.startDate,
                 event.expiryDate,
-                event.lastContribution,
                 event.topContributors,
-                event.isGoldenKappaTrain
+                event.type,
+                event.isSharedTrain
             );
         });
         this._subscriptions.push(hypeTrainBeginSubscription);
 
         // Hype Train progress
-        const hypeTrainProgressSubscription = this._eventSubListener.onChannelHypeTrainProgress(streamer.userId, (event) => {
+        const hypeTrainProgressSubscription = this._eventSubListener.onChannelHypeTrainProgressV2(streamer.userId, (event) => {
             twitchEventsHandler.hypeTrain.triggerHypeTrainProgress(
                 event.total,
                 event.progress,
@@ -236,15 +236,15 @@ class TwitchEventSubClient {
                 event.level,
                 event.startDate,
                 event.expiryDate,
-                event.lastContribution,
                 event.topContributors,
-                event.isGoldenKappaTrain
+                event.type,
+                event.isSharedTrain
             );
         });
         this._subscriptions.push(hypeTrainProgressSubscription);
 
         // Hype Train end
-        const hypeTrainEndSubscription = this._eventSubListener.onChannelHypeTrainEnd(streamer.userId, (event) => {
+        const hypeTrainEndSubscription = this._eventSubListener.onChannelHypeTrainEndV2(streamer.userId, (event) => {
             twitchEventsHandler.hypeTrain.triggerHypeTrainEnd(
                 event.total,
                 event.level,
@@ -252,7 +252,8 @@ class TwitchEventSubClient {
                 event.endDate,
                 event.cooldownEndDate,
                 event.topContributors,
-                event.isGoldenKappaTrain
+                event.type,
+                event.isSharedTrain
             );
         });
         this._subscriptions.push(hypeTrainEndSubscription);
