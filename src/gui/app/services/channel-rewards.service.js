@@ -1,10 +1,10 @@
 "use strict";
 
-(function() {
+(function () {
 
     angular
         .module("firebotApp")
-        .factory("channelRewardsService", function($q,
+        .factory("channelRewardsService", function ($q,
             backendCommunicator, utilityService, objectCopyHelper, ngToast) {
             const service = {};
 
@@ -64,7 +64,7 @@
                     resolveObj: {
                         reward: () => reward
                     },
-                    closeCallback: () => {}
+                    closeCallback: () => { }
                 });
             };
 
@@ -160,8 +160,17 @@
                 }));
             };
 
+            backendCommunicator.on("channel-rewards-updated", (channelRewards) => {
+                service.channelRewards = channelRewards;
+            });
+
             backendCommunicator.on("channel-reward-updated", (channelReward) => {
                 updateChannelReward(channelReward);
+            });
+
+            backendCommunicator.on("channel-reward-deleted", (channelRewardId) => {
+                service.channelRewards = service.channelRewards.filter(cr => cr.id !== channelRewardId);
+                delete service.redemptions[channelRewardId];
             });
 
             backendCommunicator.on("channel-reward-redemptions-updated", (redemptions) => {
