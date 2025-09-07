@@ -3,12 +3,12 @@ import { DateTime } from "luxon";
 import { SettingsManager } from "../../common/settings-manager";
 import eventManager from "../../events/EventManager";
 import logger from "../../logwrapper";
+import { wait } from "../../utility";
 
 const communitySubCache = new NodeCache({ stdTTL: 10, checkperiod: 2 });
 
 interface CommunityGiftSubRecipient {
-    gifteeUsername: string,
-    giftSubMonths: number
+    gifteeUsername: string
 }
 
 interface CommunityGiftSubCache {
@@ -18,14 +18,14 @@ interface CommunityGiftSubCache {
 
 export function triggerCommunitySubGift(
     gifterDisplayName: string,
-    subPlan: string,
+    communityGiftId: string,
     subCount: number
 ): void {
-    logger.debug(`Received ${subCount} community gift subs from ${gifterDisplayName} at ${DateTime.now().toFormat("HH:mm:ss:SSS")}`);
-    communitySubCache.set<CommunityGiftSubCache>(`${gifterDisplayName}:${subPlan}`, {subCount, giftReceivers: []});
+    logger.debug(`Received ${subCount} community gift subs from ${gifterDisplayName} (ID: ${communityGiftId}) at ${DateTime.now().toFormat("HH:mm:ss:SSS")}`);
+    communitySubCache.set<CommunityGiftSubCache>(communityGiftId, {subCount, giftReceivers: []});
 }
 
-export function triggerSubGift(
+export async function triggerSubGift(
     gifterDisplayName: string,
     gifterUserName: string,
     gifterUserId: string,
@@ -33,63 +33,66 @@ export function triggerSubGift(
     gifteeDisplayName: string,
     subPlan: string,
     giftDuration: number,
-    giftSubMonths: number,
-    streak: number
-): void {
-    if (SettingsManager.getSetting("IgnoreSubsequentSubEventsAfterCommunitySub")) {
-        logger.debug(`Attempting to process community gift sub from ${gifterDisplayName} at ${DateTime.now().toFormat("HH:mm:ss:SSS")}`);
-        const cacheKey = `${gifterDisplayName}:${subPlan}`;
+    lifetimeGiftCount: number,
+    communityGiftId: string = null
+): Promise<void> {
+    if (communityGiftId) {
+        logger.debug(`Attempting to process community gift sub from ${gifterDisplayName} (ID: ${communityGiftId}) at ${DateTime.now().toFormat("HH:mm:ss:SSS")}`);
 
-        const cache = communitySubCache.get<CommunityGiftSubCache>(cacheKey);
-        if (cache != null) {
-            const communityCount = cache.subCount;
-            const giftReceivers = cache.giftReceivers;
+        let cache = communitySubCache.get<CommunityGiftSubCache>(communityGiftId);
 
-            if (communityCount != null) {
-                if (communityCount > 0) {
-                    const newCount = communityCount - 1;
-                    giftReceivers.push({ gifteeUsername: gifteeDisplayName, giftSubMonths: streak});
+        // There's a race condition where the individual gift sub may come in before the community one.
+        // Let's just wait here until the community one shows up, then process the individual one.
+        if (cache == null) {
+            logger.debug(`Community gift cache doesn't contain an entry for ${communityGiftId} yet. Waiting...`);
 
-                    if (newCount > 0) {
-                        communitySubCache.set<CommunityGiftSubCache>(cacheKey, {subCount: newCount, giftReceivers: giftReceivers});
-                    } else {
-                        eventManager.triggerEvent("twitch", "community-subs-gifted", {
-                            username: gifterUserName,
-                            userId: gifterUserId,
-                            userDisplayName: gifterDisplayName,
-                            subCount: giftReceivers.length,
-                            subPlan,
-                            isAnonymous,
-                            gifterUsername: gifterDisplayName,
-                            giftReceivers: giftReceivers
-                        });
-
-                        logger.debug(`Community gift sub event triggered, deleting cache`);
-                        communitySubCache.del(cacheKey);
-                    }
-
-                    return;
-                }
-            } else {
-                logger.debug(`No community gift sub count found in cache`, cache);
+            while (cache == null) {
+                await wait(250);
+                cache = communitySubCache.get<CommunityGiftSubCache>(communityGiftId);
             }
-        } else {
-            logger.debug(`No community gift sub data found in cache`);
+        }
+
+        let communityCount = cache.subCount;
+        const giftReceivers = cache.giftReceivers;
+
+        if (communityCount > 0) {
+            giftReceivers.push({ gifteeUsername: gifteeDisplayName });
+
+            if (--communityCount > 0) {
+                communitySubCache.set<CommunityGiftSubCache>(communityGiftId, {subCount: communityCount, giftReceivers: giftReceivers});
+            } else {
+                eventManager.triggerEvent("twitch", "community-subs-gifted", {
+                    username: gifterUserName,
+                    userId: gifterUserId,
+                    userDisplayName: gifterDisplayName,
+                    subCount: giftReceivers.length,
+                    subPlan,
+                    isAnonymous,
+                    gifterUsername: gifterDisplayName,
+                    giftReceivers: giftReceivers,
+                    lifetimeGiftCount
+                });
+
+                logger.debug(`Community gift sub event triggered for ID ${communityGiftId}, deleting cache`);
+                communitySubCache.del(communityGiftId);
+            }
         }
     }
 
-    eventManager.triggerEvent("twitch", "subs-gifted", {
-        username: gifterUserName,
-        userId: gifterUserId,
-        userDisplayName: gifterDisplayName,
-        giftSubMonths,
-        gifteeUsername: gifteeDisplayName,
-        gifterUsername: gifterDisplayName,
-        subPlan,
-        isAnonymous,
-        giftDuration
-    });
-    logger.debug(`Gift Sub event triggered`);
+    if (communityGiftId == null || SettingsManager.getSetting("IgnoreSubsequentSubEventsAfterCommunitySub") !== true) {
+        eventManager.triggerEvent("twitch", "subs-gifted", {
+            username: gifterUserName,
+            userId: gifterUserId,
+            userDisplayName: gifterDisplayName,
+            gifteeUsername: gifteeDisplayName,
+            gifterUsername: gifterDisplayName,
+            subPlan,
+            isAnonymous,
+            giftDuration,
+            lifetimeGiftCount
+        });
+        logger.debug(`Gift Sub event triggered`);
+    }
 }
 
 export function triggerSubGiftUpgrade(
