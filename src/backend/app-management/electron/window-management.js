@@ -529,6 +529,10 @@ async function createMainWindow() {
             createStreamPreviewWindow();
         }
 
+        if (SettingsManager.getSetting("OpenEffectQueueMonitorOnLaunch") === true) {
+            createEffectQueueMonitorWindow();
+        }
+
         fileOpenHelpers.setWindowReady(true);
     });
 
