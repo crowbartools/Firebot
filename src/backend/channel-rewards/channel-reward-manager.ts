@@ -14,12 +14,15 @@ import { EffectList } from "../../types/effects";
 class ChannelRewardManager {
     channelRewards: Record<string, SavedChannelReward> = {};
     private _channelRewardRedemptions: Record<string, RewardRedemption[]> = {};
+    private _eligible = false;
 
     constructor() {
         frontendCommunicator.onAsync("get-channel-reward-count",
             twitchApi.channelRewards.getTotalChannelRewardCount);
 
         frontendCommunicator.onAsync("get-channel-rewards", async () => Object.values(this.channelRewards));
+
+        frontendCommunicator.onAsync("get-channel-rewards-eligibility", async () => this._eligible);
 
         frontendCommunicator.onAsync("save-channel-reward",
             (channelReward: SavedChannelReward) => this.saveChannelReward(channelReward));
@@ -79,10 +82,6 @@ class ChannelRewardManager {
     }
 
     async loadChannelRewards() {
-        if (accountAccess.getAccounts().streamer.broadcasterType === "") {
-            return;
-        }
-
         logger.debug(`Attempting to load channel rewards...`);
 
         try {
@@ -95,6 +94,10 @@ class ChannelRewardManager {
             if (twitchManageableRewards == null) {
                 logger.error("Manageable Twitch channel rewards returned null!");
                 this.channelRewards = channelRewardsData;
+
+                this._eligible = false;
+                frontendCommunicator.send("channel-rewards-eligibility-changed", false);
+
                 return;
             }
 
@@ -114,6 +117,10 @@ class ChannelRewardManager {
             if (twitchUnmanageableRewards == null) {
                 logger.error("Unmanageable Twitch channel rewards returned null!");
                 this.channelRewards = channelRewardsData;
+
+                this._eligible = false;
+                frontendCommunicator.send("channel-rewards-eligibility-changed", false);
+
                 return;
             }
 
@@ -159,6 +166,8 @@ class ChannelRewardManager {
             logger.debug(`Loaded channel rewards.`);
 
             frontendCommunicator.send("channel-rewards-updated", Object.values(this.channelRewards));
+            this._eligible = true;
+            frontendCommunicator.send("channel-rewards-eligibility-changed", true);
         } catch (err) {
             logger.warn(`There was an error reading channel rewards file.`, err);
         }

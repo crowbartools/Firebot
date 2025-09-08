@@ -31,6 +31,10 @@
                             service.channelRewards = channelRewards;
                         }
                     });
+                $q.when(backendCommunicator.fireEventAsync("get-channel-rewards-eligibility"))
+                    .then((eligible) => {
+                        service.userIsEligible = eligible;
+                    });
             };
 
             service.saveChannelReward = (channelReward) => {
@@ -162,6 +166,10 @@
 
             backendCommunicator.on("channel-rewards-updated", (channelRewards) => {
                 service.channelRewards = channelRewards;
+            });
+
+            backendCommunicator.on("channel-rewards-eligibility-changed", (eligible) => {
+                service.userIsEligible = eligible;
             });
 
             backendCommunicator.on("channel-reward-updated", (channelReward) => {
