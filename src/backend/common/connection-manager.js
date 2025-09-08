@@ -55,7 +55,7 @@ function emitServiceConnectionUpdateEvents(serviceId, connectionState) {
 twitchChat.on("connected", () => {
     emitServiceConnectionUpdateEvents("chat", ConnectionState.Connected);
     const rewardsManager = require("../channel-rewards/channel-reward-manager");
-    rewardsManager.loadChannelRewards(true).then(() => {
+    rewardsManager.loadChannelRewards().then(() => {
         rewardsManager.refreshChannelRewardRedemptions();
     });
 });

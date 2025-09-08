@@ -78,7 +78,7 @@ class ChannelRewardManager {
             .getJsonDbInProfile("channel-rewards");
     }
 
-    async loadChannelRewards(notifyFrontend = false) {
+    async loadChannelRewards() {
         if (accountAccess.getAccounts().streamer.broadcasterType === "") {
             return;
         }
@@ -158,9 +158,7 @@ class ChannelRewardManager {
 
             logger.debug(`Loaded channel rewards.`);
 
-            if (notifyFrontend) {
-                frontendCommunicator.send("channel-rewards-updated", Object.values(this.channelRewards));
-            }
+            frontendCommunicator.send("channel-rewards-updated", Object.values(this.channelRewards));
         } catch (err) {
             logger.warn(`There was an error reading channel rewards file.`, err);
         }

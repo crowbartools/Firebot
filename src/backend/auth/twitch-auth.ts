@@ -187,7 +187,7 @@ authManager.on("auth-success", async (authData) => {
         accountAccess.updateAccount(accountType, accountObject);
 
         if (accountType === "streamer") {
-            channelRewardManager.loadChannelRewards(true);
+            channelRewardManager.loadChannelRewards();
         }
     }
 });
