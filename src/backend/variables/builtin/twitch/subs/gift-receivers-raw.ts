@@ -21,7 +21,7 @@ const model : ReplaceVariable = {
 
         return trigger.metadata.eventData.giftReceivers.map(gr => ({
             username: gr.gifteeUsername,
-            months: gr.giftSubMonths
+            months: gr.giftSubMonths ?? 1
         }));
     }
 };

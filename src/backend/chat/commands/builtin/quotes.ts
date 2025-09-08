@@ -336,13 +336,9 @@ export const QuotesManagementSystemCommand: SystemCommand<{
                         profilePage: 'quotes'
                     };
 
-                    const binId = await cloudSync.syncProfileData(profileJSON);
+                    const streamerName = await cloudSync.syncProfileData(profileJSON);
 
-                    if (binId == null) {
-                        await twitchChat.sendChatMessage("There are no quotes to pull!");
-                    } else {
-                        await twitchChat.sendChatMessage(`Here is a list of quotes! https://firebot.app/profile?id=${binId}`);
-                    }
+                    await twitchChat.sendChatMessage(`Here is a list of quotes! https://firebot.app/profile/${streamerName}`);
 
                     return resolve();
                 }

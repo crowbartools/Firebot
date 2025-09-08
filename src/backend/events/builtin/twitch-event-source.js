@@ -160,9 +160,9 @@ module.exports = {
                     },
                     value: "1000"
                 },
-                giftSubMonths: 5,
                 giftDuration: 1,
-                gifteeUsername: "MageEnclave"
+                gifteeUsername: "MageEnclave",
+                lifetimeGiftCount: 1
             },
             activityFeed: {
                 icon: "fad fa-gift",
@@ -171,7 +171,7 @@ module.exports = {
                         eventData.giftDuration > 1 ? ` **${eventData.giftDuration} month** ` : ""
                     } **Tier ${eventData.subPlan.replace("000", "")}** sub to **${
                         eventData.gifteeUsername
-                    }** (Subbed for ${eventData.giftSubMonths} month${eventData.giftSubMonths > 1 ? "s" : ""} total)`;
+                    }**`;
                 }
             }
         },
@@ -196,13 +196,14 @@ module.exports = {
                 giftReceivers: {
                     type: "gift-receivers-list",
                     value: [
-                        { gifteeUsername: "User1", giftSubMonths: 3 },
-                        { gifteeUsername: "User2", giftSubMonths: 5 },
-                        { gifteeUsername: "User3", giftSubMonths: 8 },
-                        { gifteeUsername: "User4", giftSubMonths: 10 },
-                        { gifteeUsername: "User5", giftSubMonths: 16 }
+                        { gifteeUsername: "User1" },
+                        { gifteeUsername: "User2" },
+                        { gifteeUsername: "User3" },
+                        { gifteeUsername: "User4" },
+                        { gifteeUsername: "User5" }
                     ]
-                }
+                },
+                lifetimeGiftCount: 5
             },
             activityFeed: {
                 icon: "fad fa-gifts",
@@ -935,7 +936,9 @@ module.exports = {
                 progress: "150",
                 goal: "500",
                 level: "1",
-                isGoldenKappaTrain: false
+                isGoldenKappaTrain: false,
+                isTreasureTrain: false,
+                isSharedTrain: false
             },
             activityFeed: {
                 icon: "fad fa-train",
@@ -955,7 +958,9 @@ module.exports = {
                 progress: "150",
                 goal: "500",
                 level: "1",
-                isGoldenKappaTrain: false
+                isGoldenKappaTrain: false,
+                isTreasureTrain: false,
+                isSharedTrain: false
             },
             activityFeed: {
                 icon: "fad fa-train",
@@ -963,6 +968,23 @@ module.exports = {
                     return `Level **${eventData.level}** hype train currently at **${Math.floor(
                         (eventData.progress / eventData.goal) * 100
                     )}%**.`;
+                }
+            }
+        },
+        {
+            id: "hype-train-level-up",
+            name: "Hype Train Level Up",
+            description: "When a hype train on your channel advances to the next level.",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                previousLevel: "1",
+                level: "2"
+            },
+            activityFeed: {
+                icon: "fad fa-train",
+                getMessage: (eventData) => {
+                    return `Hype train level **${eventData.level}** unlocked!`;
                 }
             }
         },
@@ -975,7 +997,9 @@ module.exports = {
             manualMetadata: {
                 total: "150",
                 level: "1",
-                isGoldenKappaTrain: false
+                isGoldenKappaTrain: false,
+                isTreasureTrain: false,
+                isSharedTrain: false
             },
             activityFeed: {
                 icon: "fad fa-train",
