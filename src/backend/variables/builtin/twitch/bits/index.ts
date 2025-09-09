@@ -8,6 +8,9 @@ import cheerBits from './cheer-bits';
 import cheerBitsTotal from './cheer-total-bits';
 import cheerMessage from './cheer-message';
 
+import gigantifiedEmoteName from './gigantified-emote-name';
+import gigantifiedEmoteUrl from './gigantified-emote-url';
+
 import topCheerers from './bits-top-cheerers';
 import topCheerersRaw from './bits-top-cheerers-raw';
 
@@ -22,6 +25,9 @@ export default [
     cheerBits,
     cheerBitsTotal,
     cheerMessage,
+
+    gigantifiedEmoteName,
+    gigantifiedEmoteUrl,
 
     topCheerers,
     topCheerersRaw

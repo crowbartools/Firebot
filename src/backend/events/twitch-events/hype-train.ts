@@ -1,6 +1,8 @@
 import eventManager from "../EventManager";
-import { EventSubChannelHypeTrainContribution } from "@twurple/eventsub-base";
+import { EventSubChannelHypeTrainContribution, EventSubChannelHypeTrainType } from "@twurple/eventsub-base";
 import frontendCommunicator from "../../common/frontend-communicator";
+
+let hypeTrainLevel = 0;
 
 function sendStartProgressEventToFrontend(
     eventType: "start" | "progress",
@@ -8,13 +10,17 @@ function sendStartProgressEventToFrontend(
     goal: number,
     progress: number,
     endsAt: Date,
-    isGoldenKappaTrain: boolean
+    isGoldenKappaTrain: boolean,
+    isTreasureTrain: boolean,
+    isSharedTrain: boolean
 ) {
     frontendCommunicator.send(`hype-train:${eventType}`, {
         level,
         progressPercentage: Math.floor(progress / goal * 100),
         endsAt,
-        isGoldenKappaTrain
+        isGoldenKappaTrain,
+        isTreasureTrain,
+        isSharedTrain
     });
 }
 
@@ -35,10 +41,15 @@ export function triggerHypeTrainStart(
     level: number,
     startDate: Date,
     expiryDate: Date,
-    lastContribution: EventSubChannelHypeTrainContribution,
     topContributors: EventSubChannelHypeTrainContribution[],
-    isGoldenKappaTrain: boolean
+    hypeTrainType: EventSubChannelHypeTrainType,
+    isSharedTrain: boolean
 ) {
+    hypeTrainLevel = level;
+
+    const isGoldenKappaTrain = hypeTrainType === "golden_kappa";
+    const isTreasureTrain = hypeTrainType === "treasure";
+
     eventManager.triggerEvent("twitch", "hype-train-start", {
         total,
         progress,
@@ -46,12 +57,13 @@ export function triggerHypeTrainStart(
         level,
         startDate,
         expiryDate,
-        lastContribution: mapContribution(lastContribution),
         topContributors: topContributors.map(mapContribution),
-        isGoldenKappaTrain: isGoldenKappaTrain
+        isGoldenKappaTrain,
+        isTreasureTrain,
+        isSharedTrain
     });
 
-    sendStartProgressEventToFrontend("start", level, goal, progress, expiryDate, isGoldenKappaTrain);
+    sendStartProgressEventToFrontend("start", level, goal, progress, expiryDate, isGoldenKappaTrain, isTreasureTrain, isSharedTrain);
 }
 
 export function triggerHypeTrainProgress(
@@ -61,10 +73,13 @@ export function triggerHypeTrainProgress(
     level: number,
     startDate: Date,
     expiryDate: Date,
-    lastContribution: EventSubChannelHypeTrainContribution,
     topContributors: EventSubChannelHypeTrainContribution[],
-    isGoldenKappaTrain: boolean
+    hypeTrainType: EventSubChannelHypeTrainType,
+    isSharedTrain: boolean
 ) {
+    const isGoldenKappaTrain = hypeTrainType === "golden_kappa";
+    const isTreasureTrain = hypeTrainType === "treasure";
+
     eventManager.triggerEvent("twitch", "hype-train-progress", {
         total,
         progress,
@@ -72,12 +87,23 @@ export function triggerHypeTrainProgress(
         level,
         startDate,
         expiryDate,
-        lastContribution: mapContribution(lastContribution),
         topContributors: topContributors.map(mapContribution),
-        isGoldenKappaTrain: isGoldenKappaTrain
+        isGoldenKappaTrain,
+        isTreasureTrain,
+        isSharedTrain
     });
 
-    sendStartProgressEventToFrontend("progress", level, goal, progress, expiryDate, isGoldenKappaTrain);
+    const previousLevel = hypeTrainLevel;
+    hypeTrainLevel = level;
+
+    if (previousLevel !== level) {
+        eventManager.triggerEvent("twitch", "hype-train-level-up", {
+            previousLevel,
+            level
+        });
+    }
+
+    sendStartProgressEventToFrontend("progress", level, goal, progress, expiryDate, isGoldenKappaTrain, isTreasureTrain, isSharedTrain);
 }
 
 export function triggerHypeTrainEnd(
@@ -87,8 +113,14 @@ export function triggerHypeTrainEnd(
     endDate: Date,
     cooldownEndDate: Date,
     topContributors: EventSubChannelHypeTrainContribution[],
-    isGoldenKappaTrain: boolean
+    hypeTrainType: EventSubChannelHypeTrainType,
+    isSharedTrain: boolean
 ) {
+    hypeTrainLevel = 0;
+
+    const isGoldenKappaTrain = hypeTrainType === "golden_kappa";
+    const isTreasureTrain = hypeTrainType === "treasure";
+
     eventManager.triggerEvent("twitch", "hype-train-end", {
         total,
         level,
@@ -96,7 +128,9 @@ export function triggerHypeTrainEnd(
         endDate,
         cooldownEndDate,
         topContributors: topContributors.map(mapContribution),
-        isGoldenKappaTrain: isGoldenKappaTrain
+        isGoldenKappaTrain,
+        isTreasureTrain,
+        isSharedTrain
     });
 
     frontendCommunicator.send("hype-train:end");
