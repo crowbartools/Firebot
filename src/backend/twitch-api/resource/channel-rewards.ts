@@ -200,7 +200,7 @@ export class TwitchChannelRewardsApi {
                 return null;
             }
         } catch (err) {
-            logger.error("Failed to get twitch custom channel rewards", err.message);
+            logger.debug("Failed to get twitch custom channel rewards", err.message);
             return null;
         }
         return rewards.map(r => this.mapCustomRewardResponse(r));

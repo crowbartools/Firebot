@@ -11,6 +11,9 @@ import rewardManager from "../../channel-rewards/channel-reward-manager";
 import chatRolesManager from "../../roles/chat-roles-manager";
 import chatHelpers from "../../chat/chat-helpers";
 import viewerDatabase from "../../viewers/viewer-database";
+import { SavedChannelReward } from "../../../types/channel-rewards";
+import channelRewardManager from "../../channel-rewards/channel-reward-manager";
+import { getChannelRewardImageUrl, mapEventSubRewardToTwitchData } from "./eventsub-helpers";
 
 class TwitchEventSubClient {
     private _eventSubListener: EventSubWsListener;
@@ -133,26 +136,45 @@ class TwitchEventSubClient {
         });
         this._subscriptions.push(autoModMessageUpdateSub);
 
+
+        // Channel custom reward add
+        const customRewardAddSubscription = this._eventSubListener.onChannelRewardAdd(streamer.userId, async (event) => {
+            channelRewardManager.saveTwitchDataForChannelReward(mapEventSubRewardToTwitchData(event));
+        });
+        this._subscriptions.push(customRewardAddSubscription);
+
+        // Channel custom reward update
+        const customRewardUpdateSubscription = this._eventSubListener.onChannelRewardUpdate(streamer.userId, async (event) => {
+            channelRewardManager.saveTwitchDataForChannelReward(mapEventSubRewardToTwitchData(event));
+        });
+        this._subscriptions.push(customRewardUpdateSubscription);
+
+        // Channel custom reward remove
+        const customRewardRemoveSubscription = this._eventSubListener.onChannelRewardRemove(streamer.userId, async (event) => {
+            const firebotReward: SavedChannelReward | null = channelRewardManager.getChannelReward(event.id);
+
+            if (!firebotReward) {
+                return;
+            }
+
+            await channelRewardManager.deleteChannelReward(event.id, false, true);
+        });
+        this._subscriptions.push(customRewardRemoveSubscription);
+
         // Channel custom reward
         const customRewardRedemptionSubscription = this._eventSubListener.onChannelRedemptionAdd(streamer.userId, async (event) => {
-            const reward = await twitchApi.channelRewards.getCustomChannelReward(event.rewardId);
-            let imageUrl = "";
-
-            if (reward && reward.defaultImage) {
-                const images = reward.defaultImage;
-                if (images.url4x) {
-                    imageUrl = images.url4x;
-                } else if (images.url2x) {
-                    imageUrl = images.url2x;
-                } else if (images.url1x) {
-                    imageUrl = images.url1x;
-                }
+            const reward = channelRewardManager.getChannelReward(event.rewardId);
+            if (!reward) {
+                logger.debug(`Received a reward redemption for a reward that does not exist locally. Reward: ${event.rewardTitle}`, event);
+                return;
             }
+
+            const imageUrl = getChannelRewardImageUrl(reward.twitchData);
 
             twitchEventsHandler.rewardRedemption.handleRewardRedemption(
                 event.id,
                 event.status,
-                !reward.shouldRedemptionsSkipRequestQueue,
+                !reward.twitchData.shouldRedemptionsSkipRequestQueue,
                 event.input,
                 event.userId,
                 event.userName,
@@ -164,26 +186,33 @@ class TwitchEventSubClient {
                 imageUrl
             );
 
-            if (!reward.shouldRedemptionsSkipRequestQueue) {
-                rewardManager.refreshChannelRewardRedemptions();
+            if (!reward.twitchData.shouldRedemptionsSkipRequestQueue && reward.manageable) {
+                rewardManager.addRewardRedemption(event.rewardId, {
+                    id: event.id,
+                    rewardId: event.rewardId,
+                    redemptionDate: event.redemptionDate,
+                    userId: event.userId,
+                    userName: event.userName,
+                    userDisplayName: event.userDisplayName,
+                    rewardMessage: event.input
+                });
             }
         });
         this._subscriptions.push(customRewardRedemptionSubscription);
 
         const customRewardRedemptionUpdateSubscription = this._eventSubListener.onChannelRedemptionUpdate(streamer.userId, async (event) => {
-            const reward = await twitchApi.channelRewards.getCustomChannelReward(event.rewardId);
-            let imageUrl = "";
-
-            if (reward && reward.defaultImage) {
-                const images = reward.defaultImage;
-                if (images.url4x) {
-                    imageUrl = images.url4x;
-                } else if (images.url2x) {
-                    imageUrl = images.url2x;
-                } else if (images.url1x) {
-                    imageUrl = images.url1x;
-                }
+            const reward = channelRewardManager.getChannelReward(event.rewardId);
+            if (!reward) {
+                logger.debug(`Received a reward redemption update for a reward that does not exist locally. Reward: ${event.rewardTitle}`, event);
+                return;
             }
+
+            if (reward.twitchData.shouldRedemptionsSkipRequestQueue) {
+                logger.debug(`Received a reward redemption update for a reward that should skip the request queue. Reward: ${event.rewardTitle}`, event);
+                return;
+            }
+
+            const imageUrl = getChannelRewardImageUrl(reward.twitchData);
 
             twitchEventsHandler.rewardRedemption.handleRewardUpdated(
                 event.id,
@@ -199,7 +228,9 @@ class TwitchEventSubClient {
                 imageUrl
             );
 
-            rewardManager.refreshChannelRewardRedemptions();
+            if (reward.manageable) {
+                rewardManager.removeRewardRedemption(event.rewardId, event.id);
+            }
         });
         this._subscriptions.push(customRewardRedemptionUpdateSubscription);
 
