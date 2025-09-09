@@ -1,5 +1,6 @@
 import { HelixChatBadgeSet, HelixCheermoteList, HelixEmote } from "@twurple/api";
 import { ChatMessage, ParsedMessageCheerPart, ParsedMessagePart, findCheermotePositions, parseChatMessage } from "@twurple/chat";
+import { EventSubAutoModMessageHoldV2Event } from "@twurple/eventsub-base";
 import { ThirdPartyEmote, ThirdPartyEmoteProvider } from "./third-party/third-party-emote-provider";
 import { BTTVEmoteProvider } from "./third-party/bttv";
 import { FFZEmoteProvider } from "./third-party/ffz";
@@ -8,7 +9,6 @@ import { FirebotChatMessage, FirebotCheermoteInstance, FirebotParsedMessagePart 
 import logger from "../logwrapper";
 import accountAccess, { FirebotAccount } from "../common/account-access";
 import twitchApi from "../twitch-api/api";
-import { EventSubAutoModMessageHoldV2EventData } from "../twitch-api/eventsub/custom-subscriptions/automod-v2/automod-message-event-data";
 import frontendCommunicator from "../common/frontend-communicator";
 import utils from "../utility";
 
@@ -384,6 +384,7 @@ class FirebotChatHelpers {
             customRewardId: msg.tags.get("custom-reward-id") || undefined,
             isHighlighted: msg.tags.get("msg-id") === "highlighted-message",
             isAnnouncement: false,
+            isHiddenFromChatFeed: false,
             isFirstChat: msg.isFirst ?? false,
             isReturningChatter: msg.isReturningChatter ?? false,
             isReply: msg.tags.has("reply-parent-msg-id"),
@@ -521,15 +522,15 @@ class FirebotChatHelpers {
         return firebotChatMessage;
     }
 
-    async buildViewerFirebotChatMessageFromAutoModMessage(msg: EventSubAutoModMessageHoldV2EventData) {
-        const profilePicUrl = await this.getUserProfilePicUrl(msg.user_id);
+    async buildViewerFirebotChatMessageFromAutoModMessage(msg: EventSubAutoModMessageHoldV2Event) {
+        const profilePicUrl = await this.getUserProfilePicUrl(msg.userId);
 
         const viewerFirebotChatMessage: FirebotChatMessage = {
-            id: msg.message_id,
-            username: msg.user_login,
-            userId: msg.user_id,
-            userDisplayName: msg.user_name,
-            rawText: msg.message.text,
+            id: msg.messageId,
+            username: msg.userName,
+            userId: msg.userId,
+            userDisplayName: msg.userDisplayName,
+            rawText: msg.messageText,
             profilePicUrl: profilePicUrl,
             whisper: false,
             action: false,
@@ -540,28 +541,24 @@ class FirebotChatHelpers {
             roles: [],
             isAutoModHeld: true,
             autoModStatus: "pending",
-            autoModReason: (msg.reason === "automod" ? msg.automod?.category : msg.reason === "blocked_term" ? "blocked term" : null) ?? "unknown",
+            autoModReason: (msg.reason === "automod" ? msg.autoMod?.category : msg.reason === "blocked_term" ? "blocked term" : null) ?? "unknown",
             isSharedChatMessage: false // todo: check if automod messages have a way to associate them with shared chat
         };
 
         const { streamer, bot } = accountAccess.getAccounts();
-        if ((streamer.loggedIn && (msg.message.text.includes(streamer.username) || msg.message.text.includes(streamer.displayName)))
-            || (bot.loggedIn && (msg.message.text.includes(bot.username) || msg.message.text.includes(streamer.username)))
+        if ((streamer.loggedIn && (msg.messageText.includes(streamer.username) || msg.messageText.includes(streamer.displayName)))
+            || (bot.loggedIn && (msg.messageText.includes(bot.username) || msg.messageText.includes(streamer.username)))
         ) {
             viewerFirebotChatMessage.tagged = true;
         }
 
-        const flaggedPhrases = (
-            msg.reason === "automod"
-                ? msg.automod?.boundaries ?? []
-                : msg.blocked_term?.terms_found?.map(t => t.boundary) ?? []
-        ).map((boundary) => {
-            return msg.message.text.substring(boundary.start_pos, boundary.end_pos + 1);
-        });
+        const flaggedPhrases = msg.reason === "automod"
+            ? msg.autoMod?.boundaries?.map(b => b.text) ?? []
+            : msg.blockedTerms?.map(b => b.text) ?? [];
 
         const flaggedPhrasesRegex = new RegExp(`(${flaggedPhrases.join("|")})`, "g");
 
-        const parts = this._parseMessageParts(viewerFirebotChatMessage, msg.message.fragments.flatMap((f): FirebotParsedMessagePart | FirebotParsedMessagePart[] => {
+        const parts = this._parseMessageParts(viewerFirebotChatMessage, msg.messageParts.flatMap((f): FirebotParsedMessagePart | FirebotParsedMessagePart[] => {
             if (f.type === "text") {
                 const splitText = f.text?.split(flaggedPhrasesRegex)
                     // sometimes we get empty strings in the split

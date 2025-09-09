@@ -270,6 +270,19 @@
 
             backendCommunicator.on("twitch:chat:user:delete-messages", markUserMessagesAsDeleted);
 
+            service.hideMessageInChatFeed = function(messageId) {
+                const messageItem = service.chatQueue.find(i => i.type === "message" && i.data.id === messageId);
+                if (messageItem == null) {
+                    return;
+                }
+
+                messageItem.data.isHiddenFromChatFeed = true;
+            };
+
+            backendCommunicator.on("chat-feed-message-hide", (data) => {
+                service.hideMessageInChatFeed(data.messageId);
+            });
+
             service.changeModStatus = (username, shouldBeMod) => {
                 backendCommunicator.send("update-user-mod-status", {
                     username,

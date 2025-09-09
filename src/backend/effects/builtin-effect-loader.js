@@ -10,6 +10,7 @@ exports.loadEffects = () => {
         'api',
         'celebration',
         'chat-feed-alert',
+        'chat-feed-message-hide',
         'chat',
         'clear-chat',
         'clear-effects',

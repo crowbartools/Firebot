@@ -65,7 +65,7 @@ class HotkeyManager {
     }
 
     addHotkey(hotkey: FirebotHotkey) {
-        hotkey.id = uuid();
+        hotkey.id ??= uuid();
 
         this.hotkeys.push(hotkey);
         this.registerHotkey(hotkey.code);

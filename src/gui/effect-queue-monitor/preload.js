@@ -9,3 +9,12 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
         });
     }
 });
+
+contextBridge.exposeInMainWorld('queueManager', {
+    clearQueue: (queueID) => {
+        ipcRenderer.send("clearEffectQueue", queueID);
+    },
+    toggleQueue: (queueID) => {
+        ipcRenderer.send("toggleEffectQueue", queueID);
+    }
+});
