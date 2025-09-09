@@ -42,6 +42,17 @@ const convertToString = (subject) => {
     return JSON.stringify(subject);
 };
 
+const convertByteArrayJsonToByteArray = (json) => {
+    const obj = JSON.parse(json);
+    const arr = [];
+    // eslint-disable-next-line guard-for-in
+    for (const b in Object.getOwnPropertyNames(obj)) {
+        arr[b] = obj[b];
+    }
+
+    return arr;
+};
+
 /**
  * Translates seconds into human readable format of seconds, minutes, hours, days, and years
  *
@@ -333,6 +344,7 @@ exports.flattenArray = flattenArray;
 exports.jsonParse = jsonParse;
 exports.wait = wait;
 exports.convertToString = convertToString;
+exports.convertByteArrayJsonToByteArray = convertByteArrayJsonToByteArray;
 exports.deepClone = deepClone;
 exports.deepFreeze = deepFreeze;
 exports.emptyFolder = emptyFolder;
