@@ -44,6 +44,10 @@
                     </label>
 
                     <div ng-show="$ctrl.command.sendCooldownMessage">
+                        <firebot-checkbox label="Send cooldown message as reply"
+                            model="$ctrl.command.sendCooldownMessageAsReply"
+                        />
+
                         <label class="control-fb control--checkbox">
                             Use custom cooldown message
                             <input
