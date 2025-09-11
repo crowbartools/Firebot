@@ -30,7 +30,7 @@
         "@types/unzipper": "^0.10.11",
         "@typescript-eslint/eslint-plugin": "^5.62.0",
         "@typescript-eslint/parser": "^5.62.0",
-        "electron": "^37.4.0",
+        "electron": "^38.1.0",
         "electron-installer-dmg": "^5.0.1",
         "electron-winstaller": "^5.4.0",
         "eslint": "^8.56.0",
@@ -134,7 +134,7 @@
         "electron-installer-debian": "^3.2.0"
     },
     "volta": {
-        "node": "20.18.1",
+        "node": "22.19.0",
         "npm": "10.8.1"
     }
 }
