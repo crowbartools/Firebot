@@ -1,7 +1,6 @@
 import { EffectType } from "../../../types/effects";
 import { EffectCategory } from "../../../shared/effect-constants";
 import cloudSync from "../../cloud-sync/profile-sync";
-import effect from "./chat-feed-alert";
 
 const model: EffectType<{
     profilePage: "commands" | "quotes";
@@ -23,8 +22,16 @@ const model: EffectType<{
                 selected="effect.profilePage"
             />
         </eos-container>
+
+        <eos-container pad-top="true">
+            <div class="effect-info alert alert-info">
+                After sync, you can access the JSON of your profile data at <a href="https://api.crowbar.tools/v1/profile-data/{{username}}">https://api.crowbar.tools/v1/profile-data/{{username}}</a>
+            </div>
+        </eos-container>
     `,
-    optionsController: ($scope) => {
+    optionsController: ($scope, accountAccess) => {
+        $scope.username = accountAccess.accounts.streamer.username;
+
         if (!$scope.effect.profilePage) {
             $scope.effect.profilePage = "commands";
         }
