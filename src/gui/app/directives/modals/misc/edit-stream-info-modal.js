@@ -35,25 +35,25 @@
                         <div class="form-group">
                             <label for="game" class="control-label">Category</label>
                             <div style="display:flex">
-                                <ui-select style="width: 100%" ng-model="$ctrl.selectedGame" required input-id="game" theme="bootstrap" spinner-enabled="true" on-select="$ctrl.gameSelected($item)">
+                                <ui-select style="width: 100%; min-width: 0;" ng-model="$ctrl.selectedGame" required input-id="game" theme="bootstrap" spinner-enabled="true" on-select="$ctrl.gameSelected($item)">
                                     <ui-select-match placeholder="Search for category...">
                                         <div style="height: 25px; display:flex; flex-direction: row; align-items: center;">
-                                            <img style="height: 21px; width: 21px; border-radius: 5px; margin-right:5px;" ng-src="{{$select.selected.boxArtUrl}}">
-                                            <div style="font-weight: 100;font-size: 17px;">{{$select.selected.name}}</div>
+                                            <img style="height: 21px; border-radius: 5px; margin-right:5px;" ng-src="{{$select.selected.boxArtUrl}}">
+                                            <div style="font-weight: 100; font-size: 17px; overflow: hidden; text-overflow: ellipsis;">{{$select.selected.name}}</div>
                                         </div>
                                     </ui-select-match>
                                     <ui-select-choices minimum-input-length="1" repeat="game in $ctrl.games | filter: $select.search" refresh="$ctrl.searchGames($select.search)" refresh-delay="200" style="position:relative;">
                                         <div style="height: 35px; display:flex; flex-direction: row; align-items: center;">
-                                            <img style="height: 30px; width: 30px; border-radius: 5px; margin-right:10px;" ng-src="{{game.boxArtUrl}}">
-                                            <div style="font-weight: 100;font-size: 17px;">{{game.name}}</div>
+                                            <img style="height: 30px; border-radius: 5px; margin-right:10px;" ng-src="{{game.boxArtUrl}}">
+                                            <div style="font-weight: 100;font-size: 17px; overflow: hidden; text-overflow: ellipsis;">{{game.name}}</div>
                                         </div>
                                     </ui-select-choices>
                                 </ui-select>
                                 <div ng-show="$ctrl.selectedGame != null" style="margin-left: 3px">
-                                    <button 
+                                    <button
                                         class="btn btn-default"
                                         aria-label="Clear category"
-                                        uib-tooltip="Clear category"     
+                                        uib-tooltip="Clear category"
                                         ng-click="$ctrl.removeCategory()">
                                         <i class="far fa-times"></i>
                                     </button>

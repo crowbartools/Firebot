@@ -4,6 +4,7 @@ import logger from "../logwrapper";
 import { SecretsManager } from "../secrets-manager";
 import { AuthProviderDefinition } from "./auth";
 import { getExpiryDateOfAccessToken } from "@twurple/auth";
+import channelRewardManager from "../channel-rewards/channel-reward-manager";
 
 class TwitchAuthProviders {
     private readonly _host = "https://id.twitch.tv";
@@ -184,6 +185,10 @@ authManager.on("auth-success", async (authData) => {
         };
 
         accountAccess.updateAccount(accountType, accountObject);
+
+        if (accountType === "streamer") {
+            channelRewardManager.loadChannelRewards();
+        }
     }
 });
 

@@ -557,7 +557,7 @@
                 };
 
                 function getSharedEffects(code) {
-                    return $http.get(`https://bytebin.lucko.me/${code}`)
+                    return $http.get(`https://api.crowbar.tools/v1/data-bin/${code}`)
                         .then((resp) => {
                             if (resp.status === 200) {
                                 return JSON.parse(unescape(JSON.stringify(resp.data)));

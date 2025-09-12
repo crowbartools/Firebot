@@ -1,8 +1,8 @@
 import adVariables from './ads';
+import bitsVariables from './bits';
 import chatVariables from './chat';
 import channelGoalVariables from './channel-goal';
 import charityVariables from './charity';
-import cheerVariables from './cheer';
 import cheermoteVariables from './cheermote';
 import hypetrainVariables from './hype-train';
 import pointsRedemptionVariables from './points-redemption';
@@ -22,10 +22,10 @@ import vip from './vip';
 
 export default [
     ...adVariables,
+    ...bitsVariables,
     ...chatVariables,
     ...channelGoalVariables,
     ...charityVariables,
-    ...cheerVariables,
     ...cheermoteVariables,
     ...hypetrainVariables,
     ...pointsRedemptionVariables,

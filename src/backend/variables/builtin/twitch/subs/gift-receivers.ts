@@ -17,7 +17,7 @@ const model : ReplaceVariable = {
             },
             {
                 usage: "giftReceivers[3, months]",
-                description: "Displays the cumulative sub months of a specific gift receiver in the list."
+                description: "(Deprecated: removed from Twitch data) Displays the cumulative sub months of a specific gift receiver in the list."
             }
         ],
         triggers: triggers,
@@ -30,7 +30,7 @@ const model : ReplaceVariable = {
         }
 
         const giftReceiverNames = trigger.metadata.eventData.giftReceivers.map(gr => gr.gifteeUsername);
-        const giftReceiverMonths = trigger.metadata.eventData.giftReceivers.map(gr => gr.giftSubMonths);
+        const giftReceiverMonths = trigger.metadata.eventData.giftReceivers.map(gr => gr.giftSubMonths ?? 1);
 
         if (target == null && property == null) {
             return giftReceiverNames.join(", ");

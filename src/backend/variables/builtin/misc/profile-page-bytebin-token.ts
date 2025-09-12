@@ -7,7 +7,8 @@ const model : ReplaceVariable = {
     definition: {
         handle: "profilePageBytebinToken",
         description: "Get bytebin id for streamer profile. Access the json by going to https://bytebin.lucko.me/ID-HERE.",
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.TEXT],
+        hidden: true
     },
     evaluator: async (trigger, page = "commands") => {
         return await cloudSync.syncProfileData({
