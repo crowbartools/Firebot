@@ -5,7 +5,6 @@ import channelGoalVariables from './channel-goal';
 import charityVariables from './charity';
 import cheermoteVariables from './cheermote';
 import hypetrainVariables from './hype-train';
-import pointsRedemptionVariables from './points-redemption';
 import pollVariables from './polls';
 import raidVariables from './raid';
 import rewardVariables from './reward';
@@ -28,7 +27,6 @@ export default [
     ...charityVariables,
     ...cheermoteVariables,
     ...hypetrainVariables,
-    ...pointsRedemptionVariables,
     ...pollVariables,
     ...raidVariables,
     ...rewardVariables,

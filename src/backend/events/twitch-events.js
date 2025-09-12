@@ -11,7 +11,6 @@ exports.follow = require("./twitch-events/follow");
 exports.giftSub = require("./twitch-events/gift-sub");
 exports.goal = require("./twitch-events/goal");
 exports.hypeTrain = require("./twitch-events/hype-train");
-exports.pointsRedemption = require("./twitch-events/points-redemption");
 exports.poll = require("./twitch-events/poll");
 exports.prediction = require("./twitch-events/prediction");
 exports.raid = require("./twitch-events/raid");
