@@ -647,6 +647,7 @@ class TwitchEventSubClient {
                     );
                     break;
 
+                // Chat Message Deleted
                 case "delete":
                     twitchEventsHandler.chatMessage.triggerChatMessageDeleted(
                         event.userName,
@@ -658,11 +659,40 @@ class TwitchEventSubClient {
                     frontendCommunicator.send("twitch:chat:message:deleted", event.messageId);
                     break;
 
+                // Outbound Raid Starting
+                case "raid":
+                    twitchEventsHandler.raid.triggerOutgoingRaidStarted(
+                        event.broadcasterName,
+                        event.broadcasterId,
+                        event.broadcasterDisplayName,
+                        event.userName,
+                        event.userId,
+                        event.userDisplayName,
+                        event.moderatorName,
+                        event.moderatorId,
+                        event.moderatorDisplayName,
+                        event.viewerCount
+                    );
+                    break;
+
+                // Outbound Raid Canceled
+                case "unraid":
+                    twitchEventsHandler.raid.triggerOutgoingRaidCanceled(
+                        event.broadcasterName,
+                        event.broadcasterId,
+                        event.broadcasterDisplayName,
+                        event.userName,
+                        event.userId,
+                        event.userDisplayName,
+                        event.moderatorName,
+                        event.moderatorId,
+                        event.moderatorDisplayName
+                    );
+                    break;
+
                 // Reserving; already handled in bespoke events; less expensive to move those here.
                 case "ban":
                 case "unban":
-                case "raid":
-                case "unraid":
                 case "timeout":
                 case "untimeout":
                     break;
