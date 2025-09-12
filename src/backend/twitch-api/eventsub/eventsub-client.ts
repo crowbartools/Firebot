@@ -140,7 +140,7 @@ class TwitchEventSubClient {
         const channelAutomaticRewardSubscription = this._eventSubListener.onChannelAutomaticRewardRedemptionAddV2(streamer.userId, async (event) => {
             switch (event.reward.type) {
                 case "single_message_bypass_sub_mode":
-                    twitchEventsHandler.pointsRedemption.triggerRedemptionSingleMessageBypassSubMode(
+                    twitchEventsHandler.rewardRedemption.triggerRedemptionSingleMessageBypassSubMode(
                         event.userName,
                         event.userId,
                         event.userDisplayName,
@@ -148,7 +148,7 @@ class TwitchEventSubClient {
                     );
                     break;
                 case "send_highlighted_message":
-                    twitchEventsHandler.pointsRedemption.triggerRedemptionSendHighlightedMessage(
+                    twitchEventsHandler.rewardRedemption.triggerRedemptionSendHighlightedMessage(
                         event.userName,
                         event.userId,
                         event.userDisplayName,
@@ -157,7 +157,7 @@ class TwitchEventSubClient {
                     );
                     break;
                 case "random_sub_emote_unlock":
-                    twitchEventsHandler.pointsRedemption.triggerRedemptionRandomSubEmoteUnlock(
+                    twitchEventsHandler.rewardRedemption.triggerRedemptionRandomSubEmoteUnlock(
                         event.userName,
                         event.userId,
                         event.userDisplayName,
@@ -167,7 +167,7 @@ class TwitchEventSubClient {
                     );
                     break;
                 case "chosen_sub_emote_unlock":
-                    twitchEventsHandler.pointsRedemption.triggerRedemptionChosenSubEmoteUnlock(
+                    twitchEventsHandler.rewardRedemption.triggerRedemptionChosenSubEmoteUnlock(
                         event.userName,
                         event.userId,
                         event.userDisplayName,
@@ -177,7 +177,7 @@ class TwitchEventSubClient {
                     );
                     break;
                 case "chosen_modified_sub_emote_unlock":
-                    twitchEventsHandler.pointsRedemption.triggerRedemptionChosenModifiedSubEmoteUnlock(
+                    twitchEventsHandler.rewardRedemption.triggerRedemptionChosenModifiedSubEmoteUnlock(
                         event.userName,
                         event.userId,
                         event.userDisplayName,
