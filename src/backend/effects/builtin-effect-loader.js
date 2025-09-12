@@ -52,6 +52,7 @@ exports.loadEffects = () => {
         'show-image', // No migration needed.
         'show-text',
         'stop-effect-execution',
+        'sync-profile-data',
         'take-screenshot',
         'text-to-speech',
         'toggle-command',
