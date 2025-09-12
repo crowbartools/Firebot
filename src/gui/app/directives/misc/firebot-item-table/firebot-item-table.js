@@ -115,6 +115,8 @@
 
                 $ctrl.clearEffectQueue = (item) => {
                     item.effects.queue = null;
+
+                    $ctrl.triggerItemsUpdate();
                 };
 
                 $ctrl.getContextMenu = (item) => {
