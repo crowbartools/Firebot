@@ -1,6 +1,14 @@
 import logger from '../../logwrapper';
 import accountAccess from "../../common/account-access";
-import { ApiClient, HelixChatAnnouncementColor, HelixChatChatter, HelixSendChatAnnouncementParams, HelixSentChatMessage, HelixUpdateChatSettingsParams } from "@twurple/api";
+import {
+    ApiClient,
+    HelixChatAnnouncementColor,
+    HelixChatChatter,
+    HelixSendChatAnnouncementParams,
+    HelixSentChatMessage,
+    HelixUpdateChatSettingsParams,
+    HelixUserEmote
+} from "@twurple/api";
 
 interface ResultWithError<TResult, TError> {
     success: boolean;
@@ -318,6 +326,38 @@ export class TwitchChatApi {
             return await this._streamerClient.chat.getColorForUser(targetUserId);
         } catch (error) {
             logger.error("Error Receiving user color", error.message);
+            return null;
+        }
+    }
+
+    /**
+     * Gets all emotes that can be used on Twitch by the specified Firebot account.
+     *
+     * @param account Either `streamer` or `bot`
+     * @returns An array of {@link HelixUserEmote} containing all the emotes the user can use on Twitch, or null if the request failed
+     */
+    async getAllUserEmotes(account: "streamer" | "bot" = "streamer"): Promise<HelixUserEmote[]> {
+        const streamerUserId = accountAccess.getAccounts().streamer.userId;
+        let userId = streamerUserId;
+        let client = this._streamerClient;
+
+        if (account === "bot") {
+            const bot = accountAccess.getAccounts().bot;
+            if (bot.loggedIn !== true) {
+                return [];
+            }
+
+            userId = bot.userId;
+            client = this._botClient;
+        }
+
+        try {
+            const emotes = await client.chat.getUserEmotesPaginated(userId, streamerUserId).getAll();
+
+            // Filter out any duplicates that may come back from the API
+            return emotes.filter((emote, index, arr) => arr.findIndex(e => emote.id === e.id) === index);
+        } catch (error) {
+            logger.error(`Error getting all user emotes for ${account}`, error.message);
             return null;
         }
     }

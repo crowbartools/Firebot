@@ -82,21 +82,17 @@ class FirebotChatHelpers {
 
         try {
             let streamerEmotes: HelixEmoteBase[] = [];
-            let botEmotes: HelixEmoteBase[] = [];
 
             if (this._getAllTwitchEmotes) {
                 logger.debug(`Caching all available Twitch emotes for streamer ${streamer.username}`);
 
                 // This includes: global, streamer channel, all channels streamer is subscribed to, etc.
                 // This may take SEVERAL calls so it can take several seconds to complete
-                streamerEmotes = await client.chat.getUserEmotesPaginated(streamer.userId).getAll();
+                streamerEmotes = await twitchApi.chat.getAllUserEmotes();
 
                 if (!streamerEmotes) {
                     return;
                 }
-
-                // Make sure to remove any duplicates, because Twitch does that for some reason
-                streamerEmotes = streamerEmotes.filter((emote, index, arr) => arr.findIndex(e => emote.id === e.id) === index);
             } else {
                 logger.debug(`Caching Twitch channel emotes for ${streamer.username}`);
                 const channelEmotes = await client.chat.getChannelEmotes(streamer.userId);
@@ -120,11 +116,7 @@ class FirebotChatHelpers {
                 if (bot.loggedIn) {
                     logger.debug(`Caching all available Twitch emotes for bot ${bot.username}`);
 
-                    const botClient = twitchApi.botClient;
-                    if (botClient != null) {
-                        botEmotes = await botClient.chat.getUserEmotesPaginated(bot.userId, streamer.userId).getAll();
-                        this._twitchEmotes.bot = botEmotes.filter((emote, index, arr) => arr.findIndex(e => emote.id === e.id) === index);
-                    }
+                    this._twitchEmotes.bot = await twitchApi.chat.getAllUserEmotes("bot") ?? [];
                 } else {
                     logger.debug("Bot account not logged in; Skipping Twitch bot emotes");
                 }
