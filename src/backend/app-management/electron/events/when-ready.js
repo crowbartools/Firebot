@@ -45,6 +45,9 @@ exports.whenReady = async () => {
 
     const connectionManager = require("../../../common/connection-manager");
 
+    // start crowbar relay websocket
+    require("../../../crowbar-relay/crowbar-relay-websocket");
+
     windowManagement.updateSplashScreenStatus("Loading timers...");
     const timerManager = require("../../../timers/timer-manager");
     await timerManager.loadItems();
@@ -153,6 +156,10 @@ exports.whenReady = async () => {
     windowManagement.updateSplashScreenStatus("Loading quick actions...");
     const quickActionManager = require("../../../quick-actions/quick-action-manager");
     quickActionManager.loadItems();
+
+    windowManagement.updateSplashScreenStatus("Loading webhooks...");
+    const webhookConfigManager = require("../../../webhooks/webhook-config-manager");
+    webhookConfigManager.loadItems();
 
     windowManagement.updateSplashScreenStatus("Loading startup script data...");
     const startupScriptsManager = require("../../../common/handlers/custom-scripts/startup-scripts-manager");

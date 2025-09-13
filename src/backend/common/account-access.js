@@ -34,6 +34,9 @@ function AccountCache(streamer, bot) {
     this.bot = bot;
 }
 
+
+let readyResolve = null;
+
 const cache = new AccountCache(
     {
         username: "Streamer",
@@ -108,6 +111,11 @@ async function loadAccountData(emitUpdate = true) {
 
     if (emitUpdate) {
         sendAccountUpdate();
+    }
+
+    if (readyResolve) {
+        readyResolve();
+        readyResolve = null;
     }
 }
 
@@ -245,3 +253,10 @@ exports.setAccountTokenIssue = setAccountTokenIssue;
 exports.streamerTokenIssue = () => streamerTokenIssue;
 exports.botTokenIssue = () => botTokenIssue;
 exports.refreshTwitchData = refreshTwitchData;
+
+/**
+ * A promise that resolves when accounts are initially loaded
+ */
+exports.readyPromise = new Promise((resolve) => {
+    readyResolve = resolve;
+});

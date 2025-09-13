@@ -35,6 +35,20 @@
                     </firebot-setting>
 
                     <firebot-setting
+                        name="Proxied Webhooks"
+                        tag="Experimental"
+                        description="This feature allows you to receive webhooks without exposing your local network. A 'Webhook Received' event is triggered each time a webhook is received with the payload available via the $webhookPayload variable."
+                    >
+                        <setting-description-addon>
+                            <b>This feature is experimental and not guaranteed to be stable.</b>
+                        </setting-description-addon>
+                        <firebot-button
+                            text="Edit Webhooks"
+                            ng-click="showEditWebhooksModal()"
+                        />
+                    </firebot-setting>
+
+                    <firebot-setting
                         name="Quote ID Recalculation"
                         description="Quote IDs in Firebot are static, even if a quote before another is deleted. If you would like to recalculate your quote IDs so that there isn't any skipped quote numbers, you can use this option."
                     >
@@ -105,7 +119,7 @@
 
                 </div>
           `,
-            controller: function ($scope, settingsService, utilityService, backendCommunicator) {
+            controller: function ($scope, settingsService, utilityService, backendCommunicator, modalService) {
                 $scope.settings = settingsService;
 
                 $scope.toggleWhileLoops = () => {
@@ -127,6 +141,12 @@
                                 }
                             });
                     }
+                };
+
+                $scope.showEditWebhooksModal = function() {
+                    modalService.showModal({
+                        component: "editWebhooksModal"
+                    });
                 };
 
                 $scope.recalculateQuoteIds = () => {
