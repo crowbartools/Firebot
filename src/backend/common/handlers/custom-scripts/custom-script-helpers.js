@@ -109,9 +109,6 @@ function buildModules(scriptManifest) {
 
     const scriptNameNormalized = scriptManifest.name.replace(/[#%&{}\\<>*?/$!'":@`|=\s-]+/g, "-").toLowerCase();
 
-
-
-
     const scriptDataDir = path.resolve(profileManager.getPathInProfile("/script-data/"), `./${scriptNameNormalized}/`);
 
     return {
@@ -172,7 +169,7 @@ function buildModules(scriptManifest) {
         counterManager: require("../../../counters/counter-manager").CounterManager,
         utils: require("../../../utility"),
         resourceTokenManager: require("../../../resource-token-manager").ResourceTokenManager,
-        webhookManager: new ScriptWebhookManager(scriptManifest.name),
+        webhookManager: new ScriptWebhookManager(scriptNameNormalized),
         notificationManager: {
             addNotification: (notificationBase, permanentlySave = true) => {
                 return notificationManager.addNotification(
