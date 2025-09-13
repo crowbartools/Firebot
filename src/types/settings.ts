@@ -33,6 +33,7 @@ export type FirebotSettingsTypes = {
     ChatCustomFontFamilyEnabled: boolean;
     ChatCustomFontSize: number;
     ChatCustomFontSizeEnabled: boolean;
+    ChatGetAllEmotes: boolean;
     ChatHideBotAccountMessages: boolean;
     ChatHideDeletedMessages: boolean;
     ChatHideWhispers: boolean;
@@ -151,6 +152,7 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     ChatCustomFontFamilyEnabled: false,
     ChatCustomFontSize: 17,
     ChatCustomFontSizeEnabled: false,
+    ChatGetAllEmotes: false,
     ChatHideBotAccountMessages: false,
     ChatHideDeletedMessages: false,
     ChatHideWhispers: false,
