@@ -8,11 +8,14 @@ class WebhookConfigManager extends JsonDbManager<WebhookConfig, { "webhook-recei
     constructor() {
         super("Webhooks", "/webhooks");
 
-        this.on("items-changed", (items) => {
+        const sendWebhookIds = () => {
             crowbarRelayWebSocket.send("update-webhooks", {
-                webhookIds: items.map(item => item.id)
+                webhookIds: this.getAllItems().map(item => item.id)
             });
-        });
+        };
+
+        this.on("items-changed", sendWebhookIds);
+        crowbarRelayWebSocket.on("ready", sendWebhookIds);
 
         crowbarRelayWebSocket.on("message", (msg) => {
             if (msg.event === "webhook") {
