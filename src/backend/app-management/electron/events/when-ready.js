@@ -45,9 +45,6 @@ exports.whenReady = async () => {
 
     const connectionManager = require("../../../common/connection-manager");
 
-    // start crowbar relay websocket
-    require("../../../crowbar-relay/crowbar-relay-websocket");
-
     windowManagement.updateSplashScreenStatus("Loading timers...");
     const timerManager = require("../../../timers/timer-manager");
     await timerManager.loadItems();
@@ -272,6 +269,9 @@ exports.whenReady = async () => {
 
     // get ui extension manager in memory
     require("../../../ui-extensions/ui-extension-manager");
+
+    // start crowbar relay websocket
+    require("../../../crowbar-relay/crowbar-relay-websocket");
 
     logger.debug('...loading main window');
     windowManagement.updateSplashScreenStatus("Here we go!");

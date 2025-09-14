@@ -21,6 +21,9 @@ class CrowbarRelayWebSocket extends TypedEmitter<{
         accountAccess.events.on("account-update", () => {
             this.start();
         });
+        accountAccess.events.on("account-auth-update:streamer", () => {
+            this.start();
+        });
     }
 
     private start() {
@@ -51,11 +54,17 @@ class CrowbarRelayWebSocket extends TypedEmitter<{
         });
 
         this.ws.addEventListener("error", (err) => {
-            logger.error("Crowbar Relay WebSocket error:", err);
+            logger.error("Crowbar Relay WebSocket errored", err);
         });
 
-        this.ws.addEventListener("close", () => {
-            logger.info("Crowbar Relay WebSocket disconnected!");
+        this.ws.addEventListener("close", (closedEvent) => {
+            const unauthorized = closedEvent.target?._ws?._req?.res?.statusCode === 401;
+            if (unauthorized) {
+                logger.error("Crowbar Relay WebSocket unauthorized!");
+                this.ws.close();
+            } else {
+                logger.info("Crowbar Relay WebSocket disconnected!");
+            }
         });
 
         this.ws.addEventListener("message", (msg) => {

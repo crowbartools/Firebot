@@ -54,6 +54,13 @@ function sendAccountUpdate() {
 }
 
 /**
+ * @param {'streamer' | 'bot'} accountType
+ */
+function sendAccountAuthUpdate(accountType) {
+    accountEvents.emit(`account-auth-update:${accountType}`, cache[accountType]);
+}
+
+/**
  * Updates a streamer account object with various settings
  * @param {FirebotAccount} streamerAccount
  * @returns {Promise<FirebotAccount>}
@@ -163,10 +170,10 @@ let botTokenIssue = false;
 
 /**
  * Update and save data for an account
- * @param {string} accountType - The type of account ("streamer" or "bot")
+ * @param {'streamer' | 'bot'} accountType - The type of account ("streamer" or "bot")
  * @param {FirebotAccount} account - The  account
  */
-function updateAccount(accountType, account, emitUpdate = true) {
+function updateAccount(accountType, account, emitGeneralUpdate = true, emitAuthUpdateEvent = false) {
     if ((accountType !== "streamer" && accountType !== "bot") || account == null) {
         return;
     }
@@ -193,8 +200,12 @@ function updateAccount(accountType, account, emitUpdate = true) {
 
     saveAccountDataToFile(accountType);
 
-    if (emitUpdate) {
+    if (emitGeneralUpdate) {
         sendAccountUpdate();
+    }
+
+    if (emitAuthUpdateEvent) {
+        sendAccountAuthUpdate(accountType);
     }
 }
 
