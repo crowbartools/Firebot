@@ -19,6 +19,7 @@ type DefaultEvents<I extends Item = Item> = {
     "saved-all-items": (items: I[]) => void;
     "deleted-item": (item: I) => void;
     "deleted-all-items": () => void;
+    "items-changed": (items: I[]) => void;
 };
 
 /**
@@ -61,6 +62,7 @@ class JsonDbManager<T extends Item, E extends ListenerSignature<E> = DefaultEven
 
             //@ts-ignore - typescript is handling the types for .emit poorly
             this.emit("loaded-items", Object.values(this.items));
+            this.emitItemsChanged();
         } catch (err) {
             logger.error(`There was an error reading ${this.type} file.`, err);
         }
@@ -107,6 +109,7 @@ class JsonDbManager<T extends Item, E extends ListenerSignature<E> = DefaultEven
 
             //@ts-ignore - typescript is handling the types for .emit poorly
             this.emit(isCreating ? "created-item" : "updated-item", item);
+            this.emitItemsChanged();
             return item;
         } catch (err) {
             logger.error(`There was an error saving ${this.type}.`, err);
@@ -129,6 +132,7 @@ class JsonDbManager<T extends Item, E extends ListenerSignature<E> = DefaultEven
 
             //@ts-ignore - typescript is handling the types for .emit poorly
             this.emit("saved-all-items", allItems);
+            this.emitItemsChanged();
         } catch (err) {
             logger.error(`There was an error saving all ${this.type}s.`, err);
         }
@@ -154,6 +158,7 @@ class JsonDbManager<T extends Item, E extends ListenerSignature<E> = DefaultEven
 
             //@ts-ignore - typescript is handling the types for .emit poorly
             this.emit("deleted-item", item);
+            this.emitItemsChanged();
             return true;
         } catch (err) {
             logger.error(`There was an error deleting ${this.type}.`, err);
@@ -172,9 +177,15 @@ class JsonDbManager<T extends Item, E extends ListenerSignature<E> = DefaultEven
 
             //@ts-ignore - typescript is handling the types for .emit poorly
             this.emit("deleted-all-items");
+            this.emitItemsChanged();
         } catch (err) {
             logger.error(`There was an error deleting all ${this.type}s.`, err);
         }
+    }
+
+    private emitItemsChanged() {
+        //@ts-ignore - typescript is handling the types for .emit poorly
+        this.emit("items-changed", Object.values(this.items));
     }
 }
 

@@ -137,7 +137,8 @@
         videoService,
         replaceVariableService,
         variableMacroService,
-        uiExtensionsService
+        uiExtensionsService,
+        webhooksService
     ) {
         // 'chatMessagesService' and 'videoService' are included so they're instantiated on app start
 
@@ -179,6 +180,8 @@
         iconsService.loadFontAwesomeIcons();
 
         variableMacroService.loadMacros();
+
+        webhooksService.loadWebhookConfigs();
 
         //start notification check
         $timeout(() => {

@@ -34,6 +34,9 @@ function AccountCache(streamer, bot) {
     this.bot = bot;
 }
 
+
+let readyResolve = null;
+
 const cache = new AccountCache(
     {
         username: "Streamer",
@@ -48,6 +51,13 @@ const cache = new AccountCache(
 function sendAccountUpdate() {
     frontendCommunicator.send("accountUpdate", cache);
     accountEvents.emit("account-update", cache);
+}
+
+/**
+ * @param {'streamer' | 'bot'} accountType
+ */
+function sendAccountAuthUpdate(accountType) {
+    accountEvents.emit(`account-auth-update:${accountType}`, cache[accountType]);
 }
 
 /**
@@ -109,6 +119,11 @@ async function loadAccountData(emitUpdate = true) {
     if (emitUpdate) {
         sendAccountUpdate();
     }
+
+    if (readyResolve) {
+        readyResolve();
+        readyResolve = null;
+    }
 }
 
 const getTwitchData = async (accountType) => {
@@ -155,10 +170,10 @@ let botTokenIssue = false;
 
 /**
  * Update and save data for an account
- * @param {string} accountType - The type of account ("streamer" or "bot")
+ * @param {'streamer' | 'bot'} accountType - The type of account ("streamer" or "bot")
  * @param {FirebotAccount} account - The  account
  */
-function updateAccount(accountType, account, emitUpdate = true) {
+function updateAccount(accountType, account, emitGeneralUpdate = true, emitAuthUpdateEvent = false) {
     if ((accountType !== "streamer" && accountType !== "bot") || account == null) {
         return;
     }
@@ -185,8 +200,12 @@ function updateAccount(accountType, account, emitUpdate = true) {
 
     saveAccountDataToFile(accountType);
 
-    if (emitUpdate) {
+    if (emitGeneralUpdate) {
         sendAccountUpdate();
+    }
+
+    if (emitAuthUpdateEvent) {
+        sendAccountAuthUpdate(accountType);
     }
 }
 
@@ -245,3 +264,10 @@ exports.setAccountTokenIssue = setAccountTokenIssue;
 exports.streamerTokenIssue = () => streamerTokenIssue;
 exports.botTokenIssue = () => botTokenIssue;
 exports.refreshTwitchData = refreshTwitchData;
+
+/**
+ * A promise that resolves when accounts are initially loaded
+ */
+exports.readyPromise = new Promise((resolve) => {
+    readyResolve = resolve;
+});
