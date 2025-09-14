@@ -29,21 +29,17 @@ class ScriptWebhookManager extends EventEmitter {
         });
     }
 
-    saveWebhook(webhook) {
-        if (webhook.name == null || webhook.name.trim() === "") {
+    saveWebhook(name) {
+        if (name == null || name.trim() === "") {
             return null;
         }
 
         const existing = webhookManager
             .getAllItems()
-            .find(w => w.name === webhook.name && w.scriptId === this.scriptName);
-
-        if (existing == null) {
-            return null;
-        }
+            .find(w => w.name === name && w.scriptId === this.scriptName);
 
         return webhookManager.saveItem({
-            ...webhook,
+            name,
             id: existing?.id ?? undefined,
             scriptId: this.scriptName
         });
