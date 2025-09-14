@@ -15,6 +15,8 @@ class WebhookConfigManager extends JsonDbManager<WebhookConfig, { "webhook-recei
             crowbarRelayWebSocket.send("update-webhooks", {
                 webhookIds: this.getAllItems().map(item => item.id)
             });
+
+            frontendCommunicator.send("webhooks:updated", this.getAllItems());
         };
 
         this.on("items-changed", sendWebhookIds);
