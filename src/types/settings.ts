@@ -95,6 +95,7 @@ export type FirebotSettingsTypes = {
     UseOverlayInstances: boolean;
     ViewerDB: boolean;
     ViewerListPageSize: number;
+    WebhookDebugLogs: boolean;
     WebOnlineCheckin: boolean;
     WebServerPort: number;
     WhileLoopEnabled: boolean;
@@ -211,6 +212,7 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     UseOverlayInstances: false,
     ViewerDB: true,
     ViewerListPageSize: 10,
+    WebhookDebugLogs: false,
     WebOnlineCheckin: false,
     WebServerPort: 7472,
     WhileLoopEnabled: false,

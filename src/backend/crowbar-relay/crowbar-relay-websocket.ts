@@ -2,7 +2,6 @@ import ReconnectingWebSocket from '../reconnecting-websocket';
 import accountAccess from "../common/account-access";
 import { TypedEmitter } from "tiny-typed-emitter";
 import logger from "../logwrapper";
-import { maskPII } from '../utils';
 
 class CrowbarRelayWebSocket extends TypedEmitter<{
     "ready": () => void,
@@ -68,7 +67,6 @@ class CrowbarRelayWebSocket extends TypedEmitter<{
         });
 
         this.ws.addEventListener("message", (msg) => {
-            logger.debug("Crowbar Relay WebSocket message:", maskPII(msg.data));
             try {
                 this.emit("message", JSON.parse(msg.data));
             } catch (e) {

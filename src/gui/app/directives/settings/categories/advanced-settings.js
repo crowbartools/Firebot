@@ -38,6 +38,7 @@
                         name="Proxied Webhooks"
                         tag="Experimental"
                         description="This feature allows you to receive webhooks without exposing your local network. A 'Webhook Received' event is triggered each time a webhook is received with the payload available via the $webhookPayload variable."
+                        bottom-border="false"
                     >
                         <setting-description-addon>
                             <b>This feature is experimental and not guaranteed to be stable.</b>
@@ -45,6 +46,20 @@
                         <firebot-button
                             text="Edit Webhooks"
                             ng-click="showEditWebhooksModal()"
+                        />
+                    </firebot-setting>
+
+                    <firebot-setting
+                        name="Webhook Debug Logs"
+                        description="Enable or disable logging for incoming webhooks. Webhooks might contain sensitive information. Be careful where you send logs when this option is enabled."
+                    >
+                        <setting-description-addon>
+                            <b>Requires Debug Mode to also be enabled.</b>
+                        </setting-description-addon>
+                        <firebot-button
+                            text="{{settings.getSetting('WebhookDebugLogs') && settings.getSetting('DebugMode') ? 'Disable Webhook Logs' : 'Enable Webhook Logs' }}"
+                            disabled="!settings.getSetting('DebugMode')"
+                            ng-click="settings.saveSetting('WebhookDebugLogs', !settings.getSetting('WebhookDebugLogs'))"
                         />
                     </firebot-setting>
 
