@@ -59,7 +59,7 @@ class WebhookConfigManager extends JsonDbManager<WebhookConfig, { "webhook-recei
 const webhookConfigManager = new WebhookConfigManager();
 
 frontendCommunicator.onAsync("webhooks:get-all", async () =>
-    webhookConfigManager.getAllItems().filter(w => w.scriptId == null)
+    webhookConfigManager.getAllItems()
 );
 
 frontendCommunicator.onAsync("webhooks:save", async (webhookConfig: WebhookConfig) =>
