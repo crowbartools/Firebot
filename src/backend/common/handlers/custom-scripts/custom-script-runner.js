@@ -204,7 +204,7 @@ async function startUpScriptDeleted(startUpScriptConfig) {
     }
     if (activeScript.stop != null) {
         try {
-            await Promise.resolve(activeScript.stop());
+            await Promise.resolve(activeScript.stop(true));
         } catch (error) {
             logger.error(`Error when attempting to stop custom script`, error);
         }
@@ -245,7 +245,7 @@ async function stopAllScripts() {
     for (const activeScript of Object.values(activeCustomScripts)) {
         if (activeScript.stop != null) {
             try {
-                await Promise.resolve(activeScript.stop());
+                await Promise.resolve(activeScript.stop(false));
             } catch (error) {
                 logger.error(`Error when attempting to stop custom script`, error);
             }
