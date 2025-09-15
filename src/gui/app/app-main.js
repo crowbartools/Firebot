@@ -206,7 +206,7 @@
     });
 
     app.controller("MainController", function($scope, $rootScope, $timeout, connectionService, utilityService,
-        settingsService, backupService, sidebarManager, logger, backendCommunicator, fontManager) {
+        settingsService, backupService, sidebarManager, logger, backendCommunicator, fontManager, ngToast) {
         $rootScope.showSpinner = true;
 
         $scope.fontAwesome5KitUrl = `https://kit.fontawesome.com/${secrets.fontAwesome5KitId}.js`;
@@ -263,6 +263,23 @@
 
             document.body.removeChild(textArea);
         };
+
+        backendCommunicator.on("copy-to-clipboard", (data) => {
+            if (!data?.text?.length) {
+                return;
+            }
+
+            $rootScope.copyTextToClipboard(data.text);
+
+            if (!data.silent) {
+                ngToast.create({
+                    className: 'info',
+                    content: data.toastMessage || `Copied '${data.text}' to clipboard`
+                });
+            }
+
+            return;
+        });
 
         $rootScope.openLinkExternally = function(url) {
             shell.openExternal(url);
