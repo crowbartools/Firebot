@@ -197,7 +197,7 @@ export class TwitchChatApi {
      * @param enable `true` will enable emote-only mode. `false` will disable emote-only mode. Defaults to `true`.
      * @returns `true` if the update succeeded or `false` if it failed
      */
-    async setEmoteOnlyMode(enable = true) {
+    async setEmoteOnlyMode(enable = true): Promise<boolean> {
         const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
 
         try {
@@ -222,7 +222,7 @@ export class TwitchChatApi {
      * @param duration Duration in minutes that a user must be following the channel before they're allowed to chat. Default is `0`.
      * @returns `true` if the update succeeded or `false` if it failed
      */
-    async setFollowerOnlyMode(enable = true, duration = 0) {
+    async setFollowerOnlyMode(enable = true, duration = 0): Promise<boolean> {
         const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
 
         try {
@@ -247,7 +247,7 @@ export class TwitchChatApi {
      * @param enable `true` will enable subscriber-only mode. `false` will disable subscriber-only mode. Defaults to `true`.
      * @returns `true` if the update succeeded or `false` if it failed
      */
-    async setSubscriberOnlyMode(enable = true) {
+    async setSubscriberOnlyMode(enable = true): Promise<boolean> {
         const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
 
         try {
@@ -272,7 +272,7 @@ export class TwitchChatApi {
      * @param duration Duration in seconds that a user must wait between sending messages. Default is `5`.
      * @returns `true` if the update succeeded or `false` if it failed
      */
-    async setSlowMode(enable = true, duration = 5) {
+    async setSlowMode(enable = true, duration = 5): Promise<boolean> {
         const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
 
         try {
@@ -297,7 +297,7 @@ export class TwitchChatApi {
      * @param enable `true` will enable unique mode. `false` will disable unique mode. Defaults to `true`.
      * @returns `true` if the update succeeded or `false` if it failed
      */
-    async setUniqueMode(enable = true) {
+    async setUniqueMode(enable = true): Promise<boolean> {
         const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
 
         try {
@@ -321,7 +321,7 @@ export class TwitchChatApi {
      * @param targetUserId numerical ID of the user as sting.
      * @returns the color as hex code, null if the user did not set a color, or undefined if the user is unknown.
      */
-    async getColorForUser(targetUserId: string): Promise<string | null |undefined> {
+    async getColorForUser(targetUserId: string): Promise<string> {
         try {
             return await this._streamerClient.chat.getColorForUser(targetUserId);
         } catch (error) {
