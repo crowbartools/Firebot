@@ -6,6 +6,7 @@ import eventManager from "../events/EventManager";
 import { SettingsManager } from "../common/settings-manager";
 import { maskPII } from "../utils";
 import logger from "../logwrapper";
+import accountAccess from "../common/account-access";
 
 class WebhookConfigManager extends JsonDbManager<WebhookConfig, { "webhook-received": (data: { config: WebhookConfig; payload: unknown; }) => void }> {
     constructor() {
@@ -55,6 +56,11 @@ class WebhookConfigManager extends JsonDbManager<WebhookConfig, { "webhook-recei
             });
 
         });
+    }
+
+    getWebhookUrlById(webhookId: string): string {
+        const streamer = accountAccess.getAccounts().streamer;
+        return `https://api.crowbar.tools/v1/webhook/${streamer.channelId}/${webhookId}`;
     }
 }
 
