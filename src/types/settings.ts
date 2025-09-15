@@ -33,6 +33,7 @@ export type FirebotSettingsTypes = {
     ChatCustomFontFamilyEnabled: boolean;
     ChatCustomFontSize: number;
     ChatCustomFontSizeEnabled: boolean;
+    ChatGetAllEmotes: boolean;
     ChatHideBotAccountMessages: boolean;
     ChatHideDeletedMessages: boolean;
     ChatHideWhispers: boolean;
@@ -46,8 +47,13 @@ export type FirebotSettingsTypes = {
     ClearChatFeedMode: "never" | "onlyStreamer" | "always";
     ClearCustomScriptCache: boolean;
     CopiedOverlayVersion: string;
-    DashboardLayout: object; //TODO
+    DashboardLayout: {
+        dashboardViewerList: string;
+        dashboardChatWindow: string;
+        dashboardActivityFeed: string;
+    };
     DebugMode: boolean;
+    DefaultEffectLabelsEnabled: boolean;
     DefaultToAdvancedCommandMode: boolean;
     DefaultTtsVoiceId: string;
     DeleteProfile: string;
@@ -62,10 +68,14 @@ export type FirebotSettingsTypes = {
     MaxBackupCount: number | "All";
     MinimizeToTray: boolean;
     NotifyOnBeta: boolean;
+    OpenEffectQueueMonitorOnLaunch: boolean;
     OpenStreamPreviewOnLaunch: boolean;
     OverlayInstances: string[];
     PersistCustomVariables: boolean;
-    QuickActions: object; //TODO
+    QuickActions: Record<string, {
+        enabled: boolean;
+        position: number;
+    }>;
     RunCustomScripts: boolean;
     SeenAdvancedCommandModePopup: boolean;
     ShowAdBreakIndicator: boolean;
@@ -81,9 +91,11 @@ export type FirebotSettingsTypes = {
     TriggerUpcomingAdBreakMinutes: number;
     TtsVoiceRate: number;
     TtsVoiceVolume: number;
+    UseExperimentalTwitchClipUrlResolver: boolean;
     UseOverlayInstances: boolean;
     ViewerDB: boolean;
     ViewerListPageSize: number;
+    WebhookDebugLogs: boolean;
     WebOnlineCheckin: boolean;
     WebServerPort: number;
     WhileLoopEnabled: boolean;
@@ -141,6 +153,7 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     ChatCustomFontFamilyEnabled: false,
     ChatCustomFontSize: 17,
     ChatCustomFontSizeEnabled: false,
+    ChatGetAllEmotes: false,
     ChatHideBotAccountMessages: false,
     ChatHideDeletedMessages: false,
     ChatHideWhispers: false,
@@ -154,8 +167,13 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     ClearChatFeedMode: "onlyStreamer",
     ClearCustomScriptCache: false,
     CopiedOverlayVersion: "",
-    DashboardLayout: {},
+    DashboardLayout: {
+        dashboardViewerList: "225px",
+        dashboardChatWindow: "100%",
+        dashboardActivityFeed: "275px"
+    },
     DebugMode: false,
+    DefaultEffectLabelsEnabled: true,
     DefaultToAdvancedCommandMode: false,
     DefaultTtsVoiceId: undefined,
     DeleteProfile: undefined,
@@ -170,6 +188,7 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     MaxBackupCount: 25,
     MinimizeToTray: false,
     NotifyOnBeta: false,
+    OpenEffectQueueMonitorOnLaunch: false,
     OpenStreamPreviewOnLaunch: false,
     OverlayInstances: [],
     PersistCustomVariables: false,
@@ -189,9 +208,11 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     TriggerUpcomingAdBreakMinutes: 0,
     TtsVoiceRate: 1,
     TtsVoiceVolume: 0.5,
+    UseExperimentalTwitchClipUrlResolver: true,
     UseOverlayInstances: false,
     ViewerDB: true,
     ViewerListPageSize: 10,
+    WebhookDebugLogs: false,
     WebOnlineCheckin: false,
     WebServerPort: 7472,
     WhileLoopEnabled: false,

@@ -6,14 +6,16 @@ const frontendCommunicator = require("./frontend-communicator");
 const { SettingsManager } = require("./settings-manager");
 const twitchApi = require("../twitch-api/api");
 const twitchChat = require("../chat/twitch-chat");
-const twitchPubSubClient = require("../twitch-api/pubsub/pubsub-client");
 const TwitchEventSubClient = require("../twitch-api/eventsub/eventsub-client");
 const integrationManager = require("../integrations/integration-manager");
-const accountAccess = require("../common/account-access");
 
 const { ConnectionState } = require("../../shared/connection-constants");
 
-let isOnline = false;
+/**
+ * @type {import("@twurple/api").HelixStream | null}
+ */
+let currentStream = null;
+
 let onlineCheckIntervalId;
 
 /**
@@ -21,17 +23,13 @@ let onlineCheckIntervalId;
  */
 let manager;
 
-function updateOnlineStatus(online) {
-    if (online !== isOnline) {
-        isOnline = online === true;
-        manager.emit("streamerOnlineChange", isOnline);
-    }
-}
-
 async function checkOnline() {
-    const userId = accountAccess.getAccounts().streamer.userId;
-    const isOnline = await twitchApi.channels.getOnlineStatus(userId);
-    updateOnlineStatus(isOnline);
+    const stream = await twitchApi.streams.getStreamersCurrentStream();
+
+    if (stream?.id !== currentStream?.id) {
+        currentStream = stream;
+        manager.emit("streamerOnlineChange", stream != null, stream);
+    }
 }
 
 const serviceConnectionStates = {};
@@ -57,7 +55,9 @@ function emitServiceConnectionUpdateEvents(serviceId, connectionState) {
 twitchChat.on("connected", () => {
     emitServiceConnectionUpdateEvents("chat", ConnectionState.Connected);
     const rewardsManager = require("../channel-rewards/channel-reward-manager");
-    rewardsManager.refreshChannelRewardRedemptions();
+    rewardsManager.loadChannelRewards().then(() => {
+        rewardsManager.refreshChannelRewardRedemptions();
+    });
 });
 twitchChat.on("disconnected", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Disconnected));
 twitchChat.on("connecting", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Connecting));
@@ -86,12 +86,12 @@ class ConnectionManager extends EventEmitter {
         onlineCheckIntervalId = setInterval(checkOnline, 30000);
     }
 
-    setOnlineStatus(online) {
-        updateOnlineStatus(online);
+    streamerIsOnline() {
+        return currentStream != null;
     }
 
-    streamerIsOnline() {
-        return isOnline;
+    get currentStream() {
+        return currentStream;
     }
 
     chatIsConnected() {
@@ -105,11 +105,9 @@ class ConnectionManager extends EventEmitter {
     updateChatConnection(shouldConnect) {
         if (shouldConnect) {
             twitchChat.connect();
-            twitchPubSubClient.createClient();
             TwitchEventSubClient.createClient();
         } else {
             twitchChat.disconnect();
-            twitchPubSubClient.disconnectPubSub();
             TwitchEventSubClient.disconnectEventSub();
         }
         return true;

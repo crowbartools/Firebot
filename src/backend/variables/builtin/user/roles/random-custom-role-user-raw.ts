@@ -10,7 +10,8 @@ const model : ReplaceVariable = {
         usage: "rawRandomCustomRoleUser[role]",
         description: "Returns a random user that has the specified custom role as an object containing `id`, `username`, and `displayName` properties.",
         categories: [VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.OBJECT]
+        possibleDataOutput: [OutputDataType.OBJECT],
+        hidden: true
     },
     evaluator: async (_, role: string) => {
         if (role == null || role === '') {

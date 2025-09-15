@@ -128,6 +128,15 @@ const toggleConnection = {
 
         return errors;
     },
+    getDefaultLabel: (effect) => {
+        const action = effect.allAction === "toggle" ? "Toggle"
+            : effect.allAction === "true" ? "Connect" : "Disconnect";
+        if (effect.mode === "all") {
+            return `${action} all connections`;
+        }
+
+        return `Update ${effect.services.length} connection${effect.services.length === 1 ? "" : "s"}`;
+    },
     onTriggerEvent: async ({ effect }) => {
         const connectionManager = require("../../common/connection-manager");
         const integrationManager = require("../../integrations/integration-manager");

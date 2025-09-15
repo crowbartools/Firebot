@@ -1,9 +1,9 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-const fs = require("fs");
-const util = require("../../../utility");
-const logger = require("../../../logwrapper");
+import fs from "fs/promises";
+import util from "../../../utility";
+import logger from "../../../logwrapper";
 
 const model : ReplaceVariable = {
     definition: {
@@ -38,25 +38,46 @@ const model : ReplaceVariable = {
             {
                 usage: "readFile[path\\to\\file.txt, random, true]",
                 description: "Removes leading, trailing, and empty lines before grabbing a random line"
+            },
+            {
+                usage: "readFile[path\\to\\file.txt, array]",
+                description: "Read contents of a text file as an array."
+            },
+            {
+                usage: "readFile[path\\to\\file.txt, array, true]",
+                description: "Removes leading, trailing, and empty lines before grabbing the array."
+            },
+            {
+                usage: "readFile[path\\to\\file.ogg, bytes]",
+                description: "Reads the content of a file and returns a byte array."
             }
         ],
         categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.ARRAY]
     },
-    evaluator: (
+    evaluator: async (
         trigger: Trigger,
         filePath: string,
-        lineOrRandom: null | number | "first" | "last" | "random",
+        lineOrRandom: null | number | "array" | "first" | "last" | "random" | "bytes",
         ignoreWhitespace?: string | boolean
-    ) : string => {
+    ) : Promise<string | string[] | Uint8Array> => {
 
         if (filePath === null) {
             return "[File Path Error]";
         }
 
+        if (lineOrRandom === "bytes") {
+            try {
+                return Uint8Array.from(await fs.readFile(filePath));
+            } catch (err) {
+                logger.error("Error reading binary file", err);
+                return "[Read File Error]";
+            }
+        }
+
         let contents : string;
         try {
-            contents = fs.readFileSync(filePath, { encoding: "utf8" });
+            contents = await fs.readFile(filePath, { encoding: "utf-8" });
         } catch (err) {
             logger.error("error reading file", err);
             return "[Read File Error]";
@@ -90,6 +111,9 @@ const model : ReplaceVariable = {
         }
 
         const lorStr = `${lineOrRandom}`.toLowerCase();
+        if (lorStr === 'array') {
+            return lines;
+        }
         if (lorStr === 'first') {
             return lines[0];
         }

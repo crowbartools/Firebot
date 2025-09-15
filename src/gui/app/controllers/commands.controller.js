@@ -99,9 +99,9 @@
                     className: "info",
                     content: "Opening Firebot profile page..."
                 });
-                const profileToken = await backendCommunicator.fireEventAsync("get-firebot-profile-token");
-                if (profileToken) {
-                    $rootScope.openLinkExternally(`https://firebot.app/profile?id=${profileToken}`);
+                const channelName = await backendCommunicator.fireEventAsync("sync-profile-data-to-crowbar-api");
+                if (channelName) {
+                    $rootScope.openLinkExternally(`https://firebot.app/profile/${channelName}`);
                 }
             };
 
@@ -111,6 +111,18 @@
 
             $scope.resetCooldownsForCommand = (command) => {
                 commandsService.resetCooldownsForCommand(command.id);
+            };
+
+            $scope.resetAllPerStreamCommandUsages = () => {
+                commandsService.resetAllPerStreamCommandUsages();
+            };
+
+            $scope.resetPerStreamUsagesForCommand = (command) => {
+                commandsService.resetPerStreamUsagesForCommand(command.id);
+            };
+
+            $scope.saveCustomCommand = (command) => {
+                commandsService.saveCustomCommand(command);
             };
 
             $scope.saveAllCommands = (commands) => {
@@ -130,6 +142,12 @@
                         html: `<a href ><i class="iconify" data-icon="mdi:clock-fast" style="margin-right: 10px;"></i> Clear Cooldowns</a>`,
                         click: () => {
                             $scope.resetCooldownsForCommand(command);
+                        }
+                    },
+                    {
+                        html: `<a href ><i class="iconify" data-icon="mdi:tally-mark-5" style="margin-right: 10px;"></i> Clear Per-Stream Usages</a>`,
+                        click: () => {
+                            $scope.resetPerStreamUsagesForCommand(command);
                         }
                     },
                     {

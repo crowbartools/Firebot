@@ -44,7 +44,7 @@
                     />
                     <firebot-setting
                         name="Ignore Related Gift Sub Events"
-                        description="When this is enabled, Firebot will attempt to ignore subsequent Gift Sub events after a Community Gift Sub event. This means only the Community Sub event would fire instead of the Community Sub event AND an additional Gift Sub event for every recipient."
+                        description="When this is enabled, Firebot will ignore individual Gift Sub events that are part of a Community Gift Sub event. This means only the Community Sub event would fire instead of the Community Sub event AND an additional Gift Sub event for every recipient."
                     >
                         <firebot-select
                             options="{ true: 'Yes', false: 'No' }"

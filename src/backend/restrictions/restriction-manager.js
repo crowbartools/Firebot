@@ -1,8 +1,8 @@
 "use strict";
 
-const { ipcMain } = require("electron");
 const logger = require("../logwrapper");
 const EventEmitter = require("events");
+const frontendCommunicator = require("../common/frontend-communicator");
 
 class RestrictionsManager extends EventEmitter {
     constructor() {
@@ -62,7 +62,7 @@ class RestrictionsManager extends EventEmitter {
             .then(() => true, () => false);
     }
 
-    async runRestrictionPredicates(triggerData, restrictionData) {
+    async runRestrictionPredicates(triggerData, restrictionData, restrictionsAreInherited = false) {
         if (restrictionData == null || restrictionData.restrictions == null ||
             restrictionData.restrictions.length < 1) {
             return Promise.resolve();
@@ -76,10 +76,10 @@ class RestrictionsManager extends EventEmitter {
                 const restrictionDef = this.getRestrictionById(restriction.type);
                 if (restrictionDef && restrictionDef.predicate) {
                     try {
-                        await restrictionDef.predicate(triggerData, restriction);
+                        await restrictionDef.predicate(triggerData, restriction, restrictionsAreInherited);
                         restrictionPassed = true;
                         if (restrictionData.mode !== "none" && restrictionDef.onSuccessful) {
-                            restrictionDef.onSuccessful(triggerData, restriction);
+                            restrictionDef.onSuccessful(triggerData, restriction, restrictionsAreInherited);
                         }
                         break;
                     } catch (reason) {
@@ -108,7 +108,7 @@ class RestrictionsManager extends EventEmitter {
             for (const restriction of restrictions) {
                 const restrictionDef = this.getRestrictionById(restriction.type);
                 if (restrictionDef && restrictionDef.predicate) {
-                    predicatePromises.push(restrictionDef.predicate(triggerData, restriction));
+                    predicatePromises.push(restrictionDef.predicate(triggerData, restriction, restrictionsAreInherited));
                 }
             }
 
@@ -116,7 +116,7 @@ class RestrictionsManager extends EventEmitter {
                 for (const restriction of restrictions) {
                     const restrictionDef = this.getRestrictionById(restriction.type);
                     if (restrictionDef && restrictionDef.onSuccessful) {
-                        restrictionDef.onSuccessful(triggerData, restriction);
+                        restrictionDef.onSuccessful(triggerData, restriction, restrictionsAreInherited);
                     }
                 }
             });
@@ -137,10 +137,52 @@ function mapRestrictionForFrontEnd(restriction) {
     };
 }
 
-ipcMain.on("getRestrictions", (event) => {
+frontendCommunicator.on("getRestrictions", (triggerData) => {
     logger.debug("got 'get restrictions' request");
 
-    event.returnValue = manager.getAllRestrictions().map(r => mapRestrictionForFrontEnd(r));
+    const triggerType = triggerData.triggerType,
+        triggerMeta = triggerData.triggerMeta;
+
+    return manager.getAllRestrictions().map(r => mapRestrictionForFrontEnd(r)).filter((r) => {
+        if (r.definition.triggers == null || (Array.isArray(r.definition.triggers) && r.definition.triggers.length < 1)) {
+            return true;
+        }
+
+        if (triggerType == null) {
+            return false;
+        }
+
+        if (Array.isArray(r.definition.triggers)) {
+            return r.definition.triggers.includes(triggerType);
+        }
+
+        const supported = r.definition.triggers[triggerType] != null
+            && r.definition.triggers[triggerType] !== false;
+
+        if (!supported) {
+            return false;
+        }
+
+        if (triggerMeta) {
+            const effectTriggerData = r.definition.triggers[triggerType];
+
+            switch (triggerType) {
+                case "event":
+                    if (effectTriggerData === true) {
+                        return true;
+                    }
+                    if (Array.isArray(effectTriggerData)) {
+                        return effectTriggerData.includes(triggerMeta.triggerId);
+                    }
+                    return true;
+                default:
+                    return true;
+            }
+        } else {
+            return true;
+        }
+
+    });
 });
 
 module.exports = manager;

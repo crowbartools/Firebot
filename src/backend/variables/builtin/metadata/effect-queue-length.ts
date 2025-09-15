@@ -1,7 +1,8 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-import effectQueueManager from "../../../effects/queues/effect-queue-manager";
+import effectQueueManager from "../../../effects/queues/effect-queue-config-manager";
+import effectQueueRunner from "../../../effects/queues/effect-queue-runner";
 
 const model : ReplaceVariable = {
     definition: {
@@ -14,7 +15,8 @@ const model : ReplaceVariable = {
     evaluator: async (_trigger, text = "") => {
         const selectedQueue = effectQueueManager.getAllItems().find(queue => queue.name === text);
         if (selectedQueue) {
-            return selectedQueue.length.toString();
+            const queueState = effectQueueRunner.getQueueStateForConfig(selectedQueue);
+            return queueState?.queuedItems?.length.toString() || "0";
         }
         return "Unknown";
     }

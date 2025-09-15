@@ -34,8 +34,8 @@ exports.windowsAllClosed = async () => {
 
     if (SettingsManager.getSetting("BackupOnExit")) {
         // Make a backup
-        await BackupManager.startBackup(false, app.quit);
-    } else {
-        app.quit();
+        await BackupManager.startBackup(false);
     }
+
+    app.quit();
 };

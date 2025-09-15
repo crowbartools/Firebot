@@ -296,6 +296,57 @@ const model: EffectType<EffectMeta> = {
 
         return errors;
     },
+    getDefaultLabel: (effect, channelRewardsService, sortTagsService) => {
+        if (!effect.rewardSettings.paused.update &&
+            !effect.rewardSettings.enabled.update &&
+            !effect.rewardSettings.cost.update &&
+            !effect.rewardSettings.name.update &&
+            !effect.rewardSettings.description.update) {
+            return "";
+        }
+        // support legacy bool useTag
+        let selectMode = effect.rewardSelectMode;
+        selectMode ??= effect.useTag ? "sortTag" : "dropdown";
+
+        let rewardName = "";
+        let action = "";
+
+        switch (selectMode) {
+            case "dropdown":
+                rewardName = channelRewardsService.channelRewards.find(r => r.twitchData.id === effect.channelRewardId)?.twitchData.title ?? "Unknown Reward";
+                break;
+            case "associated":
+                rewardName = "Associated Reward";
+                break;
+            case "sortTag":
+                rewardName = `Tag: ${sortTagsService.getSortTags("channel rewards").find(t => t.id === effect.sortTagId)?.name ?? "Unknown Tag"}`;
+                break;
+            case "custom":
+                rewardName = effect.customId;
+                break;
+        }
+
+        if (effect.rewardSettings.enabled.update && effect.rewardSettings.paused.update) {
+            if (effect.rewardSettings.enabled.newValue === "toggle" && effect.rewardSettings.paused.newValue === "toggle") {
+                action = "Toggle Enabled & Paused";
+            } else {
+                const enableAction = effect.rewardSettings.enabled.newValue === "toggle" ? "Toggle Enabled" : effect.rewardSettings.enabled.newValue ? "Enable" : "Disable";
+                const pauseAction = effect.rewardSettings.paused.newValue === "toggle" ? "Toggle Paused" : effect.rewardSettings.paused.newValue ? "Pause" : "Unpause";
+                action = `${enableAction} & ${pauseAction}`;
+            }
+        } else if (effect.rewardSettings.enabled.update) {
+            action = effect.rewardSettings.enabled.newValue === "toggle" ? "Toggle Enabled" : effect.rewardSettings.enabled.newValue ? "Enable" : "Disable";
+        } else if (effect.rewardSettings.paused.update) {
+            action = effect.rewardSettings.paused.newValue === "toggle" ? "Toggle Paused" : effect.rewardSettings.paused.newValue ? "Pause" : "Unpause";
+        } else if (effect.rewardSettings.name.update) {
+            return `Rename ${rewardName} to ${effect.rewardSettings.name.newValue}`;
+        } else if (effect.rewardSettings.description.update) {
+            action = `Update Description for`;
+        } else if (effect.rewardSettings.cost.update) {
+            action = `Set Cost to ${effect.rewardSettings.cost.newValue} for`;
+        }
+        return `${action} ${rewardName}`;
+    },
     onTriggerEvent: async ({ trigger, effect }) => {
         if (!effect.rewardSettings.paused.update &&
             !effect.rewardSettings.enabled.update &&

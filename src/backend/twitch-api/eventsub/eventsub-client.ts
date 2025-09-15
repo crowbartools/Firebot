@@ -9,6 +9,11 @@ import twitchApi from "../api";
 import twitchStreamInfoPoll from "../stream-info-manager";
 import rewardManager from "../../channel-rewards/channel-reward-manager";
 import chatRolesManager from "../../roles/chat-roles-manager";
+import chatHelpers from "../../chat/chat-helpers";
+import viewerDatabase from "../../viewers/viewer-database";
+import { SavedChannelReward } from "../../../types/channel-rewards";
+import channelRewardManager from "../../channel-rewards/channel-reward-manager";
+import { getChannelRewardImageUrl, mapEventSubRewardToTwitchData } from "./eventsub-helpers";
 
 class TwitchEventSubClient {
     private _eventSubListener: EventSubWsListener;
@@ -47,44 +52,129 @@ class TwitchEventSubClient {
         });
         this._subscriptions.push(followSubscription);
 
-        // Cheers
-        const bitsSubscription = this._eventSubListener.onChannelCheer(streamer.userId, async (event) => {
-            const totalBits = event.isAnonymous
-                ? event.bits
-                : (await twitchApi.bits.getChannelBitsLeaderboard(1, "all", new Date(), event.userId))[0]?.amount ?? 0;
-
-            twitchEventsHandler.cheer.triggerCheer(
-                event.userName ?? "ananonymouscheerer",
-                event.userId,
-                event.userDisplayName ?? "An Anonymous Cheerer",
-                event.isAnonymous,
-                event.bits,
-                totalBits,
-                event.message ?? ""
-            );
+        // Bits Used
+        const bitsSubscription = this._eventSubListener.onChannelBitsUse(streamer.userId, async (event) => {
+            switch (event.type) {
+                case "cheer": {
+                    const totalBits = await twitchApi.bits.getChannelBitsLeaderboard(1, "all", new Date(), event.userId)[0]?.amount ?? 0;
+                    // Future: We could parse event.messageParts into a FirebotChatMessage
+                    // This would allow us to expose cheermotes to the cheer event,
+                    // rather than just chat messages which happen to be cheers.
+                    twitchEventsHandler.bits.triggerCheer(
+                        event.userName,
+                        event.userId,
+                        event.userDisplayName,
+                        event.bits,
+                        totalBits,
+                        event.messageText ?? ""
+                    );
+                    break;
+                }
+                case "combo":
+                    break;
+                case "power_up": {
+                    const totalBits = await twitchApi.bits.getChannelBitsLeaderboard(1, "all", new Date(), event.userId)[0]?.amount ?? 0;
+                    switch (event.powerUp.type) {
+                        case "celebration":
+                            twitchEventsHandler.bits.triggerPowerupCelebration(
+                                event.userName,
+                                event.userId,
+                                event.userDisplayName,
+                                event.bits,
+                                totalBits
+                            );
+                            break;
+                        case "gigantify_an_emote": {
+                            twitchEventsHandler.bits.triggerPowerupGigantifyEmote(
+                                event.userName,
+                                event.userId,
+                                event.userDisplayName,
+                                event.bits,
+                                totalBits,
+                                event.messageText ?? "",
+                                event.powerUp.emote.name,
+                                `https://static-cdn.jtvnw.net/emoticons/v2/${event.powerUp.emote.id}/default/dark/3.0`
+                            );
+                            break;
+                        }
+                        case "message_effect": {
+                            twitchEventsHandler.bits.triggerPowerupMessageEffect(
+                                event.userName,
+                                event.userId,
+                                event.userDisplayName,
+                                event.bits,
+                                totalBits,
+                                event.messageText ?? ""
+                            );
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
         });
         this._subscriptions.push(bitsSubscription);
 
+        // AutoMod message hold v2
+        const autoModMessageHoldSub = this._eventSubListener.onAutoModMessageHoldV2(streamer.userId, streamer.userId, async (event) => {
+            const firebotChatMessage = await chatHelpers.buildViewerFirebotChatMessageFromAutoModMessage(event);
+            frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
+        });
+        this._subscriptions.push(autoModMessageHoldSub);
+
+        // AutoMod message update v2
+        const autoModMessageUpdateSub = this._eventSubListener.onAutoModMessageUpdateV2(streamer.userId, streamer.userId, (event) => {
+            frontendCommunicator.send("twitch:chat:automod-update", {
+                messageId: event.messageId,
+                newStatus: event.status,
+                resolverName: event.moderatorName,
+                resolverId: event.moderatorId,
+                flaggedPhrases: event.reason === "automod"
+                    ? event.autoMod?.boundaries?.map(b => b.text) ?? []
+                    : event.blockedTerms?.map(b => b.text) ?? []
+            });
+        });
+        this._subscriptions.push(autoModMessageUpdateSub);
+
+
+        // Channel custom reward add
+        const customRewardAddSubscription = this._eventSubListener.onChannelRewardAdd(streamer.userId, async (event) => {
+            channelRewardManager.saveTwitchDataForChannelReward(mapEventSubRewardToTwitchData(event));
+        });
+        this._subscriptions.push(customRewardAddSubscription);
+
+        // Channel custom reward update
+        const customRewardUpdateSubscription = this._eventSubListener.onChannelRewardUpdate(streamer.userId, async (event) => {
+            channelRewardManager.saveTwitchDataForChannelReward(mapEventSubRewardToTwitchData(event));
+        });
+        this._subscriptions.push(customRewardUpdateSubscription);
+
+        // Channel custom reward remove
+        const customRewardRemoveSubscription = this._eventSubListener.onChannelRewardRemove(streamer.userId, async (event) => {
+            const firebotReward: SavedChannelReward | null = channelRewardManager.getChannelReward(event.id);
+
+            if (!firebotReward) {
+                return;
+            }
+
+            await channelRewardManager.deleteChannelReward(event.id, false, true);
+        });
+        this._subscriptions.push(customRewardRemoveSubscription);
+
         // Channel custom reward
         const customRewardRedemptionSubscription = this._eventSubListener.onChannelRedemptionAdd(streamer.userId, async (event) => {
-            const reward = await twitchApi.channelRewards.getCustomChannelReward(event.rewardId);
-            let imageUrl = "";
-
-            if (reward && reward.defaultImage) {
-                const images = reward.defaultImage;
-                if (images.url4x) {
-                    imageUrl = images.url4x;
-                } else if (images.url2x) {
-                    imageUrl = images.url2x;
-                } else if (images.url1x) {
-                    imageUrl = images.url1x;
-                }
+            const reward = channelRewardManager.getChannelReward(event.rewardId);
+            if (!reward) {
+                logger.debug(`Received a reward redemption for a reward that does not exist locally. Reward: ${event.rewardTitle}`, event);
+                return;
             }
+
+            const imageUrl = getChannelRewardImageUrl(reward.twitchData);
 
             twitchEventsHandler.rewardRedemption.handleRewardRedemption(
                 event.id,
                 event.status,
-                !reward.shouldRedemptionsSkipRequestQueue,
+                !reward.twitchData.shouldRedemptionsSkipRequestQueue,
                 event.input,
                 event.userId,
                 event.userName,
@@ -96,26 +186,33 @@ class TwitchEventSubClient {
                 imageUrl
             );
 
-            if (!reward.shouldRedemptionsSkipRequestQueue) {
-                rewardManager.refreshChannelRewardRedemptions();
+            if (!reward.twitchData.shouldRedemptionsSkipRequestQueue && reward.manageable) {
+                rewardManager.addRewardRedemption(event.rewardId, {
+                    id: event.id,
+                    rewardId: event.rewardId,
+                    redemptionDate: event.redemptionDate,
+                    userId: event.userId,
+                    userName: event.userName,
+                    userDisplayName: event.userDisplayName,
+                    rewardMessage: event.input
+                });
             }
         });
         this._subscriptions.push(customRewardRedemptionSubscription);
 
         const customRewardRedemptionUpdateSubscription = this._eventSubListener.onChannelRedemptionUpdate(streamer.userId, async (event) => {
-            const reward = await twitchApi.channelRewards.getCustomChannelReward(event.rewardId);
-            let imageUrl = "";
-
-            if (reward && reward.defaultImage) {
-                const images = reward.defaultImage;
-                if (images.url4x) {
-                    imageUrl = images.url4x;
-                } else if (images.url2x) {
-                    imageUrl = images.url2x;
-                } else if (images.url1x) {
-                    imageUrl = images.url1x;
-                }
+            const reward = channelRewardManager.getChannelReward(event.rewardId);
+            if (!reward) {
+                logger.debug(`Received a reward redemption update for a reward that does not exist locally. Reward: ${event.rewardTitle}`, event);
+                return;
             }
+
+            if (reward.twitchData.shouldRedemptionsSkipRequestQueue) {
+                logger.debug(`Received a reward redemption update for a reward that should skip the request queue. Reward: ${event.rewardTitle}`, event);
+                return;
+            }
+
+            const imageUrl = getChannelRewardImageUrl(reward.twitchData);
 
             twitchEventsHandler.rewardRedemption.handleRewardUpdated(
                 event.id,
@@ -131,7 +228,9 @@ class TwitchEventSubClient {
                 imageUrl
             );
 
-            rewardManager.refreshChannelRewardRedemptions();
+            if (reward.manageable) {
+                rewardManager.removeRewardRedemption(event.rewardId, event.id);
+            }
         });
         this._subscriptions.push(customRewardRedemptionUpdateSubscription);
 
@@ -189,7 +288,7 @@ class TwitchEventSubClient {
         this._subscriptions.push(shoutoutReceivedSubscription);
 
         // Hype Train start
-        const hypeTrainBeginSubscription = this._eventSubListener.onChannelHypeTrainBegin(streamer.userId, (event) => {
+        const hypeTrainBeginSubscription = this._eventSubListener.onChannelHypeTrainBeginV2(streamer.userId, (event) => {
             twitchEventsHandler.hypeTrain.triggerHypeTrainStart(
                 event.total,
                 event.progress,
@@ -197,15 +296,15 @@ class TwitchEventSubClient {
                 event.level,
                 event.startDate,
                 event.expiryDate,
-                event.lastContribution,
                 event.topContributors,
-                event.isGoldenKappaTrain
+                event.type,
+                event.isSharedTrain
             );
         });
         this._subscriptions.push(hypeTrainBeginSubscription);
 
         // Hype Train progress
-        const hypeTrainProgressSubscription = this._eventSubListener.onChannelHypeTrainProgress(streamer.userId, (event) => {
+        const hypeTrainProgressSubscription = this._eventSubListener.onChannelHypeTrainProgressV2(streamer.userId, (event) => {
             twitchEventsHandler.hypeTrain.triggerHypeTrainProgress(
                 event.total,
                 event.progress,
@@ -213,15 +312,15 @@ class TwitchEventSubClient {
                 event.level,
                 event.startDate,
                 event.expiryDate,
-                event.lastContribution,
                 event.topContributors,
-                event.isGoldenKappaTrain
+                event.type,
+                event.isSharedTrain
             );
         });
         this._subscriptions.push(hypeTrainProgressSubscription);
 
         // Hype Train end
-        const hypeTrainEndSubscription = this._eventSubListener.onChannelHypeTrainEnd(streamer.userId, (event) => {
+        const hypeTrainEndSubscription = this._eventSubListener.onChannelHypeTrainEndV2(streamer.userId, (event) => {
             twitchEventsHandler.hypeTrain.triggerHypeTrainEnd(
                 event.total,
                 event.level,
@@ -229,7 +328,8 @@ class TwitchEventSubClient {
                 event.endDate,
                 event.cooldownEndDate,
                 event.topContributors,
-                event.isGoldenKappaTrain
+                event.type,
+                event.isSharedTrain
             );
         });
         this._subscriptions.push(hypeTrainEndSubscription);
@@ -390,19 +490,6 @@ class TwitchEventSubClient {
         });
         this._subscriptions.push(banSubscription);
 
-        // Unban
-        const unbanSubscription = this._eventSubListener.onChannelUnban(streamer.userId, (event) => {
-            twitchEventsHandler.viewerBanned.triggerUnbanned(
-                event.userName,
-                event.userId,
-                event.userDisplayName,
-                event.moderatorName,
-                event.moderatorId,
-                event.moderatorDisplayName
-            );
-        });
-        this._subscriptions.push(unbanSubscription);
-
         // Charity Campaign Start
         const charityCampaignStartSubscription = this._eventSubListener.onChannelCharityCampaignStart(streamer.userId, (event) => {
             twitchEventsHandler.charity.triggerCharityCampaignStart(
@@ -547,13 +634,64 @@ class TwitchEventSubClient {
                     );
                     break;
 
+                // Chat Message Deleted
+                case "delete":
+                    twitchEventsHandler.chatMessage.triggerChatMessageDeleted(
+                        event.userName,
+                        event.userId,
+                        event.userDisplayName,
+                        event.messageText,
+                        event.messageId
+                    );
+                    frontendCommunicator.send("twitch:chat:message:deleted", event.messageId);
+                    break;
+
+                // Outbound Raid Starting
+                case "raid":
+                    twitchEventsHandler.raid.triggerOutgoingRaidStarted(
+                        event.broadcasterName,
+                        event.broadcasterId,
+                        event.broadcasterDisplayName,
+                        event.userName,
+                        event.userId,
+                        event.userDisplayName,
+                        event.moderatorName,
+                        event.moderatorId,
+                        event.moderatorDisplayName,
+                        event.viewerCount
+                    );
+                    break;
+
+                // Outbound Raid Canceled
+                case "unraid":
+                    twitchEventsHandler.raid.triggerOutgoingRaidCanceled(
+                        event.broadcasterName,
+                        event.broadcasterId,
+                        event.broadcasterDisplayName,
+                        event.userName,
+                        event.userId,
+                        event.userDisplayName,
+                        event.moderatorName,
+                        event.moderatorId,
+                        event.moderatorDisplayName
+                    );
+                    break;
+
+                case "unban":
+                case "untimeout":
+                    twitchEventsHandler.viewerBanned.triggerUnbanned(
+                        event.userName,
+                        event.userId,
+                        event.userDisplayName,
+                        event.moderatorName,
+                        event.moderatorId,
+                        event.moderatorDisplayName
+                    );
+                    break;
+
                 // Reserving; already handled in bespoke events; less expensive to move those here.
                 case "ban":
-                case "unban":
-                case "raid":
-                case "unraid":
                 case "timeout":
-                case "untimeout":
                     break;
 
                 // Available for future use:
@@ -561,7 +699,6 @@ class TwitchEventSubClient {
                 case "add_permitted_term":
                 case "approve_unban_request":
                 case "deny_unban_request":
-                case "delete":
                 case "remove_blocked_term":
                 case "remove_permitted_term":
                 case "warn":
@@ -570,6 +707,90 @@ class TwitchEventSubClient {
             }
         });
         this._subscriptions.push(channelModerateSubscription);
+
+        // Chat notification
+        const chatNotificationSubscription = this._eventSubListener.onChannelChatNotification(streamer.userId, streamer.userId, async (event) => {
+            switch (event.type) {
+                case "bits_badge_tier":
+                    twitchEventsHandler.bits.triggerBitsBadgeUnlock(
+                        event.chatterName ?? "ananonymouscheerer",
+                        event.chatterId,
+                        event.chatterDisplayName ?? "An Anonymous Cheerer",
+                        event.messageText ?? "",
+                        event.newTier
+                    );
+                    break;
+
+                case "resub":
+                case "sub":
+                    twitchEventsHandler.sub.triggerSub(
+                        event.chatterName,
+                        event.chatterId,
+                        event.chatterDisplayName,
+                        event.isPrime ? "Prime" : event.tier,
+                        event.type === "resub" ? event.cumulativeMonths : 1,
+                        event.messageText ?? "",
+                        event.type === "resub" ? event.streakMonths : 1,
+                        event.isPrime,
+                        event.type === "resub"
+                    );
+                    break;
+
+                case "community_sub_gift":
+                    twitchEventsHandler.giftSub.triggerCommunitySubGift(
+                        event.chatterDisplayName ?? "An Anonymous Gifter",
+                        event.id,
+                        event.amount
+                    );
+                    break;
+
+                case "sub_gift":
+                    await twitchEventsHandler.giftSub.triggerSubGift(
+                        event.chatterDisplayName ?? "An Anonymous Gifter",
+                        event.chatterName,
+                        event.chatterId,
+                        event.chatterIsAnonymous,
+                        event.recipientDisplayName,
+                        event.tier,
+                        event.durationMonths,
+                        event.cumulativeAmount,
+                        event.communityGiftId
+                    );
+                    await viewerDatabase.calculateAutoRanks(event.recipientId);
+                    break;
+
+                case "gift_paid_upgrade":
+                    {
+                        // IRC chat included this in the event payload. EventSub does not.
+                        const upgradeTier = (await (await event.getBroadcaster()).getSubscriber(event.chatterId)).tier;
+
+                        twitchEventsHandler.giftSub.triggerSubGiftUpgrade(
+                            event.chatterName,
+                            event.chatterId,
+                            event.chatterDisplayName,
+                            event.gifterDisplayName,
+                            upgradeTier
+                        );
+                    }
+                    await viewerDatabase.calculateAutoRanks(event.chatterId);
+                    break;
+
+                case "prime_paid_upgrade":
+                    twitchEventsHandler.sub.triggerPrimeUpgrade(
+                        event.chatterName,
+                        event.chatterId,
+                        event.chatterDisplayName,
+                        event.tier
+                    );
+                    await viewerDatabase.calculateAutoRanks(event.chatterId);
+                    break;
+
+                default:
+                    logger.debug(`Unknown EventSub chat notification type: ${event.type}. Metadata:`, event);
+                    break;
+            }
+        });
+        this._subscriptions.push(chatNotificationSubscription);
     }
 
     async createClient(): Promise<void> {

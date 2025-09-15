@@ -162,6 +162,19 @@ const firebotEventSource = {
                 metadataKey: "testKey",
                 metadataValue: "testValue"
             }
+        },
+        {
+            id: "webhook-received",
+            name: "Webhook Received",
+            description: "When a proxied webhook is received. You can setup webhooks in the Advanced tab of Settings.",
+            cached: false,
+            manualMetadata: {
+                webhookId: "testWebhookId",
+                webhookName: "Test Webhook",
+                webhookPayload: {
+                    foo: "bar"
+                }
+            }
         }
     ]
 };

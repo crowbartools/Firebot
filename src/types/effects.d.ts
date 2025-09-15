@@ -66,6 +66,7 @@ export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
     optionsTemplate: string;
     optionsController?: ($scope: EffectScope<EffectModel>, ...args: any[]) => void;
     optionsValidator?: (effect: EffectModel, $scope: EffectScope<EffectModel>) => string[];
+    getDefaultLabel?: (effect: EffectModel, ...args: any[]) => string | undefined | Promise<string | undefined>;
     onTriggerEvent: (event: {
         effect: EffectModel;
         trigger: Trigger;

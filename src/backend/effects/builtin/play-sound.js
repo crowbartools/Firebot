@@ -8,7 +8,7 @@ const logger = require("../../logwrapper");
 const path = require("path");
 const frontendCommunicator = require("../../common/frontend-communicator");
 const { EffectCategory } = require('../../../shared/effect-constants');
-const { wait } = require("../../utility");
+const { wait, convertByteArrayJsonToByteArray } = require("../../utility");
 
 const playSound = {
     definition: {
@@ -22,10 +22,9 @@ const playSound = {
     globalSettings: {},
     optionsTemplate: `
     <eos-container header="Type">
-        <firebot-radios
-            options="{ local: 'Local file', folderRandom: 'Random from folder', url: 'Url' }"
-            model="effect.soundType"
-            inline="true"
+        <firebot-select
+            options="{ local: 'Local file', folderRandom: 'Random from folder', url: 'Url', rawData: 'Raw Binary Audio Data (bytes)' }"
+            selected="effect.soundType"
             style="padding-bottom: 5px;"
         />
     </eos-container>
@@ -38,15 +37,25 @@ const playSound = {
 
             <div ng-if="effect.soundType === 'local'">
                 <div style="margin-bottom: 10px">
-                    <file-chooser model="effect.filepath" options="{ filters: [ {name: 'Audio', extensions: ['mp3', 'ogg', 'oga', 'wav', 'flac']} ]}" on-update="soundFileUpdated(filepath)"></file-chooser>
+                    <file-chooser model="effect.filepath" options="{ filters: [ {name: 'Audio', extensions: ['mp3', 'ogg', 'oga', 'wav', 'flac']} ]}"></file-chooser>
                 </div>
                 <div>
-                    <sound-player path="effect.filepath" volume="effect.volume" output-device="effect.audioOutputDevice"></sound-player>
+                    <sound-player path="encodeFilePath(effect.filepath)" volume="effect.volume" output-device="effect.audioOutputDevice"></sound-player>
                 </div>
             </div>
 
             <div ng-if="effect.soundType === 'url'">
                <firebot-input input-title="Url" model="effect.url" />
+            </div>
+
+            <div ng-if="effect.soundType === 'rawData'">
+               <firebot-input input-title="MIME Type"
+                    model="effect.mimeType"
+                    placeholder-text="Example: audio/mpeg"
+                    style="margin-bottom: 2rem;" />
+               <firebot-input input-title="Binary Data"
+                    model="effect.rawData"
+                    placeholder-text="Variable containing binary data" />
             </div>
 
             <div style="padding-top:20px">
@@ -78,6 +87,10 @@ const playSound = {
         if ($scope.effect.volume == null) {
             $scope.effect.volume = 5;
         }
+
+        $scope.encodeFilePath = (/** @type {string} */ filepath) => {
+            return filepath?.replaceAll("%", "%25").replaceAll("#", "%23");
+        };
     },
     optionsValidator: (effect) => {
         const errors = [];
@@ -92,6 +105,13 @@ const playSound = {
             }
         } else if (effect.soundType === "url" && (effect.url == null || effect.url.trim() === "")) {
             errors.push("Please input a url.");
+        } else if (effect.soundType === "rawData") {
+            if (effect.mimeType == null || effect.mimeType.trim() === "") {
+                errors.push("Please input a MIME type for the raw data.");
+            }
+            if (effect.rawData == null || effect.rawData.trim() === "") {
+                errors.push("Please input a value for the raw data.");
+            }
         }
 
         return errors;
@@ -101,6 +121,17 @@ const playSound = {
 
         if (effect.soundType == null) {
             effect.soundType = "local";
+        }
+
+        if (effect.soundType === "rawData") {
+            effect.soundType = "url";
+            try {
+                // Attempt to convert back to binary
+                effect.rawData = convertByteArrayJsonToByteArray(effect.rawData);
+            } finally {
+                const buffer = Buffer.from(effect.rawData);
+                effect.url = `data:${effect.mimeType};base64,${buffer.toString("base64")}`;
+            }
         }
 
         const data = {
@@ -121,12 +152,12 @@ const playSound = {
             }
 
             const filteredFiles = files.filter(i => (/\.(mp3|ogg|oga|wav|flac)$/i).test(i));
-            const chosenFile = filteredFiles[Math.floor(Math.random() * filteredFiles.length)];
-
             if (filteredFiles.length === 0) {
                 logger.error('No sounds were found in the select sound folder.');
+                return true;
             }
 
+            const chosenFile = filteredFiles[Math.floor(Math.random() * filteredFiles.length)];
             data.filepath = path.join(effect.folder, chosenFile);
         }
 
@@ -150,6 +181,7 @@ const playSound = {
             // send event to the overlay
             webServer.sendToOverlay("sound", data);
         } else {
+            data.filepath = data.filepath?.replaceAll("%", "%25").replaceAll("#", "%23");
             // Send data back to media.js in the gui.
             frontendCommunicator.send("playsound", data);
         }

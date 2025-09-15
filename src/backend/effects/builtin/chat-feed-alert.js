@@ -8,9 +8,9 @@ const effect = {
         id: "firebot:chat-feed-alert",
         name: "Chat Feed Alert",
         description: "Display an alert in Firebot's chat feed",
-        icon: "fad fa-comment-exclamation",
+        icon: "fad fa-exclamation-circle",
         categories: [EffectCategory.COMMON, EffectCategory.CHAT_BASED],
-        dependencies: [EffectDependency.CHAT]
+        dependencies: [],
     },
     optionsTemplate: `
     <eos-container>
@@ -26,13 +26,29 @@ const effect = {
             menu-position="under"
         />
     </eos-container>
-
+    <eos-container header="Icon" pad-top="true">
+        <input
+			maxlength="2"
+			type="text"
+			class="form-control"
+			ng-model="effect.icon"
+			icon-picker required
+		/>
+    </eos-container>
     `,
-    optionsController: () => {},
+    optionsController: ($scope) => {
+        // Backward compatibility from when the icon was hard-coded
+        if ($scope.effect.icon == null || $scope.effect.icon === "") {
+            $scope.effect.icon = "fad fa-exclamation-circle";
+        }
+    },
     optionsValidator: (effect) => {
         const errors = [];
         if (effect.message == null || effect.message === "") {
             errors.push("Alert message can't be blank.");
+        }
+        if (effect.icon == null || effect.icon === "") {
+            errors.push("Icon can't be blank.");
         }
         return errors;
     },
@@ -42,7 +58,8 @@ const effect = {
 
         frontendCommunicator.send("chatUpdate", {
             fbEvent: "ChatAlert",
-            message: effect.message
+            message: effect.message,
+            icon: effect.icon,
         });
 
         return true;

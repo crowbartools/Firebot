@@ -1,0 +1,154 @@
+/* Base Styles */
+
+[v-cloak] {
+    display: none;
+}
+
+body {
+    color: whitesmoke;
+    margin: 0;
+    padding: 0;
+    font-family: InterVariable, sans-serif;
+    background: #1a1a1a;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spin {
+    animation-name: spin;
+    animation-duration: 5000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.app-container {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    background: radial-gradient(circle at top right, rgba(50, 50, 60, 0.5), rgba(20, 20, 25, 0.5));
+}
+
+.queue-list-column {
+    flex: 0 0 320px;
+    padding: 20px;
+    background-color: rgba(30, 30, 35, 0.7);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
+}
+
+.queue-list-column h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 22px;
+    color: white;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.selected-queue-column {
+    flex: 1 1 auto;
+    padding: 20px;
+    background-color: rgba(19, 20, 24, 0.5);
+    overflow-y: scroll;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    padding: 0 20px;
+}
+
+.empty-state-icon {
+    font-size: 60px;
+    margin-bottom: 20px;
+    opacity: 0.6;
+}
+
+.empty-state-message {
+    font-size: 18px;
+    max-width: 400px;
+    line-height: 1.6;
+}
+
+pre {
+    margin: 0;
+    padding: 15px;
+    font-size: 13px;
+    font-family: "Courier New", monospace;
+    color: rgba(255, 255, 255, 0.8);
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.chip {
+    display: flex;
+    align-items: center;
+    background-color: rgba(60, 62, 70, 0.7);
+    border-radius: 20px;
+    padding: 6px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.chip-label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 13px;
+    margin-right: 6px;
+}
+
+.chip-value {
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 600;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Custom Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 4px;
+    transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}

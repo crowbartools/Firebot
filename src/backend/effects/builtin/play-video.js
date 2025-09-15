@@ -14,6 +14,7 @@ const frontendCommunicator = require('../../common/frontend-communicator');
 const { wait } = require("../../utility");
 const { parseYoutubeId } = require("../../../shared/youtube-url-parser");
 const { v4: uuid } = require("uuid");
+const { resolveTwitchClipVideoUrl } = require("../../common/handlers/twitch-clip-url-resolver");
 
 /**
  * The Play Video effect
@@ -28,7 +29,14 @@ const playVideo = {
         description: "Plays a local, Youtube, or Twitch video in the overlay.",
         icon: "fad fa-video",
         categories: [EffectCategory.COMMON, EffectCategory.OVERLAY, EffectCategory.TWITCH],
-        dependencies: []
+        dependencies: [],
+        outputs: [
+            {
+                label: "Video Duration",
+                description: "The Duration of the playing video",
+                defaultName: "videoDuration"
+            }
+        ]
     },
     /**
      * Global settings that will be available in the Settings tab
@@ -41,14 +49,11 @@ const playVideo = {
     optionsTemplate: `
     <eos-container header="Video">
         <div style="padding-bottom: 10px">
-            <div ng-if="shouldShowVideoPlaceholder()" >
-                <img src="../images/placeholders/video.png" style="width: 350px;object-fit: scale-down;background: #d7d7d7">
-            </div>
-            <div ng-if="effect.videoType == 'Local Video' && !shouldShowVideoPlaceholder()">
-                <video width="350" controls ng-src="{{effect.file}}">
+            <div ng-if="effect.videoType == 'Local Video'">
+                <video width="350" controls ng-src="{{encodeFilePath(effect.file)}}">
                 </video>
             </div>
-            <div ng-if="effect.videoType == 'YouTube Video' && !shouldShowVideoPlaceholder()">
+            <div ng-if="effect.videoType == 'YouTube Video'">
                 <!--<ng-youtube-embed
                     video="effect.youtube"
                     color="white"
@@ -175,7 +180,7 @@ const playVideo = {
             </eos-container>
         </div>
 
-        <eos-container ng-if="effect.videoType != 'Random Twitch Clip' && effect.videoType != 'Twitch Clip'" header="Volume" pad-top="true">
+        <eos-container ng-if="shouldShowVolumeControl()" header="Volume" pad-top="true">
             <div class="volume-slider-wrapper">
                 <i class="fal fa-volume-down volume-low"></i>
                 <rzslider rz-slider-model="effect.volume" rz-slider-options="{floor: 0, ceil: 10, hideLimitLabels: true}"></rzslider>
@@ -253,7 +258,7 @@ const playVideo = {
      * The controller for the front end Options
      * Port over from effectHelperService.js
      */
-    optionsController: ($scope, $rootScope, $timeout, utilityService) => {
+    optionsController: ($scope, $rootScope, $timeout, utilityService, settingsService) => {
         $scope.waitChange = () => {
             if ($scope.effect.videoType !== 'Random Twitch Clip' && $scope.effect.videoType !== 'Twitch Clip') {
                 if ($scope.effect.wait) {
@@ -264,6 +269,9 @@ const playVideo = {
         $scope.showOverlayInfoModal = function (overlayInstance) {
             utilityService.showOverlayInfoModal(overlayInstance);
         };
+
+        $scope.shouldShowVolumeControl = () => !['Random Twitch Clip', 'Twitch Clip'].includes($scope.effect.videoType) || settingsService.getSetting("UseExperimentalTwitchClipUrlResolver");
+
 
         $scope.videoPositions = [
             "Top Left",
@@ -322,6 +330,10 @@ const playVideo = {
                 $scope.effect.width = "";
             }
         };
+
+        $scope.encodeFilePath = function (/** @type {string} */ filepath) {
+            return filepath?.replaceAll("%", "%25").replaceAll("#", "%23");
+        };
     },
     /**
      * When the effect is triggered by something
@@ -373,7 +385,8 @@ const playVideo = {
             inbetweenRepeat: effect.inbetweenRepeat,
             customCoords: effect.customCoords,
             loop: effect.loop === true,
-            rotation: effect.rotation ? effect.rotation + effect.rotType : "0deg"
+            rotation: effect.rotation ? effect.rotation + effect.rotType : "0deg",
+            zIndex: effect.zIndex
         };
 
         // Get random sound
@@ -486,8 +499,12 @@ const playVideo = {
                 }
             }
 
-            //const clipVideoUrl = `${clip.thumbnailUrl.split("-preview-")[0]}.mp4`;
-            const clipVideoUrl = clip.embedUrl;
+            if (clip == null) {
+                logger.error("Unable to find clip");
+                return true;
+            }
+
+            const { url, useIframe } = await resolveTwitchClipVideoUrl(clip);
             const clipDuration = clip.duration;
             const volume = parseInt(effect.volume) / 10;
 
@@ -500,7 +517,8 @@ const playVideo = {
             }
 
             webServer.sendToOverlay("playTwitchClip", {
-                clipVideoUrl: clipVideoUrl,
+                clipVideoUrl: url,
+                useIframe,
                 volume: volume,
                 width: effect.width,
                 height: effect.height,
@@ -516,7 +534,8 @@ const playVideo = {
                 exitAnimation: effect.exitAnimation,
                 exitDuration: effect.exitDuration,
                 overlayInstance: data.overlayInstance,
-                rotation: effect.rotation ? effect.rotation + effect.rotType : "0deg"
+                rotation: effect.rotation ? effect.rotation + effect.rotType : "0deg",
+                zIndex: effect.zIndex
             });
 
             if (effect.wait) {
@@ -593,7 +612,13 @@ const playVideo = {
                 return false;
             }
         }
-        return true;
+
+        return {
+            success: true,
+            outputs: {
+                videoDuration: data.videoDuration != null ? data.videoDuration : 0
+            }
+        };
     },
     /**
      * Code to run in the overlay
@@ -693,7 +718,9 @@ const playVideo = {
                 const sizeStyles =
                     (data.videoWidth ? `width: ${data.videoWidth}px;` : "") +
                     (data.videoHeight ? `height: ${data.videoHeight}px;` : "") +
-                    (data.rotation ? `transform: rotate(${data.rotation});` : '');
+                    (data.rotation ? `transform: rotate(${data.rotation});` : '') +
+                    (data.zIndex ? `position: relative; z-index: ${data.zIndex};` : '');
+
 
                 if (videoType === "Local Video") {
                     const loopAttribute = loop ? "loop" : "";

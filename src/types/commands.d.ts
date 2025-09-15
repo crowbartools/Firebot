@@ -107,6 +107,7 @@ export type CommandDefinition = {
      * the cooldown is not yet over.
      */
     sendCooldownMessage?: boolean;
+    sendCooldownMessageAsReply?: boolean;
     useCustomCooldownMessage?: boolean;
     cooldownMessage?: string;
     baseCommandDescription?: string | undefined;

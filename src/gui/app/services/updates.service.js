@@ -110,7 +110,6 @@
                             const gitDate = gitNewest.published_at;
                             const gitLink = gitNewest.html_url;
                             const gitNotes = sanitize(marked(gitNewest.body));
-                            const gitZipDownloadUrl = gitNewest.assets[0].browser_download_url;
 
                             // Now lets look to see if there is a newer version.
 
@@ -132,7 +131,6 @@
                                 gitDate: gitDate,
                                 gitLink: gitLink,
                                 gitNotes: $sce.trustAsHtml(gitNotes),
-                                gitZipDownloadUrl: gitZipDownloadUrl,
                                 updateIsAvailable,
                                 latestUpdateType
                             };

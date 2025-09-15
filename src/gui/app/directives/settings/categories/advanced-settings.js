@@ -1,6 +1,6 @@
 "use strict";
 
-(function() {
+(function () {
 
     angular
         .module("firebotApp")
@@ -31,6 +31,35 @@
                         <firebot-button
                             text="{{settings.getSetting('WhileLoopEnabled') ? 'Disable While Loops' : 'Enable While Loops' }}"
                             ng-click="toggleWhileLoops()"
+                        />
+                    </firebot-setting>
+
+                    <firebot-setting
+                        name="Proxied Webhooks"
+                        tag="Experimental"
+                        description="This feature allows you to receive webhooks without exposing your local network. A 'Webhook Received' event is triggered each time a webhook is received with the payload available via the $webhookPayload variable."
+                        bottom-border="false"
+                    >
+                        <setting-description-addon>
+                            <b>This feature is experimental and not guaranteed to be stable.</b>
+                        </setting-description-addon>
+                        <firebot-button
+                            text="Edit Webhooks"
+                            ng-click="showEditWebhooksModal()"
+                        />
+                    </firebot-setting>
+
+                    <firebot-setting
+                        name="Webhook Debug Logs"
+                        description="Enable or disable logging for incoming webhooks. Webhooks might contain sensitive information. Be careful where you send logs when this option is enabled."
+                    >
+                        <setting-description-addon>
+                            <b>Requires Debug Mode to also be enabled.</b>
+                        </setting-description-addon>
+                        <firebot-button
+                            text="{{settings.getSetting('WebhookDebugLogs') && settings.getSetting('DebugMode') ? 'Disable Webhook Logs' : 'Enable Webhook Logs' }}"
+                            disabled="!settings.getSetting('DebugMode')"
+                            ng-click="settings.saveSetting('WebhookDebugLogs', !settings.getSetting('WebhookDebugLogs'))"
                         />
                     </firebot-setting>
 
@@ -76,13 +105,36 @@
                         />
                     </firebot-setting>
 
+                    <firebot-setting
+                        name="Experimental Clip Player"
+                        description="When enabled, Firebot will use an experimental method to play Twitch clips in the overlay that bypasses content warnings. This is an experimental feature and isn't guaranteed to work. If Firebot is unable to play the clip, it will fall back to the default method."
+                    >
+                        <toggle-button
+                            toggle-model="settings.getSetting('UseExperimentalTwitchClipUrlResolver')"
+                            on-toggle="settings.saveSetting('UseExperimentalTwitchClipUrlResolver', !settings.getSetting('UseExperimentalTwitchClipUrlResolver'))"
+                            font-size="40"
+                        />
+                    </firebot-setting>
+
+                    <firebot-setting
+                        name="Open Effect Queue Monitor on Launch"
+                        description="Automatically open the Effect Queue Monitor window when Firebot launches."
+                    >
+                        <toggle-button
+                            toggle-model="settings.getSetting('OpenEffectQueueMonitorOnLaunch')"
+                            on-toggle="settings.saveSetting('OpenEffectQueueMonitorOnLaunch', !settings.getSetting('OpenEffectQueueMonitorOnLaunch'))"
+                            font-size="40"
+                            accessibility-label="(settings.getSetting('OpenEffectQueueMonitorOnLaunch') ? 'Enabled' : 'Disabled') + ' Effect Queue Monitor on Launch'"
+                        />
+                    </firebot-setting>
+
                     <div style="margin-top: 20px">
                         <p class="muted">Looking for a setting that used to be located here? Try checking in the Tools app menu!</p>
                     </div>
 
                 </div>
           `,
-            controller: function($scope, settingsService, utilityService, backendCommunicator) {
+            controller: function ($scope, settingsService, utilityService, backendCommunicator, modalService) {
                 $scope.settings = settingsService;
 
                 $scope.toggleWhileLoops = () => {
@@ -104,6 +156,12 @@
                                 }
                             });
                     }
+                };
+
+                $scope.showEditWebhooksModal = function() {
+                    modalService.showModal({
+                        component: "editWebhooksModal"
+                    });
                 };
 
                 $scope.recalculateQuoteIds = () => {

@@ -63,6 +63,9 @@ export const SetOBSBrowserSourceUrlEffectType: EffectType<{
         }
         return [];
     },
+    getDefaultLabel: (effect) => {
+        return effect.browserSourceName;
+    },
     onTriggerEvent: async ({ effect }) => {
         await setBrowserSourceSettings(effect.browserSourceName, {
             url: effect.url

@@ -142,7 +142,7 @@ exports.whenReady = async () => {
     await chatRolesManager.loadVips();
 
     windowManagement.updateSplashScreenStatus("Loading effect queues...");
-    const effectQueueManager = require("../../../effects/queues/effect-queue-manager");
+    const effectQueueManager = require("../../../effects/queues/effect-queue-config-manager");
     effectQueueManager.loadItems();
 
     windowManagement.updateSplashScreenStatus("Loading preset effect lists...");
@@ -152,6 +152,10 @@ exports.whenReady = async () => {
     windowManagement.updateSplashScreenStatus("Loading quick actions...");
     const quickActionManager = require("../../../quick-actions/quick-action-manager");
     quickActionManager.loadItems();
+
+    windowManagement.updateSplashScreenStatus("Loading webhooks...");
+    const webhookConfigManager = require("../../../webhooks/webhook-config-manager");
+    webhookConfigManager.loadItems();
 
     // get ui extension manager in memory
     require("../../../ui-extensions/ui-extension-manager");
@@ -219,12 +223,12 @@ exports.whenReady = async () => {
     windowManagement.updateSplashScreenStatus("Loading stats...");
     logger.info("Creating or connecting stats database");
     const statsdb = require("../../../database/statsDatabase");
-    statsdb.connectStatsDatabase();
+    await statsdb.connectStatsDatabase();
 
     windowManagement.updateSplashScreenStatus("Loading quotes...");
     logger.info("Creating or connecting quotes database");
     const quotesdb = require("../../../quotes/quotes-manager");
-    quotesdb.loadQuoteDatabase();
+    await quotesdb.loadQuoteDatabase();
 
     // These are defined globally for Custom Scripts.
     // We will probably want to handle these differently but we shouldn't
@@ -265,6 +269,8 @@ exports.whenReady = async () => {
     const notificationManager = require("../../../notifications/notification-manager").default;
     notificationManager.loadNotificationCache();
 
+    // start crowbar relay websocket
+    require("../../../crowbar-relay/crowbar-relay-websocket");
 
     logger.debug('...loading main window');
     windowManagement.updateSplashScreenStatus("Here we go!");

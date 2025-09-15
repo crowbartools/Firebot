@@ -93,12 +93,14 @@ class ViewerOnlineStatusManager {
             const dbData: Partial<FirebotViewer> = {
                 username: viewer.username,
                 displayName: viewer.displayName,
-                profilePicUrl: viewer.profilePicUrl,
                 twitchRoles: viewer.twitchRoles,
                 online: true,
                 onlineAt: now,
                 lastSeen: now
             };
+            if (viewer.profilePicUrl != null) {
+                dbData.profilePicUrl = viewer.profilePicUrl;
+            }
 
             if (await chatRolesManager.userIsKnownBot(viewer.id) === true && SettingsManager.getSetting("AutoFlagBots")) {
                 dbData.disableAutoStatAccrual = true;

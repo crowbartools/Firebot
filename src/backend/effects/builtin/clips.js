@@ -7,6 +7,7 @@ const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/http-server-manager");
 const utils = require("../../utility");
 const customVariableManager = require("../../common/custom-variable-manager");
+const { resolveTwitchClipVideoUrl } = require("../../common/handlers/twitch-clip-url-resolver");
 
 const clip = {
     definition: {
@@ -210,8 +211,11 @@ const clip = {
                     }
                 }
 
+                const { url, useIframe } = await resolveTwitchClipVideoUrl(clip);
+
                 webServer.sendToOverlay("playTwitchClip", {
-                    clipVideoUrl: clip.embedUrl,
+                    clipVideoUrl: url,
+                    useIframe,
                     width: effect.width,
                     height: effect.height,
                     duration: clipDuration,
@@ -260,6 +264,7 @@ const clip = {
             onOverlayEvent: (event) => {
                 const {
                     clipVideoUrl,
+                    useIframe,
                     volume,
                     width,
                     height,
@@ -277,20 +282,39 @@ const clip = {
                     rotation
                 } = event;
 
-                // eslint-disable-next-line prefer-template
-                const styles = `width: ${width || screen.width}px;
-                 height: ${height || screen.height}px;
-                 transform: rotate(${rotation || 0});`;
+                let videoElement;
+                if (useIframe) {
+                    // eslint-disable-next-line prefer-template
+                    const styles = `width: ${width || screen.width}px;
+                        height: ${height || screen.height}px;
+                        transform: rotate(${rotation || 0});`;
 
-                const videoElement = `
-                    <iframe style="border: none; ${styles}"
-                        src="${clipVideoUrl}&parent=${window.location.hostname}&autoplay=true"
-                        height="${height || screen.height}"
-                        width="${width || screen.width}"
-                        frameBorder=0
-                        allowfullscreen>
-                    </iframe>
-                `;
+                    videoElement = `
+                        <iframe style="border: none; ${styles}"
+                            src="${clipVideoUrl}&parent=${window.location.hostname}&autoplay=true"
+                            height="${height || screen.height}"
+                            width="${width || screen.width}"
+                            frameBorder=0
+                            allowfullscreen>
+                        </iframe>
+                    `;
+                } else {
+                    // eslint-disable-next-line prefer-template
+                    const styles = (width ? `width: ${width}px;` : '') +
+                        (height ? `height: ${height}px;` : '') +
+                        (rotation ? `transform: rotate(${rotation});` : '');
+
+                    videoElement = `
+                        <video autoplay
+                            src="${clipVideoUrl}"
+                            height="${height || ""}"
+                            width="${width || ""}"
+                            style="border: none;${styles}"
+                            onloadstart="this.volume=${volume}"
+                            allowfullscreen="false" />
+                    `;
+                }
+
 
                 const positionData = {
                     position: position,

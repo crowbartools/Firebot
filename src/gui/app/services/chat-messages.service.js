@@ -132,19 +132,19 @@
             };
 
             // Chat Alert Message
-            service.chatAlertMessage = function(message) {
-
+            service.chatAlertMessage = function(message, icon = "fad fa-exclamation-circle") {
                 const alertItem = {
                     id: uuid(),
                     type: "alert",
-                    data: message
+                    message: message,
+                    icon: icon
                 };
 
                 service.chatQueue.push(alertItem);
             };
 
-            backendCommunicator.on("chat-feed-system-message", (message) => {
-                service.chatAlertMessage(message);
+            backendCommunicator.on("chat-feed-system-message", (message, icon) => {
+                service.chatAlertMessage(message, icon);
             });
 
             // Chat Update Handler
@@ -194,7 +194,7 @@
                         break;
                     case "ChatAlert":
                         logger.debug("Chat alert from backend.");
-                        service.chatAlertMessage(data.message);
+                        service.chatAlertMessage(data.message, data.icon);
                         break;
                     default:
                     // Nothing
@@ -270,6 +270,19 @@
 
             backendCommunicator.on("twitch:chat:user:delete-messages", markUserMessagesAsDeleted);
 
+            service.hideMessageInChatFeed = function(messageId) {
+                const messageItem = service.chatQueue.find(i => i.type === "message" && i.data.id === messageId);
+                if (messageItem == null) {
+                    return;
+                }
+
+                messageItem.data.isHiddenFromChatFeed = true;
+            };
+
+            backendCommunicator.on("chat-feed-message-hide", (data) => {
+                service.hideMessageInChatFeed(data.messageId);
+            });
+
             service.changeModStatus = (username, shouldBeMod) => {
                 backendCommunicator.send("update-user-mod-status", {
                     username,
@@ -331,31 +344,30 @@
                 service.clearUserList();
             });
 
-            backendCommunicator.on("twitch:chat:automod-update", ({messageId, newStatus, resolverName, flaggedPhrases}) => {
-                if (newStatus === "ALLOWED") {
-                    service.chatQueue = service.chatQueue.filter(i => i?.data?.id !== messageId);
-                    service.chatAlertMessage(`${resolverName} approved a message that contains: ${flaggedPhrases.join(", ")}`);
-                } else {
-                    const messageItem = service.chatQueue.find(i => i.type === "message" && i.data.id === messageId);
+            backendCommunicator.on("twitch:chat:automod-update", ({messageId, newStatus, resolverName }) => {
 
-                    if (messageItem == null) {
-                        return;
-                    }
-
-                    messageItem.data.autoModStatus = newStatus;
-                    messageItem.data.autoModResolvedBy = resolverName;
-                }
-
-            });
-
-            backendCommunicator.on("twitch:chat:automod-update-error", ({messageId, likelyExpired}) => {
-                const messageItem = service.chatQueue.find(i => i.type === "message" && i.data.id === messageId);
+                const messageItem = service.chatQueue.find(i => i.type === "message" &&
+                    (i.data.id === messageId || i.data.autoModHeldMessageId === messageId)
+                );
 
                 if (messageItem == null) {
                     return;
                 }
 
-                messageItem.data.autoModErrorMessage = `There was an error acting on this message. ${likelyExpired ? "The time to act likely have expired." : "You may need to reauth your Streamer account."}`;
+                messageItem.data.autoModStatus = newStatus;
+                messageItem.data.autoModResolvedBy = resolverName;
+            });
+
+            backendCommunicator.on("twitch:chat:automod-update-error", ({messageId, likelyExpired}) => {
+                const messageItem = service.chatQueue.find(i => i.type === "message" &&
+                    (i.data.id === messageId || i.data.autoModHeldMessageId === messageId)
+                );
+
+                if (messageItem == null) {
+                    return;
+                }
+
+                messageItem.data.autoModErrorMessage = `There was an error acting on this message. ${likelyExpired ? "The time to act has likely expired." : "You may need to reauth your Streamer account."}`;
             });
 
             backendCommunicator.on("twitch:chat:clear-feed", (modUsername) => {
@@ -394,6 +406,13 @@
                 if (chatMessage.tagged) {
                     soundService.playChatNotification();
                 }
+                if (chatMessage.isAutoModHeld === true) {
+                    setTimeout(() => {
+                        if (chatMessage.autoModStatus === "pending") {
+                            chatMessage.autoModStatus = "expired";
+                        }
+                    }, 5 * 60 * 1000);
+                }
 
                 pronounsService.getUserPronoun(chatMessage.username);
 
@@ -409,6 +428,32 @@
                 if (user && user.roles.length !== chatMessage.roles.length) {
                     user.roles = chatMessage.roles;
                     service.chatUserUpdated(user);
+                }
+
+                // when an automod held message is approved, the message is sent again,
+                // attempt to merge it with the existing message
+                const existingAutoModMessageIndex = service.chatQueue.findIndex(i =>
+                    i.type === "message" &&
+                    i.data.isAutoModHeld &&
+                    i.data.autoModHeldMessageId == null &&
+                    i.data.rawText === chatMessage.rawText &&
+                    i.data.userId === chatMessage.userId &&
+                    moment().diff(i.data.timestamp, "minutes") <= 5
+                );
+                const existingAutoModMessage = service.chatQueue[existingAutoModMessageIndex]?.data;
+                if (existingAutoModMessage != null) {
+                    // merge the new message with the existing one
+                    chatMessage = {
+                        ...existingAutoModMessage,
+                        ...chatMessage,
+                        autoModHeldMessageId: existingAutoModMessage.id,
+                        isAutoModHeld: existingAutoModMessage.isAutoModHeld,
+                        autoModStatus: existingAutoModMessage.autoModStatus,
+                        autoModResolvedBy: existingAutoModMessage.autoModResolvedBy,
+                        autoModErrorMessage: existingAutoModMessage.autoModErrorMessage
+                    };
+                    // remove the existing automod message from the queue
+                    service.chatQueue.splice(existingAutoModMessageIndex, 1);
                 }
 
                 // Push new message to queue.
@@ -434,28 +479,42 @@
                 service.pruneChatQueue();
             });
 
-            service.allEmotes = [];
-            service.filteredEmotes = [];
+            service.allEmotes = {
+                streamer: [],
+                bot: [],
+                thirdParty: []
+            };
+
+            service.filteredEmotes = {
+                streamer: [],
+                bot: [],
+                thirdParty: []
+            };
+
             service.refreshEmotes = () => {
                 const showBttvEmotes = settingsService.getSetting("ChatShowBttvEmotes");
                 const showFfzEmotes = settingsService.getSetting("ChatShowFfzEmotes");
                 const showSevenTvEmotes = settingsService.getSetting("ChatShowSevenTvEmotes");
 
-                service.filteredEmotes = service.allEmotes.filter((e) => {
-                    if (showBttvEmotes !== true && e.origin === "BTTV") {
-                        return false;
-                    }
+                service.filteredEmotes = {
+                    streamer: service.allEmotes.streamer,
+                    bot: service.allEmotes.bot,
+                    thirdParty: service.allEmotes.thirdParty.filter((e) => {
+                        if (showBttvEmotes !== true && e.origin === "BTTV") {
+                            return false;
+                        }
 
-                    if (showFfzEmotes !== true && e.origin === "FFZ") {
-                        return false;
-                    }
+                        if (showFfzEmotes !== true && e.origin === "FFZ") {
+                            return false;
+                        }
 
-                    if (showSevenTvEmotes !== true && e.origin === "7TV") {
-                        return false;
-                    }
+                        if (showSevenTvEmotes !== true && e.origin === "7TV") {
+                            return false;
+                        }
 
-                    return true;
-                });
+                        return true;
+                    })
+                };
             };
 
             backendCommunicator.on("all-emotes", (emotes) => {

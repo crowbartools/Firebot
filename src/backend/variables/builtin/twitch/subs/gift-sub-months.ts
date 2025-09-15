@@ -1,3 +1,4 @@
+// Deprecated
 import { ReplaceVariable } from "../../../../../types/variables";
 import { EffectTrigger } from "../../../../../shared/effect-constants";
 import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
@@ -9,13 +10,14 @@ triggers[EffectTrigger.MANUAL] = true;
 const model : ReplaceVariable = {
     definition: {
         handle: "giftSubMonths",
-        description: "The total number of months the gift receiver has been subscribed since the beginning of time.",
+        description: "(Deprecated: removed from Twitch data) The total number of months the gift receiver has been subscribed since the beginning of time.",
         triggers: triggers,
         categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        possibleDataOutput: [OutputDataType.NUMBER],
+        hidden: true
     },
     evaluator: (trigger) => {
-        return trigger.metadata.eventData.giftSubMonths || 1;
+        return trigger.metadata.eventData.giftSubMonths ?? 1;
     }
 };
 

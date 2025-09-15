@@ -82,15 +82,6 @@
         left: 0;
         height: 100%;
         width: 3px;
-        &.ALLOWED {
-            background: #00db84;
-        }
-        &.PENDING {
-            background: #ffb31a
-        }
-        &.DENIED, &.EXPIRED {
-            background: #ff4662;
-        }
     }
 
     .automod-tag {
@@ -100,6 +91,15 @@
         display: inline-block;
         margin-left: 10px;
         margin-bottom: 4px;
+        .approved {
+            color: #00db84;
+        }
+        .pending {
+            color: #ffb31a
+        }
+        .denied, .expired {
+            color: #ff4662;
+        }
     }
 
     .chat-highlight-bar {
@@ -156,7 +156,6 @@
         .chatEmoticon {
             position: relative;
             height: 28px;
-            width: 28px;
             display: inline-block;
         }
         .highlightText {

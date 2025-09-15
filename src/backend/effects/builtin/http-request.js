@@ -83,6 +83,11 @@ const effect = {
             <firebot-input input-title="Timeout (ms)" model="effect.options.timeout" input-type="number" disable-variables="true" placeholder-text="Enter ms" />
         </div>
         <firebot-checkbox
+            label="Store output as binary (advanced)"
+            tooltip="Stores the response body as a binary array instead of a text string."
+            model="effect.options.storeOutputAsBinary"
+        />
+        <firebot-checkbox
             label="Run effects on error"
             tooltip="Run a list of effects if the request fails. Useful for when you want to do clean up or stop effect execution all together."
             model="effect.options.runEffectsOnError"
@@ -259,12 +264,30 @@ const effect = {
                 body: sendBodyData === true ? effect.body : null
             });
 
-            responseData = await response.text();
+            if (effect.options.storeOutputAsBinary === true) {
+                responseData = await response.bytes();
+            } else {
+                responseData = await response.text();
+            }
 
             if (!response.ok) {
                 const error = new Error(`Request failed with status ${response.status}`);
+
+                // Convert response back to text if necessary
+                if (effect.options.storeOutputAsBinary === true) {
+                    responseData = new TextDecoder("utf-8").decode(responseData);
+                }
+
                 error.responseData = responseData;
                 throw error;
+            }
+
+            if (effect.options.storeOutputAsBinary !== true) {
+                try {
+                    responseData = JSON.parse(responseData);
+                } catch (error) {
+                //ignore error
+                }
             }
 
             /**

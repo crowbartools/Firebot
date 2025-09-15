@@ -66,6 +66,9 @@ export const SendRawOBSWebSocketRequestEffectType: EffectType<{
         }
         return [];
     },
+    getDefaultLabel: (effect) => {
+        return `${effect.functionName}`;
+    },
     onTriggerEvent: async ({ effect }) => {
         const response = await sendRawObsRequest(effect.functionName, effect.payload);
 

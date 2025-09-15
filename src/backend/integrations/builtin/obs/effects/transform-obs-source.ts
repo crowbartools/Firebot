@@ -246,6 +246,9 @@ export const TransformSourceEffectType: EffectType<{
         }
         return [];
     },
+    getDefaultLabel: (effect) => {
+        return effect.sceneItem ? `${effect.sceneName} - ${effect.sceneItem?.name}` : "";
+    },
     onTriggerEvent: async ({ effect }) => {
         if (isNaN(Number(effect.duration))) {
             effect.duration = 0;

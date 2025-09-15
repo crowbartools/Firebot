@@ -10,48 +10,57 @@ const macroManager = require("./macro-manager");
 const frontendCommunicator = require("../common/frontend-communicator");
 const { getCustomVariable } = require("../common/custom-variable-manager");
 const util = require("../utility");
+class ReplaceVariableManager extends EventEmitter {
+    #registeredVariableHandlers = new Map();
+    #variableAndAliasHandlers = new Map();
+    #registeredLookupHandlers = new Map();
 
-function preeval(options, variable) {
-    if (!variable.triggers) {
-        return;
+    /**
+     * @type {Record<string, Array<{ eventSourceId: string, eventId: string }>>}
+     */
+    additionalVariableEvents = {};
+
+    constructor() {
+        super();
     }
 
-    const optionsTrigger = options.trigger || { type: null };
-    const display = options.trigger.type ? options.trigger.type.toLowerCase() : "unknown trigger";
+    #preeval(options, variable) {
+        if (!variable.triggers) {
+            return;
+        }
 
-    const varTrigger = variable.triggers[optionsTrigger.type];
-    if (varTrigger == null || varTrigger === false) {
-        throw new ExpressionVariableError(
-            `$${variable.handle} does not support being triggered by: ${display}`,
-            variable.position,
-            variable.handle
-        );
-    }
+        const optionsTrigger = options.trigger || { type: null };
+        const display = options.trigger.type ? options.trigger.type.toLowerCase() : "unknown trigger";
 
-    if (Array.isArray(varTrigger)) {
-        if (!varTrigger.some((id) => id === options.trigger.id)) {
+        const varTrigger = variable.triggers[optionsTrigger.type];
+        if (varTrigger == null || varTrigger === false) {
             throw new ExpressionVariableError(
-                `$${variable.handle} does not support this specific trigger type: ${display}`,
+                `$${variable.handle} does not support being triggered by: ${display}`,
                 variable.position,
                 variable.handle
             );
         }
-    }
-}
 
-class ReplaceVariableManager extends EventEmitter {
-    constructor() {
-        super();
-        this._registeredVariableHandlers = new Map();
-        this._variableAndAliasHandlers = new Map();
-        this._registeredLookupHandlers = new Map();
+        if (Array.isArray(varTrigger)) {
+            if (optionsTrigger.type === "event") {
+                const additionalEvents = this.additionalVariableEvents[variable.handle]?.map(e => `${e.eventSourceId}:${e.eventId}`) ?? [];
+                varTrigger.push(...additionalEvents);
+            }
+            if (!varTrigger.some(id => id === options.trigger.id)) {
+                throw new ExpressionVariableError(
+                    `$${variable.handle} does not support this specific trigger type: ${display}`,
+                    variable.position,
+                    variable.handle
+                );
+            }
+        }
     }
 
     registerReplaceVariable(variable) {
-        if (this._registeredVariableHandlers.has(variable.definition.handle)) {
+        if (this.#registeredVariableHandlers.has(variable.definition.handle)) {
             throw new TypeError(`A variable with the handle ${variable.definition.handle} already exists.`);
         }
-        this._registeredVariableHandlers.set(variable.definition.handle, {
+        this.#registeredVariableHandlers.set(variable.definition.handle, {
             definition: variable.definition,
             handle: variable.definition.handle,
             argsCheck: variable.argsCheck,
@@ -59,7 +68,7 @@ class ReplaceVariableManager extends EventEmitter {
             triggers: variable.definition.triggers
         });
 
-        this._variableAndAliasHandlers = this._generateVariableAndAliasHandlers();
+        this.#variableAndAliasHandlers = this._generateVariableAndAliasHandlers();
 
         logger.debug(`Registered replace variable ${variable.definition.handle}`);
 
@@ -67,9 +76,10 @@ class ReplaceVariableManager extends EventEmitter {
 
         frontendCommunicator.send("replace-variable-registered", variable.definition);
     }
+
     getReplaceVariables() {
         // Map register variables Map to array
-        const registeredVariables = this._registeredVariableHandlers;
+        const registeredVariables = this.#registeredVariableHandlers;
         const variables = [];
         /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
         for (const [key, value] of registeredVariables) {
@@ -77,16 +87,17 @@ class ReplaceVariableManager extends EventEmitter {
         }
         return variables;
     }
+
     getVariableHandlers() {
-        return this._registeredVariableHandlers;
+        return this.#registeredVariableHandlers;
     }
 
     registerLookupHandler(prefix, lookup) {
-        this._registeredLookupHandlers.set(prefix, lookup);
+        this.#registeredLookupHandlers.set(prefix, lookup);
     }
 
     _generateVariableAndAliasHandlers() {
-        return Array.from(this._registeredVariableHandlers.entries()).reduce((map, [mainHandle, varConfig]) => {
+        return Array.from(this.#registeredVariableHandlers.entries()).reduce((map, [mainHandle, varConfig]) => {
             map.set(mainHandle, varConfig);
             if (varConfig.definition.aliases) {
                 varConfig.definition.aliases.forEach((alias) => {
@@ -103,12 +114,12 @@ class ReplaceVariableManager extends EventEmitter {
     evaluateText(input, metadata, trigger, onlyValidate) {
         if (input.includes("$")) {
             return expressionish({
-                handlers: this._variableAndAliasHandlers,
+                handlers: this.#variableAndAliasHandlers,
                 expression: input,
                 metadata,
                 trigger,
-                preeval,
-                lookups: this._registeredLookupHandlers,
+                preeval: (options, variable) => this.#preeval(options, variable),
+                lookups: this.#registeredLookupHandlers,
                 onlyValidate: !!onlyValidate
             });
         }
@@ -185,12 +196,22 @@ class ReplaceVariableManager extends EventEmitter {
 
         return errors;
     }
+
+    addEventToVariable(variableHandle, eventSourceId, eventId) {
+        const additionalEvents = this.additionalVariableEvents[variableHandle] ?? [];
+
+        additionalEvents.push({ eventSourceId, eventId });
+
+        this.additionalVariableEvents[variableHandle] = additionalEvents;
+
+        frontendCommunicator.send("additional-variable-events-updated", this.additionalVariableEvents);
+    }
 }
 
 const manager = new ReplaceVariableManager();
 
 // custom variable shorthand
-manager.registerLookupHandler("$", (name) => ({
+manager.registerLookupHandler("$", name => ({
     evaluator: (trigger, ...path) => {
         let result = getCustomVariable(name);
         for (const item of path) {
@@ -204,7 +225,7 @@ manager.registerLookupHandler("$", (name) => ({
 }));
 
 // Effect Output shorthand
-manager.registerLookupHandler("&", (name) => ({
+manager.registerLookupHandler("&", name => ({
     evaluator: (trigger, ...path) => {
         let result = trigger.effectOutputs;
         if (result != null) {
@@ -222,7 +243,7 @@ manager.registerLookupHandler("&", (name) => ({
 }));
 
 // Preset effect Args shorthand
-manager.registerLookupHandler("#", (name) => ({
+manager.registerLookupHandler("#", name => ({
     evaluator: (trigger) => {
         const arg = (trigger.metadata?.presetListArgs || {})[name];
         return arg == null ? null : arg;
@@ -230,7 +251,7 @@ manager.registerLookupHandler("#", (name) => ({
 }));
 
 // Macro Args shorthand
-manager.registerLookupHandler("^", (name) => ({
+manager.registerLookupHandler("^", name => ({
     evaluator: (trigger, ...args) => {
         const { macroArgs, macroNamedArgs } = trigger;
         if (
@@ -239,7 +260,7 @@ manager.registerLookupHandler("^", (name) => ({
             macroNamedArgs != null &&
             typeof name === "string"
         ) {
-            const namedArgIdx = macroNamedArgs.findIndex((item) => item === name);
+            const namedArgIdx = macroNamedArgs.findIndex(item => item === name);
             if (namedArgIdx > -1) {
                 return macroArgs[namedArgIdx];
             }
@@ -248,7 +269,7 @@ manager.registerLookupHandler("^", (name) => ({
 }));
 
 // Macro shorthand
-manager.registerLookupHandler("%", (name) => ({
+manager.registerLookupHandler("%", name => ({
     evaluator: (trigger, ...macroArgs) => {
         const macro = macroManager.getMacroByName(name);
         if (macro != null) {
@@ -265,8 +286,8 @@ manager.registerLookupHandler("%", (name) => ({
 frontendCommunicator.on("getReplaceVariableDefinitions", () => {
     logger.debug("got 'get all vars' request");
     return Array.from(manager.getVariableHandlers().values())
-        .map((v) => v.definition)
-        .filter((v) => !v.hidden);
+        .map(v => v.definition)
+        .filter(v => !v.hidden);
 });
 
 frontendCommunicator.onAsync("validateVariables", async (eventData) => {
@@ -281,6 +302,11 @@ frontendCommunicator.onAsync("validateVariables", async (eventData) => {
     }
 
     return errors;
+});
+
+frontendCommunicator.on("get-additional-variable-events", () => {
+    logger.debug("got 'get-additional-variable-events' request");
+    return manager.additionalVariableEvents;
 });
 
 module.exports = manager;

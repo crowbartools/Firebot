@@ -13,6 +13,7 @@ import rankLadder from "./rank-ladder";
 import rankTransitionType from "./rank-transition-type";
 import viewerRanks from "./viewer-ranks";
 import viewerRoles from "./viewer-roles";
+import webhook from "./webhook";
 
 export default [
     currency,
@@ -29,5 +30,6 @@ export default [
     rankLadder,
     rankTransitionType,
     viewerRanks,
-    viewerRoles
+    viewerRoles,
+    webhook
 ];

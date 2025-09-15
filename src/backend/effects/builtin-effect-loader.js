@@ -8,9 +8,9 @@ exports.loadEffects = () => {
         'activity-feed-alert',
         'add-quote',
         'api',
-        'block-unblock',
         'celebration',
         'chat-feed-alert',
+        'chat-feed-message-hide',
         'chat',
         'clear-chat',
         'clear-effects',
@@ -52,6 +52,7 @@ exports.loadEffects = () => {
         'show-image', // No migration needed.
         'show-text',
         'stop-effect-execution',
+        'sync-profile-data',
         'take-screenshot',
         'text-to-speech',
         'toggle-command',
@@ -64,14 +65,15 @@ exports.loadEffects = () => {
         'update-counter',
         'update-role',
         'update-viewer-rank',
-        'update-vip-role',
 
         'twitch/ad-break',
         'twitch/announcement',
         'twitch/approve-reject-channel-reward-redemption',
+        'twitch/block-unblock',
         'twitch/create-stream-marker',
         'twitch/raid',
         'twitch/set-chat-mode',
+        'twitch/shield-mode',
         'twitch/shoutout',
         'twitch/snooze-ad-break',
         'twitch/stream-title',
@@ -83,7 +85,8 @@ exports.loadEffects = () => {
         'twitch/cancel-prediction',
         'twitch/create-prediction',
         'twitch/lock-prediction',
-        'twitch/resolve-prediction'
+        'twitch/resolve-prediction',
+        'twitch/update-vip-role'
     ].forEach((filename) => {
         const definition = require(`./builtin/${filename}`);
         effectManager.registerEffect(definition);
