@@ -28,14 +28,9 @@ async function syncProfileData(profileSyncData) {
         'allowQuoteCSVDownloads': SettingsManager.getSetting("AllowQuoteCSVDownloads")
     };
 
-    const binId = await cloudSync.sync(completeSyncJSON);
+    await cloudSync.syncProfileData(completeSyncJSON);
 
-    if (binId != null) {
-        return binId;
-    }
-
-    logger.error('Cloud Sync: Unable to get binId from bytebin for profile data.');
-    return null;
+    return streamerUsername;
 }
 
 exports.syncProfileData = syncProfileData;

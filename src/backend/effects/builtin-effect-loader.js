@@ -10,6 +10,7 @@ exports.loadEffects = () => {
         'api',
         'celebration',
         'chat-feed-alert',
+        'chat-feed-message-hide',
         'chat',
         'clear-chat',
         'clear-effects',
@@ -51,6 +52,7 @@ exports.loadEffects = () => {
         'show-image', // No migration needed.
         'show-text',
         'stop-effect-execution',
+        'sync-profile-data',
         'take-screenshot',
         'text-to-speech',
         'toggle-command',
@@ -71,6 +73,7 @@ exports.loadEffects = () => {
         'twitch/create-stream-marker',
         'twitch/raid',
         'twitch/set-chat-mode',
+        'twitch/shield-mode',
         'twitch/shoutout',
         'twitch/snooze-ad-break',
         'twitch/stream-title',

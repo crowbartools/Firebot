@@ -124,10 +124,12 @@
 
             ctrl.isViewerDBOn = () => settingsService.getSetting("ViewerDB");
 
-            ctrl.extensionPages = () => uiExtensionsService.extensions.map(e => e.pages.map((p) => {
-                p.extensionId = e.id;
-                return p;
-            })).flat();
+            ctrl.extensionPages = () => uiExtensionsService.extensions
+                .filter(e => e.pages != null)
+                .map(e => e.pages.map((p) => {
+                    p.extensionId = e.id;
+                    return p;
+                })).flat();
 
             ctrl.showConnectionPanelModal = function() {
                 utilityService.showModal({

@@ -83,7 +83,8 @@
           />
           <chat-alert
             ng-if="chatItem.type === 'alert'"
-            message="chatItem.data"
+            alert-message="chatItem.message"
+            alert-icon="chatItem.icon"
           />
         </div>
       </div>

@@ -207,7 +207,8 @@ class CommandHandler {
                         .replace("{timeLeft}", util.secondsForHumans(remainingCooldown)),
                     null,
                     null,
-                    firebotChatMessage.id
+                    // We default to replies on purpose here
+                    command.sendCooldownMessageAsReply === false ? null : firebotChatMessage.id
                 );
             }
             return false;

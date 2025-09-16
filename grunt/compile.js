@@ -1,12 +1,16 @@
 /*
 grunt compile
-   Compiles a previously made pack into an installer(for windows) or tarball(for linux)
+   Compiles a previously made pack into an installer
 */
 
 'use strict';
 const path = require('path');
 const createWindowsInstaller = require('electron-winstaller').createWindowsInstaller;
 
+/**
+ *
+ * @param {import("grunt")} grunt
+ */
 module.exports = function (grunt) {
 
     const macIntelPathIn = path.resolve(__dirname, `../dist/pack/Firebot-darwin-x64/Firebot.app`);
@@ -24,6 +28,7 @@ module.exports = function (grunt) {
             productName: "Firebot v5",
             genericName: "Firebot v5",
             homepage: "https://firebot.app",
+            mimeType: ["application/x-firebotsetup"],
             icon: {
                 "48x48": "src/gui/images/macTrayIcon@3x.png",
                 "64x64": "src/gui/images/logo_64x.png",
@@ -32,6 +37,16 @@ module.exports = function (grunt) {
                 scalable: "src/gui/images/logo.svg"
             }
         }
+    };
+
+    const linuxScriptsDebian = {
+        postinst: 'build-assets/linux-install.sh',
+        prerm: 'build-assets/linux-uninstall.sh'
+    };
+
+    const linuxScriptsRedhat = {
+        post: 'build-assets/linux-install.sh',
+        preun: 'build-assets/linux-uninstall.sh'
     };
 
     // Bringing in from https://github.com/electron-archive/grunt-electron-installer/blob/master/tasks/index.js
@@ -43,11 +58,44 @@ module.exports = function (grunt) {
         createWindowsInstaller(config).then(done, done);
     });
 
+    grunt.registerMultiTask('create-macos-installer', 'Create the macos .dmg installers', function () {
+        this.requiresConfig(`${this.name}.${this.target}.appPath`);
+
+        const config = grunt.config(`${this.name}.${this.target}`);
+
+        const done = this.async();
+
+        const { createDMG } = require('electron-installer-dmg');
+
+        createDMG({
+            ...config,
+            contents: function (opts) {
+                return [
+                    { x: 448, y: 344, type: 'link', path: '/Applications' },
+                    { x: 192, y: 344, type: 'file', path: opts.appPath },
+                    ...(config.installInstructionsPath
+                        ? [{
+                            x: 320, y: 240,
+                            type: 'file',
+                            path: config.installInstructionsPath,
+                            name: 'Install Instructions'
+                        }]
+                        : [])
+                ];
+            },
+            overwrite: true
+        }).then(done, done);
+    });
+
     grunt.registerTask('create-redhat-installer', 'Create the Redhat .rpm installer', async function () {
         const done = this.async();
         const installer = require('@dennisrijsdijk/electron-installer-redhat');
         installer({
             ...linuxInstallerConfig,
+            options: {
+                ...linuxInstallerConfig.options,
+                scripts: linuxScriptsRedhat
+            },
             strip: false,
             arch: "x86_64",
             rename: function (dest) {
@@ -61,12 +109,17 @@ module.exports = function (grunt) {
         const installer = require('electron-installer-debian');
         installer({
             ...linuxInstallerConfig,
+            options: {
+                ...linuxInstallerConfig.options,
+                scripts: linuxScriptsDebian
+            },
             arch: "amd64",
             rename: function (dest) {
                 return path.join(dest, `firebot-v${version}-linux-x64.deb`);
             }
         }).then(done, done);
     });
+
 
     grunt.config.merge({
         'create-windows-installer': {
@@ -84,6 +137,25 @@ module.exports = function (grunt) {
                 noMsi: true
             }
         },
+        'create-macos-installer': {
+            x64: {
+                appPath: macIntelPathIn,
+                out: macPathOut,
+                name: `firebot-v${version}-macos-x64`,
+                title: "Firebot Installer",
+                icon: macDmgIcon,
+                background: macDmgBg
+            },
+            arm64: {
+                appPath: macArmPathIn,
+                out: macPathOut,
+                name: `firebot-v${version}-macos-arm64`,
+                title: "Firebot Installer",
+                icon: macDmgIcon,
+                background: macDmgBg,
+                installInstructionsPath: path.resolve(__dirname, '../macos-arm64-install-instructions.txt')
+            }
+        },
         compress: {
             linux: {
                 options: {
@@ -96,14 +168,6 @@ module.exports = function (grunt) {
                     src: ['**'],
                     dest: '/'
                 }]
-            }
-        },
-        shell: {
-            'compile-darwin-x64': {
-                command: `npx --no-install electron-installer-dmg "${macIntelPathIn}" firebot-v${version}-macos-x64 --out="${macPathOut}" --background="${macDmgBg}" --icon="${macDmgIcon}" --title="Firebot Installer" --debug`
-            },
-            'compile-darwin-arm64': {
-                command: `npx --no-install electron-installer-dmg "${macArmPathIn}" firebot-v${version}-macos-arm64 --out="${macPathOut}" --background="${macDmgBg}" --icon="${macDmgIcon}" --title="Firebot Installer" --debug`
             }
         }
     });
@@ -120,7 +184,7 @@ module.exports = function (grunt) {
             break;
 
         case 'darwin':
-            compileCommands = ['shell:compile-darwin-x64', 'shell:compile-darwin-arm64'];
+            compileCommands = ['create-macos-installer:x64', 'create-macos-installer:arm64'];
             break;
 
         default:

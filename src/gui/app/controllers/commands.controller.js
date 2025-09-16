@@ -99,9 +99,9 @@
                     className: "info",
                     content: "Opening Firebot profile page..."
                 });
-                const profileToken = await backendCommunicator.fireEventAsync("get-firebot-profile-token");
-                if (profileToken) {
-                    $rootScope.openLinkExternally(`https://firebot.app/profile?id=${profileToken}`);
+                const channelName = await backendCommunicator.fireEventAsync("sync-profile-data-to-crowbar-api");
+                if (channelName) {
+                    $rootScope.openLinkExternally(`https://firebot.app/profile/${channelName}`);
                 }
             };
 
@@ -119,6 +119,10 @@
 
             $scope.resetPerStreamUsagesForCommand = (command) => {
                 commandsService.resetPerStreamUsagesForCommand(command.id);
+            };
+
+            $scope.saveCustomCommand = (command) => {
+                commandsService.saveCustomCommand(command);
             };
 
             $scope.saveAllCommands = (commands) => {

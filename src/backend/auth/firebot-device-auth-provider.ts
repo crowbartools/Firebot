@@ -34,7 +34,7 @@ class FirebotDeviceAuthProvider {
         });
 
         account.auth = auth;
-        accountAccess.updateAccount(accountType, account, false);
+        accountAccess.updateAccount(accountType, account, false, true);
     }
 
     setupDeviceAuthProvider(): void {

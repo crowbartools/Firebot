@@ -6,6 +6,7 @@ const webServer = require("../../../server/http-server-manager");
 const twitchApi = require("../../twitch-api/api");
 const { EffectCategory } = require('../../../shared/effect-constants');
 const logger = require("../../logwrapper");
+const { wait } = require("../../utility");
 
 const shoutoutStyles = `
     .firebot-shoutout-wrapper {
@@ -178,6 +179,12 @@ const effect = {
             <p class="muted" style="font-size:11px;margin-top:6px;">
                 <b>Note:</b> The total duration will be an additional 4 seconds (2 second enter animation, 2 second exit animation)
             </p>
+            <div style="padding-top:20px">
+                <label class="control-fb control--checkbox"> Wait for shoutout to finish <tooltip text="'Wait for the shoutout to finish before letting the next effect play.'"></tooltip>
+                    <input type="checkbox" ng-model="effect.waitForShoutout">
+                    <div class="control__indicator"></div>
+                </label>
+            </div>
         </eos-container>
         <eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
         <eos-overlay-instance effect="effect" class="setting-padtop"></eos-overlay-instance>
@@ -285,6 +292,10 @@ const effect = {
         }
 
         webServer.sendToOverlay("shoutout", effect);
+        if (effect.waitForShoutout) {
+            const durationInMils = (Math.round(effect.duration + 2) || 0) * 1000;
+            await wait(durationInMils);
+        }
         return true;
     },
     overlayExtension: {
@@ -313,7 +324,7 @@ const effect = {
 
                 const shoutoutElement = `
                 <div>
-                    <div class="firebot-shoutout-wrapper" style="background: linear-gradient(0deg, ${data.bgColor2} 0%, ${data.bgColor1} 100%); transform: scale(${scale});">
+                    <div class="firebot-shoutout-wrapper" style="background: linear-gradient(0deg, ${data.bgColor2} 0%, ${data.bgColor1} 100%); transform: scale(${scale});${data.zIndex ? ` position: relative; z-index: ${data.zIndex};` : ''}">
 
                         <div style="position:relative;">
                             <div class="firebot-shoutout-avatar-wrapper firebot-shoutout-padding">

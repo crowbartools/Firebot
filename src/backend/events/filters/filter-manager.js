@@ -5,14 +5,20 @@ const logger = require("../../logwrapper");
 const EventEmitter = require("events");
 
 class FilterManager extends EventEmitter {
+
+    #registeredFilters = [];
+
+    /**
+     * @type {Record<string, Array<{ eventSourceId: string, eventId: string }>>}
+     */
+    #additionalFilterEvents = {};
+
     constructor() {
         super();
-
-        this._registeredFilters = [];
     }
 
     registerFilter(filter) {
-        const idConflict = this._registeredFilters.some(
+        const idConflict = this.#registeredFilters.some(
             f => f.id === filter.id
         );
 
@@ -26,27 +32,39 @@ class FilterManager extends EventEmitter {
             return;
         }
 
-        // TODO: validate the filter better
-
-        this._registeredFilters.push(filter);
+        this.#registeredFilters.push(filter);
 
         logger.debug(`Registered Event Filter ${filter.id}`);
 
         this.emit("filterRegistered", filter);
     }
 
+    addEventToFilter(filterId, eventSourceId, eventId) {
+        const additionalEvents = this.#additionalFilterEvents[filterId] ?? [];
+
+        additionalEvents.push({ eventSourceId, eventId });
+
+        this.#additionalFilterEvents[filterId] = additionalEvents;
+    }
+
     getFilterById(filterId) {
-        return this._registeredFilters.find(f => f.id === filterId);
+        return this.#registeredFilters.find(f => f.id === filterId);
     }
 
     getAllFilters() {
-        return this._registeredFilters;
+        return this.#registeredFilters;
     }
 
     getFiltersForEvent(eventSourceId, eventId) {
-        const filters = this._registeredFilters
-            .filter(f => f.events
-                .some(e => e.eventSourceId === eventSourceId && e.eventId === eventId));
+        const filters = this.#registeredFilters
+            .filter((f) => {
+                if (!f.events || f.events.length === 0) {
+                    return true;
+                }
+                const events = f.events;
+                const additionalEvents = this.#additionalFilterEvents[f.id] ?? [];
+                return [...events, ...additionalEvents].some(e => e.eventSourceId === eventSourceId && e.eventId === eventId);
+            });
         return filters;
     }
 
@@ -90,7 +108,7 @@ const manager = new FilterManager();
 ipcMain.on("getFiltersForEvent", (event, data) => {
     logger.info("got 'get all filters' request");
     const { eventSourceId, eventId } = data;
-    event.returnValue = manager.getFiltersForEvent(eventSourceId, eventId).map(f => {
+    event.returnValue = manager.getFiltersForEvent(eventSourceId, eventId).map((f) => {
         return {
             id: f.id,
             name: f.name,

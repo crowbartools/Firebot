@@ -6,7 +6,8 @@ import giftReceivers from './gift-receivers';
 import giftReceiversRaw from './gift-receivers-raw';
 import giftSubMonths from './gift-sub-months';
 import giftSubType from './gift-sub-type';
-
+import isAnonymous from './is-anonymous';
+import lifetimeGiftCount from "./lifetime-gift-count";
 import subCount from './sub-count';
 import subMessage from './sub-message';
 import subMonths from './sub-months';
@@ -24,7 +25,8 @@ export default [
     giftReceiversRaw,
     giftSubMonths,
     giftSubType,
-
+    isAnonymous,
+    lifetimeGiftCount,
     subCount,
     subMessage,
     subMonths,
