@@ -21,7 +21,9 @@
                             <tr ng-repeat="webhook in $ctrl.whs.webhookConfigs track by webhook.id">
                                 <td>{{webhook.name}}</td>
                                 <td><a href ng-click="$ctrl.copyWebhookUrlToClipboard(webhook)">Copy URL</a></td>
-                                <td><span class="effect-delete-btn clickable pull-right" ng-click="$ctrl.whs.deleteWebhookConfig(webhook.id)"><i class="far fa-trash-alt"></i></span></td>
+                                <td>
+                                    <span ng-if="webhook.scriptId == null" class="effect-delete-btn clickable pull-right" ng-click="$ctrl.whs.deleteWebhookConfig(webhook.id)"><i class="far fa-trash-alt"></i></span>
+                                </td>
                             </tr>
                         </tbody>
                     </table>

@@ -155,11 +155,15 @@
                 if (!ctrl.metadata.backendEventName) {
                     return;
                 }
-                ctrl.buttonLoading = true;
-                backendCommunicator.fireEventAsync(ctrl.metadata.backendEventName)
-                    .then(() => {
-                        ctrl.buttonLoading = false;
-                    });
+                if (ctrl.metadata.sync) {
+                    backendCommunicator.fireEvent(ctrl.metadata.backendEventName);
+                } else {
+                    ctrl.buttonLoading = true;
+                    backendCommunicator.fireEventAsync(ctrl.metadata.backendEventName)
+                        .then(() => {
+                            ctrl.buttonLoading = false;
+                        });
+                }
             };
 
             const parseMarkdown = (text) => {

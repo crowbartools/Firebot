@@ -6,6 +6,7 @@ import eventManager from "../events/EventManager";
 import { SettingsManager } from "../common/settings-manager";
 import { maskPII } from "../utils";
 import logger from "../logwrapper";
+import accountAccess from "../common/account-access";
 
 class WebhookConfigManager extends JsonDbManager<WebhookConfig, { "webhook-received": (data: { config: WebhookConfig; payload: unknown; }) => void }> {
     constructor() {
@@ -15,6 +16,8 @@ class WebhookConfigManager extends JsonDbManager<WebhookConfig, { "webhook-recei
             crowbarRelayWebSocket.send("update-webhooks", {
                 webhookIds: this.getAllItems().map(item => item.id)
             });
+
+            frontendCommunicator.send("webhooks:updated", this.getAllItems());
         };
 
         this.on("items-changed", sendWebhookIds);
@@ -54,12 +57,17 @@ class WebhookConfigManager extends JsonDbManager<WebhookConfig, { "webhook-recei
 
         });
     }
+
+    getWebhookUrlById(webhookId: string): string {
+        const streamer = accountAccess.getAccounts().streamer;
+        return `https://api.crowbar.tools/v1/webhook/${streamer.channelId}/${webhookId}`;
+    }
 }
 
 const webhookConfigManager = new WebhookConfigManager();
 
 frontendCommunicator.onAsync("webhooks:get-all", async () =>
-    webhookConfigManager.getAllItems().filter(w => w.scriptId == null)
+    webhookConfigManager.getAllItems()
 );
 
 frontendCommunicator.onAsync("webhooks:save", async (webhookConfig: WebhookConfig) =>

@@ -60,6 +60,10 @@
                 backendCommunicator.fireEvent("webhooks:delete", webhookId);
             };
 
+            backendCommunicator.on("webhooks:updated", (webhookConfigs) => {
+                service.webhookConfigs = webhookConfigs;
+            });
+
             return service;
         });
 }());

@@ -77,6 +77,16 @@ class ScriptWebhookManager extends EventEmitter {
             .getAllItems()
             .filter(w => w.scriptId === this.scriptName);
     }
+
+    getWebhookUrl(name) {
+        const webhook = this.getWebhook(name);
+
+        if (webhook == null) {
+            return null;
+        }
+
+        return webhookManager.getWebhookUrlById(webhook.id);
+    }
 }
 
 const accountAccess = require("../../account-access");
