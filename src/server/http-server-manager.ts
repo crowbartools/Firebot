@@ -11,6 +11,7 @@ import effectManager from "../backend/effects/effectManager";
 import { ResourceTokenManager } from "../backend/resource-token-manager";
 import websocketServerManager from "./websocket-server-manager";
 import { CustomWebSocketHandler } from "../types/websocket";
+import overlayWidgetManager from "../backend/overlay-widgets/overlay-widgets-manager";
 
 import dataAccess from "../backend/common/data-access";
 
@@ -108,21 +109,50 @@ class HttpServerManager extends EventEmitter {
         app.get("/overlay/", function(req, res) {
             const effectDefs = effectManager.getEffectOverlayExtensions();
 
-            const combinedCssDeps = [...new Set(effectDefs
-                .filter(ed => ed.dependencies != null && ed.dependencies.css != null)
-                .map(ed => ed.dependencies.css))];
+            const widgetExtensions = overlayWidgetManager.getOverlayExtensions();
 
-            const combinedJsDeps = [...new Set(effectDefs
-                .filter(ed => ed != null && ed.dependencies != null && ed.dependencies.js != null)
-                .map(ed => ed.dependencies.js))];
+            const combinedCssDeps = [...new Set(
+                [...effectDefs
+                    .filter(ed => ed.dependencies?.css?.length)
+                    .map(ed => ed.dependencies.css),
+                ...widgetExtensions
+                    .filter(we => we.dependencies?.css?.length)
+                    .map(we => we.dependencies.css)
+                ].flat())];
 
-            const combinedGlobalStyles = effectDefs
-                .filter(ed => ed != null && ed.dependencies != null && ed.dependencies.globalStyles != null)
-                .map(ed => ed.dependencies.globalStyles);
+            const combinedJsDeps = [...new Set([
+                ...effectDefs
+                    .filter(ed => ed.dependencies?.js?.length)
+                    .map(ed => ed.dependencies.js),
+                ...widgetExtensions
+                    .filter(we => we.dependencies?.js?.length)
+                    .map(we => we.dependencies.js)
+            ].flat())];
+
+            const combinedGlobalStyles = [
+                ...effectDefs
+                    .filter(ed => ed.dependencies?.globalStyles?.length)
+                    .map(ed => ed.dependencies.globalStyles),
+                ...widgetExtensions
+                    .filter(we => we.dependencies?.globalStyles?.length)
+                    .map(we => we.dependencies.globalStyles)
+            ];
+
+            // eslint-disable-next-line @typescript-eslint/ban-types
+            const widgetEvents: Array<{ name: string; callback: Function }> = [];
+            for (const widgetExtension of widgetExtensions) {
+                if (widgetExtension.eventHandler) {
+                    widgetEvents.push({
+                        name: `overlay-widget:${widgetExtension.typeId}`,
+                        callback: widgetExtension.eventHandler
+                    });
+                }
+            }
 
             const overlayTemplate = path.join(cwd, './resources/overlay');
             res.render(overlayTemplate, {
-                events: effectDefs.map(ed => ed.event),
+                effectEvents: effectDefs.map(ed => ed.event),
+                widgetEvents: widgetEvents,
                 dependencies: {
                     css: combinedCssDeps,
                     js: combinedJsDeps,

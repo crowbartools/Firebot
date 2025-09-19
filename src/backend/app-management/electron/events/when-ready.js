@@ -158,6 +158,13 @@ exports.whenReady = async () => {
     const webhookConfigManager = require("../../../webhooks/webhook-config-manager");
     webhookConfigManager.loadItems();
 
+    windowManagement.updateSplashScreenStatus("Loading overlay widgets...");
+    const { loadWidgetTypes } = require("../../../overlay-widgets/builtin-widget-type-loader");
+    loadWidgetTypes();
+
+    const overlayWidgetConfigManager = require("../../../overlay-widgets/overlay-widget-config-manager");
+    overlayWidgetConfigManager.loadItems();
+
     windowManagement.updateSplashScreenStatus("Loading startup script data...");
     const startupScriptsManager = require("../../../common/handlers/custom-scripts/startup-scripts-manager");
     startupScriptsManager.loadStartupConfig();

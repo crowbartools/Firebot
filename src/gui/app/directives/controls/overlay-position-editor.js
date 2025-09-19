@@ -6,28 +6,23 @@
         .component("overlayPositionEditor", {
             bindings: {
                 model: "=ngModel",
-                aspectRatio: "@",
-                minWidth: "<",
-                minHeight: "<",
-                overlayWidth: "<?",
-                overlayHeight: "<?"
+                minWidth: "<?",
+                minHeight: "<?"
             },
             require: {
                 ngModelCtrl: 'ngModel'
             },
             template: `
                 <div class="overlay-position-editor">
+                    <div class="overlay-dimensions" uib-tooltip="Overlay Resolution" tooltip-append-to-body="true" ng-click="$ctrl.openEditResolutionModal()">
+                        {{ $ctrl.overlayResWidth }} x {{ $ctrl.overlayResHeight }} <i class="far fa-edit" aria-hidden="true"></i>
+                    </div>
                     <div class="overlay-canvas" ng-style="$ctrl.getCanvasStyle()">
                         <div
                             class="overlay-widget-preview"
                             ng-style="$ctrl.getPreviewStyle()"
                             ng-mousedown="$ctrl.startDragging($event)"
                             ng-transclude>
-                            <div
-                                class="resize-handle center-handle"
-                                ng-mousedown="$ctrl.startResizing($event, 'center')">
-                                <i class="fas fa-arrows-alt"></i>
-                            </div>
                             <div
                                 class="resize-handle corner-handle top-left"
                                 ng-mousedown="$ctrl.startCornerResizing($event, 'topLeft')">
@@ -65,7 +60,7 @@
                     </div>
                     <div class="position-controls mt-3">
                         <div class="input-group mb-2">
-                            <span class="input-group-addon">X Position (px)</span>
+                            <span class="input-group-addon" style="width: 25%">X Position (px)</span>
                             <input
                                 type="number"
                                 class="form-control"
@@ -74,7 +69,7 @@
                                 step="1"
                                 ng-change="$ctrl.updateFromDisplayModel()">
 
-                            <span class="input-group-addon ms-2">Y Position (px)</span>
+                            <span class="input-group-addon ms-2" style="width: 25%">Y Position (px)</span>
                             <input
                                 type="number"
                                 class="form-control"
@@ -84,7 +79,7 @@
                                 ng-change="$ctrl.updateFromDisplayModel()">
                         </div>
                         <div class="input-group">
-                            <span class="input-group-addon">Width (px)</span>
+                            <span class="input-group-addon" style="width: 25%">Width (px)</span>
                             <input
                                 type="number"
                                 class="form-control"
@@ -93,7 +88,7 @@
                                 step="1"
                                 ng-change="$ctrl.updateFromDisplayModel()">
 
-                            <span class="input-group-addon ms-2">Height (px)</span>
+                            <span class="input-group-addon ms-2" style="width: 25%">Height (px)</span>
                             <input
                                 type="number"
                                 class="form-control"
@@ -102,29 +97,48 @@
                                 step="1"
                                 ng-change="$ctrl.updateFromDisplayModel()">
                         </div>
-                        <div class="input-group mt-3">
+                       <!-- <div class="input-group mt-3">
                             <span class="input-group-addon">Resolution:</span>
                             <div class="form-control resolution-display" disabled>
                                 {{ $ctrl.overlayResWidth }} x {{ $ctrl.overlayResHeight }}
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             `,
             transclude: true,
-            controller: function($element, $document, $scope) {
+            controller: function($element, $document, $scope, settingsService, modalFactory) {
                 const $ctrl = this;
 
-                // Set default values and initialize
-                $ctrl.$onInit = function() {
-                    // Set default aspect ratio to 16:9 if not provided
-                    $ctrl.canvasAspectRatio = $ctrl.aspectRatio ? $ctrl.aspectRatio : "16:9";
-                    const [width, height] = $ctrl.canvasAspectRatio.split(':').map(Number);
-                    $ctrl.aspectRatioValue = width / height;
+                // Calculated rendered scale (area ratio) of the editor vs the overlay resolution
+                $ctrl.scalePercentage = 1; // 1 as default/fallback
+
+                function computeScale() {
+                    const canvasEl = $element.find('.overlay-canvas')[0];
+                    if (!canvasEl) {
+                        return;
+                    }
+                    const rect = canvasEl.getBoundingClientRect();
+                    if (rect.width > 0 && rect.height > 0) {
+                        const areaRatio = (rect.width * rect.height) / ($ctrl.overlayResWidth * $ctrl.overlayResHeight);
+                        $scope.$applyAsync(() => {
+                            $ctrl.scalePercentage = areaRatio;
+                        });
+                    }
+                }
+
+                function init() {
+                    const overlayResSetting = settingsService.getSetting("OverlayResolution") || {};
 
                     // Set default overlay resolution (1280x720) if not provided
-                    $ctrl.overlayResWidth = $ctrl.overlayWidth || 1280;
-                    $ctrl.overlayResHeight = $ctrl.overlayHeight || 720;
+                    $ctrl.overlayResWidth = overlayResSetting.width || 1280;
+                    $ctrl.overlayResHeight = overlayResSetting.height || 720;
+
+                    // Defer scale calc until after DOM paints
+                    setTimeout(computeScale, 0);
+
+                    // Derive aspect ratio from the resolved dimensions
+                    $ctrl.aspectRatioValue = $ctrl.overlayResWidth / $ctrl.overlayResHeight;
 
                     // Set minimum dimensions for the preview widget in pixels
                     const minPixelWidth = $ctrl.minWidth || 50; // minimum 50px width
@@ -136,12 +150,42 @@
 
                     // Initialize model with default values if not provided
                     if (!$ctrl.model) {
-                        $ctrl.model = {
-                            x: 128, // 10% of 1280
-                            y: 72, // 10% of 720
-                            width: 384, // 30% of 1280
-                            height: 144 // 20% of 720
-                        };
+                        // Dynamically create a default model:
+                        // - 16:9 aspect ratio
+                        // - ~25% of the overlay area
+                        // - Centered
+                        (function() {
+                            const W = $ctrl.overlayResWidth;
+                            const H = $ctrl.overlayResHeight;
+
+                            const aspectW = 16;
+                            const aspectH = 9;
+                            const aspectRatio = aspectW / aspectH;
+
+                            // Target 25% of total overlay area
+                            const targetArea = 0.25 * W * H;
+
+                            // Derive width/height from target area and aspect ratio
+                            let width = Math.sqrt(targetArea * aspectRatio);
+                            let height = width / aspectRatio;
+
+                            // Ensure it fits within the overlay (just in case of extreme aspect ratios)
+                            if (width > W || height > H) {
+                                const fitScale = Math.min(W / width, H / height);
+                                width *= fitScale;
+                                height *= fitScale;
+                            }
+
+                            // Round to whole pixels
+                            width = Math.round(width);
+                            height = Math.round(height);
+
+                            // Center the rectangle
+                            const x = Math.round((W - width) / 2);
+                            const y = Math.round((H - height) / 2);
+
+                            $ctrl.model = { x, y, width, height };
+                        }());
                     }
 
                     // Make sure all required properties exist with pixel defaults
@@ -167,6 +211,17 @@
                     };
 
                     $ctrl.updateInternalModel();
+                }
+
+                // Set default values and initialize
+                $ctrl.$onInit = function() {
+                    init();
+                };
+
+                $ctrl.openEditResolutionModal = function() {
+                    modalFactory.openEditOverlayResolutionModal(() => {
+                        init();
+                    });
                 };
 
                 // Calculate canvas dimensions
@@ -199,97 +254,6 @@
                         'overflow': 'hidden'
                     };
                 };
-
-                // Add inline styles to the component
-                const style = document.createElement('style');
-                style.type = 'text/css';
-                style.innerHTML = `
-                    .resize-handle {
-                        position: absolute;
-                        background-color: rgba(50, 120, 255, 0.8);
-                        z-index: 10;
-                    }
-                    .center-handle {
-                        width: 22px;
-                        height: 22px;
-                        border-radius: 50%;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        cursor: se-resize;
-                        color: white;
-                        font-size: 10px;
-                    }
-                    .corner-handle {
-                        width: 12px;
-                        height: 12px;
-                        border: 2px solid white;
-                    }
-                    .top-left {
-                        top: -6px;
-                        left: -6px;
-                        cursor: nw-resize;
-                    }
-                    .top-right {
-                        top: -6px;
-                        right: -6px;
-                        cursor: ne-resize;
-                    }
-                    .bottom-left {
-                        bottom: -6px;
-                        left: -6px;
-                        cursor: sw-resize;
-                    }
-                    .bottom-right {
-                        bottom: -6px;
-                        right: -6px;
-                        cursor: se-resize;
-                    }
-                    .center-guide {
-                        position: absolute;
-                        background-color: rgba(255, 255, 255, 0.7);
-                        z-index: 5;
-                        pointer-events: none;
-                    }
-                    .center-guide.horizontal {
-                        width: 100%;
-                        height: 1px;
-                        top: 50%;
-                        left: 0;
-                        box-shadow: 0 0 3px rgba(255, 255, 255, 0.8);
-                    }
-                    .center-guide.vertical {
-                        width: 1px;
-                        height: 100%;
-                        top: 0;
-                        left: 50%;
-                        box-shadow: 0 0 3px rgba(255, 255, 255, 0.8);
-                    }
-                    .alignment-controls {
-                        position: absolute;
-                        bottom: 10px;
-                        right: 10px;
-                        display: flex;
-                        gap: 5px;
-                        z-index: 20;
-                    }
-                    .alignment-button {
-                        background-color: rgba(50, 120, 255, 0.8);
-                        border: none;
-                        color: white;
-                        padding: 5px;
-                        cursor: pointer;
-                        border-radius: 3px;
-                        transition: background-color 0.2s;
-                    }
-                    .alignment-button:hover {
-                        background-color: rgba(50, 120, 255, 1);
-                    }
-                    .alignment-button i {
-                        font-size: 14px;
-                    }
-                `;
-                document.head.appendChild(style);
 
                 // Update the ngModel value
                 $ctrl.updateModel = function() {
@@ -582,7 +546,6 @@
 <div>
     <overlay-position-editor
         ng-model="$ctrl.yourPositionSettings"
-        aspect-ratio="16:9"
         min-width="5"
         min-height="5">
     </overlay-position-editor>

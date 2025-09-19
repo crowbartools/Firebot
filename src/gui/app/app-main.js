@@ -138,7 +138,9 @@
         replaceVariableService,
         variableMacroService,
         uiExtensionsService,
-        webhooksService
+        webhooksService,
+        overlayWidgetsService,
+        dynamicParameterRegistry
     ) {
         // 'chatMessagesService' and 'videoService' are included so they're instantiated on app start
 
@@ -183,6 +185,8 @@
 
         webhooksService.loadWebhookConfigs();
 
+        overlayWidgetsService.loadOverlayWidgetTypesAndConfigs();
+
         //start notification check
         $timeout(() => {
             notificationService.loadAllNotifications();
@@ -201,6 +205,10 @@
                 settingsService.saveSetting("DefaultTtsVoiceId", ttsService.getOsDefaultVoiceId());
             }
         });
+
+        // Register built-in dynamic parameter types
+        dynamicParameterRegistry.register("string", { tag: "fb-param-string" });
+        dynamicParameterRegistry.register("number", { tag: "fb-param-number" });
 
         uiExtensionsService.setAsReady();
     });

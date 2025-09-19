@@ -33,6 +33,7 @@
     
     <script src="js/reconnecting-websocket.js"></script>
     <script src="js/util.js"></script>
+    <script src="js/overlay-widgets.js"></script>
     <script src="js/plugins/create.js"></script>
     <script src="js/fireworks.js"></script>
     <script src="js/confetti.js"></script>
@@ -52,8 +53,12 @@
             document.title = "Firebot Overlay (Default)";
         }
 
-        <% for(let event of events) {%>
-            firebotOverlay.on('<%-event.name%>', <%-event.onOverlayEvent%>);
+        <% for(let effectEvent of effectEvents) {%>
+            effectEvents.on('<%-effectEvent.name%>', <%-effectEvent.onOverlayEvent%>);
+        <% } %>
+
+        <% for(let widgetEvent of widgetEvents) {%>
+            widgetEvents.on('<%-widgetEvent.name%>', <%-widgetEvent.callback%>);
         <% } %>
     </script>
 </html> 

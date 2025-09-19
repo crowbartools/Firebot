@@ -70,6 +70,10 @@ export type FirebotSettingsTypes = {
     NotifyOnBeta: boolean;
     OpenEffectQueueMonitorOnLaunch: boolean;
     OpenStreamPreviewOnLaunch: boolean;
+    OverlayResolution: {
+        width: number;
+        height: number;
+    },
     OverlayInstances: string[];
     PersistCustomVariables: boolean;
     QuickActions: Record<string, {
@@ -191,6 +195,10 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     OpenEffectQueueMonitorOnLaunch: false,
     OpenStreamPreviewOnLaunch: false,
     OverlayInstances: [],
+    OverlayResolution: {
+        width: 1280,
+        height: 720
+    },
     PersistCustomVariables: false,
     QuickActions: {},
     RunCustomScripts: false,
