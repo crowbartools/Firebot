@@ -59,8 +59,13 @@ function updateWidgetPosition(id: string, position: Position) {
         return null;
     }
 
-    const positionStyle = getWidgetPositionStyle(position);
-    widgetElement.setAttribute("style", positionStyle);
+    //@ts-ignore
+    (Motion as any).animate(widgetElement, {
+        top: position.y,
+        left: position.x,
+        width: position.width,
+        height: position.height,
+    });
 
     return widgetElement;
 }
