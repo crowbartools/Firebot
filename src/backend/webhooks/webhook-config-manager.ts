@@ -8,7 +8,11 @@ import { maskPII } from "../utils";
 import logger from "../logwrapper";
 import accountAccess from "../common/account-access";
 
-class WebhookConfigManager extends JsonDbManager<WebhookConfig, { "webhook-received": (data: { config: WebhookConfig; payload: unknown; }) => void }> {
+type ExtraEvents = {
+    "webhook-received": (data: { config: WebhookConfig; payload: unknown; headers: Record<string, string>; }) => void
+}
+
+class WebhookConfigManager extends JsonDbManager<WebhookConfig, ExtraEvents> {
     constructor() {
         super("Webhooks", "/webhooks");
 
@@ -32,7 +36,7 @@ class WebhookConfigManager extends JsonDbManager<WebhookConfig, { "webhook-recei
                 logger.debug("Webhook received:", maskPII(msg.data));
             }
 
-            const data = msg.data as { webhookId: string; payload: unknown; };
+            const data = msg.data as { webhookId: string; payload: unknown; headers: Record<string, string>; };
 
             const webhookConfig = this.getItem(data.webhookId);
             if (!webhookConfig) {
@@ -47,12 +51,17 @@ class WebhookConfigManager extends JsonDbManager<WebhookConfig, { "webhook-recei
                 } catch {}
             }
 
-            this.emit("webhook-received", { config: webhookConfig, payload });
+            this.emit("webhook-received", {
+                config: webhookConfig,
+                payload,
+                headers: data.headers ?? {}
+            });
 
             eventManager.triggerEvent("firebot", "webhook-received", {
                 webhookId: webhookConfig.id,
                 webhookName: webhookConfig.name,
-                webhookPayload: payload
+                webhookPayload: payload,
+                webhookHeaders: data.headers ?? {}
             });
 
         });
