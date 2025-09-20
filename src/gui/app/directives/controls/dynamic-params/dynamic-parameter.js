@@ -58,8 +58,6 @@
             function onInput(val) {
                 $ctrl.viewValue = val;
                 $ctrl.ngModelCtrl.$setViewValue(val);
-
-                console.log(`ngModelCtrl for ${$ctrl.name}`, $ctrl.ngModelCtrl);
             }
 
             function onTouched() {
@@ -211,28 +209,7 @@
                 );
             }
 
-            function isModelUnset() {
-                const vv = $ctrl.ngModelCtrl.$viewValue;
-                const mv = $ctrl.ngModelCtrl.$modelValue;
-
-                // NaN !== NaN: true only when vv is the Angular "uninitialized" sentinel
-                const isUninitializedView = vv !== vv;
-
-                // Standard Angular emptiness check
-                const isEmptyModel = $ctrl.ngModelCtrl.$isEmpty(mv);
-                const isEmptyView = $ctrl.ngModelCtrl.$isEmpty(vv);
-
-                return isUninitializedView || (isEmptyModel && isEmptyView);
-            }
-
             function init() {
-                const modelIsUnset = isModelUnset();
-                if (modelIsUnset && $ctrl.schema?.default != null) {
-                    console.log('Setting default value for param', $ctrl.name, $ctrl.schema.default);
-                    $ctrl.ngModelCtrl.$setViewValue(angular.copy($ctrl.schema.default));
-                    $ctrl.ngModelCtrl.$render();
-                }
-
                 if ($ctrl.schema.title) {
                     $ctrl.title = parseMarkdown($ctrl.schema.title);
                 }
@@ -248,6 +225,9 @@
                 buildValidatorsFromSchema();
                 renderChild();
 
+                if ($ctrl._unwatchError) {
+                    $ctrl._unwatchError();
+                }
                 $ctrl._unwatchError = $scope.$watchGroup(
                     [
                         () => $ctrl.ngModelCtrl.$invalid,
@@ -258,9 +238,15 @@
                 );
             }
 
+            $scope.$watch(() => $ctrl.ngModelCtrl.$modelValue, (newVal) => {
+                if (newVal === undefined && $ctrl.schema?.default != null) {
+                    $ctrl.ngModelCtrl.$setViewValue(angular.copy($ctrl.schema.default));
+                    $ctrl.ngModelCtrl.$render();
+                }
+            });
+
             $ctrl.$onInit = $ctrl.$onChanges = function() {
                 $ctrl.ngModelCtrl.$render = () => {
-                    console.log('Dynamic param render', $ctrl.name, 'viewValue=', $ctrl.ngModelCtrl.$viewValue);
                     $ctrl.viewValue = $ctrl.ngModelCtrl.$viewValue;
                 };
                 init();
