@@ -434,12 +434,19 @@
 }
 
 .color-picker-wrapper .input-group .input-group-addon {
-    width: 40px;
-    border: 1px solid #24262A !important;
-    border-radius: 6px;
+    width: 45px;
+    border: transparent !important;
+    border-radius: 8px;
     &:first-child {
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
+    }
+}
+
+.color-picker-group-wrapper {
+    .color-picker-wrapper .input-group .input-group-addon:first-child {
+        border-top-left-radius: 0px !important;
+        border-bottom-left-radius: 0px !important;
     }
 }
 
@@ -732,4 +739,8 @@ code {
 .input-editor-selector-container .form-control,
 .input-editor-selector-container .CodeMirror {
     border-top-left-radius: 0px !important;
+}
+
+hr {
+    border-top: 1px solid #53545b;
 }

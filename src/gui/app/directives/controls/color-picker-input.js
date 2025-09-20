@@ -15,7 +15,7 @@
             },
             template: `
             <div style="{{$ctrl.style}}">
-                <div ng-if="$ctrl.label != null" class="input-group settings-buttontext">
+                <div ng-if="$ctrl.label != null" class="input-group settings-buttontext color-picker-group-wrapper">
                     <span class="input-group-addon" id="basic-addon3">{{$ctrl.label}}</span>
                     <color-picker
                         ng-model="$ctrl.model"
