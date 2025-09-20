@@ -52,10 +52,10 @@
                 const $ctrl = this;
 
                 $ctrl.presets = [
-                    { width: 3840, height: 2160, label: "4K" },
-                    { width: 2560, height: 1440, label: "1440p" },
+                    { width: 1280, height: 720, label: "720p" },
                     { width: 1920, height: 1080, label: "1080p" },
-                    { width: 1280, height: 720, label: "720p" }
+                    { width: 2560, height: 1440, label: "1440p" },
+                    { width: 3840, height: 2160, label: "4K" }
                 ];
 
                 $ctrl.applyPreset = (preset) => {
