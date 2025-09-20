@@ -42,7 +42,7 @@
                 <span ng-repeat="error in $ctrl.errorMessages" class="help-block">{{ error }}</span>
             </div>
 
-            <hr ng-if="$ctrl.schema.showBottomHr" style="margin-top:10px; margin-bottom:15px;" />
+            <hr ng-if="$ctrl.schema.showBottomHr" />
         </div>
 
        `,
