@@ -1,6 +1,6 @@
 "use strict";
 (function() {
-    angular.module("firebotApp").component("fbParamNumber", {
+    angular.module("firebotApp").component("fbParamPollChoiceList", {
         bindings: {
             schema: '<',
             value: '<',
@@ -9,17 +9,10 @@
         },
         template: `
           <div>
-            <input
-                class="form-control"
-                type="number"
-                placeholder="{{$ctrl.schema.placeholder ? $ctrl.schema.placeholder : 'Enter a number'}}"
-                ng-model="$ctrl.local"
-                ng-change="$ctrl.onInput({ value: $ctrl.local })"
-                ng-blur="$ctrl.onTouched()"
-            />
+            <poll-choice-list model="$ctrl.local" options="$ctrl.schema.options"></poll-choice-list>
           </div>
         `,
-        controller: function() {
+        controller: function($scope) {
             const $ctrl = this;
             $ctrl.$onInit = function() {
                 $ctrl.local = $ctrl.value;
@@ -29,6 +22,9 @@
                     $ctrl.local = chg.value.currentValue;
                 }
             };
+            $scope.$watch('$ctrl.local', (newValue) => {
+                $ctrl.onInput({ value: newValue });
+            });
         }
     });
 }());

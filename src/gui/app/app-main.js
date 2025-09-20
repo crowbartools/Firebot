@@ -210,6 +210,20 @@
         dynamicParameterRegistry.register("string", { tag: "fb-param-string" });
         dynamicParameterRegistry.register("number", { tag: "fb-param-number" });
         dynamicParameterRegistry.register("password", { tag: "fb-param-password" });
+        dynamicParameterRegistry.register("boolean", { tag: "fb-param-boolean", hideTitle: true, hideDescription: true });
+        dynamicParameterRegistry.register("enum", { tag: "fb-param-enum" });
+        dynamicParameterRegistry.register("filepath", { tag: "fb-param-filepath" });
+        dynamicParameterRegistry.register("role-percentages", { tag: "fb-param-role-percentages" });
+        dynamicParameterRegistry.register("role-numbers", { tag: "fb-param-role-numbers" });
+        dynamicParameterRegistry.register("currency-select", { tag: "fb-param-currency-select" });
+        dynamicParameterRegistry.register("chatter-select", { tag: "fb-param-chatter-select" });
+        dynamicParameterRegistry.register("editable-list", { tag: "fb-param-editable-list" });
+        dynamicParameterRegistry.register("multiselect", { tag: "fb-param-multiselect" });
+        dynamicParameterRegistry.register("discord-channel-webhooks", { tag: "fb-param-discord-channel-webhooks" });
+        dynamicParameterRegistry.register("gift-receivers-list", { tag: "fb-param-gift-receivers-list" });
+        dynamicParameterRegistry.register("poll-choice-list", { tag: "fb-param-poll-choice-list" });
+        dynamicParameterRegistry.register("effectlist", { tag: "fb-param-effect-list" });
+        dynamicParameterRegistry.register("button", { tag: "fb-param-button" });
 
         uiExtensionsService.setAsReady();
     });

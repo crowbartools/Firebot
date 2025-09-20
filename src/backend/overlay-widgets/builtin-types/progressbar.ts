@@ -5,6 +5,10 @@ type Settings = {
     backgroundColor: string;
     minValue: number;
     maxValue: number;
+    test: {
+        id: string;
+        effects: string[];
+    }
 }
 
 type State = {

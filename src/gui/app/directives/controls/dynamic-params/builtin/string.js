@@ -33,11 +33,11 @@
         controller: function() {
             const $ctrl = this;
             $ctrl.$onInit = function() {
-                $ctrl.local = $ctrl.value ?? '';
+                $ctrl.local = $ctrl.value;
             };
             $ctrl.$onChanges = function(chg) {
                 if (chg.value != null && chg.value.currentValue !== $ctrl.local) {
-                    $ctrl.local = chg.value.currentValue ?? '';
+                    $ctrl.local = chg.value.currentValue;
                 }
             };
         }

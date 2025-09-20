@@ -16,14 +16,14 @@
 
         <div class="form-group" ng-class="{'has-error': $ctrl.hasError}">
             <label
-                ng-if="$ctrl.title"
+                ng-if="$ctrl.title && !$ctrl.hideTitle"
                 for="{{$ctrl.name}}"
                 class="control-label markdown-container"
                 ng-bind-html="$ctrl.title"
             ></label>
 
             <div
-                ng-if="$ctrl.description"
+                ng-if="$ctrl.description && !$ctrl.hideDescription"
                 style="padding-bottom: 5px;font-size: 13px;font-weight: 100;opacity:0.8;"
                 class="markdown-container"
                 ng-bind-html="$ctrl.description"
@@ -42,7 +42,7 @@
                 <span ng-repeat="error in $ctrl.errorMessages" class="help-block">{{ error }}</span>
             </div>
 
-            <hr ng-if="$ctrl.schema.showBottomHr" />
+            <hr ng-if="$ctrl.schema.showBottomHr" style="margin-top: 30px;" />
         </div>
 
        `,
@@ -68,17 +68,25 @@
                 return val == null || (typeof val === 'string' && val.trim() === '');
             }
 
+            $ctrl.hideTitle = false;
+            $ctrl.hideDescription = false;
+
             function renderChild() {
                 if (compiledEl) {
                     compiledEl.remove();
                 }
                 const def = $ctrl.schema && dynamicParameterRegistry.get($ctrl.schema.type);
+
+                $ctrl.hideTitle = def?.hideTitle ?? false;
+                $ctrl.hideDescription = def?.hideDescription ?? false;
+
                 const tag = def ? `
                     <${def.tag}
                         schema="$ctrl.schema"
                         value="$ctrl.viewValue"
                         on-input="$ctrl._onInput(value)"
-                        on-touched="$ctrl._onTouched()">
+                        on-touched="$ctrl._onTouched()"
+                        context="$ctrl.context">
                     </${def.tag}>`
                     : `<div class="fb-param-unsupported">Unsupported type: ${$ctrl.schema && $ctrl.schema.type}</div>`;
 
@@ -210,6 +218,12 @@
             }
 
             function init() {
+                $ctrl.context = {
+                    trigger: $ctrl.trigger,
+                    triggerMeta: $ctrl.triggerMeta,
+                    modalId: $ctrl.modalId
+                };
+
                 if ($ctrl.schema.title) {
                     $ctrl.title = parseMarkdown($ctrl.schema.title);
                 }
