@@ -209,6 +209,7 @@
         // Register built-in dynamic parameter types
         dynamicParameterRegistry.register("string", { tag: "fb-param-string" });
         dynamicParameterRegistry.register("number", { tag: "fb-param-number" });
+        dynamicParameterRegistry.register("password", { tag: "fb-param-password" });
 
         uiExtensionsService.setAsReady();
     });
