@@ -9,7 +9,8 @@
             schema: "<",
             trigger: "@?",
             triggerMeta: "<?",
-            modalId: "@?"
+            modalId: "@?",
+            hideTitleAndDescription: "<?"
         },
         require: { ngModelCtrl: 'ngModel' },
         template: `
@@ -77,8 +78,8 @@
                 }
                 const def = $ctrl.schema && dynamicParameterRegistry.get($ctrl.schema.type);
 
-                $ctrl.hideTitle = def?.hideTitle ?? false;
-                $ctrl.hideDescription = def?.hideDescription ?? false;
+                $ctrl.hideTitle = def?.hideTitle ?? $ctrl.hideTitleAndDescription ?? false;
+                $ctrl.hideDescription = def?.hideDescription ?? $ctrl.hideTitleAndDescription ?? false;
 
                 const tag = def ? `
                     <${def.tag}

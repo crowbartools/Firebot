@@ -63,6 +63,7 @@ exports.loadEffects = () => {
         'toggle-timer',
         'update-channel-reward',
         'update-counter',
+        'update-overlay-widget-settings',
         'update-progress-bar',
         'update-role',
         'update-viewer-rank',

@@ -57,6 +57,10 @@ class OverlayWidgetConfigManager extends JsonDbManager<OverlayWidgetConfig, Extr
         this.emit("widget-state-updated", config);
         this.saveItem(config);
     }
+
+    triggerUiRefresh(): void {
+        frontendCommunicator.send("overlay-widgets:configs-updated");
+    }
 }
 
 const manager = new OverlayWidgetConfigManager();

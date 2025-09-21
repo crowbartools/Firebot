@@ -94,13 +94,13 @@ type OverlayWidgetConfig = {
      */
     active?: boolean;
     position: Position;
-    entryAnimation?: Animation | null;
-    exitAnimation?: Animation | null;
     /**
      * Overlay instance ID where this widget should be shown.
      * If null or undefined, the widget will be shown on the default overlay.
      */
     overlayInstance?: string | null;
+    entryAnimation?: Animation | null;
+    exitAnimation?: Animation | null;
     settings: Record<string, unknown>;
     state?: Record<string, unknown>;
 }

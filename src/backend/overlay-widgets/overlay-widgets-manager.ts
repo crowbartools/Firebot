@@ -44,6 +44,21 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
             }));
     }
 
+    sendWidgetEventToOverlay(eventName: WidgetOverlayEvent["name"], widgetConfig: OverlayWidgetConfig) {
+        const widgetType = this.getOverlayWidgetType(widgetConfig.type);
+        if (!widgetType) {
+            console.warn(`Overlay widget type with ID '${widgetConfig.type}' not found for widget ID '${widgetConfig.id}'.`);
+            return;
+        }
+        websocketServerManager.sendWidgetEventToOverlay({
+            name: eventName,
+            data: {
+                widgetConfig,
+                widgetType
+            }
+        });
+    }
+
     private formatForFrontend(overlayWidgetType: OverlayWidgetType): Pick<OverlayWidgetType, "id" | "name" | "icon" | "description" | "settingsSchema" | "userCanConfigure"> {
         return {
             id: overlayWidgetType.id,
@@ -62,52 +77,37 @@ frontendCommunicator.onAsync("overlay-widgets:get-all-types", async () => {
     return manager.getOverlayWidgetTypesForFrontend();
 });
 
-function sendWidgetEventToOverlay(eventName: WidgetOverlayEvent["name"], widgetConfig: OverlayWidgetConfig) {
-    const widgetType = manager.getOverlayWidgetType(widgetConfig.type);
-    if (!widgetType) {
-        console.warn(`Overlay widget type with ID '${widgetConfig.type}' not found for widget ID '${widgetConfig.id}'.`);
-        return;
-    }
-    websocketServerManager.sendWidgetEventToOverlay({
-        name: eventName,
-        data: {
-            widgetConfig,
-            widgetType
-        }
-    });
-}
-
 overlayWidgetConfigManager.on("created-item", (config) => {
     if (config.active === false) {
         return;
     }
-    sendWidgetEventToOverlay("show", config);
+    manager.sendWidgetEventToOverlay("show", config);
 });
 
 overlayWidgetConfigManager.on("widget-config-updated", (config) => {
     if (config.active === false) {
         return;
     }
-    sendWidgetEventToOverlay("settings-update", config);
+    manager.sendWidgetEventToOverlay("settings-update", config);
 });
 
 overlayWidgetConfigManager.on("widget-state-updated", (config) => {
     if (config.active === false) {
         return;
     }
-    sendWidgetEventToOverlay("state-update", config);
+    manager.sendWidgetEventToOverlay("state-update", config);
 });
 
 overlayWidgetConfigManager.on("widget-config-active-changed", (config) => {
     if (config.active === false) {
-        sendWidgetEventToOverlay("remove", config);
+        manager.sendWidgetEventToOverlay("remove", config);
     } else {
-        sendWidgetEventToOverlay("show", config);
+        manager.sendWidgetEventToOverlay("show", config);
     }
 });
 
 overlayWidgetConfigManager.on("widget-config-removed", (config) => {
-    sendWidgetEventToOverlay("remove", config);
+    manager.sendWidgetEventToOverlay("remove", config);
 });
 
 websocketServerManager.on("overlay-connected", (instanceName: "Default" | string) => {
@@ -119,7 +119,7 @@ websocketServerManager.on("overlay-connected", (instanceName: "Default" | string
         );
 
     for (const widgetConfig of widgetConfigs) {
-        sendWidgetEventToOverlay("show", widgetConfig);
+        manager.sendWidgetEventToOverlay("show", widgetConfig);
     }
 });
 
