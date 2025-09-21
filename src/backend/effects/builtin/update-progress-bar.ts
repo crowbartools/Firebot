@@ -13,7 +13,7 @@ const model: EffectType<{
         name: "Update Progress Bar",
         description: "Update a progress bar's value.",
         icon: "fad fa-percentage",
-        categories: [EffectCategory.COMMON, EffectCategory.ADVANCED],
+        categories: [EffectCategory.OVERLAY, EffectCategory.ADVANCED],
         dependencies: []
     },
     optionsTemplate: `
