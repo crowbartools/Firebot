@@ -18,6 +18,7 @@ import target from './target';
 import topMetadata from './top-metadata';
 import topMetadataRaw from './top-metadata-raw';
 import topMetadataUser from './top-metadata-user';
+import webhookHeader from './webhook-header';
 import webhookHeaders from './webhook-headers';
 import webhookId from './webhook-id';
 import webhookName from './webhook-name';
@@ -44,6 +45,7 @@ export default [
     topMetadata,
     topMetadataRaw,
     topMetadataUser,
+    webhookHeader,
     webhookHeaders,
     webhookId,
     webhookName,
