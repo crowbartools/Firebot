@@ -59,6 +59,7 @@ exports.loadEffects = () => {
         'toggle-connection',
         'toggle-event-set',
         'toggle-event',
+        'toggle-overlay-widgets',
         'toggle-scheduled-task',
         'toggle-timer',
         'update-channel-reward',
