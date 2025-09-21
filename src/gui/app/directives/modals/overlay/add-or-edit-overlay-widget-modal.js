@@ -77,7 +77,7 @@
                                 </select>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group" ng-if="$ctrl.userCanConfigure.position">
                                 <label for="position" class="control-label">Position</label>
                                 <overlay-position-editor
                                     ng-model="$ctrl.widget.position"
@@ -87,6 +87,9 @@
                             </div>
 
                             <div ng-if="$ctrl.selectedType != null && $ctrl.selectedType.settingsSchema != null">
+                                <hr />
+                                <h4 style="margin: 0;">Settings</h4>
+                                <div style="margin-top: 0.25rem;font-size: 14px; color: #99a1af; margin-bottom: 1.25rem;">Configure the settings for this widget below.</div>
                                 <dynamic-parameter
                                     ng-repeat="settingSchema in $ctrl.selectedType.settingsSchema"
                                     name="{{settingSchema.name}}"
@@ -131,6 +134,12 @@
 
                 $ctrl.selectedType = null;
 
+                $ctrl.userCanConfigure = {
+                    position: true,
+                    entryAnimation: true,
+                    exitAnimation: true
+                };
+
                 /**
                  * @param {Pick<OverlayWidgetType, "id" | "name">} type
                  */
@@ -141,6 +150,12 @@
                     const foundType = overlayWidgetsService.getOverlayWidgetType(type.id);
 
                     $ctrl.selectedType = foundType;
+
+                    if (foundType != null) {
+                        $ctrl.userCanConfigure.position = foundType.userCanConfigure?.position ?? true;
+                        $ctrl.userCanConfigure.entryAnimation = foundType.userCanConfigure?.entryAnimation ?? true;
+                        $ctrl.userCanConfigure.exitAnimation = foundType.userCanConfigure?.exitAnimation ?? true;
+                    }
                 };
 
                 /**

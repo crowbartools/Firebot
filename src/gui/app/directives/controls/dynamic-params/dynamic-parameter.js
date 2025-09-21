@@ -82,11 +82,14 @@
 
                 const tag = def ? `
                     <${def.tag}
+                        ng-if="$ctrl.defaultHandled"
                         schema="$ctrl.schema"
                         value="$ctrl.viewValue"
                         on-input="$ctrl._onInput(value)"
                         on-touched="$ctrl._onTouched()"
-                        context="$ctrl.context">
+                        context="$ctrl.context"
+                        name="{{$ctrl.name}}"
+                    >
                     </${def.tag}>`
                     : `<div class="fb-param-unsupported">Unsupported type: ${$ctrl.schema && $ctrl.schema.type}</div>`;
 
@@ -165,15 +168,17 @@
             }
 
             function updateErrorState() {
-                $ctrl.hasError = ($ctrl.ngModelCtrl.$$parentForm?.$submitted || $ctrl.ngModelCtrl.$touched)
-                        && $ctrl.ngModelCtrl.$invalid;
+                const modelCtrl = $ctrl.ngModelCtrl.$$parentForm?.[$ctrl.ngModelCtrl.$name] ?? $ctrl.ngModelCtrl;
+
+                $ctrl.hasError = ($ctrl.ngModelCtrl.$$parentForm?.$submitted || modelCtrl.$touched)
+                        && modelCtrl.$invalid;
 
                 if (!$ctrl.hasError) {
                     $ctrl.errorMessages = [];
                     return;
                 }
 
-                const errors = $ctrl.ngModelCtrl.$error;
+                const errors = modelCtrl.$error;
                 const schema = $ctrl.schema || {};
                 const paramDef = dynamicParameterRegistry.get(schema.type);
                 const messages = [];
@@ -245,6 +250,7 @@
                 $ctrl._unwatchError = $scope.$watchGroup(
                     [
                         () => $ctrl.ngModelCtrl.$invalid,
+                        () => $ctrl.ngModelCtrl.$$parentForm?.[$ctrl.ngModelCtrl.$name]?.$invalid,
                         () => $ctrl.ngModelCtrl.$touched,
                         () => $ctrl.ngModelCtrl.$$parentForm?.$submitted
                     ],
@@ -252,11 +258,16 @@
                 );
             }
 
+            $ctrl.defaultHandled = false;
             $scope.$watch(() => $ctrl.ngModelCtrl.$modelValue, (newVal) => {
+                if ($ctrl.defaultHandled) {
+                    return;
+                }
                 if (newVal === undefined && $ctrl.schema?.default != null) {
                     $ctrl.ngModelCtrl.$setViewValue(angular.copy($ctrl.schema.default));
                     $ctrl.ngModelCtrl.$render();
                 }
+                $ctrl.defaultHandled = true;
             });
 
             $ctrl.$onInit = $ctrl.$onChanges = function() {

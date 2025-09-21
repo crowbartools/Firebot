@@ -224,6 +224,7 @@
         dynamicParameterRegistry.register("poll-choice-list", { tag: "fb-param-poll-choice-list" });
         dynamicParameterRegistry.register("effectlist", { tag: "fb-param-effect-list" });
         dynamicParameterRegistry.register("button", { tag: "fb-param-button" });
+        dynamicParameterRegistry.register("hexcolor", { tag: "fb-param-hex-color" });
 
         uiExtensionsService.setAsReady();
     });

@@ -24,7 +24,7 @@ export const progressbar: OverlayWidgetType<Settings, State> = {
         {
             name: "backgroundColor",
             title: "Background Color",
-            type: "string",
+            type: "hexcolor",
             default: "#000000",
             validation: {
                 required: true,
@@ -34,9 +34,8 @@ export const progressbar: OverlayWidgetType<Settings, State> = {
         {
             name: "barColor",
             title: "Bar Color",
-            type: "string",
+            type: "hexcolor",
             default: "#00FF00",
-            showBottomHr: true,
             validation: {
                 required: true,
                 pattern: "^#[0-9A-Fa-f]{6}$"

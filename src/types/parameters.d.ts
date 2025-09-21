@@ -183,6 +183,15 @@ export type ButtonParameter = BaseParameter & {
     | "right-bottom";
 };
 
+export type HexColorParameter = BaseParameter & {
+    type: "hexcolor";
+    /**
+     * Default hex color value, e.g. #FF0000
+     */
+    default: string;
+    allowAlpha?: boolean;
+};
+
 export type UnknownParameter = BaseParameter & {
     [key: string]: unknown;
 };
@@ -202,7 +211,8 @@ type FirebotParameter =
     | RolePercentagesParameter
     | RoleNumberParameter
     | ButtonParameter
-    | UnknownParameter;
+    | UnknownParameter
+    | HexColorParameter;
 
 export type ParametersConfig<P> = {
     [K in keyof P]: (P[K] extends string
@@ -241,6 +251,7 @@ export type ParametersWithNameConfig<P> = {
         | ChatterSelectParameter
         | CurrencySelectParameter
         | EnumParameter<string>
+        | HexColorParameter
         : P[K] extends number
             ? NumberParameter | EnumParameter<number>
             : P[K] extends boolean

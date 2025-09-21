@@ -11,7 +11,9 @@
                 alpha: "<",
                 style: "@",
                 lgInput: "<",
-                showClear: "<"
+                showClear: "<",
+                onBlur: "&?",
+                name: "@?"
             },
             template: `
             <div style="{{$ctrl.style}}">
@@ -44,6 +46,7 @@
                         placeholder: "#ffffff",
                         case: "lower",
                         alpha: $ctrl.alpha,
+                        name: $ctrl.name,
                         clear: {
                             show: $ctrl.showClear !== false,
                             label: 'Clear',
@@ -56,6 +59,11 @@
                     onChange: (_, color) => {
                         if (color == null || color.trim() === "") {
                             $ctrl.model = null;
+                        }
+                    },
+                    onBlur: () => {
+                        if ($ctrl.onBlur != null) {
+                            $ctrl.onBlur();
                         }
                     }
                 };
