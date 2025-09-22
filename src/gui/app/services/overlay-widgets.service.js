@@ -82,8 +82,11 @@
              * @param {OverlayWidgetConfig} config
              * @returns {Promise.<void>}
              */
-            service.saveOverlayWidgetConfig = async (config) => {
-                const savedConfig = await backendCommunicator.fireEventAsync("overlay-widgets:save-config", JSON.parse(angular.toJson(config)));
+            service.saveOverlayWidgetConfig = async (config, isNew = false) => {
+                const savedConfig = await backendCommunicator.fireEventAsync(
+                    isNew ? "overlay-widgets:save-new-config" : "overlay-widgets:save-config",
+                    JSON.parse(angular.toJson(config))
+                );
 
                 if (savedConfig) {
                     updateWidgetConfig(savedConfig);

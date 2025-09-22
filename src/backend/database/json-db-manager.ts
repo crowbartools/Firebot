@@ -89,12 +89,11 @@ class JsonDbManager<T extends Item, E extends ListenerSignature<E> = DefaultEven
         return Object.values(this.items) || [];
     }
 
-    saveItem(item: T): T | null {
+    saveItem(item: T, isCreating = false): T | null {
         if (item == null) {
             return;
         }
 
-        let isCreating = false;
         if (item.id == null) {
             item.id = uuid();
             isCreating = true;

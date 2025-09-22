@@ -14,11 +14,9 @@ class OverlayWidgetConfigManager extends JsonDbManager<OverlayWidgetConfig, Extr
         super("Overlay Widgets", "/overlay-widgets");
     }
 
-    saveWidgetConfig(config: OverlayWidgetConfig): OverlayWidgetConfig {
-        const isNew = !config.id;
-
+    saveWidgetConfig(config: OverlayWidgetConfig, isNew = false): OverlayWidgetConfig {
         if (isNew) {
-            return this.saveItem(config);
+            return this.saveItem(config, true);
         }
 
         const existingConfig = this.getItem(config.id);
@@ -31,7 +29,7 @@ class OverlayWidgetConfigManager extends JsonDbManager<OverlayWidgetConfig, Extr
             this.emit("widget-config-updated", config);
         }
 
-        return this.saveItem(config);
+        return this.saveItem(config, false);
     }
 
     removeWidgetConfigById(id: string): boolean {
@@ -71,6 +69,10 @@ frontendCommunicator.onAsync("overlay-widgets:get-all-configs", async () =>
 
 frontendCommunicator.onAsync("overlay-widgets:save-config", async (config: OverlayWidgetConfig) =>
     manager.saveWidgetConfig(config)
+);
+
+frontendCommunicator.onAsync("overlay-widgets:save-new-config", async (config: OverlayWidgetConfig) =>
+    manager.saveWidgetConfig(config, true)
 );
 
 frontendCommunicator.onAsync(

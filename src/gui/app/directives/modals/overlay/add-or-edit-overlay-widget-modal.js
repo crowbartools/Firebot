@@ -2,6 +2,8 @@
 
 (function() {
 
+    const { v4: uuid } = require("uuid");
+
     /** @typedef {import("../../../../../types/overlay-widgets").OverlayWidgetType} OverlayWidgetType */
     /** @typedef {import("../../../../../types/overlay-widgets").OverlayWidgetConfig} OverlayWidgetConfig */
 
@@ -162,7 +164,7 @@
                  * @type {OverlayWidgetConfig}
                  */
                 $ctrl.widget = {
-                    id: null,
+                    id: uuid(),
                     name: null,
                     type: null,
                     active: true,
@@ -221,7 +223,7 @@
                         $ctrl.widget.overlayInstance = null;
                     }
 
-                    overlayWidgetsService.saveOverlayWidgetConfig($ctrl.widget).then((successful) => {
+                    overlayWidgetsService.saveOverlayWidgetConfig($ctrl.widget, $ctrl.isNewWidget).then((successful) => {
                         if (successful) {
                             $ctrl.dismiss();
                         } else {
