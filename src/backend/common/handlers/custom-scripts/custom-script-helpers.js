@@ -21,11 +21,11 @@ class ScriptWebhookManager extends EventEmitter {
         super();
         this.scriptName = scriptName;
 
-        webhookManager.on("webhook-received", ({ config, payload }) => {
+        webhookManager.on("webhook-received", ({ config, payload, headers }) => {
             if (config.scriptId !== this.scriptName) {
                 return;
             }
-            this.emit("webhook-received", { config, payload });
+            this.emit("webhook-received", { config, payload, headers });
         });
     }
 
