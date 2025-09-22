@@ -69,7 +69,7 @@ export class TwitchClipsApi {
                 return clips.data[index];
             }
 
-            logger.warn(`Cannot get random clip for user ID ${userId}; user has no clips`);
+            logger.warn(`Cannot get random clip for user ID ${userId}; user has no clips or does not exist`);
         } catch (error) {
             logger.error(`Error while getting random clip for user ID ${userId}`, error);
         }
@@ -103,6 +103,62 @@ export class TwitchClipsApi {
             logger.warn(`Cannot get random clip for non-existent user ${username}`);
         } catch (error) {
             logger.error(`Error while getting random clip for user ${username}`, error);
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the latest clip for the given user ID.
+     *
+     * NOTE: Due to how the Twitch API works, this can take several seconds and the clip may not be the very latest.
+     * @param userId Twitch user ID
+     * @param isFeatured `true` for only featured clips, `false` for only non-featured, or `undefined` for all
+     * @returns The most recently created {@link HelixClip} from the user's channel, or `null` if the user doesn't exist or their channel has no clips
+     */
+    async getLatestClipForUserById(
+        userId: UserIdResolvable,
+        isFeatured?: boolean
+    ): Promise<HelixClip> {
+        try {
+            const clips = await this._streamerClient.clips.getClipsForBroadcasterPaginated(userId, { isFeatured }).getAll();
+
+            if (clips?.length > 0) {
+                // Reverse sort by creation date
+                const clip = clips.sort((a, b) => b.creationDate.getTime() - a.creationDate.getTime())[0];
+                return clip;
+            }
+
+            logger.warn(`Cannot get latest clip for user ID ${userId}; user has no clips or does not exist`);
+        } catch (error) {
+            logger.error(`Error while getting latest clip for user ID ${userId}`, error);
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the latest clip for the given username.
+     *
+     * NOTE: Due to how the Twitch API works, this can take several seconds and the clip may not be the very latest.
+     * @param username Twitch username
+     * @param isFeatured `true` for only featured clips, `false` for only non-featured, or `undefined` for all
+     * @returns The most recently created {@link HelixClip} from the user's channel, or `null` if the user doesn't exist or their channel has no clips
+     */
+    async getLatestClipForUserByName(
+        username: string,
+        isFeatured?: boolean
+    ): Promise<HelixClip> {
+        try {
+            const user = await this._streamerClient.users.getUserByName(username);
+
+            if (user) {
+                return await this.getLatestClipForUserById(user.id, isFeatured);
+            }
+
+            logger.warn(`Cannot get latest clip for non-existent user ${username}`);
+        } catch (error) {
+            logger.error(`Error while getting latest clip for user ${username}`, error);
         }
 
         return null;
