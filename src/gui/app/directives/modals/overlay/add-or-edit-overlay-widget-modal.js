@@ -12,18 +12,30 @@
             template: `
                 <scroll-sentinel element-class="edit-widget-header"></scroll-sentinel>
                 <div class="modal-header sticky-header edit-widget-header">
+                    <h4 class="modal-title">
+                        <div class="action text-4xl">{{$ctrl.isNewWidget ? 'Add New Overlay Widget' : 'Edit Overlay Widget:'}}</div>
+                        <div class="text-4xl font-semibold" ng-show="!$ctrl.isNewWidget">{{$ctrl.widget.name}}</div>
+                    </h4>
+                    <firebot-button
+                        ng-click="$ctrl.toggleLivePreview()"
+                        text="Live Preview: {{$ctrl.livePreviewActive ? 'On' : 'Off'}}"
+                        size="extraSmall"
+                        type="{{$ctrl.livePreviewActive ? 'success' : 'default'}}"
+                        icon="fa-eye{{ $ctrl.livePreviewActive ? '' : '-slash' }}"
+                        disabled="!$ctrl.typeSupportsLivePreview || $ctrl.widget.type == null"
+                        tooltip="{{ $ctrl.widget.type == null ? 'Select a type to enable live preview' : (!$ctrl.typeSupportsLivePreview ? 'This widget type does not support live preview' : 'When enabled, you will see real-time changes in the overlay') }}"
+                        tooltip-placement="bottom"
+                        style="margin-left: auto; margin-right: 15px;"
+                    ></firebot-button>
                     <button
                         type="button"
                         class="close"
                         aria-label="Close"
                         ng-click="$ctrl.dismiss()"
+                        style="margin-left: 0;"
                     >
                         <i class="fal fa-times" aria-hidden="true"></i>
                     </button>
-                    <h4 class="modal-title">
-                        <div class="action text-4xl">{{$ctrl.isNewWidget ? 'Add New Overlay Widget' : 'Edit Overlay Widget:'}}</div>
-                        <div class="text-4xl font-semibold" ng-show="!$ctrl.isNewWidget">{{$ctrl.widget.name}}</div>
-                    </h4>
                 </div>
                 <div class="modal-body">
                     <form name="widgetSettings">
@@ -37,11 +49,12 @@
                                 items="$ctrl.widgetTypes"
                                 ng-required="true"
                                 on-select="$ctrl.onTypeSelected(item)"
-                                disabled="!$ctrl.isNewWidget"
+                                disabled="!$ctrl.isNewWidget || $ctrl.livePreviewActive"
                             />
                             <div ng-if="$ctrl.formFieldHasError('type')">
                                 <span class="help-block">Please select a type.</span>
                             </div>
+                            <div ng-if="$ctrl.livePreviewActive && $ctrl.isNewWidget" class="help-block">You cannot change the type while live preview is active.</div>
                         </div>
 
                         <div ng-if="$ctrl.widget.type != null">
@@ -116,7 +129,7 @@
                 dismiss: "&",
                 modalInstance: "<"
             },
-            controller: function($scope, modalFactory, overlayWidgetsService, settingsService, ngToast) {
+            controller: function($scope, modalFactory, overlayWidgetsService, settingsService, ngToast, backendCommunicator, utilityService) {
                 const $ctrl = this;
 
                 $ctrl.overlayInstances = settingsService.getSetting("OverlayInstances");
@@ -133,6 +146,8 @@
 
                 $ctrl.validationErrors = {};
 
+                $ctrl.livePreviewActive = false;
+                $ctrl.typeSupportsLivePreview = false;
 
                 $ctrl.selectedType = null;
 
@@ -157,6 +172,7 @@
                         $ctrl.userCanConfigure.position = foundType.userCanConfigure?.position ?? true;
                         $ctrl.userCanConfigure.entryAnimation = foundType.userCanConfigure?.entryAnimation ?? true;
                         $ctrl.userCanConfigure.exitAnimation = foundType.userCanConfigure?.exitAnimation ?? true;
+                        $ctrl.typeSupportsLivePreview = foundType.supportsLivePreview === true;
                     }
                 };
 
@@ -202,7 +218,9 @@
                         $ctrl.isNewWidget = false;
 
                         const foundType = overlayWidgetsService.getOverlayWidgetType($ctrl.widget.type);
-                        $ctrl.selectedType = foundType;
+                        if (foundType != null) {
+                            $ctrl.onTypeSelected(foundType);
+                        }
 
                         // Reset overlay instance to default (or null) if the saved instance doesn't exist anymore
                         if ($ctrl.widget.overlayInstance != null) {
@@ -212,6 +230,35 @@
                         }
                     }
                 };
+
+                $ctrl.toggleLivePreview = () => {
+                    if ($ctrl.livePreviewActive) {
+                        $ctrl.livePreviewActive = false;
+                        backendCommunicator.fireEvent("overlay-widgets:stop-live-preview", $ctrl.widget);
+
+                    } else {
+                        if ($ctrl.widget.type == null || !$ctrl.typeSupportsLivePreview) {
+                            return;
+                        }
+                        backendCommunicator.fireEvent("overlay-widgets:start-live-preview", $ctrl.widget);
+                        $ctrl.livePreviewActive = true;
+                    }
+                };
+
+                const sendLivePreviewUpdate = utilityService.debounce((widget) => {
+                    backendCommunicator.fireEvent("overlay-widgets:update-live-preview", widget);
+                }, 200);
+
+                // deep watch $ctrl.widget for updates and send updates to the live preview if active
+                $scope.$watch(
+                    () => $ctrl.widget,
+                    () => {
+                        if ($ctrl.livePreviewActive) {
+                            sendLivePreviewUpdate($ctrl.widget);
+                        }
+                    },
+                    true
+                );
 
                 $ctrl.save = () => {
                     $scope.widgetSettings.$setSubmitted();

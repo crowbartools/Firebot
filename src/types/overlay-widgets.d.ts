@@ -59,6 +59,18 @@ export type OverlayWidgetType<Settings extends Record<string, unknown> = Record<
      */
     initialState?: State;
     /**
+     * Whether the widget supports live preview mode when adding or editing the widget.
+     * Widget types should only enable this if all settings have default values or
+     * the widget gracefully handles missing settings.
+     *
+     * Default is false.
+     */
+    supportsLivePreview?: boolean;
+    /**
+     * State that is used when the widget is shown in live preview mode.
+     */
+    livePreviewState?: State;
+    /**
      * Called before the widget is shown on the overlay. You can modify parameter values or state here.
      */
     onShow?: (event: WidgetEvent<Settings, State>) => Awaitable<WidgetEventResult<State> | void>;
@@ -116,6 +128,8 @@ export type WidgetOverlayEvent = {
         OverlayWidgetType,
         "id" | "userCanConfigure"
         >;
+        previewMode: boolean;
+        // Optional additional data for the event (e.g., message content for "message" events)
         data?: unknown;
     };
 }

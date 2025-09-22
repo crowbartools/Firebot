@@ -63,6 +63,10 @@ export const progressbar: OverlayWidgetType<Settings, State> = {
     initialState: {
         currentValue: 0
     },
+    supportsLivePreview: true,
+    livePreviewState: {
+        currentValue: 50
+    },
     overlayExtension: {
         dependencies: {
             css: [],

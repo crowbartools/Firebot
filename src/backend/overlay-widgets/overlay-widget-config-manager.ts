@@ -3,7 +3,7 @@ import JsonDbManager from "../database/json-db-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 
 type ExtraEvents = {
-    "widget-config-updated": (item: OverlayWidgetConfig) => void;
+    "widget-config-updated": (item: OverlayWidgetConfig, previous: OverlayWidgetConfig) => void;
     "widget-state-updated": (item: OverlayWidgetConfig) => void;
     "widget-config-active-changed": (item: OverlayWidgetConfig) => void;
     "widget-config-removed": (item: OverlayWidgetConfig) => void;
@@ -19,14 +19,14 @@ class OverlayWidgetConfigManager extends JsonDbManager<OverlayWidgetConfig, Extr
             return this.saveItem(config, true);
         }
 
-        const existingConfig = this.getItem(config.id);
+        const existingConfig = JSON.parse(JSON.stringify(this.getItem(config.id))) as OverlayWidgetConfig;
 
-        const ifActiveChanged = (existingConfig?.active ?? true) !== (config.active ?? true);
+        const ifActiveChanged = (existingConfig.active ?? true) !== (config.active ?? true);
 
         if (ifActiveChanged) {
             this.emit("widget-config-active-changed", config);
         } else {
-            this.emit("widget-config-updated", config);
+            this.emit("widget-config-updated", config, existingConfig);
         }
 
         return this.saveItem(config, false);

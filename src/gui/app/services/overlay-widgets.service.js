@@ -147,14 +147,22 @@
              * @returns {void}
              */
             service.showAddOrEditOverlayWidgetModal = (overlayWidgetConfig, closeCb) => {
+                const dismiss = () => {
+                    backendCommunicator.fireEvent("overlay-widgets:stop-live-preview");
+                    if (closeCb) {
+                        closeCb();
+                    }
+                };
                 modalService.showModal({
                     component: "addOrEditOverlayWidgetModal",
                     size: "md",
+                    backdrop: false,
+                    keyboard: false,
                     resolveObj: {
                         widget: () => overlayWidgetConfig
                     },
                     closeCallback: closeCb,
-                    dismissCallback: closeCb
+                    dismissCallback: dismiss
                 });
             };
 
