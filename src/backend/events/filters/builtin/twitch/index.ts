@@ -1,7 +1,8 @@
 import bitsBadgeTier from "./bits-badge-tier";
+import channelLive from "./channel-live";
+import chatMode from "./chat-mode";
 import chatModeDuration from "./chat-mode-duration";
 import chatModeSetting from "./chat-mode-setting";
-import chatMode from "./chat-mode";
 import cheerBitsAmount from "./cheer-bits-amount";
 import giftCount from "./gift-count";
 import giftDuration from "./gift-duration";
@@ -10,8 +11,8 @@ import isAnonymous from "./is-anonymous";
 import lifetimeGiftCount from "./lifetime-gift-count";
 import message from "./message";
 import raidViewerCount from "./raid-viewer-count";
-import rewardName from "./reward-name";
 import reward from "./reward";
+import rewardName from "./reward-name";
 import sharedChat from "./shared-chat";
 import sharedTrain from "./shared-train";
 import streamCategory from "./stream-category";
@@ -22,6 +23,7 @@ import username from "./username";
 
 export default [
     bitsBadgeTier,
+    channelLive,
     chatModeDuration,
     chatModeSetting,
     chatMode,
