@@ -77,6 +77,22 @@ class ReplaceVariableManager extends EventEmitter {
         frontendCommunicator.send("replace-variable-registered", variable.definition);
     }
 
+    unregisterReplaceVariable(handle) {
+        if (!this.#registeredVariableHandlers.has(handle)) {
+            logger.warn(`A variable with the handle ${handle} does not exist.`);
+            return;
+        }
+
+        this.#registeredVariableHandlers.delete(handle);
+        this.#variableAndAliasHandlers = this._generateVariableAndAliasHandlers();
+
+        logger.debug(`Unregistered replace variable ${handle}`);
+
+        this.emit("replaceVariableUnregistered", handle);
+
+        frontendCommunicator.send("replace-variable-unregistered", handle);
+    }
+
     getReplaceVariables() {
         // Map register variables Map to array
         const registeredVariables = this.#registeredVariableHandlers;

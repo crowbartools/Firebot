@@ -4,16 +4,21 @@ import { v4 as uuid } from "uuid";
 import { FrontendCommunicatorModule } from "../../types/script-modules";
 
 class FrontendCommunicator implements FrontendCommunicatorModule {
-    private _listeners = {};
+    private _listeners: Record<string, {
+        id: string;
+        callback: (...args: Array<unknown>) => PromiseLike<unknown> | unknown;
+        async: boolean;
+    }[]> = {};
 
     private registerEventWithElectron(eventName: string): void {
         ipcMain.on(eventName, (event, data) => {
             const eventListeners = this._listeners[eventName];
             for (const listener of eventListeners) {
                 if (listener.async) {
-                    listener.callback(data).then((returnValue: unknown) => {
-                        this.send(`${eventName}:reply`, returnValue);
-                    });
+                    (listener.callback(data) as Promise<unknown>)
+                        .then((returnValue: unknown) => {
+                            this.send(`${eventName}:reply`, returnValue);
+                        });
                 } else {
                     const returnValue = listener.callback(data);
                     event.returnValue = returnValue;
@@ -73,6 +78,14 @@ class FrontendCommunicator implements FrontendCommunicatorModule {
         callback: (...args: ExpectedArgs) => Promise<ReturnPayload>
     ): string {
         return this.registerListener(eventName, callback, true);
+    }
+
+    private unregisterListener(eventName: string, id: string) {
+        this._listeners[eventName] = this._listeners[eventName].filter(l => l.id !== id);
+    }
+
+    off(eventName: string, id: string): void {
+        this.unregisterListener(eventName, id);
     }
 }
 

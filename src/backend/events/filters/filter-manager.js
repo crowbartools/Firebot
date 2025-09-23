@@ -39,6 +39,23 @@ class FilterManager extends EventEmitter {
         this.emit("filterRegistered", filter);
     }
 
+    unregisterFilter(id) {
+        const existing = this.#registeredFilters.some(
+            f => f.id === id
+        );
+
+        if (!existing) {
+            logger.warn(`Could not unregister event filter '${id}'. Filter does not exist.`);
+            return;
+        }
+
+        this.#registeredFilters = this.#registeredFilters.filter(f => f.id !== id);
+
+        logger.debug(`Unregistered Event Filter ${id}`);
+
+        this.emit("FilterUnregistered", id);
+    }
+
     addEventToFilter(filterId, eventSourceId, eventId) {
         const additionalEvents = this.#additionalFilterEvents[filterId] ?? [];
 
