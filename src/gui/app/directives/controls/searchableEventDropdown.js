@@ -29,7 +29,7 @@
             <div ng-bind-html="option.name | highlight: $select.search" style="display: inline-block"></div>
             <tooltip ng-if="option.isIntegration" text="option.source.name + ' needs to be linked in Settings -> Integrations for this event to work.'"></tooltip>
           </div>
-          <small class="muted"><strong>{{option.source.name}}</strong> | {{option.description}}</small>
+          <small class="muted" style="white-space: normal"><strong>{{option.source.name}}</strong> | {{option.description}}</small>
         </ui-select-choices>
       </ui-select>
       `,
