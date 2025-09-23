@@ -129,7 +129,7 @@
                     copiedWidget.name += " copy";
                 }
 
-                service.saveOverlayWidgetConfig(copiedWidget)
+                service.saveOverlayWidgetConfig(copiedWidget, true)
                     .then((successful) => {
                         if (successful) {
                             ngToast.create({
