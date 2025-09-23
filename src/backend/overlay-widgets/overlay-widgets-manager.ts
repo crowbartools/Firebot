@@ -180,7 +180,7 @@ frontendCommunicator.onAsync("overlay-widgets:update-live-preview", async (confi
 frontendCommunicator.onAsync("overlay-widgets:stop-live-preview", async (config: OverlayWidgetConfig) => {
     await removeCurrentLivePreview();
 
-    if (config.id) {
+    if (config?.id) {
         const existingConfig = overlayWidgetConfigManager.getItem(config.id);
         if (existingConfig && existingConfig.active !== false) {
             manager.sendWidgetEventToOverlay("show", existingConfig);

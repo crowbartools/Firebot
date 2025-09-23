@@ -92,7 +92,12 @@ export const progressbar: OverlayWidgetType<Settings, State> = {
 
             switch (event.name) {
                 case "show": {
-                    initializeWidget(event.data.widgetConfig.id, event.data.widgetConfig.position, generateWidgetHtml(event.data.widgetConfig));
+                    initializeWidget(
+                        event.data.widgetConfig.id,
+                        event.data.widgetConfig.position,
+                        event.data.widgetConfig.entryAnimation,
+                        generateWidgetHtml(event.data.widgetConfig)
+                    );
                     break;
                 }
                 case "settings-update": {
@@ -105,7 +110,7 @@ export const progressbar: OverlayWidgetType<Settings, State> = {
                     break;
                 }
                 case "remove": {
-                    removeWidget(event.data.widgetConfig.id);
+                    removeWidget(event.data.widgetConfig.id, event.data.widgetConfig.exitAnimation);
                     break;
                 }
                 default:

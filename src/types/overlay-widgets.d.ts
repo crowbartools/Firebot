@@ -12,11 +12,11 @@ export type Animation = {
     /**
      * CSS class name for the animation (e.g., from Animate.css)
      */
-    name: string;
+    class: string;
     /**
-     * Duration in milliseconds
+     * Custom duration in seconds
      */
-    duration: number;
+    duration?: number;
 }
 
 

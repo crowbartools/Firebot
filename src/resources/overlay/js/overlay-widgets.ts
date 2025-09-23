@@ -1,5 +1,6 @@
 type WidgetOverlayEvent = import("../../../types/overlay-widgets").WidgetOverlayEvent;
 type Position = import("../../../types/overlay-widgets").Position;
+type OverlayAnimation = import("../../../types/overlay-widgets").Animation;
 
 // @ts-ignore
 widgetEvents = new EventEmitter();
@@ -32,7 +33,7 @@ function getWidgetElement(id: string) {
     return document.getElementById(`${id}-container`);
 }
 
-function initializeWidget(id: string, position: Position, html: string) {
+function initializeWidget(id: string, position: Position, entryAnimation: OverlayAnimation, html: string) {
     const container = getWidgetElement(id);
     if(container) {
         container.remove();
@@ -47,6 +48,12 @@ function initializeWidget(id: string, position: Position, html: string) {
     const overlayWrapper = document.body.querySelector('.wrapper');
     if(overlayWrapper) {
         overlayWrapper.insertAdjacentHTML('beforeend', wrappedHtml);
+
+        if(entryAnimation?.class != null && entryAnimation?.class !== '' && entryAnimation?.class !== "none") {
+            const duration = entryAnimation.duration ? `${entryAnimation.duration}s` : undefined;
+            //@ts-ignore
+            $(`#${id}-container`).animateCss(entryAnimation.class, duration);
+        }
     }
 
     return getWidgetElement(id);
@@ -81,9 +88,20 @@ function updateWidgetContent(id: string, html: string) {
     return widgetElement;
 }
 
-function removeWidget(id: string) {
+function removeWidget(id: string, exitAnimation?: OverlayAnimation) {
     const widgetElement = getWidgetElement(id);
-    if(widgetElement) {
+    if(!widgetElement) {
+        return;
+    }
+
+    if(exitAnimation?.class != null && exitAnimation?.class !== '' && exitAnimation?.class !== "none") {
+        const duration = exitAnimation.duration ? `${exitAnimation.duration}s` : undefined;
+        //@ts-ignore
+        $(widgetElement).animateCss(exitAnimation.class, duration, null, null, () => {
+            const updatedElement = getWidgetElement(id);
+            updatedElement?.remove();
+        });
+    } else {
         widgetElement.remove();
     }
 }

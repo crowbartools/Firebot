@@ -101,6 +101,22 @@
                                 ></overlay-position-editor>
                             </div>
 
+                            <div class="form-group" ng-if="$ctrl.userCanConfigure.entryAnimation">
+                                <label for="position" class="control-label">Entry Animation</label>
+                                <animation-select
+                                    type="enter"
+                                    ng-model="$ctrl.widget.entryAnimation"
+                                ></animation-select>
+                            </div>
+
+                            <div class="form-group" ng-if="$ctrl.userCanConfigure.exitAnimation">
+                                <label for="position" class="control-label">Exit Animation</label>
+                                <animation-select
+                                    type="exit"
+                                    ng-model="$ctrl.widget.exitAnimation"
+                                ></animation-select>
+                            </div>
+
                             <div ng-if="$ctrl.selectedType != null && $ctrl.selectedType.settingsSchema != null">
                                 <hr />
                                 <h4 style="margin: 0;">Settings</h4>
