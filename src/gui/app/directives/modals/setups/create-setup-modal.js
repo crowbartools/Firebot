@@ -84,7 +84,7 @@
             controller: function(commandsService, countersService, currencyService,
                 effectQueuesService, eventsService, hotkeyService, presetEffectListsService,
                 timerService, scheduledTaskService, viewerRolesService, quickActionsService, variableMacroService, viewerRanksService, accountAccess, utilityService,
-                ngToast, backendCommunicator, sortTagsService, $q) {
+                ngToast, backendCommunicator, sortTagsService, $q, overlayWidgetsService) {
 
                 const $ctrl = this;
 
@@ -130,6 +130,12 @@
                         all: hotkeyService.getHotkeys(),
                         nameField: "name",
                         key: "hotkeys"
+                    },
+                    {
+                        label: "Overlay Widgets",
+                        all: overlayWidgetsService.overlayWidgetConfigs,
+                        nameField: "name",
+                        key: "overlayWidgetConfigs"
                     },
                     {
                         label: "Preset Effect Lists",
@@ -209,7 +215,8 @@
                         variableMacros: [],
                         viewerRoles: [],
                         viewerRankLadders: [],
-                        quickActions: []
+                        quickActions: [],
+                        overlayWidgetConfigs: []
                     },
                     requireCurrency: false,
                     importQuestions: []
