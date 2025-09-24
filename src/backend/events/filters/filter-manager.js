@@ -75,7 +75,7 @@ class FilterManager extends EventEmitter {
         let additionalEvents = this.#additionalFilterEvents[filterId] ?? [];
 
         if (!additionalEvents.some(f => f.eventSourceId === eventSourceId && f.eventId === eventId)) {
-            logger.warn(`Filter ${filterId} does not have a plugin event registration for ${eventSourceId}:${eventId}`);
+            logger.warn(`Filter ${filterId} does not have a plugin registration for event ${eventSourceId}:${eventId}`);
             return;
         }
 
