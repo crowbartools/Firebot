@@ -75,7 +75,9 @@ class PermitManager {
                 this._tempPermittedUsers.push(normalizedTarget);
                 logger.debug(`URL moderation: ${target} has been temporary permitted to post a URL.`);
 
-                const message = commandOptions.permitDisplayTemplate.replace("{target}", target).replace("{duration}", commandOptions.permitDuration.toString());
+                const message = commandOptions.permitDisplayTemplate
+                    .replaceAll("{target}", target)
+                    .replaceAll("{duration}", commandOptions.permitDuration.toString());
 
                 if (message) {
                     await twitchChat.sendChatMessage(message);

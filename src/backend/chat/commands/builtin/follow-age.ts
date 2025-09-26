@@ -52,9 +52,9 @@ export const FollowAgeSystemCommand: SystemCommand<{
             );
 
             await chat.sendChatMessage(commandOptions.displayTemplate
-                .replace("{user}", commandSender)
-                .replace("{followage}", followAgeString)
-                .replace("{followdate}", followDate.toFormat("dd MMMM yyyy HH:mm"))
+                .replaceAll("{user}", commandSender)
+                .replaceAll("{followage}", followAgeString)
+                .replaceAll("{followdate}", followDate.toFormat("dd MMMM yyyy HH:mm"))
             );
         }
     }

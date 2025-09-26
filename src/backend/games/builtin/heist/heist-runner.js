@@ -35,7 +35,7 @@ function triggerCooldown() {
 
     const trigger = commandManager.getSystemCommandTrigger("firebot:heist");
     const cooldownOverMessage = heistSettings.settings.generalMessages.cooldownOver
-        .replace("{command}", trigger ? trigger : '!heist');
+        .replaceAll("{command}", trigger ? trigger : '!heist');
 
     if (cooldownOverMessage) {
         cooldownTimeoutId = setTimeout(async (msg) => {
@@ -101,7 +101,7 @@ async function runHeist() {
 
     if (usersInHeist.length === 1) {
         outcomeMessage = outcomeMessage
-            .replace("{user}", usersInHeist[0].userDisplayName);
+            .replaceAll("{user}", usersInHeist[0].userDisplayName);
     }
 
     const currencyId = heistSettings.settings.currencySettings.currencyId;
@@ -119,7 +119,7 @@ async function runHeist() {
     }
 
     const winningsMessage = heistSettings.settings.generalMessages.heistWinnings
-        .replace("{winnings}", winningsString);
+        .replaceAll("{winnings}", winningsString);
 
     try {
         if (outcomeMessage) {
@@ -166,7 +166,7 @@ exports.triggerLobbyStart = (startDelayMins) => {
             let teamTooSmallMessage = heistSettings.settings.generalMessages.teamTooSmall;
             if (usersInHeist.length > 0 && teamTooSmallMessage) {
                 teamTooSmallMessage = teamTooSmallMessage
-                    .replace("{user}", usersInHeist[0].userDisplayName);
+                    .replaceAll("{user}", usersInHeist[0].userDisplayName);
 
                 await twitchChat.sendChatMessage(teamTooSmallMessage, null, chatter);
             }

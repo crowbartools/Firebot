@@ -68,7 +68,7 @@ const heistCommand = {
             if (heistSettings.settings.generalMessages.onCooldown) {
                 const timeRemainingDisplay = util.secondsForHumans(Math.abs(moment().diff(heistRunner.cooldownExpireTime, 'seconds')));
                 const cooldownMsg = heistSettings.settings.generalMessages.onCooldown
-                    .replace("{cooldown}", timeRemainingDisplay);
+                    .replaceAll("{cooldown}", timeRemainingDisplay);
 
                 await twitchChat.sendChatMessage(cooldownMsg, null, chatter);
             }
@@ -80,7 +80,7 @@ const heistCommand = {
         if (heistRunner.lobbyOpen && heistRunner.userOnTeam(username)) {
             if (heistSettings.settings.entryMessages.alreadyJoined) {
                 const alreadyJoinedMsg = heistSettings.settings.entryMessages.alreadyJoined
-                    .replace("{user}", user.displayName);
+                    .replaceAll("{user}", user.displayName);
 
                 await twitchChat.sendChatMessage(alreadyJoinedMsg, null, chatter);
             }
@@ -95,7 +95,7 @@ const heistCommand = {
             if ((defaultWager == null || defaultWager < 1)) {
                 if (heistSettings.settings.entryMessages.noWagerAmount) {
                     const noWagerAmountMsg = heistSettings.settings.entryMessages.noWagerAmount
-                        .replace("{user}", user.displayName);
+                        .replaceAll("{user}", user.displayName);
 
                     await twitchChat.sendChatMessage(noWagerAmountMsg, null, chatter);
                 }
@@ -109,7 +109,7 @@ const heistCommand = {
         } else {
             if (heistSettings.settings.entryMessages.invalidWagerAmount) {
                 const invalidWagerAmountMsg = heistSettings.settings.entryMessages.invalidWagerAmount
-                    .replace("{user}", user.displayName);
+                    .replaceAll("{user}", user.displayName);
 
                 await twitchChat.sendChatMessage(invalidWagerAmountMsg, null, chatter);
             }
@@ -125,8 +125,8 @@ const heistCommand = {
             if (wagerAmount < minWager) {
                 if (heistSettings.settings.entryMessages.wagerAmountTooLow) {
                     const wagerAmountTooLowMsg = heistSettings.settings.entryMessages.wagerAmountTooLow
-                        .replace("{user}", user.displayName)
-                        .replace("{minWager}", minWager);
+                        .replaceAll("{user}", user.displayName)
+                        .replaceAll("{minWager}", minWager);
 
                     await twitchChat.sendChatMessage(wagerAmountTooLowMsg, null, chatter);
                 }
@@ -139,8 +139,8 @@ const heistCommand = {
             if (wagerAmount > maxWager) {
                 if (heistSettings.settings.entryMessages.wagerAmountTooHigh) {
                     const wagerAmountTooHighMsg = heistSettings.settings.entryMessages.wagerAmountTooHigh
-                        .replace("{user}", user.displayName)
-                        .replace("{maxWager}", maxWager);
+                        .replaceAll("{user}", user.displayName)
+                        .replaceAll("{maxWager}", maxWager);
 
                     await twitchChat.sendChatMessage(wagerAmountTooHighMsg, null, chatter);
                 }
@@ -154,7 +154,7 @@ const heistCommand = {
         if (userBalance < wagerAmount) {
             if (heistSettings.settings.entryMessages.notEnoughToWager) {
                 const notEnoughToWagerMsg = heistSettings.settings.entryMessages.notEnoughToWager
-                    .replace("{user}", user.displayName);
+                    .replaceAll("{user}", user.displayName);
 
                 await twitchChat.sendChatMessage(notEnoughToWagerMsg, null, chatter);
             }
@@ -212,11 +212,11 @@ const heistCommand = {
             heistRunner.triggerLobbyStart(startDelay);
 
             const teamCreationMessage = heistSettings.settings.generalMessages.teamCreation
-                .replace("{user}", user.displayName)
-                .replace("{command}", userCommand.trigger)
-                .replace("{maxWager}", maxWager)
-                .replace("{minWager}", minWager)
-                .replace("{requiredUsers}", heistSettings.settings.generalSettings.minimumUsers);
+                .replaceAll("{user}", user.displayName)
+                .replaceAll("{command}", userCommand.trigger)
+                .replaceAll("{maxWager}", maxWager)
+                .replaceAll("{minWager}", minWager)
+                .replaceAll("{requiredUsers}", heistSettings.settings.generalSettings.minimumUsers);
 
             if (teamCreationMessage) {
                 await twitchChat.sendChatMessage(teamCreationMessage, null, chatter);
@@ -233,9 +233,9 @@ const heistCommand = {
         });
 
         const onJoinMessage = heistSettings.settings.entryMessages.onJoin
-            .replace("{user}", user.displayName)
-            .replace("{wager}", util.commafy(wagerAmount))
-            .replace("{currency}", currency.name);
+            .replaceAll("{user}", user.displayName)
+            .replaceAll("{wager}", util.commafy(wagerAmount))
+            .replaceAll("{currency}", currency.name);
 
         if (onJoinMessage) {
             await twitchChat.sendChatMessage(onJoinMessage, null, chatter);
