@@ -10,11 +10,11 @@ const model : ReplaceVariable = {
         examples: [
             {
                 usage: "replace[textInput, searchValue, replacement, true]",
-                description: "Allows searching using a regular expression."
+                description: "Allows searching using a [regular expression](https://developer.mozilla.org/docs/Web/JavaScript/Guide/Regular_expressions)."
             },
             {
                 usage: "replace[textInput, searchValue, replacement, true, flags]",
-                description: "Add flags when using a regular expression."
+                description: "Add flags when using a [regular expression](https://developer.mozilla.org/docs/Web/JavaScript/Guide/Regular_expressions)."
             }
         ],
         categories: [VariableCategory.TEXT],

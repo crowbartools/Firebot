@@ -4,7 +4,7 @@ import { OutputDataType, VariableCategory } from "../../../../shared/variable-co
 const model : ReplaceVariable = {
     definition: {
         handle: "regexTest",
-        description: "Check whether a string matches a regular expression",
+        description: "Check whether a string matches a [regular expression](https://developer.mozilla.org/docs/Web/JavaScript/Guide/Regular_expressions)",
         usage: "regexTest[string, expression]",
         examples: [
             {
