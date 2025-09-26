@@ -4,6 +4,8 @@ import { DateTime } from "luxon";
 import { CommandDefinition, SubCommand } from "../../../types/commands";
 import logger from "../../logwrapper";
 import frontendCommunicator from "../../common/frontend-communicator";
+import { SettingsManager } from "../../common/settings-manager";
+import accountAccess from "../../common/account-access";
 
 // This is purposefully ridiculous to try and avoid collisions when we split the string
 // (like with system commands that commonly use colons in their name)
@@ -48,6 +50,12 @@ class CommandCooldownManager {
     }
 
     getRemainingCooldown(command: CommandDefinition, triggeredSubcmd: SubCommand, username: string): number {
+        if (username === accountAccess.getAccounts().streamer.username
+            && SettingsManager.getSetting("StreamerExemptFromCooldowns") === true) {
+            logger.debug("Streamer sent command. Ignoring cooldown.");
+            return 0;
+        }
+
         const subCommandId = triggeredSubcmd && !triggeredSubcmd.inheritBaseCommandCooldown
             ? triggeredSubcmd.id ?? triggeredSubcmd.arg
             : null;
