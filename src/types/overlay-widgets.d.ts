@@ -24,11 +24,19 @@ type WidgetEvent<Settings, State> = {
     id: string;
     settings: Settings;
     state: State;
+    previewMode: boolean;
 }
 
 type WidgetEventResult<State> = {
     newState?: State | null;
+    /**
+     * If true, the new state will be persisted to file.
+     * @default false
+     */
+    persistState?: boolean;
 }
+
+export type WidgetEventHandler<Settings, State> = (event: WidgetEvent<Settings, State>) => Awaitable<WidgetEventResult<State> | undefined>;
 
 
 export type OverlayWidgetType<Settings extends Record<string, unknown> = Record<string, unknown>, State = Record<string, unknown>> = {
@@ -78,19 +86,19 @@ export type OverlayWidgetType<Settings extends Record<string, unknown> = Record<
     // eslint-disable-next-line no-use-before-define
     stateDisplay?: (config: OverlayWidgetConfig<Settings, State>) => string | null;
     /**
-     * Called before the widget is shown on the overlay. You can modify parameter values or state here.
+     * Called before the widget is shown on the overlay. You can modify state here.
      */
-    onShow?: (event: WidgetEvent<Settings, State>) => Awaitable<WidgetEventResult<State> | void>;
+    onShow?: WidgetEventHandler<Settings, State>;
     /**
-     * Called when the widget settings are updated. You can modify parameter values or state here.
+     * Called when the widget settings are updated. You can modify state here.
      */
-    onSettingsUpdate?: (event: WidgetEvent<Settings, State>) => Awaitable<WidgetEventResult<State> | void>;
+    onSettingsUpdate?: WidgetEventHandler<Settings, State>;
     /**
-     * Called before the widget is removed from the overlay. You can modify parameter values or state here.
+     * Called before the widget is removed from the overlay. You can modify state here.
      */
-    onRemove?: (event: WidgetEvent<Settings, State>) => Awaitable<WidgetEventResult<State> | void>;
+    onRemove?: WidgetEventHandler<Settings, State>;
     /**
-     * This code is injected into the overlay
+     * This code is injected into the overlay. Do not reference any variables outside this scope.
      */
     overlayExtension: {
         dependencies?: {
@@ -99,7 +107,11 @@ export type OverlayWidgetType<Settings extends Record<string, unknown> = Record<
             globalStyles?: string;
         };
         // eslint-disable-next-line no-use-before-define
-        eventHandler: (event: WidgetOverlayEvent) => void
+        eventHandler: (event: WidgetOverlayEvent) => void,
+        /**
+         * Called when the overlay is loaded. Can be async.
+         */
+        onInitialLoad?: () => void | Promise<void>
     };
 };
 

@@ -79,10 +79,6 @@ export const dynamicCountdown: OverlayWidgetType<Settings, State> = {
         return `${secondsDisplay} (${config.state?.mode ?? 'paused'})`;
     },
     overlayExtension: {
-        dependencies: {
-            css: [],
-            js: []
-        },
         eventHandler: (event: WidgetOverlayEvent<Settings, State>) => {
             const generateWidgetHtml = (config: typeof event["data"]["widgetConfig"]) => {
                 const remainingSeconds = config.state?.remainingSeconds as number ?? 0;

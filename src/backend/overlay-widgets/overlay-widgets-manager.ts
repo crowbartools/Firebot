@@ -1,4 +1,4 @@
-import { OverlayWidgetConfig, OverlayWidgetType } from "../../types/overlay-widgets";
+import { OverlayWidgetConfig, OverlayWidgetType, WidgetEventHandler } from "../../types/overlay-widgets";
 import { TypedEmitter } from "tiny-typed-emitter";
 import frontendCommunicator from "../common/frontend-communicator";
 import overlayWidgetConfigManager from "./overlay-widget-config-manager";
@@ -41,16 +41,42 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
             .map(w => ({
                 typeId: w.id,
                 dependencies: w.overlayExtension.dependencies,
-                eventHandler: w.overlayExtension.eventHandler
+                eventHandler: w.overlayExtension.eventHandler,
+                onInitialLoad: w.overlayExtension.onInitialLoad
             }));
     }
 
-    sendWidgetEventToOverlay(eventName: WidgetOverlayEvent["name"], widgetConfig: OverlayWidgetConfig, previewMode = false) {
+    async sendWidgetEventToOverlay(eventName: WidgetOverlayEvent["name"], widgetConfig: OverlayWidgetConfig, previewMode = false) {
         const widgetType = this.getOverlayWidgetType(widgetConfig.type);
         if (!widgetType) {
             console.warn(`Overlay widget type with ID '${widgetConfig.type}' not found for widget ID '${widgetConfig.id}'.`);
             return;
         }
+
+        const handleWidgetEvent = async (handler: WidgetEventHandler<typeof widgetConfig["settings"], typeof widgetConfig["state"]>) => {
+            const result = await handler({
+                id: widgetConfig.id,
+                settings: widgetConfig.settings,
+                state: widgetConfig.state ?? {},
+                previewMode
+            });
+
+            if (result?.newState) {
+                widgetConfig.state = result.newState;
+                if (result.persistState) {
+                    overlayWidgetConfigManager.setWidgetStateById(widgetConfig.id, widgetConfig.state);
+                }
+            }
+        };
+
+        if (eventName === "show" && widgetType.onShow) {
+            await handleWidgetEvent(widgetType.onShow);
+        } else if (eventName === "settings-update" && widgetType.onSettingsUpdate) {
+            await handleWidgetEvent(widgetType.onSettingsUpdate);
+        } else if (eventName === "remove" && widgetType.onRemove) {
+            await handleWidgetEvent(widgetType.onRemove);
+        }
+
         websocketServerManager.sendWidgetEventToOverlay({
             name: eventName,
             data: {

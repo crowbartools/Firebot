@@ -64,13 +64,7 @@ export const progressbar: OverlayWidgetType<Settings, State> = {
         currentValue: 50
     },
     overlayExtension: {
-        dependencies: {
-            css: [],
-            js: []
-        },
         eventHandler: (event: WidgetOverlayEvent) => {
-            console.log(`Progress Bar widget received event: ${event.name}`, event);
-
             const generateWidgetHtml = (config: WidgetOverlayEvent["data"]["widgetConfig"]) => {
                 const currentValue = config.state?.currentValue as number ?? 0;
                 const minValue = config.settings?.minValue as number ?? 0;

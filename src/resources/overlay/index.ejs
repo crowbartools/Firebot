@@ -62,5 +62,19 @@
         <% for(let widgetEvent of widgetEvents) {%>
             widgetEvents.on('<%-widgetEvent.name%>', <%-widgetEvent.callback%>);
         <% } %>
+
+        const widgetInitCallbacks = [
+            <% for(let widgetInitCallback of widgetInitCallbacks) { %>
+                <%-widgetInitCallback%>,
+            <% } %>
+        ];
+        
+        for(const callback of widgetInitCallbacks) {
+            try {
+                callback();
+            } catch(ex) {
+                console.error("Error in widget init callback", ex);
+            }
+        }
     </script>
 </html> 

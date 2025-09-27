@@ -153,6 +153,7 @@ class HttpServerManager extends EventEmitter {
             res.render(overlayTemplate, {
                 effectEvents: effectDefs.map(ed => ed.event),
                 widgetEvents: widgetEvents,
+                widgetInitCallbacks: widgetExtensions.map(we => we.onInitialLoad).filter(il => il != null),
                 dependencies: {
                     css: combinedCssDeps,
                     js: combinedJsDeps,
