@@ -21,9 +21,9 @@ const model: EffectType<{
         dependencies: []
     },
     optionsTemplate: `
-        <div ng-hide="hasCountdownWidgets">
+        <eos-container ng-hide="hasCountdownWidgets">
             <p>You need to create a Countdown (Dynamic) Overlay Widget to use this effect! Go to the <b>Overlay Widgets</b> tab to create one.</p>
-        </div>
+        </eos-container>
         <div ng-show="hasCountdownWidgets">
             <eos-container header="Countdown">
                 <firebot-overlay-widget-select

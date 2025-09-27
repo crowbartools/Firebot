@@ -5,7 +5,7 @@ import logger from "../../../logwrapper";
 
 const model: EffectType<{
     progressBarWidgetId: string;
-    mode: "increment" | "set";
+    action: "increment" | "set";
     value: string;
 }> = {
     definition: {
@@ -17,9 +17,9 @@ const model: EffectType<{
         dependencies: []
     },
     optionsTemplate: `
-        <div ng-hide="hasProgressBarWidgets">
+        <eos-container ng-hide="hasProgressBarWidgets">
             <p>You need to create a Progress Bar Overlay Widget to use this effect! Go to the <b>Overlay Widgets</b> tab to create one.</p>
-        </div>
+        </eos-container>
         <div ng-show="hasProgressBarWidgets">
             <eos-container header="Progress Bar">
                 <firebot-searchable-select
@@ -30,25 +30,22 @@ const model: EffectType<{
             </eos-container>
 
             <div ng-show="effect.progressBarWidgetId">
-                <eos-container header="Mode" pad-top="true">
-                    <div class="controls-fb" style="padding-bottom: 5px;">
-                        <label class="control-fb control--radio">Increment <tooltip text="'Increment the progress bar by the given value (value can be negative to decrement)'"></tooltip>
-                            <input type="radio" ng-model="effect.mode" value="increment"/>
-                            <div class="control__indicator"></div>
-                        </label>
-                        <label class="control-fb control--radio">Set <tooltip text="'Set the progress bar to a new value.'"></tooltip>
-                            <input type="radio" ng-model="effect.mode" value="set"/>
-                            <div class="control__indicator"></div>
-                        </label>
-                    </div>
+                <eos-container header="Action" pad-top="true">
+                    <firebot-radio-cards
+                        options="actions"
+                        ng-model="effect.action"
+                        grid-columns="2"
+                    ></firebot-radio-cards>
                 </eos-container>
             </div>
 
-            <eos-container header="{{effect.mode == 'increment' ? 'Increment Amount' : 'New Value'}}" pad-top="true" ng-show="effect.mode">
-                <div class="input-group">
-                    <span class="input-group-addon" id="delay-length-effect-type">Value</span>
-                    <input ng-model="effect.value" type="text" class="form-control" aria-describedby="delay-length-effect-type" type="text" replace-variables="number">
-                </div>
+            <eos-container header="{{effect.action == 'increment' ? 'Increment Amount' : 'New Value'}}" pad-top="true" ng-show="effect.action">
+                <firebot-input
+                    input-title="Value"
+                    model="effect.value"
+                    placeholder-text="Enter value"
+                    data-type="number"
+                />
             </eos-container>
         </div>
     `,
@@ -57,13 +54,28 @@ const model: EffectType<{
         $scope.progressBarWidgets = overlayWidgetsService.getOverlayWidgetConfigsByType("firebot:progressbar");
 
         $scope.hasProgressBarWidgets = $scope.progressBarWidgets.length > 0;
+
+        $scope.actions = [
+            {
+                value: "increment",
+                label: "Increment",
+                iconClass: "fa-plus",
+                description: "Increment the progress bar by the given value (use negative to decrement)"
+            },
+            {
+                value: "set",
+                label: "Set",
+                iconClass: "fa-equals",
+                description: "Set the progress bar to a new value."
+            }
+        ];
     },
     optionsValidator: (effect) => {
         const errors = [];
         if (effect.progressBarWidgetId == null) {
             errors.push("Please select a progress bar.");
-        } else if (effect.mode == null) {
-            errors.push("Please select an update mode.");
+        } else if (effect.action == null) {
+            errors.push("Please select an update action.");
         } else if (effect.value === undefined || effect.value === "") {
             errors.push("Please enter an update value.");
         }
@@ -72,12 +84,12 @@ const model: EffectType<{
     },
     getDefaultLabel: (effect, overlayWidgetsService) => {
         const progressBarName = overlayWidgetsService.getOverlayWidgetConfig(effect.progressBarWidgetId)?.name ?? "Unknown Progress Bar";
-        return `${effect.mode === "increment" ? "Update" : "Set"} ${progressBarName} ${effect.mode === "increment" ? "by" : "to"} ${effect.value}`;
+        return `${effect.action === "increment" ? "Update" : "Set"} ${progressBarName} ${effect.action === "increment" ? "by" : "to"} ${effect.value}`;
     },
     onTriggerEvent: async (event) => {
         const { effect } = event;
 
-        if (effect.progressBarWidgetId == null || effect.mode == null || effect.value == null) {
+        if (effect.progressBarWidgetId == null || effect.action == null || effect.value == null) {
             return false;
         }
 
@@ -98,7 +110,7 @@ const model: EffectType<{
 
         overlayWidgetConfigManager.setWidgetStateById(effect.progressBarWidgetId, {
             ...progressBarWidget.state,
-            currentValue: effect.mode === "increment" ? currentValue + value : value
+            currentValue: effect.action === "increment" ? currentValue + value : value
         });
 
         return true;
