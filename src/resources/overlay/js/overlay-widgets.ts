@@ -33,13 +33,19 @@ function getWidgetElement(id: string) {
     return document.getElementById(`${id}-container`);
 }
 
-function initializeWidget(id: string, position: Position, entryAnimation: OverlayAnimation, html: string) {
+function initializeWidget(id: string, position: Position, entryAnimation: OverlayAnimation, html: string, previewMode: boolean = false) {
     const container = getWidgetElement(id);
     if(container) {
         container.remove();
     }
 
-    const positionStyle = getWidgetPositionStyle(position);
+    let positionStyle = getWidgetPositionStyle(position);
+
+    console.log('is preview mode', previewMode);
+    if(previewMode) {
+        // add a border to the widget in preview mode
+        positionStyle += "border: 1px dashed #FF0000;";
+    }
 
     const wrappedHtml = `
         <div id="${id}-container" style="${positionStyle}">${html}</div>

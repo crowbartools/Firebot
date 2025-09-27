@@ -280,6 +280,9 @@ exports.whenReady = async () => {
     // start crowbar relay websocket
     require("../../../crowbar-relay/crowbar-relay-websocket");
 
+    const countdownManager = require("../../../overlay-widgets/builtin-types/countdown/countdown-manager");
+    countdownManager.startTimer();
+
     logger.debug('...loading main window');
     windowManagement.updateSplashScreenStatus("Here we go!");
     await windowManagement.createMainWindow();

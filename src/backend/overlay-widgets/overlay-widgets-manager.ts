@@ -61,7 +61,7 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
         });
     }
 
-    private formatForFrontend(overlayWidgetType: OverlayWidgetType): Pick<OverlayWidgetType, "id" | "name" | "icon" | "description" | "settingsSchema" | "userCanConfigure" | "supportsLivePreview"> {
+    private formatForFrontend(overlayWidgetType: OverlayWidgetType): Pick<OverlayWidgetType, "id" | "name" | "icon" | "description" | "settingsSchema" | "userCanConfigure" | "supportsLivePreview" | "initialState"> {
         return {
             id: overlayWidgetType.id,
             name: overlayWidgetType.name,
@@ -69,7 +69,8 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
             icon: overlayWidgetType.icon,
             settingsSchema: overlayWidgetType.settingsSchema,
             userCanConfigure: overlayWidgetType.userCanConfigure,
-            supportsLivePreview: overlayWidgetType.supportsLivePreview ?? false
+            supportsLivePreview: overlayWidgetType.supportsLivePreview ?? false,
+            initialState: overlayWidgetType.initialState
         };
     }
 }
@@ -80,11 +81,18 @@ frontendCommunicator.onAsync("overlay-widgets:get-all-types", async () => {
     return manager.getOverlayWidgetTypesForFrontend();
 });
 
-overlayWidgetConfigManager.on("widget-state-updated", (config) => {
-    if (config.active === false) {
-        return;
-    }
-    manager.sendWidgetEventToOverlay("state-update", config);
+frontendCommunicator.onAsync("overlay-widgets:get-state-displays", async () => {
+    const configs = overlayWidgetConfigManager.getAllItems();
+    return configs.reduce((acc, config) => {
+        const type = manager.getOverlayWidgetType(config.type);
+        if (type?.stateDisplay) {
+            const display = type.stateDisplay(config);
+            if (display) {
+                acc[config.id] = display;
+            }
+        }
+        return acc;
+    }, {} as Record<string, string>);
 });
 
 overlayWidgetConfigManager.on("widget-config-active-changed", (config) => {
@@ -105,7 +113,32 @@ const removeCurrentLivePreview = async () => {
     }
 };
 
+const sendStateDisplayToFrontend = (config: OverlayWidgetConfig) => {
+    const type = manager.getOverlayWidgetType(config.type);
+    if (type?.stateDisplay) {
+        const display = type.stateDisplay(config);
+        frontendCommunicator.send("overlay-widgets:state-display-updated", {
+            widgetId: config.id,
+            stateDisplay: display
+        });
+    }
+};
+
+overlayWidgetConfigManager.on("widget-state-updated", (config) => {
+    sendStateDisplayToFrontend(config);
+
+    if (livePreviewWidgetConfig && livePreviewWidgetConfig.id === config.id) {
+        return;
+    }
+    if (config.active === false) {
+        return;
+    }
+    manager.sendWidgetEventToOverlay("state-update", config);
+});
+
 overlayWidgetConfigManager.on("created-item", async (config) => {
+    sendStateDisplayToFrontend(config);
+
     if (livePreviewWidgetConfig && livePreviewWidgetConfig.id === config.id) {
         await removeCurrentLivePreview();
     }

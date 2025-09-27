@@ -15,6 +15,11 @@
             /** @type {OverlayWidgetType[]} */
             service.overlayWidgetTypes = [];
 
+            /**
+             * @type {Object.<string, string | null>}
+             */
+            service.overlayWidgetStateDisplays = {};
+
             service.getOverlayWidgetType = (typeId) => {
                 return service.overlayWidgetTypes.find(t => t.id === typeId);
             };
@@ -42,6 +47,11 @@
                 if (overlayWidgetConfigs) {
                     service.overlayWidgetConfigs = overlayWidgetConfigs;
                 }
+
+                const stateDisplays = await backendCommunicator.fireEventAsync("overlay-widgets:get-state-displays");
+                if (stateDisplays) {
+                    service.overlayWidgetStateDisplays = stateDisplays;
+                }
             };
 
             backendCommunicator.on("overlay-widgets:configs-updated", () => {
@@ -52,6 +62,10 @@
                 if (overlayWidgetType) {
                     service.overlayWidgetTypes.push(overlayWidgetType);
                 }
+            });
+
+            backendCommunicator.on("overlay-widgets:state-display-updated", ({ widgetId, stateDisplay }) => {
+                service.overlayWidgetStateDisplays[widgetId] = stateDisplay;
             });
 
             /**
@@ -78,14 +92,27 @@
                 return service.overlayWidgetConfigs.filter(w => w.type === typeId);
             };
 
+            service.hasOverlayWidgetConfigsOfType = (typeId) => {
+                return service.overlayWidgetConfigs.some(w => w.type === typeId);
+            };
+
             /**
              * @param {OverlayWidgetConfig} config
              * @returns {Promise.<void>}
              */
             service.saveOverlayWidgetConfig = async (config, isNew = false) => {
+                const copiedConfig = JSON.parse(angular.toJson(config));
+
+                if (isNew) {
+                    const widgetType = service.getOverlayWidgetType(config.type);
+                    if (widgetType) {
+                        copiedConfig.state = widgetType.initialState;
+                    }
+                }
+
                 const savedConfig = await backendCommunicator.fireEventAsync(
                     isNew ? "overlay-widgets:save-new-config" : "overlay-widgets:save-config",
-                    JSON.parse(angular.toJson(config))
+                    JSON.parse(angular.toJson(copiedConfig))
                 );
 
                 if (savedConfig) {

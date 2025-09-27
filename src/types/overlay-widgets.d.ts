@@ -71,6 +71,13 @@ export type OverlayWidgetType<Settings extends Record<string, unknown> = Record<
      */
     livePreviewState?: State;
     /**
+     * Function that returns a short string representing the current state of the widget.
+     * This is shown in the overlay widget list to give the user a quick overview of the widget's state.
+     * If null or undefined, no state display is shown.
+     */
+    // eslint-disable-next-line no-use-before-define
+    stateDisplay?: (config: OverlayWidgetConfig<Settings, State>) => string | null;
+    /**
      * Called before the widget is shown on the overlay. You can modify parameter values or state here.
      */
     onShow?: (event: WidgetEvent<Settings, State>) => Awaitable<WidgetEventResult<State> | void>;
@@ -96,7 +103,7 @@ export type OverlayWidgetType<Settings extends Record<string, unknown> = Record<
     };
 };
 
-type OverlayWidgetConfig = {
+type OverlayWidgetConfig<Settings = Record<string, unknown>, State = Record<string, unknown>> = {
     id: string;
     name: string;
     type: string;
@@ -113,15 +120,15 @@ type OverlayWidgetConfig = {
     overlayInstance?: string | null;
     entryAnimation?: Animation | null;
     exitAnimation?: Animation | null;
-    settings: Record<string, unknown>;
-    state?: Record<string, unknown>;
+    settings: Settings;
+    state?: State;
 }
 
-export type WidgetOverlayEvent = {
+export type WidgetOverlayEvent<Settings = Record<string, unknown>, State = Record<string, unknown>> = {
     name: "show" | "settings-update" | "state-update" | "message" | "remove";
     data: {
         widgetConfig: Pick<
-        OverlayWidgetConfig,
+        OverlayWidgetConfig<Settings, State>,
         "id" | "type" | "position" | "entryAnimation" | "exitAnimation" | "settings" | "state" | "overlayInstance"
         >;
         widgetType: Pick<

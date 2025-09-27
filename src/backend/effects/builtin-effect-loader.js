@@ -64,10 +64,12 @@ exports.loadEffects = () => {
         'toggle-timer',
         'update-channel-reward',
         'update-counter',
-        'update-overlay-widget-settings',
-        'update-progress-bar',
         'update-role',
         'update-viewer-rank',
+
+        'overlay-widgets/update-overlay-widget-settings',
+        'overlay-widgets/update-progress-bar',
+        'overlay-widgets/update-dynamic-countdown',
 
         'twitch/ad-break',
         'twitch/announcement',

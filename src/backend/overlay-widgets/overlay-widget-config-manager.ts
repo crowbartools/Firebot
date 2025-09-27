@@ -41,19 +41,23 @@ class OverlayWidgetConfigManager extends JsonDbManager<OverlayWidgetConfig, Extr
         return false;
     }
 
-    getWidgetStateById(id: string): OverlayWidgetConfig["state"] | null {
-        const config = this.getItem(id);
-        return config?.state ?? null;
+    getConfigsOfType<Config extends OverlayWidgetConfig = OverlayWidgetConfig>(typeId: string): Config[] {
+        return this.getAllItems().filter(c => c.type === typeId) as Config[];
     }
 
-    setWidgetStateById(id: string, state: OverlayWidgetConfig["state"]): void {
+    getWidgetStateById<State = Record<string, unknown>>(id: string): State | null {
+        const config = this.getItem(id);
+        return ((config?.state ?? null) as unknown as State | null);
+    }
+
+    setWidgetStateById<State extends Record<string, unknown> = Record<string, unknown>>(id: string, state: State): void {
         const config = this.getItem(id);
         if (!config) {
             return;
         }
         config.state = state;
         this.emit("widget-state-updated", config);
-        this.saveItem(config);
+        this.saveItem(config, false, true);
     }
 
     triggerUiRefresh(): void {
@@ -67,9 +71,13 @@ frontendCommunicator.onAsync("overlay-widgets:get-all-configs", async () =>
     manager.getAllItems()
 );
 
-frontendCommunicator.onAsync("overlay-widgets:save-config", async (config: OverlayWidgetConfig) =>
-    manager.saveWidgetConfig(config)
-);
+frontendCommunicator.onAsync("overlay-widgets:save-config", async (config: OverlayWidgetConfig) => {
+    const existing = manager.getItem(config.id);
+    if (existing) {
+        config.state = existing.state;
+    }
+    return manager.saveWidgetConfig(config);
+});
 
 frontendCommunicator.onAsync("overlay-widgets:save-new-config", async (config: OverlayWidgetConfig) =>
     manager.saveWidgetConfig(config, true)

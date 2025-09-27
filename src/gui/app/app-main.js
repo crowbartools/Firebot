@@ -225,6 +225,9 @@
         dynamicParameterRegistry.register("effectlist", { tag: "fb-param-effect-list" });
         dynamicParameterRegistry.register("button", { tag: "fb-param-button" });
         dynamicParameterRegistry.register("hexcolor", { tag: "fb-param-hex-color" });
+        dynamicParameterRegistry.register("font-name", { tag: "fb-param-font-name" });
+        dynamicParameterRegistry.register("font-options", { tag: "fb-param-font-options" });
+        dynamicParameterRegistry.register("radio-cards", { tag: "fb-param-radio-cards" });
 
         uiExtensionsService.setAsReady();
     });

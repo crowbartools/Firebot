@@ -1,3 +1,5 @@
+import { EffectList } from "./effects";
+
 export type BaseParameter = {
     /**
      * The title of the parameter
@@ -192,6 +194,42 @@ export type HexColorParameter = BaseParameter & {
     allowAlpha?: boolean;
 };
 
+export type FontNameParameter = BaseParameter & {
+    type: "font-name";
+    /**
+     * Default font name value, e.g. 'Arial'
+     */
+    default?: string;
+};
+
+export type FontOptions = {
+    family: string;
+    size: number;
+    weight: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
+    italic: boolean;
+    color: string;
+}
+
+export type FontOptionsParameter = BaseParameter & {
+    type: "font-options";
+    default: FontOptions;
+    allowAlpha?: boolean;
+};
+
+export type RadioCardsParameter<V = string> = BaseParameter & {
+    type: "radio-cards";
+    default?: V;
+    options: Array<{
+        value: V;
+        label: string;
+        description?: string;
+        iconClass?: string;
+    }>;
+    settings?: {
+        gridColumns?: number;
+    };
+};
+
 export type UnknownParameter = BaseParameter & {
     [key: string]: unknown;
 };
@@ -212,7 +250,9 @@ type FirebotParameter =
     | RoleNumberParameter
     | ButtonParameter
     | UnknownParameter
-    | HexColorParameter;
+    | HexColorParameter
+    | FontNameParameter
+    | FontOptionsParameter;
 
 export type ParametersConfig<P> = {
     [K in keyof P]: (P[K] extends string
@@ -237,9 +277,10 @@ export type ParametersConfig<P> = {
                                 ? RolePercentagesParameter
                                 : P[K] extends RoleNumberParameterValue
                                     ? RoleNumberParameter
-                                    : P[K] extends Firebot.EffectList
+                                    : P[K] extends EffectList
                                         ? EffectListParameter
-                                        : FirebotParameter);
+                                        : P[K] extends FontOptions
+                                            ? FontOptionsParameter : FirebotParameter);
 };
 
 export type ParametersWithNameConfig<P> = {
@@ -252,10 +293,12 @@ export type ParametersWithNameConfig<P> = {
         | CurrencySelectParameter
         | EnumParameter<string>
         | HexColorParameter
+        | FontNameParameter
+        | RadioCardsParameter<string>
         : P[K] extends number
-            ? NumberParameter | EnumParameter<number>
+            ? NumberParameter | EnumParameter<number> | RadioCardsParameter<number>
             : P[K] extends boolean
-                ? BooleanParameter | EnumParameter<boolean>
+                ? BooleanParameter | EnumParameter<boolean> | RadioCardsParameter<boolean>
                 : P[K] extends Array<string>
                     ? MultiselectParameter<string> | EditableListParameter
                     : P[K] extends Array<number>
@@ -266,9 +309,10 @@ export type ParametersWithNameConfig<P> = {
                                 ? RolePercentagesParameter
                                 : P[K] extends RoleNumberParameterValue
                                     ? RoleNumberParameter
-                                    : P[K] extends Firebot.EffectList
+                                    : P[K] extends EffectList
                                         ? EffectListParameter
-                                        : FirebotParameter) & { name: K };
+                                        : P[K] extends FontOptions
+                                            ? FontOptionsParameter : FirebotParameter) & { name: K };
 };
 
 type FirebotParamCategory<ParamConfig extends Record<string, unknown>> = {

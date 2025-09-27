@@ -1,7 +1,7 @@
-import { EffectType } from "../../../types/effects";
-import { EffectCategory } from '../../../shared/effect-constants';
-import overlayWidgetConfigManager from "../../overlay-widgets/overlay-widget-config-manager";
-import logger from "../../logwrapper";
+import { EffectType } from "../../../../types/effects";
+import { EffectCategory } from '../../../../shared/effect-constants';
+import overlayWidgetConfigManager from "../../../overlay-widgets/overlay-widget-config-manager";
+import logger from "../../../logwrapper";
 
 const model: EffectType<{
     progressBarWidgetId: string;

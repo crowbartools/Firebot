@@ -1,9 +1,9 @@
-import { EffectType } from "../../../types/effects";
-import { EffectCategory } from '../../../shared/effect-constants';
-import overlayWidgetConfigManager from "../../overlay-widgets/overlay-widget-config-manager";
-import overlayWidgetsManager from "../../overlay-widgets/overlay-widgets-manager";
-import logger from "../../logwrapper";
-import { OverlayWidgetConfig, Position } from "../../../types/overlay-widgets";
+import { EffectType } from "../../../../types/effects";
+import { EffectCategory } from '../../../../shared/effect-constants';
+import overlayWidgetConfigManager from "../../../overlay-widgets/overlay-widget-config-manager";
+import overlayWidgetsManager from "../../../overlay-widgets/overlay-widgets-manager";
+import logger from "../../../logwrapper";
+import { OverlayWidgetConfig, Position } from "../../../../types/overlay-widgets";
 
 const model: EffectType<{
     widgetConfigId: string;

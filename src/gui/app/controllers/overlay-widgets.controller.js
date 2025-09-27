@@ -35,6 +35,18 @@
                             $scope.typeName = widgetType?.name ?? "Unknown Type";
                         }
                     }
+                },
+                {
+                    name: "STATE",
+                    icon: "fa-info-circle",
+                    headerStyles: {
+                        'min-width': '100px'
+                    },
+                    sortable: false,
+                    cellTemplate: `{{oss.overlayWidgetStateDisplays[data.id] || "-"}}`,
+                    cellController: ($scope, overlayWidgetsService) => {
+                        $scope.oss = overlayWidgetsService;
+                    }
                 }
             ];
 
