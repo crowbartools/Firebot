@@ -16,6 +16,7 @@ exports.loadEffects = () => {
         'clear-effects',
         'clips',
         'conditional-effects/conditional-effects',
+        'conditional-effects/switch-statement',
         'control-emulation', // No migration needed.
         'cooldown-command',
         'copy-to-clipboard',
