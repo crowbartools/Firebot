@@ -1,5 +1,5 @@
 import { FontOptions } from "../../../../types/parameters";
-import { OverlayWidgetType, OverlayWidgetConfig } from "../../../../types/overlay-widgets";
+import { OverlayWidgetType, OverlayWidgetConfig, IOverlayWidgetUtils } from "../../../../types/overlay-widgets";
 import { WidgetOverlayEvent } from "../../../../types/overlay-widgets";
 import { Duration } from "luxon";
 
@@ -79,7 +79,7 @@ export const dynamicCountdown: OverlayWidgetType<Settings, State> = {
         return `${secondsDisplay} (${config.state?.mode ?? 'paused'})`;
     },
     overlayExtension: {
-        eventHandler: (event: WidgetOverlayEvent<Settings, State>) => {
+        eventHandler: (event: WidgetOverlayEvent<Settings, State>, utils: IOverlayWidgetUtils) => {
             const generateWidgetHtml = (config: typeof event["data"]["widgetConfig"]) => {
                 const remainingSeconds = config.state?.remainingSeconds as number ?? 0;
 
@@ -104,41 +104,14 @@ export const dynamicCountdown: OverlayWidgetType<Settings, State> = {
                 };
 
                 return `
-                <div id="countdown-container" style="${Object.entries(containerStyles).map(([key, value]) => `${key}: ${value};`).join(' ')}">
+                <div id="countdown-container" style="${utils.stylesToString(containerStyles)}">
                     <div id="time-remaining">
                         ${timeString}
                     </div>
                 </div>`;
             };
 
-            switch (event.name) {
-                case "show": {
-                    initializeWidget(
-                        event.data.widgetConfig.id,
-                        event.data.widgetConfig.position,
-                        event.data.widgetConfig.entryAnimation,
-                        generateWidgetHtml(event.data.widgetConfig),
-                        event.data.previewMode
-                    );
-                    break;
-                }
-                case "settings-update": {
-                    updateWidgetContent(event.data.widgetConfig.id, generateWidgetHtml(event.data.widgetConfig));
-                    updateWidgetPosition(event.data.widgetConfig.id, event.data.widgetConfig.position);
-                    break;
-                }
-                case "state-update": {
-                    updateWidgetContent(event.data.widgetConfig.id, generateWidgetHtml(event.data.widgetConfig));
-                    break;
-                }
-                case "remove": {
-                    removeWidget(event.data.widgetConfig.id, event.data.widgetConfig.exitAnimation);
-                    break;
-                }
-                default:
-                    console.warn(`Unhandled event type: ${event.name}`);
-                    break;
-            }
+            utils.handleOverlayEvent(generateWidgetHtml);
         }
     }
 };

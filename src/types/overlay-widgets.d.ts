@@ -39,7 +39,10 @@ type WidgetEventResult<State> = {
 export type WidgetEventHandler<Settings, State> = (event: WidgetEvent<Settings, State>) => Awaitable<WidgetEventResult<State> | undefined>;
 
 
-export type OverlayWidgetType<Settings extends Record<string, unknown> = Record<string, unknown>, State = Record<string, unknown>> = {
+export type OverlayWidgetType<
+    Settings extends Record<string, unknown> = Record<string, unknown>,
+    State = Record<string, unknown>
+> = {
     id: string;
     name: string;
     description: string;
@@ -57,7 +60,7 @@ export type OverlayWidgetType<Settings extends Record<string, unknown> = Record<
          * @default true
          */
         exitAnimation?: boolean;
-    },
+    };
     /**
      * Settings allow the user to customize the widget instance (e.g., font to use, colors, etc.)
      */
@@ -107,11 +110,11 @@ export type OverlayWidgetType<Settings extends Record<string, unknown> = Record<
             globalStyles?: string;
         };
         // eslint-disable-next-line no-use-before-define
-        eventHandler: (event: WidgetOverlayEvent) => void,
+        eventHandler: (event: WidgetOverlayEvent, utils: IOverlayWidgetUtils) => void;
         /**
          * Called when the overlay is loaded. Can be async.
          */
-        onInitialLoad?: () => void | Promise<void>
+        onInitialLoad?: () => void | Promise<void>;
     };
 };
 
@@ -151,4 +154,21 @@ export type WidgetOverlayEvent<Settings = Record<string, unknown>, State = Recor
         // Optional additional data for the event (e.g., message content for "message" events)
         data?: unknown;
     };
+}
+
+/**
+ * Utility functions for managing overlay widgets. These functions can used within the overlayExtension.eventHandler
+ */
+export interface IOverlayWidgetUtils {
+    handleOverlayEvent(generateWidgetHtml: (widgetConfig: WidgetOverlayEvent["data"]["widgetConfig"]) => string): void;
+    getWidgetPositionStyle(position?: Position): string;
+    getWidgetElement(): HTMLElement | null;
+    initializeWidget(
+        html: string
+    ): void;
+    updateWidgetContent(
+        newHtml: string,
+    ): void;
+    removeWidget(): void;
+    stylesToString(styles: Record<string, string | number | undefined>): string;
 }

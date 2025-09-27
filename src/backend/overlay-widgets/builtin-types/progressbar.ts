@@ -1,15 +1,15 @@
-import { OverlayWidgetType } from "../../../types/overlay-widgets";
+import { OverlayWidgetType, IOverlayWidgetUtils, WidgetOverlayEvent } from "../../../types/overlay-widgets";
 
 type Settings = {
     barColor: string;
     backgroundColor: string;
     minValue: number;
     maxValue: number;
-}
+};
 
 type State = {
     currentValue: number;
-}
+};
 
 export const progressbar: OverlayWidgetType<Settings, State> = {
     id: "firebot:progressbar",
@@ -64,49 +64,41 @@ export const progressbar: OverlayWidgetType<Settings, State> = {
         currentValue: 50
     },
     overlayExtension: {
-        eventHandler: (event: WidgetOverlayEvent) => {
-            const generateWidgetHtml = (config: WidgetOverlayEvent["data"]["widgetConfig"]) => {
-                const currentValue = config.state?.currentValue as number ?? 0;
-                const minValue = config.settings?.minValue as number ?? 0;
-                const maxValue = config.settings?.maxValue as number ?? 100;
+        eventHandler: (event: WidgetOverlayEvent<Settings, State>, utils: IOverlayWidgetUtils) => {
+            const generateWidgetHtml = (config: typeof event["data"]["widgetConfig"]) => {
+                const currentValue = (config.state?.currentValue as number) ?? 0;
+                const minValue = (config.settings?.minValue as number) ?? 0;
+                const maxValue = (config.settings?.maxValue as number) ?? 100;
 
                 // Calculate percentage, ensuring it's between 0 and 100
-                const currentPercentage = Math.min(100, Math.max(0, (
-                    currentValue - minValue) / (maxValue - minValue) * 100));
+                const currentPercentage = Math.min(
+                    100,
+                    Math.max(0, ((currentValue - minValue) / (maxValue - minValue)) * 100)
+                );
+
+                const containerStyles = {
+                    width: "100%",
+                    height: "100%",
+                    "background-color": config.settings?.backgroundColor || "#000000",
+                    border: "1px solid #ccc",
+                    "border-radius": "100vh",
+                    overflow: "hidden"
+                };
+
+                const progressBarStyles = {
+                    width: `${currentPercentage}%`,
+                    "background-color": config.settings?.barColor || "#00FF00",
+                    height: "100%",
+                    transition: "width 0.5s ease-in-out"
+                };
 
                 return `
-                <div id="progress-bar-container" style="width: 100%; height: 100%; background-color: ${config.settings?.backgroundColor || '#000000'}; border: 1px solid #ccc; border-radius: 100vh; overflow: hidden;">
-                    <div id="progress-bar" style="width: ${currentPercentage}%; background-color: ${config.settings?.barColor || '#00FF00'}; height: 100%;"></div>
+                <div id="progress-bar-container" style="${utils.stylesToString(containerStyles)}">
+                    <div id="progress-bar" style="${utils.stylesToString(progressBarStyles)}"></div>
                 </div>`;
             };
 
-            switch (event.name) {
-                case "show": {
-                    initializeWidget(
-                        event.data.widgetConfig.id,
-                        event.data.widgetConfig.position,
-                        event.data.widgetConfig.entryAnimation,
-                        generateWidgetHtml(event.data.widgetConfig)
-                    );
-                    break;
-                }
-                case "settings-update": {
-                    updateWidgetContent(event.data.widgetConfig.id, generateWidgetHtml(event.data.widgetConfig));
-                    updateWidgetPosition(event.data.widgetConfig.id, event.data.widgetConfig.position);
-                    break;
-                }
-                case "state-update": {
-                    updateWidgetContent(event.data.widgetConfig.id, generateWidgetHtml(event.data.widgetConfig));
-                    break;
-                }
-                case "remove": {
-                    removeWidget(event.data.widgetConfig.id, event.data.widgetConfig.exitAnimation);
-                    break;
-                }
-                default:
-                    console.warn(`Unhandled event type: ${event.name}`);
-                    break;
-            }
+            utils.handleOverlayEvent(generateWidgetHtml);
         }
     }
 };
