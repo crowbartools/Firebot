@@ -339,7 +339,17 @@ class BackupManager {
             await fsp.access(newPath);
 
             logger.info("Copying old backup files to new location");
-            await fsp.cp(this._backupFolderPath, newPath, { force: true, recursive: true });
+
+            // Don't do it recursively
+            const backupFiles = await fsp.readdir(this._backupFolderPath);
+            for (const backupFile of backupFiles) {
+                const sourceFile = path.join(this._backupFolderPath, backupFile);
+                const info = await fsp.stat(sourceFile);
+
+                if (info.isDirectory() !== true) {
+                    await fsp.cp(sourceFile, path.join(newPath, backupFile), { force: true });
+                }
+            }
 
             logger.info("Saving new backup location setting");
             SettingsManager.saveSetting("BackupLocation", newPath);

@@ -91,6 +91,17 @@
                 });
             };
 
+            service.openEditOverlayResolutionModal = function(callback) {
+                modalService.showModal({
+                    component: "editOverlayResolutionModal",
+                    size: "sm",
+                    resolveObj: {},
+                    closeCallback: (newResolution) => {
+                        callback(newResolution);
+                    }
+                });
+            };
+
             service.openViewerSearchModal = function(options, callback) {
                 modalService.showModal({
                     component: "viewerSearchModal",

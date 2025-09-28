@@ -11,11 +11,13 @@
                 alpha: "<",
                 style: "@",
                 lgInput: "<",
-                showClear: "<"
+                showClear: "<",
+                onBlur: "&?",
+                name: "@?"
             },
             template: `
             <div style="{{$ctrl.style}}">
-                <div ng-if="$ctrl.label != null" class="input-group settings-buttontext">
+                <div ng-if="$ctrl.label != null" class="input-group settings-buttontext color-picker-group-wrapper">
                     <span class="input-group-addon" id="basic-addon3">{{$ctrl.label}}</span>
                     <color-picker
                         ng-model="$ctrl.model"
@@ -44,6 +46,7 @@
                         placeholder: "#ffffff",
                         case: "lower",
                         alpha: $ctrl.alpha,
+                        name: $ctrl.name,
                         clear: {
                             show: $ctrl.showClear !== false,
                             label: 'Clear',
@@ -56,6 +59,11 @@
                     onChange: (_, color) => {
                         if (color == null || color.trim() === "") {
                             $ctrl.model = null;
+                        }
+                    },
+                    onBlur: () => {
+                        if ($ctrl.onBlur != null) {
+                            $ctrl.onBlur();
                         }
                     }
                 };

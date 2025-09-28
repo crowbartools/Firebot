@@ -77,7 +77,7 @@
             },
             controller: function($q, logger, ngToast, commandsService, countersService, currencyService,
                 effectQueuesService, eventsService, hotkeyService, presetEffectListsService,
-                timerService, scheduledTaskService, viewerRolesService, quickActionsService, variableMacroService, viewerRanksService, backendCommunicator, $sce) {
+                timerService, scheduledTaskService, viewerRolesService, quickActionsService, variableMacroService, viewerRanksService, backendCommunicator, $sce, overlayWidgetsService) {
                 const $ctrl = this;
 
                 $ctrl.setupFilePath = null;
@@ -102,6 +102,7 @@
                     ...variableMacroService.macros.map(i => i.id),
                     ...viewerRolesService.getCustomRoles().map(i => i.id),
                     ...viewerRanksService.rankLadders.map(i => i.id),
+                    ...overlayWidgetsService.overlayWidgetConfigs.map(i => i.id),
                     ...quickActionsService.quickActions
                         .filter(qa => qa.type === "custom")
                         .map(i => i.id)
@@ -123,7 +124,8 @@
                     variableMacros: "Variable Macro",
                     viewerRoles: "Viewer Role",
                     viewerRankLadders: "Viewer Rank Ladder",
-                    quickActions: "Quick Action"
+                    quickActions: "Quick Action",
+                    overlayWidgetConfigs: "Overlay Widget"
                 };
 
                 $ctrl.setup = null;

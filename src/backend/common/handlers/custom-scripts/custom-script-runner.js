@@ -186,11 +186,11 @@ async function runStartUpScript(startUpScriptConfig) {
 async function startUpScriptSaved(startUpScriptConfig) {
     const activeScript = activeCustomScripts[startUpScriptConfig.id];
     if (activeScript == null) {
-        runStartUpScript(startUpScriptConfig);
+        await runStartUpScript(startUpScriptConfig);
         return;
     }
     if (activeScript.parametersUpdated) {
-        activeScript.parametersUpdated(mapParameters(startUpScriptConfig.parameters));
+        await activeScript.parametersUpdated(mapParameters(startUpScriptConfig.parameters));
     }
 }
 

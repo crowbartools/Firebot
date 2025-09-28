@@ -53,7 +53,7 @@ export const CommandListSystemCommand: SystemCommand<{
         const streamerName = await cloudSync.syncProfileData(profileJSON);
 
         await twitchChat.sendChatMessage(commandOptions.successTemplate
-            .replace("{url}", `https://firebot.app/profile/${streamerName}`), null, "bot"
+            .replaceAll("{url}", `https://firebot.app/profile/${streamerName}`), null, "bot"
         );
     }
 };

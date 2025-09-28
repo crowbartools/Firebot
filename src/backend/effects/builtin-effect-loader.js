@@ -18,6 +18,7 @@ exports.loadEffects = () => {
         'conditional-effects/conditional-effects',
         'control-emulation', // No migration needed.
         'cooldown-command',
+        'copy-to-clipboard',
         'currency',
         'custom-script',
         'custom-variable',
@@ -59,12 +60,19 @@ exports.loadEffects = () => {
         'toggle-connection',
         'toggle-event-set',
         'toggle-event',
+        'toggle-overlay-widgets',
         'toggle-scheduled-task',
         'toggle-timer',
         'update-channel-reward',
         'update-counter',
         'update-role',
         'update-viewer-rank',
+
+        'overlay-widgets/update-overlay-widget-settings',
+        'overlay-widgets/update-progress-bar',
+        'overlay-widgets/update-dynamic-countdown',
+        'overlay-widgets/set-custom-widget-state',
+        'overlay-widgets/send-message-to-custom-widget',
 
         'twitch/ad-break',
         'twitch/announcement',

@@ -237,8 +237,8 @@ class RankCommandManager {
                     if (userRank) {
                         const rankMessage =
                             commandOptions.selfRankMessageTemplate
-                                .replace("{rank}", userRank.name)
-                                .replace("{user}", event.userCommand.commandSender);
+                                .replaceAll("{rank}", userRank.name)
+                                .replaceAll("{user}", event.userCommand.commandSender);
                         await sendMessage(rankMessage);
                     } else {
                         await sendMessage("You are currently not ranked.");
@@ -256,8 +256,8 @@ class RankCommandManager {
                         if (viewerRank) {
                             const rankMessage =
                                 commandOptions.otherRankMessageTemplate
-                                    .replace("{rank}", viewerRank.name)
-                                    .replace("{user}", username);
+                                    .replaceAll("{rank}", viewerRank.name)
+                                    .replaceAll("{user}", username);
                             await sendMessage(rankMessage);
                         } else {
                             await sendMessage(`${username} is currently not ranked.`);
@@ -273,7 +273,7 @@ class RankCommandManager {
                             })
                             .join(", ");
                         const rankListMessage = commandOptions.rankListMessageTemplate
-                            .replace("{ranks}", ranks);
+                            .replaceAll("{ranks}", ranks);
                         await sendMessage(rankListMessage);
                     } else if (triggeredSubcmd.arg === "promote") {
                         if (rankLadder.mode === "auto") {
@@ -301,8 +301,8 @@ class RankCommandManager {
                         await viewerDatabase.setViewerRank(viewer, rankLadder.id, nextRankId);
 
                         const promoteMessage = commandOptions.promoteRankMessageTemplate
-                            .replace("{user}", username)
-                            .replace("{rank}", nextRank.name);
+                            .replaceAll("{user}", username)
+                            .replaceAll("{rank}", nextRank.name);
 
                         await sendMessage(promoteMessage);
                     } else if (triggeredSubcmd.arg === "demote") {
@@ -331,8 +331,8 @@ class RankCommandManager {
                         await viewerDatabase.setViewerRank(viewer, rankLadder.id, previousRankId);
 
                         const demoteMessage = commandOptions.demoteRankMessageTemplate
-                            .replace("{user}", username)
-                            .replace("{rank}", previousRank?.name ?? "not ranked");
+                            .replaceAll("{user}", username)
+                            .replaceAll("{rank}", previousRank?.name ?? "not ranked");
 
                         await sendMessage(demoteMessage);
                     } else if (triggeredSubcmd.arg === "set") {
@@ -360,8 +360,8 @@ class RankCommandManager {
                         await viewerDatabase.setViewerRank(viewer, rankLadder.id, rank.id);
 
                         const setRankMessage = commandOptions.setRankMessageTemplate
-                            .replace("{user}", username)
-                            .replace("{rank}", rank.name);
+                            .replaceAll("{user}", username)
+                            .replaceAll("{rank}", rank.name);
 
                         await sendMessage(setRankMessage);
                     } else if (triggeredSubcmd.arg === "remove") {
@@ -380,7 +380,7 @@ class RankCommandManager {
                         await viewerDatabase.setViewerRank(viewer, rankLadder.id, null);
 
                         const removeRankMessage = commandOptions.removeRankMessageTemplate
-                            .replace("{user}", username);
+                            .replaceAll("{user}", username);
 
                         await sendMessage(removeRankMessage);
                     } else {

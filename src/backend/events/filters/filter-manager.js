@@ -39,12 +39,51 @@ class FilterManager extends EventEmitter {
         this.emit("filterRegistered", filter);
     }
 
+    unregisterFilter(id) {
+        const existing = this.#registeredFilters.some(
+            f => f.id === id
+        );
+
+        if (!existing) {
+            logger.warn(`Could not unregister event filter '${id}'. Filter does not exist.`);
+            return;
+        }
+
+        this.#registeredFilters = this.#registeredFilters.filter(f => f.id !== id);
+
+        logger.debug(`Unregistered Event Filter ${id}`);
+
+        this.emit("FilterUnregistered", id);
+    }
+
     addEventToFilter(filterId, eventSourceId, eventId) {
+        if (this.getFiltersForEvent(eventSourceId, eventId).some(f => f.id === filterId)) {
+            logger.warn(`Filter ${filterId} already setup for event ${eventSourceId}:${eventId}`);
+            return;
+        }
+
         const additionalEvents = this.#additionalFilterEvents[filterId] ?? [];
 
         additionalEvents.push({ eventSourceId, eventId });
 
         this.#additionalFilterEvents[filterId] = additionalEvents;
+
+        logger.debug(`Added event ${eventSourceId}:${eventId} to filter ${filterId}`);
+    }
+
+    removeEventFromFilter(filterId, eventSourceId, eventId) {
+        let additionalEvents = this.#additionalFilterEvents[filterId] ?? [];
+
+        if (!additionalEvents.some(f => f.eventSourceId === eventSourceId && f.eventId === eventId)) {
+            logger.warn(`Filter ${filterId} does not have a plugin registration for event ${eventSourceId}:${eventId}`);
+            return;
+        }
+
+        additionalEvents = additionalEvents.filter(e => e.eventSourceId !== eventSourceId && e.eventId !== eventId);
+
+        this.#additionalFilterEvents[filterId] = additionalEvents;
+
+        logger.debug(`Removed event ${eventSourceId}:${eventId} from filter ${filterId}`);
     }
 
     getFilterById(filterId) {

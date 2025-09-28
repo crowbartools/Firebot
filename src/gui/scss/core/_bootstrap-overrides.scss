@@ -408,7 +408,7 @@
 
 .input-group .form-control {
     z-index: 0;
-    float: none;
+    // float: none;
 }
 
 .form-group {
@@ -434,12 +434,19 @@
 }
 
 .color-picker-wrapper .input-group .input-group-addon {
-    width: 40px;
-    border: 1px solid #24262A !important;
-    border-radius: 6px;
+    width: 45px;
+    border: transparent !important;
+    border-radius: 8px;
     &:first-child {
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
+    }
+}
+
+.color-picker-group-wrapper {
+    .color-picker-wrapper .input-group .input-group-addon:first-child {
+        border-top-left-radius: 0px !important;
+        border-bottom-left-radius: 0px !important;
     }
 }
 
@@ -732,4 +739,14 @@ code {
 .input-editor-selector-container .form-control,
 .input-editor-selector-container .CodeMirror {
     border-top-left-radius: 0px !important;
+}
+
+hr {
+    border-top: 1px solid #53545b;
+}
+
+// any input group addon that doesn't also have the class .color-picker-swatch
+.input-group-addon-normalize .input-group-addon:not(.color-picker-swatch) {
+    --fb-input-group-addon-width: 100px;
+    min-width: var(--fb-input-group-addon-width);
 }

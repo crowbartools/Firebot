@@ -1,4 +1,6 @@
 import { Event, app } from "electron";
+import appCloseListenerManager from "../../app-close-listener-manager";
+
 
 async function cleanup() {
     const {
@@ -21,9 +23,21 @@ export async function willQuit(event: Event) {
 
     event.preventDefault();
 
+    logger.debug("Running app close listeners...");
+
+    try {
+        await appCloseListenerManager.runListeners();
+    } catch {}
+
+    logger.debug("App close listeners complete.");
+
     logger.debug("Doing clean up...");
 
-    await cleanup();
+    try {
+        await cleanup();
+    } catch (e) {
+        logger.error("Error during cleanup before app exit", e);
+    }
 
     logger.debug("...clean up complete. Exiting app");
 

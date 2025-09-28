@@ -9,6 +9,7 @@ import effectQueueId from './effect-queue-id';
 import effectQueueLength from './effect-queue-length';
 import effectQueueName from './effect-queue-name';
 import effectQueueStatus from './effect-queue-status';
+import eventData from "./event-data";
 import overlayInstance from './overlay-instance';
 import presetListArg from './preset-list-arg';
 import user from './user';
@@ -17,6 +18,8 @@ import target from './target';
 import topMetadata from './top-metadata';
 import topMetadataRaw from './top-metadata-raw';
 import topMetadataUser from './top-metadata-user';
+import webhookHeader from './webhook-header';
+import webhookHeaders from './webhook-headers';
 import webhookId from './webhook-id';
 import webhookName from './webhook-name';
 import webhookPayload from './webhook-payload';
@@ -33,6 +36,7 @@ export default [
     effectQueueLength,
     effectQueueName,
     effectQueueStatus,
+    eventData,
     overlayInstance,
     presetListArg,
     user,
@@ -41,6 +45,8 @@ export default [
     topMetadata,
     topMetadataRaw,
     topMetadataUser,
+    webhookHeader,
+    webhookHeaders,
     webhookId,
     webhookName,
     webhookPayload

@@ -1,13 +1,14 @@
-import { CommandDefinition, UserCommand } from "../../../types/commands";
 import { FirebotChatMessage } from "../../../types/chat";
+import { CommandDefinition, UserCommand } from "../../../types/commands";
 import { Trigger } from "../../../types/triggers";
 import { TriggerType } from "../../common/EffectType";
 
-import logger from "../../logwrapper";
-import frontendCommunicator from "../../common/frontend-communicator";
 import accountAccess from "../../common/account-access";
-import chatHelpers from "../chat-helpers";
 import effectRunner from "../../common/effect-runner";
+import frontendCommunicator from "../../common/frontend-communicator";
+import logger from "../../logwrapper";
+import twitchStreamInfoManager from "../../twitch-api/stream-info-manager";
+import chatHelpers from "../chat-helpers";
 import commandManager from "./command-manager";
 
 interface TriggerWithArgs {
@@ -99,6 +100,10 @@ class CommandRunner {
     }
 
     private execute(command: CommandDefinition, userCommand: UserCommand, firebotChatMessage?: FirebotChatMessage, manual = false) {
+        if (command.onlyTriggerWhenChannelIsLive && !twitchStreamInfoManager.streamInfo.isLive && !manual) {
+            return;
+        }
+
         let effects = command.effects;
         if (command.subCommands && command.subCommands.length > 0 && userCommand.subcommandId != null) {
             if (userCommand.subcommandId === "fallback-subcommand" && command.fallbackSubcommand) {

@@ -21,11 +21,11 @@ class ScriptWebhookManager extends EventEmitter {
         super();
         this.scriptName = scriptName;
 
-        webhookManager.on("webhook-received", ({ config, payload }) => {
+        webhookManager.on("webhook-received", ({ config, payload, headers }) => {
             if (config.scriptId !== this.scriptName) {
                 return;
             }
-            this.emit("webhook-received", { config, payload });
+            this.emit("webhook-received", { config, payload, headers });
         });
     }
 
@@ -154,6 +154,9 @@ function buildModules(scriptManifest) {
         firebotRolesManager: require("../../../roles/firebot-roles-manager"),
         timerManager: require("../../../timers/timer-manager"),
         gameManager: require("../../../games/game-manager"),
+
+        overlayWidgetsManager: require("../../../overlay-widgets/overlay-widgets-manager"),
+        overlayWidgetConfigManager: require("../../../overlay-widgets/overlay-widget-config-manager"),
 
         /** @deprecated Use `currencyAccess`, `currencyManagerNew`, and `currencyCommandManager` instead */
         currencyDb: require("../../../database/currencyDatabase"),

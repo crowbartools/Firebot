@@ -1,3 +1,5 @@
+import { EffectList } from "./effects";
+
 export type BaseParameter = {
     /**
      * The title of the parameter
@@ -21,6 +23,7 @@ export type BaseParameter = {
     showBottomHr?: boolean;
     validation?: {
         required?: boolean;
+        pattern?: string;
     };
     default?: unknown;
 };
@@ -182,6 +185,63 @@ export type ButtonParameter = BaseParameter & {
     | "right-bottom";
 };
 
+export type HexColorParameter = BaseParameter & {
+    type: "hexcolor";
+    /**
+     * Default hex color value, e.g. #FF0000
+     */
+    default: string;
+    allowAlpha?: boolean;
+};
+
+export type FontNameParameter = BaseParameter & {
+    type: "font-name";
+    /**
+     * Default font name value, e.g. 'Arial'
+     */
+    default?: string;
+};
+
+export type FontOptions = {
+    family: string;
+    size: number;
+    weight: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
+    italic: boolean;
+    color: string;
+}
+
+export type FontOptionsParameter = BaseParameter & {
+    type: "font-options";
+    default: FontOptions;
+    allowAlpha?: boolean;
+};
+
+export type RadioCardsParameter<V = string> = BaseParameter & {
+    type: "radio-cards";
+    default?: V;
+    options: Array<{
+        value: V;
+        label: string;
+        description?: string;
+        iconClass?: string;
+    }>;
+    settings?: {
+        gridColumns?: number;
+    };
+};
+
+export type CodeMirrorParameter = BaseParameter & {
+    type: "codemirror";
+    default?: string;
+    settings?: {
+        mode: { name: "javascript", json?: boolean } | "htmlmixed" | "css" | { mode: "xml", htmlMode: true },
+        theme: 'blackboard',
+        lineNumbers?: boolean,
+        autoRefresh?: boolean,
+        showGutter?: boolean
+    }
+}
+
 export type UnknownParameter = BaseParameter & {
     [key: string]: unknown;
 };
@@ -201,10 +261,15 @@ type FirebotParameter =
     | RolePercentagesParameter
     | RoleNumberParameter
     | ButtonParameter
-    | UnknownParameter;
+    | UnknownParameter
+    | HexColorParameter
+    | FontNameParameter
+    | FontOptionsParameter
+    | RadioCardsParameter
+    | CodeMirrorParameter;
 
 export type ParametersConfig<P> = {
-    [K in keyof P]: P[K] extends string
+    [K in keyof P]: (P[K] extends string
         ?
         | StringParameter
         | PasswordParameter
@@ -226,9 +291,43 @@ export type ParametersConfig<P> = {
                                 ? RolePercentagesParameter
                                 : P[K] extends RoleNumberParameterValue
                                     ? RoleNumberParameter
-                                    : P[K] extends Firebot.EffectList
+                                    : P[K] extends EffectList
                                         ? EffectListParameter
-                                        : FirebotParameter;
+                                        : P[K] extends FontOptions
+                                            ? FontOptionsParameter : FirebotParameter);
+};
+
+export type ParametersWithNameConfig<P> = {
+    [K in keyof P]: (P[K] extends string
+        ?
+        | StringParameter
+        | PasswordParameter
+        | FilepathParameter
+        | ChatterSelectParameter
+        | CurrencySelectParameter
+        | EnumParameter<string>
+        | HexColorParameter
+        | FontNameParameter
+        | RadioCardsParameter<string>
+        | CodeMirrorParameter
+        : P[K] extends number
+            ? NumberParameter | EnumParameter<number> | RadioCardsParameter<number>
+            : P[K] extends boolean
+                ? BooleanParameter | EnumParameter<boolean> | RadioCardsParameter<boolean>
+                : P[K] extends Array<string>
+                    ? MultiselectParameter<string> | EditableListParameter
+                    : P[K] extends Array<number>
+                        ? MultiselectParameter<number>
+                        : P[K] extends void | undefined | null
+                            ? ButtonParameter
+                            : P[K] extends RolePercentageParameterValue
+                                ? RolePercentagesParameter
+                                : P[K] extends RoleNumberParameterValue
+                                    ? RoleNumberParameter
+                                    : P[K] extends EffectList
+                                        ? EffectListParameter
+                                        : P[K] extends FontOptions
+                                            ? FontOptionsParameter : FirebotParameter) & { name: K, /* showWhen?: { [K2 in keyof P]?: P[K2] }*/ };
 };
 
 type FirebotParamCategory<ParamConfig extends Record<string, unknown>> = {
@@ -246,22 +345,25 @@ export type FirebotParameterCategories<Config extends FirebotParams> = {
     [Category in keyof Config]: FirebotParamCategory<Config[Category]>;
 };
 
-export type WithValues<Categories extends FirebotParameterCategories> = {
-    [Category in keyof Categories]: Categories[Category] & {
-        settings: {
-            [Setting in keyof Categories[Category]["settings"]]: Categories[Category]["settings"][Setting] & {
-                value?: Categories[Category]["settings"][Setting]["default"];
-            };
-        };
-    }
-};
+export type FirebotParameterArray<Config extends Record<string, unknown>> = ParametersWithNameConfig<Config>[keyof Config][];
 
-type ValidParamKeys<T> = {
-    [P in keyof T]: Exclude<T[P], undefined> extends void | undefined | null
-        ? never
-        : P;
-}[keyof T];
 
-export type ResolvedParameters<Config extends FirebotParams> = {
-    [K in keyof Config]: Pick<Config[K], ValidParamKeys<Config[K]>>;
-}
+// export type WithValues<Categories extends FirebotParameterCategories> = {
+//     [Category in keyof Categories]: Categories[Category] & {
+//         settings: {
+//             [Setting in keyof Categories[Category]["settings"]]: Categories[Category]["settings"][Setting] & {
+//                 value?: Categories[Category]["settings"][Setting]["default"];
+//             };
+//         };
+//     }
+// };
+
+// type ValidParamKeys<T> = {
+//     [P in keyof T]: Exclude<T[P], undefined> extends void | undefined | null
+//         ? never
+//         : P;
+// }[keyof T];
+
+// export type ResolvedParameters<Config extends FirebotParams> = {
+//     [K in keyof Config]: Pick<Config[K], ValidParamKeys<Config[K]>>;
+// }

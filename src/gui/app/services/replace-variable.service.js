@@ -20,6 +20,11 @@
                 service.triggerCache = {};
             });
 
+            backendCommunicator.on("replace-variable-unregistered", (handle) => {
+                service.allVariables = service.allVariables.filter(v => v.handle !== handle);
+                service.triggerCache = {};
+            });
+
             backendCommunicator.on("additional-variable-events-updated", (additionalVariableEvents) => {
                 service.additionalVariableEvents = additionalVariableEvents;
                 service.triggerCache = {};

@@ -1,0 +1,15 @@
+<firebot-item-table
+    items="overlayWidgetsService.overlayWidgetConfigs"
+    on-items-update="onOverlayWidgetConfigsUpdated(items)"
+    headers="headers"
+    sort-tag-context="overlay widgets"
+    orderable="true"
+    add-new-button-text="New Overlay Widget"
+    on-add-new-clicked="overlayWidgetsService.showAddOrEditOverlayWidgetModal()"
+    context-menu-options="contextMenuOptions(item)"
+    no-data-message="No overlay widgets saved. You should make one! :)"
+    none-found-message="No overlay widgets found."
+    search-placeholder="Search overlay widgets"
+    test-button="false"
+    status-field="active"
+></firebot-item-table>
