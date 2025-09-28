@@ -57,7 +57,7 @@
                             <div ng-if="$ctrl.livePreviewActive && $ctrl.isNewWidget" class="help-block">You cannot change the type while live preview is active.</div>
                         </div>
 
-                        <div ng-if="$ctrl.widget.type">
+                        <div ng-if="$ctrl.widget.type && $ctrl.selectedType != null">
 
                             <div class="form-group" ng-class="{'has-error': $ctrl.formFieldHasError('name')}">
                                 <label for="name" class="control-label">Name</label>
@@ -198,8 +198,6 @@
                      */
                     const foundType = overlayWidgetsService.getOverlayWidgetType(type.id);
 
-                    $ctrl.selectedType = foundType;
-
                     if (foundType != null) {
                         $ctrl.userCanConfigure.position = foundType.userCanConfigure?.position ?? true;
                         $ctrl.userCanConfigure.zIndex = foundType.userCanConfigure?.zIndex ?? true;
@@ -208,6 +206,8 @@
                         $ctrl.typeSupportsLivePreview = foundType.supportsLivePreview === true;
                         $ctrl.initialAspectRatio = foundType.initialAspectRatio ?? { width: 16, height: 9 };
                     }
+
+                    $ctrl.selectedType = foundType;
                 };
 
                 /**

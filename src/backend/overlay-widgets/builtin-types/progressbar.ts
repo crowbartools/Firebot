@@ -1,8 +1,11 @@
 import { OverlayWidgetType, IOverlayWidgetUtils, WidgetOverlayEvent } from "../../../types/overlay-widgets";
+import { FontOptions } from "../../../types/parameters";
 
 type Settings = {
+    title?: string;
+    titleFontOptions?: FontOptions;
     barColor: string;
-    backgroundColor: string;
+    trackColor: string;
     minValue: number;
     maxValue: number;
 };
@@ -18,8 +21,31 @@ export const progressbar: OverlayWidgetType<Settings, State> = {
     icon: "fa-percentage",
     settingsSchema: [
         {
-            name: "backgroundColor",
-            title: "Background Color",
+            name: "title",
+            title: "Title",
+            type: "string",
+            default: "Progress Bar",
+            validation: {
+                required: false
+            }
+        },
+        {
+            name: "titleFontOptions",
+            title: "Title Font Options",
+            type: "font-options",
+            default: {
+                family: "Inter",
+                weight: 600,
+                size: 24,
+                italic: false,
+                color: "#FFFFFF"
+            },
+            allowAlpha: true,
+            showBottomHr: true
+        },
+        {
+            name: "trackColor",
+            title: "Track Color",
             type: "hexcolor",
             default: "#000000",
             validation: {
@@ -80,7 +106,16 @@ export const progressbar: OverlayWidgetType<Settings, State> = {
                 const containerStyles = {
                     width: "100%",
                     height: "100%",
-                    "background-color": config.settings?.backgroundColor || "#000000",
+                    display: "flex",
+                    "flex-direction": "column",
+                    "justify-content": "center",
+                    "align-items": "center"
+                };
+
+                const trackStyles = {
+                    width: "100%",
+                    height: "100%",
+                    "background-color": config.settings?.trackColor || "#000000",
                     border: "1px solid #ccc",
                     "border-radius": "100vh",
                     overflow: "hidden"
@@ -93,10 +128,24 @@ export const progressbar: OverlayWidgetType<Settings, State> = {
                     transition: "width 0.5s ease-in-out"
                 };
 
+                const titleStyles = {
+                    "font-family": config.settings?.titleFontOptions?.family || 'Inter, sans-serif',
+                    "font-size": (config.settings?.titleFontOptions?.size ? `${config.settings.titleFontOptions.size}px` : '48px'),
+                    "font-weight": config.settings?.titleFontOptions?.weight?.toString() || '400',
+                    "font-style": config.settings?.titleFontOptions?.italic ? 'italic' : 'normal',
+                    "color": config.settings?.titleFontOptions?.color || '#FFFFFF',
+                    "text-align": "center",
+                    "margin-bottom": "8px"
+                };
+
                 return `
                 <div id="progress-bar-container" style="${utils.stylesToString(containerStyles)}">
-                    <div id="progress-bar" style="${utils.stylesToString(progressBarStyles)}"></div>
-                </div>`;
+                    ${config.settings?.title ? `<div id="progress-bar-title" style="${utils.stylesToString(titleStyles)}">${config.settings?.title || ''}</div>` : ''}
+                    <div id="progress-bar-track" style="${utils.stylesToString(trackStyles)}">
+                        <div id="progress-bar" style="${utils.stylesToString(progressBarStyles)}"></div>
+                    </div>
+                </div>
+                `;
             };
 
             utils.handleOverlayEvent(generateWidgetHtml);
