@@ -37,7 +37,7 @@
                     }
                 },
                 {
-                    name: "STATE",
+                    name: "INFO",
                     icon: "fa-info-circle",
                     headerStyles: {
                         'min-width': '100px'

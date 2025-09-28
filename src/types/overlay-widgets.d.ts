@@ -55,6 +55,10 @@ export type OverlayWidgetType<
         /**
          * @default true
          */
+        zIndex?: boolean;
+        /**
+         * @default true
+         */
         entryAnimation?: boolean;
         /**
          * @default true
@@ -128,6 +132,7 @@ type OverlayWidgetConfig<Settings = Record<string, unknown>, State = Record<stri
      */
     active?: boolean;
     position: Position;
+    zIndex?: number;
     /**
      * Overlay instance ID where this widget should be shown.
      * If null or undefined, the widget will be shown on the default overlay.
@@ -142,7 +147,7 @@ type OverlayWidgetConfig<Settings = Record<string, unknown>, State = Record<stri
 export type WidgetOverlayEvent<Settings = Record<string, unknown>, State = Record<string, unknown>> = {
     name: "show" | "settings-update" | "state-update" | "message" | "remove";
     data: {
-        widgetConfig: Pick<OverlayWidgetConfig<Settings, State>, "id" | "type" | "position" | "entryAnimation" | "exitAnimation" | "settings" | "state" | "overlayInstance">;
+        widgetConfig: Pick<OverlayWidgetConfig<Settings, State>, "id" | "name" | "type" | "position" | "entryAnimation" | "exitAnimation" | "settings" | "state" | "overlayInstance" | "zIndex">;
         widgetType: Pick<OverlayWidgetType, "id" | "userCanConfigure">;
         previewMode: boolean;
         /**

@@ -11,6 +11,7 @@ const model: EffectType<{
     saveChanges?: boolean;
     settings?: Record<string, unknown>;
     position?: Position | null;
+    zIndex?: number | null;
     overlayInstance?: string | null;
 }> = {
     definition: {
@@ -67,6 +68,24 @@ const model: EffectType<{
                                 min-width="25"
                                 min-height="25"
                             ></overlay-position-editor>
+                        </div>
+                    </div>
+
+                    <div>
+                        <firebot-checkbox
+                            label="Edit z-index"
+                            ng-init="editZIndex = (effect.zIndex != null && effect.zIndex !== '')"
+                            model="editZIndex"
+                            ng-click="topLevelPropToggled('zIndex', editZIndex)"
+                            style="margin: 0px 15px 0px 0px"
+                        />
+                        <div ng-if="editZIndex" class="ml-5 mb-10">
+                            <input
+                                type="number"
+                                class="form-control"
+                                ng-model="effect.zIndex"
+                                placeholder="Enter number"
+                            />
                         </div>
                     </div>
 
@@ -189,6 +208,7 @@ const model: EffectType<{
             $scope.editSetting = {};
             $scope.effect.settings = {};
             $scope.effect.position = null;
+            $scope.effect.zIndex = null;
             $scope.effect.overlayInstance = null;
             $scope.effect.mode = null;
             loadSelectedConfig(item.id);
@@ -198,6 +218,7 @@ const model: EffectType<{
             $scope.editSetting = {};
             $scope.effect.settings = {};
             $scope.effect.position = null;
+            $scope.effect.zIndex = null;
             $scope.effect.overlayInstance = null;
         });
     },
@@ -242,6 +263,7 @@ const model: EffectType<{
                     ...effect.settings
                 },
                 position: effect.position ?? widgetConfig.position,
+                zIndex: effect.zIndex ?? widgetConfig.zIndex,
                 overlayInstance: effect.overlayInstance ?? widgetConfig.overlayInstance
             };
 

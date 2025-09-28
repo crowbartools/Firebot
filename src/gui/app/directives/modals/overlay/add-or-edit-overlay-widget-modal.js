@@ -101,6 +101,18 @@
                                 ></overlay-position-editor>
                             </div>
 
+                            <div class="form-group" ng-if="$ctrl.userCanConfigure.zIndex">
+                                <label for="z-index" class="control-label">z-index <tooltip text="'Controls which items appear in front when things overlap. Items with a higher number are shown on top of items with a lower number.'"></tooltip></label>
+                                <input
+                                    type="number"
+                                    id="z-index"
+                                    name="z-index"
+                                    class="form-control"
+                                    ng-model="$ctrl.widget.zIndex"
+                                />
+                                <span class="help-block">Optional.</span>
+                            </div>
+
                             <div class="form-group" ng-if="$ctrl.userCanConfigure.entryAnimation">
                                 <label for="position" class="control-label">Entry Animation</label>
                                 <animation-select
@@ -169,6 +181,7 @@
 
                 $ctrl.userCanConfigure = {
                     position: true,
+                    zIndex: true,
                     entryAnimation: true,
                     exitAnimation: true
                 };
@@ -186,6 +199,7 @@
 
                     if (foundType != null) {
                         $ctrl.userCanConfigure.position = foundType.userCanConfigure?.position ?? true;
+                        $ctrl.userCanConfigure.zIndex = foundType.userCanConfigure?.zIndex ?? true;
                         $ctrl.userCanConfigure.entryAnimation = foundType.userCanConfigure?.entryAnimation ?? true;
                         $ctrl.userCanConfigure.exitAnimation = foundType.userCanConfigure?.exitAnimation ?? true;
                         $ctrl.typeSupportsLivePreview = foundType.supportsLivePreview === true;
@@ -284,6 +298,22 @@
 
                     if ($ctrl.widget.overlayInstance === "") {
                         $ctrl.widget.overlayInstance = null;
+                    }
+
+                    if (!$ctrl.userCanConfigure.position) {
+                        delete $ctrl.widget.position;
+                    }
+
+                    if (!$ctrl.userCanConfigure.zIndex) {
+                        delete $ctrl.widget.zIndex;
+                    }
+
+                    if (!$ctrl.userCanConfigure.entryAnimation) {
+                        delete $ctrl.widget.entryAnimation;
+                    }
+
+                    if (!$ctrl.userCanConfigure.exitAnimation) {
+                        delete $ctrl.widget.exitAnimation;
                     }
 
                     overlayWidgetsService.saveOverlayWidgetConfig($ctrl.widget, $ctrl.isNewWidget).then((successful) => {

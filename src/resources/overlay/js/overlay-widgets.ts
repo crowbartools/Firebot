@@ -44,9 +44,13 @@ class OverlayWidgetUtils implements IOverlayWidgetUtils {
         }
     }
 
-    getWidgetPositionStyle(position?: Position) {
+    getWidgetPositionStyle(position?: Position, zIndex?: number): string {
         if (!position) {
             position = this.widgetEvent.data.widgetConfig.position;
+        }
+
+        if (zIndex == null) {
+            zIndex = this.widgetEvent.data.widgetConfig.zIndex;
         }
 
         const styles = {
@@ -54,7 +58,8 @@ class OverlayWidgetUtils implements IOverlayWidgetUtils {
             top: position.y !== null ? `${position.y}px` : undefined,
             left: position.x !== null ? `${position.x}px` : undefined,
             width: position.width !== null ? `${position.width}px` : undefined,
-            height: position.height !== null ? `${position.height}px` : undefined
+            height: position.height !== null ? `${position.height}px` : undefined,
+            'z-index': zIndex != null ? zIndex : undefined,
         };
 
         return Object.entries(styles).reduce((acc, [key, value]) => {
@@ -130,13 +135,18 @@ class OverlayWidgetUtils implements IOverlayWidgetUtils {
             return widgetElement;
         }
 
-        //@ts-ignore
-        (Motion as any).animate(widgetElement, {
+        const animateConfig = {
             top: position.y,
             left: position.x,
             width: position.width,
             height: position.height
-        });
+        };
+
+        const zIndex = this.widgetEvent.data.widgetConfig.zIndex;
+        animateConfig['z-index'] = zIndex ?? 0;
+
+        //@ts-ignore
+        (Motion as any).animate(widgetElement, animateConfig);
 
         return widgetElement;
     }
