@@ -140,7 +140,7 @@
                                 role="button"
                                 class="effect-bar"
                                 ng-class="{'disabled': !effect.active, 'has-bottom-panel': $ctrl.showBottomPanel(effect)}"
-                                ng-style="{'cursor': !$ctrl.getEffectNameById(effect.type) ? 'no-drop' : 'pointer'}"
+                                ng-style="{'cursor': !$ctrl.getEffectNameById(effect.type) ? 'not-allowed' : 'pointer'}"
                                 ng-click="!!$ctrl.getEffectNameById(effect.type) && $ctrl.openEditEffectModal(effect, $index, $ctrl.trigger, false)"
                                 ng-mouseenter="hovering = true"
                                 ng-mouseleave="hovering = false"
