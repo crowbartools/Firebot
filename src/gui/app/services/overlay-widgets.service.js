@@ -201,6 +201,10 @@
                 });
             };
 
+            service.triggerOverlayWidgetUIAction = (widgetId, actionId) => {
+                backendCommunicator.fireEvent("overlay-widgets:trigger-ui-action", { widgetId, actionId });
+            };
+
             return service;
         });
 })();

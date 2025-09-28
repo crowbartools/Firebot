@@ -1,9 +1,10 @@
-import { OverlayWidgetConfig, OverlayWidgetType, WidgetEventHandler } from "../../types/overlay-widgets";
+import { OverlayWidgetConfig, OverlayWidgetType, WidgetEventHandler, WidgetUIAction } from "../../types/overlay-widgets";
 import { TypedEmitter } from "tiny-typed-emitter";
 import frontendCommunicator from "../common/frontend-communicator";
 import overlayWidgetConfigManager from "./overlay-widget-config-manager";
 import websocketServerManager from "../../server/websocket-server-manager";
 import { wait } from "../utility";
+import logger from "../logwrapper";
 
 type Events = {
     "overlay-widget-type-registered": (overlayWidgetType: OverlayWidgetType) => void
@@ -49,7 +50,7 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
     async sendWidgetEventToOverlay<EventName extends WidgetOverlayEvent["name"]>(eventName: EventName, widgetConfig: OverlayWidgetConfig, messageInfo: EventName extends "message" ? { messageName: string; messageData?: unknown } : undefined = undefined, previewMode = false) {
         const widgetType = this.getOverlayWidgetType(widgetConfig.type);
         if (!widgetType) {
-            console.warn(`Overlay widget type with ID '${widgetConfig.type}' not found for widget ID '${widgetConfig.id}'.`);
+            logger.warn(`Overlay widget type with ID '${widgetConfig.type}' not found for widget ID '${widgetConfig.id}'.`);
             return;
         }
 
@@ -88,7 +89,7 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
         });
     }
 
-    private formatForFrontend(overlayWidgetType: OverlayWidgetType): Pick<OverlayWidgetType, "id" | "name" | "icon" | "description" | "settingsSchema" | "userCanConfigure" | "supportsLivePreview" | "initialState" | "initialAspectRatio"> {
+    private formatForFrontend(overlayWidgetType: OverlayWidgetType): Pick<OverlayWidgetType, "id" | "name" | "icon" | "description" | "settingsSchema" | "userCanConfigure" | "supportsLivePreview" | "initialState" | "initialAspectRatio"> & { uiActions?: Omit<WidgetUIAction, "click">[] } {
         return {
             id: overlayWidgetType.id,
             name: overlayWidgetType.name,
@@ -98,7 +99,12 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
             userCanConfigure: overlayWidgetType.userCanConfigure,
             supportsLivePreview: overlayWidgetType.supportsLivePreview ?? false,
             initialState: overlayWidgetType.initialState,
-            initialAspectRatio: overlayWidgetType.initialAspectRatio
+            initialAspectRatio: overlayWidgetType.initialAspectRatio,
+            uiActions: overlayWidgetType.uiActions?.map(a => ({
+                id: a.id,
+                label: a.label,
+                icon: a.icon
+            }))
         };
     }
 }
@@ -249,6 +255,37 @@ frontendCommunicator.onAsync("overlay-widgets:stop-live-preview", async (config:
         if (existingConfig && existingConfig.active !== false) {
             manager.sendWidgetEventToOverlay("show", existingConfig);
         }
+    }
+});
+
+frontendCommunicator.on("overlay-widgets:trigger-ui-action", async (data: { widgetId: string; actionId: string }) => {
+    const config = overlayWidgetConfigManager.getItem(data.widgetId);
+    if (!config) {
+        logger.warn(`Overlay widget config with ID '${data.widgetId}' not found for UI action.`);
+        return;
+    }
+    const type = manager.getOverlayWidgetType(config.type);
+    if (!type) {
+        logger.warn(`Overlay widget type with ID '${config.type}' not found for UI action on widget ID '${data.widgetId}'.`);
+        return;
+    }
+    const action = type.uiActions?.find(a => a.id === data.actionId);
+    if (!action) {
+        logger.warn(`UI action with ID '${data.actionId}' not found on widget type '${type.id}' for widget ID '${data.widgetId}'.`);
+        return;
+    }
+    if (!action.click) {
+        logger.warn(`UI action with ID '${data.actionId}' on widget type '${type.id}' does not have a click handler.`);
+        return;
+    }
+
+    try {
+        const result = await action.click(config);
+        if (result && result.newState !== undefined) {
+            overlayWidgetConfigManager.setWidgetStateById(config.id, result.newState);
+        }
+    } catch (error) {
+        logger.error(`Error occurred while triggering UI action '${data.actionId}' on widget ID '${data.widgetId}':`, error);
     }
 });
 
