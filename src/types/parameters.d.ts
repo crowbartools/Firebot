@@ -230,6 +230,18 @@ export type RadioCardsParameter<V = string> = BaseParameter & {
     };
 };
 
+export type CodeMirrorParameter = BaseParameter & {
+    type: "codemirror";
+    default?: string;
+    settings?: {
+        mode: { name: "javascript", json?: boolean } | "htmlmixed" | "css" | { mode: "xml", htmlMode: true },
+        theme: 'blackboard',
+        lineNumbers?: boolean,
+        autoRefresh?: boolean,
+        showGutter?: boolean
+    }
+}
+
 export type UnknownParameter = BaseParameter & {
     [key: string]: unknown;
 };
@@ -252,7 +264,9 @@ type FirebotParameter =
     | UnknownParameter
     | HexColorParameter
     | FontNameParameter
-    | FontOptionsParameter;
+    | FontOptionsParameter
+    | RadioCardsParameter
+    | CodeMirrorParameter;
 
 export type ParametersConfig<P> = {
     [K in keyof P]: (P[K] extends string
@@ -295,6 +309,7 @@ export type ParametersWithNameConfig<P> = {
         | HexColorParameter
         | FontNameParameter
         | RadioCardsParameter<string>
+        | CodeMirrorParameter
         : P[K] extends number
             ? NumberParameter | EnumParameter<number> | RadioCardsParameter<number>
             : P[K] extends boolean

@@ -142,17 +142,17 @@ type OverlayWidgetConfig<Settings = Record<string, unknown>, State = Record<stri
 export type WidgetOverlayEvent<Settings = Record<string, unknown>, State = Record<string, unknown>> = {
     name: "show" | "settings-update" | "state-update" | "message" | "remove";
     data: {
-        widgetConfig: Pick<
-        OverlayWidgetConfig<Settings, State>,
-        "id" | "type" | "position" | "entryAnimation" | "exitAnimation" | "settings" | "state" | "overlayInstance"
-        >;
-        widgetType: Pick<
-        OverlayWidgetType,
-        "id" | "userCanConfigure"
-        >;
+        widgetConfig: Pick<OverlayWidgetConfig<Settings, State>, "id" | "type" | "position" | "entryAnimation" | "exitAnimation" | "settings" | "state" | "overlayInstance">;
+        widgetType: Pick<OverlayWidgetType, "id" | "userCanConfigure">;
         previewMode: boolean;
-        // Optional additional data for the event (e.g., message content for "message" events)
-        data?: unknown;
+        /**
+         * For "message" events, the name of the message being sent.
+         */
+        messageName?: string;
+        /**
+         * For "message" events, any data associated with the message.
+         */
+        messageData?: unknown;
     };
 }
 

@@ -70,6 +70,8 @@ exports.loadEffects = () => {
         'overlay-widgets/update-overlay-widget-settings',
         'overlay-widgets/update-progress-bar',
         'overlay-widgets/update-dynamic-countdown',
+        'overlay-widgets/set-custom-widget-state',
+        'overlay-widgets/send-message-to-custom-widget',
 
         'twitch/ad-break',
         'twitch/announcement',

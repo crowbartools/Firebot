@@ -228,6 +228,7 @@
         dynamicParameterRegistry.register("font-name", { tag: "fb-param-font-name" });
         dynamicParameterRegistry.register("font-options", { tag: "fb-param-font-options" });
         dynamicParameterRegistry.register("radio-cards", { tag: "fb-param-radio-cards" });
+        dynamicParameterRegistry.register("codemirror", { tag: "fb-param-code-mirror" });
 
         uiExtensionsService.setAsReady();
     });

@@ -5,7 +5,7 @@
         .module('firebotApp')
         .component("firebotOverlayWidgetSelect", {
             bindings: {
-                overlayWidgetType: "@",
+                overlayWidgetTypes: "<",
                 modelValue: "=ngModel",
                 onSelect: "&?",
                 disabled: "<?"
@@ -32,10 +32,10 @@
                 });
 
                 $ctrl.$onInit = () => {
-                    $ctrl.configs = overlayWidgetsService.getOverlayWidgetConfigsByType($ctrl.overlayWidgetType);
+                    $ctrl.configs = overlayWidgetsService.getOverlayWidgetConfigsByTypes($ctrl.overlayWidgetTypes);
 
-                    const widgetType = overlayWidgetsService.getOverlayWidgetType($ctrl.overlayWidgetType);
-                    $ctrl.typeName = widgetType?.name ?? "widget";
+                    const widgetTypes = $ctrl.overlayWidgetTypes.map(t => overlayWidgetsService.getOverlayWidgetType(t)).filter(t => t != null);
+                    $ctrl.typeName = widgetTypes.length === 1 ? widgetTypes[0].name : "widget";
                 };
             }
         });

@@ -92,8 +92,16 @@
                 return service.overlayWidgetConfigs.filter(w => w.type === typeId);
             };
 
+            service.getOverlayWidgetConfigsByTypes = (typeIds) => {
+                return service.overlayWidgetConfigs.filter(w => typeIds.includes(w.type));
+            };
+
             service.hasOverlayWidgetConfigsOfType = (typeId) => {
                 return service.overlayWidgetConfigs.some(w => w.type === typeId);
+            };
+
+            service.hasOverlayWidgetConfigsOfTypes = (typeIds) => {
+                return service.overlayWidgetConfigs.some(w => typeIds.includes(w.type));
             };
 
             /**

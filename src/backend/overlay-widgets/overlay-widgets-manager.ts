@@ -46,7 +46,7 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
             }));
     }
 
-    async sendWidgetEventToOverlay(eventName: WidgetOverlayEvent["name"], widgetConfig: OverlayWidgetConfig, previewMode = false) {
+    async sendWidgetEventToOverlay<EventName extends WidgetOverlayEvent["name"]>(eventName: EventName, widgetConfig: OverlayWidgetConfig, messageInfo: EventName extends "message" ? { messageName: string; messageData?: unknown } : undefined = undefined, previewMode = false) {
         const widgetType = this.getOverlayWidgetType(widgetConfig.type);
         if (!widgetType) {
             console.warn(`Overlay widget type with ID '${widgetConfig.type}' not found for widget ID '${widgetConfig.id}'.`);
@@ -82,7 +82,8 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
             data: {
                 widgetConfig,
                 widgetType,
-                previewMode
+                previewMode,
+                ...messageInfo
             }
         });
     }
@@ -133,7 +134,7 @@ let livePreviewWidgetConfig: OverlayWidgetConfig | null = null;
 
 const removeCurrentLivePreview = async () => {
     if (livePreviewWidgetConfig) {
-        manager.sendWidgetEventToOverlay("remove", livePreviewWidgetConfig, true);
+        manager.sendWidgetEventToOverlay("remove", livePreviewWidgetConfig, undefined, true);
         livePreviewWidgetConfig = null;
         await wait(100);
     }
@@ -196,6 +197,9 @@ overlayWidgetConfigManager.on("widget-config-removed", async (config) => {
     if (livePreviewWidgetConfig && livePreviewWidgetConfig.id === config.id) {
         await removeCurrentLivePreview();
     }
+    if (config.active === false) {
+        return;
+    }
     manager.sendWidgetEventToOverlay("remove", config);
 });
 
@@ -223,7 +227,7 @@ const handleLivePreviewUpdate = async (config: OverlayWidgetConfig) => {
 
     livePreviewWidgetConfig = config;
 
-    manager.sendWidgetEventToOverlay(isNew ? "show" : "settings-update", livePreviewWidgetConfig, true);
+    manager.sendWidgetEventToOverlay(isNew ? "show" : "settings-update", livePreviewWidgetConfig, undefined, true);
 };
 
 frontendCommunicator.onAsync("overlay-widgets:start-live-preview", handleLivePreviewUpdate);
@@ -258,8 +262,9 @@ websocketServerManager.on("overlay-connected", (instanceName: "Default" | string
     for (const widgetConfig of widgetConfigs) {
         manager.sendWidgetEventToOverlay("show", widgetConfig);
     }
+
     if (livePreviewWidgetConfig) {
-        manager.sendWidgetEventToOverlay("show", livePreviewWidgetConfig, true);
+        manager.sendWidgetEventToOverlay("show", livePreviewWidgetConfig, undefined, true);
     }
 });
 

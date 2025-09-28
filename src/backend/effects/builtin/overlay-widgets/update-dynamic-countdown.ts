@@ -27,7 +27,7 @@ const model: EffectType<{
         <div ng-show="hasCountdownWidgets">
             <eos-container header="Countdown">
                 <firebot-overlay-widget-select
-                    overlay-widget-type="firebot:countdown-dynamic"
+                    overlay-widget-types="['firebot:countdown-dynamic']"
                     ng-model="effect.countdownWidgetId"
                 />
             </eos-container>

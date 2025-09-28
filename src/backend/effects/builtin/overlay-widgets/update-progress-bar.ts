@@ -22,10 +22,9 @@ const model: EffectType<{
         </eos-container>
         <div ng-show="hasProgressBarWidgets">
             <eos-container header="Progress Bar">
-                <firebot-searchable-select
+                <firebot-overlay-widget-select
+                    overlay-widget-types="['firebot:progressbar']"
                     ng-model="effect.progressBarWidgetId"
-                    placeholder="Select or search for a progress bar..."
-                    items="progressBarWidgets"
                 />
             </eos-container>
 
@@ -51,9 +50,7 @@ const model: EffectType<{
     `,
     optionsController: ($scope, overlayWidgetsService) => {
 
-        $scope.progressBarWidgets = overlayWidgetsService.getOverlayWidgetConfigsByType("firebot:progressbar");
-
-        $scope.hasProgressBarWidgets = $scope.progressBarWidgets.length > 0;
+        $scope.hasProgressBarWidgets = overlayWidgetsService.hasOverlayWidgetConfigsOfType("firebot:progressbar");
 
         $scope.actions = [
             {
