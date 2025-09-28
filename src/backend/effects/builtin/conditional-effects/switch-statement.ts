@@ -217,27 +217,27 @@ const model: EffectType<EffectModel> = {
             return;
         }
 
-        return runEffects({
+        const result = await runEffects({
             trigger: trigger,
             outputs,
             effects: effectList
-        }).then((result) => {
-            if (result?.success && result?.stopEffectExecution) {
-                return {
-                    success: true,
-                    outputs: effect.bubbleOutputs ? result?.outputs : undefined,
-                    execution: {
-                        stop: true,
-                        bubbleStop: true
-                    }
-                };
-            }
+        });
 
+        if (result?.success && result?.stopEffectExecution) {
             return {
                 success: true,
-                outputs: effect.bubbleOutputs ? result?.outputs : undefined
+                outputs: effect.bubbleOutputs ? result?.outputs : undefined,
+                execution: {
+                    stop: true,
+                    bubbleStop: true
+                }
             };
-        });
+        }
+
+        return {
+            success: true,
+            outputs: effect.bubbleOutputs ? result?.outputs : undefined
+        };
     }
 };
 
