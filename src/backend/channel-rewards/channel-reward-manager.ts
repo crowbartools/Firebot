@@ -395,8 +395,8 @@ class ChannelRewardManager {
                     const twitchChat = require("../chat/twitch-chat");
                     await twitchChat.sendChatMessage(
                         restrictionMessage
-                            .replace("{user}", metadata.username)
-                            .replace("{reason}", reason)
+                            .replaceAll("{user}", metadata.username)
+                            .replaceAll("{reason}", reason)
                     );
                 }
 

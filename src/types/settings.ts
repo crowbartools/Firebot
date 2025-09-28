@@ -91,6 +91,7 @@ export type FirebotSettingsTypes = {
     SidebarControlledServices: string[];
     SidebarExpanded: boolean;
     SoundsEnabled: "On" | "Off";
+    StreamerExemptFromCooldowns: boolean;
     Theme: string;
     TriggerUpcomingAdBreakMinutes: number;
     TtsVoiceRate: number;
@@ -212,6 +213,7 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     SidebarControlledServices: ["chat"],
     SidebarExpanded: true,
     SoundsEnabled: "On",
+    StreamerExemptFromCooldowns: false,
     Theme: "Obsidian",
     TriggerUpcomingAdBreakMinutes: 0,
     TtsVoiceRate: 1,

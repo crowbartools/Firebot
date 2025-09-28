@@ -203,8 +203,8 @@ class CommandHandler {
 
                 await twitchChat.sendChatMessage(
                     cooldownMessage
-                        .replace("{user}", commandSender)
-                        .replace("{timeLeft}", util.secondsForHumans(remainingCooldown)),
+                        .replaceAll("{user}", commandSender)
+                        .replaceAll("{timeLeft}", util.secondsForHumans(remainingCooldown)),
                     null,
                     null,
                     // We default to replies on purpose here
@@ -266,8 +266,8 @@ class CommandHandler {
 
                     await twitchChat.sendChatMessage(
                         restrictionMessage
-                            .replace("{user}", commandSender)
-                            .replace("{reason}", reason),
+                            .replaceAll("{user}", commandSender)
+                            .replaceAll("{reason}", reason),
                         null,
                         null,
                         restrictionData.sendAsReply === true ? firebotChatMessage.id : undefined

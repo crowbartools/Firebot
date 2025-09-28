@@ -2,7 +2,6 @@ import { SystemCommand } from "../../types/commands";
 import currencyAccess, { Currency } from "./currency-access";
 import currencyManager from "./currency-manager";
 import commandManager from "../chat/commands/command-manager";
-import viewerDatabase from "../viewers/viewer-database";
 import logger from "../logwrapper";
 import util from "../utility";
 
@@ -257,9 +256,9 @@ class CurrencyCommandManager {
                     const amount = await currencyManager.getViewerCurrencyAmount(event.userCommand.commandSender, currencyId);
                     if (!isNaN(amount)) {
                         const balanceMessage = commandOptions.currencyBalanceMessageTemplate
-                            .replace("{user}", event.userCommand.commandSender)
-                            .replace("{currency}", currencyName)
-                            .replace("{amount}", util.commafy(amount));
+                            .replaceAll("{user}", event.userCommand.commandSender)
+                            .replaceAll("{currency}", currencyName)
+                            .replaceAll("{amount}", util.commafy(amount));
 
                         await twitchChat.sendChatMessage(balanceMessage, commandOptions.whisperCurrencyBalanceMessage ? event.userCommand.commandSender : null);
                     } else {
@@ -281,9 +280,9 @@ class CurrencyCommandManager {
 
                         if (status) {
                             const addMessageTemplate = commandOptions.addMessageTemplate
-                                .replace("{user}", username)
-                                .replace("{currency}", currencyName)
-                                .replace("{amount}", util.commafy(currencyAdjust));
+                                .replaceAll("{user}", username)
+                                .replaceAll("{currency}", currencyName)
+                                .replaceAll("{amount}", util.commafy(currencyAdjust));
                             await twitchChat.sendChatMessage(addMessageTemplate);
                         } else {
                             // Error removing currency.
@@ -302,9 +301,9 @@ class CurrencyCommandManager {
                         const adjustSuccess = await currencyManager.adjustCurrencyForViewer(username, currencyId, currencyAdjust);
                         if (adjustSuccess) {
                             const removeMessageTemplate = commandOptions.removeMessageTemplate
-                                .replace("{user}", username)
-                                .replace("{currency}", currencyName)
-                                .replace("{amount}", util.commafy(parseInt(args[2])));
+                                .replaceAll("{user}", username)
+                                .replaceAll("{currency}", currencyName)
+                                .replaceAll("{amount}", util.commafy(parseInt(args[2])));
                             await twitchChat.sendChatMessage(removeMessageTemplate);
                         } else {
                             // Error removing currency.
@@ -324,9 +323,9 @@ class CurrencyCommandManager {
 
                         if (status) {
                             const setMessageTemplate = commandOptions.setMessageTemplate
-                                .replace("{user}", username)
-                                .replace("{currency}", currencyName)
-                                .replace("{amount}", util.commafy(currencyAdjust));
+                                .replaceAll("{user}", username)
+                                .replaceAll("{currency}", currencyName)
+                                .replaceAll("{amount}", util.commafy(currencyAdjust));
                             await twitchChat.sendChatMessage(setMessageTemplate);
                         } else {
                             // Error removing currency.
@@ -409,8 +408,8 @@ class CurrencyCommandManager {
                         currencyManager.addCurrencyToOnlineViewers(currencyId, currencyAdjust, true);
 
                         const addAllMessageTemplate = commandOptions.addAllMessageTemplate
-                            .replace("{currency}", currencyName)
-                            .replace("{amount}", util.commafy(currencyAdjust));
+                            .replaceAll("{currency}", currencyName)
+                            .replaceAll("{amount}", util.commafy(currencyAdjust));
                         await twitchChat.sendChatMessage(addAllMessageTemplate);
 
                         break;
@@ -424,8 +423,8 @@ class CurrencyCommandManager {
                         currencyManager.addCurrencyToOnlineViewers(currencyId, currencyAdjust, true);
 
                         const removeAllMessageTemplate = commandOptions.removeAllMessageTemplate
-                            .replace("{currency}", currencyName)
-                            .replace("{amount}", util.commafy(parseInt(args[1])));
+                            .replaceAll("{currency}", currencyName)
+                            .replaceAll("{amount}", util.commafy(parseInt(args[1])));
                         await twitchChat.sendChatMessage(removeAllMessageTemplate);
 
                         break;
@@ -436,9 +435,9 @@ class CurrencyCommandManager {
                             const amount = await currencyManager.getViewerCurrencyAmount(username, currencyId);
                             if (!isNaN(amount)) {
                                 const balanceMessage = commandOptions.currencyBalanceMessageTemplate
-                                    .replace("{user}", username)
-                                    .replace("{currency}", currencyName)
-                                    .replace("{amount}", util.commafy(amount));
+                                    .replaceAll("{user}", username)
+                                    .replaceAll("{currency}", currencyName)
+                                    .replaceAll("{amount}", util.commafy(amount));
 
                                 await twitchChat.sendChatMessage(balanceMessage, commandOptions.whisperCurrencyBalanceMessage ? username : null);
                             } else {
@@ -448,9 +447,9 @@ class CurrencyCommandManager {
                             const amount = await currencyManager.getViewerCurrencyAmount(event.userCommand.commandSender, currencyId);
                             if (!isNaN(amount)) {
                                 const balanceMessage = commandOptions.currencyBalanceMessageTemplate
-                                    .replace("{user}", event.userCommand.commandSender)
-                                    .replace("{currency}", currencyName)
-                                    .replace("{amount}", util.commafy(amount));
+                                    .replaceAll("{user}", event.userCommand.commandSender)
+                                    .replaceAll("{currency}", currencyName)
+                                    .replaceAll("{amount}", util.commafy(amount));
 
                                 await twitchChat.sendChatMessage(balanceMessage, commandOptions.whisperCurrencyBalanceMessage ? event.userCommand.commandSender : null);
                             } else {

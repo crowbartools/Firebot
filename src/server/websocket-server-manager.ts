@@ -142,6 +142,13 @@ class WebSocketServerManager extends EventEmitter {
                 this.refreshOverlays();
             }
         });
+
+        effectManager.on("effectUnregistered", ({ hasOverlayEffect }) => {
+            if (hasOverlayEffect) {
+                // tell the overlay to refresh because a effect with an overlay extension has been removed
+                this.sendToOverlay("OVERLAY:REFRESH", { global: true });
+            }
+        });
     }
 
     sendToOverlay(eventName: string, meta: Record<string, unknown> = {}, overlayInstance: string = null) {

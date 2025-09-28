@@ -77,6 +77,22 @@ class ReplaceVariableManager extends EventEmitter {
         frontendCommunicator.send("replace-variable-registered", variable.definition);
     }
 
+    unregisterReplaceVariable(handle) {
+        if (!this.#registeredVariableHandlers.has(handle)) {
+            logger.warn(`A variable with the handle ${handle} does not exist.`);
+            return;
+        }
+
+        this.#registeredVariableHandlers.delete(handle);
+        this.#variableAndAliasHandlers = this._generateVariableAndAliasHandlers();
+
+        logger.debug(`Unregistered replace variable ${handle}`);
+
+        this.emit("replaceVariableUnregistered", handle);
+
+        frontendCommunicator.send("replace-variable-unregistered", handle);
+    }
+
     getReplaceVariables() {
         // Map register variables Map to array
         const registeredVariables = this.#registeredVariableHandlers;
@@ -86,6 +102,19 @@ class ReplaceVariableManager extends EventEmitter {
             variables.push(value);
         }
         return variables;
+    }
+
+    #getVariablesForEvent(eventSourceId, eventId) {
+        return this.getReplaceVariables().filter((v) => {
+            if (!v.triggers) {
+                return true;
+            }
+
+            const trigger = v.triggers["event"];
+            return trigger === true
+                || (Array.isArray(trigger)
+                    && trigger.some(e => e === `${eventSourceId}:${eventId}`));
+        });
     }
 
     getVariableHandlers() {
@@ -198,11 +227,34 @@ class ReplaceVariableManager extends EventEmitter {
     }
 
     addEventToVariable(variableHandle, eventSourceId, eventId) {
+        if (this.#getVariablesForEvent(eventSourceId, eventId).some(f => f.handle === variableHandle)) {
+            logger.warn(`Variable ${variableHandle} already setup for event ${eventSourceId}:${eventId}`);
+            return;
+        }
+
         const additionalEvents = this.additionalVariableEvents[variableHandle] ?? [];
 
         additionalEvents.push({ eventSourceId, eventId });
 
         this.additionalVariableEvents[variableHandle] = additionalEvents;
+
+        logger.debug(`Added event ${eventSourceId}:${eventId} to variable ${variableHandle}`);
+
+        frontendCommunicator.send("additional-variable-events-updated", this.additionalVariableEvents);
+    }
+
+    removeEventFromVariable(variableHandle, eventSourceId, eventId) {
+        let additionalEvents = this.additionalVariableEvents[variableHandle] ?? [];
+
+        if (!additionalEvents.some(e => e.eventSourceId === eventSourceId && e.eventId === eventId)) {
+            logger.warn(`Variable ${variableHandle} does not have a plugin registration for event ${eventSourceId}:${eventId}`);
+            return;
+        }
+
+        additionalEvents = additionalEvents.filter(e => e.eventSourceId !== eventSourceId && e.eventId !== eventId);
+        this.additionalVariableEvents[variableHandle] = additionalEvents;
+
+        logger.debug(`Removed event ${eventSourceId}:${eventId} from variable ${variableHandle}`);
 
         frontendCommunicator.send("additional-variable-events-updated", this.additionalVariableEvents);
     }
