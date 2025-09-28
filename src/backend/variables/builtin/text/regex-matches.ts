@@ -4,7 +4,7 @@ import { OutputDataType, VariableCategory } from "../../../../shared/variable-co
 const model : ReplaceVariable = {
     definition: {
         handle: "regexMatches",
-        description: "Filter a string with a regular expression and return an array of all matches",
+        description: "Filter a string with a [regular expression](https://developer.mozilla.org/docs/Web/JavaScript/Guide/Regular_expressions) and return an array of all matches",
         usage: "regexMatches[string, expression]",
         examples: [
             {

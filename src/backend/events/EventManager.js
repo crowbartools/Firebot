@@ -41,6 +41,21 @@ class EventManager extends EventEmitter {
         this.emit("eventSourceRegistered", eventSource);
     }
 
+    unregisterEventSource(id) {
+        const existing = this._registeredEventSources.some(
+            es => es.id === id
+        );
+
+        if (!existing) {
+            logger.debug(`Cannot unregister event source ${id}. Event source does not exist.`);
+            return;
+        }
+
+        this._registeredEventSources = this._registeredEventSources.filter(s => s.id !== id);
+
+        this.emit("eventSourceUnregistered", id);
+    }
+
     getEventSourceById(sourceId) {
         return this._registeredEventSources.find(es => es.id === sourceId);
     }

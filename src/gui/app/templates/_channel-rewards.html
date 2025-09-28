@@ -12,13 +12,25 @@
     </ul>
   </div>
 
-  <firebot-item-table ng-if="activeChannelRewardTab === 0" items="channelRewardsService.channelRewards"
-    on-items-update="onRewardsUpdated(items)" headers="rewardHeaders" sort-tag-context="channel rewards"
-    orderable="true" add-new-button-disabled="channelRewardsService.channelRewards.length >= 50"
-    add-new-button-text="New Channel Reward" on-add-new-clicked="channelRewardsService.showAddOrEditRewardModal()"
-    context-menu-options="rewardMenuOptions(item)" no-data-message="No channel rewards saved. You should make one! :)"
-    none-found-message="No channel rewards found." search-placeholder="Search rewards" test-button="true"
-    on-test-button-clicked="channelRewardsService.manuallyTriggerReward(itemId)" status-field="twitchData.isEnabled">
+  <firebot-item-table
+    ng-if="activeChannelRewardTab === 0"
+    items="channelRewardsService.channelRewards"
+    on-item-update="saveChannelReward(item)"
+    on-items-update="onRewardsUpdated(items)"
+    headers="rewardHeaders"
+    sort-tag-context="channel rewards"
+    orderable="true"
+    add-new-button-disabled="channelRewardsService.channelRewards.length >= 50"
+    add-new-button-text="New Channel Reward"
+    on-add-new-clicked="channelRewardsService.showAddOrEditRewardModal()"
+    context-menu-options="rewardMenuOptions(item)"
+    no-data-message="No channel rewards saved. You should make one! :)"
+    none-found-message="No channel rewards found."
+    search-placeholder="Search rewards"
+    test-button="true"
+    on-test-button-clicked="channelRewardsService.manuallyTriggerReward(itemId)"
+    status-field="twitchData.isEnabled"
+  >
     <fb-item-table-toolbar>
       <button class="btn btn-default" uib-tooltip="Twitch Sync" ng-click="channelRewardsService.syncChannelRewards()">
         <i class="fas fa-sync"></i>

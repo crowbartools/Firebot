@@ -503,7 +503,7 @@ class ChatModerationManager {
         await twitchApi.chat.deleteChatMessage(messageId);
 
         if (outputMessage?.length) {
-            outputMessage = outputMessage.replace("{userName}", username);
+            outputMessage = outputMessage.replaceAll("{userName}", username);
             await twitchApi.chat.sendChatMessage(outputMessage);
         }
     }
@@ -690,7 +690,7 @@ class ChatModerationManager {
                         const minimumViewTime = settings.viewTime.viewTimeInHours;
 
                         if (viewerViewTime <= minimumViewTime) {
-                            outputMessage = outputMessage.replace("{viewTime}", minimumViewTime.toString());
+                            outputMessage = outputMessage.replaceAll("{viewTime}", minimumViewTime.toString());
 
                             logger.debug("URL moderation: Not enough view time.");
                             shouldDeleteMessage = true;

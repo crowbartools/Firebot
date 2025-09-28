@@ -33,6 +33,7 @@ export type FirebotSettingsTypes = {
     ChatCustomFontFamilyEnabled: boolean;
     ChatCustomFontSize: number;
     ChatCustomFontSizeEnabled: boolean;
+    ChatGetAllEmotes: boolean;
     ChatHideBotAccountMessages: boolean;
     ChatHideDeletedMessages: boolean;
     ChatHideWhispers: boolean;
@@ -69,6 +70,10 @@ export type FirebotSettingsTypes = {
     NotifyOnBeta: boolean;
     OpenEffectQueueMonitorOnLaunch: boolean;
     OpenStreamPreviewOnLaunch: boolean;
+    OverlayResolution: {
+        width: number;
+        height: number;
+    },
     OverlayInstances: string[];
     PersistCustomVariables: boolean;
     QuickActions: Record<string, {
@@ -86,6 +91,7 @@ export type FirebotSettingsTypes = {
     SidebarControlledServices: string[];
     SidebarExpanded: boolean;
     SoundsEnabled: "On" | "Off";
+    StreamerExemptFromCooldowns: boolean;
     Theme: string;
     TriggerUpcomingAdBreakMinutes: number;
     TtsVoiceRate: number;
@@ -94,6 +100,7 @@ export type FirebotSettingsTypes = {
     UseOverlayInstances: boolean;
     ViewerDB: boolean;
     ViewerListPageSize: number;
+    WebhookDebugLogs: boolean;
     WebOnlineCheckin: boolean;
     WebServerPort: number;
     WhileLoopEnabled: boolean;
@@ -151,6 +158,7 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     ChatCustomFontFamilyEnabled: false,
     ChatCustomFontSize: 17,
     ChatCustomFontSizeEnabled: false,
+    ChatGetAllEmotes: false,
     ChatHideBotAccountMessages: false,
     ChatHideDeletedMessages: false,
     ChatHideWhispers: false,
@@ -188,6 +196,10 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     OpenEffectQueueMonitorOnLaunch: false,
     OpenStreamPreviewOnLaunch: false,
     OverlayInstances: [],
+    OverlayResolution: {
+        width: 1280,
+        height: 720
+    },
     PersistCustomVariables: false,
     QuickActions: {},
     RunCustomScripts: false,
@@ -201,6 +213,7 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     SidebarControlledServices: ["chat"],
     SidebarExpanded: true,
     SoundsEnabled: "On",
+    StreamerExemptFromCooldowns: false,
     Theme: "Obsidian",
     TriggerUpcomingAdBreakMinutes: 0,
     TtsVoiceRate: 1,
@@ -209,6 +222,7 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     UseOverlayInstances: false,
     ViewerDB: true,
     ViewerListPageSize: 10,
+    WebhookDebugLogs: false,
     WebOnlineCheckin: false,
     WebServerPort: 7472,
     WhileLoopEnabled: false,

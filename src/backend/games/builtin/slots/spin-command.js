@@ -61,7 +61,7 @@ const spinCommand = {
             if (defaultWager == null || defaultWager < 1) {
                 if (slotsSettings.settings.generalMessages.noWagerAmount) {
                     const noWagerAmountMsg = slotsSettings.settings.generalMessages.noWagerAmount
-                        .replace("{user}", user.displayName);
+                        .replaceAll("{user}", user.displayName);
 
                     await twitchChat.sendChatMessage(noWagerAmountMsg, null, chatter);
                 }
@@ -75,7 +75,7 @@ const spinCommand = {
         } else {
             if (slotsSettings.settings.generalMessages.invalidWagerAmount) {
                 const invalidWagerAmountMsg = slotsSettings.settings.generalMessages.invalidWagerAmount
-                    .replace("{user}", user.displayName);
+                    .replaceAll("{user}", user.displayName);
 
                 await twitchChat.sendChatMessage(invalidWagerAmountMsg, null, chatter);
             }
@@ -86,7 +86,7 @@ const spinCommand = {
         if (activeSpinners.get(username)) {
             if (slotsSettings.settings.generalMessages.alreadySpinning) {
                 const alreadySpinningMsg = slotsSettings.settings.generalMessages.alreadySpinning
-                    .replace("{username}", user.displayName);
+                    .replaceAll("{username}", user.displayName);
 
                 await twitchChat.sendChatMessage(alreadySpinningMsg, null, chatter);
             }
@@ -99,7 +99,8 @@ const spinCommand = {
             if (slotsSettings.settings.generalMessages.onCooldown) {
                 const timeRemainingDisplay = util.secondsForHumans(Math.abs(moment().diff(cooldownExpireTime, 'seconds')));
                 const cooldownMsg = slotsSettings.settings.generalMessages.onCooldown
-                    .replace("{username}", user.displayName).replace("{timeRemaining}", timeRemainingDisplay);
+                    .replaceAll("{username}", user.displayName)
+                    .replaceAll("{timeRemaining}", timeRemainingDisplay);
 
                 await twitchChat.sendChatMessage(cooldownMsg, null, chatter);
             }
@@ -110,7 +111,7 @@ const spinCommand = {
         if (wagerAmount < 1) {
             if (slotsSettings.settings.generalMessages.moreThanZero) {
                 const moreThanZeroMsg = slotsSettings.settings.generalMessages.moreThanZero
-                    .replace("{username}", user.displayName);
+                    .replaceAll("{username}", user.displayName);
 
                 await twitchChat.sendChatMessage(moreThanZeroMsg, null, chatter);
             }
@@ -123,7 +124,8 @@ const spinCommand = {
             if (wagerAmount < minWager) {
                 if (slotsSettings.settings.generalMessages.minWager) {
                     const minWagerMsg = slotsSettings.settings.generalMessages.minWager
-                        .replace("{username}", user.displayName).replace("{minWager}", minWager);
+                        .replaceAll("{username}", user.displayName)
+                        .replaceAll("{minWager}", minWager);
 
                     await twitchChat.sendChatMessage(minWagerMsg, null, chatter);
                 }
@@ -136,7 +138,8 @@ const spinCommand = {
             if (wagerAmount > maxWager) {
                 if (slotsSettings.settings.generalMessages.maxWager) {
                     const maxWagerMsg = slotsSettings.settings.generalMessages.maxWager
-                        .replace("{username}", user.displayName).replace("{maxWager}", maxWager);
+                        .replaceAll("{username}", user.displayName)
+                        .replaceAll("{maxWager}", maxWager);
 
                     await twitchChat.sendChatMessage(maxWagerMsg, null, chatter);
                 }
@@ -157,7 +160,7 @@ const spinCommand = {
         if (userBalance < wagerAmount) {
             if (slotsSettings.settings.generalMessages.notEnough) {
                 const notEnoughMsg = slotsSettings.settings.generalMessages.notEnough
-                    .replace("{username}", user.displayName);
+                    .replaceAll("{username}", user.displayName);
 
                 await twitchChat.sendChatMessage(notEnoughMsg, null, chatter);
             }
@@ -213,7 +216,7 @@ const spinCommand = {
         }
 
         const spinInActionMsg = slotsSettings.settings.generalMessages.spinInAction
-            .replace("{username}", user.displayName);
+            .replaceAll("{username}", user.displayName);
         const showSpinInActionMsg = !!slotsSettings.settings.generalMessages.spinInAction;
         const successfulRolls = await slotMachine.spin(showSpinInActionMsg, spinInActionMsg, successChance, chatter);
 
@@ -227,10 +230,10 @@ const spinCommand = {
             const currency = currencyAccess.getCurrencyById(currencyId);
 
             const spinSuccessfulMsg = slotsSettings.settings.generalMessages.spinSuccessful
-                .replace("{username}", user.displayName)
-                .replace("{successfulRolls}", successfulRolls)
-                .replace("{winningsAmount}", util.commafy(winnings))
-                .replace("{currencyName}", currency.name);
+                .replaceAll("{username}", user.displayName)
+                .replaceAll("{successfulRolls}", successfulRolls)
+                .replaceAll("{winningsAmount}", util.commafy(winnings))
+                .replaceAll("{currencyName}", currency.name);
             await twitchChat.sendChatMessage(spinSuccessfulMsg, null, chatter);
         }
 

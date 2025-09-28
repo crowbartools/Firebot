@@ -5,6 +5,7 @@
         .component("firebotItemTable", {
             bindings: {
                 items: "<",
+                onItemUpdate: "&?",
                 onItemsUpdate: "&",
                 headers: "<",
                 sortTagContext: "@?",
@@ -64,6 +65,14 @@
                     $ctrl.showAdvancedOptionsButton = $ctrl.customFilterName != null;
                 };
 
+                $ctrl.triggerItemUpdate = (item) => {
+                    if ($ctrl.onItemUpdate) {
+                        $ctrl.onItemUpdate({ item });
+                    } else {
+                        $ctrl.triggerItemsUpdate();
+                    }
+                };
+
                 $ctrl.triggerItemsUpdate = () => {
                     $ctrl.onItemsUpdate({ items: $ctrl.items });
                 };
@@ -110,13 +119,13 @@
                         item.effects.queue = queueId;
                     }
 
-                    $ctrl.triggerItemsUpdate();
+                    $ctrl.triggerItemUpdate(item);
                 };
 
                 $ctrl.clearEffectQueue = (item) => {
                     item.effects.queue = null;
 
-                    $ctrl.triggerItemsUpdate();
+                    $ctrl.triggerItemUpdate(item);
                 };
 
                 $ctrl.getContextMenu = (item) => {

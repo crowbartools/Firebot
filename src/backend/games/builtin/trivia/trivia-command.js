@@ -263,7 +263,7 @@ const triviaCommand = {
             }, answerTimeout * 1000);
         } else {
             const noWagerMessage = triviaSettings.settings.chatSettings.noWagerMessage
-                .replace("{user}", user.displayName);
+                .replaceAll("{user}", user.displayName);
             await twitchChat.sendChatMessage(noWagerMessage, null, chatter);
         }
     }

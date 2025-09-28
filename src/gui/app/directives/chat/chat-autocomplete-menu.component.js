@@ -261,16 +261,25 @@
                     });
 
                     function buildEmoteItems() {
-                        return chatMessagesService.filteredEmotes.map(emote => ({
+                        const sender = chatMessagesService.chatSender === "Bot" ? "bot" : "streamer";
+                        const emotes = [
+                            ...chatMessagesService.filteredEmotes[sender],
+                            ...chatMessagesService.filteredEmotes.thirdParty
+                        ].map(emote => ({
                             display: emote.code,
                             text: emote.code,
-                            url: emote.url,
+                            url: emote.animatedUrl ?? emote.url,
                             origin: emote.origin
-                        }));
+                        })).sort((e1, e2) => e1.display.toLowerCase().localeCompare(e2.display.toLowerCase()));
+                        return emotes;
                     }
 
                     emotesCategory.items = buildEmoteItems();
                     $scope.$watchCollection("chatMessagesService.filteredEmotes", () => {
+                        emotesCategory.items = buildEmoteItems();
+                    });
+
+                    $scope.$watch("chatMessagesService.chatSender", () => {
                         emotesCategory.items = buildEmoteItems();
                     });
 

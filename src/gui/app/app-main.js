@@ -137,7 +137,10 @@
         videoService,
         replaceVariableService,
         variableMacroService,
-        uiExtensionsService
+        uiExtensionsService,
+        webhooksService,
+        overlayWidgetsService,
+        dynamicParameterRegistry
     ) {
         // 'chatMessagesService' and 'videoService' are included so they're instantiated on app start
 
@@ -180,6 +183,10 @@
 
         variableMacroService.loadMacros();
 
+        webhooksService.loadWebhookConfigs();
+
+        overlayWidgetsService.loadOverlayWidgetTypesAndConfigs();
+
         //start notification check
         $timeout(() => {
             notificationService.loadAllNotifications();
@@ -199,11 +206,35 @@
             }
         });
 
+        // Register built-in dynamic parameter types
+        dynamicParameterRegistry.register("string", { tag: "fb-param-string" });
+        dynamicParameterRegistry.register("number", { tag: "fb-param-number" });
+        dynamicParameterRegistry.register("password", { tag: "fb-param-password" });
+        dynamicParameterRegistry.register("boolean", { tag: "fb-param-boolean", hideTitle: true, hideDescription: true });
+        dynamicParameterRegistry.register("enum", { tag: "fb-param-enum" });
+        dynamicParameterRegistry.register("filepath", { tag: "fb-param-filepath" });
+        dynamicParameterRegistry.register("role-percentages", { tag: "fb-param-role-percentages" });
+        dynamicParameterRegistry.register("role-numbers", { tag: "fb-param-role-numbers" });
+        dynamicParameterRegistry.register("currency-select", { tag: "fb-param-currency-select" });
+        dynamicParameterRegistry.register("chatter-select", { tag: "fb-param-chatter-select" });
+        dynamicParameterRegistry.register("editable-list", { tag: "fb-param-editable-list" });
+        dynamicParameterRegistry.register("multiselect", { tag: "fb-param-multiselect" });
+        dynamicParameterRegistry.register("discord-channel-webhooks", { tag: "fb-param-discord-channel-webhooks" });
+        dynamicParameterRegistry.register("gift-receivers-list", { tag: "fb-param-gift-receivers-list" });
+        dynamicParameterRegistry.register("poll-choice-list", { tag: "fb-param-poll-choice-list" });
+        dynamicParameterRegistry.register("effectlist", { tag: "fb-param-effect-list" });
+        dynamicParameterRegistry.register("button", { tag: "fb-param-button" });
+        dynamicParameterRegistry.register("hexcolor", { tag: "fb-param-hex-color" });
+        dynamicParameterRegistry.register("font-name", { tag: "fb-param-font-name" });
+        dynamicParameterRegistry.register("font-options", { tag: "fb-param-font-options" });
+        dynamicParameterRegistry.register("radio-cards", { tag: "fb-param-radio-cards" });
+        dynamicParameterRegistry.register("codemirror", { tag: "fb-param-code-mirror" });
+
         uiExtensionsService.setAsReady();
     });
 
     app.controller("MainController", function($scope, $rootScope, $timeout, connectionService, utilityService,
-        settingsService, backupService, sidebarManager, logger, backendCommunicator, fontManager) {
+        settingsService, backupService, sidebarManager, logger, backendCommunicator, fontManager, ngToast) {
         $rootScope.showSpinner = true;
 
         $scope.fontAwesome5KitUrl = `https://kit.fontawesome.com/${secrets.fontAwesome5KitId}.js`;
@@ -260,6 +291,23 @@
 
             document.body.removeChild(textArea);
         };
+
+        backendCommunicator.on("copy-to-clipboard", (data) => {
+            if (!data?.text?.length) {
+                return;
+            }
+
+            $rootScope.copyTextToClipboard(data.text);
+
+            if (!data.silent) {
+                ngToast.create({
+                    className: 'info',
+                    content: data.toastMessage || `Copied '${data.text}' to clipboard`
+                });
+            }
+
+            return;
+        });
 
         $rootScope.openLinkExternally = function(url) {
             shell.openExternal(url);
