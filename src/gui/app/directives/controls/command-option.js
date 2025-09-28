@@ -216,6 +216,6 @@
             };
         }
     };
+
     angular.module("firebotApp").component("commandOption", component);
-    angular.module("firebotApp").component("dynamicParameter", component);
 }());

@@ -2,6 +2,7 @@
 
 (function() {
     const fs = require("fs");
+    const path = require("path");
     const { marked } = require("marked");
     const { sanitize } = require("dompurify");
 
@@ -59,14 +60,14 @@
                 <div ng-hide="isLoadingParameters">
                     <span ng-hide="scriptHasParameters()" class="muted">Script has no settings.</span>
                     <div ng-show="scriptHasParameters()">
-                        <dynamic-parameter
+                        <command-option
                             ng-repeat="(parameterName, parameterMetadata) in effect.parameters"
                             name="parameterName"
                             metadata="parameterMetadata"
                             trigger="{{trigger}}"
                             trigger-meta="triggerMeta"
                             modalId="{{modalId}}"
-                        ></dynamic-parameter>
+                        ></command-option>
                     </div>
                 </div>
             </eos-container>
@@ -189,15 +190,54 @@
 
                 const scriptFolderPath = profileManager.getPathInProfile("/scripts");
 
+                const recursiveReaddirSync = (dir, prefix = '', visited = new Set()) => {
+                    const result = [];
+                    let realDir;
+                    try {
+                        realDir = fs.realpathSync(dir);
+                    } catch (e) {
+                        // If realpath fails, skip this directory
+                        return result;
+                    }
+                    if (visited.has(realDir)) {
+                        // Already visited this directory (circular symlink), skip
+                        return result;
+                    }
+                    visited.add(realDir);
+
+                    let scriptFileNames;
+                    try {
+                        scriptFileNames = fs.readdirSync(dir);
+                    } catch (e) {
+                        // If readdir fails, skip this directory
+                        return result;
+                    }
+
+                    for (const entry of scriptFileNames) {
+                        const fullPath = path.join(dir, entry);
+
+                        let stat;
+                        try {
+                            stat = fs.statSync(fullPath);
+                        } catch (e) {
+                            // If stat fails for whatever reason, skip this entry
+                            continue;
+                        }
+
+                        if (stat.isDirectory()) {
+                            if (entry === "node_modules" || entry === ".git") {
+                                continue; // Skip node_modules and .git directories
+                            }
+                            result.push(...recursiveReaddirSync(fullPath, path.join(prefix, entry), visited));
+                        } else if (entry.endsWith(".js")) {
+                            result.push(path.join(prefix, entry));
+                        }
+                    }
+                    return result;
+                };
+
                 const loadScriptFileNames = () => {
-                    const scriptDirFileNames = fs.readdirSync(scriptFolderPath, {
-                        recursive: true
-                    });
-                    $scope.scriptArray = (scriptDirFileNames
-                        ?.filter(fileName =>
-                            fileName.endsWith(".js") &&
-                            !fileName.includes("node_modules"))
-                        ?? [])
+                    $scope.scriptArray = recursiveReaddirSync(scriptFolderPath)
                         .map(f => ({ id: f, name: f }));
                 };
                 loadScriptFileNames();
