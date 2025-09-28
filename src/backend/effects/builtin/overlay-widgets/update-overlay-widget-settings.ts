@@ -64,7 +64,7 @@ const model: EffectType<{
                         />
                         <div ng-if="editPosition" class="ml-5 mb-10">
                             <overlay-position-editor
-                                ng-model="effect.position"
+                                model="effect.position"
                                 min-width="25"
                                 min-height="25"
                             ></overlay-position-editor>

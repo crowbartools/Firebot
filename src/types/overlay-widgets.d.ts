@@ -66,6 +66,15 @@ export type OverlayWidgetType<
         exitAnimation?: boolean;
     };
     /**
+     * Initial aspect ratio for the widget. Used to set a default size when adding the widget.
+     * @example { width: 16, height: 9 } for a 16:9 aspect ratio.
+     * @default { width: 16, height: 9 } (16:9)
+     */
+    initialAspectRatio?: {
+        width: number;
+        height: number;
+    };
+    /**
      * Settings allow the user to customize the widget instance (e.g., font to use, colors, etc.)
      */
     settingsSchema?: FirebotParameterArray<Settings>;

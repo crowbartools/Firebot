@@ -88,7 +88,7 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
         });
     }
 
-    private formatForFrontend(overlayWidgetType: OverlayWidgetType): Pick<OverlayWidgetType, "id" | "name" | "icon" | "description" | "settingsSchema" | "userCanConfigure" | "supportsLivePreview" | "initialState"> {
+    private formatForFrontend(overlayWidgetType: OverlayWidgetType): Pick<OverlayWidgetType, "id" | "name" | "icon" | "description" | "settingsSchema" | "userCanConfigure" | "supportsLivePreview" | "initialState" | "initialAspectRatio"> {
         return {
             id: overlayWidgetType.id,
             name: overlayWidgetType.name,
@@ -97,7 +97,8 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
             settingsSchema: overlayWidgetType.settingsSchema,
             userCanConfigure: overlayWidgetType.userCanConfigure,
             supportsLivePreview: overlayWidgetType.supportsLivePreview ?? false,
-            initialState: overlayWidgetType.initialState
+            initialState: overlayWidgetType.initialState,
+            initialAspectRatio: overlayWidgetType.initialAspectRatio
         };
     }
 }

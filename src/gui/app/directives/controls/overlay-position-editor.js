@@ -5,12 +5,12 @@
         .module('firebotApp')
         .component("overlayPositionEditor", {
             bindings: {
-                model: "=ngModel",
+                model: "=",
                 minWidth: "<?",
-                minHeight: "<?"
-            },
-            require: {
-                ngModelCtrl: 'ngModel'
+                minHeight: "<?",
+                canResetPosition: "<?",
+                defaultAspectRatio: "<?",
+                resetKey: "<?"
             },
             template: `
                 <div class="overlay-position-editor">
@@ -127,6 +127,54 @@
                     }
                 }
 
+                // Dynamically create a default model:
+                // - 16:9 aspect ratio
+                // - ~25% of the overlay area
+                // - Centered
+                function resetModelToDefault() {
+                    const W = $ctrl.overlayResWidth;
+                    const H = $ctrl.overlayResHeight;
+
+                    const aspectW = $ctrl.defaultAspectRatio?.width ?? 16;
+                    const aspectH = $ctrl.defaultAspectRatio?.height ?? 9;
+                    const aspectRatio = aspectW / aspectH;
+
+                    // Target 50% of both overlay width and height while maintaining aspect ratio
+                    const targetWidth = 0.50 * W;
+                    const targetHeight = 0.50 * H;
+
+                    // Calculate which dimension is the limiting factor based on aspect ratio
+                    let width, height;
+                    if (targetWidth / aspectRatio <= targetHeight) {
+                        // Width is the limiting factor
+                        width = targetWidth;
+                        height = width / aspectRatio;
+                    } else {
+                        // Height is the limiting factor
+                        height = targetHeight;
+                        width = height * aspectRatio;
+                    }
+
+                    // Ensure it fits within the overlay (just in case of extreme aspect ratios)
+                    if (width > W || height > H) {
+                        const fitScale = Math.min(W / width, H / height);
+                        width *= fitScale;
+                        height *= fitScale;
+                    }
+
+                    // Round to whole pixels
+                    width = Math.round(width);
+                    height = Math.round(height);
+
+                    // Center the rectangle
+                    const x = Math.round((W - width) / 2);
+                    const y = Math.round((H - height) / 2);
+
+                    $ctrl.model = { x, y, width, height };
+
+
+                }
+
                 function init() {
                     const overlayResSetting = settingsService.getSetting("OverlayResolution") || {};
 
@@ -150,42 +198,7 @@
 
                     // Initialize model with default values if not provided
                     if (!$ctrl.model) {
-                        // Dynamically create a default model:
-                        // - 16:9 aspect ratio
-                        // - ~25% of the overlay area
-                        // - Centered
-                        (function() {
-                            const W = $ctrl.overlayResWidth;
-                            const H = $ctrl.overlayResHeight;
-
-                            const aspectW = 16;
-                            const aspectH = 9;
-                            const aspectRatio = aspectW / aspectH;
-
-                            // Target 25% of total overlay area
-                            const targetArea = 0.25 * W * H;
-
-                            // Derive width/height from target area and aspect ratio
-                            let width = Math.sqrt(targetArea * aspectRatio);
-                            let height = width / aspectRatio;
-
-                            // Ensure it fits within the overlay (just in case of extreme aspect ratios)
-                            if (width > W || height > H) {
-                                const fitScale = Math.min(W / width, H / height);
-                                width *= fitScale;
-                                height *= fitScale;
-                            }
-
-                            // Round to whole pixels
-                            width = Math.round(width);
-                            height = Math.round(height);
-
-                            // Center the rectangle
-                            const x = Math.round((W - width) / 2);
-                            const y = Math.round((H - height) / 2);
-
-                            $ctrl.model = { x, y, width, height };
-                        }());
+                        resetModelToDefault();
                     }
 
                     // Make sure all required properties exist with pixel defaults
@@ -215,7 +228,22 @@
 
                 // Set default values and initialize
                 $ctrl.$onInit = function() {
+                    console.log("OverlayPositionEditor initialized with model:", $ctrl.model);
                     init();
+                };
+
+                let waitingForAspectRatioChange = false;
+                $ctrl.$onChanges = function(changes) {
+                    if (!$ctrl.canResetPosition) {
+                        return;
+                    }
+                    if (changes.resetKey && !changes.resetKey.isFirstChange() && changes.resetKey.currentValue !== changes.resetKey.previousValue) {
+                        waitingForAspectRatioChange = true;
+                    } else if (changes.defaultAspectRatio && waitingForAspectRatioChange) {
+                        waitingForAspectRatioChange = false;
+                        resetModelToDefault();
+                        $ctrl.updateModel();
+                    }
                 };
 
                 $ctrl.openEditResolutionModal = function() {
@@ -281,11 +309,6 @@
 
                     // Update internal percentage model for rendering
                     $ctrl.updateInternalModel();
-
-                    // Update ngModel
-                    if ($ctrl.ngModelCtrl) {
-                        $ctrl.ngModelCtrl.$setViewValue($ctrl.model);
-                    }
                 };
 
                 // Update from display model inputs
@@ -545,7 +568,7 @@
 
 <div>
     <overlay-position-editor
-        ng-model="$ctrl.yourPositionSettings"
+        model="$ctrl.yourPositionSettings"
         min-width="5"
         min-height="5">
     </overlay-position-editor>

@@ -56,6 +56,7 @@ export const progressbar: OverlayWidgetType<Settings, State> = {
             }
         }
     ],
+    initialAspectRatio: { width: 16, height: 2 },
     initialState: {
         currentValue: 0
     },

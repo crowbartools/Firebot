@@ -57,7 +57,7 @@
                             <div ng-if="$ctrl.livePreviewActive && $ctrl.isNewWidget" class="help-block">You cannot change the type while live preview is active.</div>
                         </div>
 
-                        <div ng-if="$ctrl.widget.type != null">
+                        <div ng-if="$ctrl.widget.type">
 
                             <div class="form-group" ng-class="{'has-error': $ctrl.formFieldHasError('name')}">
                                 <label for="name" class="control-label">Name</label>
@@ -95,9 +95,12 @@
                             <div class="form-group" ng-if="$ctrl.userCanConfigure.position">
                                 <label for="position" class="control-label">Position</label>
                                 <overlay-position-editor
-                                    ng-model="$ctrl.widget.position"
+                                    model="$ctrl.widget.position"
                                     min-width="25"
                                     min-height="25"
+                                    can-reset-position="$ctrl.isNewWidget"
+                                    reset-key="$ctrl.widget.type"
+                                    default-aspect-ratio="$ctrl.initialAspectRatio"
                                 ></overlay-position-editor>
                             </div>
 
@@ -203,6 +206,7 @@
                         $ctrl.userCanConfigure.entryAnimation = foundType.userCanConfigure?.entryAnimation ?? true;
                         $ctrl.userCanConfigure.exitAnimation = foundType.userCanConfigure?.exitAnimation ?? true;
                         $ctrl.typeSupportsLivePreview = foundType.supportsLivePreview === true;
+                        $ctrl.initialAspectRatio = foundType.initialAspectRatio ?? { width: 16, height: 9 };
                     }
                 };
 
@@ -244,8 +248,8 @@
 
                 $ctrl.$onInit = () => {
                     if ($ctrl.resolve.widget != null) {
-                        $ctrl.widget = JSON.parse(angular.toJson($ctrl.resolve.widget));
                         $ctrl.isNewWidget = false;
+                        $ctrl.widget = JSON.parse(angular.toJson($ctrl.resolve.widget));
 
                         const foundType = overlayWidgetsService.getOverlayWidgetType($ctrl.widget.type);
                         if (foundType != null) {
