@@ -71,6 +71,8 @@ export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
         effect: EffectModel;
         trigger: Trigger;
         sendDataToOverlay: (data: OverlayData, overlayInstance?: string) => void;
+        outputs: Record<string, unknown>;
+        abortSignal: AbortSignal;
     }) => Promise<void | boolean | EffectTriggerResponse>;
     overlayExtension?: OverlayExtension;
 };
