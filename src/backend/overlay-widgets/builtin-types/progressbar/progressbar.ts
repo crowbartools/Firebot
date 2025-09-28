@@ -1,5 +1,5 @@
-import { OverlayWidgetType, IOverlayWidgetUtils, WidgetOverlayEvent } from "../../../types/overlay-widgets";
-import { FontOptions } from "../../../types/parameters";
+import { OverlayWidgetType, IOverlayWidgetUtils, WidgetOverlayEvent } from "../../../../types/overlay-widgets";
+import { FontOptions } from "../../../../types/parameters";
 
 type Settings = {
     title?: string;

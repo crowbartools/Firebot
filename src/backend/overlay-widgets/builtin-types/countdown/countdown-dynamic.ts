@@ -2,6 +2,7 @@ import { FontOptions } from "../../../../types/parameters";
 import { OverlayWidgetType, OverlayWidgetConfig, IOverlayWidgetUtils } from "../../../../types/overlay-widgets";
 import { WidgetOverlayEvent } from "../../../../types/overlay-widgets";
 import { Duration } from "luxon";
+import frontendCommunicator from "../../../common/frontend-communicator";
 
 export type Settings = {
     fontOptions: FontOptions;
@@ -78,6 +79,95 @@ export const dynamicCountdown: OverlayWidgetType<Settings, State> = {
         const secondsDisplay = duration.shiftTo("hours", "minutes", "seconds").toFormat("hh:mm:ss");
         return `${secondsDisplay} (${config.state?.mode ?? 'paused'})`;
     },
+    uiActions: [
+        {
+            id: "toggle",
+            label: "Start/Pause",
+            icon: "fa-play-circle",
+            click: async (config) => {
+                if ((config.state?.remainingSeconds ?? 0) > 0) {
+                    return {
+                        newState: {
+                            ...config.state,
+                            mode: config.state.mode === "running" ? "paused" : "running"
+                        },
+                        persistState: true
+                    };
+                }
+            }
+        },
+        {
+            id: "add-time",
+            label: "Add Time",
+            icon: "fa-plus-circle",
+            click: async (config) => {
+                const seconds = await frontendCommunicator.fireEventAsync("openGetInputModal", {
+                    config: {
+                        model: 0,
+                        inputType: "number",
+                        label: "Add Seconds",
+                        saveText: "Save",
+                        descriptionText: "Enter number of seconds to add to the countdown. Can be negative to subtract time.",
+                        inputPlaceholder: "Enter number",
+                        validationText: 'Please enter a valid number.'
+                    },
+                    validation: {
+                        required: true
+                    }
+                });
+
+                if (seconds == null) {
+                    return;
+                }
+
+                console.log("Adding seconds:", seconds, typeof seconds);
+
+                const newRemaining = Math.max(0, (config.state?.remainingSeconds ?? 0) + Number(seconds));
+
+                return {
+                    newState: {
+                        ...config.state,
+                        remainingSeconds: newRemaining
+                    }
+                };
+            }
+        },
+        {
+            id: "set-time",
+            label: "Set Time",
+            icon: "fa-clock",
+            click: async (config) => {
+                const seconds = await frontendCommunicator.fireEventAsync("openGetInputModal", {
+                    config: {
+                        model: 0,
+                        inputType: "number",
+                        label: "Set Time",
+                        saveText: "Save",
+                        descriptionText: "Enter the total seconds for the countdown. The countdown will be set to this value.",
+                        inputPlaceholder: "Enter number",
+                        validationText: 'Please enter a valid number.'
+                    },
+                    validation: {
+                        required: true
+                    }
+                });
+
+                if (seconds == null) {
+                    return;
+                }
+
+                const newRemaining = Math.max(0, Number(seconds));
+
+                return {
+                    newState: {
+                        ...config.state,
+                        remainingSeconds: newRemaining,
+                        mode: newRemaining === 0 ? "paused" : config.state?.mode ?? "paused"
+                    }
+                };
+            }
+        }
+    ],
     overlayExtension: {
         eventHandler: (event: WidgetOverlayEvent<Settings, State>, utils: IOverlayWidgetUtils) => {
             const generateWidgetHtml = (config: typeof event["data"]["widgetConfig"]) => {

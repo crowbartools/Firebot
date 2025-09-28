@@ -19,7 +19,6 @@ export type Animation = {
     duration?: number;
 }
 
-
 type WidgetEvent<Settings, State> = {
     id: string;
     settings: Settings;
@@ -38,6 +37,18 @@ type WidgetEventResult<State> = {
 
 export type WidgetEventHandler<Settings, State> = (event: WidgetEvent<Settings, State>) => Awaitable<WidgetEventResult<State> | undefined>;
 
+export type WidgetUIAction<
+    Settings extends Record<string, unknown> = Record<string, unknown>,
+    State = Record<string, unknown>
+> = {
+    id: string;
+    label: string;
+    icon: string;
+    // eslint-disable-next-line no-use-before-define
+    click: (config: OverlayWidgetConfig<Settings, State>) => Awaitable<{
+        newState?: State | null;
+    } | void>;
+}
 
 export type OverlayWidgetType<
     Settings extends Record<string, unknown> = Record<string, unknown>,
@@ -101,6 +112,11 @@ export type OverlayWidgetType<
      */
     // eslint-disable-next-line no-use-before-define
     stateDisplay?: (config: OverlayWidgetConfig<Settings, State>) => string | null;
+    /**
+     * Actions are buttons shown in the overlay widget list for each widget instance.
+     * They allow the user to quickly perform common actions on the widget (e.g., start or stop a countdown timer).
+     */
+    uiActions?: WidgetUIAction<Settings, State>[];
     /**
      * Called before the widget is shown on the overlay. You can modify state here.
      */
