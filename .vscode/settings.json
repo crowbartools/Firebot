@@ -2,32 +2,35 @@
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",
     "editor.formatOnSave": true,
     "conventionalCommits.scopes": [
-      "effects",
-      "events",
-      "integrations",
-      "variables",
-      "filters",
-      "commands",
-      "timers",
-      "hotkeys",
-      "quick-actions",
-      "chat",
-      "conditionals",
-      "restrictions",
-      "twitch-api",
-      "games",
-      "counters",
-      "channel-rewards",
-      "auth",
-      "local-api",
-      "ui",
-      "overlay",
-      "scripts",
-      "ranks",
-      "moderation"
+        "effects",
+        "events",
+        "integrations",
+        "variables",
+        "filters",
+        "commands",
+        "timers",
+        "hotkeys",
+        "quick-actions",
+        "chat",
+        "conditionals",
+        "restrictions",
+        "twitch-api",
+        "games",
+        "counters",
+        "channel-rewards",
+        "auth",
+        "local-api",
+        "ui",
+        "overlay",
+        "scripts",
+        "ranks",
+        "moderation"
     ],
     "[typescript]": {
-      "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
     },
-    "prettier.trailingComma": "none"
+    "prettier.trailingComma": "none",
+    "[scss]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }

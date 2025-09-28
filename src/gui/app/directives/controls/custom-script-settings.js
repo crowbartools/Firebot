@@ -59,14 +59,14 @@
                 <div ng-hide="isLoadingParameters">
                     <span ng-hide="scriptHasParameters()" class="muted">Script has no settings.</span>
                     <div ng-show="scriptHasParameters()">
-                        <dynamic-parameter
+                        <command-option
                             ng-repeat="(parameterName, parameterMetadata) in effect.parameters"
                             name="parameterName"
                             metadata="parameterMetadata"
                             trigger="{{trigger}}"
                             trigger-meta="triggerMeta"
                             modalId="{{modalId}}"
-                        ></dynamic-parameter>
+                        ></command-option>
                     </div>
                 </div>
             </eos-container>

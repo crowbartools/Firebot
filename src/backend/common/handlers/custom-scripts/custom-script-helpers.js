@@ -155,6 +155,9 @@ function buildModules(scriptManifest) {
         timerManager: require("../../../timers/timer-manager"),
         gameManager: require("../../../games/game-manager"),
 
+        overlayWidgetsManager: require("../../../overlay-widgets/overlay-widgets-manager"),
+        overlayWidgetConfigManager: require("../../../overlay-widgets/overlay-widget-config-manager"),
+
         /** @deprecated Use `currencyAccess`, `currencyManagerNew`, and `currencyCommandManager` instead */
         currencyDb: require("../../../database/currencyDatabase"),
         /** @deprecated Use `currencyAccess`, `currencyManagerNew`, and `currencyCommandManager` instead */
