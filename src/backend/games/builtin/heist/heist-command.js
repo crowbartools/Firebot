@@ -3,7 +3,7 @@
 
 const util = require("../../../utility");
 const twitchChat = require("../../../chat/twitch-chat");
-const twitchApi = require("../../../twitch-api/api");
+const { TwitchApi } = require("../../../streaming-platforms/twitch/api");
 const commandManager = require("../../../chat/commands/command-manager");
 const gameManager = require("../../game-manager");
 const currencyAccess = require("../../../currency/currency-access").default;
@@ -45,7 +45,7 @@ const heistCommand = {
         const { chatEvent, userCommand } = event;
 
         const username = userCommand.commandSender;
-        const user = await twitchApi.users.getUserByName(username);
+        const user = await TwitchApi.users.getUserByName(username);
         if (user == null) {
             logger.warn(`Could not process heist command for ${username}. User does not exist.`);
             return;
@@ -60,7 +60,7 @@ const heistCommand = {
         // make sure the currency still exists
         if (currency == null) {
             await twitchChat.sendChatMessage("Unable to start a Heist game as the selected currency appears to not exist anymore.", null, chatter);
-            await twitchApi.chat.deleteChatMessage(chatEvent.id);
+            await TwitchApi.chat.deleteChatMessage(chatEvent.id);
         }
 
         // see if the heist is on cooldown before doing anything else

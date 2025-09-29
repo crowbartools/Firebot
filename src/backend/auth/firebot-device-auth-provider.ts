@@ -1,7 +1,7 @@
 import logger from "../logwrapper";
 import accountAccess, { FirebotAccount } from "../common/account-access";
 import twitchAuth from "./twitch-auth";
-import TwitchApi from "../twitch-api/api";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
 import { AuthDetails, AuthProviderDefinition } from "./auth";
 import { AccessToken, getExpiryDateOfAccessToken } from "@twurple/auth";
 import { DeviceAuthProvider } from "./twitch-device-auth-provider";

@@ -2,7 +2,7 @@ import customRolesManager from "../../../../roles/custom-roles-manager";
 import teamRolesManager from "../../../../roles/team-roles-manager";
 import twitchRolesManager from "../../../../../shared/twitch-roles";
 import chatRolesManager from "../../../../roles/chat-roles-manager";
-import twitchApi from "../../../../twitch-api/api";
+import { TwitchApi } from "../../../../streaming-platforms/twitch/api";
 import { EventFilter } from "../../../../../types/events";
 
 const filter: EventFilter = {
@@ -72,7 +72,7 @@ const filter: EventFilter = {
 
         try {
             if (userId == null) {
-                const user = await twitchApi.users.getUserByName(username);
+                const user = await TwitchApi.users.getUserByName(username);
 
                 if (user == null) {
                     return false;

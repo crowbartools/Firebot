@@ -445,18 +445,18 @@ const playVideo = {
         }
 
         if (effect.videoType === "Twitch Clip" || effect.videoType === "Random Twitch Clip") {
-            const twitchApi = require("../../twitch-api/api");
+            const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 
             /**@type {import('@twurple/api').HelixClip} */
             let clip;
 
             if (effect.videoType === "Twitch Clip") {
-                clip = await twitchApi.clips.getClipFromClipUrl(effect.twitchClipUrl);
+                clip = await TwitchApi.clips.getClipFromClipUrl(effect.twitchClipUrl);
             } else if (effect.videoType === "Random Twitch Clip") {
                 const username = effect.twitchClipUsername || accountAccess.getAccounts().streamer.username;
                 const dateNow = new Date();
 
-                clip = await twitchApi.clips.getRandomClipForUserByName(
+                clip = await TwitchApi.clips.getRandomClipForUserByName(
                     username,
                     100,
                     effect.isFeatured || undefined,

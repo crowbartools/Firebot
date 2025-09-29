@@ -1,7 +1,7 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-const twitchApi = require("../../../twitch-api/api");
+const { TwitchApi } = require("../../../streaming-platforms/twitch/api");
 
 const model : ReplaceVariable = {
     definition: {
@@ -28,7 +28,7 @@ const model : ReplaceVariable = {
         }
 
         try {
-            const userInfo = await twitchApi.users.getUserByName(username);
+            const userInfo = await TwitchApi.users.getUserByName(username);
             return userInfo.profilePictureUrl ? userInfo.profilePictureUrl : "[No Avatar Found]";
         } catch (err) {
             return "[No Avatar Found]";

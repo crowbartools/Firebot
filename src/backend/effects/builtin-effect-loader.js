@@ -73,31 +73,37 @@ exports.loadEffects = () => {
         'overlay-widgets/update-progress-bar',
         'overlay-widgets/update-dynamic-countdown',
         'overlay-widgets/set-custom-widget-state',
-        'overlay-widgets/send-message-to-custom-widget',
-
-        'twitch/ad-break',
-        'twitch/announcement',
-        'twitch/approve-reject-channel-reward-redemption',
-        'twitch/block-unblock',
-        'twitch/create-stream-marker',
-        'twitch/raid',
-        'twitch/set-chat-mode',
-        'twitch/shield-mode',
-        'twitch/shoutout',
-        'twitch/snooze-ad-break',
-        'twitch/stream-title',
-        'twitch/stream-game',
-
-        'twitch/create-poll',
-        'twitch/end-poll',
-
-        'twitch/cancel-prediction',
-        'twitch/create-prediction',
-        'twitch/lock-prediction',
-        'twitch/resolve-prediction',
-        'twitch/update-vip-role'
+        'overlay-widgets/send-message-to-custom-widget'
     ].forEach((filename) => {
         const definition = require(`./builtin/${filename}`);
+        effectManager.registerEffect(definition);
+    });
+
+    // Twitch effects
+    [
+        'ad-break',
+        'announcement',
+        'approve-reject-channel-reward-redemption',
+        'block-unblock',
+        'create-stream-marker',
+        'raid',
+        'set-chat-mode',
+        'shield-mode',
+        'shoutout',
+        'snooze-ad-break',
+        'stream-title',
+        'stream-game',
+
+        'create-poll',
+        'end-poll',
+
+        'cancel-prediction',
+        'create-prediction',
+        'lock-prediction',
+        'resolve-prediction',
+        'update-vip-role'
+    ].forEach((filename) => {
+        const definition = require(`../streaming-platforms/twitch/effects/${filename}`);
         effectManager.registerEffect(definition);
     });
 };

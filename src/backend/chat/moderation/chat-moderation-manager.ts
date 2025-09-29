@@ -8,7 +8,7 @@ import permitCommand from "./url-permit-command";
 import utils from "../../utility";
 import { FirebotChatMessage } from "../../../types/chat";
 import viewerDatabase from '../../viewers/viewer-database';
-import twitchApi from "../../twitch-api/api";
+import { TwitchApi } from "../../streaming-platforms/twitch/api";
 
 export interface ModerationTerm {
     text: string;
@@ -500,11 +500,11 @@ class ChatModerationManager {
     }
 
     private async deleteMessage(messageId: string, outputMessage?: string, username?: string) {
-        await twitchApi.chat.deleteChatMessage(messageId);
+        await TwitchApi.chat.deleteChatMessage(messageId);
 
         if (outputMessage?.length) {
             outputMessage = outputMessage.replaceAll("{userName}", username);
-            await twitchApi.chat.sendChatMessage(outputMessage);
+            await TwitchApi.chat.sendChatMessage(outputMessage);
         }
     }
 

@@ -1,7 +1,7 @@
 import { BasicViewer } from "../../types/viewers";
 import logger from "../logwrapper";
 import accountAccess from "../common/account-access";
-import twitchApi from "../twitch-api/api";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
 import { TypedEmitter } from "tiny-typed-emitter";
 
 const VIEWLIST_BOTS_URL = "https://api.twitchinsights.net/v1/bots/all";
@@ -62,7 +62,7 @@ class ChatRolesManager extends TypedEmitter<Events> {
                 return true;
             }
 
-            const user = await twitchApi.users.getUserById(userId);
+            const user = await TwitchApi.users.getUserById(userId);
             if (user != null) {
                 const username = user.name.toLowerCase();
                 const bot = this._knownBots.find(b => b.username === username);
@@ -78,7 +78,7 @@ class ChatRolesManager extends TypedEmitter<Events> {
     }
 
     async loadVips(): Promise<void> {
-        this._vips = (await twitchApi.channels.getVips()).map(u => ({
+        this._vips = (await TwitchApi.channels.getVips()).map(u => ({
             id: u.id,
             username: u.name,
             displayName: u.displayName
@@ -102,7 +102,7 @@ class ChatRolesManager extends TypedEmitter<Events> {
     }
 
     async loadModerators(): Promise<void> {
-        this._moderators = (await twitchApi.moderation.getModerators())
+        this._moderators = (await TwitchApi.moderation.getModerators())
             .map(m => ({
                 id: m.userId,
                 username: m.userName,
@@ -129,9 +129,9 @@ class ChatRolesManager extends TypedEmitter<Events> {
 
         const isName = !new RegExp(/^\d+$/).test(userIdOrName);
 
-        const client = twitchApi.streamerClient;
+        const client = TwitchApi.streamerClient;
         const userId = isName
-            ? (await twitchApi.users.getUserByName(userIdOrName)).id
+            ? (await TwitchApi.users.getUserByName(userIdOrName)).id
             : userIdOrName;
 
         const streamer = accountAccess.getAccounts().streamer;

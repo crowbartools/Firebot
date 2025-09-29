@@ -1,6 +1,6 @@
 "use strict";
 
-const twitchApi = require("../../../twitch-api/api");
+const { TwitchApi } = require("../../../streaming-platforms/twitch/api");
 
 const accountAccess = require("../../../common/account-access");
 
@@ -40,7 +40,7 @@ async function buildChannelEmbed(color) {
     /**@type {import('@twurple/api').HelixStream} */
     let currentStream;
     try {
-        currentStream = await twitchApi.streamerClient.streams.getStreamByUserId(streamer.userId);
+        currentStream = await TwitchApi.streamerClient.streams.getStreamByUserId(streamer.userId);
     } catch (error) {
         // stream not running
     }
@@ -114,7 +114,7 @@ async function buildClipEmbed(clip, color) {
 
 async function buildScreenshotEmbed(imageUrl, color) {
     const streamer = accountAccess.getAccounts().streamer;
-    const channelInfo = await twitchApi.channels.getChannelInformation();
+    const channelInfo = await TwitchApi.channels.getChannelInformation();
     return {
         title: channelInfo.title,
         color: parseColor(color),

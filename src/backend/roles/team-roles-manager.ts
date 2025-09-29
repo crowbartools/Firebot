@@ -1,5 +1,5 @@
 import { FirebotRole } from "../../types/roles";
-import twitchApi from "../twitch-api/api";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
 import frontendCommunicator from "../common/frontend-communicator";
 
 interface TwitchTeam {
@@ -29,7 +29,7 @@ class TeamRolesManager {
     }
 
     async loadTeamRoles(): Promise<void> {
-        const roles = await twitchApi.teams.getStreamerTeams();
+        const roles = await TwitchApi.teams.getStreamerTeams();
 
         if (!roles?.length) {
             this._streamerTeams = null;

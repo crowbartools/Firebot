@@ -4,9 +4,9 @@ const util = require("../utility");
 const logger = require("../logwrapper");
 const frontendCommunicator = require("./frontend-communicator");
 const { SettingsManager } = require("./settings-manager");
-const twitchApi = require("../twitch-api/api");
+const { TwitchApi } = require("../streaming-platforms/twitch/api");
 const twitchChat = require("../chat/twitch-chat");
-const TwitchEventSubClient = require("../twitch-api/eventsub/eventsub-client");
+const TwitchEventSubClient = require("../streaming-platforms/twitch/api/eventsub/eventsub-client");
 const integrationManager = require("../integrations/integration-manager");
 
 const { ConnectionState } = require("../../shared/connection-constants");
@@ -24,7 +24,7 @@ let onlineCheckIntervalId;
 let manager;
 
 async function checkOnline() {
-    const stream = await twitchApi.streams.getStreamersCurrentStream();
+    const stream = await TwitchApi.streams.getStreamersCurrentStream();
 
     if (stream?.id !== currentStream?.id) {
         currentStream = stream;

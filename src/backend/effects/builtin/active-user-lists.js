@@ -2,7 +2,7 @@
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 const logger = require('../../logwrapper');
-const twitchApi = require("../../twitch-api/api");
+const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 const activeUserHandler = require("../../chat/chat-listeners/active-user-handler");
 
 const model = {
@@ -58,7 +58,7 @@ const model = {
             return true;
         }
 
-        const userId = (await twitchApi.users.getUserByName(event.effect.username)).id;
+        const userId = (await TwitchApi.users.getUserByName(event.effect.username)).id;
         if (userId == null) {
             logger.debug("Couldn't get ids for username in active user list effect.");
             return true;

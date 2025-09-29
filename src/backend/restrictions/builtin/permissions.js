@@ -4,7 +4,7 @@ const chatRolesManager = require("../../roles/chat-roles-manager");
 const customRolesManager = require("../../roles/custom-roles-manager");
 const teamRolesManager = require("../../roles/team-roles-manager");
 const twitchRolesManager = require("../../../shared/twitch-roles");
-const twitchApi = require("../../twitch-api/api");
+const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 const rankManager = require("../../ranks/rank-manager");
 const viewerDatabase = require("../../viewers/viewer-database");
 
@@ -184,7 +184,7 @@ const model = {
 
                 if (userId == null) {
                     const username = triggerData.metadata.username;
-                    const user = await twitchApi.users.getUserByName(username);
+                    const user = await TwitchApi.users.getUserByName(username);
 
                     if (user == null) {
                         reject("User does not exist");

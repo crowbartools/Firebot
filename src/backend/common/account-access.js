@@ -127,14 +127,14 @@ async function loadAccountData(emitUpdate = true) {
 }
 
 const getTwitchData = async (accountType) => {
-    const twitchApi = require("../twitch-api/api");
+    const { TwitchApi } = require("../streaming-platforms/twitch/api");
     const chatHelpers = require("../chat/chat-helpers");
 
     const account = accountType === "streamer" ? cache.streamer : cache.bot;
 
     let data;
     try {
-        data = await twitchApi.users.getUserById(account.userId);
+        data = await TwitchApi.users.getUserById(account.userId);
     } catch (error) {
         logger.warn("[accounts.getTwitchData] Failed to get account data:", error.message);
         return account;

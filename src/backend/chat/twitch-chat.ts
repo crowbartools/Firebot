@@ -12,8 +12,8 @@ import firebotDeviceAuthProvider from "../auth/firebot-device-auth-provider";
 import accountAccess from "../common/account-access";
 import frontendCommunicator from "../common/frontend-communicator";
 import chatRolesManager from "../roles/chat-roles-manager";
-import twitchApi from "../twitch-api/api";
-import chatterPoll from "../twitch-api/chatter-poll";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
+import chatterPoll from "../streaming-platforms/twitch/chatter-poll";
 
 interface ChatMessageRequest {
     message: string;
@@ -206,7 +206,7 @@ class TwitchChat extends EventEmitter {
         try {
             logger.debug(`Sending message as ${accountType}.`);
 
-            await twitchApi.chat.sendChatMessage(message, replyToId ?? undefined, accountType === "bot");
+            await TwitchApi.chat.sendChatMessage(message, replyToId ?? undefined, accountType === "bot");
         } catch (error) {
             logger.error(`Error attempting to send message with ${accountType}`, error);
         }
@@ -221,8 +221,8 @@ class TwitchChat extends EventEmitter {
         try {
             logger.debug(`Sending whisper as ${accountType} to ${username}.`);
 
-            const recipient = await twitchApi.users.getUserByName(username);
-            await twitchApi.whispers.sendWhisper(recipient.id, message, accountType === "bot");
+            const recipient = await TwitchApi.users.getUserByName(username);
+            await TwitchApi.whispers.sendWhisper(recipient.id, message, accountType === "bot");
         } catch (error) {
             logger.error(`Error attempting to send whisper with ${accountType}`, error);
         }
@@ -323,7 +323,7 @@ frontendCommunicator.onAsync("send-chat-message", async (sendData: ChatMessageRe
 });
 
 frontendCommunicator.onAsync("delete-message", async (messageId: string) => {
-    return await twitchApi.chat.deleteChatMessage(messageId);
+    return await TwitchApi.chat.deleteChatMessage(messageId);
 });
 
 frontendCommunicator.onAsync("update-user-mod-status", async (data: UserModRequest) => {
@@ -335,15 +335,15 @@ frontendCommunicator.onAsync("update-user-mod-status", async (data: UserModReque
         return;
     }
 
-    const user = await twitchApi.users.getUserByName(username);
+    const user = await TwitchApi.users.getUserByName(username);
     if (user == null) {
         return;
     }
 
     if (shouldBeMod) {
-        await twitchApi.moderation.addChannelModerator(user.id);
+        await TwitchApi.moderation.addChannelModerator(user.id);
     } else {
-        await twitchApi.moderation.removeChannelModerator(user.id);
+        await TwitchApi.moderation.removeChannelModerator(user.id);
     }
 });
 
@@ -356,15 +356,15 @@ frontendCommunicator.onAsync("update-user-banned-status", async (data: UserBanRe
         return;
     }
 
-    const user = await twitchApi.users.getUserByName(username);
+    const user = await TwitchApi.users.getUserByName(username);
     if (user == null) {
         return;
     }
 
     if (shouldBeBanned) {
-        await twitchApi.moderation.banUser(user.id, "Banned via Firebot");
+        await TwitchApi.moderation.banUser(user.id, "Banned via Firebot");
     } else {
-        await twitchApi.moderation.unbanUser(user.id);
+        await TwitchApi.moderation.unbanUser(user.id);
     }
 });
 
@@ -377,20 +377,20 @@ frontendCommunicator.onAsync("update-user-vip-status", async (data: UserVipReque
         return;
     }
 
-    const user = await twitchApi.users.getUserByName(username);
+    const user = await TwitchApi.users.getUserByName(username);
     if (user == null) {
         return;
     }
 
     if (shouldBeVip) {
-        await twitchApi.moderation.addChannelVip(user.id);
+        await TwitchApi.moderation.addChannelVip(user.id);
         chatRolesManager.addVipToVipList({
             id: user.id,
             username: user.name,
             displayName: user.displayName
         });
     } else {
-        await twitchApi.moderation.removeChannelVip(user.id);
+        await TwitchApi.moderation.removeChannelVip(user.id);
         chatRolesManager.removeVipFromVipList(user.id);
     }
 });

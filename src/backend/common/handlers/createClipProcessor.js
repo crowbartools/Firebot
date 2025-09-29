@@ -7,7 +7,7 @@ const discordEmbedBuilder = require("../../integrations/builtin/discord/discord-
 const discord = require("../../integrations/builtin/discord/discord-message-sender");
 const utils = require("../../utility");
 
-const twitchApi = require("../../twitch-api/api");
+const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 
 /**
  * @returns {Promise<HelixClip?>}
@@ -15,9 +15,9 @@ const twitchApi = require("../../twitch-api/api");
 exports.createClip = async function(effect) {
 
     const streamerAccount = accountAccess.getAccounts().streamer;
-    const client = twitchApi.streamerClient;
+    const client = TwitchApi.streamerClient;
     const broadcast = await client.streams.getStreamByUserId(streamerAccount.userId);
-    const channelId = (await twitchApi.users.getUserById(streamerAccount.userId)).id;
+    const channelId = (await TwitchApi.users.getUserById(streamerAccount.userId)).id;
 
     // if (broadcast == null) {
     //     frontendCommunicator.send('error', `Failed to create a clip. Reason: Streamer is not live.`);

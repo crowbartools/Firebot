@@ -186,8 +186,8 @@ exports.addOnlineUser = async (viewer) => {
         const firebotUser = await viewerDatabase.getViewerById(viewer.userId);
 
         if (firebotUser == null) {
-            const twitchApi = require("../../twitch-api/api");
-            const twitchUser = await twitchApi.users.getUserById(viewer.userId);
+            const { TwitchApi } = require("../../streaming-platforms/twitch/api");
+            const twitchUser = await TwitchApi.users.getUserById(viewer.userId);
 
             if (twitchUser == null) {
                 logger.warn(`Could not find Twitch user with ID '${viewer.userId}'`);

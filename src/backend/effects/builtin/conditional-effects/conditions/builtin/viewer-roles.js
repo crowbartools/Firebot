@@ -1,6 +1,6 @@
 "use strict";
 
-const twitchApi = require("../../../../../twitch-api/api");
+const { TwitchApi } = require("../../../../../streaming-platforms/twitch/api");
 const roleHelpers = require("../../../../../roles/role-helpers").default;
 
 module.exports = {
@@ -43,7 +43,7 @@ module.exports = {
             username = trigger.metadata.username;
         }
 
-        const user = await twitchApi.users.getUserByName(username);
+        const user = await TwitchApi.users.getUserByName(username);
         if (user == null) {
             return false;
         }

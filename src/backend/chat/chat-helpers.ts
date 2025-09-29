@@ -9,7 +9,7 @@ import { FirebotChatMessage, FirebotCheermoteInstance, FirebotParsedMessagePart 
 import logger from "../logwrapper";
 import { SettingsManager } from "../common/settings-manager";
 import accountAccess, { FirebotAccount } from "../common/account-access";
-import twitchApi from "../twitch-api/api";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
 import frontendCommunicator from "../common/frontend-communicator";
 import utils from "../utility";
 
@@ -51,7 +51,7 @@ class FirebotChatHelpers {
     async cacheBadges(): Promise<void> {
         logger.debug("Caching Twitch badges");
         const streamer = accountAccess.getAccounts().streamer;
-        const client = twitchApi.streamerClient;
+        const client = TwitchApi.streamerClient;
         if (streamer.loggedIn && client) {
             try {
                 const channelBadges = await client.chat.getChannelBadges(streamer.userId);
@@ -72,7 +72,7 @@ class FirebotChatHelpers {
 
         // Cache this setting so it's consistent during the chat connection
         this._getAllTwitchEmotes = SettingsManager.getSetting("ChatGetAllEmotes") === true;
-        const client = twitchApi.streamerClient;
+        const client = TwitchApi.streamerClient;
 
         const { streamer, bot } = accountAccess.getAccounts();
 
@@ -88,7 +88,7 @@ class FirebotChatHelpers {
 
                 // This includes: global, streamer channel, all channels streamer is subscribed to, etc.
                 // This may take SEVERAL calls so it can take several seconds to complete
-                streamerEmotes = await twitchApi.chat.getAllUserEmotes();
+                streamerEmotes = await TwitchApi.chat.getAllUserEmotes();
 
                 if (!streamerEmotes) {
                     return;
@@ -116,7 +116,7 @@ class FirebotChatHelpers {
                 if (bot.loggedIn) {
                     logger.debug(`Caching all available Twitch emotes for bot ${bot.username}`);
 
-                    this._twitchEmotes.bot = await twitchApi.chat.getAllUserEmotes("bot") ?? [];
+                    this._twitchEmotes.bot = await TwitchApi.chat.getAllUserEmotes("bot") ?? [];
                 } else {
                     logger.debug("Bot account not logged in; Skipping Twitch bot emotes");
                 }
@@ -138,7 +138,7 @@ class FirebotChatHelpers {
 
     async cacheCheermotes() {
         logger.debug("Caching Twitch cheermotes");
-        this._twitchCheermotes = await twitchApi.bits.getChannelCheermotes();
+        this._twitchCheermotes = await TwitchApi.bits.getChannelCheermotes();
     }
 
     parseCheermote(part: ParsedMessageCheerPart | FirebotParsedMessagePart): FirebotCheermoteInstance {
@@ -212,9 +212,9 @@ class FirebotChatHelpers {
         }
 
         const streamer = accountAccess.getAccounts().streamer;
-        const client = twitchApi.streamerClient;
+        const client = TwitchApi.streamerClient;
         if (streamer.loggedIn && client) {
-            const user = await twitchApi.users.getUserById(userId);
+            const user = await TwitchApi.users.getUserById(userId);
             if (user) {
                 this._profilePicUrlCache[userId] = user.profilePictureUrl;
                 return user.profilePictureUrl;
