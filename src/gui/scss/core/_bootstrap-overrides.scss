@@ -408,7 +408,11 @@
 
 .input-group .form-control {
     z-index: 0;
-    // float: none;
+    float: none;
+}
+
+.ui-select-bootstrap .form-control {
+    float: left !important;
 }
 
 .form-group {
