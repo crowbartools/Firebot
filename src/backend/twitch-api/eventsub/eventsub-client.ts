@@ -136,6 +136,60 @@ class TwitchEventSubClient {
         });
         this._subscriptions.push(autoModMessageUpdateSub);
 
+        // Channel automatic reward
+        const channelAutomaticRewardSubscription = this._eventSubListener.onChannelAutomaticRewardRedemptionAddV2(streamer.userId, async (event) => {
+            switch (event.reward.type) {
+                case "single_message_bypass_sub_mode":
+                    twitchEventsHandler.rewardRedemption.triggerRedemptionSingleMessageBypassSubMode(
+                        event.userName,
+                        event.userId,
+                        event.userDisplayName,
+                        event.reward.channelPoints
+                    );
+                    break;
+                case "send_highlighted_message":
+                    twitchEventsHandler.rewardRedemption.triggerRedemptionSendHighlightedMessage(
+                        event.userName,
+                        event.userId,
+                        event.userDisplayName,
+                        event.reward.channelPoints,
+                        event.messageText
+                    );
+                    break;
+                case "random_sub_emote_unlock":
+                    twitchEventsHandler.rewardRedemption.triggerRedemptionRandomSubEmoteUnlock(
+                        event.userName,
+                        event.userId,
+                        event.userDisplayName,
+                        event.reward.channelPoints,
+                        event.reward.emote.name,
+                        `https://static-cdn.jtvnw.net/emoticons/v2/${event.reward.emote.id}/default/dark/3.0`
+                    );
+                    break;
+                case "chosen_sub_emote_unlock":
+                    twitchEventsHandler.rewardRedemption.triggerRedemptionChosenSubEmoteUnlock(
+                        event.userName,
+                        event.userId,
+                        event.userDisplayName,
+                        event.reward.channelPoints,
+                        event.reward.emote.name,
+                        `https://static-cdn.jtvnw.net/emoticons/v2/${event.reward.emote.id}/default/dark/3.0`
+                    );
+                    break;
+                case "chosen_modified_sub_emote_unlock":
+                    twitchEventsHandler.rewardRedemption.triggerRedemptionChosenModifiedSubEmoteUnlock(
+                        event.userName,
+                        event.userId,
+                        event.userDisplayName,
+                        event.reward.channelPoints,
+                        event.reward.emote.name,
+                        `https://static-cdn.jtvnw.net/emoticons/v2/${event.reward.emote.id}/default/dark/3.0`
+                    );
+                    break;
+
+            }
+        });
+        this._subscriptions.push(channelAutomaticRewardSubscription);
 
         // Channel custom reward add
         const customRewardAddSubscription = this._eventSubListener.onChannelRewardAdd(streamer.userId, async (event) => {
