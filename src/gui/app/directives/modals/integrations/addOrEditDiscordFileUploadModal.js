@@ -1,6 +1,7 @@
 "use strict";
 
 (function() {
+    const path = require("path");
 
     angular.module("firebotApp")
         .component("addOrEditDiscordFileUploadModal", {
@@ -13,24 +14,29 @@
 
                 <div>
                     <div class="modal-subheader" style="padding: 0 0 4px 0">
-                        File Name
+                        File
                     </div>
                     <div style="width: 100%; position: relative;">
-                        <div class="form-group" ng-class="{'has-error': $ctrl.nameError}">
-                            <input type="text" id="nameField" class="form-control" ng-model="$ctrl.file.name" ng-keyup="$event.keyCode == 13 && $ctrl.save() " aria-describedby="helpBlock" placeholder="Enter filename">
-                            <span id="helpBlock" class="help-block" ng-show="$ctrl.nameError">Please provide a filename.</span>
+                        <div class="form-group" ng-class="{'has-error': $ctrl.descError}">
+                            <file-chooser
+                                model="$ctrl.file.path"
+                                on-update="$ctrl.onPathUpdated(filepath)"
+                                aria-describedby="pathHelpBlock"
+                                options="{ filters: [ {name: 'Any File', extensions: ['*']} ]}"
+                            ></file-chooser>
+                            <span id="pathHelpBlock" class="help-block" ng-show="$ctrl.pathError">Please select a file.</span>
                         </div>
                     </div>
                 </div>
 
                 <div style="margin-top: 15px;">
                     <div class="modal-subheader" style="padding: 0 0 4px 0">
-                        File
+                        File Name
                     </div>
                     <div style="width: 100%; position: relative;">
-                        <div class="form-group" ng-class="{'has-error': $ctrl.descError}">
-                            <file-chooser model="$ctrl.file.path" aria-describedby="pathHelpBlock" options="{ filters: [ {name: 'Any File', extensions: ['*']} ]}"></file-chooser>
-                            <span id="pathHelpBlock" class="help-block" ng-show="$ctrl.pathError">Please select a file.</span>
+                        <div class="form-group" ng-class="{'has-error': $ctrl.nameError}">
+                            <input type="text" id="nameField" class="form-control" ng-model="$ctrl.file.name" ng-keyup="$event.keyCode == 13 && $ctrl.save() " aria-describedby="helpBlock" placeholder="Enter filename">
+                            <span id="helpBlock" class="help-block" ng-show="$ctrl.nameError">Please provide a filename.</span>
                         </div>
                     </div>
                 </div>
@@ -68,6 +74,12 @@
                 $ctrl.nameError = false;
                 $ctrl.descError = false;
                 $ctrl.pathError = false;
+
+                $ctrl.onPathUpdated = (filepath) => {
+                    if (!$ctrl.file.name?.length) {
+                        $ctrl.file.name = path.basename(filepath);
+                    }
+                };
 
                 function validateName() {
                     const name = $ctrl.file.name;
