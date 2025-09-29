@@ -250,7 +250,8 @@ const clip = {
         return {
             success: clip != null,
             outputs: {
-                clipUrl: clip?.url ?? ""
+                clipUrl: clip?.url ?? "",
+                thumbnailUrl: clip?.thumbnailUrl ?? ""
             }
         };
     },
