@@ -229,6 +229,7 @@
         dynamicParameterRegistry.register("font-options", { tag: "fb-param-font-options" });
         dynamicParameterRegistry.register("radio-cards", { tag: "fb-param-radio-cards" });
         dynamicParameterRegistry.register("codemirror", { tag: "fb-param-code-mirror" });
+        dynamicParameterRegistry.register("counter-select", { tag: "fb-param-counter-select" });
 
         uiExtensionsService.setAsReady();
     });

@@ -1,4 +1,4 @@
-import { FirebotParameterArray } from "./parameters";
+import { FirebotParameterArray, FontOptions } from "./parameters";
 import { Awaitable } from "./util-types";
 
 export type Position = {
@@ -199,6 +199,8 @@ export interface IOverlayWidgetUtils {
     updateWidgetContent(
         newHtml: string,
     ): void;
+    updateWidgetPosition(): void;
     removeWidget(): void;
     stylesToString(styles: Record<string, string | number | undefined>): string;
+    getFontOptionsStyles(fontOptions?: FontOptions): Record<string, string | number | undefined>;
 }
