@@ -5,9 +5,9 @@ import { EffectTrigger } from "../../../../../shared/effect-constants";
 
 const triggers = {};
 triggers[EffectTrigger.EVENT] = [
-    "twitch:channel-points-redemption-random-sub-emote-unlock",
-    "twitch:channel-points-redemption-chosen-sub-emote-unlock",
-    "twitch:channel-points-redemption-chosen-modified-sub-emote-unlock"
+    "twitch:channel-reward-redemption-random-sub-emote-unlock",
+    "twitch:channel-reward-redemption-chosen-sub-emote-unlock",
+    "twitch:channel-reward-redemption-chosen-modified-sub-emote-unlock"
 ];
 triggers[EffectTrigger.MANUAL] = true;
 
