@@ -143,6 +143,13 @@
                     <div class="chat-settings-header">Emote Settings</div>
                     <div class="mt-4 mb-8 px-8">
                         <chat-settings-toggle
+                            setting="settings.getSetting('ChatGetAllEmotes')"
+                            title="Add all available Twitch emotes to autocomplete"
+                            tooltip="This will add ALL Twitch emotes that the streamer and bot accounts can use to the chat autocomplete list. NOTE: It may take SEVERAL seconds for emotes to load after connecting to chat. Changes to this setting will take effect next time you connect to chat."
+                            input-id="twitchAllEmotes"
+                            on-update="settings.saveSetting('ChatGetAllEmotes', setting)"
+                        ></chat-settings-toggle>
+                        <chat-settings-toggle
                             setting="settings.getSetting('ChatShowBttvEmotes')"
                             title="Show BTTV Emotes"
                             external-link="https://betterttv.com/"

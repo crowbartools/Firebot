@@ -140,13 +140,16 @@
                                 role="button"
                                 class="effect-bar"
                                 ng-class="{'disabled': !effect.active, 'has-bottom-panel': $ctrl.showBottomPanel(effect)}"
-                                ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger, false)"
+                                ng-style="{'cursor': !$ctrl.getEffectNameById(effect.type) ? 'not-allowed' : 'pointer'}"
+                                ng-click="!!$ctrl.getEffectNameById(effect.type) && $ctrl.openEditEffectModal(effect, $index, $ctrl.trigger, false)"
                                 ng-mouseenter="hovering = true"
                                 ng-mouseleave="hovering = false"
                             >
                                 <span class="pr-4" style="display: inline-block;text-overflow: ellipsis;overflow: hidden;line-height: 20px;white-space: nowrap;">
                                     <span class="muted" ng-hide="$ctrl.hideNumbers === true">{{$index + 1}}. </span>
-                                    {{$ctrl.getEffectNameById(effect.type)}}
+                                    <i ng-if="!$ctrl.getEffectNameById(effect.type)" class="far fa-exclamation-triangle muted"></i>
+                                    <span ng-if="!$ctrl.getEffectNameById(effect.type)" class="muted">Unknown effect: {{effect.type}}</span>
+                                    <span ng-if="!!$ctrl.getEffectNameById(effect.type)">{{$ctrl.getEffectNameById(effect.type)}}</span>
                                     <span ng-if="$ctrl.getEffectLabel(effect)" class="muted"> ({{$ctrl.getEffectLabel(effect)}})</span>
                                 </span>
                                 <span class="flex-row-center">
@@ -183,7 +186,7 @@
                                     </div>
                                 </span>
                             </div>
-                            <div ng-if="$ctrl.showBottomPanel(effect)" class="effect-weight-panel">
+                            <div ng-if="!!$ctrl.getEffectNameById(effect.type) && $ctrl.showBottomPanel(effect)" class="effect-weight-panel">
                                 <div class="volume-slider-wrapper small-slider" style="flex-grow: 1">
                                     <i class="fas fa-balance-scale-left mr-5" uib-tooltip="Weight"></i>
                                     <rzslider rz-slider-model="effect.percentWeight" rz-slider-options="{floor: 0.0001, ceil: 1.0, step: 0.0001, precision: 4, hideLimitLabels: true, hidePointerLabels: true, showSelectionBar: true}"></rzslider>
@@ -396,6 +399,7 @@
                 };
 
                 ctrl.createEffectMenuOptions = (effect) => {
+                    const effectIsValid = !!effectDefinitions.find(e => e.id === effect.type);
                     const effectMenuOptions = [
                         {
                             html: `<a href ><i class="far fa-edit mr-4"></i> Edit Effect</a>`,
@@ -403,7 +407,8 @@
                                 const $index = $itemScope.$index;
                                 const effect = $itemScope.effect;
                                 ctrl.openEditEffectModal(effect, $index, ctrl.trigger, false);
-                            }
+                            },
+                            enabled: effectIsValid
                         },
                         {
                             html: `<a href ><i class="far fa-tag mr-4"></i> Edit Label</a>`,
@@ -607,7 +612,7 @@
                         return "";
                     }
 
-                    return effectDefinitions.find(e => e.definition.id === id).definition.name;
+                    return effectDefinitions.find(e => e.definition.id === id)?.definition.name;
                 };
 
                 /**

@@ -25,6 +25,28 @@
                 });
             });
 
+            backendCommunicator.onAsync("openGetInputModal", (data) => {
+                return new Promise((resolve) => {
+                    service.openGetInputModal({
+                        ...data.config,
+                        validationFn: async (value) => {
+                            if (value != null) {
+                                if (data.validation == null) {
+                                    return true;
+                                }
+
+                                if (data.validation.required) {
+                                    if (value == null || value === "") {
+                                        return false;
+                                    }
+                                }
+                            }
+                            return true;
+                        }
+                    }, resolve, () => resolve(null));
+                });
+            });
+
             service.showSetupWizard = function(allowExit = false) {
                 modalService.showModal({
                     component: "setupWizardModal",
@@ -34,7 +56,7 @@
                 });
             };
 
-            service.openGetInputModal = function(options, callback) {
+            service.openGetInputModal = function(options, callback, dismissCallback) {
                 modalService.showModal({
                     component: "inputModal",
                     size: "sm",
@@ -53,7 +75,8 @@
                     },
                     closeCallback: (resp) => {
                         callback(resp.model);
-                    }
+                    },
+                    dismissCallback
                 });
             };
 
@@ -87,6 +110,17 @@
                     },
                     closeCallback: async (resp) => {
                         callback(resp.model);
+                    }
+                });
+            };
+
+            service.openEditOverlayResolutionModal = function(callback) {
+                modalService.showModal({
+                    component: "editOverlayResolutionModal",
+                    size: "sm",
+                    resolveObj: {},
+                    closeCallback: (newResolution) => {
+                        callback(newResolution);
                     }
                 });
             };

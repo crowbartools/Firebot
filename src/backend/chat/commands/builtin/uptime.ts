@@ -35,6 +35,6 @@ export const UptimeSystemCommand: SystemCommand<{
         const uptimeString = await util.getUptime();
         const { commandOptions } = event;
         await chat.sendChatMessage(commandOptions.uptimeDisplayTemplate
-            .replace("{uptime}", uptimeString));
+            .replaceAll("{uptime}", uptimeString));
     }
 };

@@ -16,7 +16,7 @@ triggers[EffectTrigger.MANUAL] = true;
 const model : ReplaceVariable = {
     definition: {
         handle: "donationAmount",
-        description: "The amount of a donation from Twitch/StreamLabs/Tipeee/StreamElements/ExtraLife",
+        description: "The amount of a donation",
         triggers: triggers,
         categories: [VariableCategory.COMMON, VariableCategory.NUMBERS, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.NUMBER]

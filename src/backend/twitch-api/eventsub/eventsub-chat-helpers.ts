@@ -1,4 +1,4 @@
-import { HelixChatBadgeSet, HelixCheermoteList, HelixEmote } from "@twurple/api";
+import { HelixChatBadgeSet, HelixCheermoteList } from "@twurple/api";
 import {
     EventSubChannelChatMessageEvent,
     EventSubChannelChatNotificationEvent,
@@ -11,21 +11,40 @@ import { BTTVEmoteProvider } from "../../chat/third-party/bttv";
 import { FFZEmoteProvider } from "../../chat/third-party/ffz";
 import { SevenTVEmoteProvider } from "../../chat/third-party/7tv";
 import logger from "../../logwrapper";
-import utils from "../../utility";
+import { SettingsManager } from "../../common/settings-manager";
 import accountAccess, { FirebotAccount } from "../../common/account-access";
-import frontendCommunicator from "../../common/frontend-communicator";
 import twitchApi from "../api";
+import frontendCommunicator from "../../common/frontend-communicator";
+import utils from "../../utility";
+
+interface ChatBadge {
+    title: string;
+    url: string;
+}
+
+// Yoinked from Twurple
+interface HelixEmoteBase {
+    id: string;
+    name: string;
+    getStaticImageUrl(): string;
+    getAnimatedImageUrl(): string;
+}
 
 class TwitchEventSubChatHelpers {
     // Thanks, IRC
     // eslint-disable-next-line no-control-regex
-    private readonly chatActionRegex = /^[\x01]ACTION (.*)[\x01]$/;
+    private readonly CHAT_ACTION_REGEX = /^[\x01]ACTION (.*)[\x01]$/;
 
     private readonly URL_REGEX = utils.getNonGlobalUrlRegex();
 
     private _badgeCache: HelixChatBadgeSet[] = [];
 
-    private _twitchEmotes: HelixEmote[] = [];
+    private _getAllTwitchEmotes = false;
+    private _twitchEmotes: {
+        streamer: HelixEmoteBase[],
+        bot: HelixEmoteBase[]
+    } = { streamer: [], bot: [] };
+
     private _thirdPartyEmotes: ThirdPartyEmote[] = [];
     private _thirdPartyEmoteProviders: ThirdPartyEmoteProvider<unknown, unknown>[] = [
         new BTTVEmoteProvider(),
@@ -38,6 +57,7 @@ class TwitchEventSubChatHelpers {
     private _profilePicUrlCache: Record<string, string> = {};
 
     async cacheBadges(): Promise<void> {
+        logger.debug("Caching Twitch badges");
         const streamer = accountAccess.getAccounts().streamer;
         const client = twitchApi.streamerClient;
         if (streamer.loggedIn && client) {
@@ -56,25 +76,59 @@ class TwitchEventSubChatHelpers {
     }
 
     async cacheTwitchEmotes(): Promise<void> {
+        logger.debug("Caching Twitch emotes");
+
+        // Cache this setting so it's consistent during the chat connection
+        this._getAllTwitchEmotes = SettingsManager.getSetting("ChatGetAllEmotes") === true;
         const client = twitchApi.streamerClient;
-        const streamer = accountAccess.getAccounts().streamer;
+
+        const { streamer, bot } = accountAccess.getAccounts();
 
         if (client == null || !streamer.loggedIn) {
             return;
         }
 
         try {
-            const channelEmotes = await client.chat.getChannelEmotes(streamer.userId);
-            const globalEmotes = await client.chat.getGlobalEmotes();
+            let streamerEmotes: HelixEmoteBase[] = [];
 
-            if (!channelEmotes && !globalEmotes) {
-                return;
+            if (this._getAllTwitchEmotes) {
+                logger.debug(`Caching all available Twitch emotes for streamer ${streamer.username}`);
+
+                // This includes: global, streamer channel, all channels streamer is subscribed to, etc.
+                // This may take SEVERAL calls so it can take several seconds to complete
+                streamerEmotes = await twitchApi.chat.getAllUserEmotes();
+
+                if (!streamerEmotes) {
+                    return;
+                }
+            } else {
+                logger.debug(`Caching Twitch channel emotes for ${streamer.username}`);
+                const channelEmotes = await client.chat.getChannelEmotes(streamer.userId);
+
+                logger.debug("Caching Twitch global emotes");
+                const globalEmotes = await client.chat.getGlobalEmotes();
+
+                if (!channelEmotes && !globalEmotes) {
+                    return;
+                }
+
+                streamerEmotes = [
+                    ...channelEmotes,
+                    ...globalEmotes
+                ];
             }
 
-            this._twitchEmotes = [
-                ...channelEmotes,
-                ...globalEmotes
-            ];
+            this._twitchEmotes.streamer = streamerEmotes;
+
+            if (this._getAllTwitchEmotes) {
+                if (bot.loggedIn) {
+                    logger.debug(`Caching all available Twitch emotes for bot ${bot.username}`);
+
+                    this._twitchEmotes.bot = await twitchApi.chat.getAllUserEmotes("bot") ?? [];
+                } else {
+                    logger.debug("Bot account not logged in; Skipping Twitch bot emotes");
+                }
+            }
         } catch (err) {
             logger.error("Failed to get Twitch chat emotes", err);
             return null;
@@ -82,13 +136,16 @@ class TwitchEventSubChatHelpers {
     }
 
     async cacheThirdPartyEmotes(): Promise<void> {
+        logger.debug("Caching third-party emotes");
         this._thirdPartyEmotes = [];
         for (const provider of this._thirdPartyEmoteProviders) {
+            logger.debug(`Caching ${provider.providerName} emotes`);
             this._thirdPartyEmotes.push(...await provider.getAllEmotes());
         }
     }
 
     async cacheCheermotes(): Promise<void> {
+        logger.debug("Caching Twitch cheermotes");
         this._twitchCheermotes = await twitchApi.bits.getChannelCheermotes();
     }
 
@@ -98,17 +155,108 @@ class TwitchEventSubChatHelpers {
         await this.cacheThirdPartyEmotes();
         await this.cacheCheermotes();
 
-        frontendCommunicator.send("all-emotes", [
-            ...Object.values(this._twitchEmotes || {})
-                .flat()
-                .map(e => ({
-                    url: e.getImageUrl(1),
-                    animatedUrl: e.getAnimatedImageUrl("1.0"),
-                    origin: "Twitch",
-                    code: e.name
-                })),
-            ...this._thirdPartyEmotes
-        ]);
+        // If the all emotes setting is disabled, just send the standard global/channel list for both accounts
+        frontendCommunicator.send("all-emotes", {
+            streamer: this._mapCachedEmotesForFrontend(this._twitchEmotes.streamer),
+            bot: this._mapCachedEmotesForFrontend(this._getAllTwitchEmotes ? this._twitchEmotes.bot : this._twitchEmotes.streamer),
+            thirdParty: this._thirdPartyEmotes
+        });
+    }
+
+    private _mapCachedEmotesForFrontend(emoteList: HelixEmoteBase[]) {
+        return emoteList.map(e => ({
+            url: e.getStaticImageUrl(),
+            animatedUrl: e.getAnimatedImageUrl(),
+            origin: "Twitch",
+            code: e.name
+        }));
+    }
+
+    private parseEventSubMessageParts(message: FirebotChatMessage, parts: EventSubChatMessagePart[])
+        : FirebotParsedMessagePart[] {
+        if (message == null || parts == null) {
+            return [];
+        }
+
+        const { streamer, bot } = accountAccess.getAccounts();
+
+        return parts.flatMap((p) => {
+            if (p.type === "text" && p.text != null) {
+                // Check for tagging
+                if (message.username !== streamer.username &&
+                        (!bot.loggedIn || message.username !== bot.username)) {
+                    if (!message.whisper
+                        && !message.tagged
+                        && streamer.loggedIn
+                        && (p.text.includes(streamer.username) || p.text.includes(streamer.displayName))) {
+                        message.tagged = true;
+                    }
+                }
+
+                const subParts: FirebotParsedMessagePart[] = [];
+                for (const word of p.text.split(" ")) {
+                    // check for links
+                    if (this.URL_REGEX.test(word)) {
+                        subParts.push({
+                            type: "link",
+                            text: `${word} `,
+                            url: word.startsWith("http") ? word : `https://${word}`
+                        });
+                        continue;
+                    }
+
+                    // check for third party emotes
+                    const thirdPartyEmote = this._thirdPartyEmotes.find(e => e.code === word);
+                    if (thirdPartyEmote) {
+                        subParts.push({
+                            type: "third-party-emote",
+                            name: thirdPartyEmote.code,
+                            origin: thirdPartyEmote.origin,
+                            url: thirdPartyEmote.url
+                        });
+                        continue;
+                    }
+
+                    const previous = subParts[subParts.length - 1];
+                    if (previous && previous.type === "text") {
+                        previous.text += `${word} `;
+                    } else {
+                        subParts.push({
+                            type: "text",
+                            text: `${word} `
+                        });
+                    }
+                }
+
+                return subParts;
+            }
+
+            const part: FirebotParsedMessagePart = {
+                ...p
+            };
+
+            if (p.type === "emote") {
+                part.origin = "Twitch";
+
+                const emote = this._twitchEmotes.streamer.find(e => e.name === part.name);
+                part.url = emote ? emote.getStaticImageUrl() : `https://static-cdn.jtvnw.net/emoticons/v2/${p.emote.id}/default/dark/1.0`;
+                part.animatedUrl = emote ? emote.getAnimatedImageUrl() : null;
+            }
+
+            if (p.type === "cheermote") {
+                const parsedCheermote = this.parseEventSubCheermote(p.cheermote);
+
+                part.animatedUrl = parsedCheermote.animatedUrl;
+                part.url = parsedCheermote.url;
+                part.color = parsedCheermote.color;
+            }
+
+            if (p.type === "mention") {
+                // TODO: Add mention part
+            }
+
+            return part;
+        });
     }
 
     private parseMessageParts(firebotChatMessage: FirebotChatMessage, parts: EventSubChatMessagePart[] | FirebotParsedMessagePart[]) {
@@ -189,9 +337,9 @@ class TwitchEventSubChatHelpers {
             if (part.type === "emote") {
                 part.origin = "Twitch";
 
-                const emote = this._twitchEmotes.find(e => e.name === part.name);
-                part.url = emote ? emote.getImageUrl(1) : `https://static-cdn.jtvnw.net/emoticons/v2/${part.id}/default/dark/1.0`;
-                part.animatedUrl = emote ? emote.getAnimatedImageUrl("1.0") : null;
+                const emote = this._twitchEmotes.streamer.find(e => e.name === part.name);
+                part.url = emote ? emote.getStaticImageUrl() : `https://static-cdn.jtvnw.net/emoticons/v2/${part.id}/default/dark/1.0`;
+                part.animatedUrl = emote ? emote.getAnimatedImageUrl() : null;
             }
 
             if (part.type === "cheer") {
@@ -236,7 +384,7 @@ class TwitchEventSubChatHelpers {
         return this.parseCheermote(part.name, part.amount);
     }
 
-    private parseChatBadges(badgeData: Record<string, string>) {
+    private parseChatBadges(badgeData: Record<string, string>): ChatBadge[] {
         if (this._badgeCache == null) {
             return [];
         }
@@ -317,15 +465,15 @@ class TwitchEventSubChatHelpers {
      * @returns Chat message text, stripped of control characters
      */
     private getChatMessage(rawText: string) {
-        return this.chatActionRegex.test(rawText) === true
-            ? this.chatActionRegex.exec(rawText)[0]
+        return this.CHAT_ACTION_REGEX.test(rawText) === true
+            ? this.CHAT_ACTION_REGEX.exec(rawText)[0]
             : rawText;
     }
 
     private async buildBaseFirebotChatMessage(message: EventSubChannelChatMessageEvent | EventSubChannelChatNotificationEvent): Promise<FirebotChatMessage> {
         const { streamer, bot } = accountAccess.getAccounts();
 
-        const isAction = this.chatActionRegex.test(message.messageText);
+        const isAction = this.CHAT_ACTION_REGEX.test(message.messageText);
         const isSharedChatMessage = message.sourceMessageId != null
             && message.sourceBroadcasterId !== accountAccess.getAccounts().streamer.userId;
 
@@ -362,7 +510,7 @@ class TwitchEventSubChatHelpers {
             isSuspiciousUser: false
         };
 
-        const messageParts = this.parseMessageParts(firebotChatMessage, message.messageParts);
+        const messageParts = this.parseEventSubMessageParts(firebotChatMessage, message.messageParts);
         firebotChatMessage.parts = messageParts;
 
         if (streamer.loggedIn && firebotChatMessage.username === streamer.username) {
@@ -431,7 +579,7 @@ class TwitchEventSubChatHelpers {
     }
 
     async buildFirebotChatMessageFromEventSubWhisper(message: EventSubUserWhisperMessageEvent): Promise<FirebotChatMessage> {
-        const isAction = this.chatActionRegex.test(message.messageText);
+        const isAction = this.CHAT_ACTION_REGEX.test(message.messageText);
 
         const firebotChatMessage: FirebotChatMessage = {
             id: null,

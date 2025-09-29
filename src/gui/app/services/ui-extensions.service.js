@@ -3,7 +3,7 @@
 (function() {
     angular
         .module("firebotApp")
-        .factory("uiExtensionsService", function(backendCommunicator) {
+        .factory("uiExtensionsService", function(backendCommunicator, $injector) {
             const service = {};
 
             service.extensions = [];
@@ -83,6 +83,14 @@
                         // eslint-disable-next-line no-undef
                         ngProviders?.$provide.factory(factory.name, factory.function);
                     });
+
+                    // loop through and instantiate all factories now
+                    // so that any services they provide are available immediately
+                    // rather than waiting for something to inject them
+                    parsedExtension.providers.factories?.forEach((factory) => {
+                        $injector.get(factory.name);
+                    });
+
                     parsedExtension.providers.components?.forEach((component) => {
                         angular.module("firebotApp").component(component.name, {
                             bindings: component.bindings,

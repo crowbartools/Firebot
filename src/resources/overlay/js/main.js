@@ -1,4 +1,4 @@
-firebotOverlay = new EventEmitter();
+effectEvents = new EventEmitter();
 
 let params = new URL(location).searchParams;
 
@@ -99,7 +99,13 @@ function overlaySocketConnect(){
                 return;
             }
 
-			firebotOverlay.emit(event, data.meta);
+            if (event == "OVERLAY:WIDGET-EVENT") {
+                handleOverlayEvent(data.meta.event);
+                return;
+            }
+
+            effectEvents.emit(event, data.meta);
+
 		};
 
 		// Connection closed for some reason. Reconnecting Websocket will try to reconnect.

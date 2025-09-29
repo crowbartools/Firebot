@@ -5,6 +5,7 @@ import logger from "../logwrapper";
 import { v4 as uuid } from "uuid";
 import { TypedEmitter, type ListenerSignature } from "tiny-typed-emitter";
 import { type JsonDB } from "node-json-db";
+import appCloseListenerManager from "../app-management/app-close-listener-manager";
 
 interface Item {
     id?: string;
@@ -19,6 +20,7 @@ type DefaultEvents<I extends Item = Item> = {
     "saved-all-items": (items: I[]) => void;
     "deleted-item": (item: I) => void;
     "deleted-all-items": () => void;
+    "items-changed": (items: I[]) => void;
 };
 
 /**
@@ -30,6 +32,8 @@ class JsonDbManager<T extends Item, E extends ListenerSignature<E> = DefaultEven
     protected items: { [key: string]: T };
 
     protected db: JsonDB;
+
+    private batchedSaveTimeout: NodeJS.Timeout | null = null;
 
     /**
      *
@@ -46,6 +50,15 @@ class JsonDbManager<T extends Item, E extends ListenerSignature<E> = DefaultEven
 
         /** @protected */
         this.db = profileManager.getJsonDbInProfile(path);
+
+        appCloseListenerManager.registerListener(async () => {
+            if (this.batchedSaveTimeout) {
+                clearTimeout(this.batchedSaveTimeout);
+                this.batchedSaveTimeout = null;
+                logger.debug(`App is closing, saving any batched ${this.type} before exit...`);
+                this.saveCurrentItems();
+            }
+        });
     }
 
     loadItems(): void {
@@ -61,6 +74,7 @@ class JsonDbManager<T extends Item, E extends ListenerSignature<E> = DefaultEven
 
             //@ts-ignore - typescript is handling the types for .emit poorly
             this.emit("loaded-items", Object.values(this.items));
+            this.emitItemsChanged();
         } catch (err) {
             logger.error(`There was an error reading ${this.type} file.`, err);
         }
@@ -87,12 +101,11 @@ class JsonDbManager<T extends Item, E extends ListenerSignature<E> = DefaultEven
         return Object.values(this.items) || [];
     }
 
-    saveItem(item: T): T | null {
+    saveItem(item: T, isCreating = false, batchSave = false): T | null {
         if (item == null) {
             return;
         }
 
-        let isCreating = false;
         if (item.id == null) {
             item.id = uuid();
             isCreating = true;
@@ -100,13 +113,23 @@ class JsonDbManager<T extends Item, E extends ListenerSignature<E> = DefaultEven
 
         this.items[item.id] = item;
 
+        //@ts-ignore - typescript is handling the types for .emit poorly
+        this.emit(isCreating ? "created-item" : "updated-item", item);
+        this.emitItemsChanged();
+
+        if (batchSave) {
+            if (!this.batchedSaveTimeout) {
+                this.batchedSaveTimeout = setTimeout(() => {
+                    this.batchedSaveTimeout = null;
+                    this.saveCurrentItems();
+                }, 5000);
+            }
+            return item;
+        }
+
         try {
             this.db.push(`/${item.id}`, item);
-
             logger.debug(`Saved ${this.type} with id ${item.id} to file.`);
-
-            //@ts-ignore - typescript is handling the types for .emit poorly
-            this.emit(isCreating ? "created-item" : "updated-item", item);
             return item;
         } catch (err) {
             logger.error(`There was an error saving ${this.type}.`, err);
@@ -129,8 +152,18 @@ class JsonDbManager<T extends Item, E extends ListenerSignature<E> = DefaultEven
 
             //@ts-ignore - typescript is handling the types for .emit poorly
             this.emit("saved-all-items", allItems);
+            this.emitItemsChanged();
         } catch (err) {
             logger.error(`There was an error saving all ${this.type}s.`, err);
+        }
+    }
+
+    private saveCurrentItems(): void {
+        try {
+            this.db.push("/", this.items);
+            logger.debug(`Batched saved ${this.type} to file.`);
+        } catch (err) {
+            logger.error(`There was an error batch saving ${this.type}s.`, err);
         }
     }
 
@@ -154,6 +187,7 @@ class JsonDbManager<T extends Item, E extends ListenerSignature<E> = DefaultEven
 
             //@ts-ignore - typescript is handling the types for .emit poorly
             this.emit("deleted-item", item);
+            this.emitItemsChanged();
             return true;
         } catch (err) {
             logger.error(`There was an error deleting ${this.type}.`, err);
@@ -172,9 +206,15 @@ class JsonDbManager<T extends Item, E extends ListenerSignature<E> = DefaultEven
 
             //@ts-ignore - typescript is handling the types for .emit poorly
             this.emit("deleted-all-items");
+            this.emitItemsChanged();
         } catch (err) {
             logger.error(`There was an error deleting all ${this.type}s.`, err);
         }
+    }
+
+    private emitItemsChanged() {
+        //@ts-ignore - typescript is handling the types for .emit poorly
+        this.emit("items-changed", Object.values(this.items));
     }
 }
 

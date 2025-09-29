@@ -121,6 +121,10 @@
                 commandsService.resetPerStreamUsagesForCommand(command.id);
             };
 
+            $scope.saveCustomCommand = (command) => {
+                commandsService.saveCustomCommand(command);
+            };
+
             $scope.saveAllCommands = (commands) => {
                 commandsService.saveAllCustomCommands(commands ?? commandsService.commandsCache.customCommands);
             };

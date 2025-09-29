@@ -70,10 +70,14 @@ $.fn.extend({
 
 				element.removeClass('animated ' + animationName);
 
-				callback(data);
+                if(callback != null) {
+                    callback(data);
+                }
 			});
 		} else {
-			callback(data);
+            if(callback != null) {
+                callback(data);
+            }
 		}
         return this;
     }

@@ -162,6 +162,29 @@ const firebotEventSource = {
                 metadataKey: "testKey",
                 metadataValue: "testValue"
             }
+        },
+        {
+            id: "webhook-received",
+            name: "Webhook Received",
+            description: "When a proxied webhook is received. You can setup webhooks in the Advanced tab of Settings.",
+            cached: false,
+            manualMetadata: {
+                webhookId: "testWebhookId",
+                webhookName: "Test Webhook",
+                webhookPayload: {
+                    foo: "bar"
+                }
+            }
+        },
+        {
+            id: "dynamic-countdown-finished",
+            name: "Dynamic Countdown Finished",
+            description: "When a dynamic countdown reaches zero.",
+            cached: false,
+            manualMetadata: {
+                countdownWidgetId: "testCountdownId",
+                countdownWidgetName: "Test Countdown"
+            }
         }
     ]
 };

@@ -18,6 +18,7 @@ const variableMacroManager = require("../../variables/macro-manager");
 const rankManager = require("../../ranks/rank-manager");
 const { escapeRegExp } = require("../../utility");
 const currencyAccess = require("../../currency/currency-access").default;
+const overlayWidgetConfigManager = require("../../overlay-widgets/overlay-widget-config-manager");
 
 function findAndReplaceCurrency(data, currency) {
     const entries = Object.entries(data);
@@ -187,6 +188,16 @@ async function importSetup(setup, selectedCurrency) {
         quickActionManager.triggerUiRefresh();
     }
 
+    // overlay widget configs
+    const overlayWidgetConfigs = setup.components.overlayWidgetConfigs ?? [];
+    if (overlayWidgetConfigs.length > 0) {
+        for (const config of overlayWidgetConfigs) {
+            const existing = overlayWidgetConfigManager.getItem(config.id);
+            overlayWidgetConfigManager.saveItem(config, existing == null);
+        }
+        overlayWidgetConfigManager.triggerUiRefresh();
+    }
+
     return true;
 }
 
@@ -237,6 +248,9 @@ function removeSetupComponents(components) {
                     case "quickActions":
                         quickActionManager.deleteQuickAction(id);
                         break;
+                    case "overlayWidgetConfigs":
+                        overlayWidgetConfigManager.deleteItem(id);
+                        break;
                     default:
                     // do nothing
                 }
@@ -265,6 +279,8 @@ function removeSetupComponents(components) {
                 rankManager.triggerUiRefresh();
             } else if (componentType === "quickActions") {
                 quickActionManager.triggerUiRefresh();
+            } else if (componentType === "overlayWidgetConfigs") {
+                overlayWidgetConfigManager.triggerUiRefresh();
             }
         });
     return true;

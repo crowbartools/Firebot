@@ -226,11 +226,11 @@ export const QuotesManagementSystemCommand: SystemCommand<{
             const getFormattedQuoteString = (quote) => {
                 const prettyDate = quote.createdAt != null ? moment(quote.createdAt).format(commandOptions.quoteDateFormat) : "No Date";
                 return commandOptions.quoteDisplayTemplate
-                    .replace("{id}", quote._id)
-                    .replace("{text}", quote.text)
-                    .replace("{author}", quote.originator)
-                    .replace("{game}", quote.game)
-                    .replace("{date}", prettyDate);
+                    .replaceAll("{id}", quote._id)
+                    .replaceAll("{text}", quote.text)
+                    .replaceAll("{author}", quote.originator)
+                    .replaceAll("{game}", quote.game)
+                    .replaceAll("{date}", prettyDate);
             };
 
             const sendToTTS = (quote) => {

@@ -1,4 +1,4 @@
-import { HelixChatBadgeSet, HelixCheermoteList, HelixEmote } from "@twurple/api";
+import { HelixChatBadgeSet, HelixCheermoteList } from "@twurple/api";
 import { ChatMessage, ParsedMessageCheerPart, ParsedMessagePart, findCheermotePositions, parseChatMessage } from "@twurple/chat";
 import { EventSubAutoModMessageHoldV2Event } from "@twurple/eventsub-base";
 import { ThirdPartyEmote, ThirdPartyEmoteProvider } from "./third-party/third-party-emote-provider";
@@ -7,6 +7,7 @@ import { FFZEmoteProvider } from "./third-party/ffz";
 import { SevenTVEmoteProvider } from "./third-party/7tv";
 import { FirebotChatMessage, FirebotCheermoteInstance, FirebotParsedMessagePart } from "../../types/chat";
 import logger from "../logwrapper";
+import { SettingsManager } from "../common/settings-manager";
 import accountAccess, { FirebotAccount } from "../common/account-access";
 import twitchApi from "../twitch-api/api";
 import frontendCommunicator from "../common/frontend-communicator";
@@ -17,10 +18,23 @@ interface ExtensionBadge {
     version: string;
 }
 
+// Yoinked from Twurple
+interface HelixEmoteBase {
+    id: string;
+    name: string;
+    getStaticImageUrl(): string;
+    getAnimatedImageUrl(): string;
+}
+
 class FirebotChatHelpers {
     private _badgeCache: HelixChatBadgeSet[] = [];
 
-    private _twitchEmotes: HelixEmote[] = [];
+    private _getAllTwitchEmotes = false;
+    private _twitchEmotes: {
+        streamer: HelixEmoteBase[],
+        bot: HelixEmoteBase[]
+    } = { streamer: [], bot: [] };
+
     private _thirdPartyEmotes: ThirdPartyEmote[] = [];
     private _thirdPartyEmoteProviders: ThirdPartyEmoteProvider<unknown, unknown>[] = [
         new BTTVEmoteProvider(),
@@ -35,6 +49,7 @@ class FirebotChatHelpers {
     private readonly URL_REGEX = utils.getNonGlobalUrlRegex();
 
     async cacheBadges(): Promise<void> {
+        logger.debug("Caching Twitch badges");
         const streamer = accountAccess.getAccounts().streamer;
         const client = twitchApi.streamerClient;
         if (streamer.loggedIn && client) {
@@ -53,25 +68,59 @@ class FirebotChatHelpers {
     }
 
     async cacheTwitchEmotes(): Promise<void> {
+        logger.debug("Caching Twitch emotes");
+
+        // Cache this setting so it's consistent during the chat connection
+        this._getAllTwitchEmotes = SettingsManager.getSetting("ChatGetAllEmotes") === true;
         const client = twitchApi.streamerClient;
-        const streamer = accountAccess.getAccounts().streamer;
+
+        const { streamer, bot } = accountAccess.getAccounts();
 
         if (client == null || !streamer.loggedIn) {
             return;
         }
 
         try {
-            const channelEmotes = await client.chat.getChannelEmotes(streamer.userId);
-            const globalEmotes = await client.chat.getGlobalEmotes();
+            let streamerEmotes: HelixEmoteBase[] = [];
 
-            if (!channelEmotes && !globalEmotes) {
-                return;
+            if (this._getAllTwitchEmotes) {
+                logger.debug(`Caching all available Twitch emotes for streamer ${streamer.username}`);
+
+                // This includes: global, streamer channel, all channels streamer is subscribed to, etc.
+                // This may take SEVERAL calls so it can take several seconds to complete
+                streamerEmotes = await twitchApi.chat.getAllUserEmotes();
+
+                if (!streamerEmotes) {
+                    return;
+                }
+            } else {
+                logger.debug(`Caching Twitch channel emotes for ${streamer.username}`);
+                const channelEmotes = await client.chat.getChannelEmotes(streamer.userId);
+
+                logger.debug("Caching Twitch global emotes");
+                const globalEmotes = await client.chat.getGlobalEmotes();
+
+                if (!channelEmotes && !globalEmotes) {
+                    return;
+                }
+
+                streamerEmotes = [
+                    ...channelEmotes,
+                    ...globalEmotes
+                ];
             }
 
-            this._twitchEmotes = [
-                ...channelEmotes,
-                ...globalEmotes
-            ];
+            this._twitchEmotes.streamer = streamerEmotes;
+
+            if (this._getAllTwitchEmotes) {
+                if (bot.loggedIn) {
+                    logger.debug(`Caching all available Twitch emotes for bot ${bot.username}`);
+
+                    this._twitchEmotes.bot = await twitchApi.chat.getAllUserEmotes("bot") ?? [];
+                } else {
+                    logger.debug("Bot account not logged in; Skipping Twitch bot emotes");
+                }
+            }
         } catch (err) {
             logger.error("Failed to get Twitch chat emotes", err);
             return null;
@@ -79,13 +128,16 @@ class FirebotChatHelpers {
     }
 
     async cacheThirdPartyEmotes() {
+        logger.debug("Caching third-party emotes");
         this._thirdPartyEmotes = [];
         for (const provider of this._thirdPartyEmoteProviders) {
+            logger.debug(`Caching ${provider.providerName} emotes`);
             this._thirdPartyEmotes.push(...await provider.getAllEmotes());
         }
     }
 
     async cacheCheermotes() {
+        logger.debug("Caching Twitch cheermotes");
         this._twitchCheermotes = await twitchApi.bits.getChannelCheermotes();
     }
 
@@ -128,17 +180,21 @@ class FirebotChatHelpers {
         await this.cacheThirdPartyEmotes();
         await this.cacheCheermotes();
 
-        frontendCommunicator.send("all-emotes", [
-            ...Object.values(this._twitchEmotes || {})
-                .flat()
-                .map(e => ({
-                    url: e.getImageUrl(1),
-                    animatedUrl: e.getAnimatedImageUrl("1.0"),
-                    origin: "Twitch",
-                    code: e.name
-                })),
-            ...this._thirdPartyEmotes
-        ]);
+        // If the all emotes setting is disabled, just send the standard global/channel list for both accounts
+        frontendCommunicator.send("all-emotes", {
+            streamer: this._mapCachedEmotesForFrontend(this._twitchEmotes.streamer),
+            bot: this._mapCachedEmotesForFrontend(this._getAllTwitchEmotes ? this._twitchEmotes.bot : this._twitchEmotes.streamer),
+            thirdParty: this._thirdPartyEmotes
+        });
+    }
+
+    private _mapCachedEmotesForFrontend(emoteList: HelixEmoteBase[]) {
+        return emoteList.map(e => ({
+            url: e.getStaticImageUrl(),
+            animatedUrl: e.getAnimatedImageUrl(),
+            origin: "Twitch",
+            code: e.name
+        }));
     }
 
     private _updateAccountAvatar(accountType: "streamer" | "bot", account: FirebotAccount, url: string) {
@@ -262,9 +318,13 @@ class FirebotChatHelpers {
             if (part.type === "emote") {
                 part.origin = "Twitch";
 
-                const emote = this._twitchEmotes.find(e => e.name === part.name);
-                part.url = emote ? emote.getImageUrl(1) : `https://static-cdn.jtvnw.net/emoticons/v2/${part.id}/default/dark/1.0`;
-                part.animatedUrl = emote ? emote.getAnimatedImageUrl("1.0") : null;
+                let emote = this._twitchEmotes.streamer.find(e => e.name === part.name);
+                if (emote == null) {
+                    emote = this._twitchEmotes.bot.find(e => e.name === part.name);
+                }
+
+                part.url = emote ? emote.getStaticImageUrl() : `https://static-cdn.jtvnw.net/emoticons/v2/${part.id}/default/dark/1.0`;
+                part.animatedUrl = emote ? emote.getAnimatedImageUrl() : null;
             }
 
             if (part.type === "cheer") {
@@ -331,8 +391,8 @@ class FirebotChatHelpers {
                     .find(e => e.name === word);
                 if (foundEmote) {
                     emoteId = foundEmote.id;
-                    url = foundEmote.getImageUrl(1);
-                    animatedUrl = foundEmote.getAnimatedImageUrl("1.0");
+                    url = foundEmote.getStaticImageUrl();
+                    animatedUrl = foundEmote.getAnimatedImageUrl();
                 }
             } catch (err) {
                 //logger.silly(`Failed to find emote id for ${word}`, err);

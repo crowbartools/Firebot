@@ -101,7 +101,7 @@ const formattedSeconds = (secs, simpleOutput = false) => {
         }
     }
 
-    return duration.shiftTo(...nonZeroUnits).toHuman({ listStyle: "narrow" });
+    return duration.shiftTo(...nonZeroUnits).toHuman({ listStyle: "short" });
 };
 
 const getTriggerIdFromTriggerData = (trigger) => {

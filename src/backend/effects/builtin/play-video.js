@@ -446,57 +446,23 @@ const playVideo = {
 
         if (effect.videoType === "Twitch Clip" || effect.videoType === "Random Twitch Clip") {
             const twitchApi = require("../../twitch-api/api");
-            const client = twitchApi.streamerClient;
-
-            let clipId;
 
             /**@type {import('@twurple/api').HelixClip} */
             let clip;
+
             if (effect.videoType === "Twitch Clip") {
-                clipId = effect.twitchClipUrl.split("/").pop();
-                try {
-                    clip = await client.clips.getClipById(clipId);
-                } catch (error) {
-                    logger.error(`Unable to find clip by id: ${clipId}`, error);
-                    return true;
-                }
+                clip = await twitchApi.clips.getClipFromClipUrl(effect.twitchClipUrl);
             } else if (effect.videoType === "Random Twitch Clip") {
                 const username = effect.twitchClipUsername || accountAccess.getAccounts().streamer.username;
-                try {
-                    const user = await twitchApi.users.getUserByName(username);
+                const dateNow = new Date();
 
-                    if (user == null) {
-                        logger.warn(`Could not found a user by the username ${username}`);
-                        return true;
-                    }
-                    const filter = {
-                        limit: 100,
-                        // discard isFeatured parameter if it is falsy so featured clips aren't excluded
-                        isFeatured: effect.isFeatured || undefined
-                    };
-
-                    if (effect.useMaxClipAge === true) {
-                        const dateNow = new Date();
-                        const startDate = new Date(dateNow - (effect.maxClipAge * 1000)).toISOString();
-                        filter.startDate = startDate;
-                        filter.endDate = dateNow.toISOString();
-                    }
-
-                    const clips = await client.clips.getClipsForBroadcaster(user.id, filter);
-
-                    if (clips.data.length < 1) {
-                        logger.warn(`User ${username} has no clips. Unable to get random.`);
-                        return true;
-                    }
-
-                    const randomClipIndex = util.getRandomInt(0, clips.data.length - 1);
-                    clip = clips.data[randomClipIndex];
-
-                    clipId = clip.id;
-                } catch (error) {
-                    logger.error(`Unable to find clip random clip for: ${username}`, error);
-                    return true;
-                }
+                clip = await twitchApi.clips.getRandomClipForUserByName(
+                    username,
+                    100,
+                    effect.isFeatured || undefined,
+                    effect.useMaxClipAge === true ? new Date(dateNow - (effect.maxClipAge * 1000)) : undefined,
+                    effect.useMaxClipAge === true ? dateNow : undefined
+                );
             }
 
             if (clip == null) {

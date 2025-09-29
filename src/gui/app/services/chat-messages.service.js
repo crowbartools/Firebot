@@ -479,28 +479,42 @@
                 service.pruneChatQueue();
             });
 
-            service.allEmotes = [];
-            service.filteredEmotes = [];
+            service.allEmotes = {
+                streamer: [],
+                bot: [],
+                thirdParty: []
+            };
+
+            service.filteredEmotes = {
+                streamer: [],
+                bot: [],
+                thirdParty: []
+            };
+
             service.refreshEmotes = () => {
                 const showBttvEmotes = settingsService.getSetting("ChatShowBttvEmotes");
                 const showFfzEmotes = settingsService.getSetting("ChatShowFfzEmotes");
                 const showSevenTvEmotes = settingsService.getSetting("ChatShowSevenTvEmotes");
 
-                service.filteredEmotes = service.allEmotes.filter((e) => {
-                    if (showBttvEmotes !== true && e.origin === "BTTV") {
-                        return false;
-                    }
+                service.filteredEmotes = {
+                    streamer: service.allEmotes.streamer,
+                    bot: service.allEmotes.bot,
+                    thirdParty: service.allEmotes.thirdParty.filter((e) => {
+                        if (showBttvEmotes !== true && e.origin === "BTTV") {
+                            return false;
+                        }
 
-                    if (showFfzEmotes !== true && e.origin === "FFZ") {
-                        return false;
-                    }
+                        if (showFfzEmotes !== true && e.origin === "FFZ") {
+                            return false;
+                        }
 
-                    if (showSevenTvEmotes !== true && e.origin === "7TV") {
-                        return false;
-                    }
+                        if (showSevenTvEmotes !== true && e.origin === "7TV") {
+                            return false;
+                        }
 
-                    return true;
-                });
+                        return true;
+                    })
+                };
             };
 
             backendCommunicator.on("all-emotes", (emotes) => {

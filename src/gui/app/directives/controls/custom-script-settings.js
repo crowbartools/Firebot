@@ -2,6 +2,7 @@
 
 (function() {
     const fs = require("fs");
+    const path = require("path");
     const { marked } = require("marked");
     const { sanitize } = require("dompurify");
 
@@ -13,7 +14,9 @@
                 modalId: "<",
                 trigger: "<",
                 triggerMeta: "<",
-                allowStartup: "<"
+                allowStartup: "<",
+                isNewStartup: "<?",
+                initFirst: "=?"
             },
             template: `
             <eos-container header="Script">
@@ -46,21 +49,25 @@
                 </div>
             </eos-container>
 
-            <eos-container header="Settings" ng-show="effect.scriptName != null">
+            <eos-container ng-show="$ctrl.initFirst">
+                <i>After adding this script, you can configure its settings.</i>
+            </eos-container>
+
+            <eos-container header="Settings" ng-show="effect.scriptName != null && !$ctrl.initFirst">
                 <div ng-show="isLoadingParameters">
                     Loading settings...
                 </div>
                 <div ng-hide="isLoadingParameters">
                     <span ng-hide="scriptHasParameters()" class="muted">Script has no settings.</span>
                     <div ng-show="scriptHasParameters()">
-                        <dynamic-parameter
+                        <command-option
                             ng-repeat="(parameterName, parameterMetadata) in effect.parameters"
                             name="parameterName"
                             metadata="parameterMetadata"
                             trigger="{{trigger}}"
                             trigger-meta="triggerMeta"
                             modalId="{{modalId}}"
-                        ></dynamic-parameter>
+                        ></command-option>
                     </div>
                 </div>
             </eos-container>
@@ -109,9 +116,20 @@
                             return;
                         }
 
+                        if ($scope.scriptManifest &&
+                            $scope.scriptManifest.startupOnly &&
+                            $scope.scriptManifest.initBeforeShowingParams === true &&
+                            $ctrl.allowStartup &&
+                            $ctrl.isNewStartup) {
+                            $ctrl.initFirst = true;
+                        } else {
+                            $ctrl.initFirst = false;
+                        }
+
                         if ($scope.scriptManifest && $scope.scriptManifest.name && $ctrl.trigger === 'startup_script') {
                             $scope.effect.name = $scope.scriptManifest.name;
                         }
+
 
                         if (!initialLoad && ($scope.scriptManifest == null || $scope.scriptManifest.firebotVersion !== "5")) {
                             utilityService.showInfoModal("The selected script may not have been written for Firebot V5 and so might not function as expected. Please reach out to us on Discord or Bluesky if you need assistance.");
@@ -172,15 +190,54 @@
 
                 const scriptFolderPath = profileManager.getPathInProfile("/scripts");
 
+                const recursiveReaddirSync = (dir, prefix = '', visited = new Set()) => {
+                    const result = [];
+                    let realDir;
+                    try {
+                        realDir = fs.realpathSync(dir);
+                    } catch (e) {
+                        // If realpath fails, skip this directory
+                        return result;
+                    }
+                    if (visited.has(realDir)) {
+                        // Already visited this directory (circular symlink), skip
+                        return result;
+                    }
+                    visited.add(realDir);
+
+                    let scriptFileNames;
+                    try {
+                        scriptFileNames = fs.readdirSync(dir);
+                    } catch (e) {
+                        // If readdir fails, skip this directory
+                        return result;
+                    }
+
+                    for (const entry of scriptFileNames) {
+                        const fullPath = path.join(dir, entry);
+
+                        let stat;
+                        try {
+                            stat = fs.statSync(fullPath);
+                        } catch (e) {
+                            // If stat fails for whatever reason, skip this entry
+                            continue;
+                        }
+
+                        if (stat.isDirectory()) {
+                            if (entry === "node_modules" || entry === ".git") {
+                                continue; // Skip node_modules and .git directories
+                            }
+                            result.push(...recursiveReaddirSync(fullPath, path.join(prefix, entry), visited));
+                        } else if (entry.endsWith(".js")) {
+                            result.push(path.join(prefix, entry));
+                        }
+                    }
+                    return result;
+                };
+
                 const loadScriptFileNames = () => {
-                    const scriptDirFileNames = fs.readdirSync(scriptFolderPath, {
-                        recursive: true
-                    });
-                    $scope.scriptArray = (scriptDirFileNames
-                        ?.filter(fileName =>
-                            fileName.endsWith(".js") &&
-                            !fileName.includes("node_modules"))
-                        ?? [])
+                    $scope.scriptArray = recursiveReaddirSync(scriptFolderPath)
                         .map(f => ({ id: f, name: f }));
                 };
                 loadScriptFileNames();
