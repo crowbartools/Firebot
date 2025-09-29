@@ -2,6 +2,7 @@ type WidgetOverlayEvent = import("../../../types/overlay-widgets").WidgetOverlay
 type Position = import("../../../types/overlay-widgets").Position;
 type OverlayAnimation = import("../../../types/overlay-widgets").Animation;
 type IOverlayWidgetUtils = import("../../../types/overlay-widgets").IOverlayWidgetUtils;
+type FontOptions = import("../../../types/parameters").FontOptions;
 
 // @ts-ignore
 widgetEvents = new EventEmitter();
@@ -173,8 +174,19 @@ class OverlayWidgetUtils implements IOverlayWidgetUtils {
 
     stylesToString(styles: Record<string, string | number | undefined>): string {
         return Object.entries(styles)
+            .filter(([_, value]) => value !== undefined)
             .map(([key, value]) => `${key}: ${value};`)
             .join('')
+    }
+
+    getFontOptionsStyles(fontOptions?: FontOptions): Record<string, string | number | undefined> {
+        return {
+            "font-family": fontOptions?.family || 'Inter, sans-serif',
+            "font-size": (fontOptions?.size ? `${fontOptions.size}px` : undefined),
+            "font-weight": fontOptions?.weight?.toString() || undefined,
+            "font-style": fontOptions?.italic ? 'italic' : 'normal',
+            "color": fontOptions?.color || '#FFFFFF',
+        };
     }
 }
 

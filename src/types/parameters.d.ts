@@ -242,6 +242,11 @@ export type CodeMirrorParameter = BaseParameter & {
     }
 }
 
+export type CounterSelectParameter = BaseParameter & {
+    type: "counter-select";
+    default?: never;
+};
+
 export type UnknownParameter = BaseParameter & {
     [key: string]: unknown;
 };
@@ -266,7 +271,8 @@ type FirebotParameter =
     | FontNameParameter
     | FontOptionsParameter
     | RadioCardsParameter
-    | CodeMirrorParameter;
+    | CodeMirrorParameter
+    | CounterSelectParameter;
 
 export type ParametersConfig<P> = {
     [K in keyof P]: (P[K] extends string
@@ -276,6 +282,7 @@ export type ParametersConfig<P> = {
         | FilepathParameter
         | ChatterSelectParameter
         | CurrencySelectParameter
+        | CounterSelectParameter
         | EnumParameter<string>
         : P[K] extends number
             ? NumberParameter | EnumParameter<number>
@@ -310,6 +317,7 @@ export type ParametersWithNameConfig<P> = {
         | FontNameParameter
         | RadioCardsParameter<string>
         | CodeMirrorParameter
+        | CounterSelectParameter
         : P[K] extends number
             ? NumberParameter | EnumParameter<number> | RadioCardsParameter<number>
             : P[K] extends boolean

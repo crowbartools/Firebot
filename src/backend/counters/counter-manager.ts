@@ -10,6 +10,8 @@ import profileManager from "../common/profile-manager";
 import { TriggerType } from "../common/EffectType";
 import { Counter } from "../../types/counters";
 import { EffectList } from "../../types/effects";
+import overlayWidgetConfigManager from "../overlay-widgets/overlay-widget-config-manager";
+import { CounterDisplayWidgetConfig } from "../overlay-widgets/builtin-types/counter-display/counter-display";
 
 class CounterManager extends JsonDbManager<Counter> {
     constructor() {
@@ -75,7 +77,11 @@ class CounterManager extends JsonDbManager<Counter> {
     override saveItem(counter: Counter): Counter {
         this.updateCounterTxtFile(counter.name, counter.value);
 
-        return super.saveItem(counter);
+        const savedCounter = super.saveItem(counter);
+
+        this._updateCounterWidgets(savedCounter);
+
+        return savedCounter;
     }
 
     override deleteItem(counterId: string): boolean {
@@ -87,6 +93,19 @@ class CounterManager extends JsonDbManager<Counter> {
         }
 
         return result;
+    }
+
+    private _updateCounterWidgets(counter: Counter): void {
+        const counterWidgets = overlayWidgetConfigManager.getConfigsOfType<CounterDisplayWidgetConfig>("firebot:counter-display");
+
+        for (const widget of counterWidgets) {
+            if (widget.settings.counterId === counter.id) {
+                overlayWidgetConfigManager.setWidgetStateById(widget.id, {
+                    counterName: counter.name,
+                    counterValue: counter.value
+                }, false);
+            }
+        }
     }
 
     triggerUiRefresh(): void {
@@ -209,6 +228,8 @@ class CounterManager extends JsonDbManager<Counter> {
         this.saveItem(counter);
 
         await this.updateCounterTxtFile(counter.name, counter.value);
+
+        this._updateCounterWidgets(counter);
 
         frontendCommunicator.send("counters:counter-updated", counter);
     }

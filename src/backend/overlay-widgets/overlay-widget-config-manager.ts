@@ -50,14 +50,19 @@ class OverlayWidgetConfigManager extends JsonDbManager<OverlayWidgetConfig, Extr
         return ((config?.state ?? null) as unknown as State | null);
     }
 
-    setWidgetStateById<State extends Record<string, unknown> = Record<string, unknown>>(id: string, state: State): void {
+    setWidgetStateById<State extends Record<string, unknown> = Record<string, unknown>>(id: string, state: State, persist = true): void {
         const config = this.getItem(id);
         if (!config) {
             return;
         }
-        config.state = state;
-        this.emit("widget-state-updated", config);
-        this.saveItem(config, false, true);
+        this.emit("widget-state-updated", {
+            ...config,
+            state
+        });
+        if (persist) {
+            config.state = state;
+            this.saveItem(config, false, true);
+        }
     }
 
     triggerUiRefresh(): void {
