@@ -19,7 +19,7 @@ Head on over to [Firebot's website](https://firebot.app) and download the latest
 Please visit our [Discord server](https://discord.gg/crowbartools-372817064034959370) or send us a [Threads](https://threads.net/@FirebotApp) or [Bluesky](https://bsky.app/profile/firebot.app). We are more than happy to help.
 
 ### I found a bug, how do I report it?
-You can create a Bug Report [here](https://github.com/crowbartools/Firebot/issues/new?assignees=&template=feature_request.md). We'll reply as soon as we can.
+You can create a Bug Report [here](https://github.com/crowbartools/Firebot/issues/new?assignees=&template=bug_report.yml). We'll reply as soon as we can.
 
 ### I have a new feature idea, where do I share it?
 We'd love to hear your idea! You can submit a Feature Request [here](https://github.com/crowbartools/Firebot/issues/new?assignees=&template=feature_request.md).
