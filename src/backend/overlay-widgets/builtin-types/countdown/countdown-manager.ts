@@ -1,6 +1,7 @@
 import overlayWidgetConfigManager from "../../overlay-widget-config-manager";
 import { DynamicCountdownWidgetConfig, State as CountdownState } from "./countdown-dynamic";
 import eventManager from "../../../events/EventManager";
+import logger from "../../../logwrapper";
 
 class CountdownManager {
 
@@ -12,7 +13,7 @@ class CountdownManager {
             this.doTick();
         }, 1000);
 
-        console.log("Countdown timer started");
+        logger.debug("Countdown timer started");
     }
 
     private doTick() {
