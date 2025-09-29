@@ -1,6 +1,6 @@
 import { EffectType } from "../../../types/effects";
 import { EffectCategory } from "../../../shared/effect-constants";
-import twitchApi from "../../twitch-api/api";
+import { TwitchApi } from "../../streaming-platforms/twitch/api";
 import customRolesManager from "../../roles/custom-roles-manager";
 import logger from "../../logwrapper";
 import viewerDatabase from "../../viewers/viewer-database";
@@ -169,7 +169,7 @@ const model: EffectType<{
                 user.id = viewer._id;
                 user.displayName = viewer.displayName;
             } else {
-                const twitchUser = await twitchApi.users.getUserByName(user.username);
+                const twitchUser = await TwitchApi.users.getUserByName(user.username);
 
                 if (twitchUser == null) {
                     logger.warn(`Unable to ${effect.addRoleId ? "add" : "remove"} custom role for ${user.username}. User does not exist.`);

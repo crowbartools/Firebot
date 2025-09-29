@@ -13,7 +13,7 @@ const slotMachine = require("./slot-machine");
 const logger = require("../../../logwrapper");
 const moment = require("moment");
 const NodeCache = require("node-cache");
-const twitchApi = require("../../../twitch-api/api");
+const { TwitchApi } = require("../../../streaming-platforms/twitch/api");
 
 const activeSpinners = new NodeCache({checkperiod: 2});
 const cooldownCache = new NodeCache({checkperiod: 5});
@@ -48,7 +48,7 @@ const spinCommand = {
         const slotsSettings = gameManager.getGameSettings("firebot-slots");
         const chatter = slotsSettings.settings.chatSettings.chatter;
         const username = userCommand.commandSender;
-        const user = await twitchApi.users.getUserByName(username);
+        const user = await TwitchApi.users.getUserByName(username);
         if (user == null) {
             logger.warn(`Could not process spin command for ${username}. User does not exist.`);
             return;

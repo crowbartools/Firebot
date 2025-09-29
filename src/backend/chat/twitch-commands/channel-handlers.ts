@@ -1,4 +1,4 @@
-import twitchApi from "../../twitch-api/api";
+import { TwitchApi } from "../../streaming-platforms/twitch/api";
 import { TwitchSlashCommandHandler } from "../twitch-slash-command-handler";
 import { TwitchCommandHelpers } from "./twitch-command-helpers";
 
@@ -20,7 +20,7 @@ export const commercialHandler: TwitchSlashCommandHandler<[number]> = {
         };
     },
     handle: async ([duration]) => {
-        return await twitchApi.channels.triggerAdBreak(duration);
+        return await TwitchApi.channels.triggerAdBreak(duration);
     }
 };
 
@@ -42,13 +42,13 @@ export const raidHandler: TwitchSlashCommandHandler<[string]> = {
         };
     },
     handle: async([targetUsername]) => {
-        const targetUserId = (await twitchApi.users.getUserByName(targetUsername))?.id;
+        const targetUserId = (await TwitchApi.users.getUserByName(targetUsername))?.id;
 
         if (targetUserId == null) {
             return false;
         }
 
-        return await twitchApi.channels.raidChannel(targetUserId);
+        return await TwitchApi.channels.raidChannel(targetUserId);
     }
 };
 
@@ -61,6 +61,6 @@ export const unraidHandler: TwitchSlashCommandHandler<[]> = {
         };
     },
     handle: async() => {
-        return await twitchApi.channels.cancelRaid();
+        return await TwitchApi.channels.cancelRaid();
     }
 };

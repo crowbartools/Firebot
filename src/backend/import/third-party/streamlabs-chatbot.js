@@ -1,6 +1,6 @@
 "use strict";
 
-const twitchApi = require("../../twitch-api/api");
+const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 const chatRolesManager = require("../../roles/chat-roles-manager");
 const frontendCommunicator = require("../../common/frontend-communicator");
 const logger = require("../../logwrapper");
@@ -17,7 +17,7 @@ const addViewersFromTwitch = async (viewers) => {
     for (const group of nameGroups) {
         try {
             const names = group.map(v => v.name);
-            const response = await twitchApi.users.getUsersByNames(names);
+            const response = await TwitchApi.users.getUsersByNames(names);
 
             if (response) {
                 twitchViewers = [
@@ -31,7 +31,7 @@ const addViewersFromTwitch = async (viewers) => {
             if (err._statusCode === 400) {
                 for (const viewer of group) {
                     try {
-                        const response = await twitchApi.users.getUserByName(viewer.name);
+                        const response = await TwitchApi.users.getUserByName(viewer.name);
 
                         if (response) {
                             twitchViewers.push(response);

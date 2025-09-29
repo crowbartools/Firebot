@@ -3,9 +3,9 @@ import logger from "../logwrapper";
 import accountAccess from "../common/account-access";
 import profileManager from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
-import twitchApi from "../twitch-api/api";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
 import activeUserHandler from "../chat/chat-listeners/active-user-handler";
-import { CustomReward, RewardRedemption, RewardRedemptionsApprovalRequest } from "../twitch-api/resource/channel-rewards";
+import { CustomReward, RewardRedemption, RewardRedemptionsApprovalRequest } from "../streaming-platforms/twitch/api/resource/channel-rewards";
 import { EffectTrigger } from "../../shared/effect-constants";
 import { RewardRedemptionMetadata, SavedChannelReward } from "../../types/channel-rewards";
 import { TriggerType } from "../common/EffectType";
@@ -18,7 +18,7 @@ class ChannelRewardManager {
 
     constructor() {
         frontendCommunicator.onAsync("get-channel-reward-count",
-            twitchApi.channelRewards.getTotalChannelRewardCount);
+            TwitchApi.channelRewards.getTotalChannelRewardCount);
 
         frontendCommunicator.onAsync("get-channel-rewards", async () => Object.values(this.channelRewards));
 
@@ -90,7 +90,7 @@ class ChannelRewardManager {
             const rewards = Object.values(channelRewardsData);
 
             // Get all manageable rewards from Twitch
-            const twitchManageableRewards: CustomReward[] = await twitchApi.channelRewards.getManageableCustomChannelRewards();
+            const twitchManageableRewards: CustomReward[] = await TwitchApi.channelRewards.getManageableCustomChannelRewards();
             if (twitchManageableRewards == null) {
                 logger.error("Manageable Twitch channel rewards returned null!");
                 this.channelRewards = channelRewardsData;
@@ -113,7 +113,7 @@ class ChannelRewardManager {
                 });
 
             // Get all unmanageable rewards from Twitch
-            const twitchUnmanageableRewards = await twitchApi.channelRewards.getUnmanageableCustomChannelRewards();
+            const twitchUnmanageableRewards = await TwitchApi.channelRewards.getUnmanageableCustomChannelRewards();
             if (twitchUnmanageableRewards == null) {
                 logger.error("Unmanageable Twitch channel rewards returned null!");
                 this.channelRewards = channelRewardsData;
@@ -179,14 +179,14 @@ class ChannelRewardManager {
         }
 
         if (channelReward.id == null) {
-            const twitchData = await twitchApi.channelRewards.createCustomChannelReward(channelReward.twitchData);
+            const twitchData = await TwitchApi.channelRewards.createCustomChannelReward(channelReward.twitchData);
             if (twitchData == null) {
                 return null;
             }
             channelReward.twitchData = twitchData;
             channelReward.id = twitchData.id;
         } else if (channelReward.manageable) {
-            await twitchApi.channelRewards.updateCustomChannelReward(channelReward.twitchData);
+            await TwitchApi.channelRewards.updateCustomChannelReward(channelReward.twitchData);
         }
 
         this.channelRewards[channelReward.id] = channelReward;
@@ -246,7 +246,7 @@ class ChannelRewardManager {
     async saveAllChannelRewards(allChannelRewards: SavedChannelReward[], updateTwitch = false) {
         if (updateTwitch) {
             for (const channelReward of allChannelRewards) {
-                await twitchApi.channelRewards.updateCustomChannelReward(channelReward.twitchData);
+                await TwitchApi.channelRewards.updateCustomChannelReward(channelReward.twitchData);
             }
         }
 
@@ -284,7 +284,7 @@ class ChannelRewardManager {
             channelRewardsDb.delete(`/${channelRewardId}`);
 
             if (propagateToTwitch) {
-                await twitchApi.channelRewards.deleteCustomChannelReward(channelRewardId);
+                await TwitchApi.channelRewards.deleteCustomChannelReward(channelRewardId);
             }
 
             if (notifyFrontend) {
@@ -334,7 +334,7 @@ class ChannelRewardManager {
         try {
             return effectRunner.processEffects(processEffectsRequest);
         } catch (reason) {
-            console.log(`error when running effects: ${reason}`);
+            logger.error(`error when running effects: ${reason}`);
         }
     }
 
@@ -439,7 +439,7 @@ class ChannelRewardManager {
             return;
         }
 
-        this._channelRewardRedemptions = await twitchApi.channelRewards.getOpenChannelRewardRedemptions();
+        this._channelRewardRedemptions = await TwitchApi.channelRewards.getOpenChannelRewardRedemptions();
 
         frontendCommunicator.send("channel-reward-redemptions-updated", this.getChannelRewardRedemptions());
     }
@@ -468,11 +468,11 @@ class ChannelRewardManager {
     }
 
     async approveOrRejectChannelRewardRedemptions(request: RewardRedemptionsApprovalRequest): Promise<void> {
-        await twitchApi.channelRewards.approveOrRejectChannelRewardRedemption(request);
+        await TwitchApi.channelRewards.approveOrRejectChannelRewardRedemption(request);
     }
 
     async approveOrRejectAllRedemptionsForChannelRewards(rewardIds: string[], approve = true): Promise<void> {
-        await twitchApi.channelRewards.approveOrRejectAllRedemptionsForChannelRewards(rewardIds, approve);
+        await TwitchApi.channelRewards.approveOrRejectAllRedemptionsForChannelRewards(rewardIds, approve);
     }
 }
 

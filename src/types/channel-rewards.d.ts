@@ -1,4 +1,4 @@
-import { CustomReward } from "../backend/twitch-api/resource/channel-rewards";
+import { CustomReward } from "../backend/streaming-platforms/twitch/api/resource/channel-rewards";
 import { EffectList } from "./effects";
 import { RestrictionData } from "./restrictions";
 

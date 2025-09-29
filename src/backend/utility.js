@@ -5,7 +5,7 @@ const { DateTime, Duration } = require("luxon");
 const fs = require("fs/promises");
 const replaceVariableManager = require("./variables/replace-variable-manager");
 const accountAccess = require("./common/account-access");
-const twitchApi = require("./twitch-api/api");
+const { TwitchApi } = require("./streaming-platforms/twitch/api");
 
 const getRandomInt = (min, max) => {
     min = Math.ceil(min);
@@ -126,7 +126,7 @@ const populateStringWithTriggerData = async (string = "", trigger) => {
 };
 
 const getUptime = async () => {
-    const client = twitchApi.streamerClient;
+    const client = TwitchApi.streamerClient;
 
     const streamerAccount = accountAccess.getAccounts().streamer;
     const channelData = await client.streams.getStreamByUserId(streamerAccount.userId);

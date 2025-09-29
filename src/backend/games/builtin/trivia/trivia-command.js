@@ -14,7 +14,7 @@ const logger = require("../../../logwrapper");
 const moment = require("moment");
 const triviaHelper = require("./trivia-helper");
 const NodeCache = require("node-cache");
-const twitchApi = require("../../../twitch-api/api");
+const { TwitchApi } = require("../../../streaming-platforms/twitch/api");
 
 let fiveSecTimeoutId;
 let answerTimeoutId;
@@ -107,7 +107,7 @@ const triviaCommand = {
         const chatter = triviaSettings.settings.chatSettings.chatter;
 
         const username = userCommand.commandSender;
-        const user = await twitchApi.users.getUserByName(username);
+        const user = await TwitchApi.users.getUserByName(username);
         if (user == null) {
             logger.warn(`Could not process trivia command for ${username}. User does not exist.`);
             return;

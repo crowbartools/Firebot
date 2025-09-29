@@ -1,5 +1,5 @@
 "use strict";
-const twitchApi = require("../../twitch-api/api");
+const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 const { EffectCategory, EffectTrigger, EffectDependency } = require('../../../shared/effect-constants');
 
 const triggers = {};
@@ -36,7 +36,7 @@ const model = {
         }
 
         if (messageId) {
-            await twitchApi.chat.deleteChatMessage(messageId);
+            await TwitchApi.chat.deleteChatMessage(messageId);
         }
 
         return true;

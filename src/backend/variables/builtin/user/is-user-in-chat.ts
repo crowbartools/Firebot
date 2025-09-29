@@ -1,6 +1,6 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import twitchApi from "../../../twitch-api/api";
+import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 
 const model : ReplaceVariable = {
     definition: {
@@ -16,7 +16,7 @@ const model : ReplaceVariable = {
         }
 
         username = username.toLowerCase();
-        const chatters = await twitchApi.chat.getAllChatters();
+        const chatters = await TwitchApi.chat.getAllChatters();
 
         return chatters?.some(c => c.userName === username || c.userDisplayName.toLowerCase() === username) ?? false;
     }

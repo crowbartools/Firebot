@@ -2,7 +2,7 @@
 
 const accountAccess = require("../common/account-access");
 const NodeCache = require('node-cache');
-const twitchApi = require("../twitch-api/api");
+const { TwitchApi } = require("../streaming-platforms/twitch/api");
 const logger = require("../logwrapper");
 const chatHelpers = require("../chat/chat-helpers");
 const activeUserHandler = require("../chat/chat-listeners/active-user-handler");
@@ -26,7 +26,7 @@ async function userFollowsChannels(username, channelNames, durationInSeconds = 0
         if (cachedFollow !== undefined) {
             userFollow = cachedFollow;
         } else {
-            userFollow = await twitchApi.users.getUserChannelFollow(username, channelName);
+            userFollow = await TwitchApi.users.getUserChannelFollow(username, channelName);
 
             // set cache value
             followCache.set(`${username}:${channelName}`, userFollow);
@@ -71,7 +71,7 @@ async function getUserDetails(userId) {
     /** @type {import("@twurple/api").HelixUser} */
     let twitchUser;
     try {
-        twitchUser = await twitchApi.users.getUserById(userId);
+        twitchUser = await TwitchApi.users.getUserById(userId);
     } catch (error) {
         // fail silently for now
     }
@@ -110,7 +110,7 @@ async function getUserDetails(userId) {
 
     const streamerData = accountAccess.getAccounts().streamer;
 
-    const client = twitchApi.streamerClient;
+    const client = TwitchApi.streamerClient;
 
     let isBanned;
     try {

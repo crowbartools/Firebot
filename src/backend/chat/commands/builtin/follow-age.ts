@@ -1,7 +1,7 @@
 import { DateTime } from "luxon";
 
 import { SystemCommand } from "../../../../types/commands";
-import twitchApi from "../../../twitch-api/api";
+import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 import chat from "../../twitch-chat";
 import util from "../../../utility";
 
@@ -38,7 +38,7 @@ export const FollowAgeSystemCommand: SystemCommand<{
         const commandSender = event.userCommand.commandSender;
         const commandOptions = event.commandOptions;
 
-        const rawFollowDate = await twitchApi.users.getFollowDateForUser(commandSender);
+        const rawFollowDate = await TwitchApi.users.getFollowDateForUser(commandSender);
 
         if (rawFollowDate === null) {
             await chat.sendChatMessage(`${commandSender} is not following the channel.`);

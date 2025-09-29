@@ -2,7 +2,7 @@
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 const logger = require('../../logwrapper');
-const twitchApi = require("../../twitch-api/api");
+const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 
 const model = {
     definition: {
@@ -49,10 +49,10 @@ const model = {
     },
     onTriggerEvent: async event => {
         if (event.effect.action === "Ban") {
-            const user = await twitchApi.users.getUserByName(event.effect.username);
+            const user = await TwitchApi.users.getUserByName(event.effect.username);
 
             if (user != null) {
-                const result = await twitchApi.moderation.banUser(user.id, "Banned by Firebot");
+                const result = await TwitchApi.moderation.banUser(user.id, "Banned by Firebot");
 
                 if (result === true) {
                     logger.debug(`${event.effect.username} was banned via the Ban effect.`);
@@ -66,10 +66,10 @@ const model = {
             }
         }
         if (event.effect.action === "Unban") {
-            const user = await twitchApi.users.getUserByName(event.effect.username);
+            const user = await TwitchApi.users.getUserByName(event.effect.username);
 
             if (user != null) {
-                const result = await twitchApi.moderation.unbanUser(user.id);
+                const result = await TwitchApi.moderation.unbanUser(user.id);
 
                 if (result === true) {
                     logger.debug(`${event.effect.username} was unbanned via the Ban effect.`);

@@ -9,7 +9,7 @@ import frontendCommunicator from "../../common/frontend-communicator";
 import restrictionsManager from "../../restrictions/restriction-manager";
 import commandManager from "./command-manager";
 import commandCooldownManager from "./command-cooldown-manager";
-import twitchApi from "../../twitch-api/api";
+import { TwitchApi } from "../../streaming-platforms/twitch/api";
 import commandRunner from "./command-runner";
 import { SettingsManager } from "../../common/settings-manager";
 
@@ -176,7 +176,7 @@ class CommandHandler {
         // Can't auto delete whispers, so we ignore auto delete trigger for those
         if (firebotChatMessage.whisper !== true && command.autoDeleteTrigger || (triggeredSubcmd && triggeredSubcmd.autoDeleteTrigger)) {
             logger.debug("Auto delete trigger is on, attempting to delete chat message");
-            await twitchApi.chat.deleteChatMessage(firebotChatMessage.id);
+            await TwitchApi.chat.deleteChatMessage(firebotChatMessage.id);
         }
 
         // check if command meets min args requirement

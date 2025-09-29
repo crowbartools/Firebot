@@ -216,7 +216,7 @@ export const QuotesManagementSystemCommand: SystemCommand<{
             const quotesManager = require("../../../quotes/quotes-manager");
             const logger = require("../../../logwrapper");
             const twitchChat = require("../../twitch-chat");
-            const TwitchApi = require("../../../twitch-api/api");
+            const { TwitchApi } = require("../../../streaming-platforms/twitch/api");
             const frontendCommunicator = require("../../../common/frontend-communicator");
 
             const { commandOptions } = event;
