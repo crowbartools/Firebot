@@ -226,11 +226,11 @@ export const QuotesManagementSystemCommand: SystemCommand<{
             const getFormattedQuoteString = (quote) => {
                 const prettyDate = quote.createdAt != null ? moment(quote.createdAt).format(commandOptions.quoteDateFormat) : "No Date";
                 return commandOptions.quoteDisplayTemplate
-                    .replace("{id}", quote._id)
-                    .replace("{text}", quote.text)
-                    .replace("{author}", quote.originator)
-                    .replace("{game}", quote.game)
-                    .replace("{date}", prettyDate);
+                    .replaceAll("{id}", quote._id)
+                    .replaceAll("{text}", quote.text)
+                    .replaceAll("{author}", quote.originator)
+                    .replaceAll("{game}", quote.game)
+                    .replaceAll("{date}", prettyDate);
             };
 
             const sendToTTS = (quote) => {
@@ -336,13 +336,9 @@ export const QuotesManagementSystemCommand: SystemCommand<{
                         profilePage: 'quotes'
                     };
 
-                    const binId = await cloudSync.syncProfileData(profileJSON);
+                    const streamerName = await cloudSync.syncProfileData(profileJSON);
 
-                    if (binId == null) {
-                        await twitchChat.sendChatMessage("There are no quotes to pull!");
-                    } else {
-                        await twitchChat.sendChatMessage(`Here is a list of quotes! https://firebot.app/profile?id=${binId}`);
-                    }
+                    await twitchChat.sendChatMessage(`Here is a list of quotes! https://firebot.app/profile/${streamerName}`);
 
                     return resolve();
                 }

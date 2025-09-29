@@ -81,7 +81,7 @@ export const MarkerSystemCommand: SystemCommand<{
             }
             await chat.sendChatMessage(
                 commandOptions.successTemplate
-                    .replace("{timestamp}", utils.formattedSeconds(marker.positionInSeconds, true))
+                    .replaceAll("{timestamp}", utils.formattedSeconds(marker.positionInSeconds, true))
             );
         } catch (error) {
             logger.error(error);

@@ -6,7 +6,8 @@ const triggers = {};
 triggers[EffectTrigger.EVENT] = [
     "twitch:channel-reward-redemption",
     "twitch:channel-reward-redemption-fulfilled",
-    "twitch:channel-reward-redemption-canceled"
+    "twitch:channel-reward-redemption-canceled",
+    "twitch:channel-reward-redemption-send-highlighted-message"
 ];
 triggers[EffectTrigger.CHANNEL_REWARD] = true;
 triggers[EffectTrigger.PRESET_LIST] = true;

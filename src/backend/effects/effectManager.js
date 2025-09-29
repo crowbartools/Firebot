@@ -26,6 +26,22 @@ class EffectManager extends EventEmitter {
         this.emit("effectRegistered", effect);
     }
 
+    unregisterEffect(effectId) {
+        const effect = this._registeredEffects.find(e => e?.definition?.id === effectId);
+        if (!effect) {
+            logger.warn(`Effect ${effectId} does not exist`);
+            return;
+        }
+
+        const hasOverlayEffect = !!effect.overlayExtension;
+
+        this._registeredEffects = this._registeredEffects.filter(e => e?.definition?.id !== effectId);
+
+        logger.debug(`Unregistered Effect ${effectId}`);
+
+        this.emit("effectUnregistered", { effectId, hasOverlayEffect });
+    }
+
     getEffectDefinitions() {
         return this._registeredEffects.map(e => e.definition);
     }
@@ -36,14 +52,14 @@ class EffectManager extends EventEmitter {
 
     getEffectOverlayExtensions() {
         return this._registeredEffects
-            .filter(e => {
+            .filter((e) => {
                 return e.overlayExtension != null &&
                     e.overlayExtension.event != null &&
                     e.overlayExtension.event.onOverlayEvent != null &&
                     e.overlayExtension.event.name != null &&
                     e.overlayExtension.event.name !== "";
             })
-            .map(e => {
+            .map((e) => {
                 return {
                     id: e.definition.id,
                     dependencies: e.overlayExtension.dependencies,
@@ -148,7 +164,7 @@ frontendCommunicator.onAsync("getEffectDefinitions", async (triggerData) => {
     const filteredEffectDefs = effects
         .map(manager.mapEffectForFrontEnd)
         .map(e => e.definition)
-        .filter(e => {
+        .filter((e) => {
             if (triggerType != null) {
                 if (e.triggers == null) {
                     return true;

@@ -56,12 +56,12 @@ export const SteamSystemCommand: SystemCommand<{
 
             if (gameDetails !== null) {
                 message = commandOptions.outputTemplate
-                    .replace("{gameName}", gameDetails.name)
-                    .replace("{price}", gameDetails.price || "Unknown")
-                    .replace("{releaseDate}", gameDetails.releaseDate || "Unknown")
-                    .replace("{metaCriticScore}", gameDetails.score?.toString() || "Unknown")
-                    .replace("{steamUrl}", gameDetails.url)
-                    .replace("{steamShortDescription}", gameDetails.shortDescription || "Unknown");
+                    .replaceAll("{gameName}", gameDetails.name)
+                    .replaceAll("{price}", gameDetails.price || "Unknown")
+                    .replaceAll("{releaseDate}", gameDetails.releaseDate || "Unknown")
+                    .replaceAll("{metaCriticScore}", gameDetails.score?.toString() || "Unknown")
+                    .replaceAll("{steamUrl}", gameDetails.url)
+                    .replaceAll("{steamShortDescription}", gameDetails.shortDescription || "Unknown");
             }
         }
 

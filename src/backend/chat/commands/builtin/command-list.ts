@@ -50,15 +50,10 @@ export const CommandListSystemCommand: SystemCommand<{
             profilePage: 'commands'
         };
 
-        const binId = await cloudSync.syncProfileData(profileJSON);
+        const streamerName = await cloudSync.syncProfileData(profileJSON);
 
-        if (binId == null) {
-            await twitchChat.sendChatMessage(commandOptions.noCommandsTemplate
-                .replace("{username}", event.chatMessage.username), null, "bot");
-        } else {
-            await twitchChat.sendChatMessage(commandOptions.successTemplate
-                .replace("{url}", `https://firebot.app/profile?id=${binId}`), null, "bot"
-            );
-        }
+        await twitchChat.sendChatMessage(commandOptions.successTemplate
+            .replaceAll("{url}", `https://firebot.app/profile/${streamerName}`), null, "bot"
+        );
     }
 };

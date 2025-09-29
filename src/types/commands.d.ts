@@ -107,6 +107,7 @@ export type CommandDefinition = {
      * the cooldown is not yet over.
      */
     sendCooldownMessage?: boolean;
+    sendCooldownMessageAsReply?: boolean;
     useCustomCooldownMessage?: boolean;
     cooldownMessage?: string;
     baseCommandDescription?: string | undefined;
@@ -117,6 +118,7 @@ export type CommandDefinition = {
     subCommands?: SubCommand[] | undefined;
     fallbackSubcommand?: SubCommand | undefined;
     treatQuotedTextAsSingleArg?: boolean | undefined;
+    onlyTriggerWhenChannelIsLive?: boolean | undefined;
     minArgs?: number;
     options?: Record<keyof OptionsModel, CommandOption>;
     /**

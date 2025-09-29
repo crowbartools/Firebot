@@ -135,6 +135,10 @@
                     $ctrl.command.sendCooldownMessage = true;
                 }
 
+                if ($ctrl.command.sendCooldownMessageAsReply == null) {
+                    $ctrl.command.sendCooldownMessageAsReply = true;
+                }
+
                 if ($ctrl.command.cooldownMessage == null) {
                     $ctrl.command.cooldownMessage = "This command is still on cooldown for: {timeLeft}";
                 }

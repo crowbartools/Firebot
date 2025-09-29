@@ -1,5 +1,5 @@
 'use strict';
-const {ipcMain} = require('electron');
+const { ipcMain } = require('electron');
 const logger = require('../logwrapper');
 const effectManager = require("../effects/effectManager");
 const { EffectTrigger } = require("../../shared/effect-constants");
@@ -50,12 +50,17 @@ const findAndReplaceVariables = async (data, trigger, effectOutputs) => {
 };
 
 function validateEffectCanRun(effectId, triggerType) {
-    const effectDefinition = effectManager.getEffectById(effectId).definition;
+    const effectDefinition = effectManager.getEffectById(effectId)?.definition;
+
+    if (!effectDefinition) {
+        logger.warn(`Effect definition not found for effect id: ${effectId}`);
+        return false;
+    }
 
     // Validate trigger
     if (effectDefinition.triggers) {
         const supported = effectDefinition.triggers[triggerType] != null
-        && effectDefinition.triggers[triggerType] !== false;
+            && effectDefinition.triggers[triggerType] !== false;
         if (!supported) {
             logger.info(`${effectId} cannot be triggered by: ${triggerType}`);
             return false;
@@ -340,7 +345,7 @@ function runEffectsManually(effects, metadata = {}, triggerType = EffectTrigger.
 
 // Manually play a button.
 // This listens for an event from the render and will activate a button manually.
-ipcMain.on('runEffectsManually', function(event, {effects, metadata, triggerType}) {
+ipcMain.on('runEffectsManually', function (event, { effects, metadata, triggerType }) {
     runEffectsManually(effects, metadata, triggerType);
 });
 

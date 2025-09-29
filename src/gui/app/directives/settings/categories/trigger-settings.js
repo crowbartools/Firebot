@@ -25,6 +25,19 @@
                     </firebot-setting>
 
                     <firebot-setting
+                        name="Streamer Account Exempt From Cooldowns"
+                        description="When enabled, the streamer account will be able to use commands that are on cooldown"
+                    >
+                        <toggle-button
+                            toggle-model="settings.getSetting('StreamerExemptFromCooldowns')"
+                            on-toggle="settings.saveSetting('StreamerExemptFromCooldowns', !settings.getSetting('StreamerExemptFromCooldowns'))"
+                            font-size="40"
+                            aria-label="Streamer Account Exempt From Cooldowns, When enabled, the streamer account will be able to use commands that are on cooldown"
+                            accessibility-label="(settings.getSetting('StreamerExemptFromCooldowns') ? 'Enabled' : 'Disabled') + ' When enabled, the streamer account will be able to use commands that are on cooldown'"
+                        />
+                    </firebot-setting>
+
+                    <firebot-setting
                         name="Allow Shared Chat To Trigger Commands"
                         description="Allow commands to be triggered by chat messages sent in other channels during Twitch Shared Chat"
                     >
@@ -44,7 +57,7 @@
                     />
                     <firebot-setting
                         name="Ignore Related Gift Sub Events"
-                        description="When this is enabled, Firebot will attempt to ignore subsequent Gift Sub events after a Community Gift Sub event. This means only the Community Sub event would fire instead of the Community Sub event AND an additional Gift Sub event for every recipient."
+                        description="When this is enabled, Firebot will ignore individual Gift Sub events that are part of a Community Gift Sub event. This means only the Community Sub event would fire instead of the Community Sub event AND an additional Gift Sub event for every recipient."
                     >
                         <firebot-select
                             options="{ true: 'Yes', false: 'No' }"

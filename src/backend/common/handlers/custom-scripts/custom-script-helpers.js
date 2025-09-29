@@ -6,6 +6,88 @@ const settings = require("../../settings-manager").SettingsManager;
 const path = require("path");
 const logger = require("../../../logwrapper");
 const { app } = require("electron");
+const EventEmitter = require("events");
+
+const webhookManager = require("../../../webhooks/webhook-config-manager");
+
+/**
+ * Shim around the webhook manager to filter webhooks by script name and re-emit events
+ * specific to this script.
+ * @class
+ * @extends EventEmitter
+ */
+class ScriptWebhookManager extends EventEmitter {
+    constructor(scriptName) {
+        super();
+        this.scriptName = scriptName;
+
+        webhookManager.on("webhook-received", ({ config, payload, headers }) => {
+            if (config.scriptId !== this.scriptName) {
+                return;
+            }
+            this.emit("webhook-received", { config, payload, headers });
+        });
+    }
+
+    saveWebhook(name) {
+        if (name == null || name.trim() === "") {
+            return null;
+        }
+
+        const existing = webhookManager
+            .getAllItems()
+            .find(w => w.name === name && w.scriptId === this.scriptName);
+
+        return webhookManager.saveItem({
+            name,
+            id: existing?.id ?? undefined,
+            scriptId: this.scriptName
+        });
+    }
+
+    getWebhook(name) {
+        if (name == null || name.trim() === "") {
+            return null;
+        }
+
+        return webhookManager
+            .getAllItems()
+            .find(w => w.name === name && w.scriptId === this.scriptName)
+            ?? null;
+    }
+
+    deleteWebhook(name) {
+        if (name == null || name.trim() === "") {
+            return false;
+        }
+
+        const existing = webhookManager
+            .getAllItems()
+            .find(w => w.name === name && w.scriptId === this.scriptName);
+
+        if (existing == null) {
+            return false;
+        }
+
+        return webhookManager.deleteItem(existing.id);
+    }
+
+    getWebhooks() {
+        return webhookManager
+            .getAllItems()
+            .filter(w => w.scriptId === this.scriptName);
+    }
+
+    getWebhookUrl(name) {
+        const webhook = this.getWebhook(name);
+
+        if (webhook == null) {
+            return null;
+        }
+
+        return webhookManager.getWebhookUrlById(webhook.id);
+    }
+}
 
 const accountAccess = require("../../account-access");
 
@@ -32,6 +114,7 @@ function buildModules(scriptManifest) {
     const notificationManager = require("../../../notifications/notification-manager").default;
 
     const scriptNameNormalized = scriptManifest.name.replace(/[#%&{}\\<>*?/$!'":@`|=\s-]+/g, "-").toLowerCase();
+
     const scriptDataDir = path.resolve(profileManager.getPathInProfile("/script-data/"), `./${scriptNameNormalized}/`);
 
     return {
@@ -72,6 +155,9 @@ function buildModules(scriptManifest) {
         timerManager: require("../../../timers/timer-manager"),
         gameManager: require("../../../games/game-manager"),
 
+        overlayWidgetsManager: require("../../../overlay-widgets/overlay-widgets-manager"),
+        overlayWidgetConfigManager: require("../../../overlay-widgets/overlay-widget-config-manager"),
+
         /** @deprecated Use `currencyAccess`, `currencyManagerNew`, and `currencyCommandManager` instead */
         currencyDb: require("../../../database/currencyDatabase"),
         /** @deprecated Use `currencyAccess`, `currencyManagerNew`, and `currencyCommandManager` instead */
@@ -92,7 +178,7 @@ function buildModules(scriptManifest) {
         counterManager: require("../../../counters/counter-manager").CounterManager,
         utils: require("../../../utility"),
         resourceTokenManager: require("../../../resource-token-manager").ResourceTokenManager,
-
+        webhookManager: new ScriptWebhookManager(scriptNameNormalized),
         notificationManager: {
             addNotification: (notificationBase, permanentlySave = true) => {
                 return notificationManager.addNotification(
@@ -118,7 +204,7 @@ function buildModules(scriptManifest) {
             getNotifications: () => {
                 return notificationManager
                     .getNotifications()
-                    .filter((n) => n.source === "script" && n.scriptName === (scriptManifest.name ?? "unknown"));
+                    .filter(n => n.source === "script" && n.scriptName === (scriptManifest.name ?? "unknown"));
             },
             deleteNotification: (id) => {
                 const notification = notificationManager.getNotification(id);
@@ -133,8 +219,8 @@ function buildModules(scriptManifest) {
             clearAllNotifications: () => {
                 notificationManager
                     .getNotifications()
-                    .filter((n) => n.source === "script" && n.scriptName === (scriptManifest.name ?? "unknown"))
-                    .forEach((n) => notificationManager.deleteNotification(n.id));
+                    .filter(n => n.source === "script" && n.scriptName === (scriptManifest.name ?? "unknown"))
+                    .forEach(n => notificationManager.deleteNotification(n.id));
             }
         },
         uiExtensionManager: require("../../../ui-extensions/ui-extension-manager"),
@@ -178,6 +264,6 @@ function mapParameters(parameterData) {
     return simpleParams;
 }
 
-exports.mapParameters = mapParameters;
 exports.getScriptPath = getScriptPath;
 exports.buildRunRequest = buildRunRequest;
+exports.mapParameters = mapParameters;

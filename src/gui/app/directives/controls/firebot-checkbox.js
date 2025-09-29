@@ -11,7 +11,8 @@
                 model: "=",
                 style: "@?",
                 disabled: "<?",
-                onChange: "&?"
+                onChange: "&?",
+                ngClick: "&?"
             },
             template: `
             <label class="control-fb control--checkbox" style="{{$ctrl.style}}"> {{$ctrl.label}} <tooltip ng-if="$ctrl.tooltip" text="$ctrl.tooltip" placement="{{$ctrl.tooltipPlacement || ''}}"></tooltip>
@@ -20,6 +21,7 @@
                     ng-model="$ctrl.model"
                     ng-disabled="$ctrl.disabled"
                     ng-change="$ctrl.onChange ? $ctrl.onChange({ newValue: $ctrl.model }) : undefined"
+                    ng-click="$ctrl.ngClick ? $ctrl.ngClick() : undefined"
                 >
                 <div class="control__indicator"></div>
             </label>

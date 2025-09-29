@@ -44,7 +44,7 @@ function loadStartupConfig() {
 /**
  * @param {ScriptData} startupScriptData
  */
-function saveStartupScriptData(startupScriptData) {
+async function saveStartupScriptData(startupScriptData) {
     if (startupScriptData == null) {
         return;
     }
@@ -61,7 +61,7 @@ function saveStartupScriptData(startupScriptData) {
         logger.warn(`There was an error saving startup script data.`, err);
     }
 
-    startUpScriptSaved(startupScriptData);
+    await startUpScriptSaved(startupScriptData);
 }
 
 /**
@@ -109,8 +109,12 @@ async function runStartupScripts() {
 
 frontendCommunicator.onAsync("getStartupScripts", async () => startupScripts);
 
-frontendCommunicator.on("saveStartupScriptData", (startupScriptData) => {
-    saveStartupScriptData(startupScriptData);
+frontendCommunicator.onAsync("saveStartupScriptData", async (startupScriptData) => {
+    try {
+        await saveStartupScriptData(startupScriptData);
+    } catch (error) {
+        logger.error("Error saving startup script", error);
+    }
 });
 
 frontendCommunicator.on("deleteStartupScriptData", (startupScriptDataId) => {

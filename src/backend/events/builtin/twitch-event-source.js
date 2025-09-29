@@ -28,11 +28,55 @@ module.exports = {
             }
         },
         {
+            id: "outgoing-raid-started",
+            name: "Outgoing Raid Started",
+            description: "When you or a moderator starts an outgoing raid to another channel.",
+            cached: false,
+            manualMetadata: {
+                username: "firebot",
+                userId: "",
+                userDisplayName: "Firebot",
+                raidTargetUsername: "user",
+                raidTargetUserId: "",
+                raidTargetUserDisplayName: "User",
+                moderator: "BestMod",
+                viewerCount: 5
+            },
+            activityFeed: {
+                icon: "fad fa-inbox-out",
+                getMessage: (eventData) => {
+                    return `**${eventData.moderator}** started raid to user **${eventData.raidTargetUserDisplayName}** with **${
+                        eventData.viewerCount
+                    }** viewer(s)`;
+                }
+            }
+        },
+        {
+            id: "outgoing-raid-canceled",
+            name: "Outgoing Raid Canceled",
+            description: "When you or a moderator cancels an outgoing raid to another channel.",
+            cached: false,
+            manualMetadata: {
+                username: "firebot",
+                userId: "",
+                userDisplayName: "Firebot",
+                raidTargetUsername: "user",
+                raidTargetUserId: "",
+                raidTargetUserDisplayName: "User",
+                moderator: "BestMod"
+            },
+            activityFeed: {
+                icon: "fad fa-undo",
+                getMessage: (eventData) => {
+                    return `**${eventData.moderator}** canceled raid to user **${eventData.raidTargetUserDisplayName}**`;
+                }
+            }
+        },
+        {
             id: "raid-sent-off",
-            name: "Outgoing Raid",
+            name: "Outgoing Raid Complete",
             description: "When your outgoing raid is completed.",
             cached: false,
-            cacheMetaKey: "fromUsername",
             manualMetadata: {
                 username: "firebot",
                 userId: "",
@@ -160,9 +204,9 @@ module.exports = {
                     },
                     value: "1000"
                 },
-                giftSubMonths: 5,
                 giftDuration: 1,
-                gifteeUsername: "MageEnclave"
+                gifteeUsername: "MageEnclave",
+                lifetimeGiftCount: 1
             },
             activityFeed: {
                 icon: "fad fa-gift",
@@ -171,7 +215,7 @@ module.exports = {
                         eventData.giftDuration > 1 ? ` **${eventData.giftDuration} month** ` : ""
                     } **Tier ${eventData.subPlan.replace("000", "")}** sub to **${
                         eventData.gifteeUsername
-                    }** (Subbed for ${eventData.giftSubMonths} month${eventData.giftSubMonths > 1 ? "s" : ""} total)`;
+                    }**`;
                 }
             }
         },
@@ -196,13 +240,14 @@ module.exports = {
                 giftReceivers: {
                     type: "gift-receivers-list",
                     value: [
-                        { gifteeUsername: "User1", giftSubMonths: 3 },
-                        { gifteeUsername: "User2", giftSubMonths: 5 },
-                        { gifteeUsername: "User3", giftSubMonths: 8 },
-                        { gifteeUsername: "User4", giftSubMonths: 10 },
-                        { gifteeUsername: "User5", giftSubMonths: 16 }
+                        { gifteeUsername: "User1" },
+                        { gifteeUsername: "User2" },
+                        { gifteeUsername: "User3" },
+                        { gifteeUsername: "User4" },
+                        { gifteeUsername: "User5" }
                     ]
-                }
+                },
+                lifetimeGiftCount: 5
             },
             activityFeed: {
                 icon: "fad fa-gifts",
@@ -324,6 +369,73 @@ module.exports = {
                     return `**${eventData.userDisplayName}${
                         showUserIdName ? ` (${eventData.username})` : ""
                     }** unlocked the **${eventData.badgeTier}** bits badge in your channel!`;
+                }
+            }
+        },
+        {
+            id: "bits-powerup-message-effect",
+            name: "Power-Up: Message Effects",
+            description: "When a viewer uses the \"Message Effects\" Power-Up in your channel.",
+            cached: false,
+            manualMetadata: {
+                username: "firebot",
+                userDisplayName: "Firebot",
+                userId: "",
+                bits: 30,
+                totalBits: 1200,
+                cheerMessage: "Test Message"
+            },
+            activityFeed: {
+                icon: "fad fa-diamond",
+                getMessage: (eventData) => {
+                    const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
+                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""
+                    }** used a Message Effects Power-Up for **${eventData.bits}** bits.`;
+                }
+            }
+        },
+        {
+            id: "bits-powerup-celebration",
+            name: "Power-up: On-Screen Celebration",
+            description: "When a viewer uses the \"On-Screen Celebration\" Power-Up in your channel.",
+            cached: false,
+            manualMetadata: {
+                username: "firebot",
+                userDisplayName: "Firebot",
+                userId: "",
+                bits: 50,
+                totalBits: 1200
+            },
+            activityFeed: {
+                icon: "fad fa-diamond",
+                getMessage: (eventData) => {
+                    const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
+                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""
+                    }** used a Celebration Power-Up for **${eventData.bits}** bits.`;
+                }
+            }
+        },
+        {
+            id: "bits-powerup-gigantified-emote",
+            name: "Power-up: Gigantify an Emote",
+            description: "When a viewer uses the \"Gigantify an Emote\" Power-Up in your channel.",
+            cached: false,
+            manualMetadata: {
+                username: "firebot",
+                userDisplayName: "Firebot",
+                userId: "",
+                bits: 20,
+                totalBits: 1200,
+                cheerMessage: "Test Message",
+                emoteName: "PogChamp",
+                emoteUrl: "https://static-cdn.jtvnw.net/emoticons/v2/305954156/default/dark/3.0"
+            },
+            activityFeed: {
+                icon: "fad fa-diamond",
+                getMessage: (eventData) => {
+                    const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
+                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""
+                    }** gigantified the **${eventData.emoteName}** emote for **${eventData.bits}** bits.`;
                 }
             }
         },
@@ -581,6 +693,134 @@ module.exports = {
                     }**'s redemption of **${eventData.rewardName}** was rejected. ${
                         eventData.messageText && !!eventData.messageText.length ? `*${eventData.messageText}*` : ""
                     }`;
+                }
+            }
+        },
+        {
+            id: "channel-reward-redemption-single-message-bypass-sub-mode",
+            name: "Channel Reward Redemption: Send a Message in Sub-Only Mode",
+            description: "When someone redeems \"Send a Message in Sub-Only Mode\" to post a message in your channel",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "firebot",
+                userDisplayName: "Firebot",
+                userId: "",
+                rewardCost: 200,
+                messageText: "Test message",
+                rewardDescription: "Send a Message in Sub-Only Mode"
+            },
+            activityFeed: {
+                icon: "fad fa-arrow-right",
+                getMessage: (eventData) => {
+                    const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
+                    const message = `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }** redeemed **Send a Message in Sub-Only Mode**.`;
+                    return message;
+                }
+            }
+        },
+        {
+            id: "channel-reward-redemption-send-highlighted-message",
+            name: "Channel Reward Redemption: Highlight My Message",
+            description: "When someone redeems \"Highlight My Message\" in your channel",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "firebot",
+                userDisplayName: "Firebot",
+                userId: "",
+                rewardCost: 200,
+                messageText: "Test message",
+                rewardDescription: "Highlight My Message"
+            },
+            activityFeed: {
+                icon: "fad fa-highlighter",
+                getMessage: (eventData) => {
+                    const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
+                    const message = `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }** redeemed **Highlight My Message**.`;
+                    return message;
+                }
+            }
+        },
+        {
+            id: "channel-reward-redemption-random-sub-emote-unlock",
+            name: "Channel Reward Redemption: Unlock a Random Sub Emote",
+            description: "When someone redeems \"Unlock a Random Sub Emote\" to unlock an emote in your channel",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "firebot",
+                userDisplayName: "Firebot",
+                userId: "",
+                rewardCost: 200,
+                emoteName: "PogChamp",
+                emoteUrl: "https://static-cdn.jtvnw.net/emoticons/v2/305954156/default/dark/3.0",
+                rewardDescription: "Unlock a Random Sub Emote"
+            },
+            activityFeed: {
+                icon: "fad fa-images",
+                getMessage: (eventData) => {
+                    const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
+                    const message = `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }** redeemed **Unlock a Random Sub Emote**.`;
+                    return message;
+                }
+            }
+        },
+        {
+            id: "channel-reward-redemption-chosen-sub-emote-unlock",
+            name: "Channel Reward Redemption: Choose an Emote to Unlock",
+            description: "When someone redeems \"Choose an Emote to Unlock\" to unlock an emote in your channel",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "firebot",
+                userDisplayName: "Firebot",
+                userId: "",
+                rewardCost: 200,
+                emoteName: "PogChamp",
+                emoteUrl: "https://static-cdn.jtvnw.net/emoticons/v2/305954156/default/dark/3.0",
+                rewardDescription: "Choose an Emote to Unlock"
+            },
+            activityFeed: {
+                icon: "fad fa-images",
+                getMessage: (eventData) => {
+                    const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
+                    const message = `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }** redeemed **Choose an Emote to Unlock**.`;
+                    return message;
+                }
+            }
+        },
+        {
+            id: "channel-reward-redemption-chosen-modified-sub-emote-unlock",
+            name: "Channel Reward Redemption: Modify a Single Emote",
+            description: "When someone redeems \"Modify a Single Emote\" to modify and unlock an emote in your channel",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "firebot",
+                userDisplayName: "Firebot",
+                userId: "",
+                rewardCost: 200,
+                emoteName: "PogChamp",
+                emoteUrl: "https://static-cdn.jtvnw.net/emoticons/v2/305954156/default/dark/3.0",
+                rewardDescription: "Modify a Single Emote"
+            },
+            activityFeed: {
+                icon: "fad fa-images",
+                getMessage: (eventData) => {
+                    const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
+                    const message = `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }** redeemed **Modify a Single Emote**.`;
+                    return message;
                 }
             }
         },
@@ -868,7 +1108,9 @@ module.exports = {
                 progress: "150",
                 goal: "500",
                 level: "1",
-                isGoldenKappaTrain: false
+                isGoldenKappaTrain: false,
+                isTreasureTrain: false,
+                isSharedTrain: false
             },
             activityFeed: {
                 icon: "fad fa-train",
@@ -888,7 +1130,9 @@ module.exports = {
                 progress: "150",
                 goal: "500",
                 level: "1",
-                isGoldenKappaTrain: false
+                isGoldenKappaTrain: false,
+                isTreasureTrain: false,
+                isSharedTrain: false
             },
             activityFeed: {
                 icon: "fad fa-train",
@@ -896,6 +1140,23 @@ module.exports = {
                     return `Level **${eventData.level}** hype train currently at **${Math.floor(
                         (eventData.progress / eventData.goal) * 100
                     )}%**.`;
+                }
+            }
+        },
+        {
+            id: "hype-train-level-up",
+            name: "Hype Train Level Up",
+            description: "When a hype train on your channel advances to the next level.",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                previousLevel: "1",
+                level: "2"
+            },
+            activityFeed: {
+                icon: "fad fa-train",
+                getMessage: (eventData) => {
+                    return `Hype train level **${eventData.level}** unlocked!`;
                 }
             }
         },
@@ -908,7 +1169,9 @@ module.exports = {
             manualMetadata: {
                 total: "150",
                 level: "1",
-                isGoldenKappaTrain: false
+                isGoldenKappaTrain: false,
+                isTreasureTrain: false,
+                isSharedTrain: false
             },
             activityFeed: {
                 icon: "fad fa-train",

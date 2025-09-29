@@ -21,6 +21,7 @@
   <firebot-item-table
     ng-if="activeCmdTab === 0"
     items="commandsService.getCustomCommands()"
+    on-item-update="saveCustomCommand(item)"
     on-items-update="saveAllCommands(items)"
     headers="customCommandHeaders"
     sort-tag-context="commands"

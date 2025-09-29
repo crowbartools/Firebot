@@ -154,6 +154,17 @@ exports.whenReady = async () => {
     const quickActionManager = require("../../../quick-actions/quick-action-manager");
     quickActionManager.loadItems();
 
+    windowManagement.updateSplashScreenStatus("Loading webhooks...");
+    const webhookConfigManager = require("../../../webhooks/webhook-config-manager");
+    webhookConfigManager.loadItems();
+
+    windowManagement.updateSplashScreenStatus("Loading overlay widgets...");
+    const { loadWidgetTypes } = require("../../../overlay-widgets/builtin-widget-type-loader");
+    loadWidgetTypes();
+
+    const overlayWidgetConfigManager = require("../../../overlay-widgets/overlay-widget-config-manager");
+    overlayWidgetConfigManager.loadItems();
+
     windowManagement.updateSplashScreenStatus("Loading startup script data...");
     const startupScriptsManager = require("../../../common/handlers/custom-scripts/startup-scripts-manager");
     startupScriptsManager.loadStartupConfig();
@@ -265,6 +276,12 @@ exports.whenReady = async () => {
 
     // get ui extension manager in memory
     require("../../../ui-extensions/ui-extension-manager");
+
+    // start crowbar relay websocket
+    require("../../../crowbar-relay/crowbar-relay-websocket");
+
+    const countdownManager = require("../../../overlay-widgets/builtin-types/countdown/countdown-manager");
+    countdownManager.startTimer();
 
     logger.debug('...loading main window');
     windowManagement.updateSplashScreenStatus("Here we go!");

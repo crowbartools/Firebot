@@ -9,7 +9,7 @@ triggers[EffectTrigger.MANUAL] = true;
 const model : ReplaceVariable = {
     definition: {
         handle: "donationAmountFormatted",
-        description: "The amount (w/currency symbol) of a donation from StreamElements/StreamLabs/Tipeee/ExtraLife",
+        description: "The amount (w/currency symbol) of a donation",
         triggers: triggers,
         categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]

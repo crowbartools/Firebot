@@ -62,5 +62,5 @@ export type CustomScript = {
         runRequest: RunRequest
     ): void | PromiseLike<void> | ScriptReturnObject | PromiseLike<ScriptReturnObject>;
     parametersUpdated?: (parameters: Record<string, unknown>) => void | PromiseLike<void>;
-    stop?: () => void | PromiseLike<void>;
+    stop?: (uninstalling: boolean) => void | PromiseLike<void>;
 };

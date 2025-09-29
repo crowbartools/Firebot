@@ -5,14 +5,20 @@ const logger = require("../../logwrapper");
 const EventEmitter = require("events");
 
 class FilterManager extends EventEmitter {
+
+    #registeredFilters = [];
+
+    /**
+     * @type {Record<string, Array<{ eventSourceId: string, eventId: string }>>}
+     */
+    #additionalFilterEvents = {};
+
     constructor() {
         super();
-
-        this._registeredFilters = [];
     }
 
     registerFilter(filter) {
-        const idConflict = this._registeredFilters.some(
+        const idConflict = this.#registeredFilters.some(
             f => f.id === filter.id
         );
 
@@ -26,27 +32,78 @@ class FilterManager extends EventEmitter {
             return;
         }
 
-        // TODO: validate the filter better
-
-        this._registeredFilters.push(filter);
+        this.#registeredFilters.push(filter);
 
         logger.debug(`Registered Event Filter ${filter.id}`);
 
         this.emit("filterRegistered", filter);
     }
 
+    unregisterFilter(id) {
+        const existing = this.#registeredFilters.some(
+            f => f.id === id
+        );
+
+        if (!existing) {
+            logger.warn(`Could not unregister event filter '${id}'. Filter does not exist.`);
+            return;
+        }
+
+        this.#registeredFilters = this.#registeredFilters.filter(f => f.id !== id);
+
+        logger.debug(`Unregistered Event Filter ${id}`);
+
+        this.emit("FilterUnregistered", id);
+    }
+
+    addEventToFilter(filterId, eventSourceId, eventId) {
+        if (this.getFiltersForEvent(eventSourceId, eventId).some(f => f.id === filterId)) {
+            logger.warn(`Filter ${filterId} already setup for event ${eventSourceId}:${eventId}`);
+            return;
+        }
+
+        const additionalEvents = this.#additionalFilterEvents[filterId] ?? [];
+
+        additionalEvents.push({ eventSourceId, eventId });
+
+        this.#additionalFilterEvents[filterId] = additionalEvents;
+
+        logger.debug(`Added event ${eventSourceId}:${eventId} to filter ${filterId}`);
+    }
+
+    removeEventFromFilter(filterId, eventSourceId, eventId) {
+        let additionalEvents = this.#additionalFilterEvents[filterId] ?? [];
+
+        if (!additionalEvents.some(f => f.eventSourceId === eventSourceId && f.eventId === eventId)) {
+            logger.warn(`Filter ${filterId} does not have a plugin registration for event ${eventSourceId}:${eventId}`);
+            return;
+        }
+
+        additionalEvents = additionalEvents.filter(e => e.eventSourceId !== eventSourceId && e.eventId !== eventId);
+
+        this.#additionalFilterEvents[filterId] = additionalEvents;
+
+        logger.debug(`Removed event ${eventSourceId}:${eventId} from filter ${filterId}`);
+    }
+
     getFilterById(filterId) {
-        return this._registeredFilters.find(f => f.id === filterId);
+        return this.#registeredFilters.find(f => f.id === filterId);
     }
 
     getAllFilters() {
-        return this._registeredFilters;
+        return this.#registeredFilters;
     }
 
     getFiltersForEvent(eventSourceId, eventId) {
-        const filters = this._registeredFilters
-            .filter(f => f.events
-                .some(e => e.eventSourceId === eventSourceId && e.eventId === eventId));
+        const filters = this.#registeredFilters
+            .filter((f) => {
+                if (!f.events || f.events.length === 0) {
+                    return true;
+                }
+                const events = f.events;
+                const additionalEvents = this.#additionalFilterEvents[f.id] ?? [];
+                return [...events, ...additionalEvents].some(e => e.eventSourceId === eventSourceId && e.eventId === eventId);
+            });
         return filters;
     }
 
@@ -90,7 +147,7 @@ const manager = new FilterManager();
 ipcMain.on("getFiltersForEvent", (event, data) => {
     logger.info("got 'get all filters' request");
     const { eventSourceId, eventId } = data;
-    event.returnValue = manager.getFiltersForEvent(eventSourceId, eventId).map(f => {
+    event.returnValue = manager.getFiltersForEvent(eventSourceId, eventId).map((f) => {
         return {
             id: f.id,
             name: f.name,

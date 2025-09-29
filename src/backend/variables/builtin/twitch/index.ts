@@ -1,9 +1,10 @@
 import adVariables from './ads';
+import bitsVariables from './bits';
 import chatVariables from './chat';
 import channelGoalVariables from './channel-goal';
 import charityVariables from './charity';
-import cheerVariables from './cheer';
 import cheermoteVariables from './cheermote';
+import clipVariables from "./clips";
 import hypetrainVariables from './hype-train';
 import pollVariables from './polls';
 import raidVariables from './raid';
@@ -21,11 +22,12 @@ import vip from './vip';
 
 export default [
     ...adVariables,
+    ...bitsVariables,
     ...chatVariables,
     ...channelGoalVariables,
     ...charityVariables,
-    ...cheerVariables,
     ...cheermoteVariables,
+    ...clipVariables,
     ...hypetrainVariables,
     ...pollVariables,
     ...raidVariables,
