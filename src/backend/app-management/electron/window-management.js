@@ -345,14 +345,14 @@ async function createAppMenu() {
                 {
                     label: 'Report a Bug',
                     click: () => {
-                        shell.openExternal("https://github.com/crowbartools/Firebot/issues/new?assignees=&labels=Bug&template=bug_report.yml&title=%5BBug%5D+");
+                        shell.openExternal("https://github.com/crowbartools/Firebot/issues/new?assignees=&template=bug_report.yml");
                     },
                     icon: await createIconImage("../../../gui/images/icons/mdi/bug-outline.png")
                 },
                 {
                     label: 'Request a Feature',
                     click: () => {
-                        shell.openExternal("https://github.com/crowbartools/Firebot/issues/new?assignees=&labels=Enhancement&template=feature_request.md&title=%5BFeature+Request%5D+");
+                        shell.openExternal("https://github.com/crowbartools/Firebot/issues/new?assignees=&template=feature_request.md");
                     },
                     icon: await createIconImage("../../../gui/images/icons/mdi/star-circle-outline.png")
                 },
