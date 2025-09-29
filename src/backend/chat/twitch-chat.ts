@@ -129,7 +129,12 @@ class TwitchChat extends EventEmitter {
 
             this._streamerChatClient.connect();
 
-            await chatHelpers.handleChatConnect();
+            /**
+             * DO NOT AWAIT THIS
+             * This is just to cache badges/emotes/cheermotes
+             * Fire and forget this so we can get everything else setup
+            */
+            chatHelpers.cacheChatAssets();
 
             // Attempt to reload the known bot list in case it failed on start
             await chatRolesManager.cacheViewerListBots();
