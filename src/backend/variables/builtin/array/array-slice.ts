@@ -4,7 +4,7 @@ import { ReplaceVariable, Trigger } from "../../../../types/variables";
 const model : ReplaceVariable = {
     definition: {
         handle: "arraySlice",
-        description: "Returns a slice of an array",
+        description: "Returns a slice of an array (see [JavaScript `Array.slice()`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array/slice) for info on start/end behavior)",
         usage: "arraySlice[array, start, end]",
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]

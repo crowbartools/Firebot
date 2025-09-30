@@ -47,7 +47,7 @@ function incrementUsages(commandKey: string, userKey: string) {
 
 const limitPerStreamRestriction: RestrictionType<RestrictionData> = {
     definition: {
-        id: "limit-per-stream",
+        id: "firebot:limit-per-stream",
         name: "Limit Per Stream",
         description: "Limit the number of times a command can be used in a stream.",
         triggers: ["command"]

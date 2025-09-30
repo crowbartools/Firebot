@@ -174,7 +174,7 @@ class FirebotChatHelpers {
         return parsedCheermotes.map(this.parseCheermote);
     }
 
-    async handleChatConnect(): Promise<void> {
+    async cacheChatAssets(): Promise<void> {
         await this.cacheBadges();
         await this.cacheTwitchEmotes();
         await this.cacheThirdPartyEmotes();
