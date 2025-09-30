@@ -6,6 +6,7 @@ import {
     HelixEmoteThemeMode
 } from "@twurple/api";
 import {
+    EventSubChannelChatAnnouncementNotificationEvent,
     EventSubChannelChatMessageEvent,
     EventSubChannelChatNotificationEvent,
     EventSubUserWhisperMessageEvent
@@ -541,12 +542,26 @@ class TwitchEventSubChatHelpers {
             : rawText;
     }
 
-    private async buildBaseFirebotChatMessage(message: EventSubChannelChatMessageEvent | EventSubChannelChatNotificationEvent): Promise<FirebotChatMessage> {
+    private async buildBaseFirebotChatMessage(
+        message: EventSubChannelChatMessageEvent | EventSubChannelChatNotificationEvent
+    ): Promise<FirebotChatMessage> {
         const { streamer, bot } = accountAccess.getAccounts();
 
         const isAction = this.CHAT_ACTION_REGEX.test(message.messageText);
         const isSharedChatMessage = message.sourceMessageId != null
             && message.sourceBroadcasterId !== accountAccess.getAccounts().streamer.userId;
+
+        let isAnnouncement = false;
+        let announcementColor = undefined;
+        let chatColor = message.color;
+        if (message instanceof EventSubChannelChatAnnouncementNotificationEvent) {
+            isAnnouncement = true;
+            announcementColor = message.color;
+
+            // FIX: See https://github.com/twurple/twurple/issues/646
+            const userColor = await twitchApi.streamerClient.chat.getColorForUser(message.chatterId);
+            chatColor = userColor ?? chatColor;
+        }
 
         const firebotChatMessage: FirebotChatMessage = {
             id: message.messageId,
@@ -554,7 +569,7 @@ class TwitchEventSubChatHelpers {
             userId: message.chatterId,
             userDisplayName: message.chatterDisplayName,
             rawText: isAction ? this.getChatMessage(message.messageText) : message.messageText,
-            color: message.color,
+            color: chatColor,
             badges: this.parseChatBadges(message.badges),
             parts: [],
             roles: [],
@@ -563,7 +578,8 @@ class TwitchEventSubChatHelpers {
             // Flags
             tagged: false,
             action: isAction,
-            isAnnouncement: false,
+            isAnnouncement: isAnnouncement,
+            announcementColor: announcementColor ? announcementColor.toUpperCase() : undefined,
 
             // Whispers have a separate event
             whisper: false,
@@ -582,7 +598,7 @@ class TwitchEventSubChatHelpers {
         };
 
         const messageParts = this.parseEventSubMessageParts(firebotChatMessage, message.messageParts);
-        firebotChatMessage.parts2 = messageParts;
+        firebotChatMessage.parts = messageParts;
 
         if (streamer.loggedIn && firebotChatMessage.username === streamer.username) {
             firebotChatMessage.isBroadcaster = true;
@@ -612,36 +628,40 @@ class TwitchEventSubChatHelpers {
         return firebotChatMessage;
     }
 
-    async buildFirebotChatMessageFromEventSubChatMessage(message: EventSubChannelChatMessageEvent): Promise<FirebotChatMessage> {
+    async buildFirebotChatMessageFromEventSub(
+        message: EventSubChannelChatMessageEvent | EventSubChannelChatNotificationEvent
+    ): Promise<FirebotChatMessage> {
         const firebotChatMessage = await this.buildBaseFirebotChatMessage(message);
 
-        firebotChatMessage.customRewardId = message.rewardId;
+        if (message instanceof EventSubChannelChatMessageEvent) {
+            firebotChatMessage.customRewardId = message.rewardId;
 
-        firebotChatMessage.isCheer = message.isCheer;
-        firebotChatMessage.isHighlighted = message.messageType === "channel_points_highlighted";
+            firebotChatMessage.isCheer = message.isCheer;
+            firebotChatMessage.isHighlighted = message.messageType === "channel_points_highlighted";
 
-        // Replies
-        firebotChatMessage.isReply = message.parentMessageId != null;
-        firebotChatMessage.replyParentMessageId = message.parentMessageId;
-        firebotChatMessage.replyParentMessageText = message.parentMessageText;
-        firebotChatMessage.replyParentMessageSenderUserId = message.parentMessageUserId;
-        firebotChatMessage.replyParentMessageSenderDisplayName = message.parentMessageUserDisplayName;
-        firebotChatMessage.threadParentMessageId = message.threadMessageId;
-        firebotChatMessage.threadParentMessageSenderUserId = message.threadMessageUserId;
-        firebotChatMessage.threadParentMessageSenderDisplayName = message.threadMessageUserDisplayName;
+            // Replies
+            firebotChatMessage.isReply = message.parentMessageId != null;
+            firebotChatMessage.replyParentMessageId = message.parentMessageId;
+            firebotChatMessage.replyParentMessageText = message.parentMessageText;
+            firebotChatMessage.replyParentMessageSenderUserId = message.parentMessageUserId;
+            firebotChatMessage.replyParentMessageSenderDisplayName = message.parentMessageUserDisplayName;
+            firebotChatMessage.threadParentMessageId = message.threadMessageId;
+            firebotChatMessage.threadParentMessageSenderUserId = message.threadMessageUserId;
+            firebotChatMessage.threadParentMessageSenderDisplayName = message.threadMessageUserDisplayName;
 
-        if (firebotChatMessage.isReply) {
-            const replyUsername = message.parentMessageUserName;
-            if (firebotChatMessage.replyParentMessageText.startsWith(`@${replyUsername}`)) {
-                firebotChatMessage.replyParentMessageText = firebotChatMessage.replyParentMessageText.substring(replyUsername.length + 1);
-            }
+            if (firebotChatMessage.isReply) {
+                const replyUsername = message.parentMessageUserName;
+                if (firebotChatMessage.replyParentMessageText.startsWith(`@${replyUsername}`)) {
+                    firebotChatMessage.replyParentMessageText = firebotChatMessage.replyParentMessageText.substring(replyUsername.length + 1);
+                }
 
-            const firstPart = firebotChatMessage.parts2[0] ?? {} as FirebotChatMessagePart;
-            if (firstPart.type === "text" && firstPart.text.startsWith("@")) {
-                firstPart.text = firstPart.text.split(" ").slice(1).join(" ");
+                const firstPart = firebotChatMessage.parts[0] ?? {} as FirebotChatMessagePart;
+                if (firstPart.type === "text" && firstPart.text.startsWith("@")) {
+                    firstPart.text = firstPart.text.split(" ").slice(1).join(" ");
 
-                if (firstPart.text.trim() === "") {
-                    firebotChatMessage.parts2.splice(0, 1);
+                    if (firstPart.text.trim() === "") {
+                        firebotChatMessage.parts.splice(0, 1);
+                    }
                 }
             }
         }

@@ -80,8 +80,7 @@ export type FirebotChatMessage = {
     customRewardId?: string;
     color?: string;
     rawText: string;
-    parts: FirebotParsedMessagePart[];
-    parts2?: FirebotChatMessagePart[];
+    parts: FirebotParsedMessagePart[] | FirebotChatMessagePart[];
     whisper: boolean;
     whisperTarget?: string;
     action: boolean;
