@@ -59,6 +59,11 @@ class UIExtensionManager {
                     filters: extension.providers.filters?.map(filter => ({
                         name: filter.name,
                         functionRaw: this.prepareFunc(filter.function, "filterFunc")
+                    })),
+                    parameters: extension.providers.parameters?.map(param => ({
+                        parameterConfig: param.parameterConfig,
+                        template: param.template,
+                        controllerRaw: this.prepareFunc(param.controller, "paramCtrl")
                     }))
                 }
                 : undefined

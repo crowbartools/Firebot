@@ -34,6 +34,30 @@ export type AngularJsComponent = {
     controller: Function;
 }
 
+
+/**
+ * A specialized AngularJS component for rendering Firebot parameters.
+ * These components will always have the following bindings:
+ * - `$ctrl.schema`: The parameter schema (any properties in the parameter object)
+ * - `$ctrl.value`: The current value of the parameter
+ * - `$ctrl.onInput`: A callback function to call when the parameter value changes
+ * - `$ctrl.onTouched`: A callback function to call when the parameter is touched
+ */
+export type AngularJsFirebotParameterComponent = {
+    parameterConfig: {
+        /**
+         * The type of parameter this component handles.
+         * This value is what will go in the "type" field of a parameter schema.
+         */
+        type: string;
+        hideTitle?: boolean;
+        hideDescription?: boolean;
+    },
+    template: string;
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    controller: Function;
+}
+
 export type AngularJsDirective = {
     name: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -76,5 +100,9 @@ export type UIExtension = {
         components?: AngularJsComponent[];
         directives?: AngularJsDirective[];
         filters?: AngularJsFilter[];
+        /**
+         * Add your own parameter components for rendering custom parameter types
+         */
+        parameters?: AngularJsFirebotParameterComponent[];
     }
 }
