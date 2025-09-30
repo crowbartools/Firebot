@@ -94,6 +94,7 @@ module.exports = {
                     tip: "Cooldown is applied per viewer.",
                     default: 300,
                     validation: {
+                        required: true,
                         min: 0
                     }
                 }

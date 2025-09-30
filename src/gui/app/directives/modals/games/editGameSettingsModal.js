@@ -56,7 +56,7 @@
                 if ($ctrl.resolve.game) {
                     $ctrl.game = JSON.parse(JSON.stringify($ctrl.resolve.game));
                     $ctrl.settingCategoriesArray = Object.values($ctrl.game.settingCategories)
-                        .map(sc => {
+                        .map((sc) => {
                             sc.settingsArray = [];
                             const settingNames = Object.keys(sc.settings);
                             for (const settingName of settingNames) {
@@ -79,7 +79,7 @@
                         confirmLabel: "Reset",
                         confirmBtnType: "btn-danger"
                     })
-                    .then(confirmed => {
+                    .then((confirmed) => {
                         if (confirmed) {
                             $ctrl.close({
                                 $value: {
@@ -112,13 +112,20 @@
                                     }
                                 }
                                 if (setting.type === "number") {
-                                    if (!isNaN(setting.validation.min) && setting.value < setting.validation.min) {
-                                        ngToast.create(`The value for the ${setting.title} option must be at least ${setting.validation.min}`);
+                                    if (setting.validation.required && setting.value == null) {
+                                        ngToast.create(`Please input a value for the ${setting.title} option`);
                                         return false;
                                     }
-                                    if (!isNaN(setting.validation.max) && setting.value > setting.validation.max) {
-                                        ngToast.create(`The value for the ${setting.title} option must be no more than ${setting.validation.max}`);
-                                        return false;
+
+                                    if (setting.value != null) {
+                                        if (!isNaN(setting.validation.min) && setting.value < setting.validation.min) {
+                                            ngToast.create(`The value for the ${setting.title} option must be at least ${setting.validation.min}`);
+                                            return false;
+                                        }
+                                        if (!isNaN(setting.validation.max) && setting.value > setting.validation.max) {
+                                            ngToast.create(`The value for the ${setting.title} option must be no more than ${setting.validation.max}`);
+                                            return false;
+                                        }
                                     }
                                 }
                             }

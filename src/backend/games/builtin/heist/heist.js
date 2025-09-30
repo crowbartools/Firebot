@@ -43,6 +43,7 @@ module.exports = {
                     default: 1,
                     sortRank: 3,
                     validation: {
+                        required: true,
                         min: 1
                     }
                 },
@@ -98,6 +99,7 @@ module.exports = {
                     default: 1,
                     sortRank: 1,
                     validation: {
+                        required: true,
                         min: 1
                     }
                 },
@@ -109,6 +111,7 @@ module.exports = {
                     default: 2,
                     sortRank: 2,
                     validation: {
+                        required: true,
                         min: 1
                     }
                 },
@@ -120,6 +123,7 @@ module.exports = {
                     default: 5,
                     sortRank: 3,
                     validation: {
+                        required: true,
                         min: 1
                     }
                 }

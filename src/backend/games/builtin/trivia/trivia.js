@@ -41,6 +41,7 @@ module.exports = {
                     default: 1,
                     sortRank: 3,
                     validation: {
+                        required: true,
                         min: 1
                     }
                 },
