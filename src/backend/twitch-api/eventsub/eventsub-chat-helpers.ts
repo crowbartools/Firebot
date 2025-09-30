@@ -1,12 +1,29 @@
-import { HelixChatBadgeSet, HelixCheermoteList } from "@twurple/api";
+import {
+    HelixChatBadgeSet,
+    HelixCheermoteList,
+    HelixEmoteFormat,
+    HelixEmoteScale,
+    HelixEmoteThemeMode
+} from "@twurple/api";
 import {
     EventSubChannelChatMessageEvent,
     EventSubChannelChatNotificationEvent,
     EventSubUserWhisperMessageEvent
 } from "@twurple/eventsub-base";
-import { EventSubChatMessageCheermote, EventSubChatMessagePart } from "./twurple-private-types";
+import {
+    EventSubChatMessageCheermote,
+    EventSubChatMessageCheermotePart,
+    EventSubChatMessageEmotePart,
+    EventSubChatMessageMentionPart,
+    EventSubChatMessagePart
+} from "./twurple-private-types";
 import { ThirdPartyEmote, ThirdPartyEmoteProvider } from "../../chat/third-party/third-party-emote-provider";
-import { FirebotChatMessage, FirebotCheermoteInstance, FirebotParsedMessagePart } from "../../../types/chat";
+import {
+    FirebotChatMessage,
+    FirebotChatMessagePart,
+    FirebotCheermoteInstance,
+    FirebotParsedMessagePart
+} from "../../../types/chat";
 import { BTTVEmoteProvider } from "../../chat/third-party/bttv";
 import { FFZEmoteProvider } from "../../chat/third-party/ffz";
 import { SevenTVEmoteProvider } from "../../chat/third-party/7tv";
@@ -149,11 +166,11 @@ class TwitchEventSubChatHelpers {
         this._twitchCheermotes = await twitchApi.bits.getChannelCheermotes();
     }
 
-    async onEventSubConnect(): Promise<void> {
+    async cacheChatAssets(): Promise<void> {
         await this.cacheBadges();
-        await this.cacheTwitchEmotes();
-        await this.cacheThirdPartyEmotes();
         await this.cacheCheermotes();
+        await this.cacheThirdPartyEmotes();
+        await this.cacheTwitchEmotes();
 
         // If the all emotes setting is disabled, just send the standard global/channel list for both accounts
         frontendCommunicator.send("all-emotes", {
@@ -172,8 +189,17 @@ class TwitchEventSubChatHelpers {
         }));
     }
 
+    private getEmoteUrl(
+        part: EventSubChatMessageEmotePart,
+        format: HelixEmoteFormat = "static",
+        themeMode: HelixEmoteThemeMode = "dark",
+        scale: HelixEmoteScale = "1.0"
+    ): string {
+        return `https://static-cdn.jtvnw.net/emoticons/v2/${part.emote.id}/${format}/${themeMode}/${scale}`;
+    }
+
     private parseEventSubMessageParts(message: FirebotChatMessage, parts: EventSubChatMessagePart[])
-        : FirebotParsedMessagePart[] {
+        : FirebotChatMessagePart[] {
         if (message == null || parts == null) {
             return [];
         }
@@ -193,13 +219,26 @@ class TwitchEventSubChatHelpers {
                     }
                 }
 
-                const subParts: FirebotParsedMessagePart[] = [];
+                const subParts: FirebotChatMessagePart[] = [];
                 for (const word of p.text.split(" ")) {
+                    const previous = subParts[subParts.length - 1];
+
                     // check for links
                     if (this.URL_REGEX.test(word)) {
+                        if (previous) {
+                            if (previous.type === "text") {
+                                previous.text += " ";
+                            } else {
+                                subParts.push({
+                                    type: "text",
+                                    text: " "
+                                });
+                            }
+                        }
+
                         subParts.push({
                             type: "link",
-                            text: `${word} `,
+                            text: word,
                             url: word.startsWith("http") ? word : `https://${word}`
                         });
                         continue;
@@ -208,8 +247,20 @@ class TwitchEventSubChatHelpers {
                     // check for third party emotes
                     const thirdPartyEmote = this._thirdPartyEmotes.find(e => e.code === word);
                     if (thirdPartyEmote) {
+                        if (previous) {
+                            if (previous.type === "text") {
+                                previous.text += " ";
+                            } else {
+                                subParts.push({
+                                    type: "text",
+                                    text: " "
+                                });
+                            }
+                        }
+
                         subParts.push({
                             type: "third-party-emote",
+                            text: thirdPartyEmote.code,
                             name: thirdPartyEmote.code,
                             origin: thirdPartyEmote.origin,
                             url: thirdPartyEmote.url
@@ -217,13 +268,19 @@ class TwitchEventSubChatHelpers {
                         continue;
                     }
 
-                    const previous = subParts[subParts.length - 1];
-                    if (previous && previous.type === "text") {
-                        previous.text += `${word} `;
+                    if (previous) {
+                        if (previous.type === "text") {
+                            previous.text += ` ${word}`;
+                        } else {
+                            subParts.push({
+                                type: "text",
+                                text: ` ${word}`
+                            });
+                        }
                     } else {
                         subParts.push({
                             type: "text",
-                            text: `${word} `
+                            text: word
                         });
                     }
                 }
@@ -231,28 +288,42 @@ class TwitchEventSubChatHelpers {
                 return subParts;
             }
 
-            const part: FirebotParsedMessagePart = {
-                ...p
-            };
+            const part = { ...p } as FirebotChatMessagePart;
 
-            if (p.type === "emote") {
-                part.origin = "Twitch";
+            switch (part.type) {
+                case "emote":
+                    {
+                        const emotePart = p as EventSubChatMessageEmotePart;
+                        part.origin = "Twitch";
+                        part.name = emotePart.text;
+                        part.url = this.getEmoteUrl(emotePart);
+                        part.animatedUrl = emotePart.emote.format.includes("animated")
+                            ? this.getEmoteUrl(emotePart, "animated")
+                            : null;
+                    }
+                    break;
 
-                const emote = this._twitchEmotes.streamer.find(e => e.name === part.name);
-                part.url = emote ? emote.getStaticImageUrl() : `https://static-cdn.jtvnw.net/emoticons/v2/${p.emote.id}/default/dark/1.0`;
-                part.animatedUrl = emote ? emote.getAnimatedImageUrl() : null;
-            }
+                case "cheermote":
+                    {
+                        const cheermotePart = p as EventSubChatMessageCheermotePart;
+                        const parsedCheermote = this.parseEventSubCheermote(cheermotePart.cheermote);
+                        part.name = parsedCheermote.name;
+                        part.url = parsedCheermote.url;
+                        part.animatedUrl = parsedCheermote.animatedUrl;
+                        part.amount = parsedCheermote.amount;
+                        part.color = parsedCheermote.color;
+                    }
+                    break;
 
-            if (p.type === "cheermote") {
-                const parsedCheermote = this.parseEventSubCheermote(p.cheermote);
+                case "mention":
+                    {
+                        const mentionPart = p as EventSubChatMessageMentionPart;
+                        part.username = mentionPart.mention.user_login;
+                        part.userId = mentionPart.mention.user_id;
+                        part.userDisplayName = mentionPart.mention.user_name;
+                    }
 
-                part.animatedUrl = parsedCheermote.animatedUrl;
-                part.url = parsedCheermote.url;
-                part.color = parsedCheermote.color;
-            }
-
-            if (p.type === "mention") {
-                // TODO: Add mention part
+                    break;
             }
 
             return part;
@@ -511,7 +582,7 @@ class TwitchEventSubChatHelpers {
         };
 
         const messageParts = this.parseEventSubMessageParts(firebotChatMessage, message.messageParts);
-        firebotChatMessage.parts = messageParts;
+        firebotChatMessage.parts2 = messageParts;
 
         if (streamer.loggedIn && firebotChatMessage.username === streamer.username) {
             firebotChatMessage.isBroadcaster = true;
@@ -565,12 +636,12 @@ class TwitchEventSubChatHelpers {
                 firebotChatMessage.replyParentMessageText = firebotChatMessage.replyParentMessageText.substring(replyUsername.length + 1);
             }
 
-            const firstPart = firebotChatMessage.parts[0] ?? {} as Partial<FirebotParsedMessagePart>;
-            if (firstPart.type === "text" && firstPart.text.startsWith('@')) {
+            const firstPart = firebotChatMessage.parts2[0] ?? {} as FirebotChatMessagePart;
+            if (firstPart.type === "text" && firstPart.text.startsWith("@")) {
                 firstPart.text = firstPart.text.split(" ").slice(1).join(" ");
 
                 if (firstPart.text.trim() === "") {
-                    firebotChatMessage.parts.splice(0, 1);
+                    firebotChatMessage.parts2.splice(0, 1);
                 }
             }
         }

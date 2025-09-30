@@ -1,3 +1,58 @@
+type FirebotChatMessagePartType =
+    | "text"
+    | "link"
+    | "emote"
+    | "third-party-emote"
+    | "cheermote"
+    | "mention"
+
+type FirebotChatMessagePartBase = {
+    type: FirebotChatMessagePartType;
+    id?: string;
+    text: string;
+}
+
+type FirebotChatMessageTextPart = FirebotChatMessagePartBase & {
+    type: "text";
+    flagged?: boolean;
+};
+
+type FirebotChatMessageLinkPart = FirebotChatMessagePartBase & {
+    type: "link";
+    url: string;
+};
+
+type FirebotChatMessageEmotePart = FirebotChatMessagePartBase & {
+    type: "emote" | "third-party-emote";
+    name: string;
+    origin: string;
+    url: string;
+    animatedUrl?: string;
+};
+
+type FirebotChatMessageCheermotePart = FirebotChatMessagePartBase & {
+    type: "cheermote";
+    name: string;
+    url: string;
+    animatedUrl: string;
+    amount: number;
+    color: string;
+};
+
+type FirebotChatMessageMentionPart = FirebotChatMessagePartBase & {
+    type: "mention";
+    username: string;
+    userId: string;
+    userDisplayName: string;
+};
+
+export type FirebotChatMessagePart =
+    | FirebotChatMessageTextPart
+    | FirebotChatMessageLinkPart
+    | FirebotChatMessageEmotePart
+    | FirebotChatMessageCheermotePart
+    | FirebotChatMessageMentionPart
+
 export type FirebotParsedMessagePart = {
     type: string;
     id?: string;
@@ -26,6 +81,7 @@ export type FirebotChatMessage = {
     color?: string;
     rawText: string;
     parts: FirebotParsedMessagePart[];
+    parts2?: FirebotChatMessagePart[];
     whisper: boolean;
     whisperTarget?: string;
     action: boolean;

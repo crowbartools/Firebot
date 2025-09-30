@@ -176,9 +176,9 @@ class FirebotChatHelpers {
 
     async cacheChatAssets(): Promise<void> {
         await this.cacheBadges();
-        await this.cacheTwitchEmotes();
-        await this.cacheThirdPartyEmotes();
         await this.cacheCheermotes();
+        await this.cacheThirdPartyEmotes();
+        await this.cacheTwitchEmotes();
 
         // If the all emotes setting is disabled, just send the standard global/channel list for both accounts
         frontendCommunicator.send("all-emotes", {
