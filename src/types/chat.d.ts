@@ -99,7 +99,7 @@ export type FirebotChatMessage = {
     isCheer?: boolean;
     isHighlighted?: boolean;
     isAutoModHeld?: boolean;
-    autoModStatus?: string;
+    autoModStatus?: "pending" | "approved" | "denied" | "expired";
     autoModReason?: string;
     isFirstChat?: boolean;
     isReturningChatter?: boolean;
