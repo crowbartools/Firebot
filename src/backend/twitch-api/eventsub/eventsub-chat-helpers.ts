@@ -6,6 +6,7 @@ import {
     HelixEmoteThemeMode
 } from "@twurple/api";
 import {
+    EventSubAutoModMessageHoldV2Event,
     EventSubChannelChatAnnouncementNotificationEvent,
     EventSubChannelChatMessageEvent,
     EventSubChannelChatNotificationEvent,
@@ -25,6 +26,7 @@ import {
     FirebotChatMessageEmotePart,
     FirebotChatMessageMentionPart,
     FirebotChatMessagePart,
+    FirebotChatMessageTextPart,
     FirebotCheermoteInstance,
     FirebotParsedMessagePart
 } from "../../../types/chat";
@@ -207,15 +209,17 @@ class TwitchEventSubChatHelpers {
             && (text.includes(account.username) || text.includes(account.displayName));
     }
 
-    private parseEventSubMessageParts(message: FirebotChatMessage, parts: EventSubChatMessagePart[])
-        : FirebotChatMessagePart[] {
+    private parseMessageParts(
+        message: FirebotChatMessage,
+        parts: EventSubChatMessagePart[] | FirebotParsedMessagePart[]
+    ) : FirebotChatMessagePart[] {
         if (message == null || parts == null) {
             return [];
         }
 
         const { streamer, bot } = accountAccess.getAccounts();
 
-        return parts.flatMap((p) => {
+        return parts.flatMap((p: EventSubChatMessagePart | FirebotChatMessagePart) => {
             if (p.type === "text" && p.text != null) {
                 // Check for tagging
                 if (message.username !== streamer.username &&
@@ -230,73 +234,76 @@ class TwitchEventSubChatHelpers {
                     }
                 }
 
-                const subParts: FirebotChatMessagePart[] = [];
-                for (const word of p.text.split(" ")) {
-                    const previous = subParts[subParts.length - 1];
+                // Leave flagged text as their own separate parts
+                if ((p as FirebotChatMessageTextPart).flagged !== true) {
+                    const subParts: FirebotChatMessagePart[] = [];
+                    for (const word of p.text.split(" ")) {
+                        const previous = subParts[subParts.length - 1];
 
-                    // check for links
-                    if (this.URL_REGEX.test(word)) {
+                        // check for links
+                        if (this.URL_REGEX.test(word)) {
+                            if (previous) {
+                                if (previous.type === "text") {
+                                    previous.text += " ";
+                                } else {
+                                    subParts.push({
+                                        type: "text",
+                                        text: " "
+                                    });
+                                }
+                            }
+
+                            subParts.push({
+                                type: "link",
+                                text: word,
+                                url: word.startsWith("http") ? word : `https://${word}`
+                            });
+                            continue;
+                        }
+
+                        // check for third party emotes
+                        const thirdPartyEmote = this._thirdPartyEmotes.find(e => e.code === word);
+                        if (thirdPartyEmote) {
+                            if (previous) {
+                                if (previous.type === "text") {
+                                    previous.text += " ";
+                                } else {
+                                    subParts.push({
+                                        type: "text",
+                                        text: " "
+                                    });
+                                }
+                            }
+
+                            subParts.push({
+                                type: "third-party-emote",
+                                text: thirdPartyEmote.code,
+                                name: thirdPartyEmote.code,
+                                origin: thirdPartyEmote.origin,
+                                url: thirdPartyEmote.url
+                            });
+                            continue;
+                        }
+
                         if (previous) {
                             if (previous.type === "text") {
-                                previous.text += " ";
+                                previous.text += ` ${word}`;
                             } else {
                                 subParts.push({
                                     type: "text",
-                                    text: " "
+                                    text: ` ${word}`
                                 });
                             }
-                        }
-
-                        subParts.push({
-                            type: "link",
-                            text: word,
-                            url: word.startsWith("http") ? word : `https://${word}`
-                        });
-                        continue;
-                    }
-
-                    // check for third party emotes
-                    const thirdPartyEmote = this._thirdPartyEmotes.find(e => e.code === word);
-                    if (thirdPartyEmote) {
-                        if (previous) {
-                            if (previous.type === "text") {
-                                previous.text += " ";
-                            } else {
-                                subParts.push({
-                                    type: "text",
-                                    text: " "
-                                });
-                            }
-                        }
-
-                        subParts.push({
-                            type: "third-party-emote",
-                            text: thirdPartyEmote.code,
-                            name: thirdPartyEmote.code,
-                            origin: thirdPartyEmote.origin,
-                            url: thirdPartyEmote.url
-                        });
-                        continue;
-                    }
-
-                    if (previous) {
-                        if (previous.type === "text") {
-                            previous.text += ` ${word}`;
                         } else {
                             subParts.push({
                                 type: "text",
-                                text: ` ${word}`
+                                text: word
                             });
                         }
-                    } else {
-                        subParts.push({
-                            type: "text",
-                            text: word
-                        });
                     }
-                }
 
-                return subParts;
+                    return subParts;
+                }
             }
 
             const part = { ...p } as FirebotChatMessagePart;
@@ -322,101 +329,6 @@ class TwitchEventSubChatHelpers {
                         (p as EventSubChatMessageMentionPart)
                     );
                     break;
-            }
-
-            return part;
-        });
-    }
-
-    private parseMessageParts(firebotChatMessage: FirebotChatMessage, parts: EventSubChatMessagePart[] | FirebotParsedMessagePart[]) {
-        if (firebotChatMessage == null || parts == null) {
-            return [];
-        }
-
-        const { streamer, bot } = accountAccess.getAccounts();
-        return parts.flatMap((p) => {
-            if (p.type === "text" && p.text != null) {
-
-                if (firebotChatMessage.username !== streamer.username &&
-                        (!bot.loggedIn || firebotChatMessage.username !== bot.username)) {
-                    if (!firebotChatMessage.whisper &&
-                        !firebotChatMessage.tagged &&
-                        streamer.loggedIn &&
-                        (p.text.includes(streamer.username) || p.text.includes(streamer.displayName))) {
-                        firebotChatMessage.tagged = true;
-                    }
-                }
-
-                const subParts: FirebotParsedMessagePart[] = [];
-                for (const word of p.text.split(" ")) {
-                    // check for links
-                    if (this.URL_REGEX.test(word)) {
-                        subParts.push({
-                            type: "link",
-                            text: `${word} `,
-                            url: word.startsWith("http") ? word : `https://${word}`
-                        });
-                        continue;
-                    }
-
-                    // check for third party emotes
-                    const thirdPartyEmote = this._thirdPartyEmotes.find(e => e.code === word);
-                    if (thirdPartyEmote) {
-                        subParts.push({
-                            type: "third-party-emote",
-                            name: thirdPartyEmote.code,
-                            origin: thirdPartyEmote.origin,
-                            url: thirdPartyEmote.url
-                        });
-                        continue;
-                    }
-
-                    const previous = subParts[subParts.length - 1];
-                    if (previous && previous.type === "text") {
-                        previous.text += `${word} `;
-                    } else {
-                        subParts.push({
-                            type: "text",
-                            text: `${word} `,
-                            flagged: p.flagged
-                        });
-                    }
-                }
-
-                // move trailing spaces to separate parts so flagged parts look nicer
-                return subParts.flatMap((sp): FirebotParsedMessagePart | FirebotParsedMessagePart[] => {
-                    if (sp.type === "text" && sp.flagged && sp.text?.endsWith(" ")) {
-                        return [{
-                            type: "text",
-                            text: sp.text.trimEnd(),
-                            flagged: true
-                        }, {
-                            type: "text",
-                            text: " "
-                        }];
-                    }
-                    return sp;
-                });
-            }
-
-            const part: FirebotParsedMessagePart = {
-                ...p
-            };
-
-            if (part.type === "emote") {
-                part.origin = "Twitch";
-
-                const emote = this._twitchEmotes.streamer.find(e => e.name === part.name);
-                part.url = emote ? emote.getStaticImageUrl() : `https://static-cdn.jtvnw.net/emoticons/v2/${part.id}/default/dark/1.0`;
-                part.animatedUrl = emote ? emote.getAnimatedImageUrl() : null;
-            }
-
-            if (part.type === "cheer") {
-                const parsedCheermote = this.parseFirebotCheermote(part);
-
-                part.animatedUrl = parsedCheermote.animatedUrl;
-                part.url = parsedCheermote.url;
-                part.color = parsedCheermote.color;
             }
 
             return part;
@@ -644,7 +556,7 @@ class TwitchEventSubChatHelpers {
             isSuspiciousUser: false
         };
 
-        const messageParts = this.parseEventSubMessageParts(chatMessage, event.messageParts);
+        const messageParts = this.parseMessageParts(chatMessage, event.messageParts);
         chatMessage.parts = messageParts;
 
         chatMessage.isFounder = chatMessage.badges.some(b => b.title === "founder");
@@ -758,6 +670,73 @@ class TwitchEventSubChatHelpers {
         // TODO: Figure out whisper parts
         //const messageParts = this.parseMessageParts(chatMessage, message.messageParts);
         //chatMessage.parts = messageParts;
+
+        return chatMessage;
+    }
+
+    async buildChatMessageFromAutoModEvent(event: EventSubAutoModMessageHoldV2Event) {
+        const profilePicUrl = await this.getUserProfilePicUrl(event.userId);
+
+        const chatMessage: FirebotChatMessage = {
+            id: event.messageId,
+            username: event.userName,
+            userId: event.userId,
+            userDisplayName: event.userDisplayName,
+            rawText: event.messageText,
+            profilePicUrl: profilePicUrl,
+            whisper: false,
+            action: false,
+            tagged: false,
+            isBroadcaster: false,
+            badges: [],
+            parts: [],
+            roles: [],
+            isAutoModHeld: true,
+            autoModStatus: "pending",
+            autoModReason: (event.reason === "automod" ? event.autoMod?.category : event.reason === "blocked_term" ? "blocked term" : null) ?? "unknown",
+            isSharedChatMessage: false
+        };
+
+        const { streamer, bot } = accountAccess.getAccounts();
+        if (this.accountTaggedInText(event.messageText, streamer)
+            || this.accountTaggedInText(event.messageText, bot)
+        ) {
+            chatMessage.tagged = true;
+        }
+
+        const flaggedPhrases = event.reason === "automod"
+            ? event.autoMod?.boundaries?.map(b => b.text) ?? []
+            : event.blockedTerms?.map(b => b.text) ?? [];
+
+        const flaggedPhrasesRegex = new RegExp(`(${flaggedPhrases.join("|")})`, "g");
+
+        const parts = this.parseMessageParts(
+            chatMessage,
+            event.messageParts.flatMap((f): FirebotParsedMessagePart | FirebotParsedMessagePart[] => {
+                switch (f.type) {
+                    case "text":
+                    {
+                        const splitText = f.text?.split(flaggedPhrasesRegex)
+                        // sometimes we get empty strings in the split
+                            .filter(t => t.length > 0);
+
+                        return splitText.map((text) => {
+                            const isFlagged = flaggedPhrases.some(phrase => text.includes(phrase));
+                            return {
+                                type: "text",
+                                text: text,
+                                flagged: isFlagged
+                            };
+                        });
+                    }
+
+                    case "emote":
+                    case "cheermote":
+                        return f;
+                }
+            }));
+
+        chatMessage.parts = parts;
 
         return chatMessage;
     }
