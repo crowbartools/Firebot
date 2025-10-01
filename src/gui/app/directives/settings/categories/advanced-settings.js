@@ -1,11 +1,8 @@
 "use strict";
 
 (function () {
-
-    angular
-        .module("firebotApp")
-        .component("advancedSettings", {
-            template: `
+    angular.module("firebotApp").component("advancedSettings", {
+        template: `
                 <div>
 
                     <firebot-setting
@@ -128,57 +125,69 @@
                         />
                     </firebot-setting>
 
+                    <firebot-setting
+                        name="Allow Chat-Created Commands to Run Effects"
+                        description="Enables the !command system command to import shared effects and run effects through variables inside command responses. Recommended only if you trust your moderators with these advanced features."
+                    >
+                        <toggle-button
+                            toggle-model="settings.getSetting('AllowChatCreatedCommandsToRunEffects')"
+                            on-toggle="settings.saveSetting('AllowChatCreatedCommandsToRunEffects', !settings.getSetting('AllowChatCreatedCommandsToRunEffects'))"
+                            font-size="40"
+                            accessibility-label="(settings.getSetting('AllowChatCreatedCommandsToRunEffects') ? 'Enabled' : 'Disabled') + ' Chat-Created Commands to Run Effects'"
+                        />
+                    </firebot-setting>
+
                     <div style="margin-top: 20px">
                         <p class="muted">Looking for a setting that used to be located here? Try checking in the Tools app menu!</p>
                     </div>
 
                 </div>
           `,
-            controller: function ($scope, settingsService, utilityService, backendCommunicator, modalService) {
-                $scope.settings = settingsService;
+        controller: function ($scope, settingsService, utilityService, backendCommunicator, modalService) {
+            $scope.settings = settingsService;
 
-                $scope.toggleWhileLoops = () => {
-                    const whileLoopsEnabled = settingsService.getSetting("WhileLoopEnabled");
+            $scope.toggleWhileLoops = () => {
+                const whileLoopsEnabled = settingsService.getSetting("WhileLoopEnabled");
 
-                    if (whileLoopsEnabled) {
-                        settingsService.saveSetting("WhileLoopEnabled", false);
-                    } else {
-                        utilityService
-                            .showConfirmationModal({
-                                title: "Enable While Loops",
-                                question: "By enabling this feature, you understand that using While Loops incorrectly can potentially cause performance issues or even freeze Firebot.",
-                                confirmLabel: "I understand, enable.",
-                                confirmBtnType: "btn-primary"
-                            })
-                            .then((confirmed) => {
-                                if (confirmed) {
-                                    settingsService.saveSetting("WhileLoopEnabled", true);
-                                }
-                            });
-                    }
-                };
-
-                $scope.showEditWebhooksModal = function() {
-                    modalService.showModal({
-                        component: "editWebhooksModal"
-                    });
-                };
-
-                $scope.recalculateQuoteIds = () => {
+                if (whileLoopsEnabled) {
+                    settingsService.saveSetting("WhileLoopEnabled", false);
+                } else {
                     utilityService
                         .showConfirmationModal({
-                            title: "Recalculate Quote IDs",
-                            question: `Are you sure you want to recalculate your quote IDs?`,
-                            confirmLabel: "Recalculate",
-                            confirmBtnType: "btn-danger"
+                            title: "Enable While Loops",
+                            question:
+                                "By enabling this feature, you understand that using While Loops incorrectly can potentially cause performance issues or even freeze Firebot.",
+                            confirmLabel: "I understand, enable.",
+                            confirmBtnType: "btn-primary"
                         })
                         .then((confirmed) => {
                             if (confirmed) {
-                                backendCommunicator.fireEvent("recalc-quote-ids");
+                                settingsService.saveSetting("WhileLoopEnabled", true);
                             }
                         });
-                };
+                }
+            };
 
-            }
-        });
-}());
+            $scope.showEditWebhooksModal = function () {
+                modalService.showModal({
+                    component: "editWebhooksModal"
+                });
+            };
+
+            $scope.recalculateQuoteIds = () => {
+                utilityService
+                    .showConfirmationModal({
+                        title: "Recalculate Quote IDs",
+                        question: `Are you sure you want to recalculate your quote IDs?`,
+                        confirmLabel: "Recalculate",
+                        confirmBtnType: "btn-danger"
+                    })
+                    .then((confirmed) => {
+                        if (confirmed) {
+                            backendCommunicator.fireEvent("recalc-quote-ids");
+                        }
+                    });
+            };
+        }
+    });
+})();
