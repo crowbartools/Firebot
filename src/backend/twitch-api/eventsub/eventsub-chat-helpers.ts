@@ -578,8 +578,12 @@ class TwitchEventSubChatHelpers {
             // Flags
             tagged: false,
             action: isAction,
-            isAnnouncement: isAnnouncement,
+            isAnnouncement,
             announcementColor: announcementColor ? announcementColor.toUpperCase() : undefined,
+            isCheer: false,
+            isReply: false,
+            isHiddenFromChatFeed: false,
+            isHighlighted: false,
 
             // Whispers have a separate event
             whisper: false,
