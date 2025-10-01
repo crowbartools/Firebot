@@ -21,6 +21,9 @@ import {
 import { ThirdPartyEmote, ThirdPartyEmoteProvider } from "../../chat/third-party/third-party-emote-provider";
 import {
     FirebotChatMessage,
+    FirebotChatMessageCheermotePart,
+    FirebotChatMessageEmotePart,
+    FirebotChatMessageMentionPart,
     FirebotChatMessagePart,
     FirebotCheermoteInstance,
     FirebotParsedMessagePart
@@ -199,6 +202,11 @@ class TwitchEventSubChatHelpers {
         return `https://static-cdn.jtvnw.net/emoticons/v2/${part.emote.id}/${format}/${themeMode}/${scale}`;
     }
 
+    private accountTaggedInText(text: string, account: FirebotAccount): boolean {
+        return account.loggedIn === true
+            && (text.includes(account.username) || text.includes(account.displayName));
+    }
+
     private parseEventSubMessageParts(message: FirebotChatMessage, parts: EventSubChatMessagePart[])
         : FirebotChatMessagePart[] {
         if (message == null || parts == null) {
@@ -211,11 +219,13 @@ class TwitchEventSubChatHelpers {
             if (p.type === "text" && p.text != null) {
                 // Check for tagging
                 if (message.username !== streamer.username &&
-                        (!bot.loggedIn || message.username !== bot.username)) {
+                        (!bot.loggedIn || message.username !== bot.username)
+                ) {
                     if (!message.whisper
                         && !message.tagged
-                        && streamer.loggedIn
-                        && (p.text.includes(streamer.username) || p.text.includes(streamer.displayName))) {
+                        && (this.accountTaggedInText(p.text, streamer)
+                            || this.accountTaggedInText(p.text, bot))
+                    ) {
                         message.tagged = true;
                     }
                 }
@@ -293,37 +303,24 @@ class TwitchEventSubChatHelpers {
 
             switch (part.type) {
                 case "emote":
-                    {
-                        const emotePart = p as EventSubChatMessageEmotePart;
-                        part.origin = "Twitch";
-                        part.name = emotePart.text;
-                        part.url = this.getEmoteUrl(emotePart);
-                        part.animatedUrl = emotePart.emote.format.includes("animated")
-                            ? this.getEmoteUrl(emotePart, "animated")
-                            : null;
-                    }
+                    this.parseEventSubEmote(
+                        part,
+                        p as EventSubChatMessageEmotePart
+                    );
                     break;
 
                 case "cheermote":
-                    {
-                        const cheermotePart = p as EventSubChatMessageCheermotePart;
-                        const parsedCheermote = this.parseEventSubCheermote(cheermotePart.cheermote);
-                        part.name = parsedCheermote.name;
-                        part.url = parsedCheermote.url;
-                        part.animatedUrl = parsedCheermote.animatedUrl;
-                        part.amount = parsedCheermote.amount;
-                        part.color = parsedCheermote.color;
-                    }
+                    this.parseEventSubCheermote(
+                        part,
+                        (p as EventSubChatMessageCheermotePart).cheermote
+                    );
                     break;
 
                 case "mention":
-                    {
-                        const mentionPart = p as EventSubChatMessageMentionPart;
-                        part.username = mentionPart.mention.user_login;
-                        part.userId = mentionPart.mention.user_id;
-                        part.userDisplayName = mentionPart.mention.user_name;
-                    }
-
+                    this.parseEventSubMention(
+                        part,
+                        (p as EventSubChatMessageMentionPart)
+                    );
                     break;
             }
 
@@ -426,7 +423,34 @@ class TwitchEventSubChatHelpers {
         });
     }
 
-    private parseCheermote(name: string, amount: number): FirebotCheermoteInstance {
+    private parseEmote(emotePart: EventSubChatMessageEmotePart)
+        : FirebotChatMessageEmotePart {
+        return {
+            type: "emote",
+            origin: "Twitch",
+            text: emotePart.text,
+            name: emotePart.text,
+            url: this.getEmoteUrl(emotePart),
+            animatedUrl: emotePart.emote.format.includes("animated")
+                ? this.getEmoteUrl(emotePart, "animated")
+                : null
+        };
+    }
+
+    private parseEventSubEmote(
+        part: FirebotChatMessageEmotePart,
+        emotePart: EventSubChatMessageEmotePart
+    ): void {
+        const parsedEmote = this.parseEmote(emotePart);
+        part.origin = parsedEmote.origin;
+        part.text = parsedEmote.text;
+        part.name = parsedEmote.name;
+        part.url = parsedEmote.url;
+        part.animatedUrl = parsedEmote.animatedUrl;
+    }
+
+    private parseCheermote(name: string, amount: number)
+        : FirebotChatMessageCheermotePart {
         const displayInfo = this._twitchCheermotes.getCheermoteDisplayInfo(name, amount, {
             background: "light",
             state: "animated",
@@ -440,6 +464,8 @@ class TwitchEventSubChatHelpers {
         });
 
         return {
+            type: "cheermote",
+            text: `${name}${amount}`,
             name: name,
             amount: amount,
             url: staticDisplayInfo.url,
@@ -448,12 +474,29 @@ class TwitchEventSubChatHelpers {
         };
     }
 
-    private parseEventSubCheermote(part: EventSubChatMessageCheermote): FirebotCheermoteInstance {
-        return this.parseCheermote(part.prefix, part.bits);
+    private parseEventSubCheermote(
+        part: FirebotChatMessageCheermotePart,
+        cheermote: EventSubChatMessageCheermote
+    ): void {
+        const parsedCheermote = this.parseCheermote(cheermote.prefix, cheermote.bits);
+        part.name = parsedCheermote.name;
+        part.url = parsedCheermote.url;
+        part.animatedUrl = parsedCheermote.animatedUrl;
+        part.amount = parsedCheermote.amount;
+        part.color = parsedCheermote.color;
     }
 
     private parseFirebotCheermote(part: FirebotParsedMessagePart): FirebotCheermoteInstance {
         return this.parseCheermote(part.name, part.amount);
+    }
+
+    private parseEventSubMention(
+        part: FirebotChatMessageMentionPart,
+        mentionPart: EventSubChatMessageMentionPart
+    ): void {
+        part.username = mentionPart.mention.user_login;
+        part.userId = mentionPart.mention.user_id;
+        part.userDisplayName = mentionPart.mention.user_name;
     }
 
     private parseChatBadges(badgeData: Record<string, string>): ChatBadge[] {
@@ -542,7 +585,7 @@ class TwitchEventSubChatHelpers {
             : rawText;
     }
 
-    private async buildBaseFirebotChatMessage(
+    private async buildBaseChatMessage(
         event: EventSubChannelChatMessageEvent | EventSubChannelChatNotificationEvent
     ): Promise<FirebotChatMessage> {
         const { streamer, bot } = accountAccess.getAccounts();
@@ -638,10 +681,10 @@ class TwitchEventSubChatHelpers {
         return chatMessage;
     }
 
-    async buildFirebotChatMessageFromEventSub(
+    async buildChatMessageFromChatEvent(
         event: EventSubChannelChatMessageEvent | EventSubChannelChatNotificationEvent
     ): Promise<FirebotChatMessage> {
-        const chatMessage = await this.buildBaseFirebotChatMessage(event);
+        const chatMessage = await this.buildBaseChatMessage(event);
 
         if (event instanceof EventSubChannelChatMessageEvent) {
             chatMessage.customRewardId = event.rewardId;
@@ -679,7 +722,7 @@ class TwitchEventSubChatHelpers {
         return chatMessage;
     }
 
-    async buildFirebotChatMessageFromEventSubWhisper(message: EventSubUserWhisperMessageEvent): Promise<FirebotChatMessage> {
+    async buildFirebotChatMessageFromWhisper(message: EventSubUserWhisperMessageEvent): Promise<FirebotChatMessage> {
         const isAction = this.CHAT_ACTION_REGEX.test(message.messageText);
 
         const chatMessage: FirebotChatMessage = {
