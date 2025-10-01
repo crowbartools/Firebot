@@ -73,6 +73,9 @@ const model: EffectType<EffectMeta> = {
 
         <eos-container ng-if="effect.rewardSelectMode == 'custom'" header="Channel Reward Name/ID">
             <firebot-input placeholder="Channel Reward Name/ID" model="effect.customId" menu-position="under" />
+            <div class="effect-info alert alert-warning">
+                NOTE: Firebot can only update channel rewards that were originally created in Firebot.
+            </div>
         </eos-container>
 
         <eos-container ng-show="showRewardSettings()" header="Reward Settings" pad-top="true">
