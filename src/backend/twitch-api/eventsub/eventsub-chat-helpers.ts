@@ -543,37 +543,37 @@ class TwitchEventSubChatHelpers {
     }
 
     private async buildBaseFirebotChatMessage(
-        message: EventSubChannelChatMessageEvent | EventSubChannelChatNotificationEvent
+        event: EventSubChannelChatMessageEvent | EventSubChannelChatNotificationEvent
     ): Promise<FirebotChatMessage> {
         const { streamer, bot } = accountAccess.getAccounts();
 
-        const isAction = this.CHAT_ACTION_REGEX.test(message.messageText);
-        const isSharedChatMessage = message.sourceMessageId != null
-            && message.sourceBroadcasterId !== accountAccess.getAccounts().streamer.userId;
+        const isAction = this.CHAT_ACTION_REGEX.test(event.messageText);
+        const isSharedChatMessage = event.sourceMessageId != null
+            && event.sourceBroadcasterId !== accountAccess.getAccounts().streamer.userId;
 
         let isAnnouncement = false;
         let announcementColor = undefined;
-        let chatColor = message.color;
-        if (message instanceof EventSubChannelChatAnnouncementNotificationEvent) {
+        let chatColor = event.color;
+        if (event instanceof EventSubChannelChatAnnouncementNotificationEvent) {
             isAnnouncement = true;
-            announcementColor = message.color;
+            announcementColor = event.color;
 
             // FIX: See https://github.com/twurple/twurple/issues/646
-            const userColor = await twitchApi.streamerClient.chat.getColorForUser(message.chatterId);
+            const userColor = await twitchApi.streamerClient.chat.getColorForUser(event.chatterId);
             chatColor = userColor ?? chatColor;
         }
 
-        const firebotChatMessage: FirebotChatMessage = {
-            id: message.messageId,
-            username: message.chatterName,
-            userId: message.chatterId,
-            userDisplayName: message.chatterDisplayName,
-            rawText: isAction ? this.getChatMessage(message.messageText) : message.messageText,
+        const chatMessage: FirebotChatMessage = {
+            id: event.messageId,
+            username: event.chatterName,
+            userId: event.chatterId,
+            userDisplayName: event.chatterDisplayName,
+            rawText: isAction ? this.getChatMessage(event.messageText) : event.messageText,
             color: chatColor,
-            badges: this.parseChatBadges(message.badges),
+            badges: this.parseChatBadges(event.badges),
             parts: [],
             roles: [],
-            profilePicUrl: await this.getUserProfilePicUrl(message.chatterId),
+            profilePicUrl: await this.getUserProfilePicUrl(event.chatterId),
 
             // Flags
             tagged: false,
@@ -586,7 +586,7 @@ class TwitchEventSubChatHelpers {
 
             // Shared Chat
             isSharedChatMessage,
-            sharedChatRoomId: message.sourceBroadcasterId,
+            sharedChatRoomId: event.sourceBroadcasterId,
 
             // NOTE: EventSub does not currently return this data
             isExtension: false,
@@ -597,82 +597,88 @@ class TwitchEventSubChatHelpers {
             isSuspiciousUser: false
         };
 
-        const messageParts = this.parseEventSubMessageParts(firebotChatMessage, message.messageParts);
-        firebotChatMessage.parts = messageParts;
+        const messageParts = this.parseEventSubMessageParts(chatMessage, event.messageParts);
+        chatMessage.parts = messageParts;
 
-        if (streamer.loggedIn && firebotChatMessage.username === streamer.username) {
-            firebotChatMessage.isBroadcaster = true;
-            firebotChatMessage.roles.push("broadcaster");
+        chatMessage.isFounder = chatMessage.badges.some(b => b.title === "founder");
+        chatMessage.isMod = chatMessage.badges.some(b => b.title === "moderator");
+        chatMessage.isVip = chatMessage.badges.some(b => b.title === "vip");
+        chatMessage.isSubscriber = chatMessage.isFounder ||
+            chatMessage.badges.some(b => b.title === "subscriber");
+
+        if (streamer.loggedIn && chatMessage.userId === streamer.userId) {
+            chatMessage.isBroadcaster = true;
+            chatMessage.roles.push("broadcaster");
         }
 
-        if (bot.loggedIn && firebotChatMessage.username === bot.username) {
-            firebotChatMessage.isBot = true;
-            firebotChatMessage.roles.push("bot");
+        if (bot.loggedIn && chatMessage.userId === bot.userId) {
+            chatMessage.isBot = true;
+            chatMessage.roles.push("bot");
         }
 
-        if (firebotChatMessage.isFounder) {
-            firebotChatMessage.roles.push("founder");
-            firebotChatMessage.roles.push("sub");
-        } else if (firebotChatMessage.isSubscriber) {
-            firebotChatMessage.roles.push("sub");
+        if (chatMessage.isFounder) {
+            chatMessage.roles.push("founder");
+            chatMessage.roles.push("sub");
+        } else if (chatMessage.isSubscriber) {
+            chatMessage.roles.push("sub");
         }
 
-        if (firebotChatMessage.isMod) {
-            firebotChatMessage.roles.push("mod");
+        if (chatMessage.isMod) {
+            chatMessage.roles.push("mod");
         }
 
-        if (firebotChatMessage.isVip) {
-            firebotChatMessage.roles.push("vip");
+        if (chatMessage.isVip) {
+            chatMessage.roles.push("vip");
         }
 
-        return firebotChatMessage;
+        return chatMessage;
     }
 
     async buildFirebotChatMessageFromEventSub(
-        message: EventSubChannelChatMessageEvent | EventSubChannelChatNotificationEvent
+        event: EventSubChannelChatMessageEvent | EventSubChannelChatNotificationEvent
     ): Promise<FirebotChatMessage> {
-        const firebotChatMessage = await this.buildBaseFirebotChatMessage(message);
+        const chatMessage = await this.buildBaseFirebotChatMessage(event);
 
-        if (message instanceof EventSubChannelChatMessageEvent) {
-            firebotChatMessage.customRewardId = message.rewardId;
+        if (event instanceof EventSubChannelChatMessageEvent) {
+            chatMessage.customRewardId = event.rewardId;
 
-            firebotChatMessage.isCheer = message.isCheer;
-            firebotChatMessage.isHighlighted = message.messageType === "channel_points_highlighted";
+            chatMessage.isCheer = event.isCheer;
+            chatMessage.isHighlighted = event.messageType === "channel_points_highlighted";
 
             // Replies
-            firebotChatMessage.isReply = message.parentMessageId != null;
-            firebotChatMessage.replyParentMessageId = message.parentMessageId;
-            firebotChatMessage.replyParentMessageText = message.parentMessageText;
-            firebotChatMessage.replyParentMessageSenderUserId = message.parentMessageUserId;
-            firebotChatMessage.replyParentMessageSenderDisplayName = message.parentMessageUserDisplayName;
-            firebotChatMessage.threadParentMessageId = message.threadMessageId;
-            firebotChatMessage.threadParentMessageSenderUserId = message.threadMessageUserId;
-            firebotChatMessage.threadParentMessageSenderDisplayName = message.threadMessageUserDisplayName;
+            chatMessage.isReply = event.parentMessageId != null;
+            chatMessage.replyParentMessageId = event.parentMessageId;
+            chatMessage.replyParentMessageText = event.parentMessageText;
+            chatMessage.replyParentMessageSenderUserId = event.parentMessageUserId;
+            chatMessage.replyParentMessageSenderDisplayName = event.parentMessageUserDisplayName;
+            chatMessage.threadParentMessageId = event.threadMessageId;
+            chatMessage.threadParentMessageSenderUserId = event.threadMessageUserId;
+            chatMessage.threadParentMessageSenderDisplayName = event.threadMessageUserDisplayName;
 
-            if (firebotChatMessage.isReply) {
-                const replyUsername = message.parentMessageUserName;
-                if (firebotChatMessage.replyParentMessageText.startsWith(`@${replyUsername}`)) {
-                    firebotChatMessage.replyParentMessageText = firebotChatMessage.replyParentMessageText.substring(replyUsername.length + 1);
+            if (chatMessage.isReply) {
+                const replyUsername = event.parentMessageUserName;
+                if (chatMessage.replyParentMessageText.startsWith(`@${replyUsername}`)) {
+                    chatMessage.replyParentMessageText = chatMessage.replyParentMessageText.substring(replyUsername.length + 1);
                 }
 
-                const firstPart = firebotChatMessage.parts[0] ?? {} as FirebotChatMessagePart;
+                const firstPart = chatMessage.parts[0] ?? {} as FirebotChatMessagePart;
                 if (firstPart.type === "text" && firstPart.text.startsWith("@")) {
                     firstPart.text = firstPart.text.split(" ").slice(1).join(" ");
 
                     if (firstPart.text.trim() === "") {
-                        firebotChatMessage.parts.splice(0, 1);
+                        chatMessage.parts.splice(0, 1);
                     }
                 }
             }
         }
 
-        return firebotChatMessage;
+        return chatMessage;
     }
 
     async buildFirebotChatMessageFromEventSubWhisper(message: EventSubUserWhisperMessageEvent): Promise<FirebotChatMessage> {
         const isAction = this.CHAT_ACTION_REGEX.test(message.messageText);
 
-        const firebotChatMessage: FirebotChatMessage = {
+        const chatMessage: FirebotChatMessage = {
             id: null,
             username: message.senderUserName,
             userId: message.senderUserId,
@@ -703,10 +709,10 @@ class TwitchEventSubChatHelpers {
         };
 
         // TODO: Figure out whisper parts
-        //const messageParts = this.parseMessageParts(firebotChatMessage, message.messageParts);
-        //firebotChatMessage.parts = messageParts;
+        //const messageParts = this.parseMessageParts(chatMessage, message.messageParts);
+        //chatMessage.parts = messageParts;
 
-        return firebotChatMessage;
+        return chatMessage;
     }
 }
 
