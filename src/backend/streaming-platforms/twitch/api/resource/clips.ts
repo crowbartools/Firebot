@@ -1,6 +1,8 @@
-import logger from "../../../../logwrapper";
 import { ApiClient, HelixClip, UserIdResolvable } from "@twurple/api";
 import { randomInt } from "crypto";
+import logger from "../../../../logwrapper";
+import utils from "../../../../utility";
+import accountAccess from "../../../../common/account-access";
 
 export class TwitchClipsApi {
     private _streamerClient: ApiClient;
@@ -9,6 +11,46 @@ export class TwitchClipsApi {
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
         this._streamerClient = streamerClient;
         this._botClient = botClient;
+    }
+
+    /**
+     * Creates a clip in the streamer's channel
+     * @returns A {@linkcode HelixClip} representing the newly created clip
+     */
+    async createClip(): Promise<HelixClip> {
+        try {
+            const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
+
+            // First, we actually create the clip and get the ID
+            const clipId = await this._streamerClient.clips.createClip({
+                channel: streamerUserId
+            });
+
+            // Didn't work, so no point in proceeding
+            if (clipId == null) {
+                return null;
+            }
+
+            // Try to get the clip. Sometimes it can take a few seconds, so retry.
+            let clip = await this._streamerClient.clips.getClipById(clipId);
+            let attempts = 1;
+            while (clip == null && attempts < 15) {
+                attempts++;
+                try {
+                    clip = await this._streamerClient.clips.getClipById(clipId);
+                } catch (error) {
+                    //Failed to get clip
+                    logger.error("Failed to create clip", error);
+                }
+                if (clip == null) {
+                    await utils.wait(1000);
+                }
+            }
+
+            return clip;
+        } catch (error) {
+            logger.error("Error creating clip", error);
+        }
     }
 
     /**
