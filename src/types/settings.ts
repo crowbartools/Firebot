@@ -14,6 +14,7 @@ export type FirebotAudioDevice = {
 export type FirebotSettingsTypes = {
     ActiveChatUserListTimeout: number;
     ActiveProfiles: string[];
+    AllowChatCreatedCommandsToRunEffects: boolean;
     AllowCommandsInSharedChat: boolean;
     AllowQuoteCSVDownloads: boolean;
     AllowedActivityEvents: string[];
@@ -125,6 +126,7 @@ export const FirebotGlobalSettings: Partial<Record<keyof FirebotSettingsTypes, b
 export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     ActiveChatUserListTimeout: 5,
     ActiveProfiles: [],
+    AllowChatCreatedCommandsToRunEffects: false,
     AllowCommandsInSharedChat: false,
     AllowQuoteCSVDownloads: true,
     AllowedActivityEvents: [
