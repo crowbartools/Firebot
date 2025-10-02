@@ -22,6 +22,7 @@ interface VariableDefinition {
     categories?: VariableCategory[];
     triggers?: TriggersObject;
     possibleDataOutput: Array<"null" | "bool" | "number" | "text" | "array" | "object" | "ALL">;
+    sensitive?: boolean;
     hidden?: boolean;
 }
 

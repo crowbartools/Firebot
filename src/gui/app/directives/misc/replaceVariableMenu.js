@@ -235,6 +235,7 @@
                                 <div style="overflow-y: auto;width: 100%;" ng-style="{ height: hasMagicVariables ? '408px': '375px', padding: activeCategory === 'macros' ? '10px 0' : '10px' }">
                                     <div ng-hide="activeCategory === 'magic' || activeCategory === 'macros'" ng-repeat="variable in variables | orderBy:'handle' | variableCategoryFilter:activeCategory | variableSearch:variableSearchText" style="margin-bottom: 8px;">
                                         <div style="font-weight: 900;">\${{variable.usage ? variable.usage : variable.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="addVariable(variable)"></i></div>
+                                        <div ng-if="variable.sensitive === true" class="text-danger"><strong>WARNING</strong>: May contain sensitive data! <tooltip text="'This variable may contain sensitive/private data. You probably should NOT post it in chat, show it on overlays, or write it to insecure areas, like log files'"></tooltip></div>
                                         <div ng-if="variable.aliases && variable.aliases.length > 0">
                                             <div style="font-size: 12px; opacity: 0.75;">Aliases: {{getAliases(variable)}}</div>
                                         </div>
