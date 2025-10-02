@@ -6,6 +6,7 @@ import {
     HelixEmoteThemeMode
 } from "@twurple/api";
 import {
+    EventSubAutoModMessageHoldV2Event,
     EventSubChannelChatAnnouncementNotificationEvent,
     EventSubChannelChatMessageEvent,
     EventSubChannelChatNotificationEvent,
@@ -21,7 +22,11 @@ import {
 import { ThirdPartyEmote, ThirdPartyEmoteProvider } from "../../chat/third-party/third-party-emote-provider";
 import {
     FirebotChatMessage,
+    FirebotChatMessageCheermotePart,
+    FirebotChatMessageEmotePart,
+    FirebotChatMessageMentionPart,
     FirebotChatMessagePart,
+    FirebotChatMessageTextPart,
     FirebotCheermoteInstance,
     FirebotParsedMessagePart
 } from "../../../types/chat";
@@ -199,131 +204,130 @@ class TwitchEventSubChatHelpers {
         return `https://static-cdn.jtvnw.net/emoticons/v2/${part.emote.id}/${format}/${themeMode}/${scale}`;
     }
 
-    private parseEventSubMessageParts(message: FirebotChatMessage, parts: EventSubChatMessagePart[])
-        : FirebotChatMessagePart[] {
+    private accountTaggedInText(text: string, account: FirebotAccount): boolean {
+        return account.loggedIn === true
+            && (text.includes(account.username) || text.includes(account.displayName));
+    }
+
+    private parseMessageParts(
+        message: FirebotChatMessage,
+        parts: EventSubChatMessagePart[] | FirebotParsedMessagePart[]
+    ) : FirebotChatMessagePart[] {
         if (message == null || parts == null) {
             return [];
         }
 
         const { streamer, bot } = accountAccess.getAccounts();
 
-        return parts.flatMap((p) => {
+        return parts.flatMap((p: EventSubChatMessagePart | FirebotChatMessagePart) => {
             if (p.type === "text" && p.text != null) {
                 // Check for tagging
                 if (message.username !== streamer.username &&
-                        (!bot.loggedIn || message.username !== bot.username)) {
+                        (!bot.loggedIn || message.username !== bot.username)
+                ) {
                     if (!message.whisper
                         && !message.tagged
-                        && streamer.loggedIn
-                        && (p.text.includes(streamer.username) || p.text.includes(streamer.displayName))) {
+                        && (this.accountTaggedInText(p.text, streamer)
+                            || this.accountTaggedInText(p.text, bot))
+                    ) {
                         message.tagged = true;
                     }
                 }
 
-                const subParts: FirebotChatMessagePart[] = [];
-                for (const word of p.text.split(" ")) {
-                    const previous = subParts[subParts.length - 1];
+                // Leave flagged text as their own separate parts
+                if ((p as FirebotChatMessageTextPart).flagged !== true) {
+                    const subParts: FirebotChatMessagePart[] = [];
+                    for (const word of p.text.split(" ")) {
+                        const previous = subParts[subParts.length - 1];
 
-                    // check for links
-                    if (this.URL_REGEX.test(word)) {
+                        // check for links
+                        if (this.URL_REGEX.test(word)) {
+                            if (previous) {
+                                if (previous.type === "text") {
+                                    previous.text += " ";
+                                } else {
+                                    subParts.push({
+                                        type: "text",
+                                        text: " "
+                                    });
+                                }
+                            }
+
+                            subParts.push({
+                                type: "link",
+                                text: word,
+                                url: word.startsWith("http") ? word : `https://${word}`
+                            });
+                            continue;
+                        }
+
+                        // check for third party emotes
+                        const thirdPartyEmote = this._thirdPartyEmotes.find(e => e.code === word);
+                        if (thirdPartyEmote) {
+                            if (previous) {
+                                if (previous.type === "text") {
+                                    previous.text += " ";
+                                } else {
+                                    subParts.push({
+                                        type: "text",
+                                        text: " "
+                                    });
+                                }
+                            }
+
+                            subParts.push({
+                                type: "third-party-emote",
+                                text: thirdPartyEmote.code,
+                                name: thirdPartyEmote.code,
+                                origin: thirdPartyEmote.origin,
+                                url: thirdPartyEmote.url
+                            });
+                            continue;
+                        }
+
                         if (previous) {
                             if (previous.type === "text") {
-                                previous.text += " ";
+                                previous.text += ` ${word}`;
                             } else {
                                 subParts.push({
                                     type: "text",
-                                    text: " "
+                                    text: ` ${word}`
                                 });
                             }
-                        }
-
-                        subParts.push({
-                            type: "link",
-                            text: word,
-                            url: word.startsWith("http") ? word : `https://${word}`
-                        });
-                        continue;
-                    }
-
-                    // check for third party emotes
-                    const thirdPartyEmote = this._thirdPartyEmotes.find(e => e.code === word);
-                    if (thirdPartyEmote) {
-                        if (previous) {
-                            if (previous.type === "text") {
-                                previous.text += " ";
-                            } else {
-                                subParts.push({
-                                    type: "text",
-                                    text: " "
-                                });
-                            }
-                        }
-
-                        subParts.push({
-                            type: "third-party-emote",
-                            text: thirdPartyEmote.code,
-                            name: thirdPartyEmote.code,
-                            origin: thirdPartyEmote.origin,
-                            url: thirdPartyEmote.url
-                        });
-                        continue;
-                    }
-
-                    if (previous) {
-                        if (previous.type === "text") {
-                            previous.text += ` ${word}`;
                         } else {
                             subParts.push({
                                 type: "text",
-                                text: ` ${word}`
+                                text: word
                             });
                         }
-                    } else {
-                        subParts.push({
-                            type: "text",
-                            text: word
-                        });
                     }
-                }
 
-                return subParts;
+                    return subParts;
+                }
             }
 
             const part = { ...p } as FirebotChatMessagePart;
 
             switch (part.type) {
                 case "emote":
-                    {
-                        const emotePart = p as EventSubChatMessageEmotePart;
-                        part.origin = "Twitch";
-                        part.name = emotePart.text;
-                        part.url = this.getEmoteUrl(emotePart);
-                        part.animatedUrl = emotePart.emote.format.includes("animated")
-                            ? this.getEmoteUrl(emotePart, "animated")
-                            : null;
-                    }
+                    this.parseEventSubEmote(
+                        part,
+                        p as EventSubChatMessageEmotePart
+                    );
                     break;
 
                 case "cheermote":
-                    {
-                        const cheermotePart = p as EventSubChatMessageCheermotePart;
-                        const parsedCheermote = this.parseEventSubCheermote(cheermotePart.cheermote);
-                        part.name = parsedCheermote.name;
-                        part.url = parsedCheermote.url;
-                        part.animatedUrl = parsedCheermote.animatedUrl;
-                        part.amount = parsedCheermote.amount;
-                        part.color = parsedCheermote.color;
-                    }
+                    this.parseEventSubCheermote(
+                        part,
+                        (p as EventSubChatMessageCheermotePart).cheermote
+                    );
                     break;
 
                 case "mention":
-                    {
-                        const mentionPart = p as EventSubChatMessageMentionPart;
-                        part.username = mentionPart.mention.user_login;
-                        part.userId = mentionPart.mention.user_id;
-                        part.userDisplayName = mentionPart.mention.user_name;
-                    }
-
+                    this.parseEventSubMention(
+                        part,
+                        (p as EventSubChatMessageMentionPart)
+                    );
                     break;
             }
 
@@ -331,102 +335,34 @@ class TwitchEventSubChatHelpers {
         });
     }
 
-    private parseMessageParts(firebotChatMessage: FirebotChatMessage, parts: EventSubChatMessagePart[] | FirebotParsedMessagePart[]) {
-        if (firebotChatMessage == null || parts == null) {
-            return [];
-        }
-
-        const { streamer, bot } = accountAccess.getAccounts();
-        return parts.flatMap((p) => {
-            if (p.type === "text" && p.text != null) {
-
-                if (firebotChatMessage.username !== streamer.username &&
-                        (!bot.loggedIn || firebotChatMessage.username !== bot.username)) {
-                    if (!firebotChatMessage.whisper &&
-                        !firebotChatMessage.tagged &&
-                        streamer.loggedIn &&
-                        (p.text.includes(streamer.username) || p.text.includes(streamer.displayName))) {
-                        firebotChatMessage.tagged = true;
-                    }
-                }
-
-                const subParts: FirebotParsedMessagePart[] = [];
-                for (const word of p.text.split(" ")) {
-                    // check for links
-                    if (this.URL_REGEX.test(word)) {
-                        subParts.push({
-                            type: "link",
-                            text: `${word} `,
-                            url: word.startsWith("http") ? word : `https://${word}`
-                        });
-                        continue;
-                    }
-
-                    // check for third party emotes
-                    const thirdPartyEmote = this._thirdPartyEmotes.find(e => e.code === word);
-                    if (thirdPartyEmote) {
-                        subParts.push({
-                            type: "third-party-emote",
-                            name: thirdPartyEmote.code,
-                            origin: thirdPartyEmote.origin,
-                            url: thirdPartyEmote.url
-                        });
-                        continue;
-                    }
-
-                    const previous = subParts[subParts.length - 1];
-                    if (previous && previous.type === "text") {
-                        previous.text += `${word} `;
-                    } else {
-                        subParts.push({
-                            type: "text",
-                            text: `${word} `,
-                            flagged: p.flagged
-                        });
-                    }
-                }
-
-                // move trailing spaces to separate parts so flagged parts look nicer
-                return subParts.flatMap((sp): FirebotParsedMessagePart | FirebotParsedMessagePart[] => {
-                    if (sp.type === "text" && sp.flagged && sp.text?.endsWith(" ")) {
-                        return [{
-                            type: "text",
-                            text: sp.text.trimEnd(),
-                            flagged: true
-                        }, {
-                            type: "text",
-                            text: " "
-                        }];
-                    }
-                    return sp;
-                });
-            }
-
-            const part: FirebotParsedMessagePart = {
-                ...p
-            };
-
-            if (part.type === "emote") {
-                part.origin = "Twitch";
-
-                const emote = this._twitchEmotes.streamer.find(e => e.name === part.name);
-                part.url = emote ? emote.getStaticImageUrl() : `https://static-cdn.jtvnw.net/emoticons/v2/${part.id}/default/dark/1.0`;
-                part.animatedUrl = emote ? emote.getAnimatedImageUrl() : null;
-            }
-
-            if (part.type === "cheer") {
-                const parsedCheermote = this.parseFirebotCheermote(part);
-
-                part.animatedUrl = parsedCheermote.animatedUrl;
-                part.url = parsedCheermote.url;
-                part.color = parsedCheermote.color;
-            }
-
-            return part;
-        });
+    private parseEmote(emotePart: EventSubChatMessageEmotePart)
+        : FirebotChatMessageEmotePart {
+        return {
+            type: "emote",
+            origin: "Twitch",
+            text: emotePart.text,
+            name: emotePart.text,
+            url: this.getEmoteUrl(emotePart),
+            animatedUrl: emotePart.emote.format.includes("animated")
+                ? this.getEmoteUrl(emotePart, "animated")
+                : null
+        };
     }
 
-    private parseCheermote(name: string, amount: number): FirebotCheermoteInstance {
+    private parseEventSubEmote(
+        part: FirebotChatMessageEmotePart,
+        emotePart: EventSubChatMessageEmotePart
+    ): void {
+        const parsedEmote = this.parseEmote(emotePart);
+        part.origin = parsedEmote.origin;
+        part.text = parsedEmote.text;
+        part.name = parsedEmote.name;
+        part.url = parsedEmote.url;
+        part.animatedUrl = parsedEmote.animatedUrl;
+    }
+
+    private parseCheermote(name: string, amount: number)
+        : FirebotChatMessageCheermotePart {
         const displayInfo = this._twitchCheermotes.getCheermoteDisplayInfo(name, amount, {
             background: "light",
             state: "animated",
@@ -440,6 +376,8 @@ class TwitchEventSubChatHelpers {
         });
 
         return {
+            type: "cheermote",
+            text: `${name}${amount}`,
             name: name,
             amount: amount,
             url: staticDisplayInfo.url,
@@ -448,12 +386,29 @@ class TwitchEventSubChatHelpers {
         };
     }
 
-    private parseEventSubCheermote(part: EventSubChatMessageCheermote): FirebotCheermoteInstance {
-        return this.parseCheermote(part.prefix, part.bits);
+    private parseEventSubCheermote(
+        part: FirebotChatMessageCheermotePart,
+        cheermote: EventSubChatMessageCheermote
+    ): void {
+        const parsedCheermote = this.parseCheermote(cheermote.prefix, cheermote.bits);
+        part.name = parsedCheermote.name;
+        part.url = parsedCheermote.url;
+        part.animatedUrl = parsedCheermote.animatedUrl;
+        part.amount = parsedCheermote.amount;
+        part.color = parsedCheermote.color;
     }
 
     private parseFirebotCheermote(part: FirebotParsedMessagePart): FirebotCheermoteInstance {
         return this.parseCheermote(part.name, part.amount);
+    }
+
+    private parseEventSubMention(
+        part: FirebotChatMessageMentionPart,
+        mentionPart: EventSubChatMessageMentionPart
+    ): void {
+        part.username = mentionPart.mention.user_login;
+        part.userId = mentionPart.mention.user_id;
+        part.userDisplayName = mentionPart.mention.user_name;
     }
 
     private parseChatBadges(badgeData: Record<string, string>): ChatBadge[] {
@@ -542,51 +497,55 @@ class TwitchEventSubChatHelpers {
             : rawText;
     }
 
-    private async buildBaseFirebotChatMessage(
-        message: EventSubChannelChatMessageEvent | EventSubChannelChatNotificationEvent
+    private async buildBaseChatMessage(
+        event: EventSubChannelChatMessageEvent | EventSubChannelChatNotificationEvent
     ): Promise<FirebotChatMessage> {
         const { streamer, bot } = accountAccess.getAccounts();
 
-        const isAction = this.CHAT_ACTION_REGEX.test(message.messageText);
-        const isSharedChatMessage = message.sourceMessageId != null
-            && message.sourceBroadcasterId !== accountAccess.getAccounts().streamer.userId;
+        const isAction = this.CHAT_ACTION_REGEX.test(event.messageText);
+        const isSharedChatMessage = event.sourceMessageId != null
+            && event.sourceBroadcasterId !== accountAccess.getAccounts().streamer.userId;
 
         let isAnnouncement = false;
         let announcementColor = undefined;
-        let chatColor = message.color;
-        if (message instanceof EventSubChannelChatAnnouncementNotificationEvent) {
+        let chatColor = event.color;
+        if (event instanceof EventSubChannelChatAnnouncementNotificationEvent) {
             isAnnouncement = true;
-            announcementColor = message.color;
+            announcementColor = event.color;
 
             // FIX: See https://github.com/twurple/twurple/issues/646
-            const userColor = await twitchApi.streamerClient.chat.getColorForUser(message.chatterId);
+            const userColor = await twitchApi.streamerClient.chat.getColorForUser(event.chatterId);
             chatColor = userColor ?? chatColor;
         }
 
-        const firebotChatMessage: FirebotChatMessage = {
-            id: message.messageId,
-            username: message.chatterName,
-            userId: message.chatterId,
-            userDisplayName: message.chatterDisplayName,
-            rawText: isAction ? this.getChatMessage(message.messageText) : message.messageText,
+        const chatMessage: FirebotChatMessage = {
+            id: event.messageId,
+            username: event.chatterName,
+            userId: event.chatterId,
+            userDisplayName: event.chatterDisplayName,
+            rawText: isAction ? this.getChatMessage(event.messageText) : event.messageText,
             color: chatColor,
-            badges: this.parseChatBadges(message.badges),
+            badges: this.parseChatBadges(event.badges),
             parts: [],
             roles: [],
-            profilePicUrl: await this.getUserProfilePicUrl(message.chatterId),
+            profilePicUrl: await this.getUserProfilePicUrl(event.chatterId),
 
             // Flags
             tagged: false,
             action: isAction,
-            isAnnouncement: isAnnouncement,
+            isAnnouncement,
             announcementColor: announcementColor ? announcementColor.toUpperCase() : undefined,
+            isCheer: false,
+            isReply: false,
+            isHiddenFromChatFeed: false,
+            isHighlighted: false,
 
             // Whispers have a separate event
             whisper: false,
 
             // Shared Chat
             isSharedChatMessage,
-            sharedChatRoomId: message.sourceBroadcasterId,
+            sharedChatRoomId: event.sourceBroadcasterId,
 
             // NOTE: EventSub does not currently return this data
             isExtension: false,
@@ -597,82 +556,88 @@ class TwitchEventSubChatHelpers {
             isSuspiciousUser: false
         };
 
-        const messageParts = this.parseEventSubMessageParts(firebotChatMessage, message.messageParts);
-        firebotChatMessage.parts = messageParts;
+        const messageParts = this.parseMessageParts(chatMessage, event.messageParts);
+        chatMessage.parts = messageParts;
 
-        if (streamer.loggedIn && firebotChatMessage.username === streamer.username) {
-            firebotChatMessage.isBroadcaster = true;
-            firebotChatMessage.roles.push("broadcaster");
+        chatMessage.isFounder = chatMessage.badges.some(b => b.title === "founder");
+        chatMessage.isMod = chatMessage.badges.some(b => b.title === "moderator");
+        chatMessage.isVip = chatMessage.badges.some(b => b.title === "vip");
+        chatMessage.isSubscriber = chatMessage.isFounder ||
+            chatMessage.badges.some(b => b.title === "subscriber");
+
+        if (streamer.loggedIn && chatMessage.userId === streamer.userId) {
+            chatMessage.isBroadcaster = true;
+            chatMessage.roles.push("broadcaster");
         }
 
-        if (bot.loggedIn && firebotChatMessage.username === bot.username) {
-            firebotChatMessage.isBot = true;
-            firebotChatMessage.roles.push("bot");
+        if (bot.loggedIn && chatMessage.userId === bot.userId) {
+            chatMessage.isBot = true;
+            chatMessage.roles.push("bot");
         }
 
-        if (firebotChatMessage.isFounder) {
-            firebotChatMessage.roles.push("founder");
-            firebotChatMessage.roles.push("sub");
-        } else if (firebotChatMessage.isSubscriber) {
-            firebotChatMessage.roles.push("sub");
+        if (chatMessage.isFounder) {
+            chatMessage.roles.push("founder");
+            chatMessage.roles.push("sub");
+        } else if (chatMessage.isSubscriber) {
+            chatMessage.roles.push("sub");
         }
 
-        if (firebotChatMessage.isMod) {
-            firebotChatMessage.roles.push("mod");
+        if (chatMessage.isMod) {
+            chatMessage.roles.push("mod");
         }
 
-        if (firebotChatMessage.isVip) {
-            firebotChatMessage.roles.push("vip");
+        if (chatMessage.isVip) {
+            chatMessage.roles.push("vip");
         }
 
-        return firebotChatMessage;
+        return chatMessage;
     }
 
-    async buildFirebotChatMessageFromEventSub(
-        message: EventSubChannelChatMessageEvent | EventSubChannelChatNotificationEvent
+    async buildChatMessageFromChatEvent(
+        event: EventSubChannelChatMessageEvent | EventSubChannelChatNotificationEvent
     ): Promise<FirebotChatMessage> {
-        const firebotChatMessage = await this.buildBaseFirebotChatMessage(message);
+        const chatMessage = await this.buildBaseChatMessage(event);
 
-        if (message instanceof EventSubChannelChatMessageEvent) {
-            firebotChatMessage.customRewardId = message.rewardId;
+        if (event instanceof EventSubChannelChatMessageEvent) {
+            chatMessage.customRewardId = event.rewardId;
 
-            firebotChatMessage.isCheer = message.isCheer;
-            firebotChatMessage.isHighlighted = message.messageType === "channel_points_highlighted";
+            chatMessage.isCheer = event.isCheer;
+            chatMessage.isHighlighted = event.messageType === "channel_points_highlighted";
 
             // Replies
-            firebotChatMessage.isReply = message.parentMessageId != null;
-            firebotChatMessage.replyParentMessageId = message.parentMessageId;
-            firebotChatMessage.replyParentMessageText = message.parentMessageText;
-            firebotChatMessage.replyParentMessageSenderUserId = message.parentMessageUserId;
-            firebotChatMessage.replyParentMessageSenderDisplayName = message.parentMessageUserDisplayName;
-            firebotChatMessage.threadParentMessageId = message.threadMessageId;
-            firebotChatMessage.threadParentMessageSenderUserId = message.threadMessageUserId;
-            firebotChatMessage.threadParentMessageSenderDisplayName = message.threadMessageUserDisplayName;
+            chatMessage.isReply = event.parentMessageId != null;
+            chatMessage.replyParentMessageId = event.parentMessageId;
+            chatMessage.replyParentMessageText = event.parentMessageText;
+            chatMessage.replyParentMessageSenderUserId = event.parentMessageUserId;
+            chatMessage.replyParentMessageSenderDisplayName = event.parentMessageUserDisplayName;
+            chatMessage.threadParentMessageId = event.threadMessageId;
+            chatMessage.threadParentMessageSenderUserId = event.threadMessageUserId;
+            chatMessage.threadParentMessageSenderDisplayName = event.threadMessageUserDisplayName;
 
-            if (firebotChatMessage.isReply) {
-                const replyUsername = message.parentMessageUserName;
-                if (firebotChatMessage.replyParentMessageText.startsWith(`@${replyUsername}`)) {
-                    firebotChatMessage.replyParentMessageText = firebotChatMessage.replyParentMessageText.substring(replyUsername.length + 1);
+            if (chatMessage.isReply) {
+                const replyUsername = event.parentMessageUserName;
+                if (chatMessage.replyParentMessageText.startsWith(`@${replyUsername}`)) {
+                    chatMessage.replyParentMessageText = chatMessage.replyParentMessageText.substring(replyUsername.length + 1);
                 }
 
-                const firstPart = firebotChatMessage.parts[0] ?? {} as FirebotChatMessagePart;
+                const firstPart = chatMessage.parts[0] ?? {} as FirebotChatMessagePart;
                 if (firstPart.type === "text" && firstPart.text.startsWith("@")) {
                     firstPart.text = firstPart.text.split(" ").slice(1).join(" ");
 
                     if (firstPart.text.trim() === "") {
-                        firebotChatMessage.parts.splice(0, 1);
+                        chatMessage.parts.splice(0, 1);
                     }
                 }
             }
         }
 
-        return firebotChatMessage;
+        return chatMessage;
     }
 
-    async buildFirebotChatMessageFromEventSubWhisper(message: EventSubUserWhisperMessageEvent): Promise<FirebotChatMessage> {
+    async buildFirebotChatMessageFromWhisper(message: EventSubUserWhisperMessageEvent): Promise<FirebotChatMessage> {
         const isAction = this.CHAT_ACTION_REGEX.test(message.messageText);
 
-        const firebotChatMessage: FirebotChatMessage = {
+        const chatMessage: FirebotChatMessage = {
             id: null,
             username: message.senderUserName,
             userId: message.senderUserId,
@@ -703,10 +668,77 @@ class TwitchEventSubChatHelpers {
         };
 
         // TODO: Figure out whisper parts
-        //const messageParts = this.parseMessageParts(firebotChatMessage, message.messageParts);
-        //firebotChatMessage.parts = messageParts;
+        //const messageParts = this.parseMessageParts(chatMessage, message.messageParts);
+        //chatMessage.parts = messageParts;
 
-        return firebotChatMessage;
+        return chatMessage;
+    }
+
+    async buildChatMessageFromAutoModEvent(event: EventSubAutoModMessageHoldV2Event) {
+        const profilePicUrl = await this.getUserProfilePicUrl(event.userId);
+
+        const chatMessage: FirebotChatMessage = {
+            id: event.messageId,
+            username: event.userName,
+            userId: event.userId,
+            userDisplayName: event.userDisplayName,
+            rawText: event.messageText,
+            profilePicUrl: profilePicUrl,
+            whisper: false,
+            action: false,
+            tagged: false,
+            isBroadcaster: false,
+            badges: [],
+            parts: [],
+            roles: [],
+            isAutoModHeld: true,
+            autoModStatus: "pending",
+            autoModReason: (event.reason === "automod" ? event.autoMod?.category : event.reason === "blocked_term" ? "blocked term" : null) ?? "unknown",
+            isSharedChatMessage: false
+        };
+
+        const { streamer, bot } = accountAccess.getAccounts();
+        if (this.accountTaggedInText(event.messageText, streamer)
+            || this.accountTaggedInText(event.messageText, bot)
+        ) {
+            chatMessage.tagged = true;
+        }
+
+        const flaggedPhrases = event.reason === "automod"
+            ? event.autoMod?.boundaries?.map(b => b.text) ?? []
+            : event.blockedTerms?.map(b => b.text) ?? [];
+
+        const flaggedPhrasesRegex = new RegExp(`(${flaggedPhrases.join("|")})`, "g");
+
+        const parts = this.parseMessageParts(
+            chatMessage,
+            event.messageParts.flatMap((f): FirebotParsedMessagePart | FirebotParsedMessagePart[] => {
+                switch (f.type) {
+                    case "text":
+                    {
+                        const splitText = f.text?.split(flaggedPhrasesRegex)
+                        // sometimes we get empty strings in the split
+                            .filter(t => t.length > 0);
+
+                        return splitText.map((text) => {
+                            const isFlagged = flaggedPhrases.some(phrase => text.includes(phrase));
+                            return {
+                                type: "text",
+                                text: text,
+                                flagged: isFlagged
+                            };
+                        });
+                    }
+
+                    case "emote":
+                    case "cheermote":
+                        return f;
+                }
+            }));
+
+        chatMessage.parts = parts;
+
+        return chatMessage;
     }
 }
 

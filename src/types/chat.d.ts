@@ -76,7 +76,10 @@ export type FirebotChatMessage = {
     profilePicUrl?: string;
     isExtension?: boolean;
     roles: string[];
-    badges: unknown[];
+    badges: Array<{
+        title: string;
+        url: string;
+    }>;
     customRewardId?: string;
     color?: string;
     rawText: string;
@@ -96,7 +99,7 @@ export type FirebotChatMessage = {
     isCheer?: boolean;
     isHighlighted?: boolean;
     isAutoModHeld?: boolean;
-    autoModStatus?: string;
+    autoModStatus?: "pending" | "approved" | "denied" | "expired";
     autoModReason?: string;
     isFirstChat?: boolean;
     isReturningChatter?: boolean;
