@@ -1,7 +1,6 @@
 import { SystemCommand } from "../../../../types/commands";
 import logger from "../../../logwrapper";
 import utils from "../../../utility";
-import accountAccess from "../../../common/account-access";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 import chat from "../../twitch-chat";
 
@@ -69,11 +68,8 @@ export const MarkerSystemCommand: SystemCommand<{
 
         const { args } = userCommand;
 
-        const streamer = accountAccess.getAccounts().streamer;
-
         try {
-            const marker = await TwitchApi.streamerClient.streams
-                .createStreamMarker(streamer.userId, args.join(" "));
+            const marker = await TwitchApi.streams.createStreamMarker(args.join(" "));
 
             if (marker == null) {
                 await chat.sendChatMessage(commandOptions.unableTemplate);

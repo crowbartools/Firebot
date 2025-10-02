@@ -1,6 +1,6 @@
 import logger from '../../../../logwrapper';
 import accountAccess from "../../../../common/account-access";
-import { ApiClient, HelixStream } from "@twurple/api";
+import { ApiClient, HelixStream, HelixStreamMarker } from "@twurple/api";
 
 export class TwitchStreamsApi {
     private _streamerClient: ApiClient;
@@ -11,11 +11,11 @@ export class TwitchStreamsApi {
         this._botClient = botClient;
     }
 
-    async createStreamMarker(description?: string): Promise<void> {
+    async createStreamMarker(description?: string): Promise<HelixStreamMarker> {
         try {
             const streamerId = accountAccess.getAccounts().streamer.userId;
 
-            await this._streamerClient.streams.createStreamMarker(streamerId, description);
+            return await this._streamerClient.streams.createStreamMarker(streamerId, description);
         } catch (error) {
             logger.error(`Failed to create stream marker`, error.message);
         }
