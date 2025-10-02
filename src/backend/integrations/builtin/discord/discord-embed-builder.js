@@ -35,12 +35,10 @@ function buildCustomEmbed(customEmbedData, color) {
 }
 
 async function buildChannelEmbed(color) {
-    const streamer = accountAccess.getAccounts().streamer;
-
     /**@type {import('@twurple/api').HelixStream} */
     let currentStream;
     try {
-        currentStream = await TwitchApi.streamerClient.streams.getStreamByUserId(streamer.userId);
+        currentStream = await TwitchApi.streams.getStreamersCurrentStream();
     } catch (error) {
         // stream not running
     }
