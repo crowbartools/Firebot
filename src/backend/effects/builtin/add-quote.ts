@@ -1,4 +1,4 @@
-import twitchApi from "../../twitch-api/api";
+import { TwitchApi } from "../../streaming-platforms/twitch/api";
 import quotesManager from "../../quotes/quotes-manager";
 import { EffectCategory } from '../../../shared/effect-constants';
 import moment from "moment";
@@ -59,7 +59,7 @@ const model: EffectType<{
     onTriggerEvent: async (event) => {
         const { effect } = event;
 
-        const channelData = await twitchApi.channels.getChannelInformation();
+        const channelData = await TwitchApi.channels.getChannelInformation();
 
         const currentGameName = channelData && channelData.gameName ? channelData.gameName : "Unknown game";
 

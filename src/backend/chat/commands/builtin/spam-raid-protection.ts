@@ -1,5 +1,5 @@
 import { SystemCommand } from "../../../../types/commands";
-import twitchApi from "../../../twitch-api/api";
+import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 import chat from "../../twitch-chat";
 import raidMessageChecker from "../../moderation/raid-message-checker";
 import { TwitchCommandHelpers } from "../../twitch-commands/twitch-command-helpers";
@@ -136,23 +136,23 @@ export const SpamRaidProtectionSystemCommand: SystemCommand<{
         if (args.length === 0) {
             if (commandOptions.enableFollowerOnly) {
                 const duration = TwitchCommandHelpers.getRawDurationInSeconds(commandOptions.enableFollowerOnlyDuration);
-                await twitchApi.chat.setFollowerOnlyMode(true, duration);
+                await TwitchApi.chat.setFollowerOnlyMode(true, duration);
             }
 
             if (commandOptions.enableSubscriberOnly) {
-                await twitchApi.chat.setSubscriberOnlyMode(true);
+                await TwitchApi.chat.setSubscriberOnlyMode(true);
             }
 
             if (commandOptions.enableEmoteOnly) {
-                await twitchApi.chat.setEmoteOnlyMode(true);
+                await TwitchApi.chat.setEmoteOnlyMode(true);
             }
 
             if (commandOptions.enableSlowMode) {
-                await twitchApi.chat.setSlowMode(true, commandOptions.enableSlowModeDelay);
+                await TwitchApi.chat.setSlowMode(true, commandOptions.enableSlowModeDelay);
             }
 
             if (commandOptions.clearChat) {
-                await twitchApi.chat.clearChat();
+                await TwitchApi.chat.clearChat();
             }
 
             if (commandOptions.banRaiders || commandOptions.blockRaiders) {
@@ -163,10 +163,10 @@ export const SpamRaidProtectionSystemCommand: SystemCommand<{
         }
 
         if (args[0] === "off") {
-            await twitchApi.chat.setFollowerOnlyMode(false);
-            await twitchApi.chat.setSubscriberOnlyMode(false);
-            await twitchApi.chat.setEmoteOnlyMode(false);
-            await twitchApi.chat.setSlowMode(false);
+            await TwitchApi.chat.setFollowerOnlyMode(false);
+            await TwitchApi.chat.setSubscriberOnlyMode(false);
+            await TwitchApi.chat.setEmoteOnlyMode(false);
+            await TwitchApi.chat.setSlowMode(false);
 
             raidMessageChecker.disable();
 

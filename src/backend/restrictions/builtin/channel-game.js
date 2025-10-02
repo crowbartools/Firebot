@@ -1,7 +1,7 @@
 "use strict";
 
 const accountAccess = require("../../common/account-access");
-const TwitchApi = require("../../twitch-api/api");
+const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 
 const model = {
     definition: {
@@ -34,7 +34,7 @@ const model = {
         $scope.games = [];
         $scope.searchGames = function (gameQuery) {
             $q.when(backendCommunicator.fireEventAsync("search-twitch-games", gameQuery))
-                .then(games => {
+                .then((games) => {
                     if (games != null) {
                         $scope.games = games;
                     }
@@ -42,7 +42,7 @@ const model = {
         };
 
         $q.when(backendCommunicator.fireEventAsync("get-twitch-game", restriction.gameId))
-            .then(game => {
+            .then((game) => {
                 if (game != null) {
                     $scope.selectedGame = game;
                 }
@@ -56,7 +56,7 @@ const model = {
         };
     },
     optionsValueDisplay: (restriction) => {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             if (restriction.name != null) {
                 resolve(restriction.name);
             } else {

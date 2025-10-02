@@ -1,6 +1,6 @@
 "use strict";
 const twitchChat = require("../../../chat/twitch-chat");
-const twitchApi = require("../../../twitch-api/api");
+const { TwitchApi } = require("../../../streaming-platforms/twitch/api");
 const profileManager = require("../../profile-manager");
 const settings = require("../../settings-manager").SettingsManager;
 const path = require("path");
@@ -132,11 +132,11 @@ function buildModules(scriptManifest) {
                 await twitchChat.sendChatMessage(...args);
             },
             deleteChat: async (id) => {
-                await twitchApi.chat.deleteChatMessage(id);
+                await TwitchApi.chat.deleteChatMessage(id);
             }
         },
         twitchChat: twitchChat,
-        twitchApi: twitchApi,
+        twitchApi: TwitchApi,
         httpServer: require("../../../../server/http-server-manager"),
         effectManager: require("../../../effects/effectManager"),
         effectRunner: require("../../effect-runner"),

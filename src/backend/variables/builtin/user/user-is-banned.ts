@@ -1,6 +1,6 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import twitchApi from "../../../twitch-api/api";
+import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 
 const UserIsBannedVariable: ReplaceVariable = {
     definition: {
@@ -15,12 +15,12 @@ const UserIsBannedVariable: ReplaceVariable = {
             return false;
         }
 
-        const user = await twitchApi.users.getUserByName(username);
+        const user = await TwitchApi.users.getUserByName(username);
         if (user == null) {
             return false;
         }
 
-        return (await twitchApi.moderation.isUserBanned(user.id)) ?? false;
+        return (await TwitchApi.moderation.isUserBanned(user.id)) ?? false;
     }
 };
 

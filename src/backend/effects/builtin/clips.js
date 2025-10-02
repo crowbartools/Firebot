@@ -1,13 +1,17 @@
 "use strict";
 
-const clipProcessor = require("../../common/handlers/createClipProcessor");
 const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
 const { SettingsManager } = require("../../common/settings-manager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/http-server-manager");
+const logger = require("../../logwrapper");
 const utils = require("../../utility");
 const customVariableManager = require("../../common/custom-variable-manager");
 const { resolveTwitchClipVideoUrl } = require("../../common/handlers/twitch-clip-url-resolver");
+const { TwitchApi } = require("../../streaming-platforms/twitch/api");
+const twitchChat = require("../../chat/twitch-chat");
+const discord = require("../../integrations/builtin/discord/discord-message-sender");
+const discordEmbedBuilder = require("../../integrations/builtin/discord/discord-embed-builder");
 
 const clip = {
     definition: {
@@ -191,8 +195,26 @@ const clip = {
     },
     onTriggerEvent: async (event) => {
         const { effect } = event;
-        const clip = await clipProcessor.createClip(effect);
+
+        if (effect.postLink) {
+            await twitchChat.sendChatMessage("Creating clip...");
+        }
+
+        const clip = await TwitchApi.clips.createClip();
+
         if (clip != null) {
+            if (effect.postLink) {
+                const message = `Clip created: ${clip.url}`;
+                await twitchChat.sendChatMessage(message);
+            }
+
+            if (effect.postInDiscord) {
+                const clipEmbed = await discordEmbedBuilder.buildClipEmbed(clip, effect.embedColor);
+                await discord.sendDiscordMessage(effect.discordChannelId, "A new clip was created!", clipEmbed);
+            }
+
+            logger.info("Successfully created a clip!");
+
             const clipDuration = clip.duration;
 
             if (effect.showInOverlay) {
@@ -244,6 +266,10 @@ const clip = {
                     effect.options.variableTtl || 0,
                     effect.options.variablePropertyPath || null
                 );
+            }
+        } else {
+            if (effect.postLink) {
+                await twitchChat.sendChatMessage("Whoops! Something went wrong when creating a clip. :(");
             }
         }
 

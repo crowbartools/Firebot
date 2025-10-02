@@ -2,7 +2,7 @@ import { ReplaceVariable } from "../../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import { EffectTrigger } from "../../../../../shared/effect-constants";
 
-import twitchApi from "../../../../twitch-api/api";
+import { TwitchApi } from "../../../../streaming-platforms/twitch/api";
 import roleHelpers from "../../../../roles/role-helpers";
 
 const triggers = {};
@@ -51,7 +51,7 @@ const model : ReplaceVariable = {
         }
 
         try {
-            const user = await twitchApi.users.getUserByName(username);
+            const user = await TwitchApi.users.getUserByName(username);
             if (user == null) {
                 return false;
             }

@@ -1,6 +1,6 @@
 "use strict";
 
-const twitchApi = require("../../twitch-api/api");
+const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 
 const accountAccess = require("../../common/account-access");
 const logger = require("../../logwrapper");
@@ -67,7 +67,7 @@ const model = {
     */
     predicate: (triggerData, restrictionData) => {
         return new Promise(async (resolve, reject) => {
-            const client = twitchApi.streamerClient;
+            const client = TwitchApi.streamerClient;
             const streamer = accountAccess.getAccounts().streamer;
 
             let currentViewers = null;

@@ -3,7 +3,7 @@
 const { SettingsManager } = require("../../common/settings-manager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/http-server-manager");
-const twitchApi = require("../../twitch-api/api");
+const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 const { EffectCategory } = require('../../../shared/effect-constants');
 const logger = require("../../logwrapper");
 const { wait } = require("../../utility");
@@ -265,7 +265,7 @@ const effect = {
             }
         }
 
-        const user = await twitchApi.users.getUserByName(effect.username);
+        const user = await TwitchApi.users.getUserByName(effect.username);
 
         if (user == null) {
             return;
@@ -273,7 +273,7 @@ const effect = {
 
         effect.username = user.displayName;
 
-        const channelInfo = await twitchApi.channels.getChannelInformation(user.id);
+        const channelInfo = await TwitchApi.channels.getChannelInformation(user.id);
         if (channelInfo == null) {
             return;
         }
@@ -282,7 +282,7 @@ const effect = {
 
         if (effect.showLastGame) {
             try {
-                const game = await twitchApi.categories.getCategoryById(channelInfo.gameId);
+                const game = await TwitchApi.categories.getCategoryById(channelInfo.gameId);
                 effect.gameName = channelInfo.gameName != null && channelInfo.gameName !== "" ? channelInfo.gameName : null;
                 effect.gameBoxArtUrl = game.boxArtUrl;
             } catch (error) {

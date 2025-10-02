@@ -267,7 +267,7 @@ exports.whenReady = async () => {
     await IconManager.loadFontAwesomeIcons();
 
     windowManagement.updateSplashScreenStatus("Starting stream info poll...");
-    const streamInfoPoll = require("../../../twitch-api/stream-info-manager");
+    const streamInfoPoll = require("../../../streaming-platforms/twitch/stream-info-manager");
     streamInfoPoll.startStreamInfoPoll();
 
     windowManagement.updateSplashScreenStatus("Starting notification manager...");

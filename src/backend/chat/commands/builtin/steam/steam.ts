@@ -1,7 +1,7 @@
 import { SystemCommand } from "../../../../../types/commands";
 import Steam from "./steam-access";
 import twitchChat from "../../../twitch-chat";
-import TwitchApi from "../../../../twitch-api/api";
+import { TwitchApi } from "../../../../streaming-platforms/twitch/api";
 
 /**
  * The `!steam` command

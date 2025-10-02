@@ -3,7 +3,7 @@ import { OutputDataType, VariableCategory } from "../../../../shared/variable-co
 
 import logger from "../../../logwrapper";
 import viewerDatabase from "../../../viewers/viewer-database";
-import twitchApi from "../../../twitch-api/api";
+import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 
 const model : ReplaceVariable = {
     definition: {
@@ -36,7 +36,7 @@ const model : ReplaceVariable = {
         }
 
         try {
-            const user = await twitchApi.users.getUserByName(username);
+            const user = await TwitchApi.users.getUserByName(username);
             if (user != null) {
                 return user.displayName;
             }

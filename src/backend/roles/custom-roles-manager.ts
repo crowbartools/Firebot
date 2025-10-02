@@ -6,7 +6,7 @@ import util from "../utility";
 import accountAccess from "../common/account-access";
 import profileManager from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
-import twitchApi from "../twitch-api/api";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
 import twitchRoleManager from "../../shared/twitch-roles";
 import { BasicViewer } from "../../types/viewers";
 import { TypedEmitter } from "tiny-typed-emitter";
@@ -117,7 +117,7 @@ class CustomRolesManager extends TypedEmitter<Events> {
 
         // Maybe channel search gives us the Unicode users
         for (const viewer of unicodeViewers) {
-            const results = await twitchApi.streamerClient.search.searchChannels(viewer);
+            const results = await TwitchApi.streamerClient.search.searchChannels(viewer);
             const channel = results.data?.find(c => c.displayName.toLowerCase() === viewer.toLowerCase());
 
             if (channel && channel.displayName.toLowerCase() === viewer.toLowerCase()) {
@@ -131,7 +131,7 @@ class CustomRolesManager extends TypedEmitter<Events> {
             }
         }
 
-        const users = await twitchApi.users.getUsersByNames(viewersToMigrate);
+        const users = await TwitchApi.users.getUsersByNames(viewersToMigrate);
         for (const viewer of viewersToMigrate) {
             const user = users.find(u => u.name === viewer);
             if (user != null) {
@@ -198,7 +198,7 @@ class CustomRolesManager extends TypedEmitter<Events> {
             logger.debug(`Updating custom role ${customRole.name}`);
 
             const userIds = customRole.viewers.map(v => v.id);
-            const users = await twitchApi.users.getUsersByIds(userIds);
+            const users = await TwitchApi.users.getUsersByIds(userIds);
 
             for (const user of users) {
                 const viewerIndex = customRole.viewers.findIndex(v => v.id === user.id);

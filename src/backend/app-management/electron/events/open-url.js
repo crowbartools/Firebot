@@ -3,7 +3,7 @@
 exports.openUrl = async (event, url) => {
     const logger = require("../../../logwrapper");
     const frontendCommunicator = require("../../../common/frontend-communicator");
-    const TwitchApi = require("../../../twitch-api/api");
+    const { TwitchApi } = require("../../../streaming-platforms/twitch/api");
 
     url = url.toLowerCase();
     logger.debug(`Received Firebot URL request: ${url}`);

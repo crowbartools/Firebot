@@ -2,7 +2,7 @@ import sanitizeFileName from "sanitize-filename";
 import fs from "fs/promises";
 import path from "path";
 import logger from "../logwrapper";
-import twitchApi from "../twitch-api/api";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
 import discordEmbedBuilder from "../integrations/builtin/discord/discord-embed-builder";
 import discord from "../integrations/builtin/discord/discord-message-sender";
 import { SettingsManager } from "../common/settings-manager";
@@ -14,7 +14,7 @@ import {CustomEmbed, EmbedType} from "../../types/discord";
 export async function saveScreenshotToFolder(base64ImageData: string, folderPath: string, fileName?: string) {
     try {
         if (!fileName) {
-            const { title } = await twitchApi.channels.getChannelInformation();
+            const { title } = await TwitchApi.channels.getChannelInformation();
             fileName = `${title} ${moment().format("YYYY-MM-DD HH.mm.ss.SSS A")}`;
         }
         const folder = path.join(folderPath, `${sanitizeFileName(fileName)}.png`);

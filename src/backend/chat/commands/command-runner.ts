@@ -7,7 +7,7 @@ import accountAccess from "../../common/account-access";
 import effectRunner from "../../common/effect-runner";
 import frontendCommunicator from "../../common/frontend-communicator";
 import logger from "../../logwrapper";
-import twitchStreamInfoManager from "../../twitch-api/stream-info-manager";
+import twitchStreamInfoManager from "../../streaming-platforms/twitch/stream-info-manager";
 import chatHelpers from "../chat-helpers";
 import commandManager from "./command-manager";
 
@@ -137,7 +137,7 @@ class CommandRunner {
         }
 
         return effectRunner.processEffects(processEffectsRequest).catch((reason) => {
-            console.log(`error when running effects: ${reason}`);
+            logger.error(`error when running effects: ${reason}`);
         });
     }
 
@@ -189,7 +189,7 @@ class CommandRunner {
     triggerCustomCommand(id: string, isManual = true): void {
         const command = commandManager.getCustomCommandById(id);
         if (command != null) {
-            console.log("firing command manually", command);
+            logger.debug("firing command manually", command);
             const commandSender = accountAccess.getAccounts().streamer.username,
                 userCmd = this.buildUserCommand(command, null, commandSender);
             this.fireCommand(command, userCmd, null, commandSender, isManual);
