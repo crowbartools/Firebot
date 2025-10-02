@@ -1,9 +1,9 @@
 import { v4 as uuid } from "uuid";
 
+import { getData } from "../../../../backend/cloud-sync/cloud-sync";
 import { SystemCommand } from "../../../../types/commands";
 import frontendCommunicator from "../../../common/frontend-communicator";
 import { SettingsManager } from "../../../common/settings-manager";
-import logger from "../../../logwrapper";
 import customRolesManager from "../../../roles/custom-roles-manager";
 import teamRolesManager from "../../../roles/team-roles-manager";
 import util from "../../../utility";
@@ -337,50 +337,36 @@ export const CommandManagementSystemCommand: SystemCommand = {
                     return;
                 }
 
-                try {
-                    const response = await fetch(`https://api.crowbar.tools/v1/data-bin/${remainingData.trim()}`);
+                const effectsData = await getData(remainingData.trim());
 
-                    if (response.status !== 200) {
-                        await chat.sendMessage(
-                            `Invalid share code, please try again.`
-                        );
-                        return;
-                    }
-
-                    const effectsData = await response.json();
-
-                    if (!effectsData || !effectsData.effects) {
-                        await chat.sendMessage(
-                            `Could not parse effects data, please try again.`
-                        );
-                        return;
-                    }
-
-                    const command = {
-                        trigger: trigger,
-                        autoDeleteTrigger: false,
-                        ignoreBot: true,
-                        active: true,
-                        scanWholeMessage: !trigger.startsWith("!"),
-                        cooldown: {
-                            user: 0,
-                            global: 0
-                        },
-                        effects: {
-                            id: uuid(),
-                            list: effectsData.effects
-                        }
-                    };
-
-                    commandManager.saveCustomCommand(command, event.userCommand.commandSender);
-
-                    await chat.sendChatMessage(
-                        `Imported command '${trigger}'!`
+                if (!effectsData || !effectsData.effects) {
+                    await chat.sendMessage(
+                        `Could not parse effects data, please try again.`
                     );
-
-                } catch (error) {
-                    logger.error("Error importing shared command", error);
+                    return;
                 }
+
+                const command = {
+                    trigger: trigger,
+                    autoDeleteTrigger: false,
+                    ignoreBot: true,
+                    active: true,
+                    scanWholeMessage: !trigger.startsWith("!"),
+                    cooldown: {
+                        user: 0,
+                        global: 0
+                    },
+                    effects: {
+                        id: uuid(),
+                        list: effectsData.effects
+                    }
+                };
+
+                commandManager.saveCustomCommand(command, event.userCommand.commandSender);
+
+                await chat.sendChatMessage(
+                    `Imported command '${trigger}'!`
+                );
 
                 break;
             }
