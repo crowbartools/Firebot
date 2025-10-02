@@ -86,7 +86,9 @@
                                 ng-model="$ctrl.displayModel.width"
                                 min="1"
                                 step="1"
-                                ng-change="$ctrl.updateFromDisplayModel()">
+                                ng-change="$ctrl.updateFromDisplayModel(false)"
+                                ng-blur="$ctrl.updateFromDisplayModel(true)"
+                            >
 
                             <span class="input-group-addon ms-2" style="width: 25%">Height (px)</span>
                             <input
@@ -95,7 +97,9 @@
                                 ng-model="$ctrl.displayModel.height"
                                 min="1"
                                 step="1"
-                                ng-change="$ctrl.updateFromDisplayModel()">
+                                ng-change="$ctrl.updateFromDisplayModel(false)"
+                                ng-blur="$ctrl.updateFromDisplayModel(true)"
+                            >
                         </div>
                        <!-- <div class="input-group mt-3">
                             <span class="input-group-addon">Resolution:</span>
@@ -284,7 +288,7 @@
                 };
 
                 // Update the ngModel value
-                $ctrl.updateModel = function() {
+                $ctrl.updateModel = function(enforceMinimums = true) {
                     // Update display model with pixel values
                     $ctrl.displayModel.x = Math.round($ctrl.model.x);
                     $ctrl.displayModel.y = Math.round($ctrl.model.y);
@@ -296,10 +300,17 @@
                         Math.max(0, $ctrl.displayModel.x));
                     $ctrl.displayModel.y = Math.min($ctrl.overlayResHeight - $ctrl.displayModel.height,
                         Math.max(0, $ctrl.displayModel.y));
-                    $ctrl.displayModel.width = Math.min($ctrl.overlayResWidth,
-                        Math.max(Math.round($ctrl.minimumWidth * $ctrl.overlayResWidth / 100), $ctrl.displayModel.width));
-                    $ctrl.displayModel.height = Math.min($ctrl.overlayResHeight,
-                        Math.max(Math.round($ctrl.minimumHeight * $ctrl.overlayResHeight / 100), $ctrl.displayModel.height));
+                    if (enforceMinimums) {
+                        $ctrl.displayModel.width = Math.min($ctrl.overlayResWidth,
+                            Math.max(Math.round($ctrl.minimumWidth * $ctrl.overlayResWidth / 100), $ctrl.displayModel.width));
+                        $ctrl.displayModel.height = Math.min($ctrl.overlayResHeight,
+                            Math.max(Math.round($ctrl.minimumHeight * $ctrl.overlayResHeight / 100), $ctrl.displayModel.height));
+                    } else {
+                        $ctrl.displayModel.width = Math.min($ctrl.overlayResWidth,
+                            Math.max(1, $ctrl.displayModel.width));
+                        $ctrl.displayModel.height = Math.min($ctrl.overlayResHeight,
+                            Math.max(1, $ctrl.displayModel.height));
+                    }
 
                     // Update model with corrected pixel values
                     $ctrl.model.x = $ctrl.displayModel.x;
@@ -312,14 +323,14 @@
                 };
 
                 // Update from display model inputs
-                $ctrl.updateFromDisplayModel = function() {
+                $ctrl.updateFromDisplayModel = function(enforceMinimums = true) {
                     // Copy values from display model to actual model
                     $ctrl.model.x = $ctrl.displayModel.x;
                     $ctrl.model.y = $ctrl.displayModel.y;
                     $ctrl.model.width = $ctrl.displayModel.width;
                     $ctrl.model.height = $ctrl.displayModel.height;
 
-                    $ctrl.updateModel();
+                    $ctrl.updateModel(enforceMinimums);
                 };
 
                 // Update internal percentage model for rendering
