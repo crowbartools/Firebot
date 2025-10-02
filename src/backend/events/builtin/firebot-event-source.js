@@ -178,7 +178,7 @@ const firebotEventSource = {
         },
         {
             id: "dynamic-countdown-finished",
-            name: "Dynamic Countdown Finished",
+            name: "Countdown (Dynamic) Finished",
             description: "When a dynamic countdown reaches zero.",
             cached: false,
             manualMetadata: {

@@ -14,7 +14,7 @@ const model: EffectType<{
 }> = {
     definition: {
         id: "firebot:update-dynamic-countdown",
-        name: "Update Dynamic Countdown",
+        name: "Update Countdown (Dynamic)",
         description: "Update a dynamic countdown timer's remaining time.",
         icon: "fad fa-hourglass-half",
         categories: [EffectCategory.OVERLAY, EffectCategory.ADVANCED],
