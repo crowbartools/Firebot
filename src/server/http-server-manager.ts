@@ -1,6 +1,6 @@
 import { EventEmitter } from "events";
 import { ipcMain } from "electron";
-import express, { Express, Request, Response } from "express";
+import express, { Express, Request, Response, Router } from "express";
 import http from "http";
 import bodyParser from "body-parser";
 import cors from 'cors';
@@ -49,6 +49,7 @@ class HttpServerManager extends EventEmitter {
     overlayServer: http.Server;
     isDefaultServerStarted: boolean;
     overlayHasClients: boolean;
+    customRouteRouter: Router;
     customRoutes: CustomRoute[];
 
     constructor() {
@@ -61,9 +62,12 @@ class HttpServerManager extends EventEmitter {
         this.isDefaultServerStarted = false;
         this.overlayHasClients = false;
         this.customRoutes = [];
+
+        // eslint-disable-next-line new-cap
+        this.customRouteRouter = express.Router();
     }
 
-    start() {
+    start(): void {
         // Default overlay server is already running.
         if (this.overlayServer != null) {
             logger.error("Overlay server is already running... is another instance running?");
@@ -75,11 +79,11 @@ class HttpServerManager extends EventEmitter {
         this.startDefaultHttpServer();
     }
 
-    createDefaultServerInstance() {
+    createDefaultServerInstance(): Express {
         const app = express();
 
         // Cache buster
-        app.use(function (_, res, next) {
+        app.use((_, res, next) => {
             res.setHeader("Expires", "0");
             res.setHeader("Pragma", "no-cache");
             res.setHeader("Cache-Control", "no-store, max-age=0, must-revalidate");
@@ -95,18 +99,18 @@ class HttpServerManager extends EventEmitter {
         const v1Router = require("./api/v1/v1Router");
         app.use("/api/v1", v1Router);
 
-        app.get("/api/v1/auth/callback", function(_, res) {
+        app.get("/api/v1/auth/callback", (_, res) => {
             res.sendFile(path.join(`${__dirname}/authcallback.html`));
         });
 
-        app.get('/loginsuccess', function(_, res) {
+        app.get('/loginsuccess', (_, res) => {
             res.sendFile(path.join(`${__dirname}/loginsuccess.html`));
         });
 
 
         // Set up route to serve overlay
         app.use("/overlay/", express.static(path.join(cwd, './resources/overlay/')));
-        app.get("/overlay/", function(req, res) {
+        app.get("/overlay/", (req, res) => {
             const effectDefs = effectManager.getEffectOverlayExtensions();
 
             const widgetExtensions = overlayWidgetManager.getOverlayExtensions();
@@ -164,7 +168,7 @@ class HttpServerManager extends EventEmitter {
         app.use("/overlay-resources", express.static(dataAccess.getPathInUserData("/overlay-resources")));
 
         // Set up resource endpoint
-        app.get("/resource/:token", function(req, res) {
+        app.get("/resource/:token", (req, res) => {
             const token = req.params.token || null;
             if (token !== null) {
                 let resourcePath = ResourceTokenManager.getResourcePath(token) || null;
@@ -184,7 +188,7 @@ class HttpServerManager extends EventEmitter {
         app.get("/integrations", (req, res) => {
             const registeredCustomRoutes = this.customRoutes.map((cr) => {
                 return {
-                    path: `/integrations/${cr.fullRoute}`,
+                    path: this.getCustomRoutePathFromRoot(cr.fullRoute),
                     method: cr.method
                 };
             });
@@ -193,33 +197,10 @@ class HttpServerManager extends EventEmitter {
         });
 
         // Handle custom routes
-        app.use("/integrations/:customRoute", (req, res) => {
-            const { customRoute } = req.params;
-
-            // app.use only provides the predicate in req.path, not the full mount point
-            // See here: https://expressjs.com/en/4x/api.html#req.path
-            //
-            // Also, remove the trailing slash for matching reasons
-            const customRoutePredicate = req.path.toLowerCase().replace(/\/$/, '');
-            const fullCustomRoute = `${customRoute}${customRoutePredicate}`;
-
-            // Find the matching registered custom route
-            const customRouteEntry = this.customRoutes.find(cr =>
-                cr.fullRoute === fullCustomRoute &&
-                cr.method === req.method
-            );
-
-            if (customRouteEntry == null) {
-                res
-                    .status(404)
-                    .send({ status: "error", message: `${req.originalUrl} not found` });
-            } else {
-                customRouteEntry.callback(req, res);
-            }
-        });
+        app.use(this.customRouteRouter);
 
         // Catch all remaining paths and send the caller a 404
-        app.use(function(req, res) {
+        app.use((req, res) => {
             res
                 .status(404)
                 .send({ status: "error", message: `${req.originalUrl} not found` });
@@ -228,7 +209,7 @@ class HttpServerManager extends EventEmitter {
         return app;
     }
 
-    startDefaultHttpServer() {
+    startDefaultHttpServer(): void {
         const port: number = SettingsManager.getSetting("WebServerPort");
 
         websocketServerManager.createServer(this.defaultHttpServer);
@@ -271,13 +252,13 @@ class HttpServerManager extends EventEmitter {
         websocketServerManager.triggerEvent(`custom-event:${eventType}`, payload);
     }
 
-    createServerInstance() {
+    createServerInstance(): Express {
         const app = express();
 
         return app;
     }
 
-    startHttpServer(name, port, instance) {
+    startHttpServer(name: string, port: number, instance: Express): http.Server {
         try {
             if (this.serverInstances.some(si => si.name === name)) {
                 logger.error(`Web server instance named "${name}" is already running`);
@@ -304,7 +285,7 @@ class HttpServerManager extends EventEmitter {
         }
     }
 
-    stopHttpServer(name) {
+    stopHttpServer(name): boolean {
         try {
             if (name === "Default") {
                 logger.error("Default web server instance cannot be stopped");
@@ -333,7 +314,12 @@ class HttpServerManager extends EventEmitter {
         }
     }
 
-    registerCustomRoute(prefix: string, route: string, method: string, callback: CustomRoute["callback"]) {
+    registerCustomRoute(
+        prefix: string,
+        route: string,
+        method: string,
+        callback: CustomRoute["callback"]
+    ): boolean {
         if (prefix == null || prefix === "") {
             logger.error(`Failed to register custom route: No custom route prefix specified`);
             return false;
@@ -363,6 +349,75 @@ class HttpServerManager extends EventEmitter {
             return false;
         }
 
+        switch (normalizedMethod) {
+            case "GET":
+                this.customRouteRouter.get(
+                    this.getCustomRoutePathFromRoot(fullRoute),
+                    callback
+                );
+                break;
+
+            case "POST":
+                this.customRouteRouter.post(
+                    this.getCustomRoutePathFromRoot(fullRoute),
+                    callback
+                );
+                break;
+
+            case "PUT":
+                this.customRouteRouter.put(
+                    this.getCustomRoutePathFromRoot(fullRoute),
+                    callback
+                );
+                break;
+
+            case "PATCH":
+                this.customRouteRouter.patch(
+                    this.getCustomRoutePathFromRoot(fullRoute),
+                    callback
+                );
+                break;
+
+            case "DELETE":
+                this.customRouteRouter.delete(
+                    this.getCustomRoutePathFromRoot(fullRoute),
+                    callback
+                );
+                break;
+
+            case "HEAD":
+                this.customRouteRouter.head(
+                    this.getCustomRoutePathFromRoot(fullRoute),
+                    callback
+                );
+                break;
+
+            case "CONNECT":
+                this.customRouteRouter.connect(
+                    this.getCustomRoutePathFromRoot(fullRoute),
+                    callback
+                );
+                break;
+
+            case "OPTIONS":
+                this.customRouteRouter.options(
+                    this.getCustomRoutePathFromRoot(fullRoute),
+                    callback
+                );
+                break;
+
+            case "TRACE":
+                this.customRouteRouter.trace(
+                    this.getCustomRoutePathFromRoot(fullRoute),
+                    callback
+                );
+                break;
+
+            default:
+                logger.error(`Failed to register custom route "${normalizedMethod} ${fullRoute}": ${normalizedMethod} is not a recognzied HTTP method.`);
+                return false;
+        }
+
         this.customRoutes.push({
             prefix: normalizedPrefix,
             route: normalizedRoute,
@@ -371,11 +426,11 @@ class HttpServerManager extends EventEmitter {
             callback: callback
         });
 
-        logger.info(`Registered custom route "${normalizedMethod} /integrations/${fullRoute}"`);
+        logger.info(`Registered custom route "${normalizedMethod} ${this.getCustomRoutePathFromRoot(fullRoute)}"`);
         return true;
     }
 
-    unregisterCustomRoute(prefix: string, route: string, method: string) {
+    unregisterCustomRoute(prefix: string, route: string, method: string): boolean {
         if (prefix == null || prefix === "") {
             logger.error(`Failed to unregister custom route: No custom route prefix specified`);
             return false;
@@ -409,7 +464,12 @@ class HttpServerManager extends EventEmitter {
 
         this.customRoutes.splice(customRouteIndex, 1);
 
-        logger.info(`Unegistered custom route "${normalizedMethod} /integrations/${fullRoute}"`);
+        this.removeCustomRoute(
+            this.getCustomRoutePathFromRoot(fullRoute),
+            normalizedMethod.toLowerCase()
+        );
+
+        logger.info(`Unegistered custom route "${normalizedMethod} ${this.getCustomRoutePathFromRoot(fullRoute)}"`);
         return true;
     }
 
@@ -427,6 +487,26 @@ class HttpServerManager extends EventEmitter {
             normalizedMethod,
             fullRoute
         };
+    }
+
+    private getCustomRoutePathFromRoot(fullRoute: string): string {
+        return `/integrations/${fullRoute}`;
+    }
+
+    private removeCustomRoute(path: string, method: string): void {
+        const stacksToRemove = [];
+        this.customRouteRouter.stack.forEach((s) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            if (s.route?.path === path && (s.route as any).methods[method] === true
+            ) {
+                stacksToRemove.push(s);
+            }
+        });
+
+        for (const stack of stacksToRemove) {
+            const i = this.customRouteRouter.stack.indexOf(stack);
+            this.customRouteRouter.stack.splice(i, 1);
+        }
     }
 
     registerCustomWebSocketListener(pluginName: string, callback: CustomWebSocketHandler["callback"]): boolean {
