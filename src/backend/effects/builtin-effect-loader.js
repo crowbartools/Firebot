@@ -53,6 +53,7 @@ exports.loadEffects = () => {
         'shoutout',
         'show-image', // No migration needed.
         'show-text',
+        'show-toast',
         'stop-effect-execution',
         'sync-profile-data',
         'take-screenshot',
