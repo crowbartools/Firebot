@@ -1,8 +1,7 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-
-const mathjs = require('mathjs');
-const logger = require("../../../logwrapper");
+import { evaluate } from 'mathjs';
+import logger from "../../../logwrapper";
 
 const model : ReplaceVariable = {
     definition: {
@@ -31,7 +30,7 @@ const model : ReplaceVariable = {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let evaluation : any;
         try {
-            evaluation = mathjs.evaluate(subject);
+            evaluation = evaluate(subject);
         } catch (err) {
             logger.warn("error parsing math expression", err.message);
             evaluation = -1;
