@@ -10,6 +10,8 @@ import { EffectTrigger } from "../../shared/effect-constants";
 import { RewardRedemptionMetadata, SavedChannelReward } from "../../types/channel-rewards";
 import { TriggerType } from "../common/EffectType";
 import { EffectList } from "../../types/effects";
+import effectRunner from "../common/effect-runner";
+import restrictionsManager from "../restrictions/restriction-manager";
 
 class ChannelRewardManager {
     channelRewards: Record<string, SavedChannelReward> = {};
@@ -46,8 +48,6 @@ class ChannelRewardManager {
             if (savedReward == null) {
                 return;
             }
-
-            const accountAccess = require("../common/account-access");
 
             // Manually triggered by streamer, must pass in userId and userDisplayName can be falsy
             this.triggerChannelReward(channelRewardId, {
@@ -321,8 +321,6 @@ class ChannelRewardManager {
             return;
         }
 
-        const effectRunner = require("../common/effect-runner");
-
         const processEffectsRequest = {
             trigger: {
                 type: manual ? EffectTrigger.MANUAL : EffectTrigger.CHANNEL_REWARD,
@@ -356,7 +354,6 @@ class ChannelRewardManager {
         const restrictionData = savedReward.restrictionData;
         if (restrictionData) {
             logger.debug("Reward has restrictions...checking them.");
-            const restrictionsManager = require("../restrictions/restriction-manager");
             const triggerData = {
                 type: TriggerType.CHANNEL_REWARD,
                 metadata
