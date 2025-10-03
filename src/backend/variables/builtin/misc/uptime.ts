@@ -1,7 +1,6 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType } from "../../../../shared/variable-constants";
-
-const util = require("../../../utility");
+import util from "../../../utility";
 
 const model : ReplaceVariable = {
     definition: {

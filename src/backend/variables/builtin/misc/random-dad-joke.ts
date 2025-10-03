@@ -1,7 +1,6 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType } from "../../../../shared/variable-constants";
-
-const apiProcessor = require("../../../common/handlers/apiProcessor");
+import apiProcessor from "../../../common/handlers/apiProcessor";
 
 const model : ReplaceVariable = {
     definition: {
@@ -10,8 +9,8 @@ const model : ReplaceVariable = {
         description: "Get a random dad joke!",
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: () => {
-        return apiProcessor.getApiResponse("Dad Joke");
+    evaluator: async () => {
+        return await apiProcessor.getApiResponse("Dad Joke");
     }
 };
 

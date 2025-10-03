@@ -1,8 +1,7 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-
-const frontendCommunicator = require("../../../common/frontend-communicator");
-const logger = require("../../../logwrapper");
+import frontendCommunicator from "../../../common/frontend-communicator";
+import logger from "../../../logwrapper";
 
 const model : ReplaceVariable = {
     definition: {
@@ -22,11 +21,11 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
     },
-    evaluator: async (trigger, url) => {
+    evaluator: async (trigger, url: string) => {
         if (url == null) {
             return "[NO URL PROVIDED]";
         }
-        const result = await frontendCommunicator.fireEventAsync("getVideoDuration", url);
+        const result: number = await frontendCommunicator.fireEventAsync("getVideoDuration", url);
 
         if (isNaN(result)) {
             logger.error("Error while retrieving video duration", result);

@@ -1,8 +1,7 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-
-const fs = require("fs");
-const logger = require("../../../logwrapper");
+import fs from "fs";
+import logger from "../../../logwrapper";
 
 const model : ReplaceVariable = {
     definition: {
@@ -16,7 +15,7 @@ const model : ReplaceVariable = {
         trigger: Trigger,
         filePath: string
     ) : number => {
-        if (filePath === null || typeof filePath !== 'string') {
+        if (filePath == null || typeof filePath !== 'string') {
             logger.error(`Couldn't read file (${filePath}) to count the lines in it.`);
             return 0;
         }

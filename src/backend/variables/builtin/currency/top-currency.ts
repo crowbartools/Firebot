@@ -3,7 +3,7 @@ import { OutputDataType } from "../../../../shared/variable-constants";
 
 import currencyAccess from "../../../currency/currency-access";
 import currencyManager from "../../../currency/currency-manager";
-const util = require("../../../utility");
+import util from "../../../utility";
 
 const model : ReplaceVariable = {
     definition: {

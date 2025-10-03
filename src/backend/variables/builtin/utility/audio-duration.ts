@@ -1,7 +1,6 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-
-const frontendCommunicator = require("../../../common/frontend-communicator");
+import frontendCommunicator from "../../../common/frontend-communicator";
 
 const model : ReplaceVariable = {
     definition: {

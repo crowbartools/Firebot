@@ -1,8 +1,7 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-
-const fs = require("fs");
-const logger = require("../../../logwrapper");
+import fs from "fs";
+import logger from "../../../logwrapper";
 
 const model : ReplaceVariable = {
     definition: {
@@ -14,10 +13,10 @@ const model : ReplaceVariable = {
     },
     evaluator: (
         trigger: Trigger,
-        filePath: unknown
+        filePath: string
     ) : boolean => {
 
-        if (filePath === null) {
+        if (filePath == null) {
             return false;
         }
 

@@ -1,7 +1,6 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-
-const { processDice } = require("../../../common/handlers/diceProcessor");
+import { processDice } from "../../../common/handlers/diceProcessor";
 
 const model : ReplaceVariable = {
     definition: {

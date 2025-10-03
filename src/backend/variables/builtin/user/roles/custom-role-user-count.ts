@@ -1,7 +1,6 @@
 import { ReplaceVariable } from "../../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
-
-const customRolesManager = require("../../../../roles/custom-roles-manager");
+import customRolesManager from "../../../../roles/custom-roles-manager";
 
 const model : ReplaceVariable = {
     definition: {
@@ -11,7 +10,7 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: async (trigger, roleName) => {
+    evaluator: async (trigger, roleName: string) => {
         if (roleName == null || roleName == null) {
             return 0;
         }

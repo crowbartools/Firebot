@@ -1,7 +1,6 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType } from "../../../../shared/variable-constants";
-
-const accountAccess = require("../../../common/account-access");
+import accountAccess from "../../../common/account-access";
 
 const model : ReplaceVariable = {
     definition: {

@@ -1,7 +1,6 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType } from "../../../../shared/variable-constants";
-
-const cloudSync = require("../../../cloud-sync/profile-sync");
+import cloudSync from "../../../cloud-sync/profile-sync";
 
 const model : ReplaceVariable = {
     definition: {

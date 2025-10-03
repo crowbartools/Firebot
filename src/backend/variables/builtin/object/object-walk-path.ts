@@ -1,7 +1,6 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-
-const logger = require('../../../logwrapper');
+import logger from '../../../logwrapper';
 
 const model : ReplaceVariable = {
     definition: {

@@ -2,7 +2,7 @@ import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType } from "../../../../shared/variable-constants";
 
 import viewerMetadataManager from "../../../viewers/viewer-metadata-manager";
-const util = require("../../../utility");
+import util from "../../../utility";
 
 const model : ReplaceVariable = {
     definition: {

@@ -1,7 +1,6 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-
-const utils = require("../../../utility");
+import utils from "../../../utility";
 
 const model : ReplaceVariable = {
     definition: {
@@ -12,7 +11,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async (trigger, text = "") => {
-        return await utils.populateStringWithTriggerData(text, trigger);
+        return await utils.populateStringWithTriggerData(text as string, trigger);
     }
 };
 

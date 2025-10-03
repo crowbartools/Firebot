@@ -1,9 +1,9 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { EffectTrigger } from "../../../../shared/effect-constants";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import logger from "../../../logwrapper";
 
 const moment = require("moment");
-const logger = require("../../../logwrapper");
 
 const triggers = {};
 triggers[EffectTrigger.COMMAND] = true;

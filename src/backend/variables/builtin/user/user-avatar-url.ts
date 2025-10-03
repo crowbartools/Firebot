@@ -1,7 +1,6 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-
-const { TwitchApi } = require("../../../streaming-platforms/twitch/api");
+import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 
 const model : ReplaceVariable = {
     definition: {
@@ -22,7 +21,7 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.USER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: async (trigger, username) => {
+    evaluator: async (trigger, username: string) => {
         if (username == null) {
             username = trigger.metadata.username;
         }

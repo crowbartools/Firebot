@@ -1,7 +1,6 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-
-const customVariableManager = require("../../../common/custom-variable-manager");
+import customVariableManager from "../../../common/custom-variable-manager";
 
 const model : ReplaceVariable = {
     definition: {
