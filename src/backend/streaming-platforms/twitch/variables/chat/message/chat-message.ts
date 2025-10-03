@@ -36,7 +36,7 @@ const model : ReplaceVariable = {
 
         } else if (trigger.type === EffectTrigger.EVENT || trigger.type === EffectTrigger.MANUAL) {
             // if trigger is event/manual event, build chat message from chat event data
-            chatMessage = trigger.metadata.eventData.messageText;
+            chatMessage = trigger.metadata.eventData.messageText as string;
         }
 
         return chatMessage.trim();

@@ -10,15 +10,23 @@ const model : ReplaceVariable = {
         handle: "topCurrency",
         description: "Comma separated list of users with the most of the given currency. Defaults to top 10, you can provide a custom number as a second argument.",
         usage: "topCurrency[currencyName]",
-        examples: [
-            {
-                usage: "topCurrency[Points, 5]",
-                description: "Returns comma-separated list of top 5 users with their Points amounts"
-            }
-        ],
+        hasSuggestions: true,
+        noSuggestionsText: "No currencies have been created yet.",
         possibleDataOutput: [OutputDataType.TEXT]
     },
-
+    getSuggestions: async () => {
+        const currencies = Object.values(currencyAccess.getCurrencies());
+        return currencies.flatMap(c => ([
+            {
+                usage: `topCurrency[${c.name}]`,
+                description: `Get the top 10 ${c.name} usernames and amounts`
+            },
+            {
+                usage: `topCurrency[${c.name}, 5]`,
+                description: `Get the top 5 ${c.name} usernames and amounts`
+            }
+        ]));
+    },
     // eslint-disable-next-line @typescript-eslint/no-inferrable-types
     evaluator: async (_, currencyName: string, count: number = 10) => {
 

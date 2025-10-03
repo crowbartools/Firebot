@@ -8,15 +8,24 @@ const model : ReplaceVariable = {
     definition: {
         handle: "currency",
         description: "How much of the given currency the current user has.",
-        usage: "currency[currencyName]",
-        examples: [
-            {
-                usage: "currency[currencyName, username]",
-                description: "Returns the amount of specified currency the given user has"
-            }
-        ],
+        usage: "currency[currencyName, user]",
+        hasSuggestions: true,
+        noSuggestionsText: "No currencies have been created yet.",
         categories: [VariableCategory.USER, VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
+    },
+    getSuggestions: async () => {
+        const currencies = Object.values(currencyAccess.getCurrencies());
+        return currencies.flatMap(c => ([
+            {
+                usage: `currency[${c.name}, $user]`,
+                description: `Get the ${c.name} amount for the current user`
+            },
+            {
+                usage: `currency[${c.name}, someUserName]`,
+                description: `Get the ${c.name} amount for a specific user`
+            }
+        ]));
     },
     evaluator: async (trigger: Trigger, currencyName: string, username?: string) => {
         username ??= trigger.metadata.username;

@@ -9,14 +9,23 @@ const model : ReplaceVariable = {
         handle: "currencyRank",
         description: "Returns the rank of the current user based on how much of the given currency they have.",
         usage: "currencyRank[currencyName]",
-        examples: [
-            {
-                usage: "currencyRank[currencyName, username]",
-                description: "Returns the rank for the specified user in the specified currency"
-            }
-        ],
+        hasSuggestions: true,
+        noSuggestionsText: "No currencies have been created yet.",
         categories: [VariableCategory.USER, VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
+    },
+    getSuggestions: async () => {
+        const currencies = Object.values(currencyAccess.getCurrencies());
+        return currencies.flatMap(c => ([
+            {
+                usage: `currencyRank[${c.name}, $user]`,
+                description: `Get the ${c.name} rank for the current user`
+            },
+            {
+                usage: `currencyRank[${c.name}, someUserName]`,
+                description: `Get the ${c.name} rank for a specific user`
+            }
+        ]));
     },
     evaluator: async (trigger: Trigger, currencyName: string, username?: string) => {
         username ??= trigger.metadata.username;

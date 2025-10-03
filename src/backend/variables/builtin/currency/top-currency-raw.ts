@@ -9,9 +9,16 @@ const model : ReplaceVariable = {
         handle: "rawTopCurrency",
         description: "Returns a raw array containing those with the most of the specified currency. Items in the array contain `place`, `username` and `amount` properties.",
         usage: "rawTopCurrency[currencyName]",
+        hasSuggestions: true,
+        noSuggestionsText: "No currencies have been created yet.",
         possibleDataOutput: [OutputDataType.ARRAY]
     },
-
+    getSuggestions: async () => {
+        const currencies = Object.values(currencyAccess.getCurrencies());
+        return currencies.map(c => ({
+            usage: `rawTopCurrency[${c.name}]`
+        }));
+    },
     // eslint-disable-next-line @typescript-eslint/no-inferrable-types
     evaluator: async (_, currencyName: string, count: number = 10) => {
 

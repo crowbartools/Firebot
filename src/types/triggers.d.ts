@@ -12,7 +12,13 @@ export type TriggerType =
     | "counter"
     | "preset"
     | "quick_action"
-    | "manual";
+    | "manual"
+    | "channel_reward";
+
+export type TriggerMeta = {
+    triggerId?: string;
+    [x: string]: unknown;
+}
 
 export type Trigger = {
     type: TriggerType;
@@ -44,6 +50,7 @@ export type Trigger = {
         };
         [x: string]: unknown;
     };
+    effectOutputs?: { [key: string]: unknown };
 };
 
 export type TriggersObject = {

@@ -28,7 +28,7 @@ const model : ReplaceVariable = {
             chatMessageId = trigger.metadata.chatMessage.id;
 
         } else if (trigger.type === EffectTrigger.EVENT || trigger.type === EffectTrigger.MANUAL) {
-            chatMessageId = trigger.metadata.eventData.messageId;
+            chatMessageId = trigger.metadata.eventData.messageId as string;
         }
 
         return chatMessageId.trim();

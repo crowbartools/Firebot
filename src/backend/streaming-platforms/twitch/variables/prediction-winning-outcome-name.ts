@@ -15,7 +15,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        return trigger.metadata.eventData.winningOutcome.title;
+        return (trigger.metadata.eventData.winningOutcome as any).title;
     }
 };
 

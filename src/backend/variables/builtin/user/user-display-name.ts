@@ -25,7 +25,7 @@ const model : ReplaceVariable = {
             if (userDisplayName != null) {
                 return userDisplayName;
             }
-            username = trigger.metadata?.eventData?.username ?? trigger.metadata?.username;
+            username = (trigger.metadata?.eventData?.username ?? trigger.metadata?.username) as string;
             if (username == null) {
                 return "[No username available]";
             }

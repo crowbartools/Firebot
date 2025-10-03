@@ -19,7 +19,7 @@ const model : ReplaceVariable = {
             return "Failed to get gift receiver info";
         }
 
-        return trigger.metadata.eventData.giftReceivers.map(gr => ({
+        return (trigger.metadata.eventData.giftReceivers as any).map(gr => ({
             username: gr.gifteeUsername,
             months: gr.giftSubMonths ?? 1
         }));

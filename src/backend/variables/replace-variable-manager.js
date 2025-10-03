@@ -65,7 +65,8 @@ class ReplaceVariableManager extends EventEmitter {
             handle: variable.definition.handle,
             argsCheck: variable.argsCheck,
             evaluator: variable.evaluator,
-            triggers: variable.definition.triggers
+            triggers: variable.definition.triggers,
+            getSuggestions: variable.getSuggestions
         });
 
         this.#variableAndAliasHandlers = this._generateVariableAndAliasHandlers();
@@ -258,6 +259,24 @@ class ReplaceVariableManager extends EventEmitter {
 
         frontendCommunicator.send("additional-variable-events-updated", this.additionalVariableEvents);
     }
+
+    getSuggestionsForVariable(variableHandle, triggerType, triggerMeta) {
+        /**
+         * @type {import("../../types/variables").ReplaceVariable | undefined}
+         */
+        const variable = this.#variableAndAliasHandlers.get(variableHandle);
+
+        if (variable?.getSuggestions) {
+            try {
+                return variable.getSuggestions(triggerType, triggerMeta);
+            } catch (err) {
+                logger.error("Error occurred while getting variable suggestions.", err);
+                return [];
+            }
+        }
+
+        return [];
+    }
 }
 
 const manager = new ReplaceVariableManager();
@@ -354,6 +373,13 @@ frontendCommunicator.onAsync("validateVariables", async (eventData) => {
     }
 
     return errors;
+});
+
+frontendCommunicator.onAsync("get-variable-suggestions", async (eventData) => {
+    logger.debug("got 'get-variable-suggestions' request");
+    const { variableHandle, triggerType, triggerMeta } = eventData;
+    const suggestions = await manager.getSuggestionsForVariable(variableHandle, triggerType, triggerMeta);
+    return suggestions;
 });
 
 frontendCommunicator.on("get-additional-variable-events", () => {

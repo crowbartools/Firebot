@@ -24,7 +24,7 @@ const model : ReplaceVariable = {
     evaluator: async (trigger) => {
         let charityCampaignTotal = 0;
         if (trigger.metadata.eventData && trigger.metadata.eventData.currentTotalAmount) {
-            charityCampaignTotal = trigger.metadata.eventData.currentTotalAmount;
+            charityCampaignTotal = trigger.metadata.eventData.currentTotalAmount as number;
         } else {
             try {
                 charityCampaignTotal = await TwitchApi.charity.getCurrentCharityFundraiserTotal();

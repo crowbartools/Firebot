@@ -18,7 +18,7 @@
                     menuPosition: "@",
                     buttonPosition: "@"
                 },
-                controller: function($scope, $element, replaceVariableService, $timeout, $sce, variableMacroService) {
+                controller: function($scope, $element, replaceVariableService, $timeout, $sce, variableMacroService, backendCommunicator) {
 
                     const insertAt = (str, sub, pos) => `${str.slice(0, pos)}${sub}${str.slice(pos)}`;
 
@@ -48,12 +48,6 @@
                         }
                     };
 
-                    const parseMarkdown = (text) => {
-                        return $sce.trustAsHtml(
-                            sanitize(marked(text))
-                        );
-                    };
-
                     function findTriggerDataScope(currentScope) {
                         if (currentScope == null) {
                             currentScope = $scope;
@@ -66,6 +60,44 @@
                         }
                         return findTriggerDataScope(currentScope.$parent);
                     }
+
+                    const parseMarkdown = (text) => {
+                        return $sce.trustAsHtml(
+                            sanitize(marked(text))
+                        );
+                    };
+
+                    $scope.suggestionsLoading = {};
+
+                    function getSuggestionsForVariable(variableHandle) {
+                        $scope.suggestionsLoading[variableHandle] = true;
+
+                        const { trigger, triggerMeta } = findTriggerDataScope();
+
+                        backendCommunicator.fireEventAsync("get-variable-suggestions", {
+                            variableHandle,
+                            triggerType: trigger,
+                            triggerMeta
+                        })
+                            .then((suggestions) => {
+                                const variable = $scope.variables.find(v => v.handle === variableHandle);
+                                if (variable != null) {
+                                    variable.suggestions = suggestions?.map((s) => {
+                                        return {
+                                            ...s,
+                                            description: s.description ? parseMarkdown(s.description) : undefined
+                                        };
+                                    }) ?? [];
+                                }
+                                $scope.suggestionsLoading[variableHandle] = false;
+                            });
+                    }
+
+                    $scope.suggestionsToggled = (variable, isOpen) => {
+                        if (isOpen && !variable.suggestions?.length) {
+                            getSuggestionsForVariable(variable.handle);
+                        }
+                    };
 
                     function getVariables() {
                         const { trigger, triggerMeta } = findTriggerDataScope();
@@ -95,9 +127,10 @@
                                     examples: v.examples?.map((e) => {
                                         return {
                                             ...e,
-                                            description: parseMarkdown(e.description || "")
+                                            description: e.description ? parseMarkdown(e.description) : undefined
                                         };
-                                    })
+                                    }),
+                                    suggestions: []
                                 };
                             });
                         }
@@ -240,11 +273,25 @@
                                             <div style="font-size: 12px; opacity: 0.75;">Aliases: {{getAliases(variable)}}</div>
                                         </div>
                                         <div class="muted" ng-bind-html="variable.description"></div>
+                                        <div ng-show="variable.hasSuggestions" style="font-size: 13px;padding-left: 5px; margin-top:3px;">
+                                            <collapsable-section show-text="Suggestions" hide-text="Suggestions" text-color="#0b8dc6" on-toggle="suggestionsToggled(variable, isOpen)">
+                                                <div ng-repeat="suggestion in variable.suggestions" style="margin-top: 3px; margin-bottom: 3px;">
+                                                    <div style="font-weight: 900;">\${{suggestion.usage}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="addVariable(suggestion)"></i></div>
+                                                    <div class="muted" ng-bind-html="suggestion.description"></div>
+                                                </div>
+                                                <div ng-if="suggestionsLoading[variable.handle]" style="padding: 3px 10px;">
+                                                    <i class="fas fa-circle-notch fa-spin"></i>
+                                                </div>
+                                                <div ng-if="!suggestionsLoading[variable.handle] && (!variable.suggestions || variable.suggestions.length === 0)" style="text-align: center; padding: 1px 10px;" class="muted">
+                                                   {{ variable.noSuggestionsText || "No suggestions available" }}
+                                                </div>
+                                            </collapsable-section>
+                                        </div>
                                         <div ng-show="variable.examples && variable.examples.length > 0" style="font-size: 13px;padding-left: 5px; margin-top:3px;">
                                             <collapsable-section show-text="Other examples" hide-text="Other examples" text-color="#0b8dc6">
                                                 <div ng-repeat="example in variable.examples" style="margin-bottom: 6px;">
                                                     <div style="font-weight: 900;">\${{example.usage}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="addVariable(example)"></i></div>
-                                                    <div class="muted" ng-bind-html="example.description"></div>
+                                                    <div ng-if="example.description" class="muted" ng-bind-html="example.description"></div>
                                                 </div>
                                             </collapsable-section>
                                         </div>

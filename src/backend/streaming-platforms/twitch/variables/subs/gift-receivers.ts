@@ -29,8 +29,8 @@ const model : ReplaceVariable = {
             return "Failed to get gift receiver info";
         }
 
-        const giftReceiverNames = trigger.metadata.eventData.giftReceivers.map(gr => gr.gifteeUsername);
-        const giftReceiverMonths = trigger.metadata.eventData.giftReceivers.map(gr => gr.giftSubMonths ?? 1);
+        const giftReceiverNames = (trigger.metadata.eventData.giftReceivers as any).map(gr => gr.gifteeUsername);
+        const giftReceiverMonths = (trigger.metadata.eventData.giftReceivers as any).map(gr => gr.giftSubMonths ?? 1);
 
         if (target == null && property == null) {
             return giftReceiverNames.join(", ");
