@@ -1,9 +1,9 @@
 import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import { ReplaceVariable } from "../../../../../types/variables";
+import { TwitchApi } from "../../api";
 import logger from "../../../../logwrapper";
 import twitchStreamInfoManager from "../../stream-info-manager";
 
-const TwitchApi = require("../../api");
 
 const model : ReplaceVariable = {
     definition: {
@@ -27,7 +27,7 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.COMMON, VariableCategory.USER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: async (_trigger, username) => {
+    evaluator: async (_trigger, username: string) => {
         if (!username) {
             return twitchStreamInfoManager.streamInfo.isLive;
         }

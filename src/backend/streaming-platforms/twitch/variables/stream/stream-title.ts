@@ -1,8 +1,7 @@
 import { ReplaceVariable } from "../../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
-
-const TwitchApi = require("../../api");
-const accountAccess = require("../../../../common/account-access");
+import { TwitchApi } from "../../api";
+import accountAccess from "../../../../common/account-access";
 
 const model : ReplaceVariable = {
     definition: {
@@ -26,7 +25,7 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.COMMON, VariableCategory.USER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: async (trigger, username) => {
+    evaluator: async (trigger, username: string) => {
         if (username == null) {
             username = accountAccess.getAccounts().streamer.username;
         }

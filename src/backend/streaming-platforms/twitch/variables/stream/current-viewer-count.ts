@@ -1,9 +1,8 @@
 import { ReplaceVariable } from "../../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
-
-const logger = require("../../../../logwrapper");
-const accountAccess = require("../../../../common/account-access");
-const { TwitchApi } = require("../../api");
+import { TwitchApi } from "../../api";
+import accountAccess from "../../../../common/account-access";
+import logger from "../../../../logwrapper";
 
 const model : ReplaceVariable = {
     definition: {

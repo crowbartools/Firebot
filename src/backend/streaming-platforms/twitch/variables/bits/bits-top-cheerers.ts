@@ -1,9 +1,10 @@
 import { ReplaceVariable, Trigger } from "../../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import { TwitchApi } from "../../api";
+import { HelixBitsLeaderboardPeriod } from "@twurple/api";
 
 const expressionish = require('expressionish');
 const moment = require("moment");
-const { TwitchApi } = require("../../api");
 
 const model : ReplaceVariable = {
     definition: {
@@ -53,7 +54,7 @@ const model : ReplaceVariable = {
     evaluator: async (
         trigger: Trigger,
         count: null | number = 1,
-        period: null | string = "all",
+        period: HelixBitsLeaderboardPeriod = "all",
         startDate = null
     ) : Promise<unknown[]> => {
         count = count ?? 1;

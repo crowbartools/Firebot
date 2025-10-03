@@ -1,5 +1,8 @@
 import { ReplaceVariable } from "../../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import { TwitchApi } from "../../api";
+import channelRewardManager from "../../../../channel-rewards/channel-reward-manager";
+import accountAccess from "../../../../common/account-access";
 
 const model : ReplaceVariable = {
     definition: {
@@ -14,17 +17,13 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: async (trigger, rewardName) => {
+    evaluator: async (trigger, rewardName: string) => {
         let rewardData;
         if (!rewardName) {
             rewardData = trigger.metadata.eventData ?
                 trigger.metadata.eventData :
                 trigger.metadata;
         } else {
-            const channelRewardManager = require("../../../../channel-rewards/channel-reward-manager");
-            const { TwitchApi } = require("../../api");
-            const accountAccess = require("../../../../common/account-access");
-
             const channelRewardId = channelRewardManager.getChannelRewardIdByName(rewardName);
 
             if (channelRewardId == null) {

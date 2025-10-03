@@ -1,10 +1,11 @@
+import { HelixBitsLeaderboardPeriod } from "@twurple/api";
 import { ReplaceVariable, Trigger } from "../../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import { TwitchApi } from "../../api";
+import logger from "../../../../logwrapper";
 
 const expressionish = require('expressionish');
 const moment = require("moment");
-const logger = require("../../../../logwrapper");
-const { TwitchApi } = require("../../api");
 
 const model : ReplaceVariable = {
     definition: {
@@ -51,8 +52,8 @@ const model : ReplaceVariable = {
     },
     evaluator: async (
         trigger: Trigger,
-        username = null,
-        period = "all",
+        username?: string,
+        period: HelixBitsLeaderboardPeriod = "all",
         startDate = null
     ) => {
         username = username ?? trigger.metadata.username;

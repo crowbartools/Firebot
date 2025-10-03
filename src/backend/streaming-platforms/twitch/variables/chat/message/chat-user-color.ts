@@ -1,10 +1,10 @@
 import { ReplaceVariable } from "../../../../../../types/variables";
 import { EffectTrigger } from "../../../../../../shared/effect-constants";
 import { OutputDataType, VariableCategory } from "../../../../../../shared/variable-constants";
+import { TwitchApi } from "../../../api";
 import accountAccess from "../../../../../common/account-access";
 import viewerDatabase from "../../../../../viewers/viewer-database";
 
-const { TwitchApi } = require("../../../api");
 const DEFAULT_COLOR = "#ffffff";
 
 const model : ReplaceVariable = {
@@ -40,7 +40,7 @@ const model : ReplaceVariable = {
                 chatColor = trigger?.metadata?.eventData?.chatMessage?.color;
             }
             if (chatColor == null) {
-                const userId = trigger?.metadata?.userId ?? accountAccess.getAccounts().streamer.userId;
+                const userId = trigger?.metadata?.userId as string ?? accountAccess.getAccounts().streamer.userId;
                 chatColor = await TwitchApi.chat.getColorForUser(userId);
             }
             return chatColor ?? DEFAULT_COLOR;

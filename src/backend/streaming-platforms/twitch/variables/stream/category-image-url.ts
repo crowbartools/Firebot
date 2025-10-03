@@ -1,8 +1,7 @@
 import { ReplaceVariable } from "../../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
-
-const { TwitchApi } = require("../../api");
-const accountAccess = require("../../../../common/account-access");
+import { TwitchApi } from "../../api";
+import accountAccess from "../../../../common/account-access";
 
 const model : ReplaceVariable = {
     definition: {
@@ -30,14 +29,14 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.USER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: async (_, username, size = "285x380") => {
+    evaluator: async (_, username: string, size = "285x380") => {
         if (username == null) {
             username = accountAccess.getAccounts().streamer.username;
         }
 
         try {
             const channelInfo = await TwitchApi.channels.getChannelInformationByUsername(username);
-            const category = await TwitchApi.categories.getCategoryById(channelInfo.gameId, size);
+            const category = await TwitchApi.categories.getCategoryById(channelInfo.gameId, size as string);
 
             return category.boxArtUrl ? category.boxArtUrl : "[No Category Image Found]";
         } catch (err) {

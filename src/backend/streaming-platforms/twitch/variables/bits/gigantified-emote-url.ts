@@ -1,7 +1,6 @@
 import { ReplaceVariable, Trigger } from "../../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
-
-const { EffectTrigger } = require("../../../../../shared/effect-constants");
+import { EffectTrigger } from "../../../../../shared/effect-constants";
 
 const triggers = {};
 triggers[EffectTrigger.EVENT] = ["twitch:bits-powerup-gigantified-emote"];
