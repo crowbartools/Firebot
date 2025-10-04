@@ -1,6 +1,6 @@
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
 import chatRolesManager from "../../roles/chat-roles-manager";
-import { TwitchSlashCommandHandler } from "../twitch-slash-command-handler";
+import { TwitchSlashCommandHandler } from "../twitch-slash-commands";
 import { TwitchCommandHelpers } from "./twitch-command-helpers";
 
 export const timeoutHandler: TwitchSlashCommandHandler<[string, number, string]> = {

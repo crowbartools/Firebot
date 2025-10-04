@@ -1,5 +1,5 @@
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
-import { TwitchSlashCommandHandler } from "../twitch-slash-command-handler";
+import { TwitchSlashCommandHandler } from "../twitch-slash-commands";
 import { TwitchCommandHelpers } from "./twitch-command-helpers";
 
 export const commercialHandler: TwitchSlashCommandHandler<[number]> = {
