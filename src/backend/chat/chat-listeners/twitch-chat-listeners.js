@@ -108,8 +108,8 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
         twitchEventsHandler.chatMessage.triggerChatMessage(
             firebotChatMessage,
             ranCommand,
-            command,
-            userCommand
+            ranCommand ? command : null,
+            ranCommand ? userCommand : null
         );
         if (firebotChatMessage.isFirstChat) {
             twitchEventsHandler.chatMessage.triggerFirstTimeChat(firebotChatMessage);
@@ -161,8 +161,8 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
         twitchEventsHandler.chatMessage.triggerChatMessage(
             firebotChatMessage,
             ranCommand,
-            command,
-            userCommand
+            ranCommand ? command : null,
+            ranCommand ? userCommand : null
         );
         if (firebotChatMessage.isFirstChat) {
             twitchEventsHandler.chatMessage.triggerFirstTimeChat(firebotChatMessage);
