@@ -364,7 +364,7 @@
                         }
                     },
                     {
-                        text: "Move to...",
+                        text: "Transfer to...",
                         children: availableGroups.map((g) => {
                             return {
                                 html: `<a href>${g.name}</a>`,
