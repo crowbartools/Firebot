@@ -12,12 +12,13 @@ import effectQueueStatus from './effect-queue-status';
 import eventData from "./event-data";
 import overlayInstance from './overlay-instance';
 import presetListArg from './preset-list-arg';
-import user from './user';
-import username from './username';
+import scanWholeMessage from "./scan-whole-message";
 import target from './target';
 import topMetadata from './top-metadata';
 import topMetadataRaw from './top-metadata-raw';
 import topMetadataUser from './top-metadata-user';
+import user from './user';
+import username from './username';
 import webhookHeader from './webhook-header';
 import webhookHeaders from './webhook-headers';
 import webhookId from './webhook-id';
@@ -39,12 +40,13 @@ export default [
     eventData,
     overlayInstance,
     presetListArg,
-    user,
-    username,
+    scanWholeMessage,
     target,
     topMetadata,
     topMetadataRaw,
     topMetadataUser,
+    user,
+    username,
     webhookHeader,
     webhookHeaders,
     webhookId,
