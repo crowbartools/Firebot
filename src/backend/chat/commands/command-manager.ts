@@ -1,6 +1,7 @@
 import { TypedEmitter } from "tiny-typed-emitter";
 import { JsonDB } from "node-json-db";
 import { DateTime } from "luxon";
+import { v4 as uuid } from "uuid";
 
 import { CommandDefinition, SystemCommand, SystemCommandDefinition } from "../../../types/commands";
 import logger from "../../logwrapper";
@@ -335,7 +336,6 @@ class CommandManager extends TypedEmitter<Events> {
         if (command.id == null || command.id === "") {
             eventType = "created-item";
             // generate id for new command
-            const { v4: uuid } = require("uuid");
             command.id = uuid();
 
             command.createdBy = user

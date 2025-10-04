@@ -1,10 +1,10 @@
+import { v4 as uuid } from "uuid";
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 import logger from "../../../logwrapper";
 import effectRunner from "../../../common/effect-runner";
 
-const { v4: uuid } = require("uuid");
 
 const model : ReplaceVariable = {
     definition: {
