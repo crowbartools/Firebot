@@ -91,6 +91,82 @@ class CommandHandler {
         });
     }
 
+    async checkCommandRestrictions(
+        firebotChatMessage: FirebotChatMessage,
+        command: CommandDefinition,
+        userCmd: UserCommand,
+        sendFailureMessage = true
+    ) {
+        const twitchChat = require("../twitch-chat");
+
+        const { triggeredSubcmd, commandSender } = userCmd;
+        let restrictionData = command.restrictionData;
+        let restrictionsAreInherited = false;
+        if (triggeredSubcmd) {
+            const subCommandHasRestrictions = triggeredSubcmd.restrictionData && triggeredSubcmd.restrictionData.restrictions
+                && triggeredSubcmd.restrictionData.restrictions.length > 0;
+
+            if (subCommandHasRestrictions) {
+                restrictionData = triggeredSubcmd.restrictionData;
+            } else {
+                // subcommand has no restrictions, inherit from base command
+                restrictionData = command.restrictionData;
+                restrictionsAreInherited = true;
+            }
+        } else {
+            restrictionData = command.restrictionData;
+        }
+
+        if (restrictionData) {
+            logger.debug("Command has restrictions...checking them.");
+            const triggerData = {
+                type: TriggerType.COMMAND,
+                metadata: {
+                    username: commandSender,
+                    userId: firebotChatMessage.userId,
+                    userDisplayName: firebotChatMessage.userDisplayName,
+                    userTwitchRoles: firebotChatMessage.roles,
+                    command: command,
+                    userCommand: userCmd,
+                    chatMessage: firebotChatMessage
+                }
+            };
+            try {
+                await restrictionsManager.runRestrictionPredicates(triggerData, restrictionData, restrictionsAreInherited);
+                logger.debug("Restrictions passed!");
+                return true;
+            } catch (restrictionReason) {
+                let reason: string;
+                if (Array.isArray(restrictionReason)) {
+                    reason = restrictionReason.join(", ");
+                } else {
+                    reason = restrictionReason;
+                }
+
+                logger.debug(`${commandSender} could not use command '${command.trigger}' because: ${reason}`);
+                if (restrictionData.sendFailMessage || restrictionData.sendFailMessage == null) {
+
+                    const restrictionMessage = restrictionData.useCustomFailMessage ?
+                        restrictionData.failMessage :
+                        DEFAULT_RESTRICTION_MESSAGE;
+
+                    if (sendFailureMessage === true) {
+                        await twitchChat.sendChatMessage(
+                            restrictionMessage
+                                .replaceAll("{user}", commandSender)
+                                .replaceAll("{reason}", reason),
+                            null,
+                            null,
+                            restrictionData.sendAsReply === true ? firebotChatMessage.id : undefined
+                        );
+                    }
+                }
+
+                return false;
+            }
+        }
+    }
+
     async handleChatMessage(firebotChatMessage: FirebotChatMessage): Promise<{
         ranCommand: boolean;
         command?: CommandDefinition | SystemCommandDefinition;
@@ -227,67 +303,14 @@ class CommandHandler {
         }
 
         // Check if command passes all restrictions
-        let restrictionData = command.restrictionData;
-        let restrictionsAreInherited = false;
-        if (triggeredSubcmd) {
-            const subCommandHasRestrictions = triggeredSubcmd.restrictionData && triggeredSubcmd.restrictionData.restrictions
-                && triggeredSubcmd.restrictionData.restrictions.length > 0;
+        const restrictionsPassed = await this.checkCommandRestrictions(
+            firebotChatMessage,
+            command,
+            userCmd
+        );
 
-            if (subCommandHasRestrictions) {
-                restrictionData = triggeredSubcmd.restrictionData;
-            } else {
-                // subcommand has no restrictions, inherit from base command
-                restrictionData = command.restrictionData;
-                restrictionsAreInherited = true;
-            }
-        } else {
-            restrictionData = command.restrictionData;
-        }
-
-        if (restrictionData) {
-            logger.debug("Command has restrictions...checking them.");
-            const triggerData = {
-                type: TriggerType.COMMAND,
-                metadata: {
-                    username: commandSender,
-                    userId: firebotChatMessage.userId,
-                    userDisplayName: firebotChatMessage.userDisplayName,
-                    userTwitchRoles: firebotChatMessage.roles,
-                    command: command,
-                    userCommand: userCmd,
-                    chatMessage: firebotChatMessage
-                }
-            };
-            try {
-                await restrictionsManager.runRestrictionPredicates(triggerData, restrictionData, restrictionsAreInherited);
-                logger.debug("Restrictions passed!");
-            } catch (restrictionReason) {
-                let reason;
-                if (Array.isArray(restrictionReason)) {
-                    reason = restrictionReason.join(", ");
-                } else {
-                    reason = restrictionReason;
-                }
-
-                logger.debug(`${commandSender} could not use command '${command.trigger}' because: ${reason}`);
-                if (restrictionData.sendFailMessage || restrictionData.sendFailMessage == null) {
-
-                    const restrictionMessage = restrictionData.useCustomFailMessage ?
-                        restrictionData.failMessage :
-                        DEFAULT_RESTRICTION_MESSAGE;
-
-                    await twitchChat.sendChatMessage(
-                        restrictionMessage
-                            .replaceAll("{user}", commandSender)
-                            .replaceAll("{reason}", reason),
-                        null,
-                        null,
-                        restrictionData.sendAsReply === true ? firebotChatMessage.id : undefined
-                    );
-                }
-
-                return result;
-            }
+        if (!restrictionsPassed) {
+            return result;
         }
 
         // If command is not on cooldown AND it passes restrictions, then we can run it. Store the cooldown.
