@@ -1,4 +1,6 @@
 import { SystemCommand } from "../../../../types/commands";
+import cloudSync from '../../../cloud-sync/profile-sync.js';
+import twitchChat from "../../twitch-chat";
 
 /**
  * The `!commands` command
@@ -39,9 +41,6 @@ export const CommandListSystemCommand: SystemCommand<{
         }
     },
     onTriggerEvent: async (event) => {
-        const cloudSync = require('../../../cloud-sync/profile-sync.js');
-        const twitchChat = require("../../twitch-chat.js");
-
         const { commandOptions } = event;
 
         const profileJSON = {

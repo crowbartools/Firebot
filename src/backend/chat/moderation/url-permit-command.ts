@@ -2,6 +2,7 @@ import { SystemCommand } from "../../../types/commands";
 import logger from "../../logwrapper";
 import commandManager from "../commands/command-manager";
 import frontendCommunicator from "../../common/frontend-communicator";
+import twitchChat from "../twitch-chat";
 
 class PermitManager {
     private readonly _permidCommandId: string = "firebot:moderation:url:permit";
@@ -52,7 +53,6 @@ class PermitManager {
                 }
             },
             onTriggerEvent: async (event) => {
-                const twitchChat = require("../twitch-chat");
                 const { command, commandOptions, userCommand } = event;
                 let { args } = userCommand;
 

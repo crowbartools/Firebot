@@ -2,6 +2,12 @@ import { app } from "electron";
 import moment from "moment";
 
 import { SystemCommand } from "../../../../types/commands";
+import quotesManager from "../../../quotes/quotes-manager";
+import twitchChat from "../../twitch-chat";
+import { TwitchApi } from "../../../streaming-platforms/twitch/api";
+import cloudSync from '../../../cloud-sync/profile-sync';
+import frontendCommunicator from "../../../common/frontend-communicator";
+import logger from "../../../logwrapper";
 
 moment.locale(app.getLocale());
 
@@ -213,12 +219,6 @@ export const QuotesManagementSystemCommand: SystemCommand<{
      */
     onTriggerEvent: (event) => {
         return new Promise<void>(async (resolve) => {
-            const quotesManager = require("../../../quotes/quotes-manager");
-            const logger = require("../../../logwrapper");
-            const twitchChat = require("../../twitch-chat");
-            const { TwitchApi } = require("../../../streaming-platforms/twitch/api");
-            const frontendCommunicator = require("../../../common/frontend-communicator");
-
             const { commandOptions } = event;
 
             const args = event.userCommand.args;
@@ -328,8 +328,6 @@ export const QuotesManagementSystemCommand: SystemCommand<{
                     return resolve();
                 }
                 case "list": {
-                    const cloudSync = require('../../../cloud-sync/profile-sync');
-
                     const profileJSON = {
                         username: event.chatMessage.username,
                         userRoles: event.chatMessage.roles,

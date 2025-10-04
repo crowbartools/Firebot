@@ -4,6 +4,7 @@ import currencyManager from "./currency-manager";
 import commandManager from "../chat/commands/command-manager";
 import logger from "../logwrapper";
 import util from "../utility";
+import twitchChat from "../chat/twitch-chat";
 
 type CurrencyCommandRefreshRequestAction = "create" | "update" | "delete";
 
@@ -242,9 +243,6 @@ class CurrencyCommandManager {
          * When the command is triggered
          */
             onTriggerEvent: async (event) => {
-
-                const twitchChat = require("../chat/twitch-chat");
-
                 const { commandOptions } = event;
                 const triggeredArg = event.userCommand.triggeredArg;
                 const triggeredSubcmd = event.userCommand.triggeredSubcmd;
