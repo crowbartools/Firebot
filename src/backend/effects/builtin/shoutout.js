@@ -134,7 +134,7 @@ const effect = {
                             </div>
                         </div>
                         <div ng-if="effect.showLastGame" class="firebot-shoutout-game-wrapper">
-                            <div class="firebot-shoutout-game-boxart" style="background-image:url('{{defaultGameBoxArt}}');" />
+                            <div class="firebot-shoutout-game-boxart" ng-if="!effect.hideCategoryArt" style="background-image:url('{{defaultGameBoxArt}}');" />
                             <div class="firebot-shoutout-game-dimmer" />
                             <div class="firebot-shoutout-game-text-wrapper">
                                 <div class="firebot-shoutout-game-lastseen">
@@ -159,10 +159,14 @@ const effect = {
             <firebot-input style="margin-top:10px" input-title="Scale" model="effect.scale" placeholder-text="Enter number (ie 1, 1.25, 0.75, etc)" input-type="number" disable-variables="true" />
 
             <div style="padding-top:20px">
-                <label class="control-fb control--checkbox"> Show last game/category
-                    <input type="checkbox" ng-model="effect.showLastGame">
-                    <div class="control__indicator"></div>
-                </label>
+                <firebot-checkbox
+                    label="Show last game/category"
+                    model="effect.showLastGame"
+                />
+                <firebot-checkbox
+                    label="Hide game/category art"
+                    model="effect.hideCategoryArt"
+                />
             </div>
 
             <firebot-input ng-if="effect.showLastGame" input-title="Last Seen Text" model="effect.lastGameText" placeholder-text="Enter text" />
@@ -345,7 +349,7 @@ const effect = {
                         </div>
 
                         <div class="firebot-shoutout-game-wrapper" style="display:${!data.showLastGame || data.gameName == null ? 'none' : 'inherit'};">
-                            <div class="firebot-shoutout-game-boxart" style="background-image:url('${data.gameBoxArtUrl}');"></div>
+                            <div class="firebot-shoutout-game-boxart" style="background-image:url('${data.gameBoxArtUrl}');display:${data.hideCategoryArt ? 'none' : 'block'};"></div>
                             <div class="firebot-shoutout-game-dimmer" />
                             <div class="firebot-shoutout-game-text-wrapper">
                                 <div class="firebot-shoutout-game-lastseen">
