@@ -1,9 +1,13 @@
 import { ReplaceVariable } from "../../../../types/variables";
+import { UserCommand } from "../../../../types/commands";
 import { EffectTrigger } from "../../../../shared/effect-constants";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
+triggers[EffectTrigger.EVENT] = [
+    "twitch:chat-message"
+];
 triggers[EffectTrigger.MANUAL] = true;
 
 const model : ReplaceVariable = {
@@ -15,7 +19,8 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        return trigger.metadata.userCommand.trigger;
+        return trigger.metadata.userCommand?.trigger
+            ?? (trigger.metadata.eventData?.userCommand as UserCommand)?.trigger;
     }
 };
 

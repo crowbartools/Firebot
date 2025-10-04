@@ -1,10 +1,14 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
+import { CommandDefinition } from "../../../../types/commands";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import { EffectTrigger } from "../../../../shared/effect-constants";
 
 const triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
 triggers[EffectTrigger.PRESET_LIST] = true;
+triggers[EffectTrigger.EVENT] = [
+    "twitch:chat-message"
+];
 triggers[EffectTrigger.MANUAL] = true;
 
 const model : ReplaceVariable = {
@@ -17,8 +21,9 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger: Trigger) => {
-        const count = trigger.metadata.command && (<Record<string, unknown>>trigger.metadata.command).count;
-        return count || 0;
+        return trigger.metadata.command?.count
+            ?? (trigger.metadata.eventData?.command as CommandDefinition)?.count
+            ?? 0;
     }
 };
 
