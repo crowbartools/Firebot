@@ -12,7 +12,6 @@ import commandCooldownManager from "./command-cooldown-manager";
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
 import commandRunner from "./command-runner";
 import { SettingsManager } from "../../common/settings-manager";
-import twitchChat from "../twitch-chat";
 
 const DEFAULT_COOLDOWN_MESSAGE = "This command is still on cooldown for: {timeLeft}";
 const DEFAULT_RESTRICTION_MESSAGE = "Sorry, you cannot use this command because: {reason}";
@@ -97,6 +96,8 @@ class CommandHandler {
         command?: CommandDefinition | SystemCommandDefinition;
         userCommand?: UserCommand
     }> {
+        const twitchChat = require("../twitch-chat");
+
         logger.debug("Checking for command in message...");
 
         const result = {
