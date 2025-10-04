@@ -7,7 +7,7 @@
 
     angular
         .module("firebotApp")
-        .factory("activityFeedService", function($sce, backendCommunicator, utilityService,
+        .factory("activityFeedService", function($sce, backendCommunicator, modalService, modalFactory,
             settingsService, ngToast) {
             const service = {};
 
@@ -61,6 +61,25 @@
                 }
             };
 
+            service.clearAllActivities = () => {
+                modalFactory.showConfirmationModal({
+                    title: "Clear All Activities",
+                    question: "Are you sure you want to clear all activities?",
+                    confirmLabel: "Clear",
+                    confirmBtnType: "btn-danger"
+                }).then((confirmed) => {
+                    if (confirmed) {
+                        service.allActivities = [];
+                        service.activities = [];
+                        ngToast.create({
+                            className: 'success',
+                            content: "Successfully cleared all activities!",
+                            timeout: 5000
+                        });
+                    }
+                });
+            };
+
             service.unacknowledgedCount = () => {
                 return service.activities.filter(a => !a.acknowledged).length;
             };
@@ -79,7 +98,7 @@
             };
 
             service.showEditActivityFeedEventsModal = () => {
-                utilityService.showModal({
+                modalService.showModal({
                     component: "editActivityEventsModal",
                     size: "sm",
                     closeCallback: () => {

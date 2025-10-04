@@ -219,12 +219,22 @@
             <a ng-click="afs.toggleMarkAllAcknowledged()"
               ><i
                 class="far fa-check-square mr-4"
-                aria-label="Mark all events as acknowledged"
+                aria-label="Mark all activities as acknowledged"
               ></i>
               Mark all as {{afs.allAcknowledged() ? 'Unacknowledged' :
               'Acknowledged'}}</a
             >
           </li>
+          <li ng-class="{'disabled': afs.activities.length < 1}">
+            <a ng-click="afs.clearAllActivities()"
+              ><i
+                class="far fa-trash-alt mr-4"
+                aria-label="Clear all activities"
+              ></i>
+              Clear all activities</a
+            >
+          </li>
+          <li class="divider"></li>
           <li>
             <a ng-click="afs.showEditActivityFeedEventsModal()"
               ><i class="far fa-toggle-off mr-4" aria-label="Edit events"></i>
@@ -238,7 +248,7 @@
     <div class="activity-list">
       <div
         class="activity alternate-bg"
-        ng-class="activity.acknowledged ? 'muted' : ''"
+        ng-class="activity.acknowledged ? 'acknowledged' : ''"
         ng-repeat="activity in afs.activities track by activity.id"
       >
         <div

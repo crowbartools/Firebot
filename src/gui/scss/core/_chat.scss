@@ -697,6 +697,9 @@
         background: $activity-bg-color;
         border-radius: 7px;
         margin: 0 5px 3px;
+        &.acknowledged {
+            color: rgba($content-text-color, .15);
+        }
     }
 }
 
