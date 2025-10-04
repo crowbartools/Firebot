@@ -107,14 +107,6 @@
                             $scope.hasMagicVariables = Object.values($scope.magicVariables).some(v => v.length > 0);
                         }
 
-                        $timeout(function() {
-                            const offset = $element.offset();
-                            const menuHeight = ($scope.hasMagicVariables ? 385 : 350) + 10; // 10px to account for app title bar
-                            if (offset.top <= menuHeight && ($scope.menuPosition === "above" || $scope.menuPosition == null)) {
-                                $scope.menuPosition = "under";
-                            }
-                        }, 0, false);
-
                         if (!$scope.disableVariableMenu) {
                             $scope.variables = replaceVariableService.getVariablesForTrigger({
                                 type: trigger,
@@ -153,7 +145,14 @@
                         } else {
                             $timeout(() => {
                                 $element.next(".variable-menu").find("#variable-search").focus();
-                            }, 5);
+
+                                const offset = $element.offset();
+                                const menuHeight = $element.next(".variable-menu").height();
+
+                                if (offset.top <= menuHeight && ($scope.menuPosition === "above" || $scope.menuPosition == null || $scope.menuPosition === "")) {
+                                    $scope.menuPosition = "under";
+                                }
+                            }, 1);
                         }
                     };
 

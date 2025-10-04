@@ -128,6 +128,7 @@ const playVideo = {
                 input-title="Twitch Username"
                 model="effect.twitchClipUsername"
                 placeholder-text="Ex: $streamer, $user, etc"
+                menu-position="under"
             />
             <div class="mt-10 form-group flex-row jspacebetween" style="margin-bottom: 0;">
                 <firebot-checkbox
