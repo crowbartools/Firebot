@@ -1,6 +1,7 @@
 import logger from '../../../../logwrapper';
 import accountAccess from "../../../../common/account-access";
 import { ApiClient, HelixBanUserRequest, HelixModerator, UserIdResolvable, extractUserId } from "@twurple/api";
+import frontendCommunicator from '../../../../common/frontend-communicator';
 
 export class TwitchModerationApi {
     private _streamerClient: ApiClient;
@@ -57,7 +58,7 @@ export class TwitchModerationApi {
 
             const response = await this._streamerClient.moderation.banUser(streamerId, timeoutRequest);
 
-            return true;
+            return !!response;
         } catch (error) {
             logger.error("Error timing out user", error.message);
         }
@@ -231,5 +232,21 @@ export class TwitchModerationApi {
         }
 
         return false;
+    }
+
+    /**
+     * Processes a message held by AutoMod.
+     * @param messageId ID of the held message
+     * @param allow `true` to allow the message, or `false` to deny it
+     */
+    async processHeldAutoModMessage(messageId: string, allow: boolean) {
+        try {
+            const streamerId = accountAccess.getAccounts().streamer.userId;
+            await this._streamerClient.moderation.processHeldAutoModMessage(streamerId, messageId, allow);
+        } catch (error) {
+            const likelyExpired = error?.body?.includes("attempted to update a message status that was either already set");
+            frontendCommunicator.send("twitch:chat:automod-update-error", { messageId, likelyExpired });
+            logger.error("Error processing held AutoMod message", error.message);
+        }
     }
 }
