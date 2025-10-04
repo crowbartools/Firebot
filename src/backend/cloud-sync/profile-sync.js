@@ -33,4 +33,12 @@ async function syncProfileData(profileSyncData) {
     return streamerUsername;
 }
 
+frontendCommunicator.onAsync("sync-profile-data-to-crowbar-api", () => {
+    return syncProfileData({
+        username: undefined,
+        userRoles: [],
+        profilePage: "commands"
+    });
+});
+
 exports.syncProfileData = syncProfileData;
