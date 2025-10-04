@@ -14,7 +14,7 @@ const model = {
     },
     optionsTemplate: `
         <eos-container pad-top="true">
-            <p>When this effect is ran, all activity in the Activity Feed on the Chat page will be marked as acknowledged. Useful on a hotkey or hooked up to a StreamDeck to quickly acknowledge all current activity.</p>
+            <p>When this effect is ran, all activity in the Activity Feed on the Chat page will be marked as acknowledged. Useful on a hotkey or hooked up to a Stream Deck to quickly acknowledge all current activity.</p>
         </eos-container>
     `,
     optionsController: () => {},
