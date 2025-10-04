@@ -1,7 +1,13 @@
 import { FirebotChatMessage } from "../../../../types/chat";
+import { CommandDefinition, UserCommand } from "../../../../types/commands";
 import eventManager from "../../../events/EventManager";
 
-export function triggerChatMessage(firebotChatMessage: FirebotChatMessage): void {
+export function triggerChatMessage(
+    firebotChatMessage: FirebotChatMessage,
+    triggeredCommand = false,
+    command?: CommandDefinition,
+    userCommand?: UserCommand
+): void {
     eventManager.triggerEvent("twitch", "chat-message", {
         username: firebotChatMessage.username,
         userId: firebotChatMessage.userId,
@@ -9,7 +15,10 @@ export function triggerChatMessage(firebotChatMessage: FirebotChatMessage): void
         twitchUserRoles: firebotChatMessage.roles,
         messageText: firebotChatMessage.rawText,
         messageId: firebotChatMessage.id,
-        chatMessage: firebotChatMessage
+        chatMessage: firebotChatMessage,
+        triggeredCommand,
+        command,
+        userCommand
     });
 }
 

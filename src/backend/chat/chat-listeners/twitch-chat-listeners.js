@@ -87,7 +87,7 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
         exports.events.emit("chat-message", firebotChatMessage);
 
-        chatCommandHandler.handleChatMessage(firebotChatMessage);
+        const { ranCommand, command, userCommand } = await chatCommandHandler.handleChatMessage(firebotChatMessage);
 
         await activeUserHandler.addActiveUser(msg.userInfo, true);
 
@@ -105,7 +105,12 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
             timerManager.incrementChatLineCounters();
         }
 
-        twitchEventsHandler.chatMessage.triggerChatMessage(firebotChatMessage);
+        twitchEventsHandler.chatMessage.triggerChatMessage(
+            firebotChatMessage,
+            ranCommand,
+            command,
+            userCommand
+        );
         if (firebotChatMessage.isFirstChat) {
             twitchEventsHandler.chatMessage.triggerFirstTimeChat(firebotChatMessage);
         }
@@ -149,11 +154,16 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
 
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
 
-        chatCommandHandler.handleChatMessage(firebotChatMessage);
+        const { ranCommand, command, userCommand } = await chatCommandHandler.handleChatMessage(firebotChatMessage);
 
         await activeUserHandler.addActiveUser(msg.userInfo, true);
 
-        twitchEventsHandler.chatMessage.triggerChatMessage(firebotChatMessage);
+        twitchEventsHandler.chatMessage.triggerChatMessage(
+            firebotChatMessage,
+            ranCommand,
+            command,
+            userCommand
+        );
         if (firebotChatMessage.isFirstChat) {
             twitchEventsHandler.chatMessage.triggerFirstTimeChat(firebotChatMessage);
         }

@@ -1,4 +1,4 @@
-import { CommandDefinition, SystemCommandDefinition } from "../../../types/commands";
+import { CommandDefinition, SystemCommandDefinition, UserCommand } from "../../../types/commands";
 import { FirebotChatMessage } from "../../../types/chat";
 import { TriggerType } from "../../common/EffectType";
 
@@ -92,8 +92,18 @@ class CommandHandler {
         });
     }
 
-    async handleChatMessage(firebotChatMessage: FirebotChatMessage): Promise<boolean> {
+    async handleChatMessage(firebotChatMessage: FirebotChatMessage): Promise<{
+        ranCommand: boolean;
+        command?: CommandDefinition | SystemCommandDefinition;
+        userCommand?: UserCommand
+    }> {
         logger.debug("Checking for command in message...");
+
+        const result = {
+            ranCommand: false,
+            command: null,
+            userCommand: null
+        };
 
         // Username of the person that sent the command.
         const commandSender = firebotChatMessage.username;
@@ -103,7 +113,7 @@ class CommandHandler {
         if (this._handledMessageIds.includes(firebotChatMessage.id)) {
             // We can remove the handled id now, to keep the array small.
             this._handledMessageIds = this._handledMessageIds.filter(id => id !== firebotChatMessage.id);
-            return false;
+            return result;
         }
         // throw the message id into the array. This prevents both the bot and the streamer accounts from replying
         this._handledMessageIds.push(firebotChatMessage.id);
@@ -117,7 +127,7 @@ class CommandHandler {
 
         // command wasn't found
         if (command == null) {
-            return false;
+            return result;
         }
 
         // Check whether or not chat message is from shared chat
@@ -125,12 +135,12 @@ class CommandHandler {
         // And by the specific command.
         if (firebotChatMessage.isSharedChatMessage) {
             if (command.allowTriggerBySharedChat === false) {
-                return false;
+                return result;
             }
 
             // 'inherit' or undefined = inherit app settings
             if (command.allowTriggerBySharedChat !== true && !SettingsManager.getSetting("AllowCommandsInSharedChat")) {
-                return false;
+                return result;
             }
         }
 
@@ -139,19 +149,19 @@ class CommandHandler {
         // check if chat came from the streamer and if we should ignore it.
         if (command.ignoreStreamer && firebotChatMessage.username === streamer.username) {
             logger.debug("Message came from streamer and this command is set to ignore it");
-            return false;
+            return result;
         }
 
         // check if chat came from the bot and if we should ignore it.
         if (command.ignoreBot && firebotChatMessage.username === bot.username) {
             logger.debug("Message came from bot and this command is set to ignore it");
-            return false;
+            return result;
         }
 
         // check if chat came via whisper and if we should ignore it.
         if (command.ignoreWhispers && firebotChatMessage.whisper) {
             logger.debug("Message came from whisper and this command is set to ignore it");
-            return false;
+            return result;
         }
 
         // build usercommand object
@@ -160,16 +170,18 @@ class CommandHandler {
 
         // update trigger with the one we matched
         userCmd.trigger = matchedTrigger;
+        result.command = command;
+        result.userCommand = userCmd;
 
         // command is disabled
         if (triggeredSubcmd && triggeredSubcmd.active === false) {
             logger.debug("This Command is disabled");
-            return false;
+            return result;
         }
 
         if (userCmd.isInvalidSubcommandTrigger === true) {
             await twitchChat.sendChatMessage(`Invalid Command: unknown arg used.`);
-            return false;
+            return result;
         }
 
         // Can't auto delete whispers, so we ignore auto delete trigger for those
@@ -183,7 +195,7 @@ class CommandHandler {
         if (userCmd.args.length < minArgs) {
             const usage = triggeredSubcmd ? triggeredSubcmd.usage : command.usage;
             await twitchChat.sendChatMessage(`Invalid command. Usage: ${command.trigger} ${usage || ""}`);
-            return false;
+            return result;
         }
 
         logger.debug("Checking cooldowns for command...");
@@ -210,7 +222,7 @@ class CommandHandler {
                     command.sendCooldownMessageAsReply === false ? null : firebotChatMessage.id
                 );
             }
-            return false;
+            return result;
         }
 
         // Check if command passes all restrictions
@@ -273,7 +285,7 @@ class CommandHandler {
                     );
                 }
 
-                return false;
+                return result;
             }
         }
 
@@ -287,7 +299,8 @@ class CommandHandler {
         }
 
         commandRunner.fireCommand(command, userCmd, firebotChatMessage, commandSender, false);
-        return true;
+        result.ranCommand = true;
+        return result;
     }
 }
 
