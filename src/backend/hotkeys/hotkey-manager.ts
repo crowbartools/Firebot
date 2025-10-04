@@ -36,6 +36,14 @@ class HotkeyManager {
         frontendCommunicator.on("hotkeys:delete-hotkey", (id: string) => {
             this.deleteHotkey(id);
         });
+
+        frontendCommunicator.on("hotkeys:pause-hotkeys", () => {
+            this.unregisterAllHotkeys();
+        });
+
+        frontendCommunicator.on("hotkeys:resume-hotkeys", () => {
+            this.registerAllHotkeys();
+        });
     }
 
     private getHotkeyDb(): JsonDB {
@@ -76,6 +84,20 @@ class HotkeyManager {
     updateHotkey(hotkey: FirebotHotkey) {
         const index = this.hotkeys.findIndex(h => h.id === hotkey.id);
 
+        const existingHotkey = this.hotkeys.find(h => h.id === hotkey.id);
+
+        // If the hotkey code has changed or the hotkey has been deactivated, unregister the old one
+        if (existingHotkey.code !== hotkey.code || hotkey.active !== existingHotkey.active) {
+            if (globalShortcut.isRegistered(existingHotkey.code)) {
+                try {
+                    globalShortcut.unregister(existingHotkey.code);
+                } catch {}
+            }
+            if (hotkey.active !== false) {
+                this.registerHotkey(hotkey.code);
+            }
+        }
+
         if (index > -1) {
             this.hotkeys[index] = hotkey;
 
@@ -88,7 +110,9 @@ class HotkeyManager {
 
         this.hotkeys.splice(this.hotkeys.indexOf(hotkey), 1);
 
-        globalShortcut.unregister(hotkey.code);
+        try {
+            globalShortcut.unregister(hotkey.code);
+        } catch {}
 
         this.saveHotkeys();
     }

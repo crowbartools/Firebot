@@ -11,10 +11,16 @@
             modalInstance: "<"
         },
         controller: function(
+            $scope,
             hotkeyService,
-            ngToast
+            ngToast,
+            backendCommunicator
         ) {
             const $ctrl = this;
+
+            $scope.$on("modal.closing", function() {
+                backendCommunicator.send("hotkeys:resume-hotkeys");
+            });
 
             $ctrl.onHotkeyCapture = function(hotkey) {
                 $ctrl.hotkey.code = hotkey;
@@ -36,6 +42,8 @@
             };
 
             $ctrl.$onInit = function() {
+                backendCommunicator.send("hotkeys:pause-hotkeys");
+
                 if ($ctrl.resolve.hotkey != null) {
                     $ctrl.hotkey = JSON.parse(JSON.stringify($ctrl.resolve.hotkey));
                 }
