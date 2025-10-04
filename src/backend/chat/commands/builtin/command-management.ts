@@ -8,6 +8,7 @@ import customRolesManager from "../../../roles/custom-roles-manager";
 import teamRolesManager from "../../../roles/team-roles-manager";
 import util from "../../../utility";
 import commandManager from "../command-manager";
+import chat from "../../twitch-chat";
 
 interface TriggerWithArgs {
     trigger: string;
@@ -221,8 +222,6 @@ export const CommandManagementSystemCommand: SystemCommand = {
         ]
     },
     onTriggerEvent: async (event) => {
-        const chat = require("../../twitch-chat");
-
         const activeCustomCommands = commandManager
             .getAllCustomCommands()
             .filter(c => c.active);
@@ -340,7 +339,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                 const effectsData = await getData(remainingData.trim());
 
                 if (!effectsData || !effectsData.effects) {
-                    await chat.sendMessage(
+                    await chat.sendChatMessage(
                         `Could not parse effects data, please try again.`
                     );
                     return;

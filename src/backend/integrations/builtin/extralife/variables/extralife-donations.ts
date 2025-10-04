@@ -1,6 +1,6 @@
 import { ReplaceVariable } from "../../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
-const { getParticipantDonations } = require('extra-life-ts');
+import { GetDonationsOptions, getParticipantDonations } from 'extra-life-ts';
 import integrationManager from "../../../../integrations/integration-manager";
 
 const ExtraLifeDonations: ReplaceVariable = {
@@ -49,24 +49,23 @@ const ExtraLifeDonations: ReplaceVariable = {
             sortName = 'amount';
         }
 
-        return getParticipantDonations(participantID, { limit: numResults, orderBy: `${sortName} DESC` }).then((result) => {
-            result = result.data;
+        return getParticipantDonations(participantID, { limit: numResults, orderBy: `${sortName} DESC` } as GetDonationsOptions)
+            .then(({ data }) => {
+                if (returnJson) {
+                    return JSON.stringify(data);
+                }
 
-            if (returnJson) {
-                return JSON.stringify(result);
-            }
+                if (data.length === 0) {
+                    return "No donations yet!";
+                }
 
-            if (result.length === 0) {
-                return "No donations yet!";
-            }
+                let donationString = "";
+                data.forEach((donation) => {
+                    donationString += `${donation.displayName} - $${donation.amount}. `;
+                });
 
-            let donationString = "";
-            result.forEach((donation) => {
-                donationString += `${donation.displayName} - $${donation.amount}. `;
+                return donationString.trim();
             });
-
-            return donationString.trim();
-        });
     }
 };
 

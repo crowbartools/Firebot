@@ -3,8 +3,8 @@ import { RankLadder } from "../../types/ranks";
 import commandManager from "../chat/commands/command-manager";
 import rankManager from "./rank-manager";
 import viewerDatabase from "../viewers/viewer-database";
-import type TwitchChat from "../chat/twitch-chat";
 import logger from "../logwrapper";
+import twitchChat from "../chat/twitch-chat";
 
 type RankCommandRefreshRequestAction = "create" | "update" | "delete";
 
@@ -221,8 +221,6 @@ class RankCommandManager {
                 ]
             },
             onTriggerEvent: async (event) => {
-                const twitchChat: typeof TwitchChat = require("../chat/twitch-chat");
-
                 const { commandOptions, chatMessage } = event;
                 const triggeredSubcmd = event.userCommand.triggeredSubcmd;
                 const args = event.userCommand.args;

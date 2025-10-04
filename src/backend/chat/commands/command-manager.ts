@@ -534,13 +534,4 @@ frontendCommunicator.on("get-all-commands", () => {
     };
 });
 
-frontendCommunicator.onAsync("sync-profile-data-to-crowbar-api", () => {
-    const cloudSync = require('../../cloud-sync/profile-sync');
-    return cloudSync.syncProfileData({
-        username: undefined,
-        userRoles: [],
-        profilePage: "commands"
-    });
-});
-
 export = manager;

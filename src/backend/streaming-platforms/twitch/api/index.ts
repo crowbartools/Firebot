@@ -31,9 +31,9 @@ class TwitchApi {
     private _botClient: UserContextApiClient;
 
     constructor() {
-        frontendCommunicator.onAsync("search-twitch-games", (query: string) => {
-            return this.categories.searchCategories(query);
-        });
+        frontendCommunicator.onAsync("search-twitch-games", (query: string) =>
+            this.categories.searchCategories(query)
+        );
 
         frontendCommunicator.onAsync("search-twitch-channels", async (query: string) => {
             const response = await this.streamerClient.search.searchChannels(query, { limit: 10 });
@@ -45,21 +45,13 @@ class TwitchApi {
             }));
         });
 
-        frontendCommunicator.onAsync("process-automod-message", async ({ messageId, allow }: { messageId: string, allow: boolean }) => {
-            const accountAccess = require("../common/account-access");
-            const streamerChannelId = accountAccess.getAccounts().streamer.channelId;
-            try {
-                await this.streamerClient.moderation.processHeldAutoModMessage(streamerChannelId, messageId, allow);
-            } catch (error) {
-                const likelyExpired = error?.body?.includes("attempted to update a message status that was either already set");
-                frontendCommunicator.send("twitch:chat:automod-update-error", { messageId, likelyExpired });
-                logger.error(error);
-            }
-        });
+        frontendCommunicator.onAsync("process-automod-message", async ({ messageId, allow }: { messageId: string, allow: boolean }) =>
+            await this.moderation.processHeldAutoModMessage(messageId, allow)
+        );
 
-        frontendCommunicator.onAsync("get-twitch-game", async (gameId: string) => {
-            return await this.categories.getCategoryById(gameId);
-        });
+        frontendCommunicator.onAsync("get-twitch-game", async (gameId: string) =>
+            await this.categories.getCategoryById(gameId)
+        );
 
         frontendCommunicator.onAsync("get-channel-info", async () => {
             try {

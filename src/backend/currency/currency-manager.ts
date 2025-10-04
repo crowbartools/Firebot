@@ -76,7 +76,6 @@ class CurrencyManager {
             }
 
             if (sendChatMessage && messageTarget !== "") {
-                const twitchChat = require("../chat/twitch-chat");
                 if (!twitchChat.chatIsConnected) {
                     return;
                 }

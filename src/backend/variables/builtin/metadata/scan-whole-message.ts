@@ -1,5 +1,5 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { UserCommand } from "../../../../types/commands";
+import { CommandDefinition } from "../../../../types/commands";
 import { EffectTrigger } from "../../../../shared/effect-constants";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
@@ -12,15 +12,16 @@ triggers[EffectTrigger.MANUAL] = true;
 
 const model : ReplaceVariable = {
     definition: {
-        handle: "commandTrigger",
-        description: "The trigger of the issued command.",
+        handle: "scanWholeMessage",
+        description: "Returns `true` if the command has the **Scan Whole Message** option enabled, or `false` otherwise.",
         triggers: triggers,
         categories: [VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.BOOLEAN]
     },
     evaluator: (trigger) => {
-        return trigger.metadata.userCommand?.trigger
-            ?? (trigger.metadata.eventData?.userCommand as UserCommand)?.trigger;
+        return (trigger.metadata.command?.scanWholeMessage
+            ?? (trigger.metadata.eventData?.command as CommandDefinition)?.scanWholeMessage)
+            === true;
     }
 };
 

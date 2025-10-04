@@ -1,4 +1,5 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
+import { UserCommand } from "../../../../types/commands";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import { EffectTrigger } from "../../../../shared/effect-constants";
 
@@ -16,7 +17,9 @@ const model : ReplaceVariable = {
         hidden: true
     },
     evaluator: (trigger: Trigger) : string[] => {
-        return trigger.metadata.userCommand ? trigger.metadata.userCommand.args : [];
+        return trigger.metadata.userCommand?.args
+            ?? (trigger.metadata.eventData?.userCommand as UserCommand)?.args
+            ?? [];
     }
 };
 

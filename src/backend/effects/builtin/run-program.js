@@ -50,7 +50,7 @@ const model = {
     globalSettings: {},
     optionsTemplate: `
         <eos-container header="Program File Path">
-            <file-chooser model="effect.programPath" options="{ filters: [ { name:'Program', extensions:['exe', 'bat', 'cmd'] }, { name:'All Files', extensions:['*'] } ] }"></file-chooser>
+            <file-chooser model="effect.programPath" options="fileChooserOptions"></file-chooser>
         </eos-container>
         <eos-container header="Program Arguments (Optional)" pad-top="true">
             <div class="input-group">
@@ -88,6 +88,25 @@ const model = {
         if ($scope.effect.runDetached == null) {
             $scope.effect.runDetached = true;
         }
+
+        // Windows defaults
+        let programName = "Program";
+        let programExtensions = ["exe", "bat", "com"];
+
+        if (process.platform === "linux") {
+            programName = "Shell Script";
+            programExtensions = ["sh"];
+        } else if (process.platform === "darwin") {
+            programName = "App/Script";
+            programExtensions = ["app", "command", "tool", "sh", "scpt", "scptd"];
+        }
+
+        $scope.fileChooserOptions = {
+            filters: [
+                { name: programName, extensions: programExtensions },
+                { name: "All Files", extensions: ['*'] }
+            ]
+        };
     },
     optionsValidator: (effect) => {
         const errors = [];
@@ -103,7 +122,8 @@ const model = {
         return new Promise((resolve) => {
             const { effect } = event;
 
-            let { programPath, programArgs, waitForFinish, hideWindow, runDetached } = effect;
+            let { programPath } = effect;
+            const { programArgs, waitForFinish, hideWindow, runDetached } = effect;
 
             if (programPath == null || programPath === "") {
                 return resolve();
