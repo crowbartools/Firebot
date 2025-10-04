@@ -257,6 +257,7 @@
                     command.restrictionData.restrictions.find(r => r.type === "firebot:permissions");
 
                             if (permissions) {
+                                const isInverted = permissions.invertCondition === true;
                                 if (permissions.mode === "roles") {
                                     const roleIds = permissions.roleIds;
                                     let rolesOutput = "None selected";
@@ -300,9 +301,9 @@
                                     if (ranksOutput !== "None selected") {
                                         itemsToDisplay.push(ranksDisplay);
                                     }
-                                    return itemsToDisplay.length > 0 ? itemsToDisplay.join(", ") : "Roles/Ranks (None selected)";
+                                    return itemsToDisplay.length > 0 ? (isInverted ? "Not: " : "") + itemsToDisplay.join(", ") : "Roles/Ranks (None selected)";
                                 } else if (permissions.mode === "viewer") {
-                                    return `Viewer (${permissions.username ? permissions.username : 'No name'})`;
+                                    return `${isInverted ? "Not: " : ""}Viewer (${permissions.username ? permissions.username : 'No name'})`;
                                 }
                             } else {
                                 return "This command is available to everyone";

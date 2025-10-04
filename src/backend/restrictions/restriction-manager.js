@@ -62,6 +62,29 @@ class RestrictionsManager extends EventEmitter {
             .then(() => true, () => false);
     }
 
+    async #runPredicate(restrictionDef, triggerData, restriction, restrictionsAreInherited) {
+        let restrictionPassed = false;
+        let failedReason = null;
+
+        try {
+            await restrictionDef.predicate(triggerData, restriction, restrictionsAreInherited);
+            restrictionPassed = true;
+        } catch (reason) {
+            failedReason = reason?.toLowerCase();
+        }
+
+        if (restriction.invertCondition) {
+            restrictionPassed = !restrictionPassed;
+            if (restrictionPassed === false) {
+                failedReason = restrictionDef.failedReasonWhenInverted || "You don't meet the requirements.";
+            }
+        }
+
+        if (!restrictionPassed) {
+            throw failedReason;
+        }
+    }
+
     async runRestrictionPredicates(triggerData, restrictionData, restrictionsAreInherited = false) {
         if (restrictionData == null || restrictionData.restrictions == null ||
             restrictionData.restrictions.length < 1) {
@@ -76,7 +99,7 @@ class RestrictionsManager extends EventEmitter {
                 const restrictionDef = this.getRestrictionById(restriction.type);
                 if (restrictionDef && restrictionDef.predicate) {
                     try {
-                        await restrictionDef.predicate(triggerData, restriction, restrictionsAreInherited);
+                        await this.#runPredicate(restrictionDef, triggerData, restriction, restrictionsAreInherited);
                         restrictionPassed = true;
                         if (restrictionData.mode !== "none" && restrictionDef.onSuccessful) {
                             restrictionDef.onSuccessful(triggerData, restriction, restrictionsAreInherited);
@@ -108,7 +131,7 @@ class RestrictionsManager extends EventEmitter {
             for (const restriction of restrictions) {
                 const restrictionDef = this.getRestrictionById(restriction.type);
                 if (restrictionDef && restrictionDef.predicate) {
-                    predicatePromises.push(restrictionDef.predicate(triggerData, restriction, restrictionsAreInherited));
+                    predicatePromises.push(this.#runPredicate(restrictionDef, triggerData, restriction, restrictionsAreInherited));
                 }
             }
 
