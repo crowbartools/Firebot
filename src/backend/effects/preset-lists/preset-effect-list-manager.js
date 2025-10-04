@@ -38,7 +38,7 @@ frontendCommunicator.onAsync("getPresetEffectLists",
     async () => presetEffectListManager.getAllItems());
 
 frontendCommunicator.onAsync("savePresetEffectList",
-    async (/** @type {PresetEffectList} */ presetEffectList) => presetEffectListManager.saveItem(presetEffectList));
+    async (/** @type {{ presetEffectList: PresetEffectList, isNew: boolean }} */ { presetEffectList, isNew }) => presetEffectListManager.saveItem(presetEffectList, isNew));
 
 frontendCommunicator.onAsync("saveAllPresetEffectLists",
     async (/** @type {PresetEffectList[]} */ allPresetEffectLists) => presetEffectListManager.saveAllItems(allPresetEffectLists));

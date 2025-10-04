@@ -21,14 +21,14 @@
 
             service.loadPresetEffectLists = async function() {
                 $q.when(backendCommunicator.fireEventAsync("getPresetEffectLists"))
-                    .then(presetEffectLists => {
+                    .then((presetEffectLists) => {
                         if (presetEffectLists) {
                             service.presetEffectLists = presetEffectLists;
                         }
                     });
             };
 
-            backendCommunicator.on("all-preset-lists", presetEffectLists => {
+            backendCommunicator.on("all-preset-lists", (presetEffectLists) => {
                 if (presetEffectLists != null) {
                     service.presetEffectLists = presetEffectLists;
                 }
@@ -42,9 +42,9 @@
                 return service.presetEffectLists.find(pel => pel.id === presetEffectListId);
             };
 
-            service.savePresetEffectList = function(presetEffectList) {
-                return $q.when(backendCommunicator.fireEventAsync("savePresetEffectList", presetEffectList))
-                    .then(savedPresetEffectList => {
+            service.savePresetEffectList = function(presetEffectList, isNew = false) {
+                return $q.when(backendCommunicator.fireEventAsync("savePresetEffectList", { presetEffectList, isNew }))
+                    .then((savedPresetEffectList) => {
                         if (savedPresetEffectList) {
                             updatePresetEffectList(savedPresetEffectList);
                             return savedPresetEffectList;
@@ -114,7 +114,7 @@
                     copiedPresetEffectList.name += " copy";
                 }
 
-                service.savePresetEffectList(copiedPresetEffectList).then((savedList) => {
+                service.savePresetEffectList(copiedPresetEffectList, true).then((savedList) => {
                     if (savedList != null) {
                         ngToast.create({
                             className: 'success',
