@@ -115,7 +115,7 @@
 }
 
 .control--radio .control__indicator {
-    border-radius: 50%;
+    border-radius: 50% !important;
 }
 .control-fb:hover input ~ .control__indicator,
 .control-fb input:focus ~ .control__indicator {
@@ -149,7 +149,7 @@
     transform: rotate(45deg);
 }
 
-.control-fb input:indeterminate ~ .control__indicator:after {
+.control-fb:not(.control--radio) input:indeterminate ~ .control__indicator:after {
     display: block;
     left: 5px;
     top: 3px;
@@ -159,7 +159,7 @@
     border-width: 0px 0px 2px 0;
 }
 
-.control-fb input:indeterminate ~ .control__indicator {
+.control-fb:not(.control--radio) input:indeterminate ~ .control__indicator {
     background: #7f818b;
 }
 
@@ -177,15 +177,15 @@
 // end checkbox
 
 .control--radio .control__indicator:after {
-    left: 7px;
-    top: 7px;
-    height: 6px;
-    width: 6px;
-    border-radius: 50%;
-    background: #fff;
+    left: 7px !important;
+    top: 7px !important;
+    height: 6px !important;
+    width: 6px !important;
+    border-radius: 50% !important;
+    background: #fff !important;
 }
 .control--radio input:disabled ~ .control__indicator:after {
-    background: #7b7b7b;
+    background: #7b7b7b !important;
 }
 .select {
     position: relative;
