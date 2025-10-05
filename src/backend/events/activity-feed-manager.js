@@ -4,8 +4,9 @@ const moment = require("moment");
 const { v4: uuid } = require("uuid");
 const frontendCommunicator = require("../common/frontend-communicator");
 const rewardManager = require("../channel-rewards/channel-reward-manager");
-
 const eventManager = require("./EventManager");
+
+const { SettingsManager } = require("../common/settings-manager");
 
 const isUSLocale = app.getLocale() === "en-US";
 const timeFormat = isUSLocale ? "h:mm" : "H:mm";
@@ -29,7 +30,8 @@ export function handleTriggeredEvent(source, event, metadata, eventSettings = { 
         id: activityId,
         eventId: event.id,
         sourceId: source.id,
-        metadata: metadata
+        metadata: metadata,
+        canRetrigger: eventSettings.canRetrigger
     });
 
     if (previousActivity.length > 500) {
@@ -54,6 +56,29 @@ export function handleTriggeredEvent(source, event, metadata, eventSettings = { 
     });
 }
 
+function retriggerActivity(activity) {
+    if (activity == null) {
+        return;
+    }
+
+    if (activity.eventId === "channel-reward-redemption") {
+        // Manually triggered by streamer, must pass in userId and userDisplayName can be falsy
+        const metadata = {userId: "", userDisplayName: "", ...activity.metadata };
+        rewardManager.triggerChannelReward(activity.metadata.rewardId, metadata);
+    }
+
+    eventManager.triggerEvent(activity.sourceId, activity.eventId,
+        activity.metadata, false, true, false);
+}
+
+export function retriggerLastActivity() {
+    const allowedEvents = SettingsManager.getSetting("AllowedActivityEvents");
+    const lastRetriggerableActivity = previousActivity
+        .find(a => a.canRetrigger && allowedEvents
+            .includes(`${a.sourceId}:${a.eventId}`));
+    retriggerActivity(lastRetriggerableActivity);
+}
+
 eventManager.on("event-triggered", ({
     event,
     source,
@@ -69,18 +94,7 @@ eventManager.on("event-triggered", ({
 
 frontendCommunicator.on("retrigger-event", (activityId) => {
     const activity = previousActivity.find(a => a.id === activityId);
-    if (activity == null) {
-        return;
-    }
-
-    if (activity.eventId === "channel-reward-redemption") {
-        // Manually triggered by streamer, must pass in userId and userDisplayName can be falsy
-        const metadata = {userId: "", userDisplayName: "", ...activity.metadata };
-        rewardManager.triggerChannelReward(activity.metadata.rewardId, metadata);
-    }
-
-    eventManager.triggerEvent(activity.sourceId, activity.eventId,
-        activity.metadata, false, true, false);
+    retriggerActivity(activity);
 });
 
 frontendCommunicator.onAsync("get-all-activity-events", async () => previousActivity);

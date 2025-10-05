@@ -45,6 +45,7 @@ exports.loadEffects = () => {
         'random-reddit-image',
         'remove-user-metadata',
         'reset-timer',
+        'retrigger-last-activity',
         'run-command',
         'run-program',
         'send-custom-websocket-event',
