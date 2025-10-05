@@ -66,6 +66,7 @@ exports.loadEffects = () => {
         'toggle-overlay-widgets',
         'toggle-scheduled-task',
         'toggle-timer',
+        'trigger-manual-effect-queue',
         'update-channel-reward',
         'update-counter',
         'update-role',

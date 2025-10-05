@@ -76,6 +76,19 @@ class EffectQueueRunner extends TypedEmitter<Events> {
         queue.addEffects(runEffectsContext, duration, priority);
     }
 
+    triggerQueue(queueId: string) {
+        if (queueId == null) {
+            return;
+        }
+
+        const queue = this._queues[queueId];
+        if (queue == null) {
+            return;
+        }
+
+        queue.processEffectQueue();
+    }
+
     updateQueue(queueConfig: EffectQueueConfig) {
         if (queueConfig == null) {
             return;

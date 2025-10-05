@@ -64,6 +64,12 @@
                     label: "Interval",
                     description: "Runs effect lists on a set interval.",
                     iconClass: "fa-stopwatch"
+                },
+                {
+                    value: "manual",
+                    label: "Manual",
+                    description: "Queue will only run the next effect list when manually triggered by a Trigger Manual Queue effect.",
+                    iconClass: "fa-step-forward"
                 }
             ];
 

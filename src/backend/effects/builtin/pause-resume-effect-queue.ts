@@ -107,7 +107,6 @@ const model: EffectType<{
             effectQueueManager.toggleQueue(effect.effectQueue, effect.runEffectsImmediatelyWhenPaused);
         }
 
-
         return true;
     }
 };

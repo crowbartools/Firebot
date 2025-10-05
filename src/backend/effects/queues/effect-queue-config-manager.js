@@ -8,7 +8,7 @@ const effectQueueRunner = require("./effect-queue-runner").default;
  * @typedef EffectQueueConfig
  * @prop {string} id - the id of the effect queue
  * @prop {string} name - the name of the effect queue
- * @prop {string} mode - the mode of the effect queue
+ * @prop {"auto" | "interval" | "custom" | "manual"} mode - the mode of the effect queue
  * @prop {number} [interval] - the interval set for the interval mode
  * @prop {string[]} sortTags - the tags for the effect queue
  * @prop {boolean} active - the effect queue activity status

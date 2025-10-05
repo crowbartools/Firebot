@@ -25,7 +25,7 @@ export type QueueState = {
     queuedItems: QueueItem[];
     activeItems: QueueItem[];
     interval: number;
-    mode: string;
+    mode: "auto" | "interval" | "custom" | "manual";
     runEffectsImmediatelyWhenPaused?: boolean;
 }
 
@@ -113,6 +113,10 @@ export class EffectQueue extends TypedEmitter<Events> {
 
         logger.debug(`Running next effects for queue ${this.id}. Mode=${this._state.mode}, Interval?=${this._state.interval}, Remaining queue length=${this._state.queuedItems.length}`);
 
+        if (this._state.mode === "manual") {
+            await this._runEffects(nextQueueEntry);
+            return;
+        }
 
         if (this._state.mode === "interval") {
             this._runEffects(nextQueueEntry);
@@ -176,7 +180,9 @@ export class EffectQueue extends TypedEmitter<Events> {
             effectQueueId: this.id
         });
 
-        this.processEffectQueue();
+        if (this._state.mode !== "manual") {
+            this.processEffectQueue();
+        }
     }
 
     processEffectQueue() {
