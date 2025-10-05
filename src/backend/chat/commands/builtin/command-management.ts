@@ -15,7 +15,7 @@ interface TriggerWithArgs {
     remainingData: string;
 }
 
-function seperateTriggerFromArgs(args: string[]): TriggerWithArgs {
+function separateTriggerFromArgs(args: string[]): TriggerWithArgs {
     let trigger: string, remainingData = "";
     if (args[1].startsWith("\"")) {
         const combined = args.slice(1).join(" ");
@@ -247,7 +247,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
             return;
         }
 
-        const { trigger, remainingData } = seperateTriggerFromArgs(args);
+        const { trigger, remainingData } = separateTriggerFromArgs(args);
 
         if (trigger == null || trigger === "") {
             await chat.sendChatMessage(

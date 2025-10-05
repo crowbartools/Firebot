@@ -165,6 +165,7 @@ class CommandHandler {
                 return false;
             }
         }
+        return true;
     }
 
     async handleChatMessage(firebotChatMessage: FirebotChatMessage): Promise<{
