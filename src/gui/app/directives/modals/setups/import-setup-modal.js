@@ -59,7 +59,10 @@
                             <h4 class="muted">Import Questions</h4>
                             <div ng-repeat="question in $ctrl.setup.importQuestions track by question.id">
                                 <h5>{{question.question}} <tooltip ng-show="question.helpText" text="question.helpText" /></h5>
-                                <input type="{{question.answerType || 'text'}}" class="form-control" ng-model="question.answer" placeholder="Enter answer" />
+                                <input ng-if="question.answerType !== 'preset'" type="{{question.answerType || 'text'}}" class="form-control" ng-model="question.answer" placeholder="Enter answer" />
+                                <select ng-if="question.answerType === 'preset'" class="fb-select" ng-model="question.answer">
+                                    <option ng-repeat="preset in question.presetOptions" label="{{preset}}" value="{{preset}}">{{preset}}</option>
+                                </select>
                             </div>
                         </div>
 
