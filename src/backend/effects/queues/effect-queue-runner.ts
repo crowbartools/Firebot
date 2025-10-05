@@ -27,6 +27,7 @@ class EffectQueueRunner extends TypedEmitter<Events> {
                 status: config.active === false ? "paused" : "idle",
                 interval: config.interval,
                 mode: config.mode,
+                runEffectsImmediatelyWhenPaused: config.runEffectsImmediatelyWhenPaused,
                 queuedItems: [],
                 activeItems: []
             };

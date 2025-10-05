@@ -12,6 +12,7 @@ const effectQueueRunner = require("./effect-queue-runner").default;
  * @prop {number} [interval] - the interval set for the interval mode
  * @prop {string[]} sortTags - the tags for the effect queue
  * @prop {boolean} active - the effect queue activity status
+ * @prop {boolean} runEffectsImmediatelyWhenPaused - whether effects should run immediately when the queue is paused
  * @prop {number} length - amount of items currently in queue. don't save
  * @prop {any[]} queue - effects queue. don't save
  */
@@ -114,16 +115,22 @@ class EffectQueueConfigManager extends JsonDbManager {
     }
 
     /** @private */
-    setQueueActiveStatus(queue, status) {
+    setQueueActiveStatus(queue, status, runEffectsImmediatelyWhenPaused = undefined) {
         queue.active = status;
+        if (runEffectsImmediatelyWhenPaused != null) {
+            queue.runEffectsImmediatelyWhenPaused = runEffectsImmediatelyWhenPaused;
+        }
         this.saveItem(queue);
         frontendCommunicator.send("updateQueueStatus", {id: queue.id, active: status});
     }
 
-    pauseQueue(queueId) {
+    pauseQueue(queueId, runEffectsImmediatelyWhenPaused = undefined) {
         const queue = this.getItem(queueId);
         if (queue != null && queue.active) {
-            this.setQueueActiveStatus(queue, false);
+            this.setQueueActiveStatus(queue, false, runEffectsImmediatelyWhenPaused);
+        } else if (runEffectsImmediatelyWhenPaused != null) {
+            queue.runEffectsImmediatelyWhenPaused = runEffectsImmediatelyWhenPaused;
+            this.saveItem(queue);
         }
     }
 
@@ -134,10 +141,11 @@ class EffectQueueConfigManager extends JsonDbManager {
         }
     }
 
-    toggleQueue(queueId) {
+    toggleQueue(queueId, runEffectsImmediatelyWhenPaused = undefined) {
         const queue = this.getItem(queueId);
         if (queue != null) {
-            this.setQueueActiveStatus(queue, !queue.active);
+            const newStatus = !queue.active;
+            this.setQueueActiveStatus(queue, newStatus, !newStatus ? runEffectsImmediatelyWhenPaused : undefined);
         }
     }
 }

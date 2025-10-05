@@ -140,8 +140,6 @@
 }
 .control-fb input:checked ~ .control__indicator:after {
     display: block;
-}
-.control--checkbox .control__indicator:after {
     left: 7px;
     top: 3px;
     width: 6px;
@@ -149,6 +147,20 @@
     border: solid #fff;
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
+}
+
+.control-fb input:indeterminate ~ .control__indicator:after {
+    display: block;
+    left: 5px;
+    top: 3px;
+    width: 10px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0px 0px 2px 0;
+}
+
+.control-fb input:indeterminate ~ .control__indicator {
+    background: #7f818b;
 }
 
 .control--checkbox.small-control .control__indicator:after {

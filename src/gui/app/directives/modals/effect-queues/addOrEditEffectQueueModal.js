@@ -1,4 +1,7 @@
 "use strict";
+
+const { run } = require("node:test");
+
 (function () {
     angular.module("firebotApp").component("addOrEditEffectQueueModal", {
         template: `
@@ -41,6 +44,13 @@
                     </div>
                 </div>
 
+                <firebot-checkbox
+                    label="Run Effects Immediately When Paused"
+                    tooltip="When the queue is paused and effects are added to it, run them immediately instead of waiting for the queue to be resumed. This is useful if you want to temporarily pause queue functionality and have effects set to this queue to run as if there was no queue."
+                    model="$ctrl.effectQueue.runEffectsImmediatelyWhenPaused"
+                    style="margin-top: 15px; margin-bottom: 0px;"
+                />
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
@@ -63,7 +73,8 @@
                 mode: "auto",
                 sortTags: [],
                 active: true,
-                length: 0
+                length: 0,
+                runEffectsImmediatelyWhenPaused: false
             };
 
             $ctrl.$onInit = () => {

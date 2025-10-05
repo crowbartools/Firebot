@@ -6,6 +6,7 @@ import logger from "../../logwrapper";
 const model: EffectType<{
     effectQueue: string;
     action: "Pause" | "Resume" | "Toggle";
+    runEffectsImmediatelyWhenPaused?: boolean;
 }> = {
     definition: {
         id: "firebot:pause-effect-queue",
@@ -48,6 +49,14 @@ const model: EffectType<{
                     </li>
                 </ul>
             </div>
+            <firebot-checkbox
+                ng-if="effect.action === 'Pause' || effect.action === 'Toggle'"
+                label="Run Effects Immediately When Paused"
+                tooltip="When the queue is paused and effects are added to it, run them immediately instead of waiting for the queue to be resumed. This is useful if you want to temporarily pause queue functionality and have effects set to this queue to run as if there was no queue."
+                model="effect.runEffectsImmediatelyWhenPaused"
+                allow-indeterminate="true"
+                style="margin-top: 15px; margin-bottom: 0px;"
+            />
         </eos-container>
     `,
     optionsController: ($scope, effectQueuesService: any) => {
@@ -91,11 +100,11 @@ const model: EffectType<{
             return false;
         }
         if (effect.action === "Pause") {
-            effectQueueManager.pauseQueue(effect.effectQueue);
+            effectQueueManager.pauseQueue(effect.effectQueue, effect.runEffectsImmediatelyWhenPaused);
         } else if (effect.action === "Resume") {
             effectQueueManager.resumeQueue(effect.effectQueue);
         } else {
-            effectQueueManager.toggleQueue(effect.effectQueue);
+            effectQueueManager.toggleQueue(effect.effectQueue, effect.runEffectsImmediatelyWhenPaused);
         }
 
 

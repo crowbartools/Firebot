@@ -26,6 +26,7 @@ export type QueueState = {
     activeItems: QueueItem[];
     interval: number;
     mode: string;
+    runEffectsImmediatelyWhenPaused?: boolean;
 }
 
 type Events = {
@@ -48,7 +49,8 @@ export class EffectQueue extends TypedEmitter<Events> {
             interval: config.interval,
             mode: config.mode,
             queuedItems: [],
-            activeItems: []
+            activeItems: [],
+            runEffectsImmediatelyWhenPaused: config.runEffectsImmediatelyWhenPaused ?? false
         });
     }
 
@@ -143,6 +145,12 @@ export class EffectQueue extends TypedEmitter<Events> {
             duration,
             priority
         };
+
+        if (this._state.status === "paused" && this._state.runEffectsImmediatelyWhenPaused) {
+            logger.debug(`Queue ${this.id} is paused but configured to run effects immediately. Running effects now...`);
+            this._runEffects(queueEntry);
+            return;
+        }
 
         const queue = [...this._state.queuedItems];
 
@@ -240,6 +248,16 @@ export class EffectQueue extends TypedEmitter<Events> {
         this._setState({
             status: "paused"
         });
+
+        if (this._state.runEffectsImmediatelyWhenPaused) {
+            logger.debug(`Queue ${this.id} is paused but configured to run effects immediately. Running queued effects now...`);
+            for (const queueItem of this._state.queuedItems) {
+                this._runEffects(queueItem);
+            }
+            this._setState({
+                queuedItems: []
+            });
+        }
     }
 
     resumeQueue() {
@@ -259,10 +277,11 @@ export class EffectQueue extends TypedEmitter<Events> {
     updateConfig(config: EffectQueueConfig) {
         this._setState({
             mode: config.mode,
-            interval: config.interval
+            interval: config.interval,
+            runEffectsImmediatelyWhenPaused: config.runEffectsImmediatelyWhenPaused
         });
 
-        logger.debug(`Updated queue ${this.id} config. Mode=${config.mode}, Interval=${config.interval}`);
+        logger.debug(`Updated queue ${this.id} config. Mode=${config.mode}, Interval=${config.interval}, RunEffectsImmediatelyWhenPaused=${config.runEffectsImmediatelyWhenPaused ?? false}`);
     }
 
     toJSON() {

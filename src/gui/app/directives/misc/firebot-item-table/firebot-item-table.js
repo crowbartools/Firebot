@@ -21,6 +21,8 @@
                 testButton: "<?",
                 onTestButtonClicked: "&",
                 statusField: "@?",
+                statusEnabledLabel: "@?",
+                statusDisabledLabel: "@?",
                 startingSortField: "@?",
                 sortInitiallyReversed: "<?",
                 customFilterName: "@?",
