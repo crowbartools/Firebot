@@ -34,6 +34,11 @@ class WebSocketServerManager extends EventEmitter {
     private server: WebSocket.Server<typeof WebSocketClient>;
     private customHandlers: CustomWebSocketHandler[] = [];
 
+    constructor() {
+        super();
+        this.setMaxListeners(0);
+    }
+
     createServer(httpServer: http.Server) {
         this.server = new WebSocket.Server<typeof WebSocketClient>({
             server: httpServer

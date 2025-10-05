@@ -62,6 +62,7 @@ class HttpServerManager extends EventEmitter {
         this.isDefaultServerStarted = false;
         this.overlayHasClients = false;
         this.customRoutes = [];
+        this.setMaxListeners(0);
 
         // eslint-disable-next-line new-cap
         this.customRouteRouter = express.Router();
