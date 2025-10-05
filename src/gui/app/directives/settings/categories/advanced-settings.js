@@ -32,6 +32,16 @@
                     </firebot-setting>
 
                     <firebot-setting
+                        name="Global Values"
+                        description="Global Values are static values that can be used in effects via a $variable. They can be created and managed here."
+                    >
+                        <firebot-button
+                            text="Edit Global Values"
+                            ng-click="showEditGlobalValuesModal()"
+                        />
+                    </firebot-setting>
+
+                    <firebot-setting
                         name="Proxied Webhooks"
                         tag="Experimental"
                         description="This feature allows you to receive webhooks without exposing your local network. A 'Webhook Received' event is triggered each time a webhook is received with the payload available via the $webhookPayload variable."
@@ -171,6 +181,13 @@
             $scope.showEditWebhooksModal = function () {
                 modalService.showModal({
                     component: "editWebhooksModal"
+                });
+            };
+
+            $scope.showEditGlobalValuesModal = function () {
+                modalService.showModal({
+                    component: "editGlobalValuesModal",
+                    size: "sm"
                 });
             };
 

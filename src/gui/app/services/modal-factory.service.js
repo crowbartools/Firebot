@@ -758,7 +758,7 @@
                                     if (firstError.message) {
                                         errorDetails.push({
                                             title: "Error",
-                                            message: service.capitalize(firstError.message)
+                                            message: firstError.message
                                         });
                                     }
 

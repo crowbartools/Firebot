@@ -18,7 +18,7 @@
                     menuPosition: "@",
                     buttonPosition: "@"
                 },
-                controller: function($scope, $element, replaceVariableService, $timeout, $sce, variableMacroService, backendCommunicator) {
+                controller: function($scope, $element, replaceVariableService, $timeout, $sce, variableMacroService, backendCommunicator, modalService, settingsService) {
 
                     const insertAt = (str, sub, pos) => `${str.slice(0, pos)}${sub}${str.slice(pos)}`;
 
@@ -35,6 +35,8 @@
                     $scope.hasMagicVariables = false;
 
                     $scope.variableMacroService = variableMacroService;
+
+                    $scope.settingsService = settingsService;
 
                     $scope.activeCategory = "common";
                     $scope.setActiveCategory = (category) => {
@@ -195,6 +197,13 @@
                     $scope.getAliases = (variable) => {
                         return variable.aliases?.map(a => `$${a}`).join(", ");
                     };
+
+                    $scope.openEditGlobalValuesModal = function () {
+                        modalService.showModal({
+                            component: "editGlobalValuesModal",
+                            size: "sm"
+                        });
+                    };
                 },
                 link: function(scope, element) {
 
@@ -244,6 +253,13 @@
                                     </div>
                                     <div
                                         class="effect-category-wrapper dark"
+                                        ng-class="{'selected': activeCategory === 'global-values'}"
+                                        ng-click="setActiveCategory('global-values');"
+                                    >
+                                        <div class="category-text"><i class="fas fa-globe"></i> Global Values</div>
+                                    </div>
+                                    <div
+                                        class="effect-category-wrapper dark"
                                         ng-class="{'selected': activeCategory === 'magic'}"
                                         ng-click="setActiveCategory('magic');"
                                         ng-show="hasMagicVariables"
@@ -264,8 +280,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div style="overflow-y: auto;width: 100%;" ng-style="{ height: hasMagicVariables ? '408px': '375px', padding: activeCategory === 'macros' ? '10px 0' : '10px' }">
-                                    <div ng-hide="activeCategory === 'magic' || activeCategory === 'macros'" ng-repeat="variable in variables | orderBy:'handle' | variableCategoryFilter:activeCategory | variableSearch:variableSearchText" style="margin-bottom: 8px;">
+                                <div style="overflow-y: auto;width: 100%;" ng-style="{ height: hasMagicVariables ? '441px': '403px', padding: activeCategory === 'macros' ? '10px 0' : '10px' }">
+                                    <div ng-hide="activeCategory === 'magic' || activeCategory === 'macros' || activeCategory === 'global-values'" ng-repeat="variable in variables | orderBy:'handle' | variableCategoryFilter:activeCategory | variableSearch:variableSearchText" style="margin-bottom: 8px;">
                                         <div style="font-weight: 900;">\${{variable.usage ? variable.usage : variable.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="addVariable(variable)"></i></div>
                                         <div ng-if="variable.sensitive === true" class="text-danger"><strong>WARNING</strong>: May contain sensitive data! <tooltip text="'This variable may contain sensitive/private data. You probably should NOT post it in chat, show it on overlays, or write it to insecure areas, like log files'"></tooltip></div>
                                         <div ng-if="variable.aliases && variable.aliases.length > 0">
@@ -305,6 +321,17 @@
                                             on-edit-clicked="showAddOrEditVariableMacroModal(macro)"
                                             on-add-to-text-clicked="addMacro(macro)"
                                         />
+                                    </div>
+                                    <div ng-show="activeCategory === 'global-values'" style="position: relative;">
+                                        <div class="mb-2 pr-4" style="text-align: right;">
+                                            <firebot-button type="primary" size="small" text="Manage Global Values" ng-click="openEditGlobalValuesModal()" />
+                                        </div>
+                                        <div
+                                            ng-repeat="globalValue in settingsService.getSetting('GlobalValues') | filter: { name: variableSearchText } track by globalValue.name"
+                                            style="margin-bottom: 8px;"
+                                        >
+                                            <div style="font-weight: 900;">$!{{globalValue.name}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="insertText('$!' + globalValue.name)"></i></div>
+                                        </div>
                                     </div>
                                     <div ng-show="activeCategory === 'magic'" style="position: relative;">
                                         <div style="position: absolute; right: 0;">

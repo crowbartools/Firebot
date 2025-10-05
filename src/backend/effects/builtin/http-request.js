@@ -148,7 +148,6 @@ const effect = {
                     header: () => header
                 },
                 closeCallback: (newHeader) => {
-                    console.log(newHeader);
                     $scope.effect.headers = $scope.effect.headers.filter(h => h.key !== newHeader.key);
                     $scope.effect.headers.push(newHeader);
                 }

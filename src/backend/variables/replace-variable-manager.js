@@ -7,6 +7,8 @@ const expressionish = require("expressionish");
 const ExpressionVariableError = expressionish.ExpressionVariableError;
 const macroManager = require("./macro-manager");
 
+const { SettingsManager } = require("../common/settings-manager");
+
 const frontendCommunicator = require("../common/frontend-communicator");
 const { getCustomVariable } = require("../common/custom-variable-manager");
 const util = require("../utility");
@@ -351,6 +353,14 @@ manager.registerLookupHandler("%", name => ({
                 false
             );
         }
+    }
+}));
+
+// Global Value shorthand
+manager.registerLookupHandler("!", name => ({
+    evaluator: () => {
+        const globalValues = SettingsManager.getSetting("GlobalValues") ?? [];
+        return globalValues.find(v => v.name === name)?.value;
     }
 }));
 
