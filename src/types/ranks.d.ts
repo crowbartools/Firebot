@@ -17,6 +17,7 @@ export type RankLadder = {
         },
         announcePromotionsInChat?: boolean;
         customPromotionMessageTemplate?: string;
+        showBadgeInChat?: boolean;
     };
     ranks: Rank[];
 };

@@ -130,6 +130,16 @@
                         />
                     </div>
 
+                    <div class="form-group flex justify-between">
+                        <div>
+                            <label class="control-label" style="margin:0;">Show Badge in Chat</label>
+                            <p class="help-block">If enabled, users who are ranked on this ladder will have a badge in Firebot's chat</p>
+                        </div>
+                        <div class="ml-5">
+                            <toggle-button toggle-model="$ctrl.rankLadder.settings.showBadgeInChat" auto-update-value="true" font-size="32"></toggle-button>
+                        </div>
+                    </div>
+
                     <div
                         class="form-group"
                         ng-if="$ctrl.rankLadder.mode === 'manual' || $ctrl.rankLadder.settings.trackBy != null"

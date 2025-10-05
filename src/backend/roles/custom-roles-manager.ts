@@ -19,6 +19,7 @@ interface CustomRole {
         username: string;
         displayName: string;
     }>;
+    showBadgeInChat?: boolean;
 }
 
 type Events = {
@@ -292,7 +293,8 @@ class CustomRolesManager extends TypedEmitter<Events> {
             .map((r) => {
                 return {
                     id: r.id,
-                    name: r.name
+                    name: r.name,
+                    showBadgeInChat: r.showBadgeInChat
                 };
             });
     }

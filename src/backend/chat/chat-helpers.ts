@@ -12,6 +12,9 @@ import accountAccess, { FirebotAccount } from "../common/account-access";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 import frontendCommunicator from "../common/frontend-communicator";
 import utils from "../utility";
+import viewerDatabase from "../viewers/viewer-database";
+import rankManager from "../ranks/rank-manager";
+import roleManager from "../roles/custom-roles-manager";
 
 interface ExtensionBadge {
     id: string;
@@ -470,12 +473,16 @@ class FirebotChatHelpers {
             badges: [],
             parts: [],
             roles: [],
+            viewerRanks: {},
+            viewerCustomRoles: [],
             isSharedChatMessage,
             sharedChatRoomId: isSharedChatMessage ? sharedChatRoomId : null
         };
 
         const profilePicUrl = await this.getUserProfilePicUrl(firebotChatMessage.userId);
         firebotChatMessage.profilePicUrl = profilePicUrl;
+
+        await this.enrichMessageWithRanksAndRoles(firebotChatMessage);
 
         const { streamer, bot } = accountAccess.getAccounts();
 
@@ -599,11 +606,15 @@ class FirebotChatHelpers {
             badges: [],
             parts: [],
             roles: [],
+            viewerRanks: {},
+            viewerCustomRoles: [],
             isAutoModHeld: true,
             autoModStatus: "pending",
             autoModReason: (msg.reason === "automod" ? msg.autoMod?.category : msg.reason === "blocked_term" ? "blocked term" : null) ?? "unknown",
             isSharedChatMessage: false // todo: check if automod messages have a way to associate them with shared chat
         };
+
+        await this.enrichMessageWithRanksAndRoles(viewerFirebotChatMessage);
 
         const { streamer, bot } = accountAccess.getAccounts();
         if ((streamer.loggedIn && (msg.messageText.includes(streamer.username) || msg.messageText.includes(streamer.displayName)))
@@ -652,6 +663,22 @@ class FirebotChatHelpers {
         viewerFirebotChatMessage.parts = parts;
 
         return viewerFirebotChatMessage;
+    }
+
+    private async enrichMessageWithRanksAndRoles(firebotChatMessage: FirebotChatMessage) {
+        const viewer = await viewerDatabase.getViewerById(firebotChatMessage.userId);
+        firebotChatMessage.viewerRanks = Object.entries(viewer?.ranks || {}).reduce((obj, [ladderId, rankId]) => {
+            const ladder = rankManager.getItem(ladderId);
+            if (ladder && ladder.settings.showBadgeInChat && rankId) {
+                obj[ladder.name] = ladder.ranks.find(r => r.id === rankId)?.name || "Unknown";
+            }
+            return obj;
+        }, {} as Record<string, string>);
+
+        const customRoles = roleManager.getAllCustomRolesForViewer(firebotChatMessage.userId);
+        firebotChatMessage.viewerCustomRoles = customRoles
+            .filter(r => r.showBadgeInChat)
+            .map(r => r.name);
     }
 }
 

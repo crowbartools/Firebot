@@ -290,21 +290,6 @@
                 });
             };
 
-            // $interval(() => {
-            //     if (messageHoldingQueue.length > 0) {
-            //         service.chatQueue = service.chatQueue.concat(messageHoldingQueue);
-            //         messageHoldingQueue = [];
-
-            //         // Trim messages.
-            //         service.pruneChatQueue();
-
-            //         //hacky way to ensure we stay scroll glued
-            //         $timeout(() => {
-            //             $rootScope.$broadcast('ngScrollGlue.scroll');
-            //         }, 1);
-            //     }
-            // }, 250);
-
             backendCommunicator.on("twitch:chat:rewardredemption", (redemption) => {
                 const redemptionItem = {
                     id: uuid(),

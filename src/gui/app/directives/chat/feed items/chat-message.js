@@ -120,6 +120,14 @@
                                     ng-click="$root.openLinkExternally('https://pronouns.alejo.io/')"
                                     ng-show="$ctrl.showPronoun && $ctrl.pronouns.pronounCache[$ctrl.message.username] != null"
                                 >{{$ctrl.pronouns.pronounCache[$ctrl.message.username]}}</span>
+
+                                <span
+                                    class="rank-role-badge"
+                                    ng-repeat="badge in $ctrl.rankAndRoleBadges"
+                                    uib-tooltip="{{badge.tooltip}}"
+                                    tooltip-append-to-body="true"
+                                ><i class="{{badge.icon}}" style="font-size: 10px;"></i> {{badge.text}}</span>
+
                                 <b ng-style="{'color': $ctrl.message.color}">{{$ctrl.message.userDisplayName != null ? $ctrl.message.userDisplayName : $ctrl.message.username}}</b>
                                 <span
                                     ng-if="$ctrl.message.username && $ctrl.message.userDisplayName && $ctrl.message.username.toLowerCase() !== $ctrl.message.userDisplayName.toLowerCase()"
@@ -480,7 +488,27 @@
                     }
                 };
 
+                $ctrl.rankAndRoleBadges = [];
+
                 $ctrl.$onInit = () => {
+                    if ($ctrl.message.viewerRanks) {
+                        for (const [ladderName, rankName] of Object.entries($ctrl.message.viewerRanks)) {
+                            $ctrl.rankAndRoleBadges.push({
+                                text: rankName,
+                                icon: "far fa-chevron-double-down",
+                                tooltip: `Rank: ${rankName} in ${ladderName}`
+                            });
+                        }
+                    }
+                    if ($ctrl.message.viewerCustomRoles) {
+                        for (const roleName of $ctrl.message.viewerCustomRoles) {
+                            $ctrl.rankAndRoleBadges.push({
+                                text: roleName,
+                                icon: "far fa-user-tag",
+                                tooltip: "Custom Role"
+                            });
+                        }
+                    }
                 };
 
                 /*
