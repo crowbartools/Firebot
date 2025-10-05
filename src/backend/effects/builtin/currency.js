@@ -5,6 +5,7 @@ const currencyManager = require("../../currency/currency-manager");
 const twitchChat = require("../../chat/twitch-chat");
 const logger = require("../../logwrapper");
 const { EffectCategory } = require('../../../shared/effect-constants');
+const { populateStringWithTriggerData } = require("../../utility");
 
 /**
  * The Currency effect
@@ -26,7 +27,8 @@ const currency = {
                 description: "The amount of currency given. Useful if you use a random amount",
                 defaultName: "currencyAmount"
             }
-        ]
+        ],
+        keysExemptFromAutoVariableReplacement: ["message"]
     },
     /**
    * Global settings that will be available in the Settings tab
@@ -324,7 +326,16 @@ const currency = {
                 // Send chat if we have it.
                 if (event.effect.sendChat) {
                     const { message, whisper, chatter } = event.effect;
-                    await twitchChat.sendChatMessage(message, whisper, chatter);
+
+                    // We need to manually evaluate the message here since we skip it in the auto variable replacement step.
+                    // This is because we don't want to replace variables for currency amount before it's been updated.
+                    const evaluatedMessage = await populateStringWithTriggerData(
+                        message,
+                        event.trigger,
+                        event.outputs
+                    );
+
+                    await twitchChat.sendChatMessage(evaluatedMessage, whisper, chatter);
                 }
             } catch (error) {
                 logger.error("Error updating currency", error);

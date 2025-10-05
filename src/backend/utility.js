@@ -115,14 +115,14 @@ const getTriggerIdFromTriggerData = (trigger) => {
 };
 
 
-const populateStringWithTriggerData = async (string = "", trigger) => {
+const populateStringWithTriggerData = async (string = "", trigger, effectOutputs) => {
     if (trigger == null || string === "") {
         return string;
     }
 
     const triggerId = getTriggerIdFromTriggerData(trigger);
 
-    return await replaceVariableManager.evaluateText(string, trigger, { type: trigger.type, id: triggerId });
+    return await replaceVariableManager.evaluateText(string, { ...trigger, effectOutputs}, { type: trigger.type, id: triggerId });
 };
 
 const getUptime = async () => {

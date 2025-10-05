@@ -16,12 +16,20 @@ const {
 const SKIP_VARIABLE_PROPERTIES = ["list", "leftSideValue", "rightSideValue", "effectLabel", 'effectListLabel'];
 
 const findAndReplaceVariables = async (data, trigger, effectOutputs) => {
-    const keys = Object.keys(data);
+    const effectDef = effectManager.getEffectById(data.type);
 
+    const effectKeysExemptFromAutoVariableReplacement = effectDef?.definition?.keysExemptFromAutoVariableReplacement ?? [];
+
+    const allKeysToSkip = [
+        ...SKIP_VARIABLE_PROPERTIES,
+        ...effectKeysExemptFromAutoVariableReplacement
+    ];
+
+    const keys = Object.keys(data);
     for (const key of keys) {
 
         // skip nested effect lists and conditions so we don't replace variables too early
-        if (SKIP_VARIABLE_PROPERTIES.includes(key)) {
+        if (allKeysToSkip.includes(key)) {
             continue;
         }
 
