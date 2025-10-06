@@ -1,6 +1,7 @@
 import { FirebotChatMessage } from "./chat";
 import { EffectList } from "./effects";
 import { RestrictionData } from "./restrictions";
+import { ParametersConfig } from "./parameters";
 
 export type CommandType = "system" | "custom";
 
@@ -31,44 +32,7 @@ export type SubCommand = {
     effects?: EffectList;
 };
 
-type CommandOptionBase = {
-    type: "string" | "number" | "boolean" | "enum";
-    title: string;
-    default: unknown;
-    description?: string;
-    value?: unknown;
-}
-
-type CommandStringOption = CommandOptionBase & {
-    type: "string";
-    default: string;
-    tip?: string;
-    useTextArea?: boolean;
-    value?: string;
-};
-
-type CommandNumberOption = CommandOptionBase & {
-    type: "number";
-    default: number;
-    value?: number;
-};
-
-type CommandBooleanOption = CommandOptionBase & {
-    type: "boolean";
-    default: boolean;
-    value?: boolean;
-};
-
-type CommandEnumOption = CommandOptionBase & {
-    type: "enum";
-    options: string[];
-    default: string;
-    value?: string;
-};
-
-type CommandOption = CommandStringOption | CommandNumberOption | CommandBooleanOption | CommandEnumOption;
-
-export type CommandDefinition = {
+export type CommandDefinition<OptionsModel = any> = {
     id?: string;
     name?: string;
     description?: string;
@@ -120,7 +84,7 @@ export type CommandDefinition = {
     treatQuotedTextAsSingleArg?: boolean | undefined;
     onlyTriggerWhenChannelIsLive?: boolean | undefined;
     minArgs?: number;
-    options?: Record<keyof OptionsModel, CommandOption>;
+    options?: ParametersConfig<OptionsModel>;
     /**
      * Only set for currency system commands.
      */
@@ -153,12 +117,12 @@ CommandDefinition,
 | "simple"
 >;
 
-export type SystemCommandDefinition = CommandDefinition & {
+export type SystemCommandDefinition<OptionsModel = any> = CommandDefinition<OptionsModel> & {
     hideCooldowns?: boolean;
 };
 
-export type SystemCommand<OptionsModel = unknown> = {
-    definition: SystemCommandDefinition;
+export type SystemCommand<OptionsModel = any> = {
+    definition: SystemCommandDefinition<OptionsModel>;
     onTriggerEvent: (
         event: {
             command: SystemCommand<OptionsModel>['definition'];

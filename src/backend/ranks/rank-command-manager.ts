@@ -1,4 +1,4 @@
-import { CommandOption, SystemCommand } from "../../types/commands";
+import { SystemCommand } from "../../types/commands";
 import { RankLadder } from "../../types/ranks";
 import commandManager from "../chat/commands/command-manager";
 import rankManager from "./rank-manager";
@@ -34,7 +34,7 @@ class RankCommandManager {
     createRankCommandDefinition(rankLadder: RankLadder): SystemCommand<RankCommandOptions> {
         const cleanRankLadderName = rankLadder.name.replace(/\s+/g, '-').toLowerCase();
 
-        const sharedCommandOptions: Record<string, CommandOption> = {
+        const sharedCommandOptions: Partial<SystemCommand<RankCommandOptions>["definition"]["options"]> = {
             selfRankMessageTemplate: {
                 type: "string",
                 title: "Self Rank Message Template",
@@ -61,7 +61,7 @@ class RankCommandManager {
             }
         };
 
-        const manualCommandOptions: Record<string, CommandOption> = {
+        const manualCommandOptions: Partial<SystemCommand<RankCommandOptions>["definition"]["options"]> = {
             promoteRankMessageTemplate: {
                 type: "string",
                 title: "Promote Rank Message Template",
@@ -114,7 +114,7 @@ class RankCommandManager {
                 options: {
                     ...sharedCommandOptions,
                     ...(rankLadder.mode === "manual" ? manualCommandOptions : {})
-                },
+                } as SystemCommand<RankCommandOptions>["definition"]["options"],
                 subCommands: [
                     {
                         arg: "list",

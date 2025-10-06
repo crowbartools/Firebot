@@ -247,6 +247,12 @@ export type CounterSelectParameter = BaseParameter & {
     default?: never;
 };
 
+export type SortTagSelectParameter = BaseParameter & {
+    type: "sort-tag-select";
+    context: string;
+    default?: never;
+};
+
 export type UnknownParameter = BaseParameter & {
     [key: string]: unknown;
 };
@@ -272,7 +278,8 @@ type FirebotParameter =
     | FontOptionsParameter
     | RadioCardsParameter
     | CodeMirrorParameter
-    | CounterSelectParameter;
+    | CounterSelectParameter
+    | SortTagSelectParameter;
 
 export type ParametersConfig<P> = {
     [K in keyof P]: (P[K] extends string
@@ -282,8 +289,13 @@ export type ParametersConfig<P> = {
         | FilepathParameter
         | ChatterSelectParameter
         | CurrencySelectParameter
-        | CounterSelectParameter
         | EnumParameter<string>
+        | HexColorParameter
+        | FontNameParameter
+        | RadioCardsParameter<string>
+        | CodeMirrorParameter
+        | CounterSelectParameter
+        | SortTagSelectParameter
         : P[K] extends number
             ? NumberParameter | EnumParameter<number>
             : P[K] extends boolean
@@ -301,7 +313,7 @@ export type ParametersConfig<P> = {
                                     : P[K] extends EffectList
                                         ? EffectListParameter
                                         : P[K] extends FontOptions
-                                            ? FontOptionsParameter : FirebotParameter);
+                                            ? FontOptionsParameter : FirebotParameter) & { value?: P[K] };
 };
 
 export type ParametersWithNameConfig<P> = {
@@ -318,6 +330,7 @@ export type ParametersWithNameConfig<P> = {
         | RadioCardsParameter<string>
         | CodeMirrorParameter
         | CounterSelectParameter
+        | SortTagSelectParameter
         : P[K] extends number
             ? NumberParameter | EnumParameter<number> | RadioCardsParameter<number>
             : P[K] extends boolean

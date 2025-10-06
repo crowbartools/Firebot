@@ -230,6 +230,7 @@
         dynamicParameterRegistry.register("radio-cards", { tag: "fb-param-radio-cards" });
         dynamicParameterRegistry.register("codemirror", { tag: "fb-param-code-mirror" });
         dynamicParameterRegistry.register("counter-select", { tag: "fb-param-counter-select" });
+        dynamicParameterRegistry.register("sort-tag-select", { tag: "fb-param-sort-tag-select" });
 
         uiExtensionsService.setAsReady();
     });

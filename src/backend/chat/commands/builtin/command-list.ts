@@ -1,6 +1,7 @@
 import { SystemCommand } from "../../../../types/commands";
 import cloudSync from '../../../cloud-sync/profile-sync.js';
 import twitchChat from "../../twitch-chat";
+import { SortTagManager } from "../../../sort-tags/sort-tag-manager";
 
 /**
  * The `!commands` command
@@ -8,6 +9,7 @@ import twitchChat from "../../twitch-chat";
 export const CommandListSystemCommand: SystemCommand<{
     successTemplate: string;
     noCommandsTemplate: string;
+    defaultTag?: string;
 }> = {
     definition: {
         id: "firebot:commandlist",
@@ -37,6 +39,12 @@ export const CommandListSystemCommand: SystemCommand<{
                 tip: "Variables: {username}",
                 default: "{username}, there are no commands that you are allowed to run.",
                 useTextArea: true
+            },
+            defaultTag: {
+                type: "sort-tag-select",
+                title: "Default Tag",
+                description: "The command tag that should be selected by default when users load into your profile page.",
+                context: "commands"
             }
         }
     },
@@ -51,8 +59,18 @@ export const CommandListSystemCommand: SystemCommand<{
 
         const streamerName = await cloudSync.syncProfileData(profileJSON);
 
+        let profileUrl = `https://firebot.app/profile/${streamerName}`;
+
+        if (event.commandOptions?.defaultTag) {
+            const commandTags = SortTagManager.getSortTagsForContext("commands");
+            const defaultTag = commandTags.find(t => t.id === event.commandOptions?.defaultTag);
+            if (defaultTag != null) {
+                profileUrl += `?commands=${encodeURIComponent(defaultTag.name)}`;
+            }
+        }
+
         await twitchChat.sendChatMessage(commandOptions.successTemplate
-            .replaceAll("{url}", `https://firebot.app/profile/${streamerName}`), null, "bot"
+            .replaceAll("{url}", profileUrl), null, "bot"
         );
     }
 };

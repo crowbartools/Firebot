@@ -97,6 +97,10 @@ class SortTagManager {
         this.saveAllSortTags();
     }
 
+    getSortTagsForContext(context: string) {
+        return this.sortTags[context] ?? [];
+    }
+
     private saveAllSortTags() {
         try {
             this.getSortTagsDb().push("/", this.sortTags);
