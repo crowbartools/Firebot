@@ -40,6 +40,11 @@
                         ng-class="{'first-chat': $ctrl.message.isFirstChat, returning: $ctrl.message.isReturningChatter, raider: $ctrl.message.isRaider, suspicious: $ctrl.message.isSuspiciousUser}"
                     >
                     </div>
+                    <div
+                        ng-if="$ctrl.message.customHighlightColor"
+                        class="chat-highlight-bar"
+                        ng-style="{'background-color': $ctrl.message.customHighlightColor}">
+                    </div>
                     <div ng-if="$ctrl.message.isAnnouncement" class="chat-message-banner">
                         <i class="fad fa-bullhorn"></i> Announcement
                     </div>
@@ -54,6 +59,10 @@
                     </div>
                     <div ng-if="$ctrl.message.isSuspiciousUser" class="chat-message-banner">
                         <i class="fad fa-exclamation-triangle"></i> Suspicious User
+                    </div>
+                    <div ng-if="$ctrl.message.customBannerText" class="chat-message-banner">
+                        <i ng-if="$ctrl.message.customBannerIcon" class="{{$ctrl.message.customBannerIcon}}"></i>
+                        {{$ctrl.message.customBannerText}}
                     </div>
                     <div ng-if="$ctrl.message.isReply && !$ctrl.hideReplyBanner" class="chat-message-banner mini-banner muted truncate" ng-click="$ctrl.replyBannerClicked()">
                         <i class="fad fa-comment-alt-dots"></i> Replying to @{{$ctrl.message.replyParentMessageSenderDisplayName}}: {{$ctrl.message.replyParentMessageText}}</span>
@@ -234,7 +243,7 @@
                             <span>Flagged by AutoMod ({{$ctrl.message.autoModReason}}): Expired</span>
                         </div>
                     </div>
-                    <div ng-if="$ctrl.message.isAnnouncement || $ctrl.message.isFirstChat || $ctrl.message.isReturningChatter || $ctrl.message.isRaider || $ctrl.message.isSuspiciousUser" style="margin-bottom:5px">
+                    <div ng-if="$ctrl.message.isAnnouncement || $ctrl.message.isFirstChat || $ctrl.message.isReturningChatter || $ctrl.message.isRaider || $ctrl.message.isSuspiciousUser || $ctrl.message.customBannerText || $ctrl.message.customBannerIcon" style="margin-bottom:5px">
                 </div>
             `,
             controller: function(chatMessagesService, utilityService, connectionService, pronounsService, backendCommunicator) {

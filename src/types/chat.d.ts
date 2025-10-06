@@ -118,7 +118,10 @@ export type FirebotChatMessage = {
     sharedChatRoomId?: string;
     isHiddenFromChatFeed?: boolean;
     viewerRanks?: Record<string, string>;
-    viewerCustomRoles?: string[]
+    viewerCustomRoles?: string[];
+    customHighlightColor?: string;
+    customBannerIcon?: string;
+    customBannerText?: string;
 };
 
 export type FirebotEmote = {

@@ -147,6 +147,22 @@
                 service.chatAlertMessage(message, icon);
             });
 
+            // Custom Highlight and Banner
+            service.customHighlightAndBanner = function(messageId, customHighlightColor, customBannerIcon, customBannerText) {
+                const messageItem = service.chatQueue.find(i => i.type === "message" && i.data.id === messageId);
+                if (messageItem == null) {
+                    return;
+                }
+
+                messageItem.data.customHighlightColor = customHighlightColor;
+                messageItem.data.customBannerIcon = customBannerIcon;
+                messageItem.data.customBannerText = customBannerText;
+            };
+
+            backendCommunicator.on("chat-feed-custom-highlight", (data) => {
+                service.customHighlightAndBanner(data.messageId, data.customHighlightColor, data.customBannerIcon, data.customBannerText);
+            });
+
             // Chat Update Handler
             // This handles all of the chat stuff that isn't a message.
             // This will only work when chat feed is turned on in the settings area.
