@@ -66,13 +66,14 @@
 
         const widgetInitCallbacks = [
             <% for(let widgetInitCallback of widgetInitCallbacks) { %>
-                <%-widgetInitCallback%>,
+                ["<%-widgetInitCallback.typeId%>", <%-widgetInitCallback.callback%>],
             <% } %>
         ];
         
-        for(const callback of widgetInitCallbacks) {
+        for(const [widgetType, callback] of widgetInitCallbacks) {
             try {
-                callback();
+                const utils = new OverlayWidgetInitUtils(widgetType);
+                callback(utils);
             } catch(ex) {
                 console.error("Error in widget init callback", ex);
             }

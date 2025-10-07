@@ -1,4 +1,4 @@
-import { OverlayWidgetType, IOverlayWidgetUtils, WidgetOverlayEvent, OverlayWidgetConfig } from "../../../../types/overlay-widgets";
+import { OverlayWidgetType, IOverlayWidgetEventUtils, WidgetOverlayEvent, OverlayWidgetConfig } from "../../../../types/overlay-widgets";
 import { FontOptions } from "../../../../types/parameters";
 import { CounterManager } from "../../../counters/counter-manager";
 
@@ -131,7 +131,7 @@ export const counterDisplay: OverlayWidgetType<Settings, State> = {
         };
     },
     overlayExtension: {
-        eventHandler: (event: WidgetOverlayEvent<Settings, State>, utils: IOverlayWidgetUtils) => {
+        eventHandler: (event: WidgetOverlayEvent<Settings, State>, utils: IOverlayWidgetEventUtils) => {
             const generateWidgetHtml = (config: typeof event["data"]["widgetConfig"]) => {
                 const counterName = config.state?.counterName ?? "Counter";
                 const counterValue = config.state?.counterValue ?? "-";

@@ -1,4 +1,4 @@
-import { OverlayWidgetType, IOverlayWidgetUtils, WidgetOverlayEvent } from "../../../../types/overlay-widgets";
+import { OverlayWidgetType, IOverlayWidgetEventUtils, WidgetOverlayEvent } from "../../../../types/overlay-widgets";
 
 type Settings = {
     onEventJs: string;
@@ -58,7 +58,7 @@ if (eventName === "show") {
     supportsLivePreview: false,
     livePreviewState: {},
     overlayExtension: {
-        eventHandler: async (event: WidgetOverlayEvent<Settings, State>, utils: IOverlayWidgetUtils) => {
+        eventHandler: async (event: WidgetOverlayEvent<Settings, State>, utils: IOverlayWidgetEventUtils) => {
             if (!event.data.widgetConfig.settings.onEventJs) {
                 return;
             }

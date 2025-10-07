@@ -1,5 +1,5 @@
 import { FontOptions } from "../../../../types/parameters";
-import { OverlayWidgetType, OverlayWidgetConfig, IOverlayWidgetUtils } from "../../../../types/overlay-widgets";
+import { OverlayWidgetType, OverlayWidgetConfig, IOverlayWidgetEventUtils } from "../../../../types/overlay-widgets";
 import { WidgetOverlayEvent } from "../../../../types/overlay-widgets";
 import { Duration } from "luxon";
 import frontendCommunicator from "../../../common/frontend-communicator";
@@ -169,7 +169,7 @@ export const dynamicCountdown: OverlayWidgetType<Settings, State> = {
         }
     ],
     overlayExtension: {
-        eventHandler: (event: WidgetOverlayEvent<Settings, State>, utils: IOverlayWidgetUtils) => {
+        eventHandler: (event: WidgetOverlayEvent<Settings, State>, utils: IOverlayWidgetEventUtils) => {
             const generateWidgetHtml = (config: typeof event["data"]["widgetConfig"]) => {
                 const remainingSeconds = config.state?.remainingSeconds ?? 0;
 

@@ -1,4 +1,4 @@
-import { OverlayWidgetType, IOverlayWidgetUtils, WidgetOverlayEvent } from "../../../../types/overlay-widgets";
+import { OverlayWidgetType, IOverlayWidgetEventUtils, WidgetOverlayEvent } from "../../../../types/overlay-widgets";
 import { FontOptions } from "../../../../types/parameters";
 
 type Settings = {
@@ -91,7 +91,7 @@ export const progressbar: OverlayWidgetType<Settings, State> = {
         currentValue: 50
     },
     overlayExtension: {
-        eventHandler: (event: WidgetOverlayEvent<Settings, State>, utils: IOverlayWidgetUtils) => {
+        eventHandler: (event: WidgetOverlayEvent<Settings, State>, utils: IOverlayWidgetEventUtils) => {
             const generateWidgetHtml = (config: typeof event["data"]["widgetConfig"]) => {
                 const currentValue = config.state?.currentValue ?? 0;
                 const minValue = config.settings?.minValue ?? 0;

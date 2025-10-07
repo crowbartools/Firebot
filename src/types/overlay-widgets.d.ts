@@ -139,11 +139,11 @@ export type OverlayWidgetType<
             globalStyles?: string;
         };
 
-        eventHandler: (event: WidgetOverlayEvent, utils: IOverlayWidgetUtils) => void;
+        eventHandler: (event: WidgetOverlayEvent, utils: IOverlayWidgetEventUtils) => void;
         /**
          * Called when the overlay is loaded. Can be async.
          */
-        onInitialLoad?: () => void | Promise<void>;
+        onInitialLoad?: (utils: IOverlayWidgetInitUtils) => void | Promise<void>;
     };
 };
 
@@ -189,10 +189,16 @@ export type WidgetOverlayEvent<Settings = Record<string, unknown>, State = Recor
 /**
  * Utility functions for managing overlay widgets. These functions can used within the overlayExtension.eventHandler
  */
-export interface IOverlayWidgetUtils {
-    handleOverlayEvent(generateWidgetHtml: (widgetConfig: WidgetOverlayEvent["data"]["widgetConfig"]) => string): void;
+export interface IOverlayWidgetEventUtils {
+    /**
+     * Automatically handles overlay events for the widget, including showing, updating, and removing the widget using the provided HTML generator function.
+     *
+     * @param generateWidgetHtml Function that generates the HTML for the widget based on its current configuration.
+     * @param updateOnMessage If true, the widget HTML will be updated when a "message" event is received. Default is false.
+     */
+    handleOverlayEvent(generateWidgetHtml: (widgetConfig: WidgetOverlayEvent["data"]["widgetConfig"]) => string, updateOnMessage = false): void;
     getWidgetPositionStyle(position?: Position): string;
-    getWidgetElement(): HTMLElement | null;
+    getWidgetContainerElement(): HTMLElement | null;
     initializeWidget(
         html: string
     ): void;
@@ -203,4 +209,8 @@ export interface IOverlayWidgetUtils {
     removeWidget(): void;
     stylesToString(styles: Record<string, string | number | undefined>): string;
     getFontOptionsStyles(fontOptions?: FontOptions): Record<string, string | number | undefined>;
+}
+
+export interface IOverlayWidgetInitUtils {
+    getWidgetContainerElements(): NodeListOf<HTMLElement>;
 }

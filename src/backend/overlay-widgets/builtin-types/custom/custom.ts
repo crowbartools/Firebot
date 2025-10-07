@@ -1,4 +1,4 @@
-import { OverlayWidgetType, IOverlayWidgetUtils, WidgetOverlayEvent } from "../../../../types/overlay-widgets";
+import { OverlayWidgetType, IOverlayWidgetEventUtils, WidgetOverlayEvent } from "../../../../types/overlay-widgets";
 
 type Settings = {
     html: string;
@@ -79,7 +79,7 @@ export const custom: OverlayWidgetType<Settings, State> = {
     supportsLivePreview: true,
     livePreviewState: {},
     overlayExtension: {
-        eventHandler: async (event: WidgetOverlayEvent<Settings, State>, utils: IOverlayWidgetUtils) => {
+        eventHandler: async (event: WidgetOverlayEvent<Settings, State>, utils: IOverlayWidgetEventUtils) => {
             utils.handleOverlayEvent((config) => {
                 return config.settings.html as string ?? "<div></div>";
             });
@@ -110,7 +110,7 @@ export const custom: OverlayWidgetType<Settings, State> = {
 
             if ((event.name === "show" || event.name === "settings-update") && event.data.widgetConfig.settings.onShowJs) {
                 await runRawJs(event.data.widgetConfig.settings.onShowJs, {
-                    containerElement: utils.getWidgetElement(),
+                    containerElement: utils.getWidgetContainerElement(),
                     widgetId: event.data.widgetConfig.id,
                     widgetState: event.data.widgetConfig.state
                 });
@@ -118,7 +118,7 @@ export const custom: OverlayWidgetType<Settings, State> = {
 
             if (event.name === "state-update" && event.data.widgetConfig.settings.onStateUpdateJs) {
                 await runRawJs(event.data.widgetConfig.settings.onStateUpdateJs, {
-                    containerElement: utils.getWidgetElement(),
+                    containerElement: utils.getWidgetContainerElement(),
                     widgetId: event.data.widgetConfig.id,
                     widgetState: event.data.widgetConfig.state
                 });
@@ -126,7 +126,7 @@ export const custom: OverlayWidgetType<Settings, State> = {
 
             if (event.name === "message" && event.data.widgetConfig.settings.onMessageJs) {
                 await runRawJs(event.data.widgetConfig.settings.onMessageJs, {
-                    containerElement: utils.getWidgetElement(),
+                    containerElement: utils.getWidgetContainerElement(),
                     widgetId: event.data.widgetConfig.id,
                     widgetState: event.data.widgetConfig.state,
                     messageName: event.data.messageName,
