@@ -11,6 +11,7 @@
         "timers",
         "hotkeys",
         "quick-actions",
+        "overlay-widgets",
         "chat",
         "conditionals",
         "restrictions",
