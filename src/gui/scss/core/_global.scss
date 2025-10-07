@@ -1947,3 +1947,19 @@ column-resizer {
 .markdown-container > *:last-child {
     margin-bottom: 0;
 }
+
+.CodeMirror-hints {
+    background: #303136;
+
+    .CodeMirror-hint {
+        color: white !important;
+    }
+}
+
+.CodeMirror-lines {
+    padding: 10px 0 !important;
+}
+
+.CodeMirror-line {
+    padding: 0 10px !important;
+}

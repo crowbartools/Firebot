@@ -30,6 +30,10 @@
     />
     <link
       rel="stylesheet"
+      href="../../../node_modules/codemirror/addon/hint/show-hint.css"
+    />
+    <link
+      rel="stylesheet"
       href="../../../node_modules/codemirror/theme/blackboard.css"
     />
 
@@ -65,6 +69,18 @@
     <script src="../../../node_modules/codemirror/mode/javascript/javascript.js"></script>
     <script src="../../../node_modules/codemirror/mode/css/css.js"></script>
     <script src="../../../node_modules/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+    <script src="../../../node_modules/codemirror/addon/hint/show-hint.js"></script>
+    <script src="../../../node_modules/codemirror/addon/display/placeholder.js"></script>
+    <script src="../../../node_modules/codemirror/addon/mode/overlay.js"></script>
+    <script src="../../../node_modules/codemirror/addon/edit/matchbrackets.js"></script>
+
+    <style>
+      /* ensure hints float above modals/overlays */
+      .CodeMirror-hints { z-index: 999999 !important; }
+      /* make placeholder visible across themes */
+      .CodeMirror .CodeMirror-placeholder { opacity: 0.6; }
+    </style>
+
 
     <!-- include summernote css/js -->
     <link
