@@ -75,7 +75,7 @@ const randomEffect = {
     /**
    * The controller for the front end Options
    */
-    optionsController: $scope => {
+    optionsController: ($scope) => {
 
         $scope.effectListUpdated = function(effects) {
             $scope.effect.effectList = effects;
@@ -84,8 +84,8 @@ const randomEffect = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise(resolve => {
+    onTriggerEvent: (event) => {
+        return new Promise((resolve) => {
 
             const effect = event.effect;
             const effectList = effect.effectList;
@@ -200,7 +200,7 @@ const randomEffect = {
             };
 
             effectRunner.processEffects(processEffectsRequest)
-                .then(result => {
+                .then((result) => {
                     if (result != null && result.success === true) {
                         if (result.stopEffectExecution) {
                             return resolve({

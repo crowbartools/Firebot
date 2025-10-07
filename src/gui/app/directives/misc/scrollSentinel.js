@@ -14,7 +14,7 @@
                 $ctrl.id = `a${Math.random().toString(36).substr(2, 9)}`;
                 $ctrl.$onInit = function() {
                     $timeout(() => {
-                        const observer = new IntersectionObserver(entries => {
+                        const observer = new IntersectionObserver((entries) => {
                             const entry = entries[0];
                             angular.element(`.${$ctrl.elementClass}`).toggleClass('is-stuck', !entry.isIntersecting);
                         });

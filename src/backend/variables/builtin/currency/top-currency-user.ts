@@ -25,7 +25,7 @@ const model : ReplaceVariable = {
             }
         ]));
     },
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
     evaluator: async (_, currencyName: string, position: number = 1, usernameOrPosition = "username") => {
 
         if (currencyName == null) {

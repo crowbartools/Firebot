@@ -15,7 +15,7 @@
             <eos-container header="Overlay Display Location" pad-top="$ctrl.padTop">
                 <div class="controls-fb-inline">
                     <label class="control-fb control--radio">Preset
-                        <input type="radio" ng-model="$ctrl.presetOrCustom" ng-change="$ctrl.togglePresetCustom()" value="preset"/> 
+                        <input type="radio" ng-model="$ctrl.presetOrCustom" ng-change="$ctrl.togglePresetCustom()" value="preset"/>
                         <div class="control__indicator"></div>
                     </label>
                     <label class="control-fb control--radio">Custom
@@ -163,7 +163,7 @@
                         }
                     }
                     ctrl.presetOrCustom =
-          ctrl.effect.position === "Custom" ? "custom" : "preset";
+                        ctrl.effect.position === "Custom" ? "custom" : "preset";
                 };
             }
         });

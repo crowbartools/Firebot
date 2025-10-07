@@ -55,7 +55,7 @@ function validateQuote(quote) {
 exports.getQuotes = async function(req, res) {
     const quotes = await quotesManager.getAllQuotes();
 
-    const formattedQuotes = quotes.map(q => {
+    const formattedQuotes = quotes.map((q) => {
         return formatQuote(q);
     });
 

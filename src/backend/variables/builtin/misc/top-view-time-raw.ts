@@ -11,7 +11,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.ARRAY]
     },
 
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
     evaluator: async (_, count: number = 10) => {
 
         // min of 1

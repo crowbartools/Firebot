@@ -151,7 +151,7 @@ const model: EffectType<{
 
         if (effect.viewerType === "current") {
             user.id = event.trigger.metadata.userId as string | undefined ?? event.trigger.metadata.eventData?.userId as string | undefined;
-            user.username = event.trigger.metadata.username as string | undefined ?? event.trigger.metadata.eventData?.username as string | undefined;
+            user.username = event.trigger.metadata.username ?? event.trigger.metadata.eventData?.username as string | undefined;
             user.displayName = event.trigger.metadata.userDisplayName as string | undefined ?? event.trigger.metadata.eventData?.userDisplayName as string | undefined;
         } else {
             user.username = effect.customViewer ? effect.customViewer.trim() : "";

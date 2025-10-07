@@ -35,19 +35,19 @@ export type WebSocketEventType =
 
 interface Message {
     type: string;
-    id?: number|string;
+    id?: number | string;
     name: string;
     data?: unknown;
 }
 interface InvokeMessage extends Message {
     type: "invoke";
-    id: string|number;
+    id: string | number;
     data: unknown;
 }
 interface ResponseMessage extends Message {
     type: "response";
-    id: number|string;
-    name: "error"|"success";
+    id: number | string;
+    name: "error" | "success";
 }
 interface EventMessage extends Message {
     type: "event"
@@ -65,4 +65,4 @@ interface CustomWebSocketHandler {
 
 export type OverlayConnectedData = {
     instanceName: string;
-}
+};

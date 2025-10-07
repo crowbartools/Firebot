@@ -69,7 +69,7 @@ module.exports = {
         $scope.hasChannels = false;
         $scope.channelOptions = {};
         $q.when(backendCommunicator.fireEventAsync("getDiscordChannels"))
-            .then(channels => {
+            .then((channels) => {
                 if (channels && channels.length > 0) {
                     const newChannels = {};
 
@@ -119,7 +119,7 @@ module.exports = {
 
         if (effect.files != null && effect.files.length !== 0) {
             files = [];
-            effect.files.forEach(file => {
+            effect.files.forEach((file) => {
                 if (fs.existsSync(file.path)) {
                     files.push({name: file.name, file: fs.readFileSync(file.path)});
                 } else {

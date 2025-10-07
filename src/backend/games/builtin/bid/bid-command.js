@@ -207,7 +207,7 @@ const bidCommand = {
             const newTopBidWithRaise = bidAmount + raiseMinimum;
             await twitchChat.sendChatMessage(`${userDisplayName} is the new high bidder at ${bidAmount} ${currencyName}. To bid, type !bid ${newTopBidWithRaise} (or higher).`);
 
-            // eslint-disable-next-line no-use-before-define
+
             setNewHighBidder(username, userDisplayName, bidAmount);
 
             const cooldownSecs = bidSettings.settings.cooldownSettings.cooldown;

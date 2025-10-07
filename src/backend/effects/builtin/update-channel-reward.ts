@@ -23,7 +23,7 @@ type EffectMeta = {
     customId: string;
     useTag?: boolean;
     sortTagId?: string;
-}
+};
 
 function updateRewardEnabledOrPaused(effect: EffectMeta, channelReward: SavedChannelReward) {
     if (effect.rewardSettings.enabled.update) {

@@ -14,7 +14,7 @@ let rotateFileLogLevel = "info";
 let debugMode = false;
 try {
     debugMode = settingsfile.getData("/settings/debugMode");
-} catch (err) {} //eslint-disable-line no-empty
+} catch (err) {}
 if (debugMode === true) {
     rotateFileLogLevel = "debug";
 }
@@ -69,7 +69,7 @@ const logger = new winston.Logger({
 });
 
 // uncaught exception - log the error
-process.on("uncaughtException", logger.error); //eslint-disable-line no-console
+process.on("uncaughtException", logger.error);
 process.on("unhandledRejection", error => logger.error("Unhandled promise rejection", error));
 
 // Export
@@ -80,7 +80,7 @@ module.exports = logger;
 // #### @key {string} **Optional** Optional key represented by obj in a larger object
 // Performs simple comma-separated, `key=value` serialization for Loggly when
 // logging to non-JSON inputs.
-function serialize(obj, key) { //eslint-disable-line @typescript-eslint/no-unused-vars
+function serialize(obj, key) {
     // symbols cannot be directly casted to strings
     if (typeof key === "symbol") {
         key = key.toString();

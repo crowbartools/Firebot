@@ -57,7 +57,7 @@
                             options: ctrl.options,
                             currentPath: ctrl.model && ctrl.model !== "" ? ctrl.model : undefined
                         }))
-                        .then(response => {
+                        .then((response) => {
                             if (response.path == null) {
                                 return;
                             }

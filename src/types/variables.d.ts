@@ -17,7 +17,7 @@ export type VariableCategory =
 type VariableUsage = {
     usage: string;
     description?: string;
-}
+};
 
 interface VariableDefinition {
     handle: string;
@@ -39,13 +39,13 @@ type Variable = {
     getSuggestions?: (triggerType: TriggerType, triggerMeta?: TriggerMeta) => Awaitable<VariableUsage[]>;
     argsCheck?: (...args: unknown[]) => void;
     evaluator(trigger: Trigger, ...args: unknown[]): PromiseLike<unknown> | unknown;
-}
+};
 
 type SpoofedVariable = {
     definition: VariableDefinition & { spoof: true };
     argsCheck?: never;
     evaluator?: never;
     getSuggestions?: (triggerType: TriggerType, triggerMeta?: TriggerMeta) => Awaitable<VariableUsage[]>;
-}
+};
 
 export type ReplaceVariable = Variable | SpoofedVariable;

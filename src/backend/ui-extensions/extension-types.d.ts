@@ -1,38 +1,35 @@
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 export type BasePage = {
     id: string;
     name: string;
     icon: `fa-${string}`;
     fullPage?: boolean;
     disableScroll?: boolean;
-}
+};
 
 export type AngularJsPage = BasePage & {
     type: 'angularjs';
     template: string;
-    // eslint-disable-next-line @typescript-eslint/ban-types
     controller: Function;
-}
+};
 
 export type IframePage = BasePage & {
     type: 'iframe';
     // Other properties TBD
-}
+};
 
 export type AngularJsFactory = {
     name: string;
-    // eslint-disable-next-line @typescript-eslint/ban-types
     function: Function;
-}
+};
 
 export type AngularJsComponent = {
     name: string;
     bindings: Record<string, string>;
     template: string;
     transclude?: boolean | string | {[slot: string]: string};
-    // eslint-disable-next-line @typescript-eslint/ban-types
     controller: Function;
-}
+};
 
 
 /**
@@ -54,9 +51,8 @@ export type AngularJsFirebotParameterComponent = {
         hideDescription?: boolean;
     },
     template: string;
-    // eslint-disable-next-line @typescript-eslint/ban-types
     controller: Function;
-}
+};
 
 export type AngularJsDirective = {
     name: string;
@@ -70,21 +66,20 @@ export type AngularJsDirective = {
         priority?: number;
         require?: string | string[] | {[controller: string]: string};
         restrict?: string;
-        scope?: boolean | Object;
+        scope?: boolean | object;
         template?: string;
         terminal?: boolean;
         transclude?: boolean | string | {[slot: string]: string};
     };
-}
+};
 
-export type AngularJsFilter= {
+export type AngularJsFilter = {
     name: string;
-    // eslint-disable-next-line @typescript-eslint/ban-types
     function: {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (...args: any[]): Function;
     };
-}
+};
 
 export type UIExtension = {
     id: string;
@@ -105,4 +100,4 @@ export type UIExtension = {
          */
         parameters?: AngularJsFirebotParameterComponent[];
     }
-}
+};

@@ -1,3 +1,6 @@
+/* eslint-disable angular/no-run-logic */
+/* eslint-disable angular/di-unused */
+
 "use strict";
 (function() {
     const electron = require("electron");
@@ -51,6 +54,7 @@
     });
 
     app.directive('focusOn', function() {
+        // eslint-disable-next-line angular/prefer-component
         return function(scope, elem, attr) {
             scope.$on('focusOn', function(e, name) {
                 if (name === attr.focusOn) {
@@ -535,7 +539,8 @@
         };
     });
 
-    app.filter("dynamicFilter", function($filter) {
+    // eslint-disable-next-line angular/no-services
+    app.filter("dynamicFilter", ($filter) => {
         return function(items, filterName, ...args) {
             return $filter(filterName ?? "filter")(items, ...args);
         };

@@ -122,7 +122,7 @@
                     filterDefintions = backendCommunicator.fireEventSync("getFiltersForEvent", {
                         eventSourceId: $ctrl.eventSourceId,
                         eventId: $ctrl.eventId
-                    }).map(fd => {
+                    }).map((fd) => {
                         fd.getPresetValues = eval(fd.getPresetValues); // eslint-disable-line no-eval
                         fd.getSelectedValueDisplay = eval(fd.getSelectedValueDisplay); // eslint-disable-line no-eval
                         fd.valueIsStillValid = eval(fd.valueIsStillValid); // eslint-disable-line no-eval
@@ -170,7 +170,7 @@
                             availableFilters: () => filterDefintions,
                             index: () => index
                         },
-                        closeCallback: resp => {
+                        closeCallback: (resp) => {
                             const action = resp.action;
 
                             switch (action) {

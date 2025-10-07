@@ -19,7 +19,7 @@ const model : ReplaceVariable = {
             usage: `rawTopCurrency[${c.name}]`
         }));
     },
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
     evaluator: async (_, currencyName: string, count: number = 10) => {
 
         if (currencyName == null) {

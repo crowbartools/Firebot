@@ -93,9 +93,9 @@ export const progressbar: OverlayWidgetType<Settings, State> = {
     overlayExtension: {
         eventHandler: (event: WidgetOverlayEvent<Settings, State>, utils: IOverlayWidgetUtils) => {
             const generateWidgetHtml = (config: typeof event["data"]["widgetConfig"]) => {
-                const currentValue = (config.state?.currentValue as number) ?? 0;
-                const minValue = (config.settings?.minValue as number) ?? 0;
-                const maxValue = (config.settings?.maxValue as number) ?? 100;
+                const currentValue = config.state?.currentValue ?? 0;
+                const minValue = config.settings?.minValue ?? 0;
+                const maxValue = config.settings?.maxValue ?? 100;
 
                 // Calculate percentage, ensuring it's between 0 and 100
                 const currentPercentage = Math.min(

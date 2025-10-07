@@ -1,10 +1,10 @@
-/* eslint @typescript-eslint/no-unused-vars: 0*/
 "use strict";
 const electron = require("electron");
 const { ipcRenderer } = electron;
 
 const logger = require("../../backend/logwrapper");
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 //from old Gobal.js
 const shell = require("electron").shell;
 
@@ -42,7 +42,7 @@ require("../../../node_modules/tinycolor2/dist/tinycolor-min");
 require("angularjs-color-picker");
 
 const configureOpenRenderedLinksInDefaultBrowser = () => {
-    document.querySelector('body').addEventListener('click', event => {
+    document.querySelector('body').addEventListener('click', (event) => {
         if (event.target.tagName.toLowerCase() === 'a') {
             const href = event.target.href;
             if (href != null && href.length > 0 && href.toLowerCase().startsWith("http")) {
@@ -89,7 +89,7 @@ function printRow(colorOne, colorTwo, ...args) {
 
     const size = "13px";
 
-    args.forEach(a => {
+    args.forEach((a) => {
         msg += "%c   ";
         if (a === 1) {
             styles.push(`background:${colorOne};font-size:${size};`);
@@ -98,15 +98,15 @@ function printRow(colorOne, colorTwo, ...args) {
         }
     });
 
-    console.log(msg, ...styles); // eslint-disable-line no-console
+    console.log(msg, ...styles);
 }
 
 const letterColor = "#EBB11F",
     spaceColor = "transparent",
     ruleColor = "darkgray";
-/* eslint-disable no-multi-spaces */
-console.log("%cWELCOME TO", "color:gray;font-weight:900;font-size:18px;"); // eslint-disable-line no-console
-printRow(ruleColor, spaceColor,   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+
+console.log("%cWELCOME TO", "color:gray;font-weight:900;font-size:18px;");
+printRow(ruleColor, spaceColor, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 
 printRow(letterColor, spaceColor, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1);
 printRow(letterColor, spaceColor, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0);
@@ -114,11 +114,11 @@ printRow(letterColor, spaceColor, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0
 printRow(letterColor, spaceColor, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0);
 printRow(letterColor, spaceColor, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0);
 
-printRow(ruleColor, spaceColor,   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
-/* eslint-enable no-multi-spaces */
+printRow(ruleColor, spaceColor, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+
 
 //extra line for breathing room
-console.log(""); // eslint-disable-line no-console
+console.log("");
 
 function getLogLevelColor(level) {
     switch (level) {
@@ -140,7 +140,7 @@ function getLogLevelColor(level) {
 }
 
 // Prints all logs from the "console" transport into the Browser Console
-/* eslint-disable no-console */
+
 function printLogToBrowserConsole(transport, level, msg, meta) {
     if (transport != null && transport.name === "console") {
         if (msg != null && msg.trim() !== "(Renderer)") {
@@ -156,7 +156,7 @@ function printLogToBrowserConsole(transport, level, msg, meta) {
         }
     }
 }
-/* eslint-enable no-console */
+
 
 // Back end log feed
 ipcRenderer.on("logging", (event, data) => {

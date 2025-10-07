@@ -266,7 +266,7 @@ const showText = {
         const position = dto.position;
         if (position === "Random") {
             logger.debug("Getting random preset location");
-            dto.position = mediaProcessor.randomLocation(); //eslint-disable-line no-undef
+            dto.position = mediaProcessor.randomLocation();
         }
 
         if (SettingsManager.getSetting("UseOverlayInstances")) {

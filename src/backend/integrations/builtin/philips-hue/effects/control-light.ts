@@ -33,7 +33,7 @@ type HueLightData = {
             colorgamut?: [number, number][],
         }
     };
-}
+};
 
 const model: EffectType<HueControlLightEffectData> = {
     definition: {

@@ -21,7 +21,7 @@ const model = {
             </div>
         </eos-container>
     `,
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.delay == null || effect.delay.length < 1) {
             errors.push("Please input a delay duration.");
@@ -31,8 +31,8 @@ const model = {
     getDefaultLabel: (effect) => {
         return effect.delay != null ? `${effect.delay} second${effect.delay > 1 ? "s" : ""}` : undefined;
     },
-    onTriggerEvent: event => {
-        return new Promise(resolve => {
+    onTriggerEvent: (event) => {
+        return new Promise((resolve) => {
             const { effect } = event;
 
             // wait for the specified time before resolving.

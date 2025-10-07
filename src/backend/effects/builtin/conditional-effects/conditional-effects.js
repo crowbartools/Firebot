@@ -87,13 +87,13 @@ const model = {
             });
         };
 
-        $scope.deleteClauseAtIndex = $index => {
+        $scope.deleteClauseAtIndex = ($index) => {
             utilityService.showConfirmationModal({
                 title: "Remove Clause",
                 question: `Are you sure you want to remove this ${$index === 0 ? 'IF' : 'IF ELSE'} clause?`,
                 confirmLabel: "Remove",
                 confirmBtnType: "btn-danger"
-            }).then(confirmed => {
+            }).then((confirmed) => {
                 if (confirmed) {
                     $scope.effect.ifs.splice($index, 1);
                 }
@@ -115,7 +115,7 @@ const model = {
         const errors = [];
         return errors;
     },
-    onTriggerEvent: event => {
+    onTriggerEvent: (event) => {
         return new Promise(async (resolve) => {
             // What should this do when triggered.
             const { effect, trigger, outputs, abortSignal } = event;
@@ -150,7 +150,7 @@ const model = {
                 };
 
                 effectRunner.processEffects(processEffectsRequest)
-                    .then(result => {
+                    .then((result) => {
                         if (result != null && result.success === true) {
                             if (result.stopEffectExecution) {
                                 return resolve({

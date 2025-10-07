@@ -311,7 +311,7 @@ const clip = {
 
                 let videoElement;
                 if (useIframe) {
-                    // eslint-disable-next-line prefer-template
+
                     const styles = `width: ${width || screen.width}px;
                         height: ${height || screen.height}px;
                         transform: rotate(${rotation || 0});`;
@@ -326,7 +326,7 @@ const clip = {
                         </iframe>
                     `;
                 } else {
-                    // eslint-disable-next-line prefer-template
+
                     const styles = (width ? `width: ${width}px;` : '') +
                         (height ? `height: ${height}px;` : '') +
                         (rotation ? `transform: rotate(${rotation});` : '');

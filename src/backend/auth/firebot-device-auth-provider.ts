@@ -10,7 +10,7 @@ import frontendCommunicator from "../common/frontend-communicator";
 type ValidationRequest = {
     accountType: "streamer" | "bot";
     authDetails: AuthDetails;
-}
+};
 
 class FirebotDeviceAuthProvider {
     streamerProvider: DeviceAuthProvider;

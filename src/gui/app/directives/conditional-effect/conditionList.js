@@ -86,7 +86,7 @@
                 function getConditionTypes(triggerData) {
                     return backendCommunicator
                         .fireEventSync("getConditionTypes", triggerData)
-                        .map(ct => {
+                        .map((ct) => {
                             ct.getRightSidePresetValues = eval(ct.getRightSidePresetValues); // eslint-disable-line no-eval
                             ct.getLeftSidePresetValues = eval(ct.getLeftSidePresetValues); // eslint-disable-line no-eval
                             ct.getRightSideValueDisplay = eval(ct.getRightSideValueDisplay); // eslint-disable-line no-eval
@@ -153,7 +153,7 @@
                             triggerMeta: () => $ctrl.triggerMeta,
                             index: () => index
                         },
-                        closeCallback: resp => {
+                        closeCallback: (resp) => {
                             const action = resp.action;
 
                             switch (action) {

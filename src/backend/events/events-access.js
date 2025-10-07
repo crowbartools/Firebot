@@ -195,7 +195,7 @@ function getEvent(eventId) {
     return event;
 }
 
-ipcMain.on("getAllEventData", event => {
+ipcMain.on("getAllEventData", (event) => {
     logger.debug("got 'get all event data' request");
     event.returnValue = {
         mainEvents: Array.isArray(mainEvents) ? mainEvents : Object.values(mainEvents),
@@ -225,7 +225,7 @@ ipcMain.on("eventUpdate", (_, data) => {
     }
 });
 
-frontendCommunicator.on("event-sort-tags-update", tags => {
+frontendCommunicator.on("event-sort-tags-update", (tags) => {
     sortTags = tags;
     saveSortTags();
 });

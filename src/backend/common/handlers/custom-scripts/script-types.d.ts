@@ -1,12 +1,12 @@
 type ScriptParameters = Record<
-string,
-{
-    type: string;
-    description: string;
-    secondaryDescription: string;
-    value: unknown;
-    default: unknown;
-}
+    string,
+    {
+        type: string;
+        description: string;
+        secondaryDescription: string;
+        value: unknown;
+        default: unknown;
+    }
 >;
 
 type ScriptReturnObject = {

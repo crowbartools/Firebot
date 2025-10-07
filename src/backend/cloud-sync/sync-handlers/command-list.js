@@ -29,7 +29,6 @@ async function getCommandListForSync() {
                     ? strippedCommand.subCommands
                         .filter(sc => sc.active && !sc.hidden)
                         .map((sc) => {
-                            // eslint-disable-next-line @typescript-eslint/no-unused-vars
                             const { effects, ...strippedSubCommand } = sc;
                             return strippedSubCommand;
                         })

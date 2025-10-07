@@ -30,7 +30,7 @@ exports.handleSquirrelEvents = () => {
         let child;
         switch (process.argv[1]) {
             case "--squirrel-updated":
-            case "--squirrel-install": //eslint-disable-line no-fallthrough
+            case "--squirrel-install":
             // Optional - do things such as:
             // - Install desktop and start menu shortcuts
             // - Add your .exe to the PATH

@@ -232,7 +232,7 @@ class BackupManager {
 
         if (shouldBackUp) {
             const isSameDay =
-          lastBackupDate != null &&
+                lastBackupDate != null &&
           lastBackupDate.getDate() === todayDate.getDate() &&
           lastBackupDate.getMonth() === todayDate.getMonth() &&
           lastBackupDate.getFullYear() === todayDate.getFullYear();

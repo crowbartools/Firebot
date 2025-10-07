@@ -13,7 +13,7 @@
             const getSlcbQuoteDateFormat = (quotes) => {
                 let dateFormat = null;
 
-                quotes.forEach(q => {
+                quotes.forEach((q) => {
                     const dateArray = q.createdAt.split("-");
 
                     if (parseInt(dateArray[0]) > 12) {
@@ -29,7 +29,7 @@
             };
 
             const splitSlcbQuotes = (quotes) => {
-                return quotes.map(q => {
+                return quotes.map((q) => {
                     const splittedQuote = q[1].split("[").map(sq => sq.replace("]", "").trim());
 
                     if (splittedQuote.length > 3) {
@@ -49,7 +49,7 @@
 
             const mapSlcbViewers = (data) => {
                 let i = 0;
-                return data.map(v => {
+                return data.map((v) => {
                     i++;
 
                     return {
@@ -79,7 +79,7 @@
                 const data = {};
                 const file = xlsx.parse(fs.readFileSync(filepath));
 
-                file.forEach(f => {
+                file.forEach((f) => {
                     f.data.shift();
                     switch (f.name) {
                         case "Quotes": {
@@ -120,7 +120,7 @@
                         }
                     });
                     //split the file into quotes
-                    const quotes = file.map(q => {
+                    const quotes = file.map((q) => {
                         const splittedQuote = q.split("\t");
                         return {
                             _id: splittedQuote[0],

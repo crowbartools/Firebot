@@ -53,7 +53,7 @@ export const ChangeSceneCollectionEffectType: EffectType<{
             ).then((sceneCollections: string[]) => {
                 $scope.sceneCollections = [];
                 if (sceneCollections != null) {
-                    sceneCollections.forEach(sceneCollection => {
+                    sceneCollections.forEach((sceneCollection) => {
                         $scope.sceneCollections.push({name: sceneCollection, custom: false});
                     });
                 }

@@ -153,7 +153,7 @@ exports.setupCommonListeners = () => {
         updater.install();
 
         // Access electrons autoUpdater
-        // eslint-disable-next-line no-unused-expressions
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         updater.autoUpdater;
     });
 };

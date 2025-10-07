@@ -38,7 +38,7 @@ const model : ReplaceVariable = {
             try {
                 subject = JSON.parse(`${subject}`);
 
-            //eslint-disable-next-line no-empty
+
             } catch (ignore) {}
         }
         if (!Array.isArray(subject)) {

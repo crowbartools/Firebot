@@ -45,7 +45,7 @@ const model = {
     /**
    * The controller for the front end Options
    */
-    optionsController: $scope => {
+    optionsController: ($scope) => {
         if ($scope.effect.effectList == null) {
             $scope.effect.effectList = [];
         }
@@ -57,8 +57,8 @@ const model = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise(resolve => {
+    onTriggerEvent: (event) => {
+        return new Promise((resolve) => {
 
             const effect = event.effect;
             const effectList = effect.effectList;
@@ -128,7 +128,7 @@ const model = {
             };
 
             effectRunner.processEffects(processEffectsRequest)
-                .then(result => {
+                .then((result) => {
                     if (result != null && result.success === true) {
                         if (result.stopEffectExecution) {
                             return resolve({

@@ -152,7 +152,7 @@
                         confirmLabel: "Delete",
                         confirmBtnType: "btn-danger"
                     })
-                    .then(confirmed => {
+                    .then((confirmed) => {
                         if (confirmed) {
                             $ctrl.close({
                                 $value: {

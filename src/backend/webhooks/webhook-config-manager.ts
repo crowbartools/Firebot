@@ -10,7 +10,7 @@ import accountAccess from "../common/account-access";
 
 type ExtraEvents = {
     "webhook-received": (data: { config: WebhookConfig; payload: unknown; headers: Record<string, string>; }) => void
-}
+};
 
 class WebhookConfigManager extends JsonDbManager<WebhookConfig, ExtraEvents> {
     constructor() {

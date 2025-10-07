@@ -152,7 +152,7 @@
                         resolveObj: {
                             viewer: () => viewer
                         },
-                        closeCallback: response => {
+                        closeCallback: (response) => {
                             if (response.action === "delete") {
                                 $ctrl.filteredViewers = $ctrl.filteredViewers.filter(v => v.id !== response.viewer.id);
                                 return;

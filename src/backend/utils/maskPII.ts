@@ -15,9 +15,9 @@ const DEFAULT_MASK = "***";
 const EMAIL_RE = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}\b/g;
 
 const IPV4_RE =
-  /\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b/g;
+    /\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b/g;
 const IPV6_RE =
-  /\b(?:[A-Fa-f0-9]{1,4}:){1,7}[A-Fa-f0-9]{1,4}\b/g;
+    /\b(?:[A-Fa-f0-9]{1,4}:){1,7}[A-Fa-f0-9]{1,4}\b/g;
 
 // Credit card candidate: 13–19 digits with optional spaces/dashes; validated by Luhn before masking.
 const CC_CANDIDATE_RE = /(?<!\d)(?:\d[ -]?){13,19}(?!\d)/g;
@@ -33,7 +33,7 @@ const ADDRESS_RE = new RegExp(
 
 // Built-in key-name hints that force masking for a value (strings/numbers/objects).
 const BUILT_IN_KEY_HINTS =
-  /\b(email|e[-_ ]?mail|phone|mobile|tel|fax|contact|ip(v[46])?|address|addr|street|city|state|zip|postal|card|cc|pan|cvv|exp(iry|iration)?|ssn|tax[_-]?id|nid|passport)\b/i;
+    /\b(email|e[-_ ]?mail|phone|mobile|tel|fax|contact|ip(v[46])?|address|addr|street|city|state|zip|postal|card|cc|pan|cvv|exp(iry|iration)?|ssn|tax[_-]?id|nid|passport)\b/i;
 
 function luhnCheck(digitsOnlyString: string) {
     let sum = 0, even = false;

@@ -17,7 +17,7 @@
 
             service.pronounCache = {};
 
-            service.userHasPronoun = (username) => service.pronounCache[username] != null;
+            service.userHasPronoun = username => service.pronounCache[username] != null;
 
             service.getUserPronoun = (username) => {
                 if (username == null) {
@@ -29,7 +29,7 @@
                 }
 
                 $http.get(`https://pronouns.alejo.io/api/users/${username}`)
-                    .then(resp => {
+                    .then((resp) => {
                         if (resp.status === 200) {
                             const userPronounData = resp.data[0];
                             if (userPronounData == null) {
@@ -55,7 +55,7 @@
                 service.pronounCache = {};
 
                 $http.get('https://pronouns.alejo.io/api/pronouns')
-                    .then(resp => {
+                    .then((resp) => {
                         if (resp.status === 200) {
                             pronouns = resp.data;
                         } else {

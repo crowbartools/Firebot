@@ -10,7 +10,7 @@
 
             service.fetchQuotes = function() {
                 $q.when(backendCommunicator.fireEventAsync("get-all-quotes"))
-                    .then(quotes => {
+                    .then((quotes) => {
                         service.quotes = quotes;
                     });
             };

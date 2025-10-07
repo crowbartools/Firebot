@@ -21,7 +21,7 @@ type ComponentEvents = {
 
 type EffectQueueRunnerEvents = {
     "length-updated": (item: unknown) => void;
-}
+};
 
 type Events = ComponentEvents & EffectQueueRunnerEvents;
 
@@ -29,7 +29,7 @@ type ComponentManager = {
     componentName: string;
     manager: TypedEmitter<any>;
     eventNameOverrides?: Array<[keyof Events, string]>;
-}
+};
 
 const FIREBOT_COMPONENT_MANAGERS: Array<ComponentManager> = [
     {

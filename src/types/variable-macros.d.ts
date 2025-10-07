@@ -4,4 +4,4 @@ export type VariableMacro = {
     expression: string;
     description?: string;
     argNames?: string[];
-}
+};

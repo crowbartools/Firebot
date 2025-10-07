@@ -14,7 +14,7 @@ const model : ReplaceVariable = {
             {
                 usage: '$example[path, to, value]',
                 description: "Returns the value of the customVariable 'example'; Synonymous with $customVariable[example, path.to.value]"
-            },
+            }
         ],
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.ALL],

@@ -134,7 +134,7 @@ module.exports = function setupUpdater() {
                 updateDownloaded = true;
                 resolve(args);
             });
-            autoUpdater.once('error', message => {
+            autoUpdater.once('error', (message) => {
                 updaterBusy = false;
                 reject(message);
             });

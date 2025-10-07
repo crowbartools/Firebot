@@ -41,7 +41,7 @@ const model = {
     </eos-container>
     `,
     optionsController: () => {},
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.action == null || effect.action === "") {
             errors.push("Please select an action to perform.");
@@ -51,7 +51,7 @@ const model = {
         }
         return errors;
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const username = event.effect.username;
         if (username == null) {
             logger.debug("Couldn't find username for active user list effect.");

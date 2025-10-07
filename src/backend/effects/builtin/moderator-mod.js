@@ -37,7 +37,7 @@ const model = {
     </eos-container>
     `,
     optionsController: () => {},
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.action == null) {
             errors.push("Please choose an action.");
@@ -47,7 +47,7 @@ const model = {
         }
         return errors;
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         if (event.effect.action === "Mod") {
             const user = await TwitchApi.users.getUserByName(event.effect.username);
 

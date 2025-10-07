@@ -54,7 +54,7 @@
                                     confirmLabel: "Delete",
                                     confirmBtnType: "btn-danger"
                                 })
-                                .then(confirmed => {
+                                .then((confirmed) => {
                                     if (confirmed) {
                                         presetEffectListsService.deletePresetEffectList(item.id);
                                     }

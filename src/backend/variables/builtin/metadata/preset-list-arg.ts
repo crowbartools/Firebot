@@ -16,7 +16,7 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
     evaluator: (trigger, argName: string = "") => {
         const args = trigger.metadata.presetListArgs || {};
         return args[argName] || null;

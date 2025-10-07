@@ -27,7 +27,7 @@ const model : ReplaceVariable = {
     },
     argsCheck: (
         count: null | number = 1,
-        // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
         period: string = "all",
         startDate = null
     ) => {
@@ -56,8 +56,8 @@ const model : ReplaceVariable = {
     },
     evaluator: async (
         trigger: Trigger,
-        count: number = 10, // eslint-disable-line @typescript-eslint/no-inferrable-types
-        period: string = "all", // eslint-disable-line @typescript-eslint/no-inferrable-types
+        count: number = 10,
+        period: string = "all",
         startDate = null
     ) => {
         count = count ?? 1;

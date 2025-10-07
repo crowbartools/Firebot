@@ -61,7 +61,7 @@
                         return;
                     }
                     backendCommunicator.fireEventAsync("search-twitch-channels", query)
-                        .then(channels => {
+                        .then((channels) => {
                             console.log(channels);
                             if (channels != null) {
                                 $ctrl.channels = channels;

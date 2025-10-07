@@ -17,7 +17,7 @@ type PollChoice = {
     id: string,
     title: string,
     totalVotes?: number
-}
+};
 
 const model: ReplaceVariable = {
     definition: {

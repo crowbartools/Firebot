@@ -20,7 +20,7 @@
                             <button class="btn btn-default" style="margin-right: 10px" ng-click="$ctrl.showAddOrEditStartupScriptModal(script)">Edit</button>
                             <span uib-tooltip="Remove Startup Script" tooltip-append-to-body="true" class="clickable" style="color:red;" ng-click="$ctrl.removeStartupScript(script)">
                                 <i class="fas fa-trash-alt"></i>
-                            </span>    
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -50,7 +50,7 @@
                     question: `Are you sure you want to delete the startup script '${startupScript.name}'?`,
                     confirmLabel: "Delete",
                     confirmBtnType: "btn-danger"
-                }).then(confirmed => {
+                }).then((confirmed) => {
                     if (confirmed) {
                         startupScriptsService.deleteStartupScriptData(startupScript.id);
                     }
@@ -66,7 +66,7 @@
                     },
                     dismissCallback: () => {
                     },
-                    closeCallback: resp => {
+                    closeCallback: (resp) => {
                         const { scriptData } = resp;
                         startupScriptsService.saveStartupScriptData(scriptData);
                     }

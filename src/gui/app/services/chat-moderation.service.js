@@ -114,7 +114,7 @@
                 backendCommunicator.fireEvent("chat-moderation:add-allowed-user", { id: user.id, username: user.username, displayName: user.displayName });
             };
 
-            service.removeAllowedUserById= (id) => {
+            service.removeAllowedUserById = (id) => {
                 backendCommunicator.fireEvent("chat-moderation:remove-allowed-user", id);
             };
 

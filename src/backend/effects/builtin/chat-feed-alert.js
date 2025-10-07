@@ -10,7 +10,7 @@ const effect = {
         description: "Display an alert in Firebot's chat feed",
         icon: "fad fa-exclamation-circle",
         categories: [EffectCategory.COMMON, EffectCategory.CHAT_BASED],
-        dependencies: [],
+        dependencies: []
     },
     optionsTemplate: `
     <eos-container>
@@ -59,7 +59,7 @@ const effect = {
         frontendCommunicator.send("chatUpdate", {
             fbEvent: "ChatAlert",
             message: effect.message,
-            icon: effect.icon,
+            icon: effect.icon
         });
 
         return true;

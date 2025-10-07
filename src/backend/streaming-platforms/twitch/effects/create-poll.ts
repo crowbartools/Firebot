@@ -127,7 +127,7 @@ const model: EffectType<{
             return false;
         }
 
-        effect.choices.forEach(c => {
+        effect.choices.forEach((c) => {
             if (!c.length || c.length < 1 || c.length > 25) {
                 logger.error(`Unable to create poll. Poll choice "${c}" must be between 1 and 25 characters.`);
                 return false;

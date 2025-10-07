@@ -6,7 +6,7 @@
 
     angular
         .module("firebotApp")
-        .factory("viewerRanksService", function($q, backendCommunicator, utilityService, objectCopyHelper, ngToast) {
+        .factory("viewerRanksService", function(backendCommunicator, utilityService, objectCopyHelper, ngToast) {
             const service = {};
 
             /** @type {RankLadder[]} */

@@ -23,7 +23,7 @@ const model : ReplaceVariable = {
     evaluator: (
         trigger: Trigger,
         subject: string | unknown[],
-        // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
         separator : string = ","
     ) : string => {
         if (typeof subject === 'string' || subject instanceof String) {

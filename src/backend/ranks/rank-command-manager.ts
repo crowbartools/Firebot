@@ -16,7 +16,7 @@ type RankCommandOptions = {
     demoteRankMessageTemplate: string;
     setRankMessageTemplate: string;
     removeRankMessageTemplate: string;
-}
+};
 
 class RankCommandManager {
     constructor() {

@@ -268,7 +268,7 @@ async function createAppMenu() {
                     toolTip: "Open the custom variable inspector",
                     sublabel: "Open the custom variable inspector",
                     click: () => {
-                        // eslint-disable-next-line no-use-before-define
+
                         createVariableInspectorWindow();
                     },
                     icon: await createIconImage("../../../gui/images/icons/mdi/text-search.png")

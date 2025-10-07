@@ -7,12 +7,12 @@ import frontendCommunicator from "../../common/frontend-communicator";
 type RestrictionData = {
     perUserLimit?: number;
     globalLimit?: number;
-}
+};
 
 type CommandUsages = {
     globalUsages: number;
     perUserUsages: Record<string, number>;
-}
+};
 
 let usageCache: Record<string, CommandUsages> = {};
 

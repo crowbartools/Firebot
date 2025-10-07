@@ -46,7 +46,7 @@ const model = {
             </div>
         </eos-container>
     `,
-    optionsController: $scope => {
+    optionsController: ($scope) => {
         $scope.displayModeOptions = {
             sum: { text: "Just the sum", description: "Ex: 'ebiggz rolled a 7 on 2d6.'" },
             individual: { text: "Include each roll", description: "Ex: 'ebiggz rolled a 7 (4, 3) on 2d6.'"}
@@ -56,7 +56,7 @@ const model = {
             ? $scope.effect.resultType
             : "sum";
     },
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (!effect.dice) {
             errors.push("Please input the number of dice you'd like to roll.");

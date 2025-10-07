@@ -54,7 +54,7 @@
                 $ctrl.label = "Enter Text";
                 $ctrl.inputPlaceholder = "Enter Text";
                 $ctrl.saveText = "Save";
-                $ctrl.validationFn = (model) => model != null && model.length > 0;
+                $ctrl.validationFn = model => model != null && model.length > 0;
                 $ctrl.validationText = "Account ID cannot be empty!";
                 $ctrl.hasValidationError = false;
 

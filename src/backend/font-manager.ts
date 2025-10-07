@@ -19,7 +19,7 @@ export type FirebotFont = {
     path: string;
     name: string;
     format: FontFormat
-}
+};
 
 class FontManager {
     cachedFonts: FirebotFont[] = [];

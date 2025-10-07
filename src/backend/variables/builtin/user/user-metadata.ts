@@ -21,7 +21,7 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
     evaluator: async (_, username: string, key: string, defaultValue = null, propertyPath: string = null) => {
         const data = await viewerMetadataManager.getViewerMetadata(username, key, propertyPath);
 

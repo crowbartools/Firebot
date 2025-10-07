@@ -143,7 +143,6 @@ class HttpServerManager extends EventEmitter {
                     .map(we => we.dependencies.globalStyles)
             ];
 
-            // eslint-disable-next-line @typescript-eslint/ban-types
             const widgetEvents: Array<{ name: string; callback: Function }> = [];
             for (const widgetExtension of widgetExtensions) {
                 if (widgetExtension.eventHandler) {

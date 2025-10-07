@@ -107,14 +107,14 @@ type UserCommand = {
 };
 
 type BasicCommandDefinition = Omit<
-CommandDefinition,
-| "type"
-| "createdBy"
-| "createdAt"
-| "lastEditBy"
-| "lastEditAt"
-| "count"
-| "simple"
+    CommandDefinition,
+    | "type"
+    | "createdBy"
+    | "createdAt"
+    | "lastEditBy"
+    | "lastEditAt"
+    | "count"
+    | "simple"
 >;
 
 export type SystemCommandDefinition<OptionsModel = any> = CommandDefinition<OptionsModel> & {

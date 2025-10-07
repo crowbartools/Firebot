@@ -42,7 +42,7 @@ const chat = {
             $scope.effect.selectedTimerId = undefined;
         }
     },
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.selectedTimerId == null) {
             errors.push("Please select a timer.");
@@ -54,7 +54,7 @@ const chat = {
             .find(timer => timer.id === effect.selectedTimerId);
         return timer?.name ?? "Unknown Timer";
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const { effect } = event;
 
         const timer = timerManager.getItem(effect.selectedTimerId);

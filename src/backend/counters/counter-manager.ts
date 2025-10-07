@@ -43,14 +43,14 @@ class CounterManager extends JsonDbManager<Counter> {
     /**
      * @deprecated Please use `saveItem()` instead.
      */
-    async saveCounter(counter: Counter): Promise<Counter | unknown> {
-        const savedCounter = await this.saveItem(counter);
+    saveCounter(counter: Counter): Counter {
+        const savedCounter = this.saveItem(counter);
 
         if (savedCounter) {
             return savedCounter;
         }
 
-        return {};
+        return {} as Counter;
     }
 
     /**

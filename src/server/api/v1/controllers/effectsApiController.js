@@ -65,7 +65,7 @@ exports.getPresetLists = async function(req, res) {
         });
     }
 
-    const formattedPresetLists = presetLists.map(presetList => {
+    const formattedPresetLists = presetLists.map((presetList) => {
         return {
             id: presetList.id,
             name: presetList.name,

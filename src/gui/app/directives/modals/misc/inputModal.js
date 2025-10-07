@@ -139,7 +139,7 @@
                 $ctrl.save = function() {
                     const validate = $ctrl.validationFn($ctrl.model);
 
-                    Promise.resolve(validate).then(valid => {
+                    Promise.resolve(validate).then((valid) => {
 
                         let successful = false;
 

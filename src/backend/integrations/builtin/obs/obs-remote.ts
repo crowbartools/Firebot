@@ -44,7 +44,7 @@ type CachedGroupInfo = {
         /// The item id for the group inside of this scene.
         itemId: number;
     }[];
-}
+};
 
 let eventManager: ScriptModules["eventManager"];
 
@@ -834,7 +834,7 @@ export type OBSSourceScreenshotSettings = {
     imageWidth?: number;
     imageHeight?: number;
     imageCompressionQuality?: number;
-}
+};
 
 export type OBSSourceTransformKeys =
     | "positionX"
@@ -1419,7 +1419,7 @@ export async function saveReplayBuffer(): Promise<boolean> {
     return true;
 }
 
-export type ObsRawResponse = { success: boolean; response?: string; }
+export type ObsRawResponse = { success: boolean; response?: string; };
 
 export async function sendRawObsRequest(functionName: string, payload?: string): Promise<ObsRawResponse> {
     const rawResponse: ObsRawResponse = { success: false };

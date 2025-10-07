@@ -3,13 +3,13 @@ export enum FirebotAutoUpdateLevel {
     Bugfix = 1,
     Feature = 2,
     MajorRelease = 3,
-    Betas = 4,
+    Betas = 4
 }
 
 export type FirebotAudioDevice = {
     label: string;
     deviceId: string;
-}
+};
 
 export type FirebotSettingsTypes = {
     ActiveChatUserListTimeout: number;
@@ -107,7 +107,7 @@ export type FirebotSettingsTypes = {
     WebServerPort: number;
     WhileLoopEnabled: boolean;
     WysiwygBackground: "black" | "white";
-}
+};
 
 export const FirebotGlobalSettings: Partial<Record<keyof FirebotSettingsTypes, boolean>> = {
     ActiveProfiles: true,

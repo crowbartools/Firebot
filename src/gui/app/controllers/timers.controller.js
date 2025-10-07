@@ -95,7 +95,7 @@
                                     confirmLabel: "Delete",
                                     confirmBtnType: "btn-danger"
                                 })
-                                .then(confirmed => {
+                                .then((confirmed) => {
                                     if (confirmed) {
                                         timerService.deleteTimer(item);
                                     }
@@ -174,7 +174,7 @@
                                     confirmLabel: "Delete",
                                     confirmBtnType: "btn-danger"
                                 })
-                                .then(confirmed => {
+                                .then((confirmed) => {
                                     if (confirmed) {
                                         scheduledTaskService.deleteScheduledTask(item);
                                     }

@@ -25,7 +25,7 @@
                 }
                 try {
                     itemIndex = itemArray.indexOf(element);
-                } catch (err) {} //eslint-disable-line no-empty
+                } catch (err) {}
 
                 if (itemIndex !== -1) {
                     // Item exists, so we're unchecking it.

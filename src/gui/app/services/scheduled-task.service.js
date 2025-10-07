@@ -16,17 +16,17 @@
                 }
             }
 
-            backendCommunicator.on("scheduledTaskUpdate", scheduledTask => {
+            backendCommunicator.on("scheduledTaskUpdate", (scheduledTask) => {
                 updateScheduledTask(scheduledTask);
             });
 
-            backendCommunicator.on("allScheduledTasksUpdated", scheduledTasks => {
+            backendCommunicator.on("allScheduledTasksUpdated", (scheduledTasks) => {
                 service.scheduledTasks = scheduledTasks;
             });
 
             service.loadScheduledTasks = function() {
                 $q.when(backendCommunicator.fireEventAsync("getScheduledTasks"))
-                    .then(scheduledTasks => {
+                    .then((scheduledTasks) => {
                         if (scheduledTasks) {
                             service.scheduledTasks = scheduledTasks;
                         }
@@ -37,7 +37,7 @@
 
             service.saveScheduledTask = function(scheduledTask) {
                 return $q.when(backendCommunicator.fireEventAsync("saveScheduledTask", scheduledTask))
-                    .then(savedScheduledTask => {
+                    .then((savedScheduledTask) => {
                         if (savedScheduledTask) {
                             updateScheduledTask(savedScheduledTask);
                             return true;
@@ -141,7 +141,7 @@
                     copiedScheduledTask.name += " copy";
                 }
 
-                service.saveScheduledTask(copiedScheduledTask).then(successful => {
+                service.saveScheduledTask(copiedScheduledTask).then((successful) => {
                     if (successful) {
                         ngToast.create({
                             className: 'success',
@@ -165,7 +165,7 @@
             };
 
             service.showAddEditScheduledTaskModal = function(scheduledTask) {
-                return new Promise(resolve => {
+                return new Promise((resolve) => {
                     utilityService.showModal({
                         component: "addOrEditScheduledTaskModal",
                         breadcrumbName: "Edit Scheduled Effect List",
@@ -173,7 +173,7 @@
                         resolveObj: {
                             scheduledTask: () => scheduledTask
                         },
-                        closeCallback: response => {
+                        closeCallback: (response) => {
                             resolve(response.scheduledTask);
                         }
                     });
