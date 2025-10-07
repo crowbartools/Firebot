@@ -21,7 +21,7 @@ const model : ReplaceVariable = {
         }
 
         if (typeof argIndex === 'string' && macroNamedArgs != null) {
-            const namedArgIdx = (<string[]>macroNamedArgs).findIndex(item => item === argIndex);
+            const namedArgIdx = (macroNamedArgs).findIndex(item => item === argIndex);
             if (namedArgIdx > -1) {
                 return macroArgs[namedArgIdx];
             }

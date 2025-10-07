@@ -28,7 +28,7 @@ function buildCustomEmbed(customEmbedData, color) {
     }
     if (customEmbedData.imageUrl) {
         customEmbed.image = {
-            url: customEmbedData.imageUrl //eslint-disable-line camelcase
+            url: customEmbedData.imageUrl
         };
     }
     return customEmbed;

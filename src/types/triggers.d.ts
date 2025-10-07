@@ -18,7 +18,7 @@ export type TriggerType =
 export type TriggerMeta = {
     triggerId?: string;
     [x: string]: unknown;
-}
+};
 
 export type Trigger = {
     type: TriggerType;

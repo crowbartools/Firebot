@@ -111,7 +111,7 @@
                     const areas = {};
 
                     let total = 0;
-                    Object.values(allColumns).forEach(c => {
+                    Object.values(allColumns).forEach((c) => {
                         areas[c.id] = {
                             start: total,
                             end: total + c.element.width()
@@ -133,7 +133,7 @@
                     const allColumns = getAllColumnData().filter(c => c.id !== side.id);
 
                     let totalMinWidth = 0;
-                    allColumns.forEach(c => {
+                    allColumns.forEach((c) => {
                         if (c.id === otherSide.id) {
                             totalMinWidth += c.minWidth;
                             return;

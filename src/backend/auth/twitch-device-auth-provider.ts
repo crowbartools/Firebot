@@ -362,7 +362,7 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
                 // don't create new object on every get
                 if (previousToken.scope) {
                     compareScopeSets(previousToken.scope, scopeSets);
-                    return previousToken as AccessTokenWithUserId;
+                    return previousToken;
                 }
 
                 const [scope = []] = await loadAndCompareTokenInfo(
@@ -374,7 +374,7 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
                 );
 
                 const newToken: AccessTokenWithUserId = {
-                    ...(previousToken as AccessTokenWithUserId),
+                    ...previousToken,
                     scope
                 };
 

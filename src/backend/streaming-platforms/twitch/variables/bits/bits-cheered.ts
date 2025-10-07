@@ -27,7 +27,7 @@ const model : ReplaceVariable = {
     },
     argsCheck: (
         username: string,
-        // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
         period: string = "all",
         startDate: null | string = null
     ) => {

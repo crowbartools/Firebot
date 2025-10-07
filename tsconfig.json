@@ -18,6 +18,5 @@
         },
         "target": "ES2022"
     },
-    "include": ["src/**/*"],
-    "exclude": ["src/**/*.mjs"]
+    "include": ["src/**/*"]
 }

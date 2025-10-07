@@ -28,7 +28,7 @@
                 backendCommunicator.fireEvent("logoutAccount", accountType);
             };
 
-            backendCommunicator.on("accountUpdate", accounts => {
+            backendCommunicator.on("accountUpdate", (accounts) => {
                 service.accounts = accounts;
             });
 

@@ -45,7 +45,7 @@
                         resolveObj: {
                             file: () => file
                         },
-                        closeCallback: resp => {
+                        closeCallback: (resp) => {
                             cb(resp.file);
                         }
                     });

@@ -68,7 +68,7 @@ const model: EffectType<{
             return false;
         }
 
-        effect.outcomes.forEach(o => {
+        effect.outcomes.forEach((o) => {
             if (!o.length || o.length < 1 || o.length > 25) {
                 logger.error(`Unable to create prediction. Prediction outcome "${o}" must be between 1 and 25 characters.`);
                 return false;

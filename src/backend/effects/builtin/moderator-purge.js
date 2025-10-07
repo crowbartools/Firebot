@@ -22,14 +22,14 @@ const model = {
     </eos-container>
     `,
     optionsController: () => {},
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.username == null && effect.username !== "") {
             errors.push("Please enter a username.");
         }
         return errors;
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const user = await TwitchApi.users.getUserByName(event.effect.username);
 
         if (user != null) {

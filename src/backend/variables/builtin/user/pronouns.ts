@@ -48,7 +48,7 @@ const model : ReplaceVariable = {
         trigger,
         username: string,
         pronounNumber: number | string = 0,
-        // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
         fallback : string = "they/them"
     ) => {
 
@@ -56,7 +56,7 @@ const model : ReplaceVariable = {
             pronounNumber = Number(`${pronounNumber}`);
         }
 
-        if (!Number.isFinite(<number>pronounNumber)) {
+        if (!Number.isFinite(pronounNumber)) {
             logger.warn(`Pronoun index not a number using ${fallback}`);
             return fallback;
         }

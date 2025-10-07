@@ -79,7 +79,7 @@ const effect = {
         }
 
         $q.when(backendCommunicator.fireEventAsync("getKeyLights"))
-            .then(keyLights => {
+            .then((keyLights) => {
                 if (keyLights?.length > 0) {
                     $scope.keyLights = keyLights;
 

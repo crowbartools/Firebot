@@ -3,26 +3,26 @@ name: Build Tests
 # No need to run on master branch
 on:
   push:
-    branches: ['*', '!master']
+    branches: ["*", "!master"]
   pull_request:
     types: [opened, edited, synchronize, reopened]
-    branches: ['*', '!master']
+    branches: ["*", "!master"]
 
 jobs:
   test:
     name: Lint
-    runs-on: 'ubuntu-latest'
+    runs-on: ubuntu-latest
     steps:
       - name: Setup Nodejs
-        uses: 'actions/setup-node@v3'
+        uses: actions/setup-node@v5
         with:
-          node-version: "18.17.1"
+          node-version: "22.19.0"
 
       - name: Install Correct NPM Version
-        run: npm install -g npm@10.2.4
+        run: npm install -g npm@10.9.3
 
       - name: Checkout branch
-        uses: 'actions/checkout@v3'
+        uses: actions/checkout@v5
 
       - name: Install Dependencies
         run: npm install

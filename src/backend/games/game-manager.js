@@ -178,7 +178,7 @@ function saveAllGameSettings() {
 }
 
 function getGames() {
-    return registeredGames.map(g => {
+    return registeredGames.map((g) => {
         return {
             id: g.id,
             name: g.name,

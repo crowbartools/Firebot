@@ -48,7 +48,7 @@ function insertStatRecord(eventType, userId, meta) {
     };
 
     // Insert this record into the stats database.
-    db.insert(ins, err => {
+    db.insert(ins, (err) => {
         if (err) {
             logger.error("Error adding user: ", err.message);
         }

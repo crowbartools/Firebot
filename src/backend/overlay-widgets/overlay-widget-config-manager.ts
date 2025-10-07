@@ -7,7 +7,7 @@ type ExtraEvents = {
     "widget-state-updated": (item: OverlayWidgetConfig) => void;
     "widget-config-active-changed": (item: OverlayWidgetConfig) => void;
     "widget-config-removed": (item: OverlayWidgetConfig) => void;
-}
+};
 
 class OverlayWidgetConfigManager extends JsonDbManager<OverlayWidgetConfig, ExtraEvents> {
     constructor() {

@@ -124,7 +124,7 @@ const model : ReplaceVariable = {
         subject: string | unknown[],
         matcher: unknown,
         propertyPath : string = null,
-        //eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
         exact : boolean | string = false
     ) : null | number => {
         if (typeof subject === 'string' || subject instanceof String) {

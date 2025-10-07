@@ -62,7 +62,7 @@
                             label: "Case Label",
                             saveText: "Save",
                             validationFn: () => {
-                                return new Promise(resolve => {
+                                return new Promise((resolve) => {
                                     resolve(true);
                                 });
                             },

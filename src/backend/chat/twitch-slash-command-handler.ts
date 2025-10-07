@@ -81,7 +81,7 @@ export function validateChatCommand(message: string): TwitchSlashCommandValidati
 }
 
 export async function processChatCommand(message: string, sendAsBot = false): Promise<boolean> {
-    const validationResult = await validateChatCommand(message);
+    const validationResult = validateChatCommand(message);
 
     if (validationResult.success === false) {
         return false;

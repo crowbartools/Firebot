@@ -26,7 +26,7 @@ type Scope = ng.IScope & {
     deleteCase(index: number): void;
     effectListUpdated(effects: unknown, index: number | "default"): void;
     getAutomaticLabel(switchCase: SwitchCase): string;
-}
+};
 
 const model: EffectType<EffectModel> = {
     definition: {

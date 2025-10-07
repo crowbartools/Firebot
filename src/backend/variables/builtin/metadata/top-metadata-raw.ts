@@ -11,7 +11,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.ARRAY, OutputDataType.TEXT]
     },
 
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
     evaluator: async (_, metadataKey: string, count: number = 10) => {
 
         if (metadataKey == null) {

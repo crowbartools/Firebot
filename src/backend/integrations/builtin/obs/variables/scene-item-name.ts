@@ -22,8 +22,8 @@ export const SceneItemNameVariable: ReplaceVariable = {
     evaluator: async (trigger) => {
         if (typeof trigger.metadata?.eventData?.groupItemId === "number" && typeof trigger.metadata?.eventData?.groupName === "string") {
             return (await getGroupItem(
-                trigger.metadata.eventData.groupName as string,
-                trigger.metadata.eventData.groupItemId as number
+                trigger.metadata.eventData.groupName,
+                trigger.metadata.eventData.groupItemId
             ))?.name ?? "Unknown";
         }
         const sceneItem = await getSceneItem(

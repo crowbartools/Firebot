@@ -103,7 +103,7 @@
                 return;
             }
 
-            groups.forEach(group => {
+            groups.forEach((group) => {
                 const indexInGroup = group.events.findIndex(e => e.id === eventToSave.id);
                 if (indexInGroup > -1) {
                     group.events[indexInGroup] = eventToSave;

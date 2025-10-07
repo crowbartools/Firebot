@@ -5,6 +5,6 @@ export type CustomEmbed = {
     authorName?: string;
     authorIconUrl?: string;
     imageUrl?: string;
-}
+};
 
 export type EmbedType = "channel" | "stream" | "custom";

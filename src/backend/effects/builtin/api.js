@@ -141,7 +141,7 @@ const api = {
     /**
    * When the effect is triggered by something
    */
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.api == null) {
             errors.push("Please select an API from the list.");
@@ -152,13 +152,13 @@ const api = {
         }
         return errors;
     },
-    getDefaultLabel: effect => {
+    getDefaultLabel: (effect) => {
         return effect.api;
     },
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const chatter = event.effect.chatter;
         const apiType = event.effect.api;
 

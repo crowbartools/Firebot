@@ -21,7 +21,7 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.USER, VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
     },
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
     evaluator: async (_, metadataKey: string, position: number = 1, usernameOrPosition = "username") => {
 
         if (metadataKey == null) {

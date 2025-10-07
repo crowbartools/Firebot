@@ -6,7 +6,7 @@ type EventData = {
     eventSourceId: string;
     eventId: string;
     eventMeta: Record<string, unknown>;
-}
+};
 
 type FilterEvent = Omit<EventData, "eventMeta">;
 
@@ -24,7 +24,7 @@ type PresetFilterConfig = FilterConfig & {
     valueIsStillValid?(filterSettings: FilterSettings, ...args: unknown[]): Promise<boolean> | boolean;
     getSelectedValueDisplay?(filterSettings: FilterSettings, ...args: unknown[]): Promise<string> | string;
     allowIsNot?: boolean;
-}
+};
 
 const TEXT_COMPARISON_TYPES = [
     ComparisonType.IS,
@@ -136,7 +136,7 @@ export function createTextFilter({
                 eventValue = eventValue.toString().toLowerCase();
             }
             const filterValue =
-        (caseInsensitive ? value?.toLowerCase() : value) ?? "";
+                (caseInsensitive ? value?.toLowerCase() : value) ?? "";
 
             return compareValue(comparisonType, filterValue, eventValue);
         }
@@ -147,8 +147,8 @@ export function createNumberFilter({
     eventMetaKey,
     ...config
 }: Omit<FilterConfig, "caseInsensitive" | "presetValues" | "allowIsNot">): Omit<EventFilter, "presetValues" | "valueType"> & {
-        valueType: "number";
-    } {
+    valueType: "number";
+} {
     return {
         ...config,
         comparisonTypes: NUMBER_COMPARISON_TYPES,
@@ -182,7 +182,7 @@ export function createTextOrNumberFilter({
                 eventValue = eventValue.toString().toLowerCase();
             }
             const filterValue =
-        (caseInsensitive ? value?.toString()?.toLowerCase() : value) ?? "";
+                (caseInsensitive ? value?.toString()?.toLowerCase() : value) ?? "";
             return compareValue(comparisonType, filterValue, eventValue);
         }
     };

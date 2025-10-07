@@ -162,7 +162,7 @@
                     return;
                 }
 
-                scheduledTaskService.saveScheduledTask($ctrl.scheduledTask).then(successful => {
+                scheduledTaskService.saveScheduledTask($ctrl.scheduledTask).then((successful) => {
                     if (successful) {
                         $ctrl.close({
                             $value: {

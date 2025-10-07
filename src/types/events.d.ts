@@ -15,7 +15,7 @@ export type EventSource = {
 export type PresetValue = {
     value: any;
     display: string;
-}
+};
 
 export type FilterSettings = {
     comparisonType: ComparisonType;

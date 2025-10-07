@@ -14,7 +14,7 @@ angular.module('firebotApp').
 
                 element.on(events, function() {
                     element.removeClass("animated");
-                    animationNames.forEach(a => {
+                    animationNames.forEach((a) => {
                         element.removeClass(a);
                     });
                 });

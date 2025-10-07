@@ -26,7 +26,7 @@ async function loadQuoteDatabase() {
 }
 
 function getCurrentQuoteId() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         db.find({ _id: '__autoid__' },
             function (err, autoid) {
                 if (err) {
@@ -39,7 +39,7 @@ function getCurrentQuoteId() {
 }
 
 function getNextQuoteId() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         db.update(
             { _id: '__autoid__' },
             { $inc: { seq: 1 } },
@@ -55,7 +55,7 @@ function getNextQuoteId() {
 }
 
 function setQuoteIdIncrementer(number) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         db.update(
             { _id: '__autoid__' },
             { $set: { seq: number } },
@@ -92,7 +92,7 @@ function addQuote(quote) {
             }
         }
 
-        db.insert(quote, err => {
+        db.insert(quote, (err) => {
             if (err) {
                 logger.error("QuoteDB: Error adding quote: ", err.message);
                 return reject();
@@ -106,7 +106,7 @@ function addQuote(quote) {
 
 const addQuotes = (quotes) => {
     return new Promise(async (resolve, reject) => {
-        quotes.forEach(async q => {
+        quotes.forEach(async (q) => {
             const newQuoteId = await getNextQuoteId();
 
             if (newQuoteId == null) {
@@ -117,7 +117,7 @@ const addQuotes = (quotes) => {
             q._id = newQuoteId;
         });
 
-        db.insert(quotes, err => {
+        db.insert(quotes, (err) => {
             if (err) {
                 logger.error("QuoteDB: Error adding quotes: ", err.message);
                 return reject();
@@ -136,7 +136,7 @@ const addQuotes = (quotes) => {
 function updateQuote(quote, dontSendUiUpdateEvent = false) {
     return new Promise(async (resolve, reject) => {
 
-        db.update({ _id: quote._id }, quote, err => {
+        db.update({ _id: quote._id }, quote, (err) => {
             if (err) {
                 logger.error("QuoteDB: Error updating quote: ", err.message);
                 return reject();
@@ -154,7 +154,7 @@ function updateQuote(quote, dontSendUiUpdateEvent = false) {
 
 
 function removeQuote(quoteId, dontSendUiUpdateEvent = false) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         db.remove({ _id: quoteId }, {}, function (err) {
             if (err) {
                 logger.warn("Error while removing quote", err);
@@ -197,7 +197,7 @@ function getRandomQuoteByDate(dateConfig) {
 
     const datePattern = new RegExp(regex);
 
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         db.find(
             {createdAt: { $regex: datePattern}},
             function (err, docs) {
@@ -211,7 +211,7 @@ function getRandomQuoteByDate(dateConfig) {
 }
 
 function getRandomQuoteByAuthor(author) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         db.find({originator: { $regex: new RegExp(`^${regExpEscape(author)}$`, 'i')}},
             // result handler
             function (err, docs) {
@@ -232,7 +232,7 @@ function getRandomQuoteByAuthor(author) {
 
 function getRandomQuoteByGame(gameSearch) {
     const gamePattern = new RegExp(`${regExpEscape(gameSearch)}`, 'i');
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         db.find(
             {game: { $regex: gamePattern}},
             function (err, docs) {
@@ -252,7 +252,7 @@ function getRandomQuoteContainingText(text) {
     const textPattern = new RegExp(`\\b${regExpEscape(text)}\\b`, 'i');
 
     // return a promise that is resolved once the db returns a result
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         db.find(
 
             // search the field 'text' using the text
@@ -301,7 +301,7 @@ function getRandomQuote() {
 }
 
 function getAllQuotes() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         db.find({
             $where: function () {
                 //filter out our auto inc id field
@@ -317,7 +317,7 @@ function getAllQuotes() {
 }
 
 function updateQuoteId(quote, newId) {
-    return new Promise(async resolve => {
+    return new Promise(async (resolve) => {
 
         if (quote._id === newId) {
             return resolve(true);
@@ -326,7 +326,7 @@ function updateQuoteId(quote, newId) {
         await removeQuote(quote._id, true);
 
         quote._id = newId;
-        db.insert(quote, err => {
+        db.insert(quote, (err) => {
             if (err) {
                 logger.error("QuoteDB: Error adding quote: ", err.message);
                 return resolve(false);
@@ -363,19 +363,19 @@ async function recalculateQuoteIds() {
 }
 
 
-frontendCommunicator.on("add-quote", quote => {
+frontendCommunicator.on("add-quote", (quote) => {
     addQuote(quote).catch(() => {});
 });
 
-frontendCommunicator.on("add-quotes", quotes => {
+frontendCommunicator.on("add-quotes", (quotes) => {
     addQuotes(quotes).catch(() => {});
 });
 
-frontendCommunicator.on("update-quote", quote => {
+frontendCommunicator.on("update-quote", (quote) => {
     updateQuote(quote, true).catch(() => {});
 });
 
-frontendCommunicator.on("delete-quote", quoteId => {
+frontendCommunicator.on("delete-quote", (quoteId) => {
     removeQuote(quoteId, true).catch(() => {});
 });
 

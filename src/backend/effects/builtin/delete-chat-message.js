@@ -24,7 +24,7 @@ const model = {
     `,
     optionsController: () => {},
     optionsValidator: () => {},
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const { trigger } = event;
 
         let messageId = null;

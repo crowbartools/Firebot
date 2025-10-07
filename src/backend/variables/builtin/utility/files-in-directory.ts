@@ -35,7 +35,7 @@ const model : ReplaceVariable = {
                     .map(dirent => resolve(join(dirent.path, sep, dirent.name)));
             }
 
-            const regexFilter = new RegExp(<string>filter, flags);
+            const regexFilter = new RegExp(filter, flags);
             return fileList
                 .filter(dirent => regexFilter.test(dirent.name))
                 .map(dirent => resolve(join(dirent.path, sep, dirent.name)));

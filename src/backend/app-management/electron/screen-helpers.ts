@@ -26,7 +26,7 @@ export async function takeScreenshot(displayId: number): Promise<string> {
             types: ['screen'],
             thumbnailSize: resolution
         })
-        .then(sources => {
+        .then((sources) => {
             const foundSource = sources.find(s => s.display_id.toString() === displayId.toString());
 
             if (foundSource) {
@@ -34,11 +34,11 @@ export async function takeScreenshot(displayId: number): Promise<string> {
             }
 
             return null;
-        }, err => {
+        }, (err) => {
             logger.error("Failed to take screenshot", err.message);
             return null;
         })
-        .catch(err => {
+        .catch((err) => {
             logger.error('Failed to take screenshot', err.message);
             return null;
         });

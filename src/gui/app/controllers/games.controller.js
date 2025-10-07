@@ -15,7 +15,7 @@
                     resolveObj: {
                         game: () => game
                     },
-                    closeCallback: resp => {
+                    closeCallback: (resp) => {
                         const action = resp.action;
 
                         if (action === 'save') {

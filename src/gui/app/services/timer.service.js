@@ -16,17 +16,17 @@
                 }
             }
 
-            backendCommunicator.on("timerUpdate", timer => {
+            backendCommunicator.on("timerUpdate", (timer) => {
                 updateTimer(timer);
             });
 
-            backendCommunicator.on("all-timers-updated", timers => {
+            backendCommunicator.on("all-timers-updated", (timers) => {
                 service.timers = timers;
             });
 
             service.loadTimers = function() {
                 $q.when(backendCommunicator.fireEventAsync("getTimers"))
-                    .then(timers => {
+                    .then((timers) => {
                         if (timers) {
                             service.timers = timers;
                         }
@@ -37,7 +37,7 @@
 
             service.saveTimer = function(timer) {
                 return $q.when(backendCommunicator.fireEventAsync("saveTimer", timer))
-                    .then(savedTimer => {
+                    .then((savedTimer) => {
                         if (savedTimer) {
                             updateTimer(savedTimer);
                             return true;
@@ -76,7 +76,7 @@
                     copiedTimer.name += " copy";
                 }
 
-                service.saveTimer(copiedTimer).then(successful => {
+                service.saveTimer(copiedTimer).then((successful) => {
                     if (successful) {
                         ngToast.create({
                             className: 'success',
@@ -100,7 +100,7 @@
             };
 
             service.showAddEditTimerModal = function(timer) {
-                return new Promise(resolve => {
+                return new Promise((resolve) => {
                     utilityService.showModal({
                         component: "addOrEditTimerModal",
                         breadcrumbName: "Edit Timer",
@@ -108,7 +108,7 @@
                         resolveObj: {
                             timer: () => timer
                         },
-                        closeCallback: response => {
+                        closeCallback: (response) => {
                             resolve(response.timer);
                         }
                     });

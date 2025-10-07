@@ -12,7 +12,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
 
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
     evaluator: async (_, count: number = 10) => {
 
         // limit to max of 25

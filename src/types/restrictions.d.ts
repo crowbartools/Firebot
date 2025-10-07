@@ -45,5 +45,5 @@ export type RestrictionData = {
     useCustomFailMessage?: boolean;
     failMessage?: string;
     restrictions: unknown[]; // TODO: change when restriction-manager and companion types are added
-    sendAsReply?:boolean;
+    sendAsReply?: boolean;
 };

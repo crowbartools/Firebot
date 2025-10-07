@@ -199,7 +199,7 @@ const effectDefinitions = [
 
 function getEffects(triggerType) {
     // filter effects list to given triggerType
-    const filteredEffects = effectDefinitions.filter(e => {
+    const filteredEffects = effectDefinitions.filter((e) => {
         if (triggerType != null) {
             return e.triggers[triggerType] != null && e.triggers[triggerType] !== false;
         }
@@ -211,7 +211,7 @@ function getEffects(triggerType) {
 function generateEffectObjects(triggerType, triggerMeta, useV5Ids = false) {
     const effectsObject = {};
     const filteredEffects = getEffects(triggerType, triggerMeta);
-    filteredEffects.forEach(e => {
+    filteredEffects.forEach((e) => {
         effectsObject[e.id] = useV5Ids ? e.v5Id : e.name;
     });
     return effectsObject;

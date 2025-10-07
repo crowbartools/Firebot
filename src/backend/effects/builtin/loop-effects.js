@@ -177,7 +177,7 @@ const model = {
                     maxLoopCount = parseInt(effect.loopCount);
                 }
 
-                while (true) { //eslint-disable-line no-constant-condition
+                while (true) {
                     if (abortSignal.aborted) {
                         return resolve(true);
                     }

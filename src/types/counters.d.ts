@@ -10,4 +10,4 @@ export type Counter = {
     updateEffects?: EffectList;
     minimumEffects?: EffectList;
     maximumEffects?: EffectList;
-}
+};

@@ -4,13 +4,13 @@ type FirebotChatMessagePartType =
     | "emote"
     | "third-party-emote"
     | "cheermote"
-    | "mention"
+    | "mention";
 
 type FirebotChatMessagePartBase = {
     type: FirebotChatMessagePartType;
     id?: string;
     text: string;
-}
+};
 
 type FirebotChatMessageTextPart = FirebotChatMessagePartBase & {
     type: "text";
@@ -51,7 +51,7 @@ export type FirebotChatMessagePart =
     | FirebotChatMessageLinkPart
     | FirebotChatMessageEmotePart
     | FirebotChatMessageCheermotePart
-    | FirebotChatMessageMentionPart
+    | FirebotChatMessageMentionPart;
 
 export type FirebotParsedMessagePart = {
     type: string;

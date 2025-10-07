@@ -18,7 +18,7 @@
                 const $ctrl = this;
 
                 $ctrl.currencies = {};
-                currencyService.getCurrencies().forEach(c => {
+                currencyService.getCurrencies().forEach((c) => {
                     $ctrl.currencies[c.id] = c.name;
                 });
             }

@@ -66,7 +66,7 @@ const effect = {
         }
 
         $q.when(backendCommunicator.fireEventAsync("getLightStrips"))
-            .then(lightStrips => {
+            .then((lightStrips) => {
                 if (lightStrips?.length > 0) {
                     $scope.lightStrips = lightStrips;
 

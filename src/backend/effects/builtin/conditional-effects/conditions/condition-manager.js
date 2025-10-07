@@ -102,7 +102,7 @@ frontendCommunicator.on("getConditionTypes", (trigger) => {
     let conditionTypes = manager.getAllConditionTypes();
     if (trigger != null) {
         conditionTypes = conditionTypes
-            .filter(c => {
+            .filter((c) => {
 
                 if (c.triggers == null) {
                     return true;
@@ -122,7 +122,7 @@ frontendCommunicator.on("getConditionTypes", (trigger) => {
                 return false;
             });
     }
-    return conditionTypes.map(c => {
+    return conditionTypes.map((c) => {
         return {
             id: c.id,
             name: c.name,

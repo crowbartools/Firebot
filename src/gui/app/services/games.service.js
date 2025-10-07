@@ -11,7 +11,7 @@
 
             service.loadGames = () => {
                 $q.when(backendCommunicator.fireEventAsync("get-games"))
-                    .then(games => {
+                    .then((games) => {
                         if (games) {
                             service.games = games;
                         }
@@ -39,7 +39,7 @@
                 });
             };
 
-            service.resetGameToDefault = gameId => {
+            service.resetGameToDefault = (gameId) => {
                 backendCommunicator.fireEvent("reset-game-to-defaults", gameId);
             };
 

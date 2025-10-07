@@ -317,7 +317,7 @@ class CommandManager extends TypedEmitter<Events> {
             commandDb.delete(`/systemCommandOverrides/${id}`);
             const command = this.getSystemCommandById(id);
             this.emit("updated-item", command);
-        } catch (err) {} //eslint-disable-line no-empty
+        } catch (err) {}
 
         frontendCommunicator.send("system-commands-updated");
     }

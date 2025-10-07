@@ -23,7 +23,7 @@
             controller: function(utilityService) {
                 const $ctrl = this;
 
-                $ctrl.getTagName = id => {
+                $ctrl.getTagName = (id) => {
                     const tag = $ctrl.allTags.find(t => t.id === id);
                     return tag ? tag.name : "";
                 };
@@ -33,7 +33,7 @@
                     $ctrl.hasTagsAvailable = $ctrl.allTags.filter(t => !$ctrl.currentTagIds.some(id => id === t.id)).length > 0;
                 }
 
-                $ctrl.removeTag = tagId => {
+                $ctrl.removeTag = (tagId) => {
                     $ctrl.currentTagIds = $ctrl.currentTagIds.filter(id => id !== tagId);
                     updateTagsAvailable();
                 };

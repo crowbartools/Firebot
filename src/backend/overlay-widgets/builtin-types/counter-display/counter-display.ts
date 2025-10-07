@@ -133,8 +133,8 @@ export const counterDisplay: OverlayWidgetType<Settings, State> = {
     overlayExtension: {
         eventHandler: (event: WidgetOverlayEvent<Settings, State>, utils: IOverlayWidgetUtils) => {
             const generateWidgetHtml = (config: typeof event["data"]["widgetConfig"]) => {
-                const counterName = (config.state?.counterName as string) ?? "Counter";
-                const counterValue = (config.state?.counterValue as number) ?? "-";
+                const counterName = config.state?.counterName ?? "Counter";
+                const counterValue = config.state?.counterValue ?? "-";
 
                 const containerStyles = {
                     "width": "100%",

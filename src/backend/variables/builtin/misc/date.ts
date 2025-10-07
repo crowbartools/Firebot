@@ -28,7 +28,7 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
     evaluator: (_, template = 'MMM Do YYYY', steps: number = 0, key) => {
         const now = moment();
 

@@ -176,7 +176,7 @@ const effect = {
             return effectHelperService.checkSavedArray(list, item);
         };
     },
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.mode === "keyPress") {
             if (effect.press == null) {

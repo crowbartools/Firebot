@@ -77,7 +77,7 @@ export type ScreenshotEffectData = {
     exitDuration?: number;
     rotation?: string;
     rotType?: string;
-}
+};
 
 export function sendScreenshotToOverlay(screenshotDataUrl: string, effect: ScreenshotEffectData) {
     let position = effect.position;

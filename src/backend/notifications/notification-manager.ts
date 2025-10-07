@@ -24,7 +24,7 @@ type ExternalNotification = {
     title: string;
     message: string;
     type: NotificationType;
-}
+};
 
 export type NotificationBase = {
     title: string;
@@ -34,14 +34,14 @@ export type NotificationBase = {
     scriptName?: string;
     externalId?: string;
     metadata?: Record<string, unknown>;
-}
+};
 
 export type Notification = NotificationBase & {
     id: string;
     timestamp: Date;
     saved: boolean;
     read: boolean;
-}
+};
 
 interface NotificationCache {
     dbVersion?: string;

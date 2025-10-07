@@ -42,7 +42,7 @@ export class TwitchBitsApi {
     ): Promise<string[]> {
         const leaderboard = await this.getChannelBitsLeaderboard(count, period, startDate);
 
-        return leaderboard.map(l => {
+        return leaderboard.map((l) => {
             return l.userName;
         });
     }

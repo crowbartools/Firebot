@@ -13,9 +13,9 @@ let minimizedToTray = false;
 
 const createNativeImage = () => {
     const iconPath =
-            process.platform === "darwin"
-                ? path.join(__dirname, "../../../gui/images/macTrayIcon.png")
-                : path.join(__dirname, "../../../gui/images/logo_transparent_2.png");
+        process.platform === "darwin"
+            ? path.join(__dirname, "../../../gui/images/macTrayIcon.png")
+            : path.join(__dirname, "../../../gui/images/logo_transparent_2.png");
     return nativeImage.createFromPath(iconPath);
 };
 

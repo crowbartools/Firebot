@@ -100,7 +100,6 @@ class ReplaceVariableManager extends EventEmitter {
         // Map register variables Map to array
         const registeredVariables = this.#registeredVariableHandlers;
         const variables = [];
-        /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
         for (const [key, value] of registeredVariables) {
             variables.push(value);
         }

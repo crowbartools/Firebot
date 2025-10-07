@@ -28,7 +28,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },
 
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
     evaluator: (
         { effectOutputs },
         name: string,
@@ -49,7 +49,7 @@ const model : ReplaceVariable = {
 
         if (typeof data === "string") {
             try {
-                data = JSON.parse(data as string);
+                data = JSON.parse(data);
             } catch (_) { }
         }
 

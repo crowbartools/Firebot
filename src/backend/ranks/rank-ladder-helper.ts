@@ -74,7 +74,7 @@ export class RankLadderHelper {
         }
         const ranks = this.rankLadder.ranks;
         const viewersValue = this.getTrackByValue(viewer);
-        const rank = ranks.find(rank => viewersValue >= rank.value ?? 0);
+        const rank = ranks.find(rank => viewersValue >= (rank.value ?? 0));
 
         return rank?.id;
     }

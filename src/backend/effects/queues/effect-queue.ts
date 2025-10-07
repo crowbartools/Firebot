@@ -12,13 +12,13 @@ export type QueueStatus = "running" | "paused" | "idle" | "canceled";
 export type RunEffectsContext = {
     effects?: EffectList
     [key: string]: unknown;
-}
+};
 
 type QueueItem = {
     runEffectsContext: RunEffectsContext
     duration?: number;
     priority?: "none" | "high";
-}
+};
 
 export type QueueState = {
     status: QueueStatus;
@@ -27,7 +27,7 @@ export type QueueState = {
     interval: number;
     mode: "auto" | "interval" | "custom" | "manual";
     runEffectsImmediatelyWhenPaused?: boolean;
-}
+};
 
 type Events = {
     "queue-state-updated": (newState: QueueState, changedState: Partial<QueueState>) => void;

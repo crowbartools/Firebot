@@ -28,7 +28,7 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
     evaluator: (_, date?: string, format?: string) => {
         const time = moment(date, format);
 

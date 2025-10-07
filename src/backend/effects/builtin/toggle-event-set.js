@@ -55,7 +55,7 @@ const chat = {
             $scope.effect.toggleType = "disable";
         }
     },
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.selectedEventGroupId == null) {
             errors.push("Please select an event set.");
@@ -67,7 +67,7 @@ const chat = {
         const action = effect.toggleType === "enable" ? "Activate" : "Deactivate";
         return `${action} ${eventGroup?.name ?? "Unknown Event Set"}`;
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const { effect } = event;
 
         eventAccess.updateEventGroupActiveStatus(effect.selectedEventGroupId, effect.toggleType === "enable");

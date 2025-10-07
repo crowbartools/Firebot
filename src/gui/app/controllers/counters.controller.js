@@ -65,7 +65,7 @@
                                     confirmLabel: "Delete",
                                     confirmBtnType: "btn-danger"
                                 })
-                                .then(confirmed => {
+                                .then((confirmed) => {
                                     if (confirmed) {
                                         countersService.deleteCounter(item.id);
                                     }
@@ -85,7 +85,7 @@
                         label: "Rename Counter",
                         saveText: "Save",
                         validationFn: (value) => {
-                            return new Promise(resolve => {
+                            return new Promise((resolve) => {
                                 if (value == null || value.trim().length < 1) {
                                     resolve(false);
                                 } else if (countersService.counterNameExists(value)) {

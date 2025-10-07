@@ -70,7 +70,6 @@ class UIExtensionManager {
         };
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
     private prepareFunc(func: Function | undefined, name: string) {
         let rawFunc = func?.toString() ?? "() => {}";
         const namelessFunction = /^[\s]*function[\s]*\(/;

@@ -35,7 +35,7 @@ interface FontAwesomeIconDefinition {
 
 type FontAwesomeIconDefinitions = {
     [iconName: string]: FontAwesomeIconDefinition
-}
+};
 
 class IconManager {
     icons: FontAwesomeIcon[] = [];

@@ -36,7 +36,7 @@
 
                 return JSON.parse(angular.toJson(copiedEffects))
                     .filter(e => !effectDefs || effectDefs.find(ed => ed.id === e.type))
-                    .map(e => {
+                    .map((e) => {
                         e.id = uuid();
                         return e;
                     });
@@ -67,7 +67,7 @@
                 return copied;
             };
 
-            service.hasObjectCopied = (key) => copiedObjectsCache[key] != null;
+            service.hasObjectCopied = key => copiedObjectsCache[key] != null;
 
             service.getCopiedObject = (key) => {
                 const object = copiedObjectsCache[key];
