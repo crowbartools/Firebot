@@ -118,6 +118,7 @@ export default defineConfig([{
             skipBlankLines: false,
             ignoreComments: false
         }],
+        "@stylistic/object-curly-spacing": ["warn", "always"],
         "@stylistic/semi": ["warn", "always"],
         "@stylistic/semi-spacing": ["warn", {
             before: false,
