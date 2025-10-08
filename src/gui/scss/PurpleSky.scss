@@ -158,6 +158,8 @@ $variable-menu-bg: #0a080f;
 /* controls */
 $primary-button-bg: $accent;
 $primary-button-hover-bg: lighten($accent, 8%);
+$link-button-color: $accent-100;
+$link-button-hover-color: $accent-200;
 
 // Import Core Styles
 @import "./core/$importer";

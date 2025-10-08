@@ -191,8 +191,8 @@
     &:hover {
         background-color: $primary-button-hover-bg;
     }
-    &:active {
-        background-color: $primary-button-bg;
+    &:active, &:focus {
+        background-color: $primary-button-bg !important;
     }
 }
 
@@ -258,9 +258,9 @@
 }
 
 .btn-link {
-    color: #12d0ff;
+    color: $link-button-color;
     &:hover, &:focus {
-        color: #11add4;
+        color: $link-button-hover-color;
     }
 }
 
@@ -462,6 +462,10 @@
     }
 }
 
+.form-control:focus {
+    border-color: lighten($primary-button-bg, 25%);
+}
+
 .input-group .form-control:focus {
     z-index: 0;
 }
@@ -608,7 +612,7 @@ label {
   }
 
 a {
-    color: #41a7ff;
+    color: $link-button-color;
     &:hover {
         opacity: 0.8;
     }

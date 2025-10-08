@@ -122,11 +122,11 @@
     background: #ccc;
 }
 .control-fb input:checked ~ .control__indicator {
-    background: #16809c;
+    background: $primary-button-hover-bg;
 }
 .control-fb:hover input:not([disabled]):checked ~ .control__indicator,
 .control-fb input:checked:focus ~ .control__indicator {
-    background: #0e647d;
+    background: darken($primary-button-hover-bg, 5%);
 }
 .control-fb input:disabled ~ .control__indicator {
     background: #e6e6e6;
@@ -515,7 +515,7 @@ input:checked + .slider:before {
     }
 
     &:checked + .tgl-btn {
-        background: #16809c;
+        background: $primary-button-bg;
     }
 
     &:disabled + .tgl-btn {
@@ -859,7 +859,7 @@ table.fb-table-alt {
     font-size: 30px;
     line-height: 1;
     &.toggled-on {
-        color: #2fbbde;
+        color: $primary-button-bg;
     }
     &:hover {
         opacity: 0.8;
