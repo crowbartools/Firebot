@@ -1634,7 +1634,7 @@ thead th{
 }
 
 .effect-bar {
-  background: #16809c;
+  background: $primary-button-bg;
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -1652,7 +1652,7 @@ thead th{
   }
 
   &:hover {
-    background: #136e87;
+    background: $primary-button-hover-bg;
     cursor: pointer;
   }
 
