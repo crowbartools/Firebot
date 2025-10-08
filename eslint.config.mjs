@@ -111,6 +111,17 @@ export default defineConfig([{
             after: true
         }],
         "@stylistic/linebreak-style": ["warn", "unix"],
+        "@stylistic/member-delimiter-style": ["warn", {
+            multiline: {
+                delimiter: "semi",
+                requireLast: true
+            },
+            singleline: {
+                delimiter: "comma",
+                requireLast: false
+            },
+
+        }],
         "@stylistic/no-confusing-arrow": "warn",
         "@stylistic/no-floating-decimal": "warn",
         "@stylistic/no-multi-spaces": "warn",
