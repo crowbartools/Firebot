@@ -10,7 +10,7 @@
                     >
                         <firebot-select
                             aria-label="App Theme"
-                            options="{'Light': 'Light', 'Midnight': 'Midnight', 'PurpleSky': 'Purple Sky', 'PurpleSkySoft': 'Purple Sky (Soft)', 'Obsidian': 'Obsidian',}"
+                            options="{'Light': 'Light', 'Midnight': 'Midnight', 'PurpleSky': 'Purple Sky', 'Obsidian': 'Obsidian',}"
                             ng-init="selectedTheme = settings.getSetting('Theme')"
                             selected="selectedTheme"
                             on-update="settings.saveSetting('Theme', option)"
