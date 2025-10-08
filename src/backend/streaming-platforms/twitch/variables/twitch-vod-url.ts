@@ -30,7 +30,7 @@ const model : ReplaceVariable = {
             return "[Error: No VOD Found]";
         }
 
-        if (includeCurrentTimestamp === true || includeCurrentTimestamp === 'true') {
+        if (includeCurrentTimestamp !== true && includeCurrentTimestamp !== 'true') {
             return vod.url;
         }
 
