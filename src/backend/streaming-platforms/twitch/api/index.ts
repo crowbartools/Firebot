@@ -23,6 +23,7 @@ import { TwitchStreamsApi } from "./resource/streams";
 import { TwitchSubscriptionsApi } from "./resource/subscriptions";
 import { TwitchTeamsApi } from "./resource/teams";
 import { TwitchUsersApi } from "./resource/users";
+import { TwitchVideosApi } from "./resource/videos";
 import { TwitchWhispersApi } from "./resource/whispers";
 import { TwitchHypeTrainApi } from "./resource/hypetrain";
 
@@ -181,6 +182,10 @@ class TwitchApi {
 
     get users() {
         return new TwitchUsersApi(this._streamerClient, this._botClient);
+    }
+
+    get videos() {
+        return new TwitchVideosApi(this._streamerClient, this._botClient);
     }
 
     get whispers() {

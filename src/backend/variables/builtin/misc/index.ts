@@ -14,6 +14,7 @@ import rollDice from './roll-dice';
 import time from './time';
 import topViewTime from './top-view-time';
 import topViewTimeRaw from './top-view-time-raw';
+import twitchVodUrl from './twitch-vod-url';
 import unixTimestamp from './unix-timestamp';
 import uptime from './uptime';
 import viewTime from './view-time';
@@ -35,6 +36,7 @@ export default [
     time,
     topViewTime,
     topViewTimeRaw,
+    twitchVodUrl,
     unixTimestamp,
     uptime,
     viewTime
