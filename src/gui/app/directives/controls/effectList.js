@@ -399,7 +399,7 @@
                 };
 
                 ctrl.createEffectMenuOptions = (effect) => {
-                    const effectIsValid = !!effectDefinitions.find(e => e.id === effect.type);
+                    const effectIsValid = !!effectDefinitions.find(e => e.definition.id === effect.type);
                     const effectMenuOptions = [
                         {
                             html: `<a href ><i class="far fa-edit mr-4"></i> Edit Effect</a>`,
