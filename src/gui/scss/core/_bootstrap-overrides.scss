@@ -186,11 +186,19 @@
 }
 
 .btn-primary {
-    background-color: #16809c;
+    background-color: $primary-button-bg;
     border-color: transparent;
     &:hover {
-        background-color: #1f849e;
+        background-color: $primary-button-hover-bg;
     }
+    &:active {
+        background-color: $primary-button-bg;
+    }
+}
+
+.btn-primary[disabled]:hover {
+    background-color: $primary-button-bg;
+    opacity: 0.75;
 }
 
 .btn-default {

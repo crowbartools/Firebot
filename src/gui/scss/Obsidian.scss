@@ -138,5 +138,9 @@ $variable-category-bg: #202124;
 $variable-magic-tooltip-fg: white;
 $variable-menu-bg: #18191b;
 
+/* controls */
+$primary-button-bg: #16809c;
+$primary-button-hover-bg: #1f849e;
+
 // Import Core Styles
 @import './core/$importer';
