@@ -1,7 +1,7 @@
 import accountAccess from "../../../common/account-access";
 import { OutputDataType } from "../../../../shared/variable-constants";
 import { ReplaceVariable } from "../../../../types/variables";
-import { TwitchApi } from "../../../streaming-platforms/twitch/api";
+import { TwitchApi } from "../api";
 
 const model : ReplaceVariable = {
     definition: {
