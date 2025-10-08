@@ -215,6 +215,21 @@
         dynamicParameterRegistry.register("number", { tag: "fb-param-number" });
         dynamicParameterRegistry.register("password", { tag: "fb-param-password" });
         dynamicParameterRegistry.register("boolean", { tag: "fb-param-boolean", hideTitle: true, hideDescription: true });
+        dynamicParameterRegistry.register("date-time", { tag: "fb-param-date-time",
+            validators: {
+                futureOnly: {
+                    fn: (view, isFuture) => (
+                        view == null || view === ""
+                            ? true
+                            : isFuture
+                                ? new Date(view) > new Date()
+                                : new Date(view) < new Date()
+                    ),
+                    message: isFuture => `Must be in the ${isFuture ? "future" : "past"}.`,
+                    async: false
+                }
+            }
+        });
         dynamicParameterRegistry.register("enum", { tag: "fb-param-enum" });
         dynamicParameterRegistry.register("filepath", { tag: "fb-param-filepath" });
         dynamicParameterRegistry.register("role-percentages", { tag: "fb-param-role-percentages" });

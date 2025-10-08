@@ -54,6 +54,14 @@ export type NumberParameter = BaseParameter & {
     };
 };
 
+export type DateTimeParameter = BaseParameter & {
+    type: "date-time";
+    default?: string;
+    validation?: {
+        futureOnly?: boolean;
+    };
+};
+
 export type EnumParameter<G = string | number> = BaseParameter & {
     type: "enum";
     options: Array<G>;
@@ -234,12 +242,12 @@ export type CodeMirrorParameter = BaseParameter & {
     type: "codemirror";
     default?: string;
     settings?: {
-        mode: { name: "javascript", json?: boolean } | "htmlmixed" | "css" | { mode: "xml", htmlMode: true },
-        theme: 'blackboard',
-        lineNumbers?: boolean,
-        autoRefresh?: boolean,
-        showGutter?: boolean
-    }
+        mode: { name: "javascript", json?: boolean } | "htmlmixed" | "css" | { mode: "xml", htmlMode: true };
+        theme: 'blackboard';
+        lineNumbers?: boolean;
+        autoRefresh?: boolean;
+        showGutter?: boolean;
+    };
 };
 
 export type CounterSelectParameter = BaseParameter & {
@@ -262,6 +270,7 @@ type FirebotParameter =
     | PasswordParameter
     | BooleanParameter
     | NumberParameter
+    | DateTimeParameter
     | EnumParameter
     | EffectListParameter
     | DiscordChannelWebhookParameter
@@ -286,6 +295,7 @@ export type ParametersConfig<P> = {
         ?
         | StringParameter
         | PasswordParameter
+        | DateTimeParameter
         | FilepathParameter
         | ChatterSelectParameter
         | CurrencySelectParameter
@@ -321,6 +331,7 @@ export type ParametersWithNameConfig<P> = {
         ?
         | StringParameter
         | PasswordParameter
+        | DateTimeParameter
         | FilepathParameter
         | ChatterSelectParameter
         | CurrencySelectParameter
@@ -348,7 +359,7 @@ export type ParametersWithNameConfig<P> = {
                                     : P[K] extends EffectList
                                         ? EffectListParameter
                                         : P[K] extends FontOptions
-                                            ? FontOptionsParameter : FirebotParameter) & { name: K, /* showWhen?: { [K2 in keyof P]?: P[K2] }*/ };
+                                            ? FontOptionsParameter : FirebotParameter) & { name: K /* showWhen?: { [K2 in keyof P]?: P[K2] }*/ };
 };
 
 type FirebotParamCategory<ParamConfig extends Record<string, unknown>> = {
