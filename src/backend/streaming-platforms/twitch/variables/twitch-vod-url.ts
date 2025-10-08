@@ -1,4 +1,3 @@
-import accountAccess from "../../../common/account-access";
 import { OutputDataType } from "../../../../shared/variable-constants";
 import { ReplaceVariable } from "../../../../types/variables";
 import { TwitchApi } from "../api";
@@ -16,10 +15,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async (trigger, includeCurrentTimestamp: boolean | string) => {
-        const client = TwitchApi.streamerClient;
-
-        const streamerAccount = accountAccess.getAccounts().streamer;
-        const channelData = await client.streams.getStreamByUserId(streamerAccount.userId);
+        const channelData = await TwitchApi.streams.getStreamersCurrentStream();
 
         if (channelData == null) {
             return "[Error: Not Live]";
