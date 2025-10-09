@@ -193,7 +193,10 @@ const model = {
                         break;
                     }
 
-                    const conditionsPass = await conditionManager.runConditions(effect.conditionData, trigger);
+                    const conditionsPass = await conditionManager.runConditions(effect.conditionData, {
+                        ...trigger,
+                        effectOutputs: lastOutputs
+                    });
 
                     if (conditionsPass) {
                         const result = await runEffects(currentLoopCount, null, lastOutputs);

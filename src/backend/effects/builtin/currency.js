@@ -331,8 +331,10 @@ const currency = {
                     // This is because we don't want to replace variables for currency amount before it's been updated.
                     const evaluatedMessage = await populateStringWithTriggerData(
                         message,
-                        event.trigger,
-                        event.outputs
+                        {
+                            ...event.trigger,
+                            effectOutputs: event.outputs
+                        }
                     );
 
                     await twitchChat.sendChatMessage(evaluatedMessage, whisper, chatter);
