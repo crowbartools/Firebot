@@ -31,7 +31,7 @@
         "@types/sprintf-js": "^1.1.4",
         "@types/unzipper": "^0.10.11",
         "@typescript-eslint/parser": "^8.46.0",
-        "electron": "^38.1.0",
+        "electron": "^38.2.2",
         "electron-installer-dmg": "^5.0.1",
         "electron-winstaller": "^5.4.0",
         "eslint": "^9.37.0",
