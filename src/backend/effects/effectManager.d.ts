@@ -7,6 +7,8 @@ declare class EffectManager extends EventEmitter {
     unregisterEffect: (effectId: string) => void;
     getEffectById: (effectId: string) => EffectType<unknown> | undefined;
     getEffectOverlayExtensions: () => OverlayExtension[];
+    addEventToEffect: (effectId: string, eventSourceId: string, eventId: string) => void;
+    removeEventFromEffect: (effectId: string, eventSourceId: string, eventId: string) => void;
 }
 
 declare const _EffectManager: EffectManager;
