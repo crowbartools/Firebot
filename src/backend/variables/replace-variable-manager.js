@@ -229,7 +229,8 @@ class ReplaceVariableManager extends EventEmitter {
     }
 
     addEventToVariable(variableHandle, eventSourceId, eventId) {
-        if (this.#getVariablesForEvent(eventSourceId, eventId).some(f => f.handle === variableHandle)) {
+        if (this.#getVariablesForEvent(eventSourceId, eventId).some(f => f.handle === variableHandle)
+            || this.additionalVariableEvents[variableHandle]?.some(e => e.eventSourceId === eventSourceId && e.eventId === eventId)) {
             logger.warn(`Variable ${variableHandle} already setup for event ${eventSourceId}:${eventId}`);
             return;
         }
