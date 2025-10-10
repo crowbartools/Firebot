@@ -712,7 +712,7 @@
                     updateDefaultLabels();
                 };
                 ctrl.testEffects = function () {
-                    ipcRenderer.send('runEffectsManually', { effects: ctrl.effectsData });
+                    backendCommunicator.send('runEffectsManually', { effects: ctrl.effectsData });
                 };
 
                 ctrl.getLabelButtonTextForLabel = function (labelModel) {

@@ -3,7 +3,7 @@
 const logger = require('../logwrapper');
 const eventManager = require("../events/EventManager");
 const windowManagement = require("../app-management/electron/window-management");
-const { ipcMain } = require("electron");
+const frontendCommunicator = require('./frontend-communicator');
 
 const EventEmitter = require("events");
 
@@ -69,7 +69,7 @@ exports.loadVariablesFromFile = () => {
     const db = getVariableCacheDb();
     const data = db.getData("/");
     if (data) {
-        for (const [key, {t, v}] of Object.entries(data)) {
+        for (const [key, { t, v }] of Object.entries(data)) {
             const now = Date.now();
             if (t && t > 0 && t < now) {
                 // this var has expired
@@ -87,7 +87,7 @@ exports.addCustomVariable = (name, data, ttl = 0, propertyPath = null) => {
     //attempt to parse data as json
     try {
         data = JSON.parse(data);
-    } catch (error) {
+    } catch {
         //silently fail
     }
 
@@ -149,7 +149,7 @@ exports.addCustomVariable = (name, data, ttl = 0, propertyPath = null) => {
                 value: currentData
             });
         } catch (error) {
-            logger.debug(`error setting data to custom variable ${name} using property path ${propertyPath}`);
+            logger.debug(`error setting data to custom variable ${name} using property path ${propertyPath}`, error);
         }
     }
 };
@@ -180,7 +180,7 @@ exports.getCustomVariable = (name, propertyPath, defaultData = null) => {
         }
         return data != null ? data : defaultData;
     } catch (error) {
-        logger.debug(`error getting data from custom variable ${name} using property path ${propertyPath}`);
+        logger.debug(`error getting data from custom variable ${name} using property path ${propertyPath}`, error);
         return defaultData;
     }
 };
@@ -201,7 +201,7 @@ function deleteCustomVariable(name) {
     }
 }
 
-ipcMain.on("customVariableDelete", (_, key) => {
+frontendCommunicator.on("customVariableDelete", (key) => {
     deleteCustomVariable(key);
 });
 

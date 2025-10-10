@@ -10,8 +10,8 @@ import frontendCommunicator from "../common/frontend-communicator";
 import { ScheduledTask } from "../../types/timers";
 
 interface ScheduledTaskRunner {
-    taskDefinition: ScheduledTask,
-    cronjob: CronJob
+    taskDefinition: ScheduledTask;
+    cronjob: CronJob;
 }
 
 class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
@@ -67,7 +67,7 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
                     },
                     effects: task.effects
                 };
-                effectRunner.processEffects(effectsRequest);
+                void effectRunner.processEffects(effectsRequest);
 
                 this.logNextTaskRun(task);
             }
@@ -81,7 +81,7 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
             taskRunner.cronjob = this.createCronJob(taskRunner.taskDefinition);
         }
 
-        if (taskRunner.cronjob.running) {
+        if (taskRunner.cronjob.isActive) {
             logger.debug(`Scheduled task timer for "${taskRunner.taskDefinition.name}" is already running`);
         } else {
             taskRunner.cronjob.start();
@@ -96,7 +96,7 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
             taskRunner.cronjob = this.createCronJob(taskRunner.taskDefinition);
         }
 
-        if (taskRunner.cronjob.running) {
+        if (taskRunner.cronjob.isActive) {
             taskRunner.cronjob.stop();
             logger.debug(`Scheduled task timer for "${taskRunner.taskDefinition.name}" stopped`);
         } else {
@@ -112,7 +112,7 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
         if (this.taskCache.has(task.id)) {
             const taskRunner = this.taskCache.get(task.id);
 
-            if (taskRunner.cronjob.running) {
+            if (taskRunner.cronjob.isActive) {
                 logger.debug(`Scheduled task "${task.name}" next run: ${taskRunner.cronjob.nextDate().toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS)}`);
             } else {
                 logger.debug(`Scheduled task "${task.name}" not running.`);
@@ -128,7 +128,7 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
 
         if (savedTask) {
             if (this.taskCache.has(savedTask.id) &&
-                this.taskCache.get(savedTask.id).cronjob?.running) {
+                this.taskCache.get(savedTask.id).cronjob?.isActive) {
                 this.stopTask(this.taskCache.get(savedTask.id));
             }
 

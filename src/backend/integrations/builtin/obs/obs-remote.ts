@@ -696,7 +696,7 @@ export async function setCurrentSceneCollection(
     }
 }
 
-export type SourceData = Record<string, Array<{ id: number; name: string, groupName?: string }>>;
+export type SourceData = Record<string, Array<{ id: number, name: string, groupName?: string }>>;
 
 export async function getSourceData(): Promise<SourceData> {
     if (!connected) {
@@ -1226,7 +1226,6 @@ export async function setTextSourceSettings(sourceName: string, settings: OBSTex
 export async function createRecordChapter(chapterName: string) {
     try {
         // obs-websockets-js hasn't been updated to include "CreateRecordChapter" yet
-        // @ts-expect-error
         await obs.call("CreateRecordChapter", {
             chapterName
         });
@@ -1419,7 +1418,7 @@ export async function saveReplayBuffer(): Promise<boolean> {
     return true;
 }
 
-export type ObsRawResponse = { success: boolean; response?: string; };
+export type ObsRawResponse = { success: boolean, response?: string };
 
 export async function sendRawObsRequest(functionName: string, payload?: string): Promise<ObsRawResponse> {
     const rawResponse: ObsRawResponse = { success: false };

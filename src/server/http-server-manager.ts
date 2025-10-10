@@ -1,5 +1,4 @@
 import { EventEmitter } from "events";
-import { ipcMain } from "electron";
 import express, { Express, Request, Response, Router } from "express";
 import http from "http";
 import bodyParser from "body-parser";
@@ -14,6 +13,7 @@ import { CustomWebSocketHandler } from "../types/websocket";
 import overlayWidgetManager from "../backend/overlay-widgets/overlay-widgets-manager";
 
 import dataAccess from "../backend/common/data-access";
+import frontendCommunicator from "../backend/common/frontend-communicator";
 
 const cwd = dataAccess.getWorkingDirectoryPath();
 
@@ -143,7 +143,7 @@ class HttpServerManager extends EventEmitter {
                     .map(we => we.dependencies.globalStyles)
             ];
 
-            const widgetEvents: Array<{ name: string; callback: Function }> = [];
+            const widgetEvents: Array<{ name: string, callback: Function }> = [];
             for (const widgetExtension of widgetExtensions) {
                 if (widgetExtension.eventHandler) {
                     widgetEvents.push({
@@ -522,8 +522,8 @@ const manager = new HttpServerManager();
 
 setInterval(() => websocketServerManager.reportClientsToFrontend(manager.isDefaultServerStarted), 3000);
 
-ipcMain.on("getOverlayStatus", (event) => {
-    event.returnValue = {
+frontendCommunicator.on("getOverlayStatus", () => {
+    return {
         clientsConnected: websocketServerManager.overlayHasClients,
         serverStarted: manager.isDefaultServerStarted
     };

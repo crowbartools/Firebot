@@ -1,6 +1,6 @@
 "use strict";
 const electron = require("electron");
-const { app, ipcMain, dialog, shell } = electron;
+const { app, dialog, shell } = electron;
 const logger = require("../logwrapper");
 const { restartApp } = require("../app-management/electron/app-helpers");
 
@@ -67,7 +67,7 @@ exports.setupCommonListeners = () => {
 
     frontendCommunicator.on("category-changed", (category) => {
         const eventsManager = require("../events/EventManager");
-        eventsManager.triggerEvent("firebot", "category-changed", {category: category});
+        eventsManager.triggerEvent("firebot", "category-changed", { category: category });
     });
 
     frontendCommunicator.on("restartApp", () => restartApp());
@@ -79,26 +79,26 @@ exports.setupCommonListeners = () => {
     // Front old main
 
     // When we get an event from the renderer to create a new profile.
-    ipcMain.on("createProfile", (_, profileName) => {
+    frontendCommunicator.on("createProfile", (profileName) => {
         profileManager.createNewProfile(profileName);
     });
 
     // When we get an event from the renderer to delete a particular profile.
-    ipcMain.on("deleteProfile", () => {
+    frontendCommunicator.on("deleteProfile", () => {
         profileManager.deleteProfile();
     });
 
     // Change profile when we get event from renderer
-    ipcMain.on("switchProfile", function(_, profileId) {
+    frontendCommunicator.on("switchProfile", (profileId) => {
         profileManager.logInProfile(profileId);
     });
 
-    ipcMain.on("renameProfile", function(_, newProfileId) {
+    frontendCommunicator.on("renameProfile", (newProfileId) => {
         profileManager.renameProfile(newProfileId);
     });
 
     // Change profile when we get event from renderer
-    ipcMain.on("sendToOverlay", function(_, data) {
+    frontendCommunicator.on("sendToOverlay", (data) => {
         if (data == null) {
             return;
         }
@@ -110,7 +110,7 @@ exports.setupCommonListeners = () => {
         currentVersion: app.getVersion()
     };
 
-    ipcMain.on("downloadUpdate", async () => {
+    frontendCommunicator.on("downloadUpdate", async () => {
         const GhReleases = require("electron-gh-releases");
 
         //back up first
@@ -141,7 +141,7 @@ exports.setupCommonListeners = () => {
         });
     });
 
-    ipcMain.on("installUpdate", () => {
+    frontendCommunicator.on("installUpdate", () => {
         logger.info("Installing update...");
         frontendCommunicator.send("installingUpdate");
 

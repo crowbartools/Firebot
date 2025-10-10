@@ -1,6 +1,5 @@
 "use strict";
 
-const { ipcMain } = require("electron");
 const logger = require("../logwrapper");
 const EventEmitter = require("events");
 const util = require("../utility");
@@ -117,20 +116,19 @@ class EventManager extends EventEmitter {
 
 const manager = new EventManager();
 
-ipcMain.on("getAllEventSources", (event) => {
+frontendCommunicator.on("getAllEventSources", () => {
     logger.info("got 'get all event sources' request");
-    event.returnValue = JSON.parse(JSON.stringify(manager.getAllEventSources()));
+    return JSON.parse(JSON.stringify(manager.getAllEventSources()));
 });
 
-ipcMain.on("getAllEvents", (event) => {
+frontendCommunicator.on("getAllEvents", () => {
     logger.info("got 'get all events' request");
-    event.returnValue = JSON.parse(JSON.stringify(manager.getAllEvents()));
+    return JSON.parse(JSON.stringify(manager.getAllEvents()));
 });
 
 // Manually Activate an Event for Testing
 // This will manually trigger an event for testing purposes.
-ipcMain.on("triggerManualEvent", function(_, data) {
-
+frontendCommunicator.on("triggerManualEvent", (data) => {
     const { sourceId, eventId, eventSettingsId } = data;
 
     const source = manager.getEventSourceById(sourceId);

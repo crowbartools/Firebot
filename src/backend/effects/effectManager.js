@@ -1,6 +1,5 @@
 "use strict";
 
-const { ipcMain } = require("electron");
 const logger = require("../logwrapper");
 const EventEmitter = require("events");
 const { EffectTrigger } = require("../../shared/effect-constants");
@@ -8,8 +7,16 @@ const frontendCommunicator = require("../common/frontend-communicator");
 const cloudSync = require("../cloud-sync/cloud-sync");
 
 class EffectManager extends EventEmitter {
+    /**
+     * @type {Record<string, Array<{ eventSourceId: string, eventId: string }>>}
+     */
+    additionalEffectEvents = {};
+
     constructor() {
         super();
+        /**
+         * @type {import("../../types/effects").EffectType[]}
+         */
         this._registeredEffects = [];
     }
 
@@ -66,6 +73,50 @@ class EffectManager extends EventEmitter {
                     event: e.overlayExtension.event
                 };
             });
+    }
+
+    getEffectsForEvent(eventSourceId, eventId) {
+        const effects = this.getEffectDefinitions()
+            .filter((e) => {
+                if (!e.triggers) {
+                    return true;
+                }
+                const trigger = e.triggers["event"];
+                return trigger === true
+                    || (Array.isArray(trigger)
+                        && trigger.some(e => e === `${eventSourceId}:${eventId}`));
+            });
+        return effects;
+    }
+
+    addEventToEffect(effectId, eventSourceId, eventId) {
+        if (this.getEffectsForEvent(eventSourceId, eventId).some(e => e.id === effectId)
+            || this.additionalEffectEvents[effectId]?.some(e => e.eventSourceId === eventSourceId && e.eventId === eventId)) {
+            logger.warn(`Effect ${effectId} already setup for event ${eventSourceId}:${eventId}`);
+            return;
+        }
+
+        const additionalEvents = this.additionalEffectEvents[effectId] ?? [];
+
+        additionalEvents.push({ eventSourceId, eventId });
+
+        this.additionalEffectEvents[effectId] = additionalEvents;
+
+        logger.debug(`Added event ${eventSourceId}:${eventId} to effect ${effectId}`);
+    }
+
+    removeEventFromEffect(effectId, eventSourceId, eventId) {
+        let additionalEvents = this.additionalEffectEvents[effectId] ?? [];
+
+        if (!additionalEvents.some(e => e.eventSourceId === eventSourceId && e.eventId === eventId)) {
+            logger.warn(`Effect ${effectId} does not have a plugin registration for event ${eventSourceId}:${eventId}`);
+            return;
+        }
+
+        additionalEvents = additionalEvents.filter(e => e.eventSourceId !== eventSourceId && e.eventId !== eventId);
+        this.additionalEffectEvents[effectId] = additionalEvents;
+
+        logger.debug(`Removed event ${eventSourceId}:${eventId} from effect ${effectId}`);
     }
 
     /**
@@ -183,7 +234,10 @@ frontendCommunicator.onAsync("getEffectDefinitions", async (triggerData) => {
                                 return true;
                             }
                             if (Array.isArray(effectTriggerData)) {
-                                return effectTriggerData.includes(triggerMeta.triggerId);
+                                const additionalEffectEvents = (manager.additionalEffectEvents[e.id] ?? [])
+                                    .map(e => `${e.eventSourceId}:${e.eventId}`);
+                                return effectTriggerData.includes(triggerMeta.triggerId)
+                                    || additionalEffectEvents.includes(triggerMeta.triggerId);
                             }
                             return true;
                         default:
@@ -199,9 +253,9 @@ frontendCommunicator.onAsync("getEffectDefinitions", async (triggerData) => {
     return filteredEffectDefs;
 });
 
-ipcMain.on("getEffectDefinition", (event, effectId) => {
+frontendCommunicator.on("getEffectDefinition", (effectId) => {
     logger.debug("got effect request", effectId);
-    event.returnValue = manager.mapEffectForFrontEnd(
+    return manager.mapEffectForFrontEnd(
         manager.getEffectById(effectId)
     );
 });

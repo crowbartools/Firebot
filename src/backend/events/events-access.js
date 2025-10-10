@@ -1,9 +1,7 @@
 "use strict";
 
-const { ipcMain } = require("electron");
 const logger = require("../logwrapper");
 const profileManager = require("../common/profile-manager");
-
 const frontendCommunicator = require("../common/frontend-communicator");
 
 const EVENTS_FOLDER = "/events/";
@@ -195,16 +193,16 @@ function getEvent(eventId) {
     return event;
 }
 
-ipcMain.on("getAllEventData", (event) => {
+frontendCommunicator.on("getAllEventData", () => {
     logger.debug("got 'get all event data' request");
-    event.returnValue = {
+    return {
         mainEvents: Array.isArray(mainEvents) ? mainEvents : Object.values(mainEvents),
         groups: Object.values(groups),
         sortTags: sortTags
     };
 });
 
-ipcMain.on("eventUpdate", (_, data) => {
+frontendCommunicator.on("eventUpdate", (data) => {
     logger.debug("got 'eventUpdate' event");
 
     const { action, meta } = data;

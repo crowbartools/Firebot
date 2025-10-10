@@ -95,7 +95,7 @@
 
             service.manuallyTriggerPresetEffectList = (presetEffectListId, args, isQuickAction) => {
                 const presetEffectList = service.presetEffectLists.find(pel => pel.id === presetEffectListId);
-                ipcRenderer.send('runEffectsManually', {
+                backendCommunicator.send('runEffectsManually', {
                     effects: presetEffectList.effects,
                     metadata: args ? { presetListArgs: args } : undefined,
                     triggerType: isQuickAction ? "quick_action" : undefined

@@ -1,8 +1,8 @@
 "use strict";
 
-const { ipcMain } = require("electron");
 const logger = require("../../logwrapper");
 const EventEmitter = require("events");
+const frontendCommunicator = require("../../common/frontend-communicator");
 
 class FilterManager extends EventEmitter {
 
@@ -144,10 +144,10 @@ class FilterManager extends EventEmitter {
 
 const manager = new FilterManager();
 
-ipcMain.on("getFiltersForEvent", (event, data) => {
+frontendCommunicator.on("getFiltersForEvent", (data) => {
     logger.info("got 'get all filters' request");
     const { eventSourceId, eventId } = data;
-    event.returnValue = manager.getFiltersForEvent(eventSourceId, eventId).map((f) => {
+    return manager.getFiltersForEvent(eventSourceId, eventId).map((f) => {
         return {
             id: f.id,
             name: f.name,

@@ -118,11 +118,20 @@ export const countdownToDate: OverlayWidgetType<Settings, State> = {
 
                 // eslint-disable-next-line
                 const DateTime = (window as any).luxon.DateTime;
+
+                // eslint-disable-next-line
+                const Duration = (window as any).luxon.Duration;
+
                 const units: (keyof DurationLikeObject)[] = ["seconds", "minutes", "hours", "days", "months", "years"];
 
                 // eslint-disable-next-line
-                const remainingTime: Duration = (<DateTime>DateTime.fromISO(config.settings?.targetDateTime))
+                let remainingTime: Duration = (<DateTime>DateTime.fromISO(config.settings?.targetDateTime))
                     .diffNow(units);
+
+                if (remainingTime.valueOf() < 0) {
+                    // eslint-disable-next-line
+                    remainingTime = Duration.fromMillis(0).shiftTo(...units);
+                }
 
                 let formatted = "";
                 if (config.settings?.format === "human") {

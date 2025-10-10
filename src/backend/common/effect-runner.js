@@ -1,5 +1,4 @@
 'use strict';
-const { ipcMain } = require('electron');
 const logger = require('../logwrapper');
 const effectManager = require("../effects/effectManager");
 const { EffectTrigger } = require("../../shared/effect-constants");
@@ -12,6 +11,7 @@ const {
     addEffectAbortController,
     removeEffectAbortController
 } = require("./effect-abort-helpers");
+const frontendCommunicator = require('./frontend-communicator');
 
 const SKIP_VARIABLE_PROPERTIES = ["list", "leftSideValue", "rightSideValue", "effectLabel", 'effectListLabel'];
 
@@ -353,7 +353,7 @@ function runEffectsManually(effects, metadata = {}, triggerType = EffectTrigger.
 
 // Manually play a button.
 // This listens for an event from the render and will activate a button manually.
-ipcMain.on('runEffectsManually', function (event, { effects, metadata, triggerType }) {
+frontendCommunicator.on('runEffectsManually', function ({ effects, metadata, triggerType }) {
     runEffectsManually(effects, metadata, triggerType);
 });
 
