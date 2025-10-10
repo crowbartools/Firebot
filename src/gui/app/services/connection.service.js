@@ -106,21 +106,21 @@
 
             // Create new profile
             service.createNewProfile = function(profileId) {
-                ipcRenderer.send("createProfile", profileId);
+                backendCommunicator.send("createProfile", profileId);
             };
 
             service.renameProfile = function(newProfileId) {
-                ipcRenderer.send("renameProfile", newProfileId);
+                backendCommunicator.send("renameProfile", newProfileId);
             };
 
             // delete profile
             service.deleteProfile = function() {
-                ipcRenderer.send("deleteProfile");
+                backendCommunicator.send("deleteProfile");
             };
 
             // switch profile
             service.switchProfiles = function(profileId) {
-                ipcRenderer.send("switchProfile", profileId);
+                backendCommunicator.send("switchProfile", profileId);
             };
 
             service.profiles = [];
@@ -133,7 +133,7 @@
                     const globalSettingDb = dataAccess.getJsonDbInUserData("./global-settings");
                     activeProfileIds = globalSettingDb.getData("./profiles/activeProfiles");
                 } catch (err) {
-                    logger.warn(`Couldn't load active profiles.`);
+                    logger.warn(`Couldn't load active profiles.`, err);
                     return;
                 }
 
@@ -156,7 +156,7 @@
                         const profileDb = dataAccess.getJsonDbInUserData(`./profiles/${profileId}/auth-twitch`);
                         streamer = profileDb.getData("/streamer");
                     } catch (err) {
-                        logger.info(`Couldn't get streamer data for profile ${profileId} while updating the UI. It's possible this account hasn't logged in yet.`);
+                        logger.info(`Couldn't get streamer data for profile ${profileId} while updating the UI. It's possible this account hasn't logged in yet.`, err);
                     }
 
                     if (streamer) {

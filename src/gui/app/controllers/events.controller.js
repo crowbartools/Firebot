@@ -328,7 +328,7 @@
 
                 const currentGroupId = eventsService.getSelectedTab();
                 const availableGroups = [
-                    { id: 'mainevents', name: "Main Events"},
+                    { id: 'mainevents', name: "Main Events" },
                     ...eventsService.getEventGroups().map(g => ({ id: g.id, name: g.name }))
                 ].filter(g => g.id !== currentGroupId);
 
@@ -445,7 +445,7 @@
             $scope.fireEventManually = function(eventId) {
                 const event = $scope.getSelectedEvents().find(e => e.id === eventId);
                 if (event != null) {
-                    ipcRenderer.send("triggerManualEvent", {
+                    backendCommunicator.send("triggerManualEvent", {
                         eventId: event.eventId,
                         sourceId: event.sourceId,
                         eventSettingsId: event.id

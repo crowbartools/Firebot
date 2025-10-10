@@ -1,5 +1,5 @@
 "use strict";
-const { ipcMain, shell } = require("electron");
+const { shell } = require("electron");
 const { v4: uuid } = require("uuid");
 const logger = require("../../../logwrapper");
 const utils = require("../../../utility");
@@ -26,7 +26,7 @@ const activeCustomScripts = {};
  * @param {Trigger} trigger
  */
 async function executeScript(scriptData, trigger, isStartupScript = false) {
-    const { scriptName, parameters, id} = scriptData;
+    const { scriptName, parameters, id } = scriptData;
 
     const scriptFilePath = getScriptPath(scriptName);
 
@@ -254,7 +254,7 @@ async function stopAllScripts() {
     logger.info("Stopped all custom scripts");
 }
 
-ipcMain.on("openScriptsFolder", function () {
+frontendCommunicator.on("openScriptsFolder", () => {
     shell.openPath(profileManager.getPathInProfile("/scripts"));
 });
 

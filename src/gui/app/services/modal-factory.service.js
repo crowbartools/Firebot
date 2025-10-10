@@ -879,7 +879,7 @@
                         };
 
                         $scope.runEffect = function() {
-                            ipcRenderer.send('runEffectsManually', { effects: { list: [$scope.effect] } });
+                            backendCommunicator.send('runEffectsManually', { effects: { list: [$scope.effect] } });
                         };
 
                         $scope.delete = function() {

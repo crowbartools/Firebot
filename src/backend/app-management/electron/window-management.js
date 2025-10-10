@@ -1,7 +1,7 @@
 "use strict";
 
 const electron = require("electron");
-const { ipcMain, BrowserWindow, BrowserView, Menu, shell, dialog, nativeImage } = electron;
+const { BrowserWindow, BrowserView, Menu, shell, dialog, nativeImage } = electron;
 const path = require("path");
 const url = require("url");
 const windowStateKeeper = require("electron-window-state");
@@ -417,12 +417,12 @@ async function createMainWindow() {
         defaultHeight: 720
     });
 
-    ipcMain.on('preload.openDevTools', (event) => {
+    frontendCommunicator.on('preload.openDevTools', () => {
         if (exports.mainWindow != null) {
             exports.mainWindow.webContents.openDevTools();
-            event.returnValue = true;
+            return true;
         }
-        event.returnValue = false;
+        return false;
     });
 
     const additionalArguments = [];
