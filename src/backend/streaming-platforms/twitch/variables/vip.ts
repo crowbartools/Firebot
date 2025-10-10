@@ -10,9 +10,9 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.COMMON, VariableCategory.USER],
         possibleDataOutput: [OutputDataType.ARRAY]
     },
-    evaluator: async () => {
+    evaluator: () => {
         try {
-            const vips = await roleManager.getVips();
+            const vips = roleManager.getVips();
             return vips.map(v => ({
                 userId: v.id,
                 userName: v.username,
