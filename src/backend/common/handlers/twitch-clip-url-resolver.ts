@@ -1,11 +1,11 @@
 import { HelixClip } from '@twurple/api';
 import { BrowserWindow } from 'electron';
 import { SettingsManager } from '../settings-manager';
-import windowManagement from '../../app-management/electron/window-management';
+import { WindowManager } from '../../app-management/electron/window-manager';
 
 let window: BrowserWindow = null;
 
-windowManagement.events.on('main-window-closed', () => {
+WindowManager.events.on('main-window-closed', () => {
     if (window != null && !window.isDestroyed()) {
         window.close();
     }
@@ -31,9 +31,9 @@ function attemptToAcquireDirectUrl(clipId: string): Promise<string | null> {
 
     return new Promise((resolve) => {
         const sandbox: {
-            finished: boolean,
-            timeout?: ReturnType<typeof setTimeout>,
-            resolve?: (url?: string | null) => void,
+            finished: boolean;
+            timeout?: ReturnType<typeof setTimeout>;
+            resolve?: (url?: string | null) => void;
         } = {
             finished: false
         };
@@ -134,7 +134,7 @@ function isValidTwitchUrl(url: string): boolean {
     }
 }
 
-export const resolveTwitchClipVideoUrl = async (clip: HelixClip): Promise<{ url: string; useIframe: boolean; }> => {
+export const resolveTwitchClipVideoUrl = async (clip: HelixClip): Promise<{ url: string, useIframe: boolean }> => {
     const useExperimentalTwitchClipUrlResolver = SettingsManager.getSetting("UseExperimentalTwitchClipUrlResolver");
 
     if (!useExperimentalTwitchClipUrlResolver) {

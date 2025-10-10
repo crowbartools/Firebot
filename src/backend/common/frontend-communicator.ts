@@ -1,12 +1,13 @@
-import { ipcMain } from "electron";
+import { BrowserWindow, ipcMain } from "electron";
 import { v4 as uuid } from "uuid";
 
 import { FrontendCommunicatorModule } from "../../types/script-modules";
+import { Awaitable } from "../../types/util-types";
 
 class FrontendCommunicator implements FrontendCommunicatorModule {
     private _listeners: Record<string, {
         id: string;
-        callback: (...args: Array<unknown>) => PromiseLike<unknown> | unknown;
+        callback: (...args: Array<unknown>) => Awaitable<unknown>;
         async: boolean;
     }[]> = {};
 
@@ -15,7 +16,7 @@ class FrontendCommunicator implements FrontendCommunicatorModule {
             const eventListeners = this._listeners[eventName];
             for (const listener of eventListeners) {
                 if (listener.async) {
-                    (listener.callback(data) as Promise<unknown>)
+                    void (listener.callback(data) as Promise<unknown>)
                         .then((returnValue: unknown) => {
                             this.send(`${eventName}:reply`, returnValue);
                         });
@@ -28,8 +29,8 @@ class FrontendCommunicator implements FrontendCommunicatorModule {
     }
 
     send(eventName: string, data?: unknown): void {
-        if (globalThis.renderWindow?.webContents?.isDestroyed() === false) {
-            globalThis.renderWindow.webContents.send(eventName, data);
+        if ((globalThis.renderWindow as BrowserWindow)?.webContents?.isDestroyed() === false) {
+            (globalThis.renderWindow as BrowserWindow).webContents.send(eventName, data);
         }
     }
 
@@ -37,9 +38,9 @@ class FrontendCommunicator implements FrontendCommunicatorModule {
         return new Promise((resolve) => {
             if (globalThis.renderWindow != null) {
                 ipcMain.once(`${type}:reply`, (_, eventData) => {
-                    resolve(eventData);
+                    resolve(eventData as ReturnPayload);
                 });
-                globalThis.renderWindow.webContents.send(type, data);
+                (globalThis.renderWindow as BrowserWindow).webContents.send(type, data);
             }
         });
     }

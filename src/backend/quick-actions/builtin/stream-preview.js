@@ -1,7 +1,7 @@
 "use strict";
 
 const SystemQuickAction = require("../quick-action");
-const windowManagement = require("../../app-management/electron/window-management");
+const { WindowManager } = require("../../app-management/electron/window-manager");
 
 class StreamPreviewQuickAction extends SystemQuickAction {
     constructor() {
@@ -14,7 +14,7 @@ class StreamPreviewQuickAction extends SystemQuickAction {
     }
 
     onTriggerEvent() {
-        windowManagement.createStreamPreviewWindow();
+        WindowManager.createStreamPreviewWindow();
     }
 }
 

@@ -5,7 +5,7 @@ import { AuthProvider, AuthProviderDefinition } from "./auth";
 import { SettingsManager } from "../common/settings-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import { Notification, app } from "electron";
-import windowManagement from "../app-management/electron/window-management";
+import { WindowManager } from "../app-management/electron/window-manager";
 
 class AuthManager extends EventEmitter {
     private readonly _httpPort: number;
@@ -66,7 +66,7 @@ class AuthManager extends EventEmitter {
     }
 
     buildOAuthClientForProvider(provider: AuthProviderDefinition, redirectUri: string): ClientOAuth2 {
-        let scopes;
+        let scopes: string[];
         if (provider.scopes) {
             scopes = Array.isArray(provider.scopes)
                 ? (scopes = provider.scopes)
@@ -181,8 +181,8 @@ frontendCommunicator.onAsync("begin-device-auth", async (providerId: string): Pr
 
                 if (
                     Notification.isSupported() &&
-                    windowManagement.mainWindow &&
-                    !windowManagement.mainWindow.isFocused()
+                    WindowManager.mainWindow &&
+                    !WindowManager.mainWindow.isFocused()
                 ) {
                     const successfulAuthNotification = new Notification({
                         title: "Successfully authenticated with Twitch!",

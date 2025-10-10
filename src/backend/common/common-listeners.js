@@ -12,13 +12,13 @@ exports.setupCommonListeners = () => {
     const webServer = require("../../server/http-server-manager");
 
     frontendCommunicator.on("show-twitch-preview", () => {
-        const windowManagement = require("../app-management/electron/window-management");
-        windowManagement.createStreamPreviewWindow();
+        const { WindowManager } = require("../app-management/electron/window-manager");
+        WindowManager.createStreamPreviewWindow();
     });
 
     frontendCommunicator.on("show-variable-inspector", () => {
-        const windowManagement = require("../app-management/electron/window-management");
-        windowManagement.createVariableInspectorWindow();
+        const { WindowManager } = require("../app-management/electron/window-manager");
+        WindowManager.createVariableInspectorWindow();
     });
 
     frontendCommunicator.onAsync("show-save-dialog", async (data) => {

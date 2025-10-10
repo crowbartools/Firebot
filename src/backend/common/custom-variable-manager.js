@@ -2,7 +2,7 @@
 "use strict";
 const logger = require('../logwrapper');
 const eventManager = require("../events/EventManager");
-const windowManagement = require("../app-management/electron/window-management");
+const { WindowManager } = require("../app-management/electron/window-manager");
 const frontendCommunicator = require('./frontend-communicator');
 
 const EventEmitter = require("events");
@@ -19,7 +19,7 @@ const onCustomVariableExpire = (key, value) => {
         expiredCustomVariableData: value
     });
 
-    windowManagement.sendVariableExpireToInspector(key, value);
+    WindowManager.sendVariableExpireToInspector(key, value);
 };
 
 const onCustomVariableDelete = (key, value) => {
@@ -27,7 +27,7 @@ const onCustomVariableDelete = (key, value) => {
         name: key,
         value: value
     });
-    windowManagement.sendVariableDeleteToInspector(key);
+    WindowManager.sendVariableDeleteToInspector(key);
 };
 
 cache.on("expired", onCustomVariableExpire);
@@ -39,7 +39,7 @@ cache.on("set", function(key, value) {
         createdCustomVariableData: value
     });
 
-    windowManagement.sendVariableCreateToInspector(key, value, cache.getTtl(key));
+    WindowManager.sendVariableCreateToInspector(key, value, cache.getTtl(key));
 });
 
 cache.on("del", onCustomVariableDelete);

@@ -83,7 +83,7 @@
         "countup.js-angular1": "^1.0.0",
         "cron": "^4.3.3",
         "cronstrue": "^2.21.0",
-        "custom-electron-titlebar": "^4.1.0",
+        "custom-electron-titlebar": "^4.2.8",
         "deepmerge": "^4.2.2",
         "dompurify": "^2.2.2",
         "ejs": "^3.1.10",

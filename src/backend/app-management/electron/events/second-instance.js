@@ -12,15 +12,15 @@ exports.secondInstance = (event, argv) => {
     const logger = require("../../../logwrapper");
     try {
         logger.debug("Second instance detected, focusing main window.");
-        const { mainWindow } = require("../window-management");
-        if (mainWindow) {
-            if (!mainWindow.isVisible()) {
-                mainWindow.show();
+        const { WindowManager } = require("../window-manager");
+        if (WindowManager.mainWindow) {
+            if (!WindowManager.mainWindow.isVisible()) {
+                WindowManager.mainWindow.show();
             }
-            if (mainWindow.isMinimized()) {
-                mainWindow.restore();
+            if (WindowManager.mainWindow.isMinimized()) {
+                WindowManager.mainWindow.restore();
             }
-            mainWindow.focus();
+            WindowManager.mainWindow.focus();
 
 
             fileOpenHelpers.checkForFirebotSetupPathInArgs(argv);
