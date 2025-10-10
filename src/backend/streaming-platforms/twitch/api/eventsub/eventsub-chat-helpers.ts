@@ -57,15 +57,16 @@ class TwitchEventSubChatHelpers {
     // Thanks, IRC
     // eslint-disable-next-line no-control-regex
     private readonly CHAT_ACTION_REGEX = /^[\x01]ACTION (.*)[\x01]$/;
-
     private readonly URL_REGEX = utils.getNonGlobalUrlRegex();
+
+    readonly HIGHLIGHT_MESSAGE_REWARD_ID = "highlight-message";
 
     private _badgeCache: HelixChatBadgeSet[] = [];
 
     private _getAllTwitchEmotes = false;
     private _twitchEmotes: {
-        streamer: HelixEmoteBase[],
-        bot: HelixEmoteBase[]
+        streamer: HelixEmoteBase[];
+        bot: HelixEmoteBase[];
     } = { streamer: [], bot: [] };
 
     private _thirdPartyEmotes: ThirdPartyEmote[] = [];
@@ -416,7 +417,7 @@ class TwitchEventSubChatHelpers {
             return [];
         }
 
-        const chatBadges = [];
+        const chatBadges: ChatBadge[] = [];
 
         for (const [setName, version] of Object.entries(badgeData)) {
 
@@ -534,6 +535,7 @@ class TwitchEventSubChatHelpers {
             tagged: false,
             action: isAction,
             isAnnouncement,
+            // eslint-disable-next-line
             announcementColor: announcementColor ? announcementColor.toUpperCase() : undefined,
             isCheer: false,
             isReply: false,
