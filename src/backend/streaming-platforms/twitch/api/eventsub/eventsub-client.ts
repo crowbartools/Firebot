@@ -1,6 +1,8 @@
 import { EventSubSubscription } from "@twurple/eventsub-base";
 import { EventSubWsListener } from "@twurple/eventsub-ws";
 
+import { FirebotChatMessage } from "../../../../../types/chat";
+
 import logger from "../../../../logwrapper";
 import accountAccess from "../../../../common/account-access";
 import frontendCommunicator from "../../../../common/frontend-communicator";
@@ -14,10 +16,24 @@ import viewerDatabase from "../../../../viewers/viewer-database";
 import { SavedChannelReward } from "../../../../../types/channel-rewards";
 import channelRewardManager from "../../../../channel-rewards/channel-reward-manager";
 import { getChannelRewardImageUrl, mapEventSubRewardToTwitchData } from "./eventsub-helpers";
+import eventSubChatHelpers from "./eventsub-chat-helpers";
+import activeUserHandler from "../../../../chat/chat-listeners/active-user-handler";
+import timerManager from "../../../../timers/timer-manager";
+import chatCommandHandler from "../../../../chat/commands/chat-command-handler";
+import raidMessageChecker from "../../../../chat/moderation/raid-message-checker";
+import { TypedEmitter } from "tiny-typed-emitter";
 
-class TwitchEventSubClient {
+type EventSubClientEvents = {
+    "chat-message": (message: FirebotChatMessage) => void;
+};
+
+class TwitchEventSubClient extends TypedEmitter<EventSubClientEvents> {
     private _eventSubListener: EventSubWsListener;
     private _subscriptions: Array<EventSubSubscription> = [];
+
+    constructor() {
+        super();
+    }
 
     private createSubscriptions(): void {
         const streamer = accountAccess.getAccounts().streamer;
@@ -788,6 +804,18 @@ class TwitchEventSubClient {
                         event.isPrime,
                         event.type === "resub"
                     );
+
+                    if (event.type === "resub") {
+                        try {
+                            const message = await eventSubChatHelpers.buildChatMessageFromChatEvent(event);
+                            frontendCommunicator.send("twitch:chat:message", message);
+                            this.emit("chat-message", message);
+                        } catch (error) {
+                            logger.error("Failed to parse resub message", error);
+                        }
+                    }
+
+                    void viewerDatabase.calculateAutoRanks(event.chatterId);
                     break;
 
                 case "community_sub_gift":
@@ -839,12 +867,109 @@ class TwitchEventSubClient {
                     await viewerDatabase.calculateAutoRanks(event.chatterId);
                     break;
 
+                case "announcement":
+                    {
+                        const message = await eventSubChatHelpers.buildChatMessageFromChatEvent(event);
+
+                        frontendCommunicator.send("twitch:chat:message", message);
+                        twitchEventsHandler.announcement.triggerAnnouncement(
+                            message.username,
+                            message.userId,
+                            message.userDisplayName,
+                            message.roles,
+                            message.rawText,
+                            message.id
+                        );
+                    }
+                    break;
+
                 default:
                     logger.debug(`Unknown EventSub chat notification type: ${event.type}. Metadata:`, event);
                     break;
             }
         });
         this._subscriptions.push(chatNotificationSubscription);
+
+        const chatMessageSubscription = this._eventSubListener.onChannelChatMessage(streamer.userId, streamer.userId, async (event) => {
+            const message = await eventSubChatHelpers.buildChatMessageFromChatEvent(event);
+
+            if (message.isVip === true) {
+                chatRolesManager.addVipToVipList({
+                    id: event.chatterId,
+                    username: event.chatterName,
+                    displayName: event.chatterDisplayName
+                });
+            } else {
+                chatRolesManager.removeVipFromVipList(event.chatterId);
+            }
+
+            if (message.isHighlighted) {
+                message.customRewardId = eventSubChatHelpers.HIGHLIGHT_MESSAGE_REWARD_ID;
+                frontendCommunicator.send("twitch:chat:rewardredemption", {
+                    id: eventSubChatHelpers.HIGHLIGHT_MESSAGE_REWARD_ID,
+                    messageText: message.rawText,
+                    user: {
+                        id: message.userId,
+                        username: message.username,
+                        displayName: message.userDisplayName
+                    },
+                    reward: {
+                        id: eventSubChatHelpers.HIGHLIGHT_MESSAGE_REWARD_ID,
+                        name: "Highlight Message",
+                        cost: 0,
+                        imageUrl: "https://static-cdn.jtvnw.net/automatic-reward-images/highlight-4.png"
+                    }
+                });
+            }
+
+            frontendCommunicator.send("twitch:chat:message", message);
+            this.emit("chat-message", message);
+
+            const { ranCommand, command, userCommand } = await chatCommandHandler.handleChatMessage(message);
+
+            await activeUserHandler.addActiveUser({
+                userId: event.chatterId,
+                userName: event.chatterName,
+                displayName: event.chatterDisplayName,
+                isBroadcaster: message.isBroadcaster,
+                isMod: message.isMod,
+                isFounder: message.isFounder,
+                isSubscriber: message.isSubscriber,
+                isVip: message.isVip
+            }, true);
+
+            twitchEventsHandler.viewerArrived.triggerViewerArrived(
+                event.chatterName,
+                event.chatterId,
+                event.chatterDisplayName,
+                event.messageText,
+                message
+            );
+
+            twitchEventsHandler.chatMessage.triggerChatMessage(
+                message,
+                ranCommand,
+                ranCommand ? command : null,
+                ranCommand ? userCommand : null
+            );
+
+            if (message.isFirstChat) {
+                twitchEventsHandler.chatMessage.triggerFirstTimeChat(message);
+            }
+
+            const { streamer, bot } = accountAccess.getAccounts();
+            if (event.chatterName !== streamer.username && event.chatterName !== bot.username) {
+                timerManager.incrementChatLineCounters();
+            }
+
+            if (message.action !== true) {
+                await raidMessageChecker.sendMessageToCache({
+                    rawText: message.rawText,
+                    userId: message.userId
+                });
+            }
+        });
+        this._subscriptions.push(chatMessageSubscription);
     }
 
     createClient(): void {
@@ -866,6 +991,8 @@ class TwitchEventSubClient {
             logger.error("Failed to connect to Twitch EventSub", error);
             return;
         }
+
+        void eventSubChatHelpers.cacheChatAssets();
     }
 
     removeSubscriptions(): void {
