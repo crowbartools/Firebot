@@ -7,7 +7,9 @@ import chatRolesManager from "../roles/chat-roles-manager";
 import connectionManager from "../common/connection-manager";
 import eventManager from "../events/EventManager";
 import twitchChat from "../chat/twitch-chat";
+import twitchChatterPoll from "../streaming-platforms/twitch/chatter-poll";
 import frontendCommunicator from "../common/frontend-communicator";
+import activeUserHandler from "../chat/chat-listeners/active-user-handler";
 
 class ViewerOnlineStatusManager {
     private _updateLastSeenIntervalId: NodeJS.Timeout;
@@ -40,7 +42,7 @@ class ViewerOnlineStatusManager {
     async getOnlineViewers(): Promise<FirebotViewer[]> {
         try {
             return await viewerDatabase.getViewerDb().findAsync({ online: true });
-        } catch (error) {
+        } catch {
             return [];
         }
     }
@@ -117,8 +119,8 @@ class ViewerOnlineStatusManager {
     }
 
     async setAllChatViewersOnline(): Promise<void> {
-        await twitchChat.populateChatterList();
-        const viewers = twitchChat.getViewerList();
+        await twitchChatterPoll.runChatterPoll();
+        const viewers = activeUserHandler.getAllOnlineUsers();
 
         if (viewers == null) {
             return;
@@ -134,7 +136,7 @@ class ViewerOnlineStatusManager {
                 twitchRoles: viewer.twitchRoles
             };
 
-            this.setChatViewerOnline(viewerPacket);
+            void this.setChatViewerOnline(viewerPacket);
         }
     }
 
@@ -188,7 +190,7 @@ class ViewerOnlineStatusManager {
             const { numAffected } = await viewerDatabase.getViewerDb().updateAsync({ online: true }, { $set: { lastSeen: Date.now() } }, { multi: true });
 
             logger.debug(`ViewerDB: Setting last seen date for ${numAffected} viewers`);
-        } catch (error) {
+        } catch {
             logger.debug("ViewerDB: Error setting last seen");
         }
     }
@@ -238,7 +240,7 @@ class ViewerOnlineStatusManager {
 
                 onlineViewers.forEach(viewer => this.calcViewerOnlineMinutes(viewer));
             }
-        } catch (error) { }
+        } catch { }
     }
 
     /**
@@ -255,13 +257,13 @@ class ViewerOnlineStatusManager {
         }
         if (newHours !== previousHours) {
 
-            eventManager.triggerEvent("firebot", "view-time-update", {
+            void eventManager.triggerEvent("firebot", "view-time-update", {
                 username: viewer.username,
                 previousViewTime: previousHours,
                 newViewTime: newHours
             });
 
-            viewerDatabase.calculateAutoRanks(viewer._id, "view_time");
+            void viewerDatabase.calculateAutoRanks(viewer._id, "view_time");
         }
     }
 }
@@ -269,11 +271,11 @@ class ViewerOnlineStatusManager {
 const viewerOnlineStatusManager = new ViewerOnlineStatusManager();
 
 twitchChat.on("connected", () => {
-    viewerOnlineStatusManager.setAllChatViewersOnline();
+    void viewerOnlineStatusManager.setAllChatViewersOnline();
 });
 
 twitchChat.on("disconnected", () => {
-    viewerOnlineStatusManager.setAllViewersOffline();
+    void viewerOnlineStatusManager.setAllViewersOffline();
 });
 
 export = viewerOnlineStatusManager;

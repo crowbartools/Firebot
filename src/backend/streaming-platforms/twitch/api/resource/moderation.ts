@@ -2,14 +2,106 @@ import logger from '../../../../logwrapper';
 import accountAccess from "../../../../common/account-access";
 import { ApiClient, HelixBanUserRequest, HelixModerator, UserIdResolvable, extractUserId } from "@twurple/api";
 import frontendCommunicator from '../../../../common/frontend-communicator';
+import { BasicViewer } from '../../../../../types/viewers';
+import { TypedEmitter } from 'tiny-typed-emitter';
 
-export class TwitchModerationApi {
+interface UserModRequest {
+    username: string;
+    shouldBeMod: boolean;
+}
+
+interface UserBanRequest {
+    username: string;
+    shouldBeBanned: boolean;
+}
+
+interface UserVipRequest {
+    username: string;
+    shouldBeVip: boolean;
+}
+
+type ModerationEvents = {
+    "vip:added": (user: BasicViewer) => void;
+    "vip:removed": (userId: string) => void;
+    "moderator:added": (user: BasicViewer) => void;
+    "moderator:removed": (userId: string) => void;
+};
+
+export class TwitchModerationApi extends TypedEmitter<ModerationEvents> {
     private _streamerClient: ApiClient;
     private _botClient: ApiClient;
 
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
+        super();
+
         this._streamerClient = streamerClient;
         this._botClient = botClient;
+
+        frontendCommunicator.onAsync("update-user-banned-status", async (data: UserBanRequest) => {
+            if (data == null) {
+                return;
+            }
+
+            const { username, shouldBeBanned } = data;
+            if (username == null || shouldBeBanned == null) {
+                return;
+            }
+
+            const user = await this._streamerClient.users.getUserByName(username);
+            if (user == null) {
+                return;
+            }
+
+            if (shouldBeBanned) {
+                await this.banUser(user.id, "Banned via Firebot");
+            } else {
+                await this.unbanUser(user.id);
+            }
+        });
+
+        frontendCommunicator.onAsync("update-user-mod-status", async (data: UserModRequest) => {
+            if (data == null) {
+                return;
+            }
+
+            const { username, shouldBeMod } = data;
+            if (username == null || shouldBeMod == null) {
+                return;
+            }
+
+            const user = await this._streamerClient.users.getUserByName(username);
+            if (user == null) {
+                return;
+            }
+
+            if (shouldBeMod) {
+                await this.addChannelModerator(user.id);
+            } else {
+                await this.removeChannelModerator(user.id);
+            }
+        });
+
+        frontendCommunicator.onAsync("update-user-vip-status", async (data: UserVipRequest) => {
+            if (data == null) {
+                return;
+            }
+
+            const { username, shouldBeVip } = data;
+            if (username == null || shouldBeVip == null) {
+                return;
+            }
+
+            const user = await this._streamerClient.users.getUserByName(username);
+            if (user == null) {
+                return;
+            }
+
+            if (shouldBeVip) {
+                await this.addChannelVip(user.id);
+            } else {
+                await this.removeChannelVip(user.id);
+            }
+        });
     }
 
     /**
@@ -60,7 +152,7 @@ export class TwitchModerationApi {
 
             return !!response;
         } catch (error) {
-            logger.error("Error timing out user", error.message);
+            logger.error("Error timing out user", (error as Error).message);
         }
 
         return false;
@@ -83,7 +175,7 @@ export class TwitchModerationApi {
 
             return response.data.some(b => b.userId === userId && b.expiryDate == null);
         } catch (error) {
-            logger.error(`Error checking if user ${userId} is banned`, error.message);
+            logger.error(`Error checking if user ${userId} is banned`, (error as Error).message);
             return null;
         }
     }
@@ -109,7 +201,7 @@ export class TwitchModerationApi {
 
             return true;
         } catch (error) {
-            logger.error("Error banning user", error.message);
+            logger.error("Error banning user", (error as Error).message);
         }
 
         return false;
@@ -129,7 +221,7 @@ export class TwitchModerationApi {
 
             return true;
         } catch (error) {
-            logger.error("Error unbanning/removing timeout for user", error.message);
+            logger.error("Error unbanning/removing timeout for user", (error as Error).message);
         }
 
         return false;
@@ -150,7 +242,7 @@ export class TwitchModerationApi {
 
             moderators.push(...await this._streamerClient.moderation.getModeratorsPaginated(streamerId).getAll());
         } catch (error) {
-            logger.error("Error getting moderators", error.message);
+            logger.error("Error getting moderators", (error as Error).message);
         }
 
         return moderators;
@@ -168,9 +260,15 @@ export class TwitchModerationApi {
         try {
             await this._streamerClient.moderation.addModerator(streamerId, userId);
 
+            const user = await this._streamerClient.users.getUserById(userId);
+            this.emit("moderator:added", {
+                id: user.id,
+                username: user.name,
+                displayName: user.displayName
+            });
             return true;
         } catch (error) {
-            logger.error("Error adding moderator", error.message);
+            logger.error("Error adding moderator", (error as Error).message);
         }
 
         return false;
@@ -187,10 +285,10 @@ export class TwitchModerationApi {
 
         try {
             await this._streamerClient.moderation.removeModerator(streamerId, userId);
-
+            this.emit("moderator:removed", userId as string);
             return true;
         } catch (error) {
-            logger.error("Error removing moderator", error.message);
+            logger.error("Error removing moderator", (error as Error).message);
         }
 
         return false;
@@ -207,9 +305,16 @@ export class TwitchModerationApi {
 
         try {
             await this._streamerClient.channels.addVip(streamerId, userId);
+
+            const user = await this._streamerClient.users.getUserById(userId);
+            this.emit("vip:added", {
+                id: user.id,
+                username: user.name,
+                displayName: user.displayName
+            });
             return true;
         } catch (error) {
-            logger.error("Error adding VIP", error.message);
+            logger.error("Error adding VIP", (error as Error).message);
         }
 
         return false;
@@ -226,9 +331,10 @@ export class TwitchModerationApi {
 
         try {
             await this._streamerClient.channels.removeVip(streamerId, userId);
+            this.emit("vip:removed", userId as string);
             return true;
         } catch (error) {
-            logger.error("Error removing VIP", error.message);
+            logger.error("Error removing VIP", (error as Error).message);
         }
 
         return false;
@@ -244,9 +350,10 @@ export class TwitchModerationApi {
             const streamerId = accountAccess.getAccounts().streamer.userId;
             await this._streamerClient.moderation.processHeldAutoModMessage(streamerId, messageId, allow);
         } catch (error) {
+            // eslint-disable-next-line
             const likelyExpired = error?.body?.includes("attempted to update a message status that was either already set");
             frontendCommunicator.send("twitch:chat:automod-update-error", { messageId, likelyExpired });
-            logger.error("Error processing held AutoMod message", error.message);
+            logger.error("Error processing held AutoMod message", (error as Error).message);
         }
     }
 }

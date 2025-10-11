@@ -34,10 +34,17 @@ export class TwitchWhispersApi {
             accountAccess.getAccounts().streamer.userId;
 
         try {
-            if (willSendAsBot === true) {
-                await this._botClient.whispers.sendWhisper(senderUserId, recipientUserId, message);
-            } else {
-                await this._streamerClient.whispers.sendWhisper(senderUserId, recipientUserId, message);
+            const messageFragments = message
+                .match(/[\s\S]{1,500}/g)
+                .map(mf => mf.trim())
+                .filter(mf => mf !== "");
+
+            for (const fragment of messageFragments) {
+                if (willSendAsBot === true) {
+                    await this._botClient.whispers.sendWhisper(senderUserId, recipientUserId, fragment);
+                } else {
+                    await this._streamerClient.whispers.sendWhisper(senderUserId, recipientUserId, fragment);
+                }
             }
 
             return true;
