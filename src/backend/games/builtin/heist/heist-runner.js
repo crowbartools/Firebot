@@ -1,10 +1,10 @@
 "use strict";
 const moment = require("moment");
 const gameManager = require("../../game-manager");
-const twitchChat = require("../../../chat/twitch-chat");
 const commandManager = require("../../../chat/commands/command-manager");
 const currencyManager = require("../../../currency/currency-manager");
 const util = require("../../../utility");
+const { TwitchApi } = require("../../../streaming-platforms/twitch/api");
 
 /**
  * @typedef HeistUser
@@ -27,7 +27,8 @@ exports.lobbyOpen = false;
 
 function triggerCooldown() {
     const heistSettings = gameManager.getGameSettings("firebot-heist");
-    const chatter = heistSettings.settings.chatSettings.chatter;
+    const sendAsBot = !heistSettings.settings.chatSettings.chatter
+        || heistSettings.settings.chatSettings.chatter.toLowerCase() === "bot";
 
     const cooldownMins = heistSettings.settings.generalSettings.cooldown || 1;
     const expireTime = moment().add(cooldownMins, 'minutes');
@@ -39,19 +40,20 @@ function triggerCooldown() {
 
     if (cooldownOverMessage) {
         cooldownTimeoutId = setTimeout(async (msg) => {
-            await twitchChat.sendChatMessage(msg, null, chatter);
+            await TwitchApi.chat.sendChatMessage(msg, null, sendAsBot);
         }, cooldownMins * 60000, cooldownOverMessage);
     }
 }
 
 async function runHeist() {
     const heistSettings = gameManager.getGameSettings("firebot-heist");
-    const chatter = heistSettings.settings.chatSettings.chatter;
+    const sendAsBot = !heistSettings.settings.chatSettings.chatter
+        || heistSettings.settings.chatSettings.chatter.toLowerCase() === "bot";
 
     const startMessage = heistSettings.settings.generalMessages.startMessage;
 
     if (startMessage) {
-        await twitchChat.sendChatMessage(startMessage, null, chatter);
+        await TwitchApi.chat.sendChatMessage(startMessage, null, sendAsBot);
     }
 
     // wait a few secs for suspense
@@ -123,13 +125,13 @@ async function runHeist() {
 
     try {
         if (outcomeMessage) {
-            await twitchChat.sendChatMessage(outcomeMessage, null, chatter);
+            await TwitchApi.chat.sendChatMessage(outcomeMessage, null, sendAsBot);
         }
 
         if (winningsMessage) {
-            await twitchChat.sendChatMessage(winningsMessage, null, chatter);
+            await TwitchApi.chat.sendChatMessage(winningsMessage, null, sendAsBot);
         }
-    } catch (error) {
+    } catch {
         //weird error
     }
 
@@ -162,13 +164,14 @@ exports.triggerLobbyStart = (startDelayMins) => {
                 await currencyManager.adjustCurrencyForViewer(user.username, currencyId, user.wager);
             }
 
-            const chatter = heistSettings.settings.chatSettings.chatter;
+            const sendAsBot = !heistSettings.settings.chatSettings.chatter
+                || heistSettings.settings.chatSettings.chatter.toLowerCase() === "bot";
             let teamTooSmallMessage = heistSettings.settings.generalMessages.teamTooSmall;
             if (usersInHeist.length > 0 && teamTooSmallMessage) {
                 teamTooSmallMessage = teamTooSmallMessage
                     .replaceAll("{user}", usersInHeist[0].userDisplayName);
 
-                await twitchChat.sendChatMessage(teamTooSmallMessage, null, chatter);
+                await TwitchApi.chat.sendChatMessage(teamTooSmallMessage, null, sendAsBot);
             }
 
             usersInHeist = [];
