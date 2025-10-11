@@ -3,7 +3,7 @@
 const frontendCommunicator = require("../../common/frontend-communicator");
 const chatCommandHandler = require("../commands/chat-command-handler");
 const chatHelpers = require("../chat-helpers");
-const activeUserHandler = require("./active-user-handler");
+const { ActiveUserHandler } = require("../active-user-handler");
 const accountAccess = require("../../common/account-access");
 const { ChatModerationManager } = require("../moderation/chat-moderation-manager");
 const chatRolesManager = require("../../roles/chat-roles-manager");
@@ -89,7 +89,7 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
 
         const { ranCommand, command, userCommand } = await chatCommandHandler.handleChatMessage(firebotChatMessage);
 
-        await activeUserHandler.addActiveUser(msg.userInfo, true);
+        await ActiveUserHandler.addActiveUser(msg.userInfo, true);
 
         twitchEventsHandler.viewerArrived.triggerViewerArrived(
             msg.userInfo.userName,
@@ -156,7 +156,7 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
 
         const { ranCommand, command, userCommand } = await chatCommandHandler.handleChatMessage(firebotChatMessage);
 
-        await activeUserHandler.addActiveUser(msg.userInfo, true);
+        await ActiveUserHandler.addActiveUser(msg.userInfo, true);
 
         twitchEventsHandler.chatMessage.triggerChatMessage(
             firebotChatMessage,

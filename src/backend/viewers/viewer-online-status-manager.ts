@@ -9,7 +9,7 @@ import eventManager from "../events/EventManager";
 import twitchChat from "../chat/twitch-chat";
 import twitchChatterPoll from "../streaming-platforms/twitch/chatter-poll";
 import frontendCommunicator from "../common/frontend-communicator";
-import activeUserHandler from "../chat/chat-listeners/active-user-handler";
+import { ActiveUserHandler } from "../chat/active-user-handler";
 
 class ViewerOnlineStatusManager {
     private _updateLastSeenIntervalId: NodeJS.Timeout;
@@ -36,6 +36,10 @@ class ViewerOnlineStatusManager {
             viewerDatabase.disconnectViewerDatabase();
 
             logger.debug("Disconnecting from viewer database.");
+        });
+
+        ActiveUserHandler.on("user:online", (user) => {
+            void this.setChatViewerOnline(user);
         });
     }
 
@@ -120,7 +124,7 @@ class ViewerOnlineStatusManager {
 
     async setAllChatViewersOnline(): Promise<void> {
         await twitchChatterPoll.runChatterPoll();
-        const viewers = activeUserHandler.getAllOnlineUsers();
+        const viewers = ActiveUserHandler.getAllOnlineUsers();
 
         if (viewers == null) {
             return;

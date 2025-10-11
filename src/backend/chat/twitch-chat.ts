@@ -3,7 +3,7 @@ import { ChatClient } from "@twurple/chat";
 
 import logger from "../logwrapper";
 import chatHelpers from "./chat-helpers";
-import activeUserHandler from "./chat-listeners/active-user-handler";
+import { ActiveUserHandler } from "./active-user-handler";
 import twitchChatListeners from "./chat-listeners/twitch-chat-listeners";
 import firebotDeviceAuthProvider from "../auth/firebot-device-auth-provider";
 import accountAccess from "../common/account-access";
@@ -49,7 +49,7 @@ class TwitchChat extends EventEmitter {
         }
         chatterPoll.stopChatterPoll();
 
-        activeUserHandler.clearAllActiveUsers();
+        ActiveUserHandler.clearAllActiveUsers();
     }
 
     /**
