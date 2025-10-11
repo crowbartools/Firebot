@@ -18,6 +18,7 @@ import { Rank, RankLadder } from "../../types/ranks";
 
 import { userIsActive } from "../chat/chat-listeners/active-user-handler";
 import roleHelpers from "../roles/role-helpers";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
 
 interface ViewerDbChangePacket {
     userId: string;
@@ -297,7 +298,7 @@ class ViewerDatabase extends EventEmitter {
         }
     }
 
-    async getAllUsernamesWithIds(): Promise<{ id: string; username: string; displayName: string; }[]> {
+    async getAllUsernamesWithIds(): Promise<{ id: string, username: string, displayName: string }[]> {
         if (this.isViewerDBOn() !== true) {
             return [];
         }
@@ -442,7 +443,7 @@ class ViewerDatabase extends EventEmitter {
 
     async getPurgeViewers(options: ViewerPurgeOptions): Promise<FirebotViewer[]> {
         try {
-            return await this._db.findAsync({ $where: this.getPurgeWherePredicate(options)});
+            return await this._db.findAsync({ $where: this.getPurgeWherePredicate(options) });
         } catch (error) {
             return [];
         }
@@ -453,7 +454,7 @@ class ViewerDatabase extends EventEmitter {
 
         try {
             const numRemoved = await this._db
-                .removeAsync({ $where: this.getPurgeWherePredicate(options)}, {multi: true});
+                .removeAsync({ $where: this.getPurgeWherePredicate(options) }, { multi: true });
 
             return numRemoved;
         } catch (error) {
@@ -495,8 +496,7 @@ class ViewerDatabase extends EventEmitter {
                 .replace(/{user}/g, viewer.displayName)
                 .replace(/{rank}/g, newRank?.name)
                 .replace(/{rankDescription}/g, rankValueDescription);
-            const twitchChat = require("../chat/twitch-chat");
-            await twitchChat.sendChatMessage(promotionMessage);
+            await TwitchApi.chat.sendChatMessage(promotionMessage, null, true);
         }
 
         const newRank = ladder.getRank(newRankId);

@@ -118,7 +118,7 @@ class ViewerOnlineStatusManager {
 
     async setAllChatViewersOnline(): Promise<void> {
         await twitchChat.populateChatterList();
-        const viewers = await twitchChat.getViewerList();
+        const viewers = twitchChat.getViewerList();
 
         if (viewers == null) {
             return;
@@ -167,7 +167,7 @@ class ViewerOnlineStatusManager {
 
         logger.debug('ViewerDB: Trying to set all viewers to offline.');
 
-        const { numAffected } = await viewerDatabase.getViewerDb().updateAsync({online: true}, {$set: { online: false }}, { multi: true });
+        const { numAffected } = await viewerDatabase.getViewerDb().updateAsync({ online: true }, { $set: { online: false } }, { multi: true });
 
         if (numAffected > 0) {
             logger.debug(`ViewerDB: Set ${numAffected} viewers to offline.`);

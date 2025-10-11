@@ -8,7 +8,7 @@ import customRolesManager from "../../../roles/custom-roles-manager";
 import teamRolesManager from "../../../roles/team-roles-manager";
 import util from "../../../utility";
 import commandManager from "../command-manager";
-import chat from "../../twitch-chat";
+import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 
 interface TriggerWithArgs {
     trigger: string;
@@ -40,7 +40,7 @@ function separateTriggerFromArgs(args: string[]): TriggerWithArgs {
 }
 
 async function mapSingleRole(perm: string): Promise<string[]> {
-    const groups = [];
+    const groups: string[] = [];
 
     const roles = [
         ...customRolesManager.getCustomRoles(),
@@ -72,7 +72,7 @@ async function mapSingleRole(perm: string): Promise<string[]> {
 }
 
 async function mapMultipleRoles(permArray: string[]): Promise<string[]> {
-    const groups = [];
+    const groups: string[] = [];
 
     const roles = [
         ...customRolesManager.getCustomRoles(),
@@ -116,7 +116,7 @@ async function mapPermArgToRoleIds(permArg: string): Promise<string[]> {
     }
 
     const normalizedPerm = permArg.toLowerCase().trim();
-    let groups = [];
+    let groups: string[] = [];
 
     if (normalizedPerm.includes(",")) {
         groups = await mapMultipleRoles(normalizedPerm.split(","));
@@ -242,16 +242,21 @@ export const CommandManagementSystemCommand: SystemCommand = {
         const args = event.userCommand.args;
 
         if (args.length < 2) {
-            await chat.sendChatMessage(
-                `Invalid command. Usage: ${event.command.trigger} ${usage}`);
+            await TwitchApi.chat.sendChatMessage(
+                `Invalid command. Usage: ${event.command.trigger} ${usage}`,
+                null,
+                true
+            );
             return;
         }
 
         const { trigger, remainingData } = separateTriggerFromArgs(args);
 
         if (trigger == null || trigger === "") {
-            await chat.sendChatMessage(
-                `Invalid command. Usage: ${event.command.trigger} ${usage}`
+            await TwitchApi.chat.sendChatMessage(
+                `Invalid command. Usage: ${event.command.trigger} ${usage}`,
+                null,
+                true
             );
             return;
         }
@@ -259,15 +264,19 @@ export const CommandManagementSystemCommand: SystemCommand = {
         switch (triggeredArg) {
             case "add": {
                 if (args.length < 3 || remainingData == null || remainingData === "") {
-                    await chat.sendChatMessage(
-                        `Invalid command. Usage: ${event.command.trigger} ${usage}`
+                    await TwitchApi.chat.sendChatMessage(
+                        `Invalid command. Usage: ${event.command.trigger} ${usage}`,
+                        null,
+                        true
                     );
                     return;
                 }
 
                 if (commandManager.triggerIsTaken(trigger) === true) {
-                    await chat.sendChatMessage(
-                        `The trigger '${trigger}' is already in use, please try again.`
+                    await TwitchApi.chat.sendChatMessage(
+                        `The trigger '${trigger}' is already in use, please try again.`,
+                        null,
+                        true
                     );
                     return;
                 }
@@ -275,8 +284,10 @@ export const CommandManagementSystemCommand: SystemCommand = {
                 const canUseEffectVars = SettingsManager.getSetting("AllowChatCreatedCommandsToRunEffects");
 
                 if (!canUseEffectVars && (remainingData.includes("$runEffect") || remainingData.includes("$evalVars"))) {
-                    await chat.sendChatMessage(
-                        "Could not add command, \"Allow Chat-Created Commands to Run Effects\" setting is required for included variable(s)."
+                    await TwitchApi.chat.sendChatMessage(
+                        "Could not add command, \"Allow Chat-Created Commands to Run Effects\" setting is required for included variable(s).",
+                        null,
+                        true
                     );
                     return;
                 }
@@ -305,8 +316,10 @@ export const CommandManagementSystemCommand: SystemCommand = {
 
                 commandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
-                await chat.sendChatMessage(
-                    `Added command '${trigger}'!`
+                await TwitchApi.chat.sendChatMessage(
+                    `Added command '${trigger}'!`,
+                    null,
+                    true
                 );
 
                 break;
@@ -314,15 +327,19 @@ export const CommandManagementSystemCommand: SystemCommand = {
 
             case "import": {
                 if (args.length < 3 || remainingData == null || remainingData === "") {
-                    await chat.sendChatMessage(
-                        `Invalid command. Usage: ${event.command.trigger} ${usage}`
+                    await TwitchApi.chat.sendChatMessage(
+                        `Invalid command. Usage: ${event.command.trigger} ${usage}`,
+                        null,
+                        true
                     );
                     return;
                 }
 
                 if (commandManager.triggerIsTaken(trigger) === true) {
-                    await chat.sendChatMessage(
-                        `The trigger '${trigger}' is already in use, please try again.`
+                    await TwitchApi.chat.sendChatMessage(
+                        `The trigger '${trigger}' is already in use, please try again.`,
+                        null,
+                        true
                     );
                     return;
                 }
@@ -330,8 +347,10 @@ export const CommandManagementSystemCommand: SystemCommand = {
                 const canImport = SettingsManager.getSetting("AllowChatCreatedCommandsToRunEffects");
 
                 if (!canImport) {
-                    await chat.sendChatMessage(
-                        "Cannot import command, \"Allow Chat-Created Commands to Run Effects\" is disabled in settings."
+                    await TwitchApi.chat.sendChatMessage(
+                        "Cannot import command, \"Allow Chat-Created Commands to Run Effects\" is disabled in settings.",
+                        null,
+                        true
                     );
                     return;
                 }
@@ -339,8 +358,10 @@ export const CommandManagementSystemCommand: SystemCommand = {
                 const effectsData = await getData(remainingData.trim());
 
                 if (!effectsData || !effectsData.effects) {
-                    await chat.sendChatMessage(
-                        `Could not parse effects data, please try again.`
+                    await TwitchApi.chat.sendChatMessage(
+                        `Could not parse effects data, please try again.`,
+                        null,
+                        true
                     );
                     return;
                 }
@@ -363,8 +384,10 @@ export const CommandManagementSystemCommand: SystemCommand = {
 
                 commandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
-                await chat.sendChatMessage(
-                    `Imported command '${trigger}'!`
+                await TwitchApi.chat.sendChatMessage(
+                    `Imported command '${trigger}'!`,
+                    null,
+                    true
                 );
 
                 break;
@@ -372,16 +395,20 @@ export const CommandManagementSystemCommand: SystemCommand = {
 
             case "response": {
                 if (args.length < 3 || remainingData == null || remainingData === "") {
-                    await chat.sendChatMessage(
-                        `Invalid command. Usage: ${event.command.trigger} ${usage}`
+                    await TwitchApi.chat.sendChatMessage(
+                        `Invalid command. Usage: ${event.command.trigger} ${usage}`,
+                        null,
+                        true
                     );
                     return;
                 }
 
                 const command = activeCustomCommands.find(c => c.trigger === trigger);
                 if (command == null) {
-                    await chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try again.`
+                    await TwitchApi.chat.sendChatMessage(
+                        `Could not find a command with the trigger '${trigger}', please try again.`,
+                        null,
+                        true
                     );
                     return;
                 }
@@ -389,8 +416,10 @@ export const CommandManagementSystemCommand: SystemCommand = {
                 const canUseEffectVars = SettingsManager.getSetting("AllowChatCreatedCommandsToRunEffects");
 
                 if (!canUseEffectVars && (remainingData.includes("$runEffect") || remainingData.includes("$evalVars"))) {
-                    await chat.sendChatMessage(
-                        "Could not update response, \"Allow Chat-Created Commands to Run Effects\" setting is required for included variable(s)."
+                    await TwitchApi.chat.sendChatMessage(
+                        "Could not update response, \"Allow Chat-Created Commands to Run Effects\" setting is required for included variable(s).",
+                        null,
+                        true
                     );
                     return;
                 }
@@ -398,8 +427,10 @@ export const CommandManagementSystemCommand: SystemCommand = {
                 const chatEffectsCount = command.effects ? command.effects.list.filter(e => e.type === "firebot:chat").length : 0;
 
                 if (chatEffectsCount > 1) {
-                    await chat.sendChatMessage(
-                        `The command '${trigger}' has more than one Chat Effect, preventing the response from being editable via chat.`
+                    await TwitchApi.chat.sendChatMessage(
+                        `The command '${trigger}' has more than one Chat Effect, preventing the response from being editable via chat.`,
+                        null,
+                        true
                     );
                     return;
                 }
@@ -417,8 +448,10 @@ export const CommandManagementSystemCommand: SystemCommand = {
 
                 commandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
-                await chat.sendChatMessage(
-                    `Updated '${trigger}' with response: ${remainingData}`
+                await TwitchApi.chat.sendChatMessage(
+                    `Updated '${trigger}' with response: ${remainingData}`,
+                    null,
+                    true
                 );
 
                 break;
@@ -428,16 +461,20 @@ export const CommandManagementSystemCommand: SystemCommand = {
                 const countArg = remainingData.trim();
                 const numericCountArg = parseInt(countArg);
                 if (countArg === "" || isNaN(numericCountArg)) {
-                    await chat.sendChatMessage(
-                        `Invalid command. Usage: ${event.command.trigger} ${usage}`
+                    await TwitchApi.chat.sendChatMessage(
+                        `Invalid command. Usage: ${event.command.trigger} ${usage}`,
+                        null,
+                        true
                     );
                     return;
                 }
 
                 const command = activeCustomCommands.find(c => c.trigger === trigger);
                 if (command == null) {
-                    await chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try again.`
+                    await TwitchApi.chat.sendChatMessage(
+                        `Could not find a command with the trigger '${trigger}', please try again.`,
+                        null,
+                        true
                     );
                     return;
                 }
@@ -451,8 +488,10 @@ export const CommandManagementSystemCommand: SystemCommand = {
 
                 commandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
-                await chat.sendChatMessage(
-                    `Updated usage count for '${trigger}' to: ${newCount}`
+                await TwitchApi.chat.sendChatMessage(
+                    `Updated usage count for '${trigger}' to: ${newCount}`,
+                    null,
+                    true
                 );
 
                 break;
@@ -461,15 +500,19 @@ export const CommandManagementSystemCommand: SystemCommand = {
             case "description": {
                 const command = activeCustomCommands.find(c => c.trigger === trigger);
                 if (command == null) {
-                    await chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try again.`
+                    await TwitchApi.chat.sendChatMessage(
+                        `Could not find a command with the trigger '${trigger}', please try again.`,
+                        null,
+                        true
                     );
                     return;
                 }
 
                 if (remainingData == null || remainingData.length < 1) {
-                    await chat.sendChatMessage(
-                        `Please provided a description for '${trigger}'!`
+                    await TwitchApi.chat.sendChatMessage(
+                        `Please provided a description for '${trigger}'!`,
+                        null,
+                        true
                     );
                     return;
                 }
@@ -478,8 +521,10 @@ export const CommandManagementSystemCommand: SystemCommand = {
 
                 commandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
-                await chat.sendChatMessage(
-                    `Updated description for '${trigger}' to: ${remainingData}`
+                await TwitchApi.chat.sendChatMessage(
+                    `Updated description for '${trigger}' to: ${remainingData}`,
+                    null,
+                    true
                 );
 
                 break;
@@ -491,16 +536,20 @@ export const CommandManagementSystemCommand: SystemCommand = {
                 let userCooldown = parseInt(cooldownArgs[1]);
                 if (args.length < 3 || remainingData === "" || cooldownArgs.length < 2 || isNaN(globalCooldown)
                     || isNaN(userCooldown)) {
-                    await chat.sendChatMessage(
-                        `Invalid command. Usage: ${event.command.trigger} ${usage}`
+                    await TwitchApi.chat.sendChatMessage(
+                        `Invalid command. Usage: ${event.command.trigger} ${usage}`,
+                        null,
+                        true
                     );
                     return;
                 }
 
                 const command = activeCustomCommands.find(c => c.trigger === trigger);
                 if (command == null) {
-                    await chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try again.`
+                    await TwitchApi.chat.sendChatMessage(
+                        `Could not find a command with the trigger '${trigger}', please try again.`,
+                        null,
+                        true
                     );
                     return;
                 }
@@ -520,8 +569,10 @@ export const CommandManagementSystemCommand: SystemCommand = {
 
                 commandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
-                await chat.sendChatMessage(
-                    `Updated '${trigger}' with cooldowns: ${userCooldown}s (user), ${globalCooldown}s (global)`
+                await TwitchApi.chat.sendChatMessage(
+                    `Updated '${trigger}' with cooldowns: ${userCooldown}s (user), ${globalCooldown}s (global)`,
+                    null,
+                    true
                 );
 
                 break;
@@ -529,16 +580,20 @@ export const CommandManagementSystemCommand: SystemCommand = {
 
             case "restrict": {
                 if (args.length < 3 || remainingData === "") {
-                    await chat.sendChatMessage(
-                        `Invalid command. Usage: ${event.command.trigger} ${usage}`
+                    await TwitchApi.chat.sendChatMessage(
+                        `Invalid command. Usage: ${event.command.trigger} ${usage}`,
+                        null,
+                        true
                     );
                     return;
                 }
 
                 const command = activeCustomCommands.find(c => c.trigger === trigger);
                 if (command == null) {
-                    await chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try again.`
+                    await TwitchApi.chat.sendChatMessage(
+                        `Could not find a command with the trigger '${trigger}', please try again.`,
+                        null,
+                        true
                     );
                     return;
                 }
@@ -548,8 +603,10 @@ export const CommandManagementSystemCommand: SystemCommand = {
 
 
                 if (roleIds == null || roleIds.length === 0) {
-                    await chat.sendChatMessage(
-                        `Please provide a valid group name: All, Sub, Mod, Streamer, or a custom group's name`
+                    await TwitchApi.chat.sendChatMessage(
+                        `Please provide a valid group name: All, Sub, Mod, Streamer, or a custom group's name`,
+                        null,
+                        true
                     );
                     return;
                 }
@@ -565,7 +622,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
 
                 commandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
-                await chat.sendChatMessage(`Updated '${trigger}' restrictions to: ${remainingData}`);
+                await TwitchApi.chat.sendChatMessage(`Updated '${trigger}' restrictions to: ${remainingData}`, null, true);
 
                 break;
             }
@@ -573,15 +630,17 @@ export const CommandManagementSystemCommand: SystemCommand = {
             case "remove": {
                 const command = activeCustomCommands.find(c => c.trigger === trigger);
                 if (command == null) {
-                    await chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try again.`
+                    await TwitchApi.chat.sendChatMessage(
+                        `Could not find a command with the trigger '${trigger}', please try again.`,
+                        null,
+                        true
                     );
                     return;
                 }
 
                 commandManager.removeCustomCommandByTrigger(trigger);
 
-                await chat.sendChatMessage(`Successfully removed command '${trigger}'.`);
+                await TwitchApi.chat.sendChatMessage(`Successfully removed command '${trigger}'.`, null, true);
                 break;
             }
 
@@ -590,8 +649,10 @@ export const CommandManagementSystemCommand: SystemCommand = {
                 const command = commandManager.getAllCustomCommands().find(c => c.trigger === trigger);
 
                 if (command == null) {
-                    await chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try again.`
+                    await TwitchApi.chat.sendChatMessage(
+                        `Could not find a command with the trigger '${trigger}', please try again.`,
+                        null,
+                        true
                     );
                     return;
                 }
@@ -599,8 +660,8 @@ export const CommandManagementSystemCommand: SystemCommand = {
                 const newActiveStatus = triggeredArg === "enable";
 
                 if (command.active === newActiveStatus) {
-                    await chat.sendChatMessage(
-                        `${trigger} is already ${triggeredArg}d.`
+                    await TwitchApi.chat.sendChatMessage(
+                        `${trigger} is already ${triggeredArg}d.`, null, true
                     );
                     return;
                 }
@@ -611,8 +672,8 @@ export const CommandManagementSystemCommand: SystemCommand = {
 
                 frontendCommunicator.send("custom-commands-updated");
 
-                await chat.sendChatMessage(
-                    `${util.capitalize(triggeredArg)}d "${trigger}"`
+                await TwitchApi.chat.sendChatMessage(
+                    `${util.capitalize(triggeredArg)}d "${trigger}"`, null, true
                 );
                 break;
             }
@@ -621,8 +682,10 @@ export const CommandManagementSystemCommand: SystemCommand = {
                 const alias = remainingData.trim();
 
                 if (args.length < 3 || alias === "") {
-                    await chat.sendChatMessage(
-                        `Invalid command. Usage: ${event.command.trigger} ${usage}`
+                    await TwitchApi.chat.sendChatMessage(
+                        `Invalid command. Usage: ${event.command.trigger} ${usage}`,
+                        null,
+                        true
                     );
                     return;
                 }
@@ -630,8 +693,10 @@ export const CommandManagementSystemCommand: SystemCommand = {
                 const command = commandManager.getAllCustomCommands().find(c => c.trigger === trigger);
 
                 if (command == null) {
-                    await chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try again.`
+                    await TwitchApi.chat.sendChatMessage(
+                        `Could not find a command with the trigger '${trigger}', please try again.`,
+                        null,
+                        true
                     );
                     return;
                 }
@@ -644,8 +709,10 @@ export const CommandManagementSystemCommand: SystemCommand = {
                     a.toLowerCase() === alias.toLowerCase());
 
                 if (aliasIndex > -1) {
-                    await chat.sendChatMessage(
-                        `Alias '${alias}' already exists for command with the trigger '${trigger}'.`
+                    await TwitchApi.chat.sendChatMessage(
+                        `Alias '${alias}' already exists for command with the trigger '${trigger}'.`,
+                        null,
+                        true
                     );
                     return;
                 }
@@ -653,8 +720,10 @@ export const CommandManagementSystemCommand: SystemCommand = {
                 command.aliases.push(alias);
                 commandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
-                await chat.sendChatMessage(
-                    `Added alias '${alias}' to custom command '${trigger}'!`
+                await TwitchApi.chat.sendChatMessage(
+                    `Added alias '${alias}' to custom command '${trigger}'!`,
+                    null,
+                    true
                 );
 
                 break;
@@ -664,8 +733,10 @@ export const CommandManagementSystemCommand: SystemCommand = {
                 const alias = remainingData.trim();
 
                 if (args.length < 3 || alias === "") {
-                    await chat.sendChatMessage(
-                        `Invalid command. Usage: ${event.command.trigger} ${usage}`
+                    await TwitchApi.chat.sendChatMessage(
+                        `Invalid command. Usage: ${event.command.trigger} ${usage}`,
+                        null,
+                        true
                     );
                     return;
                 }
@@ -673,8 +744,10 @@ export const CommandManagementSystemCommand: SystemCommand = {
                 const command = commandManager.getAllCustomCommands().find(c => c.trigger === trigger);
 
                 if (command == null) {
-                    await chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try again.`
+                    await TwitchApi.chat.sendChatMessage(
+                        `Could not find a command with the trigger '${trigger}', please try again.`,
+                        null,
+                        true
                     );
                     return;
                 }
@@ -687,8 +760,10 @@ export const CommandManagementSystemCommand: SystemCommand = {
                     a.toLowerCase() === alias.toLowerCase());
 
                 if (aliasIndex === -1) {
-                    await chat.sendChatMessage(
-                        `Alias '${alias}' does not exist for command with the trigger '${trigger}'.`
+                    await TwitchApi.chat.sendChatMessage(
+                        `Alias '${alias}' does not exist for command with the trigger '${trigger}'.`,
+                        null,
+                        true
                     );
                     return;
                 }
@@ -696,8 +771,10 @@ export const CommandManagementSystemCommand: SystemCommand = {
                 command.aliases.splice(aliasIndex, 1);
                 commandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
-                await chat.sendChatMessage(
-                    `Removed alias '${alias}' from custom command '${trigger}'!`
+                await TwitchApi.chat.sendChatMessage(
+                    `Removed alias '${alias}' from custom command '${trigger}'!`,
+                    null,
+                    true
                 );
 
                 break;

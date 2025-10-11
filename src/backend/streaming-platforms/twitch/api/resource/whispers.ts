@@ -1,6 +1,6 @@
+import { ApiClient, UserIdResolvable } from "@twurple/api";
 import logger from '../../../../logwrapper';
 import accountAccess from "../../../../common/account-access";
-import { ApiClient, UserIdResolvable } from "@twurple/api";
 
 export class TwitchWhispersApi {
     private _streamerClient: ApiClient;
@@ -42,7 +42,7 @@ export class TwitchWhispersApi {
 
             return true;
         } catch (error) {
-            logger.error("Error sending whisper", error.message);
+            logger.error("Error sending whisper", (error as Error).message);
         }
 
         return false;

@@ -1,7 +1,7 @@
 import { SystemCommand } from "../../../../types/commands";
 import cloudSync from '../../../cloud-sync/profile-sync.js';
-import twitchChat from "../../twitch-chat";
 import { SortTagManager } from "../../../sort-tags/sort-tag-manager";
+import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 
 /**
  * The `!commands` command
@@ -69,8 +69,8 @@ export const CommandListSystemCommand: SystemCommand<{
             }
         }
 
-        await twitchChat.sendChatMessage(commandOptions.successTemplate
-            .replaceAll("{url}", profileUrl), null, "bot"
+        await TwitchApi.chat.sendChatMessage(commandOptions.successTemplate
+            .replaceAll("{url}", profileUrl), null, true
         );
     }
 };

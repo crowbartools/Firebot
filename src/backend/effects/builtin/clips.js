@@ -9,7 +9,6 @@ const utils = require("../../utility");
 const customVariableManager = require("../../common/custom-variable-manager");
 const { resolveTwitchClipVideoUrl } = require("../../common/handlers/twitch-clip-url-resolver");
 const { TwitchApi } = require("../../streaming-platforms/twitch/api");
-const twitchChat = require("../../chat/twitch-chat");
 const discord = require("../../integrations/builtin/discord/discord-message-sender");
 const discordEmbedBuilder = require("../../integrations/builtin/discord/discord-embed-builder");
 
@@ -197,7 +196,7 @@ const clip = {
         const { effect } = event;
 
         if (effect.postLink) {
-            await twitchChat.sendChatMessage("Creating clip...");
+            await TwitchApi.chat.sendChatMessage("Creating clip...", null, true);
         }
 
         const clip = await TwitchApi.clips.createClip();
@@ -205,7 +204,7 @@ const clip = {
         if (clip != null) {
             if (effect.postLink) {
                 const message = `Clip created: ${clip.url}`;
-                await twitchChat.sendChatMessage(message);
+                await TwitchApi.chat.sendChatMessage(message, null, true);
             }
 
             if (effect.postInDiscord) {
@@ -269,7 +268,7 @@ const clip = {
             }
         } else {
             if (effect.postLink) {
-                await twitchChat.sendChatMessage("Whoops! Something went wrong when creating a clip. :(");
+                await TwitchApi.chat.sendChatMessage("Whoops! Something went wrong when creating a clip. :(", null, true);
             }
         }
 

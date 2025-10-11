@@ -30,7 +30,7 @@ class ChannelRewardManager {
             (channelReward: SavedChannelReward) => this.saveChannelReward(channelReward));
 
         frontendCommunicator.onAsync("save-all-channel-rewards",
-            async (data: { channelRewards: SavedChannelReward[]; updateTwitch: boolean }) =>
+            async (data: { channelRewards: SavedChannelReward[], updateTwitch: boolean }) =>
                 await this.saveAllChannelRewards(data.channelRewards, data.updateTwitch));
 
         frontendCommunicator.onAsync("sync-channel-rewards", async (): Promise<SavedChannelReward[]> => {
@@ -368,18 +368,18 @@ class ChannelRewardManager {
                 logger.debug("Restrictions passed!");
                 if (shouldAutoApproveOrReject) {
                     logger.debug("auto accepting redemption");
-                    this.approveOrRejectChannelRewardRedemptions({
+                    void this.approveOrRejectChannelRewardRedemptions({
                         rewardId,
                         redemptionIds: [metadata.redemptionId],
                         approve: true
                     });
                 }
             } catch (restrictionReason) {
-                let reason;
+                let reason: string;
                 if (Array.isArray(restrictionReason)) {
                     reason = restrictionReason.join(", ");
                 } else {
-                    reason = restrictionReason;
+                    reason = restrictionReason as string;
                 }
 
                 logger.debug(`${metadata.username} could not use Reward '${savedReward.twitchData.title}' because: ${reason}`);
@@ -389,17 +389,18 @@ class ChannelRewardManager {
                         restrictionData.failMessage :
                         "Sorry @{user}, you cannot use this channel reward because: {reason}";
 
-                    const twitchChat = require("../chat/twitch-chat");
-                    await twitchChat.sendChatMessage(
+                    await TwitchApi.chat.sendChatMessage(
                         restrictionMessage
                             .replaceAll("{user}", metadata.username)
-                            .replaceAll("{reason}", reason)
+                            .replaceAll("{reason}", reason),
+                        null,
+                        true
                     );
                 }
 
                 if (shouldAutoApproveOrReject) {
                     logger.debug("auto rejecting redemption");
-                    this.approveOrRejectChannelRewardRedemptions({
+                    void this.approveOrRejectChannelRewardRedemptions({
                         rewardId,
                         redemptionIds: [metadata.redemptionId],
                         approve: false

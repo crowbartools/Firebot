@@ -1,5 +1,3 @@
-import logger from '../../../../logwrapper';
-import accountAccess from "../../../../common/account-access";
 import {
     ApiClient,
     HelixChatAnnouncementColor,
@@ -9,11 +7,21 @@ import {
     HelixUpdateChatSettingsParams,
     HelixUserEmote
 } from "@twurple/api";
+import logger from '../../../../logwrapper';
+import accountAccess from "../../../../common/account-access";
+import frontendCommunicator from '../../../../common/frontend-communicator';
+import { TwitchSlashCommandHandler } from "../../chat/twitch-slash-command-handler";
 
 interface ResultWithError<TResult, TError> {
     success: boolean;
     result?: TResult;
     error?: TError;
+}
+
+interface ChatMessageRequest {
+    message: string;
+    accountType: string;
+    replyToMessageId?: string;
 }
 
 export class TwitchChatApi {
@@ -23,6 +31,16 @@ export class TwitchChatApi {
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
         this._streamerClient = streamerClient;
         this._botClient = botClient;
+
+        frontendCommunicator.onAsync("send-chat-message", async (sendData: ChatMessageRequest) => {
+            const { message, accountType, replyToMessageId } = sendData;
+
+            await this.sendChatMessage(message, replyToMessageId, accountType.toLowerCase() === "bot");
+        });
+
+        frontendCommunicator.onAsync("delete-message", async (messageId: string) => {
+            return await this.deleteChatMessage(messageId);
+        });
     }
 
     /**
@@ -36,7 +54,7 @@ export class TwitchChatApi {
 
             chatters.push(...await this._streamerClient.chat.getChattersPaginated(streamerUserId).getAll());
         } catch (error) {
-            logger.error("Error getting chatter list", error.message);
+            logger.error("Error getting chatter list", (error as Error).message);
         }
 
         return chatters;
@@ -48,30 +66,70 @@ export class TwitchChatApi {
      * @param message Chat message to send.
      * @param replyToMessageId The ID of the message this should be replying to. Leave as null for non replies.
      * @param sendAsBot If the chat message should be sent as the bot or not.
-     * If this is set to `false`, the chat message will be sent as the streamer.
+     * If this is set to `false` or the bot account is not logged in, the chat message will be sent as the streamer.
      * @returns `true` if sending the chat message was successful or `false` if it failed
      */
-    async sendChatMessage(message: string, replyToMessageId = null, sendAsBot = false): Promise<boolean> {
+    async sendChatMessage(message: string, replyToMessageId: string = null, sendAsBot = false): Promise<boolean> {
         if (!message?.length) {
             return false;
         }
 
         try {
+            // Determine sender
             const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
             const willSendAsBot: boolean = sendAsBot === true
                 && accountAccess.getAccounts().bot?.userId != null
                 && this._botClient != null;
 
-            let result: HelixSentChatMessage;
+            // Slash command processing
+            const slashCommandValidationResult = TwitchSlashCommandHandler.validateChatCommand(message);
 
-            if (willSendAsBot === true) {
-                result = await this._botClient.chat.sendChatMessage(streamerUserId, message, { replyParentMessageId: replyToMessageId });
-            } else {
-                result = await this._streamerClient.chat.sendChatMessage(streamerUserId, message, { replyParentMessageId: replyToMessageId });
+            // If the slash command handler finds, validates, and successfully executes a command, no need to continue.
+            if (slashCommandValidationResult != null
+                && slashCommandValidationResult.success === true
+            ) {
+                const slashCommandResult = await TwitchSlashCommandHandler.processChatCommand(
+                    message,
+                    willSendAsBot
+                );
+
+                if (!slashCommandResult) {
+                    frontendCommunicator.send("chatUpdate", {
+                        fbEvent: "ChatAlert",
+                        message: `Failed to execute "${message}"`
+                    });
+                }
+
+                return slashCommandResult;
             }
 
-            if (result.isSent !== true) {
-                logger.error(`Twitch dropped chat message. Reason: ${result.dropReasonMessage}`);
+            if (slashCommandValidationResult != null
+                && slashCommandValidationResult.success === false
+                && slashCommandValidationResult.foundCommand !== false
+            ) {
+                frontendCommunicator.send("chatUpdate", {
+                    fbEvent: "ChatAlert",
+                    message: slashCommandValidationResult.errorMessage
+                });
+            }
+
+            const messageFragments = message
+                .match(/[\s\S]{1,500}/g)
+                .map(mf => mf.trim())
+                .filter(mf => mf !== "");
+            let result: HelixSentChatMessage;
+
+            for (const fragment of messageFragments) {
+                if (willSendAsBot === true) {
+                    result = await this._botClient.chat.sendChatMessage(streamerUserId, fragment, { replyParentMessageId: replyToMessageId });
+                } else {
+                    result = await this._streamerClient.chat.sendChatMessage(streamerUserId, fragment, { replyParentMessageId: replyToMessageId });
+                }
+
+                if (result.isSent !== true) {
+                    logger.error(`Twitch dropped chat message. Reason: ${result.dropReasonMessage}`);
+                    return false;
+                }
             }
 
             return result.isSent;
@@ -127,7 +185,7 @@ export class TwitchChatApi {
 
             return true;
         } catch (error) {
-            logger.error("Error sending announcement", error.message);
+            logger.error("Error sending announcement", (error as Error).message);
         }
 
         return false;
@@ -145,8 +203,9 @@ export class TwitchChatApi {
         try {
             await this._streamerClient.chat.shoutoutUser(streamerId, targetUserId);
         } catch (error) {
-            logger.error("Error sending shoutout", error.message);
-            const body = JSON.parse(error._body);
+            logger.error("Error sending shoutout", (error as Error).message);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            const body = JSON.parse(error._body as string) as { message?: string };
             return { success: false, error: body.message };
         }
         return { success: true };
@@ -166,7 +225,7 @@ export class TwitchChatApi {
 
             return true;
         } catch (error) {
-            logger.error("Error deleting chat message", error.message);
+            logger.error("Error deleting chat message", (error as Error).message);
         }
 
         return false;
@@ -185,7 +244,7 @@ export class TwitchChatApi {
 
             return true;
         } catch (error) {
-            logger.error("Error clearing chat", error.message);
+            logger.error("Error clearing chat", (error as Error).message);
         }
 
         return false;
@@ -209,7 +268,7 @@ export class TwitchChatApi {
 
             return true;
         } catch (error) {
-            logger.error("Error setting emote-only mode", error.message);
+            logger.error("Error setting emote-only mode", (error as Error).message);
         }
 
         return false;
@@ -235,7 +294,7 @@ export class TwitchChatApi {
 
             return true;
         } catch (error) {
-            logger.error("Error setting follower-only mode", error.message);
+            logger.error("Error setting follower-only mode", (error as Error).message);
         }
 
         return false;
@@ -259,7 +318,7 @@ export class TwitchChatApi {
 
             return true;
         } catch (error) {
-            logger.error("Error setting subscriber-only mode", error.message);
+            logger.error("Error setting subscriber-only mode", (error as Error).message);
         }
 
         return false;
@@ -285,7 +344,7 @@ export class TwitchChatApi {
 
             return true;
         } catch (error) {
-            logger.error("Error setting slow mode", error.message);
+            logger.error("Error setting slow mode", (error as Error).message);
         }
 
         return false;
@@ -309,7 +368,7 @@ export class TwitchChatApi {
 
             return true;
         } catch (error) {
-            logger.error("Error setting unique mode", error.message);
+            logger.error("Error setting unique mode", (error as Error).message);
         }
 
         return false;
@@ -325,7 +384,7 @@ export class TwitchChatApi {
         try {
             return await this._streamerClient.chat.getColorForUser(targetUserId);
         } catch (error) {
-            logger.error("Error Receiving user color", error.message);
+            logger.error("Error Receiving user color", (error as Error).message);
             return null;
         }
     }
@@ -357,7 +416,7 @@ export class TwitchChatApi {
             // Filter out any duplicates that may come back from the API
             return emotes.filter((emote, index, arr) => arr.findIndex(e => emote.id === e.id) === index);
         } catch (error) {
-            logger.error(`Error getting all user emotes for ${account}`, error.message);
+            logger.error(`Error getting all user emotes for ${account}`, (error as Error).message);
             return null;
         }
     }

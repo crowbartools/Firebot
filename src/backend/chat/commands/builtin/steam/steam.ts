@@ -1,6 +1,5 @@
 import { SystemCommand } from "../../../../../types/commands";
 import Steam from "./steam-access";
-import twitchChat from "../../../twitch-chat";
 import { TwitchApi } from "../../../../streaming-platforms/twitch/api";
 
 /**
@@ -65,6 +64,6 @@ export const SteamSystemCommand: SystemCommand<{
             }
         }
 
-        await twitchChat.sendChatMessage(message);
+        await TwitchApi.chat.sendChatMessage(message, null, true);
     }
 };

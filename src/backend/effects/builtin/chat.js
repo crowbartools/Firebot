@@ -1,7 +1,7 @@
 "use strict";
 
 const { EffectCategory, EffectTrigger, EffectDependency } = require('../../../shared/effect-constants');
-const twitchChat = require("../../chat/twitch-chat");
+const { TwitchApi } = require('../../streaming-platforms/twitch/api');
 
 const effect = {
     definition: {
@@ -69,7 +69,7 @@ const effect = {
         }
         return errors;
     },
-    onTriggerEvent: async ({ effect, trigger}) => {
+    onTriggerEvent: async ({ effect, trigger }) => {
         let messageId = null;
         if (trigger.type === EffectTrigger.COMMAND) {
             messageId = trigger.metadata.chatMessage.id;
@@ -81,7 +81,12 @@ const effect = {
             effect.message = `/me ${effect.message}`;
         }
 
-        await twitchChat.sendChatMessage(effect.message, effect.whisper, effect.chatter, !effect.whisper && effect.sendAsReply ? messageId : undefined);
+        if (effect.whisper) {
+            const user = await TwitchApi.users.getUserByName(effect.whisper);
+            await TwitchApi.whispers.sendWhisper(user.id, effect.message, effect.chatter.toLowerCase() === "bot");
+        } else {
+            await TwitchApi.chat.sendChatMessage(effect.message, effect.sendAsReply ? messageId : null, effect.chatter.toLowerCase() === "bot");
+        }
 
         return true;
     }

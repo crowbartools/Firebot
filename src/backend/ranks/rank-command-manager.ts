@@ -4,7 +4,7 @@ import commandManager from "../chat/commands/command-manager";
 import rankManager from "./rank-manager";
 import viewerDatabase from "../viewers/viewer-database";
 import logger from "../logwrapper";
-import twitchChat from "../chat/twitch-chat";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
 
 type RankCommandRefreshRequestAction = "create" | "update" | "delete";
 
@@ -226,8 +226,7 @@ class RankCommandManager {
                 const args = event.userCommand.args;
 
                 const sendMessage = (message: string) =>
-                    twitchChat.sendChatMessage(message, undefined, undefined, chatMessage.id);
-
+                    TwitchApi.chat.sendChatMessage(message, chatMessage.id, true);
 
                 // If no arguments are provided, show the user's rank
                 if (args.length === 0) {
