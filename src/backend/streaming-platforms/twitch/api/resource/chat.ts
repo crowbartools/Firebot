@@ -7,6 +7,7 @@ import {
     HelixUpdateChatSettingsParams,
     HelixUserEmote
 } from "@twurple/api";
+import { ApiResourceBase } from "./api-resource-base";
 import logger from '../../../../logwrapper';
 import accountAccess from "../../../../common/account-access";
 import frontendCommunicator from '../../../../common/frontend-communicator';
@@ -24,13 +25,9 @@ interface ChatMessageRequest {
     replyToMessageId?: string;
 }
 
-export class TwitchChatApi {
-    private _streamerClient: ApiClient;
-    private _botClient: ApiClient;
-
+export class TwitchChatApi extends ApiResourceBase {
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        this._streamerClient = streamerClient;
-        this._botClient = botClient;
+        super(streamerClient, botClient);
 
         frontendCommunicator.onAsync("send-chat-message", async (sendData: ChatMessageRequest) => {
             const { message, accountType, replyToMessageId } = sendData;

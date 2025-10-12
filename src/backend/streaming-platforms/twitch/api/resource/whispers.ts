@@ -1,14 +1,11 @@
 import { ApiClient, UserIdResolvable } from "@twurple/api";
+import { ApiResourceBase } from "./api-resource-base";
 import logger from '../../../../logwrapper';
 import accountAccess from "../../../../common/account-access";
 
-export class TwitchWhispersApi {
-    private _streamerClient: ApiClient;
-    private _botClient: ApiClient;
-
+export class TwitchWhispersApi extends ApiResourceBase {
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        this._streamerClient = streamerClient;
-        this._botClient = botClient;
+        super(streamerClient, botClient);
     }
 
     /**

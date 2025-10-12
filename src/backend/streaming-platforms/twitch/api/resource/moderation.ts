@@ -1,9 +1,15 @@
+import {
+    ApiClient,
+    HelixBanUserRequest,
+    HelixModerator,
+    UserIdResolvable,
+    extractUserId
+} from "@twurple/api";
+import { ApiResourceBase } from './api-resource-base';
 import logger from '../../../../logwrapper';
 import accountAccess from "../../../../common/account-access";
-import { ApiClient, HelixBanUserRequest, HelixModerator, UserIdResolvable, extractUserId } from "@twurple/api";
 import frontendCommunicator from '../../../../common/frontend-communicator';
 import { BasicViewer } from '../../../../../types/viewers';
-import { TypedEmitter } from 'tiny-typed-emitter';
 
 interface UserModRequest {
     username: string;
@@ -27,15 +33,9 @@ type ModerationEvents = {
     "moderator:removed": (userId: string) => void;
 };
 
-export class TwitchModerationApi extends TypedEmitter<ModerationEvents> {
-    private _streamerClient: ApiClient;
-    private _botClient: ApiClient;
-
+export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        super();
-
-        this._streamerClient = streamerClient;
-        this._botClient = botClient;
+        super(streamerClient, botClient);
 
         frontendCommunicator.onAsync("update-user-banned-status", async (data: UserBanRequest) => {
             if (data == null) {

@@ -1,14 +1,16 @@
-import accountAccess from "../../../../common/account-access";
+import {
+    ApiClient,
+    HelixChannelFollower,
+    HelixUser,
+    UserIdResolvable
+} from "@twurple/api";
+import { ApiResourceBase } from "./api-resource-base";
 import logger from "../../../../logwrapper";
-import {ApiClient, HelixChannelFollower, HelixUser, UserIdResolvable} from "@twurple/api";
+import accountAccess from "../../../../common/account-access";
 
-export class TwitchUsersApi {
-    private _streamerClient: ApiClient;
-    private _botClient: ApiClient;
-
+export class TwitchUsersApi extends ApiResourceBase {
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        this._streamerClient = streamerClient;
-        this._botClient = botClient;
+        super(streamerClient, botClient);
     }
 
     async getUserById(userId: string): Promise<HelixUser> {

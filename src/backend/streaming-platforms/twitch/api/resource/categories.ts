@@ -1,27 +1,24 @@
-import logger from "../../../../logwrapper";
 import { ApiClient, HelixGame } from "@twurple/api";
+import { ApiResourceBase } from "./api-resource-base";
+import logger from "../../../../logwrapper";
 
 /**
  * Defines a Twitch category
  */
 export interface TwitchCategory {
     /** The Twitch ID of the category */
-    id: string,
+    id: string;
 
     /** The name of the category */
-    name: string,
+    name: string;
 
     /** The box art or cover image URL of the category */
-    boxArtUrl: string
+    boxArtUrl: string;
 }
 
-export class TwitchCategoriesApi {
-    private _streamerClient: ApiClient;
-    private _botClient: ApiClient;
-
+export class TwitchCategoriesApi extends ApiResourceBase {
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        this._streamerClient = streamerClient;
-        this._botClient = botClient;
+        super(streamerClient, botClient);
     }
 
     private mapTwitchCategory(category: HelixGame, size?: string): TwitchCategory {

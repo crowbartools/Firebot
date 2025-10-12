@@ -82,6 +82,8 @@ class TwitchApi {
     }
 
     setupApiClients(streamerProvider: AuthProvider, botProvider: AuthProvider): void {
+        logger.debug("Call to setupApiClients");
+
         if (!streamerProvider && !botProvider) {
             return;
         }
@@ -97,7 +99,27 @@ class TwitchApi {
             );
         }
 
-        logger.info("Finished setting up Twitch API client");
+        logger.debug("Updating Twitch API resource clients...");
+
+        this.auth.updateApiClients(this._streamerClient, this._botClient);
+        this.bits.updateApiClients(this._streamerClient, this._botClient);
+        this.categories.updateApiClients(this._streamerClient, this._botClient);
+        this.channelRewards.updateApiClients(this._streamerClient, this._botClient);
+        this.channels.updateApiClients(this._streamerClient, this._botClient);
+        this.chat.updateApiClients(this._streamerClient, this._botClient);
+        this.clips.updateApiClients(this._streamerClient, this._botClient);
+        this.goals.updateApiClients(this._streamerClient, this._botClient);
+        this.hypeTrain.updateApiClients(this._streamerClient, this._botClient);
+        this.moderation.updateApiClients(this._streamerClient, this._botClient);
+        this.polls.updateApiClients(this._streamerClient, this._botClient);
+        this.predictions.updateApiClients(this._streamerClient, this._botClient);
+        this.streams.updateApiClients(this._streamerClient, this._botClient);
+        this.subscriptions.updateApiClients(this._streamerClient, this._botClient);
+        this.teams.updateApiClients(this._streamerClient, this._botClient);
+        this.users.updateApiClients(this._streamerClient, this._botClient);
+        this.whispers.updateApiClients(this._streamerClient, this._botClient);
+
+        logger.info("Finished setting up Twitch API clients");
     }
 
     /**

@@ -1,14 +1,11 @@
+import { ApiClient, HelixTeam } from "@twurple/api";
+import { ApiResourceBase } from "./api-resource-base";
 import logger from "../../../../logwrapper";
 import accountAccess from "../../../../common/account-access";
-import { ApiClient, HelixTeam } from "@twurple/api";
 
-export class TwitchTeamsApi {
-    private _streamerClient: ApiClient;
-    private _botClient: ApiClient;
-
+export class TwitchTeamsApi extends ApiResourceBase {
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        this._streamerClient = streamerClient;
-        this._botClient = botClient;
+        super(streamerClient, botClient);
     }
 
     async getTeams(broadcasterId: string): Promise<HelixTeam[]> {
