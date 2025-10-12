@@ -32,7 +32,7 @@ exports.whenReady = async () => {
     // load twitch auth
     windowManagement.updateSplashScreenStatus("Loading Twitch login system...");
     require("../../../auth/auth-manager");
-    const twitchAuth = require("../../../auth/twitch-auth");
+    const twitchAuth = require("../../../streaming-platforms/twitch/auth/twitch-auth");
     twitchAuth.registerTwitchAuthProviders();
 
     // load accounts

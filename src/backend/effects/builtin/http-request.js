@@ -212,7 +212,7 @@ const effect = {
     onTriggerEvent: async (event) => {
 
         const logger = require("../../logwrapper");
-        const twitchAuth = require("../../auth/twitch-auth");
+        const twitchAuth = require("../../streaming-platforms/twitch/auth/twitch-auth");
         const accountAccess = require("../../common/account-access");
         const customVariableManager = require("../../common/custom-variable-manager");
         const effectRunner = require("../../common/effect-runner");
