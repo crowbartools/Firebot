@@ -13,7 +13,7 @@ interface KnownBot {
 }
 
 interface KnownBotServiceResponse {
-    bots: Array<[string, number, number]>
+    bots: Array<[string, number, number]>;
 }
 
 type Events = {
@@ -85,7 +85,7 @@ class ChatRolesManager extends TypedEmitter<Events> {
         }));
     }
 
-    async getVips(): Promise<BasicViewer[]> {
+    getVips(): BasicViewer[] {
         return this._vips;
     }
 

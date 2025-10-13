@@ -56,7 +56,7 @@ class TwitchEventSubClient {
         const bitsSubscription = this._eventSubListener.onChannelBitsUse(streamer.userId, async (event) => {
             switch (event.type) {
                 case "cheer": {
-                    const totalBits = await TwitchApi.bits.getChannelBitsLeaderboard(1, "all", new Date(), event.userId)[0]?.amount ?? 0;
+                    const totalBits = (await TwitchApi.bits.getChannelBitsLeaderboard(1, "all", new Date(), event.userId))[0]?.amount ?? 0;
                     // Future: We could parse event.messageParts into a FirebotChatMessage
                     // This would allow us to expose cheermotes to the cheer event,
                     // rather than just chat messages which happen to be cheers.
@@ -73,7 +73,7 @@ class TwitchEventSubClient {
                 case "combo":
                     break;
                 case "power_up": {
-                    const totalBits = await TwitchApi.bits.getChannelBitsLeaderboard(1, "all", new Date(), event.userId)[0]?.amount ?? 0;
+                    const totalBits = (await TwitchApi.bits.getChannelBitsLeaderboard(1, "all", new Date(), event.userId))[0]?.amount ?? 0;
                     switch (event.powerUp.type) {
                         case "celebration":
                             twitchEventsHandler.bits.triggerPowerupCelebration(
@@ -137,7 +137,7 @@ class TwitchEventSubClient {
         this._subscriptions.push(autoModMessageUpdateSub);
 
         // Channel automatic reward
-        const channelAutomaticRewardSubscription = this._eventSubListener.onChannelAutomaticRewardRedemptionAddV2(streamer.userId, async (event) => {
+        const channelAutomaticRewardSubscription = this._eventSubListener.onChannelAutomaticRewardRedemptionAddV2(streamer.userId, (event) => {
             switch (event.reward.type) {
                 case "single_message_bypass_sub_mode":
                     twitchEventsHandler.rewardRedemption.triggerRedemptionSingleMessageBypassSubMode(
@@ -192,13 +192,13 @@ class TwitchEventSubClient {
         this._subscriptions.push(channelAutomaticRewardSubscription);
 
         // Channel custom reward add
-        const customRewardAddSubscription = this._eventSubListener.onChannelRewardAdd(streamer.userId, async (event) => {
+        const customRewardAddSubscription = this._eventSubListener.onChannelRewardAdd(streamer.userId, (event) => {
             channelRewardManager.saveTwitchDataForChannelReward(mapEventSubRewardToTwitchData(event));
         });
         this._subscriptions.push(customRewardAddSubscription);
 
         // Channel custom reward update
-        const customRewardUpdateSubscription = this._eventSubListener.onChannelRewardUpdate(streamer.userId, async (event) => {
+        const customRewardUpdateSubscription = this._eventSubListener.onChannelRewardUpdate(streamer.userId, (event) => {
             channelRewardManager.saveTwitchDataForChannelReward(mapEventSubRewardToTwitchData(event));
         });
         this._subscriptions.push(customRewardUpdateSubscription);
@@ -216,7 +216,7 @@ class TwitchEventSubClient {
         this._subscriptions.push(customRewardRemoveSubscription);
 
         // Channel custom reward
-        const customRewardRedemptionSubscription = this._eventSubListener.onChannelRedemptionAdd(streamer.userId, async (event) => {
+        const customRewardRedemptionSubscription = this._eventSubListener.onChannelRedemptionAdd(streamer.userId, (event) => {
             const reward = channelRewardManager.getChannelReward(event.rewardId);
             if (!reward) {
                 logger.debug(`Received a reward redemption for a reward that does not exist locally. Reward: ${event.rewardTitle}`, event);
@@ -254,7 +254,7 @@ class TwitchEventSubClient {
         });
         this._subscriptions.push(customRewardRedemptionSubscription);
 
-        const customRewardRedemptionUpdateSubscription = this._eventSubListener.onChannelRedemptionUpdate(streamer.userId, async (event) => {
+        const customRewardRedemptionUpdateSubscription = this._eventSubListener.onChannelRedemptionUpdate(streamer.userId, (event) => {
             const reward = channelRewardManager.getChannelReward(event.rewardId);
             if (!reward) {
                 logger.debug(`Received a reward redemption update for a reward that does not exist locally. Reward: ${event.rewardTitle}`, event);
@@ -847,7 +847,7 @@ class TwitchEventSubClient {
         this._subscriptions.push(chatNotificationSubscription);
     }
 
-    async createClient(): Promise<void> {
+    createClient(): void {
         this.disconnectEventSub();
 
         logger.info("Connecting to Twitch EventSub...");

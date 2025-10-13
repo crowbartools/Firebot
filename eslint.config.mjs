@@ -157,7 +157,9 @@ export default defineConfig([{
         "@typescript-eslint/no-empty-object-type": "warn",
         "@typescript-eslint/no-explicit-any": "warn",
         "@typescript-eslint/no-floating-promises": "warn",
-        "@typescript-eslint/no-misused-promises": "warn",
+        "@typescript-eslint/no-misused-promises": ["warn", {
+            checksVoidReturn: false
+        }],
         "@typescript-eslint/no-redundant-type-constituents": "warn",
         "@typescript-eslint/no-require-imports": "off",
         "@typescript-eslint/no-restricted-types": "warn",
