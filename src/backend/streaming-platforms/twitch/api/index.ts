@@ -118,6 +118,7 @@ class TwitchApi {
         this.subscriptions.updateApiClients(this._streamerClient, this._botClient);
         this.teams.updateApiClients(this._streamerClient, this._botClient);
         this.users.updateApiClients(this._streamerClient, this._botClient);
+        this.videos.updateApiClients(this._streamerClient, this._botClient);
         this.whispers.updateApiClients(this._streamerClient, this._botClient);
 
         logger.info("Finished setting up Twitch API clients");
@@ -223,8 +224,9 @@ class TwitchApi {
         return this._users ??= new TwitchUsersApi(this._streamerClient, this._botClient);
     }
 
+    private _videos: TwitchVideosApi;
     get videos() {
-        return new TwitchVideosApi(this._streamerClient, this._botClient);
+        return this._videos ??= new TwitchVideosApi(this._streamerClient, this._botClient);
     }
 
     private _whispers: TwitchWhispersApi;

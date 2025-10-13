@@ -1,14 +1,11 @@
-import accountAccess from "../../../../common/account-access";
-import logger from "../../../../logwrapper";
 import { ApiClient } from "@twurple/api";
+import { ApiResourceBase } from "./api-resource-base";
+import logger from "../../../../logwrapper";
+import accountAccess from "../../../../common/account-access";
 
-export class TwitchVideosApi {
-    private _streamerClient: ApiClient;
-    private _botClient: ApiClient;
-
+export class TwitchVideosApi extends ApiResourceBase {
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        this._streamerClient = streamerClient;
-        this._botClient = botClient;
+        super(streamerClient, botClient);
     }
 
     async getVodByStreamId(streamId: string) {
