@@ -187,7 +187,7 @@
                     // First make sure cron likes it since it's more strict
                     new CronTime(schedule);
                     return cronstrue.toString(schedule);
-                } catch (error) {
+                } catch {
                     return "Invalid schedule";
                 }
             };
