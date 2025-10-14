@@ -30,6 +30,7 @@
         "@types/node": "^22.18.0",
         "@types/sprintf-js": "^1.1.4",
         "@types/unzipper": "^0.10.11",
+        "@types/yargs-parser": "^21.0.3",
         "@typescript-eslint/parser": "^8.46.0",
         "electron": "^38.2.2",
         "electron-installer-dmg": "^5.0.1",

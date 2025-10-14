@@ -43,7 +43,7 @@ const model : ReplaceVariable = {
 
             // map each entry to #position) name - amount
             .map((user, idx) => {
-                return `#${idx + 1}) ${user.displayName} - ${util.commafy(user.metadata[metadataKey])}`;
+                return `#${idx + 1}) ${user.displayName} - ${util.commafy(user.metadata[metadataKey] as number)}`;
             })
 
             // convert to commafied string

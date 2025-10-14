@@ -1,6 +1,6 @@
 import logger from "../../logwrapper";
 import accountAccess from "../../common/account-access";
-import activeChatUserHandler from "../../chat/chat-listeners/active-user-handler";
+import { ActiveUserHandler } from "../../chat/active-user-handler";
 import { TwitchApi } from "./api";
 
 // Every 5 mins
@@ -35,10 +35,10 @@ class TwitchChatterPoll {
             }
 
             for (const chatter of chatters) {
-                await activeChatUserHandler.addOnlineUser(chatter);
+                await ActiveUserHandler.addOnlineUser(chatter);
             }
         } catch (error) {
-            logger.error("There was an error getting connected chat users", error.message);
+            logger.error("There was an error getting connected chat users", (error as Error).message);
         }
     }
 
@@ -56,7 +56,7 @@ class TwitchChatterPoll {
 
     startChatterPoll(): void {
         this.clearPollInterval();
-        this.runChatterPoll();
+        void this.runChatterPoll();
         this._chatterPollIntervalId = setInterval(() => this.runChatterPoll(), POLL_INTERVAL);
     }
 

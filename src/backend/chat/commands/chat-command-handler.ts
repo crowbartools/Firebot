@@ -25,7 +25,7 @@ class CommandHandler {
     private _handledMessageIds: string[] = [];
 
     private buildCommandRegexStr(trigger: string, scanWholeMessage: boolean): string {
-        const escapedTrigger = util.escapeRegExp(trigger);
+        const escapedTrigger = util.escapeRegExp(trigger) as string;
         if (scanWholeMessage) {
             return `(?:^|\\s)${escapedTrigger}(?!-)(?:\\b|$|(?=\\s))`;
         }
@@ -97,8 +97,6 @@ class CommandHandler {
         userCmd: UserCommand,
         sendFailureMessage = true
     ) {
-        const twitchChat = require("../twitch-chat");
-
         const { triggeredSubcmd, commandSender } = userCmd;
         let restrictionData = command.restrictionData;
         let restrictionsAreInherited = false;
@@ -140,7 +138,7 @@ class CommandHandler {
                 if (Array.isArray(restrictionReason)) {
                     reason = restrictionReason.join(", ");
                 } else {
-                    reason = restrictionReason;
+                    reason = restrictionReason as string;
                 }
 
                 logger.debug(`${commandSender} could not use command '${command.trigger}' because: ${reason}`);
@@ -151,13 +149,12 @@ class CommandHandler {
                         DEFAULT_RESTRICTION_MESSAGE;
 
                     if (sendFailureMessage === true) {
-                        await twitchChat.sendChatMessage(
+                        await TwitchApi.chat.sendChatMessage(
                             restrictionMessage
                                 .replaceAll("{user}", commandSender)
                                 .replaceAll("{reason}", reason),
-                            null,
-                            null,
-                            restrictionData.sendAsReply === true ? firebotChatMessage.id : undefined
+                            restrictionData.sendAsReply === true ? firebotChatMessage.id : null,
+                            true
                         );
                     }
                 }
@@ -171,10 +168,8 @@ class CommandHandler {
     async handleChatMessage(firebotChatMessage: FirebotChatMessage): Promise<{
         ranCommand: boolean;
         command?: CommandDefinition | SystemCommandDefinition;
-        userCommand?: UserCommand
+        userCommand?: UserCommand;
     }> {
-        const twitchChat = require("../twitch-chat");
-
         logger.debug("Checking for command in message...");
 
         const result = {
@@ -258,7 +253,7 @@ class CommandHandler {
         }
 
         if (userCmd.isInvalidSubcommandTrigger === true) {
-            await twitchChat.sendChatMessage(`Invalid Command: unknown arg used.`);
+            await TwitchApi.chat.sendChatMessage(`Invalid Command: unknown arg used.`, null, true);
             return result;
         }
 
@@ -272,7 +267,7 @@ class CommandHandler {
         const minArgs = triggeredSubcmd ? triggeredSubcmd.minArgs || 0 : command.minArgs || 0;
         if (userCmd.args.length < minArgs) {
             const usage = triggeredSubcmd ? triggeredSubcmd.usage : command.usage;
-            await twitchChat.sendChatMessage(`Invalid command. Usage: ${command.trigger} ${usage || ""}`);
+            await TwitchApi.chat.sendChatMessage(`Invalid command. Usage: ${command.trigger} ${usage || ""}`, null, true);
             return result;
         }
 
@@ -290,14 +285,13 @@ class CommandHandler {
 
                 const cooldownMessage = command.useCustomCooldownMessage ? command.cooldownMessage : DEFAULT_COOLDOWN_MESSAGE;
 
-                await twitchChat.sendChatMessage(
+                await TwitchApi.chat.sendChatMessage(
                     cooldownMessage
                         .replaceAll("{user}", commandSender)
                         .replaceAll("{timeLeft}", util.secondsForHumans(remainingCooldown)),
-                    null,
-                    null,
                     // We default to replies on purpose here
-                    command.sendCooldownMessageAsReply === false ? null : firebotChatMessage.id
+                    command.sendCooldownMessageAsReply === false ? null : firebotChatMessage.id,
+                    true
                 );
             }
             return result;

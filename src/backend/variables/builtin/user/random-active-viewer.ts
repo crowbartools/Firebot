@@ -1,6 +1,6 @@
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import { ReplaceVariable } from "../../../../types/variables";
-import activeUserHandler from '../../../chat/chat-listeners/active-user-handler';
+import { ActiveUserHandler } from '../../../chat/active-user-handler';
 import logger from "../../../logwrapper";
 import customRolesManager from '../../../roles/custom-roles-manager';
 import { getRandomInt } from '../../../utility';
@@ -39,11 +39,11 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.USER],
         possibleDataOutput: [OutputDataType.TEXT, OutputDataType.OBJECT]
     },
-    evaluator: async (_trigger, roles?: string | string[], ignoreUsers?: string | string[], ignoreRoles?: string | string[], propName?: string) => {
+    evaluator: (_trigger, roles?: string | string[], ignoreUsers?: string | string[], ignoreRoles?: string | string[], propName?: string) => {
         const failResult = "[Unable to get random active user]";
         logger.debug("Getting random active viewer...");
 
-        const activeViewerCount = activeUserHandler.getActiveUserCount();
+        const activeViewerCount = ActiveUserHandler.getActiveUserCount();
         if (activeViewerCount === 0) {
             logger.debug("randomActiveViewer: no active viewers are available to select from");
             return failResult;
@@ -91,7 +91,7 @@ const model : ReplaceVariable = {
             logger.warn(`randomActiveViewer ignoring unknown excluded role(s): ${unknownRoleNames.join(", ")}`);
         }
 
-        let selectableViewers = activeUserHandler.getAllActiveUsers();
+        let selectableViewers = ActiveUserHandler.getAllActiveUsers();
         if (excludedUserNames.length > 0) {
             selectableViewers = selectableViewers.filter(user => !excludedUserNames.includes(user.username));
         }

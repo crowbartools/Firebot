@@ -1,14 +1,10 @@
-import accountAccess from "../../../../common/account-access";
-import logger from '../../../../logwrapper';
 import { ApiClient } from "@twurple/api";
+import { ApiResourceBase } from "./api-resource-base";
+import accountAccess from "../../../../common/account-access";
 
-export class TwitchCharityApi {
-    private _streamerClient: ApiClient;
-    private _botClient: ApiClient;
-
+export class TwitchCharityApi extends ApiResourceBase {
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        this._streamerClient = streamerClient;
-        this._botClient = botClient;
+        super(streamerClient, botClient);
     }
 
     async getCurrentCharityFundraiserTotal(): Promise<number> {

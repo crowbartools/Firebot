@@ -15,9 +15,8 @@ import frontendCommunicator from "../common/frontend-communicator";
 import rankManager from "../ranks/rank-manager";
 import util, { wait } from "../utility";
 import { Rank, RankLadder } from "../../types/ranks";
-
-import { userIsActive } from "../chat/chat-listeners/active-user-handler";
 import roleHelpers from "../roles/role-helpers";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
 
 interface ViewerDbChangePacket {
     userId: string;
@@ -51,6 +50,7 @@ class ViewerDatabase extends EventEmitter {
     private _dbCompactionInterval = 30000;
 
     private cancelRankRecalculation = false;
+    private _activeViewers: string[] = [];
 
     constructor() {
         super();
@@ -128,7 +128,7 @@ class ViewerDatabase extends EventEmitter {
             await this.recalculateRanksForAllViewers(rankLadderId);
         });
 
-        frontendCommunicator.onAsync("rank-recalculation:cancel", async () => {
+        frontendCommunicator.on("rank-recalculation:cancel", () => {
             this.cancelRankRecalculation = true;
         });
     }
@@ -152,7 +152,7 @@ class ViewerDatabase extends EventEmitter {
         try {
             await this._db.loadDatabaseAsync();
         } catch (error) {
-            logger.info("ViewerDB: Error Loading Database: ", error.message);
+            logger.info("ViewerDB: Error Loading Database: ", (error as Error).message);
             logger.info("ViewerDB: Failed Database Path: ", path);
         }
 
@@ -218,13 +218,13 @@ class ViewerDatabase extends EventEmitter {
 
         // Insert our record into db.
         try {
-            eventManager.triggerEvent("firebot", "viewer-created", {
+            const newViewer = await this._db.insertAsync(viewer);
+
+            void eventManager.triggerEvent("firebot", "viewer-created", {
                 username,
                 userId,
                 userDisplayName: displayName
             });
-
-            const newViewer = await this._db.insertAsync(viewer);
 
             return newViewer;
         } catch (error) {
@@ -264,7 +264,7 @@ class ViewerDatabase extends EventEmitter {
             const searchTerm = new RegExp(`^${username}$`, 'i');
 
             return await this._db.findOneAsync({ username: { $regex: searchTerm }, twitch: true });
-        } catch (error) {
+        } catch {
             return;
         }
     }
@@ -297,7 +297,7 @@ class ViewerDatabase extends EventEmitter {
         }
     }
 
-    async getAllUsernamesWithIds(): Promise<{ id: string; username: string; displayName: string; }[]> {
+    async getAllUsernamesWithIds(): Promise<{ id: string, username: string, displayName: string }[]> {
         if (this.isViewerDBOn() !== true) {
             return [];
         }
@@ -331,10 +331,10 @@ class ViewerDatabase extends EventEmitter {
 
             if (affectedDocuments != null) {
                 const updateObj = {};
-                updateObj[fieldName] = util.commafy(affectedDocuments[fieldName]);
+                updateObj[fieldName] = util.commafy(affectedDocuments[fieldName] as number);
             }
         } catch (error) {
-            logger.error(error);
+            logger.error("incrementDbField error", error);
         }
     }
 
@@ -418,7 +418,7 @@ class ViewerDatabase extends EventEmitter {
 
     private getPurgeWherePredicate(options: ViewerPurgeOptions): () => boolean {
         return function () {
-            const viewer: FirebotViewer = this;
+            const viewer = this as FirebotViewer;
 
             if (!viewer.twitch) {
                 return false;
@@ -442,8 +442,8 @@ class ViewerDatabase extends EventEmitter {
 
     async getPurgeViewers(options: ViewerPurgeOptions): Promise<FirebotViewer[]> {
         try {
-            return await this._db.findAsync({ $where: this.getPurgeWherePredicate(options)});
-        } catch (error) {
+            return await this._db.findAsync({ $where: this.getPurgeWherePredicate(options) });
+        } catch {
             return [];
         }
     }
@@ -453,10 +453,10 @@ class ViewerDatabase extends EventEmitter {
 
         try {
             const numRemoved = await this._db
-                .removeAsync({ $where: this.getPurgeWherePredicate(options)}, {multi: true});
+                .removeAsync({ $where: this.getPurgeWherePredicate(options) }, { multi: true });
 
             return numRemoved;
-        } catch (error) {
+        } catch {
             return 0;
         }
     }
@@ -486,7 +486,7 @@ class ViewerDatabase extends EventEmitter {
 
         const isPromotion = ladder.isRankHigher(newRankId, currentRankId);
 
-        if (isPromotion && ladder.announcePromotionsInChat && userIsActive(viewer._id)) {
+        if (isPromotion && ladder.announcePromotionsInChat && this._activeViewers.includes(viewer._id)) {
             const newRank = ladder.getRank(newRankId);
             const rankValueDescription = ladder.getRankValueDescription(newRankId);
 
@@ -495,14 +495,13 @@ class ViewerDatabase extends EventEmitter {
                 .replace(/{user}/g, viewer.displayName)
                 .replace(/{rank}/g, newRank?.name)
                 .replace(/{rankDescription}/g, rankValueDescription);
-            const twitchChat = require("../chat/twitch-chat");
-            await twitchChat.sendChatMessage(promotionMessage);
+            await TwitchApi.chat.sendChatMessage(promotionMessage, null, true);
         }
 
         const newRank = ladder.getRank(newRankId);
         const previousRank = ladder.getRank(currentRankId);
 
-        eventManager.triggerEvent("firebot", "viewer-rank-updated", {
+        void eventManager.triggerEvent("firebot", "viewer-rank-updated", {
             username: viewer.username,
             userId: viewer._id,
             userDisplayName: viewer.displayName,
@@ -531,7 +530,7 @@ class ViewerDatabase extends EventEmitter {
         await this.setViewerRank(viewer, ladderId, rankId);
     }
 
-    async viewerHasRank(viewer: FirebotViewer, ladderId: string, rankId: string): Promise<boolean> {
+    viewerHasRank(viewer: FirebotViewer, ladderId: string, rankId: string): boolean {
         if (this.isViewerDBOn() !== true) {
             return false;
         }
@@ -643,6 +642,7 @@ class ViewerDatabase extends EventEmitter {
             }
         }
     }
+
     async calculateAutoRanksByName(userName: string, trackByType?: RankLadder["settings"]["trackBy"]): Promise<void> {
         if (this.isViewerDBOn() !== true) {
             return;
@@ -706,6 +706,16 @@ class ViewerDatabase extends EventEmitter {
         await wait(1000);
 
         frontendCommunicator.send("rank-recalculation:complete");
+    }
+
+    addActiveViewer(userId: string) {
+        if (!this._activeViewers.includes(userId)) {
+            this._activeViewers.push(userId);
+        }
+    }
+
+    removeActiveViewer(userId: string) {
+        this._activeViewers = this._activeViewers.filter(v => v !== userId);
     }
 }
 

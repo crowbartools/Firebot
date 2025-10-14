@@ -5,7 +5,7 @@ const NodeCache = require('node-cache');
 const { TwitchApi } = require("../streaming-platforms/twitch/api");
 const logger = require("../logwrapper");
 const chatHelpers = require("../chat/chat-helpers");
-const activeUserHandler = require("../chat/chat-listeners/active-user-handler");
+const { ActiveUserHandler } = require("../chat/active-user-handler");
 const frontendCommunicator = require("../common/frontend-communicator");
 const chatRolesManager = require("../roles/chat-roles-manager");
 const teamRolesManager = require("../roles/team-roles-manager");
@@ -72,7 +72,7 @@ async function getUserDetails(userId) {
     let twitchUser;
     try {
         twitchUser = await TwitchApi.users.getUserById(userId);
-    } catch (error) {
+    } catch {
         // fail silently for now
     }
 
@@ -104,7 +104,7 @@ async function getUserDetails(userId) {
             displayName: firebotUserData.displayName,
             roles: userRoles,
             profilePicUrl: firebotUserData.profilePicUrl,
-            active: activeUserHandler.userIsActive(firebotUserData._id)
+            active: ActiveUserHandler.userIsActive(firebotUserData._id)
         });
     }
 

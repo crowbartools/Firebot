@@ -1,6 +1,6 @@
 import { EffectType } from "../../../../types/effects";
 import { EffectCategory } from "../../../../shared/effect-constants";
-import { TwitchCommandHelpers } from "../../../chat/twitch-commands/twitch-command-helpers";
+import { TwitchSlashCommandHelpers } from "../chat/slash-commands/twitch-command-helpers";
 import { TwitchApi } from "../api";
 
 const model: EffectType<{
@@ -169,7 +169,7 @@ const model: EffectType<{
     optionsController: () => {},
     onTriggerEvent: async ({ effect }) => {
         if (effect.setFollowersOnly === true) {
-            const parsedDuration = TwitchCommandHelpers.getRawDurationInSeconds(
+            const parsedDuration = TwitchSlashCommandHelpers.getRawDurationInSeconds(
                 effect.followersOnlyDuration,
                 "minutes"
             );

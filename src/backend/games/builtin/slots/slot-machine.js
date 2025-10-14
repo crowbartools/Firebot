@@ -1,5 +1,5 @@
 "use strict";
-const twitchChat = require("../../../chat/twitch-chat");
+const { TwitchApi } = require("../../../streaming-platforms/twitch/api");
 const util = require("../../../utility");
 
 const SPIN_COUNT = 3;
@@ -9,7 +9,11 @@ async function spin(showSpinInActionMsg, spinInActionMsg, successChance, chatter
     let successCount = 0;
 
     if (showSpinInActionMsg) {
-        await twitchChat.sendChatMessage(spinInActionMsg, null, chatter);
+        await TwitchApi.chat.sendChatMessage(
+            spinInActionMsg,
+            null,
+            !chatter || chatter.toLowerCase() === "bot"
+        );
     }
 
     for (let currentSpin = 1; currentSpin <= SPIN_COUNT; currentSpin++) {

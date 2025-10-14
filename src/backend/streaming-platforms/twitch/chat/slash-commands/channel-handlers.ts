@@ -1,11 +1,11 @@
-import { TwitchApi } from "../../streaming-platforms/twitch/api";
-import { TwitchSlashCommandHandler } from "../twitch-slash-commands";
-import { TwitchCommandHelpers } from "./twitch-command-helpers";
+import { TwitchApi } from "../../api";
+import { TwitchSlashCommand } from "../twitch-slash-commands";
+import { TwitchSlashCommandHelpers } from "./twitch-command-helpers";
 
-export const commercialHandler: TwitchSlashCommandHandler<[number]> = {
+export const commercialHandler: TwitchSlashCommand<[number]> = {
     commands: ["/commercial"],
     validateArgs: ([duration]) => {
-        const parsedDuration = TwitchCommandHelpers.getRawDurationInSeconds(duration);
+        const parsedDuration = TwitchSlashCommandHelpers.getRawDurationInSeconds(duration);
 
         if (parsedDuration == null) {
             return {
@@ -24,7 +24,7 @@ export const commercialHandler: TwitchSlashCommandHandler<[number]> = {
     }
 };
 
-export const raidHandler: TwitchSlashCommandHandler<[string]> = {
+export const raidHandler: TwitchSlashCommand<[string]> = {
     commands: ["/raid"],
     validateArgs: ([targetUsername]) => {
         if (targetUsername == null || targetUsername.length < 1) {
@@ -34,7 +34,7 @@ export const raidHandler: TwitchSlashCommandHandler<[string]> = {
             };
         }
 
-        targetUsername = TwitchCommandHelpers.getNormalizedUsername(targetUsername);
+        targetUsername = TwitchSlashCommandHelpers.getNormalizedUsername(targetUsername);
 
         return {
             success: true,
@@ -52,7 +52,7 @@ export const raidHandler: TwitchSlashCommandHandler<[string]> = {
     }
 };
 
-export const unraidHandler: TwitchSlashCommandHandler<[]> = {
+export const unraidHandler: TwitchSlashCommand<[]> = {
     commands: ["/unraid"],
     validateArgs: () => {
         return {

@@ -1,14 +1,11 @@
+import { ApiClient, HelixHypeTrainEvent } from "@twurple/api";
+import { ApiResourceBase } from './api-resource-base';
 import logger from '../../../../logwrapper';
 import accountAccess from "../../../../common/account-access";
-import { ApiClient, HelixHypeTrainEvent } from "@twurple/api";
 
-export class TwitchHypeTrainApi {
-    private _streamerClient: ApiClient;
-    private _botClient: ApiClient;
-
+export class TwitchHypeTrainApi extends ApiResourceBase {
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        this._streamerClient = streamerClient;
-        this._botClient = botClient;
+        super(streamerClient, botClient);
     }
 
     /**

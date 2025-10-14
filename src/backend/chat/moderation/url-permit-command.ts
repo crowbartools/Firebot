@@ -2,7 +2,7 @@ import { SystemCommand } from "../../../types/commands";
 import logger from "../../logwrapper";
 import commandManager from "../commands/command-manager";
 import frontendCommunicator from "../../common/frontend-communicator";
-import twitchChat from "../twitch-chat";
+import { TwitchApi } from "../../streaming-platforms/twitch/api";
 
 class PermitManager {
     private readonly _permidCommandId: string = "firebot:moderation:url:permit";
@@ -61,14 +61,14 @@ class PermitManager {
             }
 
             if (args.length !== 1) {
-                await twitchChat.sendChatMessage("Incorrect command usage!");
+                await TwitchApi.chat.sendChatMessage("Incorrect command usage!", null, true);
                 return;
             }
 
             const target = args[0].replace("@", "");
             const normalizedTarget = target.toLowerCase();
             if (!target) {
-                await twitchChat.sendChatMessage("Please specify a user to permit.");
+                await TwitchApi.chat.sendChatMessage("Please specify a user to permit.", null, true);
                 return;
             }
 
@@ -80,7 +80,7 @@ class PermitManager {
                 .replaceAll("{duration}", commandOptions.permitDuration.toString());
 
             if (message) {
-                await twitchChat.sendChatMessage(message);
+                await TwitchApi.chat.sendChatMessage(message, null, true);
             }
 
             setTimeout(() => {

@@ -1,8 +1,8 @@
-import { BasicViewer } from "../../types/viewers";
-import logger from "../logwrapper";
-import accountAccess from "../common/account-access";
-import { TwitchApi } from "../streaming-platforms/twitch/api";
 import { TypedEmitter } from "tiny-typed-emitter";
+import logger from "../logwrapper";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
+import accountAccess from "../common/account-access";
+import { BasicViewer } from "../../types/viewers";
 
 const VIEWLIST_BOTS_URL = "https://api.twitchinsights.net/v1/bots/all";
 
@@ -27,6 +27,13 @@ class ChatRolesManager extends TypedEmitter<Events> {
 
     constructor() {
         super();
+    }
+
+    setupListeners(): void {
+        TwitchApi.moderation.on("vip:added", user => this.addVipToVipList(user));
+        TwitchApi.moderation.on("vip:removed", userId => this.removeVipFromVipList(userId));
+        TwitchApi.moderation.on("moderator:added", user => this.addModeratorToModeratorsList(user));
+        TwitchApi.moderation.on("moderator:removed", userId => this.removeModeratorFromModeratorsList(userId));
     }
 
     async cacheViewerListBots(): Promise<void> {

@@ -1,16 +1,13 @@
-import { ApiClient, HelixClip, UserIdResolvable } from "@twurple/api";
 import { randomInt } from "crypto";
+import { ApiClient, HelixClip, UserIdResolvable } from "@twurple/api";
+import { ApiResourceBase } from "./api-resource-base";
 import logger from "../../../../logwrapper";
 import utils from "../../../../utility";
 import accountAccess from "../../../../common/account-access";
 
-export class TwitchClipsApi {
-    private _streamerClient: ApiClient;
-    private _botClient: ApiClient;
-
+export class TwitchClipsApi extends ApiResourceBase {
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        this._streamerClient = streamerClient;
-        this._botClient = botClient;
+        super(streamerClient, botClient);
     }
 
     /**

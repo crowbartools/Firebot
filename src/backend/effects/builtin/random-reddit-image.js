@@ -1,13 +1,13 @@
 "use strict";
 
 const redditProcessor = require("../../common/handlers/redditProcessor");
-const twitchChat = require("../../chat/twitch-chat");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const { SettingsManager } = require("../../common/settings-manager");
 const logger = require("../../logwrapper");
 const webServer = require("../../../server/http-server-manager");
 const { EffectCategory } = require('../../../shared/effect-constants');
 const frontendCommunicator = require("../../common/frontend-communicator");
+const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 
 const model = {
     definition: {
@@ -112,7 +112,7 @@ const model = {
         try {
             logger.debug(`Random Reddit: ${imageUrl}`);
             if (event.effect.show === "chat" || event.effect.show === "both") {
-                await twitchChat.sendChatMessage(`Random Reddit: ${imageUrl}`, null, chatter);
+                await TwitchApi.chat.sendChatMessage(`Random Reddit: ${imageUrl}`, null, chatter.toLowerCase() === "bot");
             }
 
             if (event.effect.show === "overlay" || event.effect.show === "both") {
@@ -148,7 +148,7 @@ const model = {
                 // Send to overlay.
                 webServer.sendToOverlay("image", data);
             }
-        } catch (err) {
+        } catch {
             frontendCommunicator.send(
                 "error",
                 "There was an error sending a reddit picture."

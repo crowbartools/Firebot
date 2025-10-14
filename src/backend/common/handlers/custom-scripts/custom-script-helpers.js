@@ -129,6 +129,9 @@ function buildModules(scriptManifest) {
         logger: logger,
         // thin chat shim for basic backwards compatibility
         chat: {
+            /**
+             * @deprecated Use `twitchApi.chat.sendChatMessage` instead.
+             */
             smartSend: async (...args) => {
                 await twitchChat.sendChatMessage(...args);
             },
@@ -136,6 +139,9 @@ function buildModules(scriptManifest) {
                 await TwitchApi.chat.deleteChatMessage(id);
             }
         },
+        /**
+         * @deprecated Use the `twitchApi.chat` class instead.
+         */
         twitchChat: twitchChat,
         twitchApi: TwitchApi,
         httpServer: require("../../../../server/http-server-manager"),

@@ -1,8 +1,9 @@
 "use strict";
 
 const apiProcessor = require("../../common/handlers/apiProcessor");
-const twitchChat = require("../../chat/twitch-chat");
 const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
+const { TwitchApi } = require("../../streaming-platforms/twitch/api");
+
 /**
  * The API effect
  */
@@ -164,7 +165,7 @@ const api = {
 
         const apiResponse = await apiProcessor.getApiResponse(apiType);
 
-        await twitchChat.sendChatMessage(`${apiType}: ${apiResponse}`, null, chatter);
+        await TwitchApi.chat.sendChatMessage(`${apiType}: ${apiResponse}`, null, chatter.toLowerCase() === "bot");
 
         return {
             success: true,

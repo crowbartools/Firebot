@@ -3,7 +3,7 @@
 const { EffectCategory } = require('../../../shared/effect-constants');
 const logger = require('../../logwrapper');
 const { TwitchApi } = require("../../streaming-platforms/twitch/api");
-const activeUserHandler = require("../../chat/chat-listeners/active-user-handler");
+const { ActiveUserHandler } = require("../../chat/active-user-handler");
 
 const model = {
     definition: {
@@ -65,15 +65,15 @@ const model = {
         }
 
         if (event.effect.action === "Add User") {
-            await activeUserHandler.addActiveUser({
+            await ActiveUserHandler.addActiveUser({
                 id: userId,
                 displayName: username,
                 userName: username
             }, false, true);
         } else if (event.effect.action === "Remove User") {
-            await activeUserHandler.removeActiveUser(userId);
+            await ActiveUserHandler.removeActiveUser(userId);
         } else if (event.effect.action === "Clear List") {
-            activeUserHandler.clearAllActiveUsers();
+            ActiveUserHandler.clearAllActiveUsers();
         }
 
         return true;

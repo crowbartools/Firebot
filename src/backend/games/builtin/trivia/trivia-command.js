@@ -1,7 +1,6 @@
 "use strict";
 
 const util = require("../../../utility");
-const twitchChat = require("../../../chat/twitch-chat");
 const twitchListeners = require("../../../chat/chat-listeners/twitch-chat-listeners");
 const commandManager = require("../../../chat/commands/command-manager");
 const gameManager = require("../../game-manager");
@@ -39,6 +38,7 @@ twitchListeners.events.on("chat-message", async (data) => {
         return;
     }
     const { username, question, wager, winningsMultiplier, currencyId, chatter, postCorrectAnswer } = currentQuestion;
+    const sendAsBot = !chatter || chatter.toLowerCase() === "bot";
     //ensure chat is from question user
     if (username !== chatMessage.username) {
         return;
@@ -67,9 +67,9 @@ twitchListeners.events.on("chat-message", async (data) => {
 
         const currency = currencyAccess.getCurrencyById(currencyId);
 
-        await twitchChat.sendChatMessage(`${chatMessage.userDisplayName ?? username}, that is correct! You have won ${util.commafy(winnings)} ${currency.name}`, null, chatter);
+        await TwitchApi.chat.sendChatMessage(`${chatMessage.userDisplayName ?? username}, that is correct! You have won ${util.commafy(winnings)} ${currency.name}`, null, sendAsBot);
     } else {
-        await twitchChat.sendChatMessage(`Sorry ${chatMessage.userDisplayName ?? username}, that is incorrect.${postCorrectAnswer ? ` The correct answer was ${question.answers[question.correctIndex - 1]}.` : ""} Better luck next time!`, null, chatter);
+        await TwitchApi.chat.sendChatMessage(`Sorry ${chatMessage.userDisplayName ?? username}, that is incorrect.${postCorrectAnswer ? ` The correct answer was ${question.answers[question.correctIndex - 1]}.` : ""} Better luck next time!`, null, sendAsBot);
     }
     clearCurrentQuestion();
 });
@@ -105,6 +105,7 @@ const triviaCommand = {
 
         const triviaSettings = gameManager.getGameSettings("firebot-trivia");
         const chatter = triviaSettings.settings.chatSettings.chatter;
+        const sendAsBot = !chatter || chatter.toLowerCase() === "bot";
 
         const username = userCommand.commandSender;
         const user = await TwitchApi.users.getUserByName(username);
@@ -119,36 +120,36 @@ const triviaCommand = {
 
             if (currentQuestion) {
                 if (currentQuestion.username === username) {
-                    await twitchChat.sendChatMessage(`${user.displayName}, you already have a trivia question in progress!`, null, chatter);
+                    await TwitchApi.chat.sendChatMessage(`${user.displayName}, you already have a trivia question in progress!`, null, sendAsBot);
                     return;
                 }
-                await twitchChat.sendChatMessage(`${user.displayName}, someone else is currently answering a question. Please wait for them to finish.`, null, chatter);
+                await TwitchApi.chat.sendChatMessage(`${user.displayName}, someone else is currently answering a question. Please wait for them to finish.`, null, sendAsBot);
                 return;
             }
 
             const cooldownExpireTime = cooldownCache.get(username);
             if (cooldownExpireTime && moment().isBefore(cooldownExpireTime)) {
                 const timeRemainingDisplay = util.secondsForHumans(Math.abs(moment().diff(cooldownExpireTime, 'seconds')));
-                await twitchChat.sendChatMessage(`${user.displayName}, trivia is currently on cooldown for you. Time remaining: ${timeRemainingDisplay}`, null, chatter);
+                await TwitchApi.chat.sendChatMessage(`${user.displayName}, trivia is currently on cooldown for you. Time remaining: ${timeRemainingDisplay}`, null, sendAsBot);
                 return;
             }
 
             if (wagerAmount < 1) {
-                await twitchChat.sendChatMessage(`${user.displayName}, your wager amount must be more than 0.`, null, chatter);
+                await TwitchApi.chat.sendChatMessage(`${user.displayName}, your wager amount must be more than 0.`, null, sendAsBot);
                 return;
             }
 
             const minWager = triviaSettings.settings.currencySettings.minWager;
             if (minWager != null & minWager > 0) {
                 if (wagerAmount < minWager) {
-                    await twitchChat.sendChatMessage(`${user.displayName}, your wager amount must be at least ${minWager}.`, null, chatter);
+                    await TwitchApi.chat.sendChatMessage(`${user.displayName}, your wager amount must be at least ${minWager}.`, null, sendAsBot);
                     return;
                 }
             }
             const maxWager = triviaSettings.settings.currencySettings.maxWager;
             if (maxWager != null && maxWager > 0) {
                 if (wagerAmount > maxWager) {
-                    await twitchChat.sendChatMessage(`${user.displayName}, your wager amount can be no more than ${maxWager}.`, null, chatter);
+                    await TwitchApi.chat.sendChatMessage(`${user.displayName}, your wager amount can be no more than ${maxWager}.`, null, sendAsBot);
                     return;
                 }
             }
@@ -163,7 +164,7 @@ const triviaCommand = {
             }
 
             if (userBalance < wagerAmount) {
-                await twitchChat.sendChatMessage(`${user.displayName}, you don't have enough to wager this amount!`, null, chatter);
+                await TwitchApi.chat.sendChatMessage(`${user.displayName}, you don't have enough to wager this amount!`, null, sendAsBot);
                 return;
             }
 
@@ -174,7 +175,7 @@ const triviaCommand = {
             );
 
             if (question == null) {
-                await twitchChat.sendChatMessage(`Sorry ${user.displayName}, there was an issue finding you a trivia question. Your wager has not been deducted.`, null, chatter);
+                await TwitchApi.chat.sendChatMessage(`Sorry ${user.displayName}, there was an issue finding you a trivia question. Your wager has not been deducted.`, null, sendAsBot);
                 return;
             }
 
@@ -188,7 +189,7 @@ const triviaCommand = {
                 await currencyManager.adjustCurrencyForViewerById(user.id, currencyId, 0 - Math.abs(wagerAmount));
             } catch (error) {
                 logger.error(error.message);
-                await twitchChat.sendChatMessage(`Sorry ${user.displayName}, there was an error deducting currency from your balance so trivia has been canceled.`, null, chatter);
+                await TwitchApi.chat.sendChatMessage(`Sorry ${user.displayName}, there was an error deducting currency from your balance so trivia has been canceled.`, null, sendAsBot);
                 return;
             }
 
@@ -245,26 +246,26 @@ const triviaCommand = {
 
             const questionMessage = `@${user.displayName} trivia (${question.difficulty}): ${question.question} ${question.answers.map((v, i) => `${i + 1}) ${v}`).join(" ")} [Chat the correct answer # within ${answerTimeout} secs]`;
 
-            await twitchChat.sendChatMessage(questionMessage, null, chatter);
+            await TwitchApi.chat.sendChatMessage(questionMessage, null, sendAsBot);
 
             fiveSecTimeoutId = setTimeout(async () => {
                 if (currentQuestion == null || currentQuestion.username !== username) {
                     return;
                 }
-                await twitchChat.sendChatMessage(`@${user.displayName}, 5 seconds remaining to answer...`, null, chatter);
+                await TwitchApi.chat.sendChatMessage(`@${user.displayName}, 5 seconds remaining to answer...`, null, sendAsBot);
             }, (answerTimeout - 6) * 1000);
 
             answerTimeoutId = setTimeout(async () => {
                 if (currentQuestion == null || currentQuestion.username !== username) {
                     return;
                 }
-                await twitchChat.sendChatMessage(`@${user.displayName} did not provide an answer in time!`, null, chatter);
+                await TwitchApi.chat.sendChatMessage(`@${user.displayName} did not provide an answer in time!`, null, sendAsBot);
                 clearCurrentQuestion();
             }, answerTimeout * 1000);
         } else {
             const noWagerMessage = triviaSettings.settings.chatSettings.noWagerMessage
                 .replaceAll("{user}", user.displayName);
-            await twitchChat.sendChatMessage(noWagerMessage, null, chatter);
+            await TwitchApi.chat.sendChatMessage(noWagerMessage, null, sendAsBot);
         }
     }
 };
