@@ -1,56 +1,66 @@
-"use strict";
+import { QuickActionDefinition, SystemQuickAction } from "../../types/quick-actions";
+import { EffectList } from "../../types/effects";
+import { EffectTrigger } from "../../shared/effect-constants";
+import JsonDbManager from "../database/json-db-manager";
+import frontendCommunicator from "../common/frontend-communicator";
+import effectRunner from "../common/effect-runner";
+import presetEffectListManager from "../effects/preset-lists/preset-effect-list-manager";
+import accountAccess from "../common/account-access";
+import { SettingsManager } from "../common/settings-manager";
 
-const frontendCommunicator = require("../common/frontend-communicator");
-const JsonDbManager = require("../database/json-db-manager");
-const effectRunner = require("../common/effect-runner");
-const presetEffectListManager = require("../effects/preset-lists/preset-effect-list-manager");
-const { EffectTrigger } = require("../../shared/effect-constants");
-const accountAccess = require("../common/account-access");
-const { SettingsManager } = require("../common/settings-manager");
+import { GiveCurrencyQuickAction } from "./builtin/give-currency";
+import { OpenRewardQueueQuickAction } from "./builtin/open-reward-request-queue";
+import { StreamInfoQuickAction } from "./builtin/stream-info";
+import { StreamPreviewQuickAction } from "./builtin/stream-preview";
 
-/** @typedef {import("../../shared/types").QuickActionDefinition} QuickActionDefinition */
 
-/**
- * @extends {JsonDbManager<QuickActionDefinition>}
- */
-class QuickActionManager extends JsonDbManager {
+class QuickActionManager extends JsonDbManager<QuickActionDefinition> {
+    systemQuickActions: SystemQuickAction[] = [
+        GiveCurrencyQuickAction,
+        OpenRewardQueueQuickAction,
+        StreamInfoQuickAction,
+        StreamPreviewQuickAction
+    ];
+
     constructor() {
         super("Custom Quick Action", "/custom-quick-actions");
 
-        this.systemQuickActions = [];
+        frontendCommunicator.on("quick-actions:get-quick-actions",
+            () => this.getAllItems()
+        );
+
+        frontendCommunicator.on("quick-actions:save-custom-quick-action",
+            (customQuickAction: QuickActionDefinition) =>
+                this.saveQuickAction(customQuickAction)
+        );
+
+        frontendCommunicator.on("quick-actions:save-all-custom-quick-actions",
+            (allCustomQuickActions: QuickActionDefinition[]) =>
+                this.saveAllItems(allCustomQuickActions)
+        );
+
+        frontendCommunicator.on("quick-actions:delete-custom-quick-action",
+            (customQuickActionId: string) =>
+                this.deleteQuickAction(customQuickActionId)
+        );
+
+        frontendCommunicator.on("quick-actions:trigger-quick-action",
+            (quickActionId: string) => this.triggerQuickAction(quickActionId)
+        );
     }
 
-    /**
-     * @override
-     * @inheritdoc
-     */
-    loadItems() {
+    loadItems(): void {
         super.loadItems();
-
-        [
-            "give-currency",
-            "stream-info",
-            "stream-preview",
-            "open-reward-request-queue"
-        ].forEach((filename) => {
-            const quickAction = require(`./builtin/${filename}.js`);
-            this.systemQuickActions.push(quickAction);
-        });
     }
 
-    /**
-     * @override
-     * @inheritdoc
-     * @returns {QuickActionDefinition[]}
-     */
-    getAllItems() {
+    getAllItems(): QuickActionDefinition[] {
         return [
             ...this.getSystemQuickActionDefinitions(),
             ...Object.values(this.items)
         ];
     }
 
-    saveQuickAction(quickAction, notify = true) {
+    saveQuickAction(quickAction: QuickActionDefinition, notify = true): QuickActionDefinition {
         const savedQuickAction = super.saveItem(quickAction);
         if (!savedQuickAction) {
             return;
@@ -66,7 +76,7 @@ class QuickActionManager extends JsonDbManager {
         return savedQuickAction;
     }
 
-    deleteQuickAction(customQuickActionId) {
+    deleteQuickAction(customQuickActionId: string): void {
         if (super.deleteItem(customQuickActionId)) {
             const quickActionSettings = SettingsManager.getSetting("QuickActions");
             delete quickActionSettings[customQuickActionId];
@@ -74,22 +84,19 @@ class QuickActionManager extends JsonDbManager {
         }
     }
 
-    /**
-     * @returns {QuickActionDefinition[]}
-     */
-    getSystemQuickActionDefinitions() {
+    getSystemQuickActionDefinitions(): QuickActionDefinition[] {
         return this.systemQuickActions.map(sqa => sqa.definition);
     }
 
-    triggerQuickAction(quickActionId) {
+    triggerQuickAction(quickActionId: string): void {
         const triggeredQuickAction = [
             ...this.getSystemQuickActionDefinitions(),
             ...Object.values(this.items)
         ].find(qa => qa.id === quickActionId);
 
         if (triggeredQuickAction.type === 'custom') {
-            let effects = [];
-            let presetArgValues = undefined;
+            let effects: EffectList = null;
+            let presetArgValues: Record<string, unknown> = null;
 
             if (triggeredQuickAction.presetListId != null) {
                 const presetList = presetEffectListManager.getItem(triggeredQuickAction.presetListId);
@@ -114,7 +121,7 @@ class QuickActionManager extends JsonDbManager {
                 effects: effects
             };
 
-            effectRunner.processEffects(request);
+            void effectRunner.processEffects(request);
             return;
         }
 
@@ -122,30 +129,11 @@ class QuickActionManager extends JsonDbManager {
         systemQuickAction.onTriggerEvent();
     }
 
-    /**
-     * @returns {void}
-     */
-    triggerUiRefresh() {
+    triggerUiRefresh(): void {
         frontendCommunicator.send("all-quick-actions", this.getAllItems());
     }
 }
 
 const quickActionManager = new QuickActionManager();
 
-frontendCommunicator.onAsync("getQuickActions",
-    async () => quickActionManager.getAllItems());
-
-frontendCommunicator.onAsync("saveCustomQuickAction",
-    async (/** @type {QuickActionDefinition} */ customQuickAction) => await quickActionManager.saveQuickAction(customQuickAction));
-
-frontendCommunicator.onAsync("saveAllCustomQuickActions",
-    async (/** @type {QuickActionDefinition[]} */ allCustomQuickActions) => await quickActionManager.saveAllItems(allCustomQuickActions));
-
-frontendCommunicator.on("deleteCustomQuickAction",
-    (/** @type {string} */ customQuickActionId) => quickActionManager.deleteQuickAction(customQuickActionId));
-
-frontendCommunicator.on("triggerQuickAction", (quickActionId) => {
-    quickActionManager.triggerQuickAction(quickActionId);
-});
-
-module.exports = quickActionManager;
+export { quickActionManager as QuickActionManager };

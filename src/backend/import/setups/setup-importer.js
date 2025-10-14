@@ -13,7 +13,7 @@ const timerManager = require("../../timers/timer-manager");
 const scheduledTaskManager = require("../../timers/scheduled-task-manager");
 const presetEffectListManager = require("../../effects/preset-lists/preset-effect-list-manager");
 const customRolesManager = require("../../roles/custom-roles-manager");
-const quickActionManager = require("../../quick-actions/quick-action-manager");
+const { QuickActionManager } = require("../../quick-actions/quick-action-manager");
 const variableMacroManager = require("../../variables/macro-manager");
 const rankManager = require("../../ranks/rank-manager");
 const { escapeRegExp } = require("../../utility");
@@ -183,9 +183,9 @@ async function importSetup(setup, selectedCurrency) {
     const quickActions = setup.components.quickActions || [];
     if (quickActions.length > 0) {
         for (const action of quickActions) {
-            quickActionManager.saveQuickAction(action, false);
+            QuickActionManager.saveQuickAction(action, false);
         }
-        quickActionManager.triggerUiRefresh();
+        QuickActionManager.triggerUiRefresh();
     }
 
     // overlay widget configs
@@ -246,7 +246,7 @@ function removeSetupComponents(components) {
                         rankManager.deleteItem(id);
                         break;
                     case "quickActions":
-                        quickActionManager.deleteQuickAction(id);
+                        QuickActionManager.deleteQuickAction(id);
                         break;
                     case "overlayWidgetConfigs":
                         overlayWidgetConfigManager.deleteItem(id);
@@ -278,7 +278,7 @@ function removeSetupComponents(components) {
             } else if (componentType === "viewerRankLadders") {
                 rankManager.triggerUiRefresh();
             } else if (componentType === "quickActions") {
-                quickActionManager.triggerUiRefresh();
+                QuickActionManager.triggerUiRefresh();
             } else if (componentType === "overlayWidgetConfigs") {
                 overlayWidgetConfigManager.triggerUiRefresh();
             }

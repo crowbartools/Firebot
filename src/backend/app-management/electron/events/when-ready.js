@@ -152,8 +152,8 @@ exports.whenReady = async () => {
     presetEffectListManager.loadItems();
 
     windowManagement.updateSplashScreenStatus("Loading quick actions...");
-    const quickActionManager = require("../../../quick-actions/quick-action-manager");
-    quickActionManager.loadItems();
+    const { QuickActionManager } = require("../../../quick-actions/quick-action-manager");
+    QuickActionManager.loadItems();
 
     windowManagement.updateSplashScreenStatus("Loading webhooks...");
     const webhookConfigManager = require("../../../webhooks/webhook-config-manager");

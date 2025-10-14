@@ -1,7 +1,7 @@
 "use strict";
 
 (function() {
-    /** @typedef {import("../../../shared/types").QuickActionDefinition} QuickAction */
+    /** @typedef {import("../../../types/quick-actions").QuickActionDefinition} QuickAction */
 
     angular
         .module("firebotApp")
@@ -29,7 +29,7 @@
              * @returns {Promise.<void>}
              */
             service.loadQuickActions = async () => {
-                const quickActions = await backendCommunicator.fireEventAsync("getQuickActions");
+                const quickActions = await backendCommunicator.fireEventSync("quick-actions:get-quick-actions");
 
                 if (quickActions) {
                     service.quickActions = quickActions;
@@ -94,7 +94,7 @@
              * @returns {Promise.<void>}
              */
             service.saveCustomQuickAction = async (customQuickAction) => {
-                const savedCustomQuickAction = await backendCommunicator.fireEventAsync("saveCustomQuickAction", customQuickAction);
+                const savedCustomQuickAction = await backendCommunicator.fireEventSync("quick-actions:save-custom-quick-action", customQuickAction);
 
                 if (savedCustomQuickAction) {
                     updateQuickActions(savedCustomQuickAction);
@@ -110,7 +110,7 @@
              */
             service.deleteCustomQuickAction = (customQuickActionId) => {
                 service.quickActions = service.quickActions.filter(cqa => cqa.id !== customQuickActionId);
-                backendCommunicator.fireEvent("deleteCustomQuickAction", customQuickActionId);
+                backendCommunicator.fireEvent("quick-actions:delete-custom-quick-action", customQuickActionId);
             };
 
             /**
