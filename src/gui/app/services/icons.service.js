@@ -6,7 +6,7 @@
         .factory("iconsService", function(backendCommunicator) {
             const service = {};
 
-            /** @type {import("../../../shared/types").FontAwesomeIcon[]} */
+            /** @type {import("../../../types/icons").FontAwesomeIcon[]} */
             service.icons = [];
 
             service.loadFontAwesomeIcons = () => {

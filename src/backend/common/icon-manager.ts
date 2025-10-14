@@ -1,5 +1,5 @@
+import { FontAwesomeIcon } from "../../types/icons";
 import frontendCommunicator from "./frontend-communicator";
-import { FontAwesomeIcon } from "../../shared/types";
 
 enum FontAwesomeStyle {
     Brands = "brands",
@@ -34,7 +34,7 @@ interface FontAwesomeIconDefinition {
 }
 
 type FontAwesomeIconDefinitions = {
-    [iconName: string]: FontAwesomeIconDefinition
+    [iconName: string]: FontAwesomeIconDefinition;
 };
 
 class IconManager {
@@ -45,7 +45,7 @@ class IconManager {
     }
 
     async loadFontAwesomeIcons(): Promise<void> {
-        const fontAwesomeIcons: FontAwesomeIconDefinitions = await (await fetch("https://raw.githubusercontent.com/FortAwesome/Font-Awesome/master/metadata/icons.json")).json();
+        const fontAwesomeIcons = await (await fetch("https://raw.githubusercontent.com/FortAwesome/Font-Awesome/master/metadata/icons.json")).json() as FontAwesomeIconDefinitions;
 
         for (const iconName in fontAwesomeIcons) {
             if (fontAwesomeIcons[iconName].private) {
