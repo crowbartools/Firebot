@@ -1,15 +1,16 @@
-"use strict";
+import { EffectType } from '../../../types/effects';
+import frontendCommunicator from '../../common/frontend-communicator';
 
-const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
-const frontendCommunicator = require('../../common/frontend-communicator');
-
-const effect = {
+const effect: EffectType<{
+    message: string;
+    icon: string;
+}> = {
     definition: {
         id: "firebot:chat-feed-alert",
         name: "Chat Feed Alert",
         description: "Display an alert in Firebot's chat feed",
         icon: "fad fa-exclamation-circle",
-        categories: [EffectCategory.COMMON, EffectCategory.CHAT_BASED],
+        categories: ["common", "chat based"],
         dependencies: []
     },
     optionsTemplate: `
@@ -43,7 +44,7 @@ const effect = {
         }
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.message == null || effect.message === "") {
             errors.push("Alert message can't be blank.");
         }
@@ -52,7 +53,7 @@ const effect = {
         }
         return errors;
     },
-    onTriggerEvent: async (event) => {
+    onTriggerEvent: (event) => {
 
         const { effect } = event;
 
@@ -66,4 +67,4 @@ const effect = {
     }
 };
 
-module.exports = effect;
+export = effect;

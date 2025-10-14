@@ -3,7 +3,7 @@ import { EffectCategory } from "../../../shared/effect-constants";
 import logger from "../../logwrapper";
 import HttpServerManager from "../../../server/http-server-manager";
 
-const model: EffectType<{
+const effect: EffectType<{
     eventName: string;
     eventData: string;
 }> = {
@@ -61,7 +61,7 @@ const model: EffectType<{
         $scope.initialEditorLabel = $scope.effect?.eventData?.startsWith("{") || $scope.effect?.eventData?.startsWith("[") ? "JSON" : "Basic";
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (!(effect.eventName?.length > 0)) {
             errors.push("Please input an event name.");
         }
@@ -84,4 +84,4 @@ const model: EffectType<{
     }
 };
 
-module.exports = model;
+export = effect;

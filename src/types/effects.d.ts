@@ -1,5 +1,6 @@
-import { TriggerType, TriggersObject, Trigger } from "./triggers";
 import ng from "angular";
+import { TriggerType, TriggersObject, Trigger } from "./triggers";
+import { Awaitable } from "./util-types";
 
 type Func<T> = (...args: unknown[]) => T;
 
@@ -75,14 +76,14 @@ export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
     optionsTemplate: string;
     optionsController?: ($scope: EffectScope<EffectModel>, ...args: any[]) => void;
     optionsValidator?: (effect: EffectModel, $scope: EffectScope<EffectModel>) => string[];
-    getDefaultLabel?: (effect: EffectModel, ...args: any[]) => string | undefined | Promise<string | undefined>;
+    getDefaultLabel?: (effect: EffectModel, ...args: any[]) => Awaitable<string | undefined>;
     onTriggerEvent: (event: {
         effect: EffectModel;
         trigger: Trigger;
         sendDataToOverlay: (data: OverlayData, overlayInstance?: string) => void;
         outputs: Record<string, unknown>;
         abortSignal: AbortSignal;
-    }) => Promise<void | boolean | EffectTriggerResponse>;
+    }) => Awaitable<void | boolean | EffectTriggerResponse>;
     overlayExtension?: OverlayExtension;
 };
 

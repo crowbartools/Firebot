@@ -82,7 +82,7 @@ const effect: EffectType<{
         }
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.commandType !== "tag" && effect.commandId == null) {
             errors.push("Please select a command.");
         }

@@ -1,17 +1,18 @@
-"use strict";
+import { EffectType } from '../../../types/effects';
+import { TwitchApi } from "../../streaming-platforms/twitch/api";
+import { ActiveUserHandler } from "../../chat/active-user-handler";
+import logger from '../../logwrapper';
 
-const { EffectCategory } = require('../../../shared/effect-constants');
-const logger = require('../../logwrapper');
-const { TwitchApi } = require("../../streaming-platforms/twitch/api");
-const { ActiveUserHandler } = require("../../chat/active-user-handler");
-
-const model = {
+const effect: EffectType<{
+    action: string;
+    username: string;
+}> = {
     definition: {
         id: "firebot:activeUserLists",
         name: "Manage Active Chat Users",
         description: "Add or remove users from the active chat user lists.",
         icon: "fad fa-users",
-        categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
+        categories: ["common", "Moderation"],
         dependencies: []
     },
     optionsTemplate: `
@@ -42,7 +43,7 @@ const model = {
     `,
     optionsController: () => {},
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.action == null || effect.action === "") {
             errors.push("Please select an action to perform.");
         }
@@ -66,12 +67,12 @@ const model = {
 
         if (event.effect.action === "Add User") {
             await ActiveUserHandler.addActiveUser({
-                id: userId,
+                userId: userId,
                 displayName: username,
                 userName: username
             }, false, true);
         } else if (event.effect.action === "Remove User") {
-            await ActiveUserHandler.removeActiveUser(userId);
+            ActiveUserHandler.removeActiveUser(userId);
         } else if (event.effect.action === "Clear List") {
             ActiveUserHandler.clearAllActiveUsers();
         }
@@ -80,4 +81,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export = effect;

@@ -2,7 +2,7 @@ import { EffectType } from "../../../types/effects";
 import { EffectCategory } from "../../../shared/effect-constants";
 import { retriggerLastActivity } from "../../events/activity-feed-manager";
 
-const model: EffectType = {
+const effect: EffectType = {
     definition: {
         id: "firebot:retrigger-last-activity",
         name: "Retrigger Last Activity",
@@ -22,4 +22,4 @@ const model: EffectType = {
     }
 };
 
-module.exports = model;
+export = effect;

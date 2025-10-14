@@ -1,16 +1,20 @@
-"use strict";
+import { EffectType } from '../../../types/effects';
+import { TwitchApi } from '../../streaming-platforms/twitch/api';
 
-const { EffectCategory, EffectTrigger, EffectDependency } = require('../../../shared/effect-constants');
-const { TwitchApi } = require('../../streaming-platforms/twitch/api');
-
-const effect = {
+const effect: EffectType<{
+    chatter: string;
+    message: string;
+    me: boolean;
+    whisper: string;
+    sendAsReply: boolean;
+}> = {
     definition: {
         id: "firebot:chat",
         name: "Chat",
         description: "Send a chat message.",
         icon: "fad fa-comment-lines",
-        categories: [EffectCategory.COMMON, EffectCategory.CHAT_BASED, EffectCategory.TWITCH],
-        dependencies: [EffectDependency.CHAT]
+        categories: ["common", "chat based", "twitch"],
+        dependencies: ["chat"]
     },
     optionsTemplate: `
     <eos-chatter-select effect="effect" title="Chat as"></eos-chatter-select>
@@ -63,17 +67,17 @@ const effect = {
         $scope.showWhisperInput = $scope.effect.whisper != null && $scope.effect.whisper !== '';
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.message == null || effect.message === "") {
             errors.push("Chat message can't be blank.");
         }
         return errors;
     },
     onTriggerEvent: async ({ effect, trigger }) => {
-        let messageId = null;
-        if (trigger.type === EffectTrigger.COMMAND) {
+        let messageId: string = null;
+        if (trigger.type === "command") {
             messageId = trigger.metadata.chatMessage.id;
-        } else if (trigger.type === EffectTrigger.EVENT) {
+        } else if (trigger.type === "event") {
             messageId = trigger.metadata.eventData?.chatMessage?.id;
         }
 
@@ -92,4 +96,4 @@ const effect = {
     }
 };
 
-module.exports = effect;
+export = effect;

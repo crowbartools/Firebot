@@ -4,7 +4,7 @@ import { EffectCategory } from '../../../shared/effect-constants';
 import moment from "moment";
 import { EffectType } from "../../../types/effects";
 
-const model: EffectType<{
+const effect: EffectType<{
     creator: string;
     originator: string;
     text: string;
@@ -42,7 +42,7 @@ const model: EffectType<{
     `,
     optionsController: () => {},
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.creator == null || effect.creator === "") {
             errors.push("Please provide a quote creator.");
         }
@@ -71,7 +71,7 @@ const model: EffectType<{
             createdAt: moment().toISOString()
         };
 
-        const id = await quotesManager.addQuote(newQuote);
+        const id = (await quotesManager.addQuote(newQuote)) as string;
 
         return {
             success: true,
@@ -82,4 +82,4 @@ const model: EffectType<{
     }
 };
 
-export = model;
+export = effect;

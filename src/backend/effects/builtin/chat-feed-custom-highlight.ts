@@ -7,7 +7,7 @@ const triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
 triggers[EffectTrigger.EVENT] = ["twitch:chat-message", "twitch:viewer-arrived"];
 
-const model: EffectType<{
+const effect: EffectType<{
     highlightEnabled: boolean;
     bannerEnabled: boolean;
     customHighlightColor?: string;
@@ -82,7 +82,7 @@ const model: EffectType<{
         }
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (!effect.highlightEnabled && !effect.bannerEnabled) {
             errors.push("At least one of 'Highlight Message' or 'Add a Banner' must be enabled, or this effect will not do anything.");
         }
@@ -103,7 +103,7 @@ const model: EffectType<{
         }
         return errors;
     },
-    onTriggerEvent: async (event) => {
+    onTriggerEvent: (event) => {
         const { effect, trigger } = event;
 
         let messageId: string | null = null;
@@ -128,4 +128,4 @@ const model: EffectType<{
     }
 };
 
-export = model;
+export = effect;

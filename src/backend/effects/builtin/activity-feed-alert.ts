@@ -19,34 +19,34 @@ const effect: EffectType<{
         <p>Use this effect to send yourself alerts in Firebot's activity feed.</p>
     </eos-container>
     <eos-container header="Message" pad-top="true">
-        <firebot-input 
-            model="effect.message" 
+        <firebot-input
+            model="effect.message"
             placeholder-text="Enter message"
             use-text-area="true"
             rows="4"
             cols="40"
             menu-position="under"
         />
-    </eos-container> 
+    </eos-container>
     <eos-container header="Icon" pad-top="true">
-        <input 
-			maxlength="2" 
-			type="text" 
-			class="form-control" 
-			ng-model="effect.icon" 
+        <input
+			maxlength="2"
+			type="text"
+			class="form-control"
+			ng-model="effect.icon"
 			icon-picker required
 		/>
-    </eos-container> 
+    </eos-container>
     `,
     optionsController: () => { },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.message == null || effect.message === "") {
             errors.push("Alert message can't be blank.");
         }
         return errors;
     },
-    onTriggerEvent: async ({ effect }) => {
+    onTriggerEvent: ({ effect }) => {
         handleTriggeredEvent(
             {
                 id: "firebot",
@@ -74,4 +74,4 @@ const effect: EffectType<{
     }
 };
 
-module.exports = effect;
+export = effect;

@@ -5,7 +5,7 @@ import { EffectCategory } from "../../../shared/effect-constants";
 import logger from "../../logwrapper";
 import { evalSandboxedJs } from "../../common/handlers/js-sandbox/sandbox-eval";
 
-const model: EffectType<{
+const effect: EffectType<{
     code: string;
     parameters: string[];
 }> = {
@@ -79,7 +79,7 @@ const model: EffectType<{
         };
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.code == null) {
             errors.push("Please enter some JavaScript code.");
         }
@@ -101,4 +101,4 @@ const model: EffectType<{
     }
 };
 
-module.exports = model;
+export = effect;

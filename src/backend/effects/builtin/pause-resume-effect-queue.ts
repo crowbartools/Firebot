@@ -3,7 +3,7 @@ import { EffectCategory } from "../../../shared/effect-constants";
 import effectQueueManager, { EffectQueueConfig } from "../queues/effect-queue-config-manager";
 import logger from "../../logwrapper";
 
-const model: EffectType<{
+const effect: EffectType<{
     effectQueue: string;
     action: "Pause" | "Resume" | "Toggle";
     runEffectsImmediatelyWhenPaused?: boolean;
@@ -111,4 +111,4 @@ const model: EffectType<{
     }
 };
 
-module.exports = model;
+export = effect;

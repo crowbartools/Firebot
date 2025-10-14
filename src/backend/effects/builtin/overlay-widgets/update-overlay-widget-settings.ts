@@ -223,7 +223,7 @@ const model: EffectType<{
         });
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
 
         if (effect.widgetConfigId == null) {
             errors.push("Please select a overlay widget.");
