@@ -1,6 +1,6 @@
 "use strict";
-const electron = require("electron");
-const { app, dialog, shell } = electron;
+
+const { app, dialog, shell, autoUpdater } = require("electron");
 const logger = require("../logwrapper");
 const { restartApp } = require("../app-management/electron/app-helpers");
 
@@ -110,28 +110,19 @@ exports.setupCommonListeners = () => {
         currentVersion: app.getVersion()
     };
 
-    frontendCommunicator.on("downloadUpdate", async () => {
-        const GhReleases = require("electron-gh-releases");
+    const updateFeedUrl = `https://update.electronjs.org/crowbartools/Firebot/win32/${app.getVersion()}`;
 
+    frontendCommunicator.on("downloadUpdate", async () => {
         //back up first
         if (SettingsManager.getSetting("BackupBeforeUpdates")) {
             await BackupManager.startBackup();
         }
 
-        // Download Update
-        const updater = new GhReleases(updaterOptions);
-
-        updater.check((err) => {
-            // Download the update
-            updater.download();
-
-            if (err) {
-                logger.info(err);
-            }
-        });
+        autoUpdater.setFeedURL({ url: updateFeedUrl });
+        autoUpdater.checkForUpdates();
 
         // When an update has been downloaded
-        updater.on("update-downloaded", () => {
+        autoUpdater.on("update-downloaded", () => {
             logger.info("Updated downloaded.");
             //let the front end know and wait a few secs.
             frontendCommunicator.send("updateDownloaded");
@@ -145,15 +136,6 @@ exports.setupCommonListeners = () => {
         logger.info("Installing update...");
         frontendCommunicator.send("installingUpdate");
 
-        const GhReleases = require("electron-gh-releases");
-
-        // Download Update
-        const updater = new GhReleases(updaterOptions);
-
-        updater.install();
-
-        // Access electrons autoUpdater
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        updater.autoUpdater;
+        autoUpdater.quitAndInstall();
     });
 };
