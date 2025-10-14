@@ -2,10 +2,10 @@
 
 const currencyAccess = require("../../currency/currency-access").default;
 const currencyManager = require("../../currency/currency-manager");
-const twitchChat = require("../../chat/twitch-chat");
 const logger = require("../../logwrapper");
 const { EffectCategory } = require('../../../shared/effect-constants');
 const { populateStringWithTriggerData } = require("../../utility");
+const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 
 /**
  * The Currency effect
@@ -337,7 +337,12 @@ const currency = {
                         }
                     );
 
-                    await twitchChat.sendChatMessage(evaluatedMessage, whisper, chatter);
+                    if (whisper) {
+                        const user = await TwitchApi.users.getUserByName(whisper);
+                        await TwitchApi.whispers.sendWhisper(user.id, evaluatedMessage, chatter.toLowerCase() === "bot");
+                    } else {
+                        await TwitchApi.chat.sendChatMessage(evaluatedMessage, null, chatter.toLowerCase() === "bot");
+                    }
                 }
             } catch (error) {
                 logger.error("Error updating currency", error);

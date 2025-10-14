@@ -176,6 +176,10 @@ const capitalize = (word) => {
     return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 };
 
+/**
+ * @param {number} number
+ * @returns {string}
+ */
 const commafy = (number) => {
     return number == null ? number : number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };

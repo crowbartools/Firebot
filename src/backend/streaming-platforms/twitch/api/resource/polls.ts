@@ -1,14 +1,11 @@
+import { ApiClient, HelixPoll } from "@twurple/api";
+import { ApiResourceBase } from './api-resource-base';
 import logger from '../../../../logwrapper';
 import accountAccess from "../../../../common/account-access";
-import { ApiClient, HelixPoll } from "@twurple/api";
 
-export class TwitchPollsApi {
-    private _streamerClient: ApiClient;
-    private _botClient: ApiClient;
-
+export class TwitchPollsApi extends ApiResourceBase {
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        this._streamerClient = streamerClient;
-        this._botClient = botClient;
+        super(streamerClient, botClient);
     }
 
     /**

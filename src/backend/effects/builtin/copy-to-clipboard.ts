@@ -2,7 +2,7 @@ import { EffectType } from "../../../types/effects";
 import { EffectCategory } from "../../../shared/effect-constants";
 import frontendCommunicator from "../../common/frontend-communicator";
 
-const model: EffectType<{
+const effect: EffectType<{
     text: string;
 }> = {
     definition: {
@@ -19,7 +19,7 @@ const model: EffectType<{
         </eos-container>
     `,
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (!(effect.text?.length > 0)) {
             errors.push("Please input some text.");
         }
@@ -32,4 +32,4 @@ const model: EffectType<{
     }
 };
 
-module.exports = model;
+export = effect;

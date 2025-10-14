@@ -4,7 +4,7 @@ import effectQueueManager, { EffectQueueConfig } from "../queues/effect-queue-co
 import queueRunner from "../queues/effect-queue-runner";
 import logger from "../../logwrapper";
 
-const model: EffectType<{
+const effect: EffectType<{
     effectQueueId: string;
 }> = {
     definition: {
@@ -70,4 +70,4 @@ const model: EffectType<{
     }
 };
 
-module.exports = model;
+export = effect;

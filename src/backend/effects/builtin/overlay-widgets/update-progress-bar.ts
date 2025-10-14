@@ -68,7 +68,7 @@ const model: EffectType<{
         ];
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.progressBarWidgetId == null) {
             errors.push("Please select a progress bar.");
         } else if (effect.action == null) {

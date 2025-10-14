@@ -67,7 +67,7 @@ const model: EffectType<{
         };
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.customWidgetId == null) {
             errors.push("Please select a custom widget.");
         } else if (effect.messageName == null || effect.messageName.trim() === "") {

@@ -100,8 +100,8 @@
 
             backendCommunicator.on("invalidate-accounts", service.invalidateAccounts);
 
-            service.validateAccounts = async () => {
-                await backendCommunicator.fireEventAsync("validate-twitch-accounts");
+            service.validateAccounts = () => {
+                backendCommunicator.fireEventSync("validate-twitch-accounts");
             };
 
             // Create new profile

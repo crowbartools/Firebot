@@ -1,9 +1,9 @@
-import { TwitchApi } from "../../streaming-platforms/twitch/api";
-import chatRolesManager from "../../roles/chat-roles-manager";
-import { TwitchSlashCommandHandler } from "../twitch-slash-commands";
-import { TwitchCommandHelpers } from "./twitch-command-helpers";
+import { TwitchApi } from "../../api";
+import { TwitchSlashCommand } from "../twitch-slash-commands";
+import { TwitchSlashCommandHelpers } from "./twitch-command-helpers";
+import chatRolesManager from "../../../../roles/chat-roles-manager";
 
-export const timeoutHandler: TwitchSlashCommandHandler<[string, number, string]> = {
+export const timeoutHandler: TwitchSlashCommand<[string, number, string]> = {
     commands: ["/timeout"],
     validateArgs: ([targetUsername, duration, ...reason]) => {
         if (targetUsername == null || targetUsername.length < 1) {
@@ -13,7 +13,7 @@ export const timeoutHandler: TwitchSlashCommandHandler<[string, number, string]>
             };
         }
 
-        const parsedDuration = TwitchCommandHelpers.getRawDurationInSeconds(duration);
+        const parsedDuration = TwitchSlashCommandHelpers.getRawDurationInSeconds(duration);
         if (parsedDuration == null) {
             return {
                 success: false,
@@ -21,7 +21,7 @@ export const timeoutHandler: TwitchSlashCommandHandler<[string, number, string]>
             };
         }
 
-        targetUsername = TwitchCommandHelpers.getNormalizedUsername(targetUsername);
+        targetUsername = TwitchSlashCommandHelpers.getNormalizedUsername(targetUsername);
         const formattedReason: string = reason == null ? null : reason.join(" ");
 
         return {
@@ -40,7 +40,7 @@ export const timeoutHandler: TwitchSlashCommandHandler<[string, number, string]>
     }
 };
 
-export const banHandler: TwitchSlashCommandHandler<[string, string]> = {
+export const banHandler: TwitchSlashCommand<[string, string]> = {
     commands: ["/ban"],
     validateArgs: ([targetUsername, ...reason]) => {
         if (targetUsername == null || targetUsername.length < 1) {
@@ -50,7 +50,7 @@ export const banHandler: TwitchSlashCommandHandler<[string, string]> = {
             };
         }
 
-        targetUsername = TwitchCommandHelpers.getNormalizedUsername(targetUsername);
+        targetUsername = TwitchSlashCommandHelpers.getNormalizedUsername(targetUsername);
         const formattedReason: string = reason == null ? null : reason.join(" ");
 
         return {
@@ -69,7 +69,7 @@ export const banHandler: TwitchSlashCommandHandler<[string, string]> = {
     }
 };
 
-export const unbanHandler: TwitchSlashCommandHandler<[string]> = {
+export const unbanHandler: TwitchSlashCommand<[string]> = {
     commands: ["/unban", "/untimeout"],
     validateArgs: ([targetUsername]) => {
         if (targetUsername == null || targetUsername.length < 1) {
@@ -79,7 +79,7 @@ export const unbanHandler: TwitchSlashCommandHandler<[string]> = {
             };
         }
 
-        targetUsername = TwitchCommandHelpers.getNormalizedUsername(targetUsername);
+        targetUsername = TwitchSlashCommandHelpers.getNormalizedUsername(targetUsername);
 
         return {
             success: true,
@@ -97,7 +97,7 @@ export const unbanHandler: TwitchSlashCommandHandler<[string]> = {
     }
 };
 
-export const vipHandler: TwitchSlashCommandHandler<[string]> = {
+export const vipHandler: TwitchSlashCommand<[string]> = {
     commands: ["/vip"],
     validateArgs: ([targetUsername]) => {
         if (targetUsername == null || targetUsername.length < 1) {
@@ -107,7 +107,7 @@ export const vipHandler: TwitchSlashCommandHandler<[string]> = {
             };
         }
 
-        targetUsername = TwitchCommandHelpers.getNormalizedUsername(targetUsername);
+        targetUsername = TwitchSlashCommandHelpers.getNormalizedUsername(targetUsername);
 
         return {
             success: true,
@@ -133,7 +133,7 @@ export const vipHandler: TwitchSlashCommandHandler<[string]> = {
     }
 };
 
-export const unvipHandler: TwitchSlashCommandHandler<[string]> = {
+export const unvipHandler: TwitchSlashCommand<[string]> = {
     commands: ["/unvip"],
     validateArgs: ([targetUsername]) => {
         if (targetUsername == null || targetUsername.length < 1) {
@@ -143,7 +143,7 @@ export const unvipHandler: TwitchSlashCommandHandler<[string]> = {
             };
         }
 
-        targetUsername = TwitchCommandHelpers.getNormalizedUsername(targetUsername);
+        targetUsername = TwitchSlashCommandHelpers.getNormalizedUsername(targetUsername);
 
         return {
             success: true,
@@ -165,7 +165,7 @@ export const unvipHandler: TwitchSlashCommandHandler<[string]> = {
     }
 };
 
-export const modHandler: TwitchSlashCommandHandler<[string]> = {
+export const modHandler: TwitchSlashCommand<[string]> = {
     commands: ["/mod"],
     validateArgs: ([targetUsername]) => {
         if (targetUsername == null || targetUsername.length < 1) {
@@ -175,7 +175,7 @@ export const modHandler: TwitchSlashCommandHandler<[string]> = {
             };
         }
 
-        targetUsername = TwitchCommandHelpers.getNormalizedUsername(targetUsername);
+        targetUsername = TwitchSlashCommandHelpers.getNormalizedUsername(targetUsername);
 
         return {
             success: true,
@@ -193,7 +193,7 @@ export const modHandler: TwitchSlashCommandHandler<[string]> = {
     }
 };
 
-export const unmodHandler: TwitchSlashCommandHandler<[string]> = {
+export const unmodHandler: TwitchSlashCommand<[string]> = {
     commands: ["/unmod"],
     validateArgs: ([targetUsername]) => {
         if (targetUsername == null || targetUsername.length < 1) {
@@ -203,7 +203,7 @@ export const unmodHandler: TwitchSlashCommandHandler<[string]> = {
             };
         }
 
-        targetUsername = TwitchCommandHelpers.getNormalizedUsername(targetUsername);
+        targetUsername = TwitchSlashCommandHelpers.getNormalizedUsername(targetUsername);
 
         return {
             success: true,

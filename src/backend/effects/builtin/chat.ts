@@ -1,16 +1,20 @@
-"use strict";
+import { EffectType } from '../../../types/effects';
+import { TwitchApi } from '../../streaming-platforms/twitch/api';
 
-const { EffectCategory, EffectTrigger, EffectDependency } = require('../../../shared/effect-constants');
-const twitchChat = require("../../chat/twitch-chat");
-
-const effect = {
+const effect: EffectType<{
+    chatter: string;
+    message: string;
+    me: boolean;
+    whisper: string;
+    sendAsReply: boolean;
+}> = {
     definition: {
         id: "firebot:chat",
         name: "Chat",
         description: "Send a chat message.",
         icon: "fad fa-comment-lines",
-        categories: [EffectCategory.COMMON, EffectCategory.CHAT_BASED, EffectCategory.TWITCH],
-        dependencies: [EffectDependency.CHAT]
+        categories: ["common", "chat based", "twitch"],
+        dependencies: ["chat"]
     },
     optionsTemplate: `
     <eos-chatter-select effect="effect" title="Chat as"></eos-chatter-select>
@@ -63,17 +67,17 @@ const effect = {
         $scope.showWhisperInput = $scope.effect.whisper != null && $scope.effect.whisper !== '';
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.message == null || effect.message === "") {
             errors.push("Chat message can't be blank.");
         }
         return errors;
     },
-    onTriggerEvent: async ({ effect, trigger}) => {
-        let messageId = null;
-        if (trigger.type === EffectTrigger.COMMAND) {
+    onTriggerEvent: async ({ effect, trigger }) => {
+        let messageId: string = null;
+        if (trigger.type === "command") {
             messageId = trigger.metadata.chatMessage.id;
-        } else if (trigger.type === EffectTrigger.EVENT) {
+        } else if (trigger.type === "event") {
             messageId = trigger.metadata.eventData?.chatMessage?.id;
         }
 
@@ -81,10 +85,15 @@ const effect = {
             effect.message = `/me ${effect.message}`;
         }
 
-        await twitchChat.sendChatMessage(effect.message, effect.whisper, effect.chatter, !effect.whisper && effect.sendAsReply ? messageId : undefined);
+        if (effect.whisper) {
+            const user = await TwitchApi.users.getUserByName(effect.whisper);
+            await TwitchApi.whispers.sendWhisper(user.id, effect.message, effect.chatter.toLowerCase() === "bot");
+        } else {
+            await TwitchApi.chat.sendChatMessage(effect.message, effect.sendAsReply ? messageId : null, effect.chatter.toLowerCase() === "bot");
+        }
 
         return true;
     }
 };
 
-module.exports = effect;
+export = effect;

@@ -1,14 +1,11 @@
+import { ApiClient, HelixStream, HelixStreamMarker } from "@twurple/api";
+import { ApiResourceBase } from './api-resource-base';
 import logger from '../../../../logwrapper';
 import accountAccess from "../../../../common/account-access";
-import { ApiClient, HelixStream, HelixStreamMarker } from "@twurple/api";
 
-export class TwitchStreamsApi {
-    private _streamerClient: ApiClient;
-    private _botClient: ApiClient;
-
+export class TwitchStreamsApi extends ApiResourceBase {
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        this._streamerClient = streamerClient;
-        this._botClient = botClient;
+        super(streamerClient, botClient);
     }
 
     async createStreamMarker(description?: string): Promise<HelixStreamMarker> {

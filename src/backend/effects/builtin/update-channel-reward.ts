@@ -38,7 +38,7 @@ function updateRewardEnabledOrPaused(effect: EffectMeta, channelReward: SavedCha
     }
 }
 
-const model: EffectType<EffectMeta> = {
+const effect: EffectType<EffectMeta> = {
     definition: {
         id: "firebot:update-channel-reward",
         name: "Update Channel Reward",
@@ -240,7 +240,7 @@ const model: EffectType<EffectMeta> = {
         }
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
 
         if (
             effect.rewardSelectMode === null
@@ -438,4 +438,4 @@ const model: EffectType<EffectMeta> = {
     }
 };
 
-export = model;
+export = effect;

@@ -1,7 +1,7 @@
 "use strict";
 
 
-const {checkForFirebotSetupPathInArgs} = require("../../file-open-helpers");
+const { checkForFirebotSetupPathInArgs } = require("../../file-open-helpers");
 
 exports.whenReady = async () => {
     const logger = require("../../../logwrapper");
@@ -32,7 +32,7 @@ exports.whenReady = async () => {
     // load twitch auth
     windowManagement.updateSplashScreenStatus("Loading Twitch login system...");
     require("../../../auth/auth-manager");
-    const twitchAuth = require("../../../auth/twitch-auth");
+    const twitchAuth = require("../../../streaming-platforms/twitch/auth/twitch-auth");
     twitchAuth.registerTwitchAuthProviders();
 
     // load accounts
@@ -132,6 +132,7 @@ exports.whenReady = async () => {
     await customRolesManager.loadCustomRoles();
 
     const chatRolesManager = require("../../../roles/chat-roles-manager");
+    chatRolesManager.setupListeners();
 
     windowManagement.updateSplashScreenStatus("Loading known bot list...");
     await chatRolesManager.cacheViewerListBots();

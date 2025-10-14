@@ -2,7 +2,7 @@ import timerManager from "../../timers/timer-manager";
 import {EffectCategory} from "../../../shared/effect-constants";
 import {EffectType} from "../../../types/effects";
 
-const model: EffectType<{
+const effect: EffectType<{
     selectedTimerId?: string;
     toggleType: "toggle" | "enable" | "disable";
     useTag?: boolean;
@@ -82,7 +82,7 @@ const model: EffectType<{
         }
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (!effect.useTag && effect.selectedTimerId == null) {
             errors.push("Please select a timer.");
         }
@@ -123,4 +123,4 @@ const model: EffectType<{
     }
 };
 
-export = model;
+export = effect;

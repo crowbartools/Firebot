@@ -1,16 +1,20 @@
+import {
+    ApiClient,
+    CommercialLength,
+    HelixAdSchedule,
+    HelixChannel,
+    HelixChannelUpdate,
+    HelixUser,
+    HelixUserRelation
+} from "@twurple/api";
+import { ApiResourceBase } from './api-resource-base';
 import logger from '../../../../logwrapper';
 import accountAccess from "../../../../common/account-access";
-import { ApiClient, CommercialLength, HelixChannel, HelixChannelUpdate, HelixUser, HelixUserRelation } from "@twurple/api";
-import { HelixAdSchedule } from '@twurple/api/lib/endpoints/channel/HelixAdSchedule';
 import frontendCommunicator from '../../../../common/frontend-communicator';
 
-export class TwitchChannelsApi {
-    private _streamerClient: ApiClient;
-    private _botClient: ApiClient;
-
+export class TwitchChannelsApi extends ApiResourceBase {
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        this._streamerClient = streamerClient;
-        this._botClient = botClient;
+        super(streamerClient, botClient);
     }
 
     /**

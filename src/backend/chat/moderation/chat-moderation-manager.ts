@@ -504,7 +504,7 @@ class ChatModerationManager {
 
         if (outputMessage?.length) {
             outputMessage = outputMessage.replaceAll("{userName}", username);
-            await TwitchApi.chat.sendChatMessage(outputMessage);
+            await TwitchApi.chat.sendChatMessage(outputMessage, null, true);
         }
     }
 

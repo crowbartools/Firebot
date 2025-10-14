@@ -8,7 +8,7 @@ triggers[EffectTrigger.COMMAND] = true;
 triggers[EffectTrigger.EVENT] = ["twitch:chat-message"];
 triggers[EffectTrigger.PRESET_LIST] = true;
 
-const model: EffectType<{
+const effect: EffectType<{
     hidden: boolean;
 }> = {
     definition: {
@@ -32,7 +32,7 @@ const model: EffectType<{
     optionsValidator: () => {
         return [];
     },
-    onTriggerEvent: async (event) => {
+    onTriggerEvent: (event) => {
         const { trigger } = event;
 
         try {
@@ -54,4 +54,4 @@ const model: EffectType<{
     }
 };
 
-export = model;
+export = effect;

@@ -2,7 +2,7 @@ import { EffectType } from "../../../types/effects";
 import { EffectCategory } from "../../../shared/effect-constants";
 import frontendCommunicator from "../../common/frontend-communicator";
 
-const model: EffectType<{
+const effect: EffectType<{
     alertType: "info" | "success" | "warning" | "danger";
     message: string;
 }> = {
@@ -36,7 +36,7 @@ const model: EffectType<{
         $scope.effect.alertType = $scope.effect.alertType ?? "info";
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (!(effect.message?.length > 0)) {
             errors.push("Please input a message.");
         }
@@ -53,4 +53,4 @@ const model: EffectType<{
     }
 };
 
-module.exports = model;
+export = effect;

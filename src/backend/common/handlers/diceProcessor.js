@@ -1,10 +1,9 @@
 "use strict";
 
 const Roll = require("roll");
+const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 
 const diceRoller = new Roll();
-
-const twitchChat = require("../../chat/twitch-chat");
 
 function processDice(diceConfig, showEach) {
 
@@ -37,7 +36,12 @@ async function handleDiceEffect(effect, trigger) {
         `Dice Roll: ${username} rolled a ${output} on ${dice}.` :
         `Unable to roll "${dice}" as it's not in the correct format.`;
 
-    await twitchChat.sendChatMessage(message, whisper, chatter);
+    if (whisper) {
+        const user = await TwitchApi.users.getUserByName(whisper);
+        await TwitchApi.whispers.sendWhisper(user.id, message, chatter.toLowerCase() === "bot");
+    } else {
+        await TwitchApi.chat.sendChatMessage(message, null, chatter.toLowerCase() === "bot");
+    }
 }
 
 exports.handleDiceEffect = handleDiceEffect;

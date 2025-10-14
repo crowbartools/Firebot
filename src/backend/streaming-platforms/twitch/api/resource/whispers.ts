@@ -1,14 +1,11 @@
+import { ApiClient, UserIdResolvable } from "@twurple/api";
+import { ApiResourceBase } from "./api-resource-base";
 import logger from '../../../../logwrapper';
 import accountAccess from "../../../../common/account-access";
-import { ApiClient, UserIdResolvable } from "@twurple/api";
 
-export class TwitchWhispersApi {
-    private _streamerClient: ApiClient;
-    private _botClient: ApiClient;
-
+export class TwitchWhispersApi extends ApiResourceBase {
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        this._streamerClient = streamerClient;
-        this._botClient = botClient;
+        super(streamerClient, botClient);
     }
 
     /**
@@ -34,15 +31,22 @@ export class TwitchWhispersApi {
             accountAccess.getAccounts().streamer.userId;
 
         try {
-            if (willSendAsBot === true) {
-                await this._botClient.whispers.sendWhisper(senderUserId, recipientUserId, message);
-            } else {
-                await this._streamerClient.whispers.sendWhisper(senderUserId, recipientUserId, message);
+            const messageFragments = message
+                .match(/[\s\S]{1,500}/g)
+                .map(mf => mf.trim())
+                .filter(mf => mf !== "");
+
+            for (const fragment of messageFragments) {
+                if (willSendAsBot === true) {
+                    await this._botClient.whispers.sendWhisper(senderUserId, recipientUserId, fragment);
+                } else {
+                    await this._streamerClient.whispers.sendWhisper(senderUserId, recipientUserId, fragment);
+                }
             }
 
             return true;
         } catch (error) {
-            logger.error("Error sending whisper", error.message);
+            logger.error("Error sending whisper", (error as Error).message);
         }
 
         return false;

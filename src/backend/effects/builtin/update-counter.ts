@@ -3,7 +3,7 @@ import { EffectCategory } from '../../../shared/effect-constants';
 import { CounterManager } from "../../counters/counter-manager";
 import logger from "../../logwrapper";
 
-const model: EffectType<{
+const effect: EffectType<{
     counterId: string;
     mode: string;
     value: string;
@@ -63,7 +63,7 @@ const model: EffectType<{
 
     },
     optionsValidator: (effect, $scope) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.counterId == null) {
             errors.push("Please select a counter.");
         } else if (effect.mode == null) {
@@ -104,4 +104,4 @@ const model: EffectType<{
     }
 };
 
-export = model;
+export = effect;

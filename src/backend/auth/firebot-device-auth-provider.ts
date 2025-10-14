@@ -1,10 +1,10 @@
-import logger from "../logwrapper";
-import accountAccess, { FirebotAccount } from "../common/account-access";
-import twitchAuth from "./twitch-auth";
-import { TwitchApi } from "../streaming-platforms/twitch/api";
-import { AuthDetails, AuthProviderDefinition } from "./auth";
 import { AccessToken, getExpiryDateOfAccessToken } from "@twurple/auth";
-import { DeviceAuthProvider } from "./twitch-device-auth-provider";
+import logger from "../logwrapper";
+import { AuthDetails, AuthProviderDefinition } from "./auth";
+import accountAccess, { FirebotAccount } from "../common/account-access";
+import twitchAuth from "../streaming-platforms/twitch/auth/twitch-auth";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
+import { DeviceAuthProvider } from "../streaming-platforms/twitch/auth/twitch-device-auth-provider";
 import frontendCommunicator from "../common/frontend-communicator";
 
 type ValidationRequest = {
@@ -122,7 +122,7 @@ class FirebotDeviceAuthProvider {
         );
     }
 
-    async validateTwitchAccount(request: ValidationRequest): Promise<boolean> {
+    validateTwitchAccount(request: ValidationRequest): boolean {
         let definition: AuthProviderDefinition;
 
         switch (request.accountType) {
@@ -145,7 +145,7 @@ class FirebotDeviceAuthProvider {
         return true;
     }
 
-    async validateTwitchAccounts() {
+    validateTwitchAccounts() {
         const invalidAccounts = {
             streamer: false,
             bot: false
@@ -153,7 +153,7 @@ class FirebotDeviceAuthProvider {
 
         if (accountAccess.getAccounts().streamer.loggedIn === true) {
             if (
-                !(await this.validateTwitchAccount({
+                !(this.validateTwitchAccount({
                     accountType: "streamer",
                     authDetails: accountAccess.getAccounts().streamer.auth
                 }))
@@ -164,7 +164,7 @@ class FirebotDeviceAuthProvider {
 
         if (accountAccess.getAccounts().bot.loggedIn === true) {
             if (
-                !(await this.validateTwitchAccount({
+                !(this.validateTwitchAccount({
                     accountType: "bot",
                     authDetails: accountAccess.getAccounts().bot.auth
                 }))
@@ -183,8 +183,8 @@ accountAccess.events.on("account-update", () => {
     firebotDeviceAuthProvider.setupDeviceAuthProvider();
 });
 
-frontendCommunicator.onAsync("validate-twitch-accounts", async () => {
-    await firebotDeviceAuthProvider.validateTwitchAccounts();
+frontendCommunicator.on("validate-twitch-accounts", () => {
+    firebotDeviceAuthProvider.validateTwitchAccounts();
 });
 
 export = firebotDeviceAuthProvider;

@@ -66,7 +66,7 @@ const effect: EffectType<{
         };
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.text == null || effect.text.length < 1) {
             errors.push("Please input some text.");
         }

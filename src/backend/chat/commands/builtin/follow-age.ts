@@ -2,7 +2,6 @@ import { DateTime } from "luxon";
 
 import { SystemCommand } from "../../../../types/commands";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
-import chat from "../../twitch-chat";
 import util from "../../../utility";
 
 /**
@@ -41,7 +40,7 @@ export const FollowAgeSystemCommand: SystemCommand<{
         const rawFollowDate = await TwitchApi.users.getFollowDateForUser(commandSender);
 
         if (rawFollowDate === null) {
-            await chat.sendChatMessage(`${commandSender} is not following the channel.`);
+            await TwitchApi.chat.sendChatMessage(`${commandSender} is not following the channel.`, null, true);
         } else {
             const followDate = DateTime.fromJSDate(rawFollowDate),
                 now = DateTime.utc();
@@ -51,10 +50,13 @@ export const FollowAgeSystemCommand: SystemCommand<{
                 now.toJSDate()
             );
 
-            await chat.sendChatMessage(commandOptions.displayTemplate
-                .replaceAll("{user}", commandSender)
-                .replaceAll("{followage}", followAgeString)
-                .replaceAll("{followdate}", followDate.toFormat("dd MMMM yyyy HH:mm"))
+            await TwitchApi.chat.sendChatMessage(
+                commandOptions.displayTemplate
+                    .replaceAll("{user}", commandSender)
+                    .replaceAll("{followage}", followAgeString)
+                    .replaceAll("{followdate}", followDate.toFormat("dd MMMM yyyy HH:mm")),
+                null,
+                true
             );
         }
     }

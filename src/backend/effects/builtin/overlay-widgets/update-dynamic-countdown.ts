@@ -113,7 +113,7 @@ const model: EffectType<{
         ];
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.countdownWidgetId == null) {
             errors.push("Please select a countdown widget.");
         } else if (effect.action == null) {

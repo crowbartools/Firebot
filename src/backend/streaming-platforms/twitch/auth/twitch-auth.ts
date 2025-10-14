@@ -1,10 +1,10 @@
-import authManager from "./auth-manager";
-import accountAccess, { FirebotAccount } from "../common/account-access";
-import logger from "../logwrapper";
-import { SecretsManager } from "../secrets-manager";
-import { AuthProviderDefinition } from "./auth";
 import { getExpiryDateOfAccessToken } from "@twurple/auth";
-import channelRewardManager from "../channel-rewards/channel-reward-manager";
+import logger from "../../../logwrapper";
+import { SecretsManager } from "../../../secrets-manager";
+import authManager from "../../../auth/auth-manager";
+import accountAccess, { FirebotAccount } from "../../../common/account-access";
+import { AuthProviderDefinition } from "../../../auth/auth";
+import channelRewardManager from "../../../channel-rewards/channel-reward-manager";
 
 class TwitchAuthProviders {
     private readonly _host = "https://id.twitch.tv";
@@ -158,7 +158,7 @@ authManager.on("auth-success", async (authData) => {
 
     if (providerId === twitchAuthProviders.streamerAccountProviderId
         || providerId === twitchAuthProviders.botAccountProviderId) {
-        const userData = await getUserCurrent(tokenData.access_token);
+        const userData = await getUserCurrent(tokenData.access_token as string);
         if (userData == null) {
             return;
         }
@@ -187,7 +187,7 @@ authManager.on("auth-success", async (authData) => {
         accountAccess.updateAccount(accountType, accountObject);
 
         if (accountType === "streamer") {
-            channelRewardManager.loadChannelRewards();
+            void channelRewardManager.loadChannelRewards();
         }
     }
 });

@@ -1,5 +1,3 @@
-import logger from "../../../../logwrapper";
-import accountAccess from "../../../../common/account-access";
 import {
     ApiClient,
     HelixCustomReward,
@@ -8,6 +6,9 @@ import {
     HelixCustomRewardRedemption,
     HelixCustomRewardRedemptionFilter
 } from "@twurple/api";
+import { ApiResourceBase } from "./api-resource-base";
+import logger from "../../../../logwrapper";
+import accountAccess from "../../../../common/account-access";
 import { chunkArray } from "../../../../utils/chunkArray";
 
 export interface ImageSet {
@@ -64,17 +65,15 @@ export interface RewardRedemptionsApprovalRequest {
     approve?: boolean;
 }
 
-export class TwitchChannelRewardsApi {
-    private _streamerClient: ApiClient;
-    private _botClient: ApiClient;
-
+export class TwitchChannelRewardsApi extends ApiResourceBase {
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        this._streamerClient = streamerClient;
-        this._botClient = botClient;
+        super(streamerClient, botClient);
     }
 
     private mapCustomRewardToCreateRewardPayload(reward: CustomReward): HelixCreateCustomRewardData {
-        let maxRedemptionsPerStream = null, maxRedemptionsPerUserPerStream = null, globalCooldown = null;
+        let maxRedemptionsPerStream: number = null,
+            maxRedemptionsPerUserPerStream: number = null,
+            globalCooldown: number = null;
 
         if (reward.maxPerStreamSetting?.isEnabled === true && reward.maxPerStreamSetting?.maxPerStream > 0) {
             maxRedemptionsPerStream = reward.maxPerStreamSetting.maxPerStream;
@@ -103,7 +102,9 @@ export class TwitchChannelRewardsApi {
     }
 
     private mapCustomRewardToUpdateRewardPayload(reward: CustomReward): HelixUpdateCustomRewardData {
-        let maxRedemptionsPerStream = null, maxRedemptionsPerUserPerStream = null, globalCooldown = null;
+        let maxRedemptionsPerStream: number = null,
+            maxRedemptionsPerUserPerStream: number = null,
+            globalCooldown: number = null;
 
         if (reward.maxPerStreamSetting?.isEnabled === true && reward.maxPerStreamSetting?.maxPerStream > 0) {
             maxRedemptionsPerStream = reward.maxPerStreamSetting.maxPerStream;
@@ -188,7 +189,7 @@ export class TwitchChannelRewardsApi {
      * @param {boolean} onlyManageable - Only get rewards manageable by Firebot
      */
     async getCustomChannelRewards(onlyManageable = false): Promise<CustomReward[]> {
-        let rewards = [];
+        let rewards: HelixCustomReward[] = [];
         try {
             const response = await this._streamerClient?.channelPoints?.getCustomRewards(
                 accountAccess.getAccounts().streamer.userId,

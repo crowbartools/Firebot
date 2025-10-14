@@ -1,10 +1,9 @@
-"use strict";
+import { EffectCategory, EffectDependency } from '../../../shared/effect-constants';
+import { TwitchApi } from "../../streaming-platforms/twitch/api";
+import logger from '../../logwrapper';
+import { EffectType } from '../../../types/effects';
 
-const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
-const logger = require('../../logwrapper');
-const { TwitchApi } = require("../../streaming-platforms/twitch/api");
-
-const model = {
+const effect: EffectType = {
     definition: {
         id: "firebot:clearchat",
         name: "Clear Chat",
@@ -19,10 +18,7 @@ const model = {
         </eos-container>
     `,
     optionsController: () => {},
-    optionsValidator: () => {
-        const errors = [];
-        return errors;
-    },
+    optionsValidator: () => [],
     onTriggerEvent: async () => {
         await TwitchApi.chat.clearChat();
         logger.debug("Chat was cleared via the clear chat effect.");
@@ -30,4 +26,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export = effect;

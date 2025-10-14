@@ -2,7 +2,7 @@ import { EffectType } from "../../../types/effects";
 import { EffectCategory } from "../../../shared/effect-constants";
 import cloudSync from "../../cloud-sync/profile-sync";
 
-const model: EffectType<{
+const effect: EffectType<{
     profilePage: "commands" | "quotes";
 }> = {
     definition: {
@@ -48,4 +48,4 @@ const model: EffectType<{
     }
 };
 
-module.exports = model;
+export = effect;

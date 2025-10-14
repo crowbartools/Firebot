@@ -15,6 +15,7 @@ import customRolesManager from "../roles/custom-roles-manager";
 import firebotRolesManager from "../roles/firebot-roles-manager";
 import teamRolesManager from "../roles/team-roles-manager";
 import twitchRolesManager from "../../shared/twitch-roles";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
 
 interface GiveCurrencyRequest {
     currencyId: string;
@@ -76,11 +77,7 @@ class CurrencyManager {
             }
 
             if (sendChatMessage && messageTarget !== "") {
-                if (!twitchChat.chatIsConnected) {
-                    return;
-                }
-
-                await twitchChat.sendChatMessage(`${amount < 0 ? "Removed" : "Gave"} ${util.commafy(amount)} ${currency.name} ${amount < 0 ? "from" : "to"} ${messageTarget}!`);
+                await TwitchApi.chat.sendChatMessage(`${amount < 0 ? "Removed" : "Gave"} ${util.commafy(amount)} ${currency.name} ${amount < 0 ? "from" : "to"} ${messageTarget}!`, null, true);
             }
         });
 
@@ -367,7 +364,7 @@ class CurrencyManager {
 
         const onlineViewers = await viewerOnlineStatusManager.getOnlineViewers();
 
-        const teamRoles: Record<string, Array<{ id: string; name: string; }>> = {};
+        const teamRoles: Record<string, Array<{ id: string, name: string }>> = {};
         for (const viewer of onlineViewers) {
             teamRoles[viewer._id] = await teamRolesManager
                 .getAllTeamRolesForViewer(viewer._id);

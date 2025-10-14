@@ -1,9 +1,9 @@
-import { TwitchApi } from "../../streaming-platforms/twitch/api";
-import { TwitchSlashCommandHandler } from "../twitch-slash-commands";
-import { TwitchCommandHelpers } from "./twitch-command-helpers";
-import frontendCommunicator from "../../common/frontend-communicator";
+import { TwitchApi } from "../../api";
+import { TwitchSlashCommand } from "../twitch-slash-commands";
+import { TwitchSlashCommandHelpers } from "./twitch-command-helpers";
+import frontendCommunicator from "../../../../common/frontend-communicator";
 
-export const whisperHandler: TwitchSlashCommandHandler<[string, string]> = {
+export const whisperHandler: TwitchSlashCommand<[string, string]> = {
     commands: ["/whisper", "/w"],
     validateArgs: ([targetUsername, ...message]) => {
         if (targetUsername == null || targetUsername.length < 1) {
@@ -13,7 +13,7 @@ export const whisperHandler: TwitchSlashCommandHandler<[string, string]> = {
             };
         }
 
-        targetUsername = TwitchCommandHelpers.getNormalizedUsername(targetUsername);
+        targetUsername = TwitchSlashCommandHelpers.getNormalizedUsername(targetUsername);
 
         if (message == null || message.length < 1) {
             return {
@@ -38,7 +38,7 @@ export const whisperHandler: TwitchSlashCommandHandler<[string, string]> = {
     }
 };
 
-export const announceHandler: TwitchSlashCommandHandler<[string]> = {
+export const announceHandler: TwitchSlashCommand<[string]> = {
     commands: ["/announce"],
     validateArgs: (message) => {
         if (message == null || message.length < 1) {
@@ -58,7 +58,7 @@ export const announceHandler: TwitchSlashCommandHandler<[string]> = {
     }
 };
 
-export const announceblueHandler: TwitchSlashCommandHandler<[string]> = {
+export const announceblueHandler: TwitchSlashCommand<[string]> = {
     commands: ["/announceblue"],
     validateArgs: (message) => {
         if (message == null || message.length < 1) {
@@ -78,7 +78,7 @@ export const announceblueHandler: TwitchSlashCommandHandler<[string]> = {
     }
 };
 
-export const announcegreenHandler: TwitchSlashCommandHandler<[string]> = {
+export const announcegreenHandler: TwitchSlashCommand<[string]> = {
     commands: ["/announcegreen"],
     validateArgs: (message) => {
         if (message == null || message.length < 1) {
@@ -98,7 +98,7 @@ export const announcegreenHandler: TwitchSlashCommandHandler<[string]> = {
     }
 };
 
-export const announceorangeHandler: TwitchSlashCommandHandler<[string]> = {
+export const announceorangeHandler: TwitchSlashCommand<[string]> = {
     commands: ["/announceorange"],
     validateArgs: (message) => {
         if (message == null || message.length < 1) {
@@ -118,7 +118,7 @@ export const announceorangeHandler: TwitchSlashCommandHandler<[string]> = {
     }
 };
 
-export const announcepurpleHandler: TwitchSlashCommandHandler<[string]> = {
+export const announcepurpleHandler: TwitchSlashCommand<[string]> = {
     commands: ["/announcepurple"],
     validateArgs: (message) => {
         if (message == null || message.length < 1) {
@@ -138,7 +138,7 @@ export const announcepurpleHandler: TwitchSlashCommandHandler<[string]> = {
     }
 };
 
-export const shoutoutHandler: TwitchSlashCommandHandler<[string]> = {
+export const shoutoutHandler: TwitchSlashCommand<[string]> = {
     commands: ["/shoutout"],
     validateArgs: ([targetUsername]) => {
         if (targetUsername == null || targetUsername.length < 1) {
@@ -148,7 +148,7 @@ export const shoutoutHandler: TwitchSlashCommandHandler<[string]> = {
             };
         }
 
-        targetUsername = TwitchCommandHelpers.getNormalizedUsername(targetUsername);
+        targetUsername = TwitchSlashCommandHelpers.getNormalizedUsername(targetUsername);
 
         return {
             success: true,
@@ -172,7 +172,7 @@ export const shoutoutHandler: TwitchSlashCommandHandler<[string]> = {
     }
 };
 
-export const clearHandler: TwitchSlashCommandHandler<[]> = {
+export const clearHandler: TwitchSlashCommand<[]> = {
     commands: ["/clear"],
     validateArgs: () => {
         return {
@@ -185,7 +185,7 @@ export const clearHandler: TwitchSlashCommandHandler<[]> = {
     }
 };
 
-export const emoteonlyHandler: TwitchSlashCommandHandler<[]> = {
+export const emoteonlyHandler: TwitchSlashCommand<[]> = {
     commands: ["/emoteonly"],
     validateArgs: () => {
         return {
@@ -198,7 +198,7 @@ export const emoteonlyHandler: TwitchSlashCommandHandler<[]> = {
     }
 };
 
-export const emoteonlyoffHandler: TwitchSlashCommandHandler<[]> = {
+export const emoteonlyoffHandler: TwitchSlashCommand<[]> = {
     commands: ["/emoteonlyoff"],
     validateArgs: () => {
         return {
@@ -211,10 +211,10 @@ export const emoteonlyoffHandler: TwitchSlashCommandHandler<[]> = {
     }
 };
 
-export const followersHandler: TwitchSlashCommandHandler<[number]> = {
+export const followersHandler: TwitchSlashCommand<[number]> = {
     commands: ["/followers"],
     validateArgs: ([duration]) => {
-        const parsedDuration = TwitchCommandHelpers.getRawDurationInSeconds(duration, "minutes");
+        const parsedDuration = TwitchSlashCommandHelpers.getRawDurationInSeconds(duration, "minutes");
 
         if (parsedDuration == null) {
             return {
@@ -233,7 +233,7 @@ export const followersHandler: TwitchSlashCommandHandler<[number]> = {
     }
 };
 
-export const followersoffHandler: TwitchSlashCommandHandler<[]> = {
+export const followersoffHandler: TwitchSlashCommand<[]> = {
     commands: ["/followersoff"],
     validateArgs: () => {
         return {
@@ -246,7 +246,7 @@ export const followersoffHandler: TwitchSlashCommandHandler<[]> = {
     }
 };
 
-export const subscribersHandler: TwitchSlashCommandHandler<[]> = {
+export const subscribersHandler: TwitchSlashCommand<[]> = {
     commands: ["/subscribers"],
     validateArgs: () => {
         return {
@@ -259,7 +259,7 @@ export const subscribersHandler: TwitchSlashCommandHandler<[]> = {
     }
 };
 
-export const subscribersoffHandler: TwitchSlashCommandHandler<[]> = {
+export const subscribersoffHandler: TwitchSlashCommand<[]> = {
     commands: ["/subscribersoff"],
     validateArgs: () => {
         return {
@@ -272,10 +272,10 @@ export const subscribersoffHandler: TwitchSlashCommandHandler<[]> = {
     }
 };
 
-export const slowHandler: TwitchSlashCommandHandler<[number]> = {
+export const slowHandler: TwitchSlashCommand<[number]> = {
     commands: ["/slow"],
     validateArgs: ([duration]) => {
-        const parsedDuration = TwitchCommandHelpers.getRawDurationInSeconds(duration);
+        const parsedDuration = TwitchSlashCommandHelpers.getRawDurationInSeconds(duration);
 
         if (parsedDuration == null) {
             return {
@@ -294,7 +294,7 @@ export const slowHandler: TwitchSlashCommandHandler<[number]> = {
     }
 };
 
-export const slowoffHandler: TwitchSlashCommandHandler<[]> = {
+export const slowoffHandler: TwitchSlashCommand<[]> = {
     commands: ["/slowoff"],
     validateArgs: () => {
         return {
@@ -307,7 +307,7 @@ export const slowoffHandler: TwitchSlashCommandHandler<[]> = {
     }
 };
 
-export const uniquechatHandler: TwitchSlashCommandHandler<[]> = {
+export const uniquechatHandler: TwitchSlashCommand<[]> = {
     commands: ["/uniquechat"],
     validateArgs: () => {
         return {
@@ -320,7 +320,7 @@ export const uniquechatHandler: TwitchSlashCommandHandler<[]> = {
     }
 };
 
-export const uniquechatoffHandler: TwitchSlashCommandHandler<[]> = {
+export const uniquechatoffHandler: TwitchSlashCommand<[]> = {
     commands: ["/uniquechatoff"],
     validateArgs: () => {
         return {

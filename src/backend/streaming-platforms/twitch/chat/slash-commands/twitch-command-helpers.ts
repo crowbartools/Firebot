@@ -1,4 +1,4 @@
-export class TwitchCommandHelpers {
+export class TwitchSlashCommandHelpers {
     static getRawDurationInSeconds(rawDuration: string, originalUnit: "seconds" | "minutes" | "hours" | "days" | "weeks" = "seconds"): number {
         if (rawDuration == null) {
             return 0;

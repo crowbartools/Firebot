@@ -3,8 +3,8 @@ import { EffectCategory } from '../../../shared/effect-constants';
 import overlayWidgetConfigManager from "../../overlay-widgets/overlay-widget-config-manager";
 import { OverlayWidgetConfig } from "../../../types/overlay-widgets";
 
-const model: EffectType<{
-    mode: "toggle" | "disable" | "enable",
+const effect: EffectType<{
+    mode: "toggle" | "disable" | "enable";
     widgetConfigIds: string[];
 }> = {
     definition: {
@@ -74,7 +74,7 @@ const model: EffectType<{
         }
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
 
         if (effect.mode == null) {
             errors.push("Please select a mode.");
@@ -89,7 +89,7 @@ const model: EffectType<{
     getDefaultLabel: (effect, utilityService) => {
         return `${utilityService.capitalize(effect.mode)} ${effect.widgetConfigIds?.length ?? 0} overlay widget(s)`;
     },
-    onTriggerEvent: async (event) => {
+    onTriggerEvent: (event) => {
         const { effect } = event;
 
         if (effect.mode == null) {
@@ -127,4 +127,4 @@ const model: EffectType<{
     }
 };
 
-export = model;
+export = effect;

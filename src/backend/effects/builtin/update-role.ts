@@ -9,7 +9,7 @@ import { BasicViewer } from "../../../types/viewers";
 /**
  * The 'Update Role' effect
  */
-const model: EffectType<{
+const effect: EffectType<{
     addRoleId: string;
     customViewer: string;
     removeRoleId: string;
@@ -193,4 +193,4 @@ const model: EffectType<{
     }
 };
 
-export = model;
+export = effect;

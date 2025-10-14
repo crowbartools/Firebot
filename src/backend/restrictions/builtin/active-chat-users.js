@@ -1,5 +1,7 @@
 "use strict";
 
+const { ActiveUserHandler } = require("../../chat/active-user-handler");
+
 const model = {
     definition: {
         id: "firebot:activeChatUsers",
@@ -19,10 +21,9 @@ const model = {
     */
     predicate: (triggerData) => {
         return new Promise((resolve, reject) => {
-            const activeUserHandler = require("../../chat/chat-listeners/active-user-handler");
             const username = triggerData.metadata.username;
 
-            if (activeUserHandler.userIsActive(username)) {
+            if (ActiveUserHandler.userIsActive(username)) {
                 resolve();
             } else {
                 reject("You haven't sent a chat message recently");
