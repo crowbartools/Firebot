@@ -417,14 +417,6 @@ async function createMainWindow() {
         defaultHeight: 720
     });
 
-    frontendCommunicator.on('preload.openDevTools', () => {
-        if (exports.mainWindow != null) {
-            exports.mainWindow.webContents.openDevTools();
-            return true;
-        }
-        return false;
-    });
-
     const additionalArguments = [];
 
     if (Object.hasOwn(argv, 'fbuser-data-directory') && argv['fbuser-data-directory'] != null && argv['fbuser-data-directory'] !== '') {
@@ -509,7 +501,6 @@ async function createMainWindow() {
 
         createTray(mainWindow);
 
-        // mainWindow.webContents.openDevTools();
         mainWindow.show();
 
         // mainWindow.show();
