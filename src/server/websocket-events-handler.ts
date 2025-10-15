@@ -9,7 +9,7 @@ import { events as customVariablesEvents } from "../backend/common/custom-variab
 import effectQueueManager from "../backend/effects/queues/effect-queue-config-manager";
 import effectQueueRunner from "../backend/effects/queues/effect-queue-runner";
 import presetEffectListManager from "../backend/effects/preset-lists/preset-effect-list-manager";
-import { events as quotesEvents } from "../backend/quotes/quotes-manager";
+import { QuoteManager } from "../backend/quotes/quote-manager";
 import timerManager from "../backend/timers/timer-manager";
 import viewerMetadataManager from "../backend/viewers/viewer-metadata-manager";
 
@@ -65,7 +65,7 @@ const FIREBOT_COMPONENT_MANAGERS: Array<ComponentManager> = [
     },
     {
         componentName: "quote",
-        manager: quotesEvents
+        manager: QuoteManager.events
     },
     {
         componentName: "timer",
@@ -84,7 +84,7 @@ const MANAGER_EVENT_MAP: Array<[keyof ComponentEvents, string]> = [
 ];
 
 export function createComponentEventListeners() {
-    for (const {componentName, manager, eventNameOverrides} of FIREBOT_COMPONENT_MANAGERS) {
+    for (const { componentName, manager, eventNameOverrides } of FIREBOT_COMPONENT_MANAGERS) {
         for (const [managerEvent, webSocketEvent] of eventNameOverrides ?? MANAGER_EVENT_MAP) {
             manager.on(managerEvent, (item) => {
                 webSocketServerManager.triggerEvent(`${componentName}:${webSocketEvent}`, item);

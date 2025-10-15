@@ -1,9 +1,7 @@
-"use strict";
-
-const quoteManager = require("../../quotes/quotes-manager");
+import { QuoteManager } from "../../quotes/quote-manager";
 
 async function getQuoteListForSync() {
-    const quotes = await quoteManager.getAllQuotes();
+    const quotes = await QuoteManager.getAllQuotes();
     const quotesData = {
         'quotes': quotes
     };
@@ -15,4 +13,4 @@ async function getQuoteListForSync() {
     return quotesData;
 }
 
-exports.getQuoteListForSync = getQuoteListForSync;
+export { getQuoteListForSync };

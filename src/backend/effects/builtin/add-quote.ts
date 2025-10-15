@@ -1,5 +1,5 @@
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
-import quotesManager from "../../quotes/quotes-manager";
+import { QuoteManager } from "../../quotes/quote-manager";
 import { EffectCategory } from '../../../shared/effect-constants';
 import moment from "moment";
 import { EffectType } from "../../../types/effects";
@@ -71,7 +71,7 @@ const effect: EffectType<{
             createdAt: moment().toISOString()
         };
 
-        const id = (await quotesManager.addQuote(newQuote)) as string;
+        const id = await QuoteManager.addQuote(newQuote);
 
         return {
             success: true,

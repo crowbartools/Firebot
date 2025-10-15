@@ -180,7 +180,7 @@ function buildModules(scriptManifest) {
         viewerMetadataManager: require("../../../viewers/viewer-metadata-manager"),
         viewerOnlineStatusManager: require("../../../viewers/viewer-online-status-manager"),
 
-        quotesManager: require("../../../quotes/quotes-manager"),
+        quotesManager: require("../../../quotes/quote-manager").QuoteManager,
         frontendCommunicator: require("../../frontend-communicator"),
         counterManager: require("../../../counters/counter-manager").CounterManager,
         utils: require("../../../utility"),

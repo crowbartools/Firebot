@@ -1,6 +1,7 @@
 import { ReplaceVariable } from "../../../../types/variables";
+import { Quote } from "../../../../types/quotes";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import quoteManager from "../../../quotes/quotes-manager";
+import { QuoteManager } from "../../../quotes/quote-manager";
 import commandManager from "../../../chat/commands/command-manager";
 import logger from "../../../logwrapper";
 
@@ -31,15 +32,15 @@ const model : ReplaceVariable = {
     evaluator: async (_, quoteId: number, property) => {
         const quoteCommand = commandManager.getSystemCommandById("firebot:quotesmanagement");
         const quoteDateFormat = quoteCommand.definition.options.quoteDateFormat.value;
-        let quote;
+        let quote: Quote;
         quoteId = parseInt(`${quoteId}`);
 
         if (quoteId != null && !isNaN(quoteId)) {
             logger.debug(`Getting quote ${quoteId}...`);
-            quote = await quoteManager.getQuote(quoteId);
+            quote = await QuoteManager.getQuote(quoteId);
         } else {
             logger.debug("Getting random quote...");
-            quote = await quoteManager.getRandomQuote();
+            quote = await QuoteManager.getRandomQuote();
         }
 
         if (quote != null) {
