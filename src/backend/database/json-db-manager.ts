@@ -1,11 +1,9 @@
-"use strict";
-
-import profileManager from "../common/profile-manager";
-import logger from "../logwrapper";
-import { v4 as uuid } from "uuid";
-import { TypedEmitter, type ListenerSignature } from "tiny-typed-emitter";
 import { type JsonDB } from "node-json-db";
+import { TypedEmitter, type ListenerSignature } from "tiny-typed-emitter";
+import { v4 as uuid } from "uuid";
+import profileManager from "../common/profile-manager";
 import appCloseListenerManager from "../app-management/app-close-listener-manager";
+import logger from "../logwrapper";
 
 interface Item {
     id?: string;
@@ -23,20 +21,14 @@ type DefaultEvents<I extends Item = Item> = {
     "items-changed": (items: I[]) => void;
 };
 
-/**
- * @hideconstructor
-*/
-class JsonDbManager<T extends Item, E extends ListenerSignature<E> = DefaultEvents<T>>
+abstract class JsonDbManager<T extends Item, E extends ListenerSignature<E> = DefaultEvents<T>>
     extends TypedEmitter<E & DefaultEvents<T>> {
 
     protected items: { [key: string]: T };
-
     protected db: JsonDB;
-
     private batchedSaveTimeout: NodeJS.Timeout | null = null;
 
     /**
-     *
      * @param type - The type of data in the json file
      * @param path - The path to the json file
      */
@@ -44,14 +36,10 @@ class JsonDbManager<T extends Item, E extends ListenerSignature<E> = DefaultEven
         super();
 
         this.type = type;
-
-        /** @protected */
         this.items = {};
-
-        /** @protected */
         this.db = profileManager.getJsonDbInProfile(path);
 
-        appCloseListenerManager.registerListener(async () => {
+        appCloseListenerManager.registerListener(() => {
             if (this.batchedSaveTimeout) {
                 clearTimeout(this.batchedSaveTimeout);
                 this.batchedSaveTimeout = null;
@@ -65,7 +53,7 @@ class JsonDbManager<T extends Item, E extends ListenerSignature<E> = DefaultEven
         logger.debug(`Attempting to load ${this.type}s...`);
 
         try {
-            const data = this.db.getData("/");
+            const data = this.db.getData("/") as { [key: string]: T };
             if (data) {
                 this.items = data;
             }
