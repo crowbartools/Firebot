@@ -1,14 +1,80 @@
-"use strict";
-const fileWriterProcessor = require("../../common/handlers/fileWriterProcessor");
-const { EffectCategory } = require('../../../shared/effect-constants');
+import fs from "fs";
+import fsp from "fs/promises";
+import path from "path";
+import { EffectType } from "../../../types/effects";
+import { EffectCategory } from '../../../shared/effect-constants';
+import logger from "../../logwrapper";
 
-/**
- * The File Writer effect
- */
-const fileWriter = {
-    /**
-   * The definition of the Effect
-   */
+async function doesTextExistInFile(filepath: string, text: string): Promise<boolean> {
+    const contents = await fsp.readFile(filepath, { encoding: "utf8" });
+    return contents.includes(text);
+}
+
+async function removeLines(filepath: string, lines: number[] = []): Promise<string> {
+    const contents = await fsp.readFile(filepath, { encoding: "utf8" });
+    return `${contents
+        .split('\n')
+        .filter(l => l != null && l.trim() !== "")
+        .filter((_, index) => !lines.includes(index))
+        .join('\n')}\n`;
+}
+
+async function removeLinesWithText(filepath: string, text: string): Promise<string> {
+    const contents = await fsp.readFile(filepath, { encoding: "utf8" });
+    return `${contents
+        .split('\n')
+        .map((l) => {
+            return l.replace('\r', "");
+        })
+        .filter(l => l != null && l.trim() !== "")
+        .filter(l => l !== text)
+        .join('\n')}\n`;
+}
+
+async function replaceLines(
+    filepath: string,
+    lineNumbers: number[] = [],
+    replacement: string
+): Promise<string> {
+    const contents = await fsp.readFile(filepath, { encoding: "utf8" });
+
+    return `${contents
+        .split('\n')
+        .filter(l => l != null && l.trim() !== "")
+        .map((l, index) => {
+            return lineNumbers.includes(index) ? replacement : l;
+        })
+        .join('\n')}\n`;
+}
+
+async function replaceLinesWithText(
+    filepath: string,
+    text: string,
+    replacement: string
+): Promise<string> {
+    const contents = await fsp.readFile(filepath, { encoding: "utf8" });
+    return `${contents
+        .split('\n')
+        .map((l) => {
+            return l.replace('\r', "");
+        })
+        .filter(l => l != null && l.trim() !== "")
+        .map((l) => {
+            return l === text ? replacement : l;
+        })
+        .join('\n')}\n`;
+}
+
+const fileWriter: EffectType<{
+    filepath: string;
+    writeMode: "replace" | "suffix" | "append" | "delete" | "replace-line" | "delete-all";
+    deleteLineMode: "lines" | "text";
+    replaceLineMode: "lineNumbers" | "text";
+    lineNumbers: string;
+    text: string;
+    dontRepeat: boolean;
+    replacementText: string;
+}> = {
     definition: {
         id: "firebot:filewriter",
         name: "Write To File",
@@ -17,17 +83,9 @@ const fileWriter = {
         categories: [EffectCategory.ADVANCED],
         dependencies: []
     },
-    /**
-   * Global settings that will be available in the Settings tab
-   */
-    globalSettings: {},
-    /**
-   * The HTML template for the Options view (ie options when effect is added to something such as a button.
-   * You can alternatively supply a url to a html file via optionTemplateUrl
-   */
     optionsTemplate: `
         <eos-container header="File">
-            <file-chooser model="effect.filepath" options="{ filters: [ {name:'Text',extensions:['txt']} ]}"></file-chooser>
+            <file-chooser model="effect.filepath" options="{ filters: [ {name:'Text',extensions:['txt']}, {name:'All files',extensions:['*']} ]}"></file-chooser>
         </eos-container>
 
         <eos-container header="Write Mode" pad-top="true">
@@ -105,10 +163,6 @@ const fileWriter = {
             <firebot-input model="effect.replacementText" type="text" placeholder-text="Enter text" use-text-area="true"></firebot-input>
         </eos-container>
     `,
-    /**
-   * The controller for the front end Options
-   * Port over from effectHelperService.js
-   */
     optionsController: ($scope) => {
         if ($scope.effect.writeMode == null) {
             $scope.effect.writeMode = "replace";
@@ -122,12 +176,8 @@ const fileWriter = {
             $scope.effect.replaceLineMode = "lineNumbers";
         }
     },
-    /**
-   * When the effect is triggered by something
-   * Used to validate fields in the option template.
-   */
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.filepath == null || effect.filepath === "") {
             errors.push("Please select a text file to write to.");
         }
@@ -137,7 +187,7 @@ const fileWriter = {
         if (effect.writeMode === 'delete' && (effect.deleteLineMode === 'text' && (effect.text == null || effect.text === ""))) {
             errors.push("Please set the line text to be deleted.");
         }
-        if (effect.writeMode === 'replace-line' && (effect.replaceLineMode === 'lines' && (effect.lineNumbers == null || effect.lineNumbers === ""))) {
+        if (effect.writeMode === 'replace-line' && (effect.replaceLineMode === 'lineNumbers' && (effect.lineNumbers == null || effect.lineNumbers === ""))) {
             errors.push("Please set the line number to be replaced.");
         }
         if (effect.writeMode === 'replace-line' && (effect.replaceLineMode === 'text' && (effect.text == null || effect.text === ""))) {
@@ -145,13 +195,80 @@ const fileWriter = {
         }
         return errors;
     },
-    /**
-   * When the effect is triggered by something
-   */
-    onTriggerEvent: async (event) => {
-        await fileWriterProcessor.run(event.effect, event.trigger);
+    onTriggerEvent: async ({ effect }) => {
+        if (effect == null || effect.filepath == null) {
+            return;
+        }
+
+        let text = effect.text || "";
+        let escapedNewline = "␚";
+        while (text.includes(escapedNewline)) {
+            escapedNewline = `␚${uuid()}␚`;
+        }
+        text = text.replace(/\\\\n/g, escapedNewline);
+        text = effect.writeMode === "suffix" ? text.replace(/\\n/g, "\n") : text.replace(/\\n/g, "\n").trim();
+        text = text.replaceAll(escapedNewline, "\\n");
+
+        try {
+            switch (effect.writeMode) {
+                case "suffix":
+                    await fsp.appendFile(effect.filepath, text, { encoding: "utf8" });
+                    break;
+
+                case "append":
+                    if (fs.existsSync(effect.filepath) && effect.dontRepeat) {
+                        if (!await doesTextExistInFile(effect.filepath, text)) {
+                            await fsp.appendFile(effect.filepath, `${text}\n`, { encoding: "utf8" });
+                        }
+                    } else {
+                        await fsp.mkdir(path.dirname(effect.filepath), { recursive: true });
+                        await fsp.appendFile(effect.filepath, `${text}\n`, { encoding: "utf8" });
+                    }
+                    break;
+
+                case "delete":
+                    if (effect.deleteLineMode === 'lines' || effect.deleteLineMode == null) {
+                        const lines = effect.lineNumbers
+                            .split(",")
+                            .map(l => l.trim())
+                            .filter(l => !isNaN(Number(l)))
+                            .map(l => parseInt(l, 10) - 1);
+
+                        await fsp.writeFile(effect.filepath, await removeLines(effect.filepath, lines), { encoding: "utf8" });
+                    } else if (effect.deleteLineMode === 'text') {
+                        await fsp.writeFile(effect.filepath, await removeLinesWithText(effect.filepath, effect.text), { encoding: "utf8" });
+                    }
+                    break;
+
+                case "replace-line":
+                    if (effect.replaceLineMode === 'lineNumbers' || effect.replaceLineMode == null) {
+                        const lines = effect.lineNumbers
+                            .split(",")
+                            .map(l => l.trim())
+                            .filter(l => !isNaN(Number(l)))
+                            .map(l => parseInt(l, 10) - 1);
+
+                        await fsp.writeFile(effect.filepath, await replaceLines(effect.filepath, lines, effect.replacementText), { encoding: "utf8" });
+                    } else if (effect.replaceLineMode === 'text') {
+                        await fsp.writeFile(effect.filepath, await replaceLinesWithText(effect.filepath, effect.text, effect.replacementText), { encoding: "utf8" });
+                    }
+                    break;
+
+                case "delete-all":
+                    await fsp.writeFile(effect.filepath, "", { encoding: "utf8" });
+                    break;
+
+                default: // Replace (overwrite)
+                    await fsp.writeFile(effect.filepath, text, { encoding: "utf8" });
+                    break;
+            }
+        } catch (err) {
+            logger.warn("Failed to write to file", err);
+            return false;
+        }
+
         return true;
     }
 };
 
-module.exports = fileWriter;
+export = fileWriter;
