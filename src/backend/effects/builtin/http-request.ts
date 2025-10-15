@@ -1,8 +1,37 @@
-"use strict";
+import { EffectType, EffectList } from "../../../types/effects";
+import { KeyValuePair } from "../../../types/util-types";
+import { EffectCategory } from "../../../shared/effect-constants";
+import logger from "../../logwrapper";
+import twitchAuth from "../../streaming-platforms/twitch/auth/twitch-auth";
+import accountAccess from "../../common/account-access";
+import customVariableManager from "../../common/custom-variable-manager";
+import effectRunner from "../../common/effect-runner";
 
-const { EffectCategory } = require("../../../shared/effect-constants");
+type ErrorWithResponseData = Error & {
+    responseData: string;
+};
 
-const effect = {
+const effect: EffectType<{
+    url: string;
+    method: string;
+    body: string;
+    headers: Array<KeyValuePair>;
+    options: {
+        timeout?: number;
+        useTwitchAuth?: boolean;
+        runEffectsOnError?: boolean;
+        storeOutputAsBinary?: boolean;
+        /** @deprecated */
+        putResponseInVariable?: boolean;
+        /** @deprecated */
+        variableName?: string;
+        /** @deprecated */
+        variableTtl?: number;
+        /** @deprecated */
+        variablePropertyPath?: string;
+    };
+    errorEffects: EffectList;
+}> = {
     definition: {
         id: "firebot:http-request",
         name: "HTTP Request",
@@ -18,7 +47,6 @@ const effect = {
             }
         ]
     },
-    globalSettings: {},
     optionsTemplate: `
     <eos-container header="URL">
         <firebot-input model="effect.url" placeholder-text="Enter url" menu-position="below"></firebot-input>
@@ -111,20 +139,19 @@ const effect = {
 
     `,
     optionsController: ($scope, utilityService) => {
-
-        $scope.errorEffectsUpdated = function(effects) {
+        $scope.errorEffectsUpdated = (effects: EffectList) => {
             $scope.effect.errorEffects = effects;
         };
 
         $scope.editorSettings = {
-            mode: {name: "javascript", json: true},
+            mode: { name: "javascript", json: true },
             theme: "blackboard",
             lineNumbers: true,
             autoRefresh: true,
             showGutter: true
         };
 
-        $scope.codemirrorLoaded = function(_editor) {
+        $scope.codemirrorLoaded = (_editor) => {
             // Editor part
             _editor.refresh();
             const cmResize = require("cm-resize");
@@ -140,14 +167,14 @@ const effect = {
             stop: () => {}
         };
 
-        $scope.showAddOrEditHeaderModal = (header) => {
+        $scope.showAddOrEditHeaderModal = (header: KeyValuePair) => {
             utilityService.showModal({
                 component: "addOrEditHeaderModal",
                 size: "sm",
                 resolveObj: {
                     header: () => header
                 },
-                closeCallback: (newHeader) => {
+                closeCallback: (newHeader: KeyValuePair) => {
                     $scope.effect.headers = $scope.effect.headers.filter(h => h.key !== newHeader.key);
                     $scope.effect.headers.push(newHeader);
                 }
@@ -162,7 +189,7 @@ const effect = {
             $scope.effect.options = {};
         }
 
-        $scope.removeHeaderAtIndex = (index) => {
+        $scope.removeHeaderAtIndex = (index: number) => {
             $scope.effect.headers.splice(index, 1);
         };
 
@@ -181,17 +208,17 @@ const effect = {
             }
         ];
 
-        $scope.headerOptions = (item) => {
+        $scope.headerOptions = (item: KeyValuePair) => {
             const options = [
                 {
                     html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
-                    click: function () {
+                    click: () => {
                         $scope.showAddOrEditHeaderModal(item);
                     }
                 },
                 {
                     html: `<a href style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
-                    click: function () {
+                    click: () => {
                         $scope.effect.headers = $scope.effect.headers.filter(h => h.key !== item.key);
                     }
                 }
@@ -200,7 +227,7 @@ const effect = {
         };
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.method === "" || effect.method == null) {
             errors.push("Please select an HTTP method");
         }
@@ -209,17 +236,8 @@ const effect = {
         }
         return errors;
     },
-    onTriggerEvent: async (event) => {
-
-        const logger = require("../../logwrapper");
-        const twitchAuth = require("../../streaming-platforms/twitch/auth/twitch-auth");
-        const accountAccess = require("../../common/account-access");
-        const customVariableManager = require("../../common/custom-variable-manager");
-        const effectRunner = require("../../common/effect-runner");
-
-        const { effect, trigger, outputs, abortSignal } = event;
-
-        let headers = {
+    onTriggerEvent: async ({ effect, trigger, outputs, abortSignal }) => {
+        let headers: Record<string, string> = {
             "User-Agent": "Firebot v5 - HTTP Request Effect",
             ...effect.headers.reduce((acc, next) => {
                 acc[next.key] = next.value;
@@ -251,13 +269,13 @@ const effect = {
             } catch { }
         }
 
-        let responseData;
+        let responseData: string | Uint8Array<ArrayBuffer> | Record<string, unknown>;
 
         try {
             const response = await fetch(effect.url, {
                 method: effect.method.toUpperCase(),
                 headers,
-                timeout: effect.options.timeout && effect.options.timeout > 0
+                signal: effect.options.timeout && effect.options.timeout > 0
                     ? AbortSignal.timeout(effect.options.timeout)
                     : undefined,
                 body: sendBodyData === true ? effect.body : null
@@ -270,23 +288,21 @@ const effect = {
             }
 
             if (!response.ok) {
-                const error = new Error(`Request failed with status ${response.status}`);
+                const error = new Error(`Request failed with status ${response.status}`) as ErrorWithResponseData;
 
                 // Convert response back to text if necessary
                 if (effect.options.storeOutputAsBinary === true) {
-                    responseData = new TextDecoder("utf-8").decode(responseData);
+                    responseData = new TextDecoder("utf-8").decode(responseData as Uint8Array<ArrayBuffer>);
                 }
 
-                error.responseData = responseData;
+                error.responseData = responseData as string;
                 throw error;
             }
 
             if (effect.options.storeOutputAsBinary !== true) {
                 try {
-                    responseData = JSON.parse(responseData);
-                } catch (error) {
-                //ignore error
-                }
+                    responseData = JSON.parse(responseData as string) as Record<string, unknown>;
+                } catch { } //ignore error
             }
 
             /**
@@ -300,7 +316,8 @@ const effect = {
                     effect.options.variablePropertyPath || null
                 );
             }
-        } catch (error) {
+        } catch (err) {
+            const error = err as ErrorWithResponseData;
             const message = {
                 errorMessage: error.message,
                 responseData: error.responseData
@@ -336,14 +353,7 @@ const effect = {
                 httpResponse: responseData
             }
         };
-    },
-    overlayExtension: {
-        dependencies: {
-            css: [],
-            js: []
-        },
-        event: {}
     }
 };
 
-module.exports = effect;
+export = effect;

@@ -329,7 +329,7 @@ class ChannelRewardManager {
         };
 
         try {
-            return effectRunner.processEffects(processEffectsRequest);
+            await effectRunner.processEffects(processEffectsRequest);
         } catch (reason) {
             logger.error(`error when running effects: ${reason}`);
         }

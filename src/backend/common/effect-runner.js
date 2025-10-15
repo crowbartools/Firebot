@@ -135,6 +135,9 @@ function triggerEffect(effect, trigger, outputs, manualAbortSignal, listAbortSig
     });
 }
 
+/**
+ * @returns {Promise<{success: boolean, stopEffectExecution: boolean, outputs: Record<string, string>}>}
+ */
 function runEffects(runEffectsContext) {
     return new Promise(async (resolve) => {
         runEffectsContext = structuredClone(runEffectsContext);
