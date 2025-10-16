@@ -1,4 +1,5 @@
 import { ComparisonType } from "../shared/filter-constants";
+import { Awaitable } from "./util-types";
 
 export type EventSource = {
     id: string;
@@ -32,9 +33,9 @@ export type EventFilter = {
     }>;
     comparisonTypes: string[];
     valueType: "text" | "preset";
-    presetValues?(...args: unknown[]): Promise<PresetValue[]> | PresetValue[];
-    valueIsStillValid?(filterSettings: FilterSettings, ...args: unknown[]): Promise<boolean> | boolean;
-    getSelectedValueDisplay?(filterSettings: FilterSettings, ...args: unknown[]): Promise<string> | string;
+    presetValues?(...args: unknown[]): Awaitable<PresetValue[]>;
+    valueIsStillValid?(filterSettings: FilterSettings, ...args: unknown[]): Awaitable<boolean>;
+    getSelectedValueDisplay?(filterSettings: FilterSettings, ...args: unknown[]): Awaitable<string>;
     predicate(
         filterSettings: FilterSettings,
         eventData: {
@@ -42,5 +43,5 @@ export type EventFilter = {
             eventId: string;
             eventMeta: Record<string, unknown>;
         }
-    ): Promise<boolean> | boolean;
+    ): Awaitable<boolean>;
 };

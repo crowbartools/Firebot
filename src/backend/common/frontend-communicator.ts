@@ -1,12 +1,13 @@
 import { ipcMain } from "electron";
 import { v4 as uuid } from "uuid";
 
+import { Awaitable } from "../../types/util-types";
 import { FrontendCommunicatorModule } from "../../types/script-modules";
 
 class FrontendCommunicator implements FrontendCommunicatorModule {
     private _listeners: Record<string, {
         id: string;
-        callback: (...args: Array<unknown>) => PromiseLike<unknown> | unknown;
+        callback: (...args: Array<unknown>) => Awaitable<unknown>;
         async: boolean;
     }[]> = {};
 

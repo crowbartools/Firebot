@@ -143,7 +143,7 @@ export type OverlayWidgetType<
         /**
          * Called when the overlay is loaded. Can be async.
          */
-        onInitialLoad?: (utils: IOverlayWidgetInitUtils) => void | Promise<void>;
+        onInitialLoad?: (utils: IOverlayWidgetInitUtils) => Awaitable<void>;
     };
 };
 

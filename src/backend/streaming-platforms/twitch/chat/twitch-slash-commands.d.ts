@@ -1,3 +1,5 @@
+import { Awaitable } from "../../../../types/util-types";
+
 export type TwitchSlashCommandValidationResult<Args extends unknown[] = unknown[]> = {
     success: true;
     args: Args;
@@ -10,5 +12,5 @@ export type TwitchSlashCommandValidationResult<Args extends unknown[] = unknown[
 export type TwitchSlashCommand<Args extends unknown[] = unknown[]> = {
     commands: string[];
     validateArgs(rawArgs: string[]): TwitchSlashCommandValidationResult<Args>;
-    handle(args: Args, sendAsBot?: boolean): boolean | PromiseLike<boolean>;
+    handle(args: Args, sendAsBot?: boolean): Awaitable<boolean>;
 };

@@ -4,13 +4,15 @@ import http from "http";
 import bodyParser from "body-parser";
 import cors from 'cors';
 import path from 'path';
-import logger from "../backend/logwrapper";
+
+import { Awaitable } from "../types/util-types";
 import { SettingsManager } from "../backend/common/settings-manager";
 import effectManager from "../backend/effects/effectManager";
 import { ResourceTokenManager } from "../backend/resource-token-manager";
 import websocketServerManager from "./websocket-server-manager";
 import { CustomWebSocketHandler } from "../types/websocket";
 import overlayWidgetManager from "../backend/overlay-widgets/overlay-widgets-manager";
+import logger from "../backend/logwrapper";
 
 import dataAccess from "../backend/common/data-access";
 import frontendCommunicator from "../backend/common/frontend-communicator";
@@ -39,7 +41,7 @@ interface CustomRoute {
     route: string;
     fullRoute: string;
     method: HttpMethod;
-    callback: (req: Request, res: Response) => Promise<void> | void;
+    callback: (req: Request, res: Response) => Awaitable<void>;
 }
 
 class HttpServerManager extends EventEmitter {

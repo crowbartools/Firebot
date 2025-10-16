@@ -1,3 +1,5 @@
+import { Awaitable } from "./util-types";
+
 export type WebSocketEventType =
 "subscribe-events" |
 "overlay-connected" |
@@ -50,7 +52,7 @@ interface ResponseMessage extends Message {
     name: "error" | "success";
 }
 interface EventMessage extends Message {
-    type: "event"
+    type: "event";
 }
 
 interface InvokePluginMessage extends InvokeMessage {
@@ -60,7 +62,7 @@ interface InvokePluginMessage extends InvokeMessage {
 
 interface CustomWebSocketHandler {
     pluginName: string;
-    callback: (data: unknown | unknown[]) => Promise<void> | void;
+    callback: (data: unknown | unknown[]) => Awaitable<void>;
 }
 
 export type OverlayConnectedData = {

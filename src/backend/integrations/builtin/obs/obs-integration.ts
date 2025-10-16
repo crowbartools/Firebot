@@ -7,6 +7,8 @@ import {
 } from "@crowbartools/firebot-custom-scripts-types";
 import { EventManager } from "@crowbartools/firebot-custom-scripts-types/types/modules/event-manager";
 
+import { Awaitable } from "../../../../types/util-types";
+
 import logger from "../../../logwrapper";
 import effectManager from "../../../effects/effectManager";
 import eventManager from "../../../events/EventManager";
@@ -135,7 +137,7 @@ class ObsIntegration
     init(
         linked: boolean,
         integrationData: IntegrationData<ObsSettings>
-    ): void | PromiseLike<void> {
+    ): Awaitable<void> {
         logger.info("Starting OBS Control...");
 
         setupFrontendListeners(frontendCommunicator);
@@ -203,7 +205,7 @@ class ObsIntegration
 
     onUserSettingsUpdate?(
         integrationData: IntegrationData<ObsSettings>
-    ): void | PromiseLike<void> {
+    ): Awaitable<void> {
         this.setupConnection(integrationData.userSettings);
     }
 }

@@ -1,4 +1,5 @@
 import { Trigger, TriggerType, TriggersObject } from "./triggers";
+import { Awaitable } from "./util-types";
 
 interface RestrictionScope<RestrictionModel> extends ng.IScope {
     restriction: RestrictionType<RestrictionModel>;
@@ -25,12 +26,12 @@ export type RestrictionType<RestrictionModel> = {
         triggerData: Trigger,
         restrictionData: RestrictionModel,
         inherited?: boolean
-    ): boolean | Promise<boolean>;
+    ): Awaitable<boolean>;
     onSuccessful?: (
         triggerData: Trigger,
         restrictionData: RestrictionModel,
         inherited?: boolean
-    ) => void | Promise<void>;
+    ) => Awaitable<void>;
 };
 
 export type RestrictionData = {
