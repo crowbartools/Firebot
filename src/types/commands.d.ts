@@ -2,6 +2,7 @@ import { FirebotChatMessage } from "./chat";
 import { EffectList } from "./effects";
 import { RestrictionData } from "./restrictions";
 import { ParametersConfig } from "./parameters";
+import { Awaitable } from "./util-types";
 
 export type CommandType = "system" | "custom";
 
@@ -30,6 +31,7 @@ export type SubCommand = {
     cooldown?: Cooldown | undefined;
     inheritBaseCommandCooldown?: boolean;
     effects?: EffectList;
+    hidden?: boolean;
 };
 
 export type CommandDefinition<OptionsModel = any> = {
@@ -132,5 +134,5 @@ export type SystemCommand<OptionsModel = any> = {
                 [x in keyof OptionsModel]: OptionsModel[x]
             };
         }
-    ) => PromiseLike<boolean> | boolean | PromiseLike<void> | void;
+    ) => Awaitable<boolean | void>;
 };

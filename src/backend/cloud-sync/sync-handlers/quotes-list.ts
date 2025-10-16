@@ -1,6 +1,6 @@
 import { QuoteManager } from "../../quotes/quote-manager";
 
-async function getQuoteListForSync() {
+export async function getQuoteListForSync() {
     const quotes = await QuoteManager.getAllQuotes();
     const quotesData = {
         'quotes': quotes
@@ -12,5 +12,3 @@ async function getQuoteListForSync() {
 
     return quotesData;
 }
-
-export { getQuoteListForSync };

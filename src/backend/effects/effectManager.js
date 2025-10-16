@@ -1,10 +1,10 @@
 "use strict";
 
-const logger = require("../logwrapper");
 const EventEmitter = require("events");
 const { EffectTrigger } = require("../../shared/effect-constants");
+const cloudSync = require("../cloud-sync");
 const frontendCommunicator = require("../common/frontend-communicator");
-const cloudSync = require("../cloud-sync/cloud-sync");
+const logger = require("../logwrapper");
 
 class EffectManager extends EventEmitter {
     /**

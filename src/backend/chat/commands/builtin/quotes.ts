@@ -5,7 +5,7 @@ import { SystemCommand } from "../../../../types/commands";
 import { Quote } from "../../../../types/quotes";
 import { QuoteManager } from "../../../quotes/quote-manager";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
-import cloudSync from '../../../cloud-sync/profile-sync';
+import * as cloudSync from "../../../cloud-sync";
 import frontendCommunicator from "../../../common/frontend-communicator";
 import logger from "../../../logwrapper";
 
@@ -325,13 +325,11 @@ export const QuotesManagementSystemCommand: SystemCommand<{
                 return;
             }
             case "list": {
-                const profileJSON = {
+                const streamerName = await cloudSync.syncProfileData({
                     username: event.chatMessage.username,
                     userRoles: event.chatMessage.roles,
                     profilePage: 'quotes'
-                };
-
-                const streamerName = await cloudSync.syncProfileData(profileJSON);
+                });
 
                 await TwitchApi.chat.sendChatMessage(`Here is a list of quotes! https://firebot.app/profile/${streamerName}`, null, true);
 

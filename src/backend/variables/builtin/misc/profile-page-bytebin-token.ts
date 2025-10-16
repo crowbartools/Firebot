@@ -1,6 +1,6 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType } from "../../../../shared/variable-constants";
-import cloudSync from "../../../cloud-sync/profile-sync";
+import * as cloudSync from "../../../cloud-sync";
 
 const model : ReplaceVariable = {
     definition: {
@@ -9,7 +9,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT],
         hidden: true
     },
-    evaluator: async (trigger, page = "commands") => {
+    evaluator: async (trigger, page: "commands" | "quotes" = "commands") => {
         return await cloudSync.syncProfileData({
             username: trigger.metadata.username,
             userRoles: [],

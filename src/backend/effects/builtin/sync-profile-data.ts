@@ -1,6 +1,6 @@
 import { EffectType } from "../../../types/effects";
 import { EffectCategory } from "../../../shared/effect-constants";
-import cloudSync from "../../cloud-sync/profile-sync";
+import * as cloudSync from "../../cloud-sync";
 
 const effect: EffectType<{
     profilePage: "commands" | "quotes";

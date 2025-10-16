@@ -38,7 +38,7 @@ type Variable = {
     definition: VariableDefinition;
     getSuggestions?: (triggerType: TriggerType, triggerMeta?: TriggerMeta) => Awaitable<VariableUsage[]>;
     argsCheck?: (...args: unknown[]) => void;
-    evaluator(trigger: Trigger, ...args: unknown[]): PromiseLike<unknown> | unknown;
+    evaluator(trigger: Trigger, ...args: unknown[]): Awaitable<unknown>;
 };
 
 type SpoofedVariable = {
@@ -49,3 +49,12 @@ type SpoofedVariable = {
 };
 
 export type ReplaceVariable = Variable | SpoofedVariable;
+
+export type RegisteredVariable = {
+    definition: VariableDefinition;
+    handle: string;
+    triggers: TriggersObject;
+    argsCheck: (...args: unknown[]) => void;
+    evaluator(trigger: Trigger, ...args: unknown[]): Awaitable<unknown>;
+    getSuggestions: (triggerType: TriggerType, triggerMeta?: TriggerMeta) => Awaitable<VariableUsage[]>;
+};

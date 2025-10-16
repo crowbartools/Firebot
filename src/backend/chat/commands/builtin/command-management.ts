@@ -1,7 +1,8 @@
 import { v4 as uuid } from "uuid";
 
-import { getData } from "../../../../backend/cloud-sync/cloud-sync";
 import { SystemCommand } from "../../../../types/commands";
+import { EffectInstance } from "../../../../types/effects";
+import { getData } from "../../../cloud-sync";
 import frontendCommunicator from "../../../common/frontend-communicator";
 import { SettingsManager } from "../../../common/settings-manager";
 import customRolesManager from "../../../roles/custom-roles-manager";
@@ -13,6 +14,10 @@ import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 interface TriggerWithArgs {
     trigger: string;
     remainingData: string;
+}
+
+interface SharedEffects {
+    effects: EffectInstance[];
 }
 
 function separateTriggerFromArgs(args: string[]): TriggerWithArgs {
@@ -355,7 +360,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                     return;
                 }
 
-                const effectsData = await getData(remainingData.trim());
+                const effectsData = await getData<SharedEffects>(remainingData.trim());
 
                 if (!effectsData || !effectsData.effects) {
                     await TwitchApi.chat.sendChatMessage(

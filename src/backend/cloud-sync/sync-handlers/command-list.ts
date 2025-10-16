@@ -1,8 +1,6 @@
-"use strict";
+import commandManager from "../../chat/commands/command-manager";
 
-const commandManager = require("../../chat/commands/command-manager");
-
-async function getCommandListForSync() {
+export function getCommandListForSync() {
     const allCommands = commandManager.getAllActiveCommands();
     const commandData = {
         'allowedCmds': []
@@ -29,6 +27,7 @@ async function getCommandListForSync() {
                     ? strippedCommand.subCommands
                         .filter(sc => sc.active && !sc.hidden)
                         .map((sc) => {
+                            // eslint-disable-next-line @typescript-eslint/no-unused-vars
                             const { effects, ...strippedSubCommand } = sc;
                             return strippedSubCommand;
                         })
@@ -43,5 +42,3 @@ async function getCommandListForSync() {
 
     return commandData;
 }
-
-exports.getCommandListForSync = getCommandListForSync;

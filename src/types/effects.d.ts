@@ -87,7 +87,13 @@ export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
     overlayExtension?: OverlayExtension;
 };
 
+export interface EffectInstance {
+    id: string;
+    type: string;
+    [x: string]: unknown;
+}
+
 export interface EffectList {
     id: string;
-    list: any[];
+    list: EffectInstance[];
 }

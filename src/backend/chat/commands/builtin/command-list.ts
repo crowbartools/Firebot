@@ -1,5 +1,5 @@
 import { SystemCommand } from "../../../../types/commands";
-import cloudSync from '../../../cloud-sync/profile-sync.js';
+import * as cloudSync from '../../../cloud-sync';
 import { SortTagManager } from "../../../sort-tags/sort-tag-manager";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 
@@ -51,13 +51,11 @@ export const CommandListSystemCommand: SystemCommand<{
     onTriggerEvent: async (event) => {
         const { commandOptions } = event;
 
-        const profileJSON = {
+        const streamerName = await cloudSync.syncProfileData({
             username: event.chatMessage.username,
             userRoles: event.chatMessage.roles,
-            profilePage: 'commands'
-        };
-
-        const streamerName = await cloudSync.syncProfileData(profileJSON);
+            profilePage: "commands"
+        });
 
         let profileUrl = `https://firebot.app/profile/${streamerName}`;
 

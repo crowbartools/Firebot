@@ -38,10 +38,6 @@
                 return sortTags[context];
             };
 
-            backendCommunicator.onAsync("get-sort-tags", async (context) => {
-                return service.getSortTags(context);
-            });
-
             /**
              * @param {string} context
              * @param {string[]} tagIds
