@@ -1,17 +1,26 @@
-"use strict";
+import { Request, Response } from "express";
+import { Trigger } from "../../../../types/triggers";
+import commandManager from "../../../../backend/chat/commands/command-manager";
+import commandRunner from "../../../../backend/chat/commands/command-runner";
 
-const commandManager = require("../../../../backend/chat/commands/command-manager");
-const commandRunner = require("../../../../backend/chat/commands/command-runner");
-
-function getCommandTriggerAndArgs(req) {
-    const body = req.body || {};
-    const query = req.query || {};
-    let args, username, metadata;
+function getCommandTriggerAndArgs(req: Request): {
+    trigger: Trigger;
+    args: string[];
+} {
+    const body = (req.body ?? {}) as {
+        args?: string[];
+        username?: string;
+        metadata?: Record<string, unknown> & { username: string };
+    };
+    const query = req.query ?? {};
+    let args: string[],
+        username: string,
+        metadata: Record<string, unknown> & { username: string };
 
     // GET
     if (req.method === "GET") {
-        args = query.args;
-        username = query.username;
+        args = query.args as string[];
+        username = query.username as string;
 
     // POST
     } else if (req.method === "POST") {
@@ -22,8 +31,9 @@ function getCommandTriggerAndArgs(req) {
 
     username = username ?? "API User";
 
-    const trigger = {
-        metadata: metadata || { }
+    const trigger: Trigger = {
+        type: "api",
+        metadata: metadata ?? { username: username }
     };
 
     trigger.metadata.username = trigger.metadata.username ?? username;
@@ -31,11 +41,11 @@ function getCommandTriggerAndArgs(req) {
     return { trigger, args };
 }
 
-exports.getSystemCommands = async function(req, res) {
+export function getSystemCommands(req: Request, res: Response): void {
     const sysCommands = commandManager.getAllSystemCommandDefinitions();
 
     if (sysCommands == null) {
-        return res.status(500).send({
+        res.status(500).send({
             status: "error",
             message: "Unknown error getting system commands"
         });
@@ -49,14 +59,14 @@ exports.getSystemCommands = async function(req, res) {
         };
     });
 
-    return res.json(formattedSysCommands);
+    res.json(formattedSysCommands);
 };
 
-exports.getSystemCommand = async function(req, res) {
+export function getSystemCommand(req: Request, res: Response): void {
     const sysCommandId = req.params.sysCommandId;
 
     if (!(sysCommandId?.length > 0)) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: "No sysCommandId provided"
         });
@@ -65,20 +75,20 @@ exports.getSystemCommand = async function(req, res) {
     const sysCommand = commandManager.getSystemCommandById(sysCommandId);
 
     if (sysCommand == null) {
-        return res.status(404).send({
+        res.status(404).send({
             status: "error",
             message: `System command '${sysCommandId}' not found`
         });
     }
 
-    return res.json(sysCommand.definition);
+    res.json(sysCommand.definition);
 };
 
-exports.runSystemCommand = async function(req, res) {
+export function runSystemCommand(req: Request, res: Response): void {
     const sysCommandId = req.params.sysCommandId;
 
     if (!(sysCommandId?.length > 0)) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: "No sysCommandId provided"
         });
@@ -87,7 +97,7 @@ exports.runSystemCommand = async function(req, res) {
     const sysCommand = commandManager.getSystemCommandById(sysCommandId);
 
     if (sysCommand == null) {
-        return res.status(404).send({
+        res.status(404).send({
             status: "error",
             message: `System command '${sysCommandId}' not found`
         });
@@ -98,23 +108,23 @@ exports.runSystemCommand = async function(req, res) {
     try {
         commandRunner.runSystemCommandFromEffect(sysCommandId, trigger, args);
     } catch (e) {
-        return res.status(500).send({
+        res.status(500).send({
             status: "error",
             message: `Error executing system command '${sysCommandId}': ${e}`
         });
     }
 
-    return res.status(200).send({
+    res.status(200).send({
         status: "success",
         message: `System command '${sysCommandId}' executed successfully`
     });
 };
 
-exports.getCustomCommands = async function(req, res) {
+export function getCustomCommands(req: Request, res: Response): void {
     const customCommands = commandManager.getAllCustomCommands();
 
     if (customCommands == null) {
-        return res.status(500).send({
+        res.status(500).send({
             status: "error",
             message: "Unknown error getting custom commands"
         });
@@ -128,14 +138,14 @@ exports.getCustomCommands = async function(req, res) {
         };
     });
 
-    return res.json(formattedCustomCommands);
+    res.json(formattedCustomCommands);
 };
 
-exports.getCustomCommand = async function(req, res) {
+export function getCustomCommand(req: Request, res: Response): void {
     const customCommandId = req.params.customCommandId;
 
     if (!(customCommandId?.length > 0)) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: "No customCommandId provided"
         });
@@ -144,20 +154,20 @@ exports.getCustomCommand = async function(req, res) {
     const customCommand = commandManager.getCustomCommandById(customCommandId);
 
     if (customCommand == null) {
-        return res.status(404).send({
+        res.status(404).send({
             status: "error",
             message: `Custom command '${customCommandId}' not found`
         });
     }
 
-    return res.json(customCommand);
+    res.json(customCommand);
 };
 
-exports.runCustomCommand = async function(req, res) {
+export function runCustomCommand(req: Request, res: Response): void {
     const customCommandId = req.params.customCommandId;
 
     if (!(customCommandId?.length > 0)) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: "No customCommandId provided"
         });
@@ -166,7 +176,7 @@ exports.runCustomCommand = async function(req, res) {
     const customCommand = commandManager.getCustomCommandById(customCommandId);
 
     if (customCommand == null) {
-        return res.status(404).send({
+        res.status(404).send({
             status: "error",
             message: `Custom command '${customCommandId}' not found`
         });
@@ -177,13 +187,13 @@ exports.runCustomCommand = async function(req, res) {
     try {
         commandRunner.runCustomCommandFromEffect(customCommandId, trigger, args);
     } catch (e) {
-        return res.status(500).send({
+        res.status(500).send({
             status: "error",
             message: `Error executing custom command '${customCommandId}': ${e}`
         });
     }
 
-    return res.status(200).send({
+    res.status(200).send({
         status: "success",
         message: `Custom command '${customCommandId}' executed successfully`
     });

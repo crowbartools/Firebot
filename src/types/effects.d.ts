@@ -51,28 +51,30 @@ export type OverlayExtension = {
     };
 };
 
-export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
-    definition: {
-        id: string;
-        name: string;
-        description: string;
-        icon: string;
-        categories: EffectCategory[];
-        hidden?: boolean | Func<boolean>;
-        triggers?: TriggerType[] | TriggersObject;
-        dependencies?: EffectDependencies | Array<"chat">;
-        showWhenDependenciesNotMet?: boolean;
-        outputs?: EffectOutput[];
-        /**
+export type EffectDefinition<EffectModel = unknown> = {
+    id: string;
+    name: string;
+    description: string;
+    icon: string;
+    categories: EffectCategory[];
+    hidden?: boolean | Func<boolean>;
+    triggers?: TriggerType[] | TriggersObject;
+    dependencies?: EffectDependencies | Array<"chat">;
+    showWhenDependenciesNotMet?: boolean;
+    outputs?: EffectOutput[];
+    /**
          * If true, this effect cannot be aborted via the "Timeout" feature
          */
-        exemptFromTimeouts?: boolean;
-        /**
+    exemptFromTimeouts?: boolean;
+    /**
          * Keys of the effect model that should be exempt from having variables replaced in them automatically.
          * This is useful when you want to run variable replacement manually, or not at all.
          */
-        keysExemptFromAutoVariableReplacement?: Array<keyof EffectModel>;
-    };
+    keysExemptFromAutoVariableReplacement?: Array<keyof EffectModel>;
+};
+
+export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
+    definition: EffectDefinition<EffectModel>;
     optionsTemplate: string;
     optionsController?: ($scope: EffectScope<EffectModel>, ...args: any[]) => void;
     optionsValidator?: (effect: EffectModel, $scope: EffectScope<EffectModel>) => string[];

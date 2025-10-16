@@ -1,20 +1,21 @@
-"use strict";
-const { EffectTrigger } = require("../../../../shared/effect-constants");
-const effectsManager = require("../../../../backend/effects/effectManager");
-const effectRunner = require("../../../../backend/common/effect-runner");
-const presetEffectListManager = require("../../../../backend/effects/preset-lists/preset-effect-list-manager");
+import { Request, Response } from "express";
+import { EffectInstance } from "../../../../types/effects";
+import { EffectTrigger } from "../../../../shared/effect-constants";
+import effectsManager from "../../../../backend/effects/effectManager";
+import effectRunner from "../../../../backend/common/effect-runner";
+import presetEffectListManager from "../../../../backend/effects/preset-lists/preset-effect-list-manager";
 
-exports.getEffects = function(req, res) {
+export function getEffects(req: Request, res: Response): void {
     let effectDefs = effectsManager.getEffectDefinitions();
 
     if (req.query.trigger) {
-        effectDefs = effectDefs.filter(effect => effect.triggers == null || effect.triggers[req.query.trigger]);
+        effectDefs = effectDefs.filter(effect => effect.triggers == null || effect.triggers[req.query.trigger as string]);
     }
 
     res.json(effectDefs);
 };
 
-exports.getEffect = function(req, res) {
+export function getEffect(req: Request, res: Response): void {
     const effectId = req.params.effectId;
     const effect = effectsManager.getEffectById(effectId);
     if (effect == null) {
@@ -28,10 +29,18 @@ exports.getEffect = function(req, res) {
     res.json(effect.definition);
 };
 
-exports.runEffects = async function(req, res) {
+export async function runEffects(
+    req: Request<undefined, undefined, {
+        effects: EffectInstance[];
+        triggerData: {
+            username: string;
+        };
+    }>,
+    res: Response
+): Promise<void> {
     if (req.body.effects != null) {
 
-        const triggerData = req.body && req.body.triggerData || {};
+        const triggerData = req.body?.triggerData ?? {} as { username: string };
         if (triggerData.username == null) {
             triggerData.username = "API Call";
         }
@@ -47,7 +56,8 @@ exports.runEffects = async function(req, res) {
         try {
             await effectRunner.processEffects(processEffectsRequest);
             res.status(200).send({ status: "success" });
-        } catch (err) {
+        } catch (error) {
+            const err = error as Error;
             res.status(500).send({ status: "error", message: err.message });
         }
     } else {
@@ -55,11 +65,11 @@ exports.runEffects = async function(req, res) {
     }
 };
 
-exports.getPresetLists = async function(req, res) {
+export function getPresetLists(req: Request, res: Response): void {
     const presetLists = presetEffectListManager.getAllItems();
 
     if (presetLists == null) {
-        return res.status(500).send({
+        res.status(500).send({
             status: "error",
             message: "Unknown error getting preset effect lists"
         });
@@ -73,14 +83,18 @@ exports.getPresetLists = async function(req, res) {
         };
     });
 
-    return res.json(formattedPresetLists);
+    res.json(formattedPresetLists);
 };
 
-async function runPresetEffectList(req, res, waitForCompletion = false) {
+async function runPresetEffectList(
+    req: Request,
+    res: Response,
+    waitForCompletion = false
+): Promise<void> {
     const presetListId = req.params.presetListId;
 
     if (presetListId == null) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: `No presetListId provided`
         });
@@ -88,19 +102,19 @@ async function runPresetEffectList(req, res, waitForCompletion = false) {
 
     const presetList = presetEffectListManager.getItem(presetListId);
     if (presetList == null) {
-        return res.status(404).send({
+        res.status(404).send({
             status: "error",
-            message: `Cannot find preset effect list '${presetList}'`
+            message: `Cannot find preset effect list '${presetListId}'`
         });
     }
 
-    const body = req.body || {};
-    const query = req.query || {};
-    let args, username;
+    const body = (req.body ?? {}) as { username?: string, args?: Record<string, unknown> };
+    const query = req.query ?? {};
+    let args: Record<string, unknown>, username: string;
 
     // GET
     if (req.method === "GET") {
-        username = query.username;
+        username = query.username as string;
         args = query;
 
     // POST
@@ -110,7 +124,7 @@ async function runPresetEffectList(req, res, waitForCompletion = false) {
 
     // Not GET or POST
     } else {
-        return res.status(404).send({ status: "error", message: "Invalid request method" });
+        res.status(404).send({ status: "error", message: "Invalid request method" });
     }
 
     const processEffectsRequest = {
@@ -128,18 +142,19 @@ async function runPresetEffectList(req, res, waitForCompletion = false) {
         if (waitForCompletion === true) {
             await effectRunner.processEffects(processEffectsRequest);
         } else {
-            effectRunner.processEffects(processEffectsRequest);
+            void effectRunner.processEffects(processEffectsRequest);
         }
         res.status(200).send({ status: "success" });
-    } catch (err) {
+    } catch (error) {
+        const err = error as Error;
         res.status(500).send({ status: "error", message: err.message });
     }
 }
 
-exports.runPresetListSynchronous = async function(req, res) {
-    runPresetEffectList(req, res, true);
+export async function runPresetListSynchronous(req: Request, res: Response): Promise<void> {
+    await runPresetEffectList(req, res, true);
 };
 
-exports.triggerPresetListAsync = async function(req, res) {
-    runPresetEffectList(req, res, false);
+export function triggerPresetListAsync(req: Request, res: Response): void {
+    void runPresetEffectList(req, res, false);
 };

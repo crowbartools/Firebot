@@ -1,8 +1,8 @@
-import timersManager from "../../../../backend/timers/timer-manager";
 import { Request, Response } from "express";
 import { Timer } from "../../../../types/timers";
+import timersManager from "../../../../backend/timers/timer-manager";
 
-function findTimer(req: Request, res: Response): Timer | undefined {
+function findTimer(req: Request, res: Response): Timer {
     const timerId: string = req.params.timerId;
 
     if (!(timerId.length > 0)) {
@@ -26,7 +26,7 @@ function findTimer(req: Request, res: Response): Timer | undefined {
     return timer;
 }
 
-export async function getTimers(req: Request, res: Response): Promise<Response> {
+export function getTimers(req: Request, res: Response): void {
     const timers = timersManager.getAllItems()
         .map((c) => {
             return {
@@ -36,19 +36,19 @@ export async function getTimers(req: Request, res: Response): Promise<Response> 
             };
         });
 
-    return res.json(timers);
+    res.json(timers);
 }
 
-export async function getTimerById(req: Request, res: Response): Promise<Response> {
+export function getTimerById(req: Request, res: Response): void {
     const timer = findTimer(req, res);
     if (!timer) {
         return;
     }
 
-    return res.json(timer);
+    res.json(timer);
 }
 
-export async function updateTimerById(req: Request, res: Response): Promise<Response> {
+export function updateTimerById(req: Request, res: Response): void {
     const timer = findTimer(req, res);
     if (!timer) {
         return;
@@ -62,7 +62,7 @@ export async function updateTimerById(req: Request, res: Response): Promise<Resp
         action !== "toggle" &&
         action !== "clear"
     ) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: "invalid action provided"
         });
@@ -70,10 +70,10 @@ export async function updateTimerById(req: Request, res: Response): Promise<Resp
 
     if (action === "clear") {
         timersManager.updateIntervalForTimer(timer);
-        return res.status(200).send();
+        res.status(200).send();
     }
 
     const isActive = action === "toggle" ? !timer.active : action === "enable";
     timersManager.updateTimerActiveStatus(timer.id, isActive);
-    return res.status(200).send();
+    res.status(200).send();
 }

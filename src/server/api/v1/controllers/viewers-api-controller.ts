@@ -1,28 +1,28 @@
-"use strict";
+import { Request, Response } from "express";
+import { FirebotViewer } from "../../../../types/viewers";
+import * as customRolesApiController from "./custom-roles-api-controller";
+import viewerDatabase from "../../../../backend/viewers/viewer-database";
+import viewerMetaDataManager from "../../../../backend/viewers/viewer-metadata-manager";
+import customRolesManager from "../../../../backend/roles/custom-roles-manager";
+import currencyAccess from "../../../../backend/currency/currency-access";
+import currencyManager from "../../../../backend/currency/currency-manager";
 
-const viewerDatabase = require("../../../../backend/viewers/viewer-database");
-const viewerMetaDataManager = require("../../../../backend/viewers/viewer-metadata-manager");
-const customRolesManager = require("../../../../backend/roles/custom-roles-manager");
-const currencyAccess = require("../../../../backend/currency/currency-access").default;
-const currencyManager = require("../../../../backend/currency/currency-manager");
-const customRolesApiController = require("./customRolesApiController");
-
-exports.getAllUsers = async function (req, res) {
-    return res.json(await viewerDatabase.getAllUsernamesWithIds());
+export async function getAllUsers(req: Request, res: Response): Promise<void> {
+    res.json(await viewerDatabase.getAllUsernamesWithIds());
 };
 
-exports.getUserMetadata = async function (req, res) {
+export async function getUserMetadata(req: Request, res: Response): Promise<void> {
     const { userId } = req.params;
     const { username } = req.query;
 
     if (userId == null) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: `No viewerIdOrName provided`
         });
     }
 
-    let metadata;
+    let metadata: FirebotViewer;
     if (username === "true") {
         metadata = await viewerDatabase.getViewerByUsername(userId);
     } else {
@@ -30,38 +30,48 @@ exports.getUserMetadata = async function (req, res) {
     }
 
     if (metadata === null) {
-        return res.status(404).send({
+        res.status(404).send({
             status: "error",
             message: `Specified viewer does not exist`
         });
     }
 
     const customRoles = customRolesManager.getAllCustomRolesForViewer(metadata._id) ?? [];
-    metadata.customRoles = customRoles;
 
-    return res.json(metadata);
+    res.json({
+        ...metadata,
+        customRoles
+    });
 };
 
-exports.updateUserMetadataKey = async function (req, res) {
+export async function updateUserMetadataKey(
+    req: Request<{
+        metadataKey: string;
+        userId: string;
+    }, undefined, {
+        data: string;
+    }>,
+    res: Response
+): Promise<void> {
     const { data: metadataValue } = req.body;
     const { metadataKey, userId } = req.params;
     const { username } = req.query;
 
     if (userId == null) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: `No viewerIdOrName provided`
         });
     }
 
     if (metadataKey == null) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: `No metadataKey provided`
         });
     }
 
-    let viewer;
+    let viewer: FirebotViewer;
     if (username === "true") {
         viewer = await viewerDatabase.getViewerByUsername(userId);
     } else {
@@ -69,7 +79,7 @@ exports.updateUserMetadataKey = async function (req, res) {
     }
 
     if (viewer === null) {
-        return res.status(404).send({
+        res.status(404).send({
             status: "error",
             message: `Specified viewer does not exist`
         });
@@ -78,28 +88,28 @@ exports.updateUserMetadataKey = async function (req, res) {
     await viewerMetaDataManager.updateViewerMetadata(viewer.username, metadataKey, metadataValue);
     const status = metadataKey in viewer.metadata ? 204 : 201;
 
-    return res.status(status).send();
+    res.status(status).send();
 };
 
-exports.removeUserMetadataKey = async function (req, res) {
+export async function removeUserMetadataKey(req: Request, res: Response): Promise<void> {
     const { metadataKey, userId } = req.params;
     const { username } = req.query;
 
     if (userId == null) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: `No viewerIdOrName provided`
         });
     }
 
     if (metadataKey == null) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: `No metadataKey provided`
         });
     }
 
-    let viewer;
+    let viewer: FirebotViewer;
     if (username === "true") {
         viewer = await viewerDatabase.getViewerByUsername(userId);
     } else {
@@ -107,14 +117,14 @@ exports.removeUserMetadataKey = async function (req, res) {
     }
 
     if (viewer === null) {
-        return res.status(404).send({
+        res.status(404).send({
             status: "error",
             message: `Specified viewer does not exist`
         });
     }
 
     if (!(metadataKey in viewer.metadata)) {
-        return res.status(404).send({
+        res.status(404).send({
             status: "error",
             message: `Specified metadataKey does not exist`
         });
@@ -122,16 +132,16 @@ exports.removeUserMetadataKey = async function (req, res) {
 
     await viewerMetaDataManager.removeViewerMetadata(viewer.username, metadataKey);
 
-    return res.status(204).send();
+    res.status(204).send();
 };
 
-exports.getUserCurrency = async function (req, res) {
+export async function getUserCurrency(req: Request, res: Response): Promise<void> {
     const { userId, currencyId } = req.params;
 
     const { username } = req.query;
 
     if (userId == null) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: `No viewerIdOrName provided`
         });
@@ -140,19 +150,22 @@ exports.getUserCurrency = async function (req, res) {
     const currencies = (await currencyManager.getViewerCurrencies(userId, username === "true")) || {};
 
     if (currencyId) {
-        return res.json(currencies[currencyId]);
+        res.json(currencies[currencyId]);
     }
 
     res.json(currencies);
 };
 
-exports.setUserCurrency = async function (req, res) {
+export async function setUserCurrency(req: Request, res: Response): Promise<void> {
     const { userId, currencyId } = req.params;
     const { username } = req.query;
-    const options = req.body;
+    const options = req.body as {
+        amount: string;
+        setAmount: boolean;
+    };
 
     if (options == null) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: `No currency options provided`
         });
@@ -177,18 +190,18 @@ exports.setUserCurrency = async function (req, res) {
     res.status(204).send();
 };
 
-exports.getUserCustomRoles = async function (req, res) {
+export async function getUserCustomRoles(req: Request, res: Response): Promise<void> {
     const { userId } = req.params;
     const { username } = req.query;
 
     if (userId == null) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: `No viewerIdOrName provided`
         });
     }
 
-    let metadata;
+    let metadata: FirebotViewer;
     if (username === "true") {
         metadata = await viewerDatabase.getViewerByUsername(userId);
     } else {
@@ -196,7 +209,7 @@ exports.getUserCustomRoles = async function (req, res) {
     }
 
     if (metadata === null) {
-        return res.status(404).send({
+        res.status(404).send({
             status: "error",
             message: `Specified viewer does not exist`
         });
@@ -204,18 +217,18 @@ exports.getUserCustomRoles = async function (req, res) {
 
     const customRoles = customRolesManager.getAllCustomRolesForViewer(metadata._id) ?? [];
 
-    return res.json(customRoles);
+    res.json(customRoles);
 };
 
-exports.addUserToCustomRole = async function (req, res) {
-    return customRolesApiController.addUserToCustomRole(req, res);
+export async function addUserToCustomRole(req: Request, res: Response): Promise<void> {
+    return await customRolesApiController.addUserToCustomRole(req, res);
 };
 
-exports.removeUserFromCustomRole = async function (req, res) {
-    return customRolesApiController.removeUserFromCustomRole(req, res);
+export async function removeUserFromCustomRole(req: Request, res: Response): Promise<void> {
+    return await customRolesApiController.removeUserFromCustomRole(req, res);
 };
 
-exports.getAllUserDataAsJSON = async function (req, res) {
+export async function getAllUserDataAsJSON(req: Request, res: Response): Promise<void> {
     const viewerDb = viewerDatabase.getViewerDb();
 
     const allCurrencyDetails = currencyAccess.getCurrencies();

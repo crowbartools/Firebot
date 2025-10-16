@@ -1,9 +1,9 @@
-import customRolesManager from "../../../../backend/roles/custom-roles-manager";
-import viewerDatabase from "../../../../backend/viewers/viewer-database";
 import { Request, Response } from "express";
 import { FirebotViewer } from "../../../../types/viewers";
+import customRolesManager from "../../../../backend/roles/custom-roles-manager";
+import viewerDatabase from "../../../../backend/viewers/viewer-database";
 
-export async function getCustomRoles(req: Request, res: Response): Promise<Response> {
+export function getCustomRoles(req: Request, res: Response): void {
     const customRoles = customRolesManager.getCustomRoles()
         .map((cr) => {
             return {
@@ -13,14 +13,14 @@ export async function getCustomRoles(req: Request, res: Response): Promise<Respo
             };
         });
 
-    return res.json(customRoles);
+    res.json(customRoles);
 }
 
-export async function getCustomRoleById(req: Request, res: Response): Promise<Response> {
+export function getCustomRoleById(req: Request, res: Response): void {
     const customRoleId: string = req.params.customRoleId;
 
     if (!(customRoleId.length > 0)) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: "No customRoleId provided"
         });
@@ -29,7 +29,7 @@ export async function getCustomRoleById(req: Request, res: Response): Promise<Re
     const customRole = customRolesManager.getCustomRoles().find(role => role.id.toLowerCase() === customRoleId.toLowerCase());
 
     if (customRole == null) {
-        return res.status(404).send({
+        res.status(404).send({
             status: "error",
             message: `Custom role '${customRoleId}' not found`
         });
@@ -41,22 +41,22 @@ export async function getCustomRoleById(req: Request, res: Response): Promise<Re
         viewers: customRole.viewers ?? []
     };
 
-    return res.json(formattedCustomRole);
+    res.json(formattedCustomRole);
 }
 
-export async function addUserToCustomRole(req: Request, res: Response): Promise<Response> {
+export async function addUserToCustomRole(req: Request, res: Response): Promise<void> {
     const { userId, customRoleId } = req.params;
     const { username } = req.query;
 
     if (userId == null) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: `No viewerIdOrName provided`
         });
     }
 
     if (customRoleId == null) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: `No customRoleId provided`
         });
@@ -70,7 +70,7 @@ export async function addUserToCustomRole(req: Request, res: Response): Promise<
     }
 
     if (metadata === null) {
-        return res.status(404).send({
+        res.status(404).send({
             status: "error",
             message: `Specified viewer does not exist`
         });
@@ -79,7 +79,7 @@ export async function addUserToCustomRole(req: Request, res: Response): Promise<
     const customRole = customRolesManager.getCustomRoles().find(cr => cr.id.toLowerCase() === customRoleId.toLowerCase());
 
     if (customRole == null) {
-        return res.status(404).send({
+        res.status(404).send({
             status: "error",
             message: `Specified custom role does not exist`
         });
@@ -91,22 +91,22 @@ export async function addUserToCustomRole(req: Request, res: Response): Promise<
         displayName: metadata.displayName
     });
 
-    return res.status(201).send();
+    res.status(201).send();
 }
 
-export async function removeUserFromCustomRole(req: Request, res: Response): Promise<Response> {
+export async function removeUserFromCustomRole(req: Request, res: Response): Promise<void> {
     const { userId, customRoleId } = req.params;
     const { username } = req.query;
 
     if (userId == null) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: `No viewerIdOrName provided`
         });
     }
 
     if (customRoleId == null) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: `No customRoleId provided`
         });
@@ -120,7 +120,7 @@ export async function removeUserFromCustomRole(req: Request, res: Response): Pro
     }
 
     if (metadata === null) {
-        return res.status(404).send({
+        res.status(404).send({
             status: "error",
             message: `Specified viewer does not exist`
         });
@@ -129,7 +129,7 @@ export async function removeUserFromCustomRole(req: Request, res: Response): Pro
     const customRole = customRolesManager.getCustomRoles().find(cr => cr.id.toLowerCase() === customRoleId.toLowerCase());
 
     if (customRole == null) {
-        return res.status(404).send({
+        res.status(404).send({
             status: "error",
             message: `Specified custom role does not exist`
         });
@@ -137,15 +137,15 @@ export async function removeUserFromCustomRole(req: Request, res: Response): Pro
 
     customRolesManager.removeViewerFromRole(customRole.id, metadata._id);
 
-    return res.status(204).send();
+    res.status(204).send();
 }
 
-export async function removeAllViewersFromRole(req: Request, res: Response): Promise<Response> {
+export function removeAllViewersFromRole(req: Request, res: Response): void {
     const { customRoleId } = req.params;
 
 
     if (customRoleId == null) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: `No customRoleId provided`
         });
@@ -154,7 +154,7 @@ export async function removeAllViewersFromRole(req: Request, res: Response): Pro
     const customRole = customRolesManager.getCustomRoles().find(cr => cr.id.toLowerCase() === customRoleId.toLowerCase());
 
     if (customRole == null) {
-        return res.status(404).send({
+        res.status(404).send({
             status: "error",
             message: `Specified custom role does not exist`
         });
@@ -162,5 +162,5 @@ export async function removeAllViewersFromRole(req: Request, res: Response): Pro
 
     customRolesManager.removeAllViewersFromRole(customRole.id);
 
-    return res.status(204).send();
+    res.status(204).send();
 }

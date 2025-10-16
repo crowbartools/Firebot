@@ -1,6 +1,6 @@
+import { Request, Response } from "express";
 import effectQueueManager from "../../../../backend/effects/queues/effect-queue-config-manager";
 import effectQueueRunner from "../../../../backend/effects/queues/effect-queue-runner";
-import { Request, Response } from "express";
 
 function checkQueue(req: Request, res: Response): boolean {
     const queueId: string = req.params.queueId;
@@ -22,62 +22,62 @@ function checkQueue(req: Request, res: Response): boolean {
     return true;
 }
 
-export async function getQueues(req: Request, res: Response): Promise<Response> {
-    return res.json(effectQueueManager.getAllItems());
+export function getQueues(req: Request, res: Response): void {
+    res.json(effectQueueManager.getAllItems());
 }
 
-export async function getQueueById(req: Request, res: Response): Promise<Response> {
+export function getQueueById(req: Request, res: Response): void {
     if (!checkQueue(req, res)) {
-        return res;
+        return;
     }
 
-    return res.json(effectQueueManager.getItem(req.params.queueId));
+    res.json(effectQueueManager.getItem(req.params.queueId));
 }
 
-export async function pauseQueue(req: Request, res: Response): Promise<Response> {
+export function pauseQueue(req: Request, res: Response): void {
     if (!checkQueue(req, res)) {
-        return res;
+        return;
     }
 
     const queueId = req.params.queueId;
 
     effectQueueManager.pauseQueue(queueId);
 
-    return res.json(effectQueueManager.getItem(queueId));
+    res.json(effectQueueManager.getItem(queueId));
 }
 
-export async function resumeQueue(req: Request, res: Response): Promise<Response> {
+export function resumeQueue(req: Request, res: Response): void {
     if (!checkQueue(req, res)) {
-        return res;
+        return;
     }
 
     const queueId = req.params.queueId;
 
     effectQueueManager.resumeQueue(queueId);
 
-    return res.json(effectQueueManager.getItem(queueId));
+    res.json(effectQueueManager.getItem(queueId));
 }
 
-export async function toggleQueue(req: Request, res: Response): Promise<Response> {
+export function toggleQueue(req: Request, res: Response): void {
     if (!checkQueue(req, res)) {
-        return res;
+        return;
     }
 
     const queueId = req.params.queueId;
 
     effectQueueManager.toggleQueue(queueId);
 
-    return res.json(effectQueueManager.getItem(queueId));
+    res.json(effectQueueManager.getItem(queueId));
 }
 
-export async function clearQueue(req: Request, res: Response): Promise<Response> {
+export function clearQueue(req: Request, res: Response): void {
     if (!checkQueue(req, res)) {
-        return res;
+        return;
     }
 
     const queueId = req.params.queueId;
 
     effectQueueRunner.removeQueue(queueId);
 
-    return res.json(effectQueueManager.getItem(queueId));
+    res.json(effectQueueManager.getItem(queueId));
 }

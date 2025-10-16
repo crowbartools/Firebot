@@ -1,7 +1,7 @@
-import { CounterManager } from "../../../../backend/counters/counter-manager";
 import { Request, Response } from "express";
+import { CounterManager } from "../../../../backend/counters/counter-manager";
 
-export async function getCounters(req: Request, res: Response): Promise<Response> {
+export function getCounters(req: Request, res: Response): void {
     const counters = CounterManager.getAllItems()
         .map((c) => {
             return {
@@ -11,14 +11,14 @@ export async function getCounters(req: Request, res: Response): Promise<Response
             };
         });
 
-    return res.json(counters);
+    res.json(counters);
 }
 
-export async function getCounterById(req: Request, res: Response): Promise<Response> {
+export function getCounterById(req: Request, res: Response): void {
     const counterId: string = req.params.counterId;
 
     if (!(counterId.length > 0)) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: "No counterId provided"
         });
@@ -27,43 +27,51 @@ export async function getCounterById(req: Request, res: Response): Promise<Respo
     const counter = CounterManager.getItem(counterId);
 
     if (counter == null) {
-        return res.status(404).send({
+        res.status(404).send({
             status: "error",
             message: `Counter '${counterId}' not found`
         });
     }
 
-    return res.json(counter);
+    res.json(counter);
 }
 
-export async function updateCounter(req: Request, res: Response): Promise<Response> {
-    const counterId: string = req.params.counterId;
-    const value: number = req.body.value;
-    const override: boolean = req.body.override ?? false;
+export async function updateCounter(
+    req: Request<{
+        counterId: string;
+    }, unknown, {
+        value: number;
+        override?: boolean;
+    }>,
+    res: Response
+): Promise<void> {
+    const counterId = req.params.counterId;
+    const value = req.body.value;
+    const override = req.body.override ?? false;
 
     if (!(counterId.length > 0)) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: "No counterId provided"
         });
     }
 
     if (value == null) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: "value not present."
         });
     }
 
     if (typeof value !== "number") {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: "value must be a number."
         });
     }
 
     if (typeof override !== "boolean") {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: "override must be a boolean."
         });
@@ -72,7 +80,7 @@ export async function updateCounter(req: Request, res: Response): Promise<Respon
     const counter = CounterManager.getItem(counterId);
 
     if (counter == null) {
-        return res.status(404).send({
+        res.status(404).send({
             status: "error",
             message: `Counter '${counterId}' not found`
         });
@@ -85,5 +93,5 @@ export async function updateCounter(req: Request, res: Response): Promise<Respon
 
     await CounterManager.updateCounterValue(counter.id, value, override);
     response.newValue = CounterManager.getItem(counterId).value;
-    return res.json(response);
+    res.json(response);
 }

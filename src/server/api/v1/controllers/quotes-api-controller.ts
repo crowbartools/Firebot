@@ -52,7 +52,7 @@ function validateQuote(quote: Partial<Quote>): string[] {
     return validationErrors;
 }
 
-export const getQuotes = async function(req: Request, res: Response) {
+export async function getQuotes(req: Request, res: Response): Promise<void> {
     const quotes = await QuoteManager.getAllQuotes();
 
     const formattedQuotes = quotes.map((q) => {
@@ -62,7 +62,7 @@ export const getQuotes = async function(req: Request, res: Response) {
     res.json(formattedQuotes);
 };
 
-export const getQuote = async function(req: Request, res: Response) {
+export async function getQuote(req: Request, res: Response): Promise<void> {
     const quoteId = validateQuoteId(req.params.quoteId, res);
     if (!quoteId) {
         return;
@@ -71,7 +71,7 @@ export const getQuote = async function(req: Request, res: Response) {
     const quote = await QuoteManager.getQuote(quoteId);
 
     if (quote == null) {
-        return res.status(404).send({
+        res.status(404).send({
             status: "error",
             message: `Quote ${quoteId} not found`
         });
@@ -80,13 +80,13 @@ export const getQuote = async function(req: Request, res: Response) {
     res.json(formatQuote(quote));
 };
 
-export const postQuote = async function(req: Request, res: Response) {
+export async function postQuote(req: Request, res: Response): Promise<void> {
     // Make sure the new quote is valid
     const body = req.body as Quote;
     const validationErrors = validateQuote(body);
 
     if (validationErrors.length > 0) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: validationErrors.join("; ")
         });
@@ -104,16 +104,16 @@ export const postQuote = async function(req: Request, res: Response) {
         const newQuoteId = await QuoteManager.addQuote(quotePost);
         const newQuote = formatQuote(await QuoteManager.getQuote(newQuoteId));
 
-        return res.status(201).send(newQuote);
+        res.status(201).send(newQuote);
     } catch (e) {
-        return res.status(500).send({
+        res.status(500).send({
             status: "error",
             message: `Error creating quote: ${e}`
         });
     }
 };
 
-export const putQuote = async function(req: Request, res: Response) {
+export async function putQuote(req: Request, res: Response): Promise<void> {
     const quotePut = req.body as Quote;
 
     const quoteId = validateQuoteId(req.params.quoteId, res);
@@ -125,7 +125,7 @@ export const putQuote = async function(req: Request, res: Response) {
     const validationErrors = validateQuote(quotePut);
 
     if (validationErrors.length > 0) {
-        return res.status(400).send({
+        res.status(400).send({
             status: "error",
             message: validationErrors.join("; ")
         });
@@ -167,7 +167,7 @@ export const putQuote = async function(req: Request, res: Response) {
         try {
             quote = await QuoteManager.updateQuote(quote);
         } catch (e) {
-            return res.status(500).send({
+            res.status(500).send({
                 status: "error",
                 message: `Error storing quote ${quoteId}: ${e}`
             });
@@ -175,16 +175,16 @@ export const putQuote = async function(req: Request, res: Response) {
     }
 
     if (quote == null) {
-        return res.status(500).send({
+        res.status(500).send({
             status: "error",
             message: `Error storing quote ${quoteId}`
         });
     }
 
-    return res.status(201).send(formatQuote(quote));
+    res.status(201).send(formatQuote(quote));
 };
 
-export const patchQuote = async function(req: Request, res: Response) {
+export async function patchQuote(req: Request, res: Response): Promise<void> {
     const quotePatch = req.body as Quote;
 
     const quoteId = validateQuoteId(req.params.quoteId, res);
@@ -195,7 +195,7 @@ export const patchQuote = async function(req: Request, res: Response) {
     let quote = await QuoteManager.getQuote(quoteId);
 
     if (quote == null) {
-        return res.status(404).send({
+        res.status(404).send({
             status: "error",
             message: `Quote ${quoteId} not found`
         });
@@ -224,16 +224,16 @@ export const patchQuote = async function(req: Request, res: Response) {
     try {
         quote = await QuoteManager.updateQuote(quote);
     } catch (e) {
-        return res.status(500).send({
+        res.status(500).send({
             status: "error",
             message: `Error updating quote ${quoteId}: ${e}`
         });
     }
 
-    return res.json(formatQuote(quote));
+    res.json(formatQuote(quote));
 };
 
-export const deleteQuote = async function(req: Request, res: Response) {
+export async function deleteQuote(req: Request, res: Response): Promise<void> {
     const quoteId = validateQuoteId(req.params.quoteId, res);
     if (!quoteId) {
         return;
@@ -242,7 +242,7 @@ export const deleteQuote = async function(req: Request, res: Response) {
     const quote = await QuoteManager.getQuote(quoteId);
 
     if (quote == null) {
-        return res.status(404).send({
+        res.status(404).send({
             status: "error",
             message: `Quote ${quoteId} not found`
         });
@@ -250,5 +250,5 @@ export const deleteQuote = async function(req: Request, res: Response) {
 
     await QuoteManager.removeQuote(quoteId);
 
-    return res.status(204).send();
+    res.status(204).send();
 };
