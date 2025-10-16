@@ -222,11 +222,6 @@ exports.whenReady = async () => {
     const viewerOnlineStatusManager = require("../../../viewers/viewer-online-status-manager");
     await viewerOnlineStatusManager.setAllViewersOffline();
 
-    windowManagement.updateSplashScreenStatus("Loading stats...");
-    logger.info("Creating or connecting stats database");
-    const statsdb = require("../../../database/statsDatabase");
-    await statsdb.connectStatsDatabase();
-
     windowManagement.updateSplashScreenStatus("Loading quotes...");
     logger.info("Creating or connecting quotes database");
     const { QuoteManager } = require("../../../quotes/quote-manager");
