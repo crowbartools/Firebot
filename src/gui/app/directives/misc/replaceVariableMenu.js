@@ -76,7 +76,7 @@
 
                         const { trigger, triggerMeta } = findTriggerDataScope();
 
-                        backendCommunicator.fireEventAsync("get-variable-suggestions", {
+                        backendCommunicator.fireEventAsync("variables:get-variable-suggestions", {
                             variableHandle,
                             triggerType: trigger,
                             triggerMeta

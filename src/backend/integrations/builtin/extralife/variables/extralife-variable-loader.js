@@ -1,6 +1,6 @@
 "use strict";
 
-const variableManager = require("../../../../variables/replace-variable-manager");
+const { ReplaceVariableManager } = require("../../../../variables/replace-variable-manager");
 
 exports.registerVariables = () => {
     const donations = require("../variables/extralife-donations");
@@ -9,10 +9,8 @@ exports.registerVariables = () => {
     const milestones = require("../variables/extralife-milestones");
 
 
-    variableManager.registerReplaceVariable(donations);
-    variableManager.registerReplaceVariable(incentives);
-    variableManager.registerReplaceVariable(info);
-    variableManager.registerReplaceVariable(milestones);
+    ReplaceVariableManager.registerReplaceVariable(donations);
+    ReplaceVariableManager.registerReplaceVariable(incentives);
+    ReplaceVariableManager.registerReplaceVariable(info);
+    ReplaceVariableManager.registerReplaceVariable(milestones);
 };
-
-

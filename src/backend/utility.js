@@ -3,7 +3,7 @@
 const { randomInt } = require('node:crypto');
 const { DateTime, Duration } = require("luxon");
 const fs = require("fs/promises");
-const replaceVariableManager = require("./variables/replace-variable-manager");
+const { ReplaceVariableManager } = require("./variables/replace-variable-manager");
 const accountAccess = require("./common/account-access");
 const { TwitchApi } = require("./streaming-platforms/twitch/api");
 
@@ -122,7 +122,7 @@ const populateStringWithTriggerData = async (string = "", trigger) => {
 
     const triggerId = getTriggerIdFromTriggerData(trigger);
 
-    return await replaceVariableManager.evaluateText(string, trigger, { type: trigger.type, id: triggerId });
+    return await ReplaceVariableManager.evaluateText(string, trigger, { type: trigger.type, id: triggerId });
 };
 
 const getUptime = async () => {
@@ -221,7 +221,7 @@ const flattenArray = (arr) => {
 const jsonParse = (json) => {
     try {
         json = JSON.parse(json);
-    } catch (err) {
+    } catch {
         return json;
     }
     return json;
@@ -326,7 +326,7 @@ const extractPropertyWithPath = (obj, path, defaultValue = undefined) => {
             data = data[item];
         }
         return data ?? defaultValue;
-    } catch (_) {
+    } catch {
         return defaultValue;
     }
 };

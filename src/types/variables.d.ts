@@ -14,7 +14,7 @@ export type VariableCategory =
     | "obs"
     | "integrations";
 
-type VariableUsage = {
+export type VariableUsage = {
     usage: string;
     description?: string;
 };

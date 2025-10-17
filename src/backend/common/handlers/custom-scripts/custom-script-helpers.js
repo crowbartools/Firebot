@@ -153,7 +153,7 @@ function buildModules(scriptManifest) {
         eventManager: require("../../../events/EventManager"),
         eventFilterManager: require("../../../events/filters/filter-manager"),
         eventFilterFactory: require("../../../events/filters/filter-factory"),
-        replaceVariableManager: require("../../../variables/replace-variable-manager"),
+        replaceVariableManager: require("../../../variables/replace-variable-manager").ReplaceVariableManager,
         replaceVariableFactory: require("../../../variables/variable-factory"),
         integrationManager: require("../../../integrations/integration-manager"),
         customVariableManager: require("../../../common/custom-variable-manager"),

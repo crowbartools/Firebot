@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import manager from "../../../../backend//variables/replace-variable-manager";
+import { ReplaceVariableManager } from "../../../../backend/variables/replace-variable-manager";
 
 export function getReplaceVariables(req: Request, res: Response): void {
-    const sortedVariables = [...manager.getReplaceVariables()]
+    const sortedVariables = [...ReplaceVariableManager.getReplaceVariables()]
         .sort((a, b) => a.definition.handle.localeCompare(b.definition.handle));
 
     res.json(sortedVariables);

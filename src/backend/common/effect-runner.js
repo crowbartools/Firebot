@@ -3,7 +3,7 @@ const logger = require('../logwrapper');
 const effectManager = require("../effects/effectManager");
 const { EffectTrigger } = require("../../shared/effect-constants");
 const accountAccess = require('./account-access');
-const replaceVariableManager = require("./../variables/replace-variable-manager");
+const { ReplaceVariableManager } = require("./../variables/replace-variable-manager");
 const webServer = require("../../server/http-server-manager");
 const util = require("../utility");
 const { v4: uuid } = require("uuid");
@@ -39,7 +39,7 @@ const findAndReplaceVariables = async (data, trigger, effectOutputs) => {
             let replacedValue = value;
             const triggerId = util.getTriggerIdFromTriggerData(trigger);
             try {
-                replacedValue = await replaceVariableManager.evaluateText(value, {
+                replacedValue = await ReplaceVariableManager.evaluateText(value, {
                     ...trigger,
                     effectOutputs
                 }, {

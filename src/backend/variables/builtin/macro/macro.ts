@@ -3,7 +3,7 @@ import { OutputDataType } from "../../../../shared/variable-constants";
 
 import macroManager from '../../macro-manager';
 
-import variableManager from '../../replace-variable-manager';
+import { ReplaceVariableManager } from '../../replace-variable-manager';
 
 const model : ReplaceVariable = {
     definition: {
@@ -18,7 +18,7 @@ const model : ReplaceVariable = {
             return null;
         }
         const { argNames: macroArgNames } = macro;
-        return variableManager.evaluateText(macro.expression, { macroArgs, macroArgNames }, trigger);
+        return ReplaceVariableManager.evaluateText(macro.expression, { macroArgs, macroArgNames }, trigger);
     }
 };
 export default model;

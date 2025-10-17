@@ -3,7 +3,7 @@ import * as quoteList from "./sync-handlers/quotes-list";
 import accountAccess from "../common/account-access";
 import { SettingsManager } from "../common/settings-manager";
 import rankManager from "../ranks/rank-manager";
-import variableManager from "../variables/replace-variable-manager";
+import { ReplaceVariableManager } from "../variables/replace-variable-manager";
 import { SortTagManager } from "../sort-tags/sort-tag-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
@@ -81,7 +81,7 @@ export async function syncProfileData(profileSyncData: ProfileSyncData): Promise
         "profilePage": profileSyncData.profilePage,
         "commands": commands,
         "sortTags": SortTagManager.getSortTagsForContext("commands"),
-        "variables": variableManager.getReplaceVariables().map(v => v.definition),
+        "variables": ReplaceVariableManager.getReplaceVariables().map(v => v.definition),
         "ranks": rankManager.getAllItems(),
         "quotes": quotes,
         "allowQuoteCSVDownloads": SettingsManager.getSetting("AllowQuoteCSVDownloads")

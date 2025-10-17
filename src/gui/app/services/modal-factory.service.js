@@ -735,7 +735,7 @@
 
                             const { triggerType, triggerMeta } = $scope;
                             try {
-                                const variableErrors = await backendCommunicator.fireEventAsync("validateVariables", {
+                                const variableErrors = await backendCommunicator.fireEventAsync("variables:validate-variables", {
                                     data: $scope.effect,
                                     trigger: {
                                         type: triggerType,

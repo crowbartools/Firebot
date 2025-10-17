@@ -1,42 +1,124 @@
-"use strict";
+import EventEmitter from "events";
+import expressionish, * as expressionishErrs from "expressionish";
+import {
+    ReplaceVariable,
+    RegisteredVariable,
+    VariableUsage,
+    TriggerMeta,
+    TriggerType,
+    Trigger
+} from "../../types/variables";
+import { Awaitable } from "../../types/util-types";
+import macroManager from "./macro-manager";
+import { SettingsManager } from "../common/settings-manager";
+import { getCustomVariable } from "../common/custom-variable-manager";
+import frontendCommunicator from "../common/frontend-communicator";
+import { getTriggerIdFromTriggerData } from "../utility";
+import logger from "../logwrapper";
 
-const logger = require("../logwrapper");
-const EventEmitter = require("events");
+type Evaluator = {
+    evaluator(trigger: Trigger, ...args: unknown[]): Awaitable<unknown>;
+};
 
-const expressionish = require("expressionish");
-const ExpressionVariableError = expressionish.ExpressionVariableError;
-const macroManager = require("./macro-manager");
+type TriggerWithId = Omit<Trigger, "metadata"> & {
+    id?: string;
+    metadata?: Record<string, unknown>;
+};
 
-const { SettingsManager } = require("../common/settings-manager");
+type MacroTrigger = Trigger & {
+    macroArgs: string[];
+    macroArgNames: string[];
+};
 
-const frontendCommunicator = require("../common/frontend-communicator");
-const { getCustomVariable } = require("../common/custom-variable-manager");
-const util = require("../utility");
+type EvaluatedRegisteredVariable = RegisteredVariable & {
+    position: number;
+};
+
+type VariableError = {
+    message: string;
+    dataField: string;
+    rawText: string;
+    position: number;
+    varname: string;
+    character: string;
+};
+
 class ReplaceVariableManager extends EventEmitter {
-    #registeredVariableHandlers = new Map();
-    #variableAndAliasHandlers = new Map();
-    #registeredLookupHandlers = new Map();
+    private registeredVariableHandlers: Map<string, RegisteredVariable> = new Map();
+    private variableAndAliasHandlers: Map<string, RegisteredVariable> = new Map();
+    private registeredLookupHandlers: Map<
+        string,
+        (name: string) => Evaluator
+    > = new Map();
 
-    /**
-     * @type {Record<string, Array<{ eventSourceId: string, eventId: string }>>}
-     */
-    additionalVariableEvents = {};
+    additionalVariableEvents: Record<string, Array<{
+        eventSourceId: string;
+        eventId: string;
+    }>> = {};
 
     constructor() {
         super();
+
+        frontendCommunicator.on("variables:get-replace-variable-definitions", () => {
+            logger.debug("got 'get all vars' request");
+            return Array.from(this.getVariableHandlers().values())
+                .map(v => v.definition)
+                .filter(v => !v.hidden);
+        });
+
+        frontendCommunicator.onAsync("variables:validate-variables", async (
+            eventData: {
+                data: Record<string, unknown>;
+                trigger: Trigger;
+            }) => {
+            logger.debug("got 'variables:validate-variables' request");
+            const { data, trigger } = eventData;
+
+            let errors: VariableError[] = [];
+            try {
+                errors = await this.findAndValidateVariables(data, trigger);
+            } catch (err) {
+                logger.error("Unable to validate variables.", err);
+            }
+
+            return errors;
+        });
+
+        frontendCommunicator.onAsync("variables:get-variable-suggestions", async (
+            eventData: {
+                variableHandle: string;
+                triggerType: TriggerType;
+                triggerMeta: Record<string, unknown>;
+            }) => {
+            logger.debug("got 'get-variable-suggestions' request");
+            const { variableHandle, triggerType, triggerMeta } = eventData;
+            const suggestions = await this.getSuggestionsForVariable(variableHandle, triggerType, triggerMeta);
+            return suggestions;
+        });
+
+        frontendCommunicator.on("variables:get-additional-variable-events", () => {
+            logger.debug("got 'get-additional-variable-events' request");
+            return this.additionalVariableEvents;
+        });
     }
 
-    #preeval(options, variable) {
+    private preeval(
+        options: {
+            trigger: TriggerWithId;
+        },
+        variable: EvaluatedRegisteredVariable
+    ): void {
         if (!variable.triggers) {
             return;
         }
 
-        const optionsTrigger = options.trigger || { type: null };
+        const optionsTrigger = options.trigger ?? { type: null } as Trigger;
         const display = options.trigger.type ? options.trigger.type.toLowerCase() : "unknown trigger";
 
         const varTrigger = variable.triggers[optionsTrigger.type];
         if (varTrigger == null || varTrigger === false) {
-            throw new ExpressionVariableError(
+            // eslint-disable-next-line
+            throw new expressionishErrs.ExpressionVariableError(
                 `$${variable.handle} does not support being triggered by: ${display}`,
                 variable.position,
                 variable.handle
@@ -49,7 +131,8 @@ class ReplaceVariableManager extends EventEmitter {
                 varTrigger.push(...additionalEvents);
             }
             if (!varTrigger.some(id => id === options.trigger.id)) {
-                throw new ExpressionVariableError(
+                // eslint-disable-next-line
+                throw new expressionishErrs.ExpressionVariableError(
                     `$${variable.handle} does not support this specific trigger type: ${display}`,
                     variable.position,
                     variable.handle
@@ -58,11 +141,11 @@ class ReplaceVariableManager extends EventEmitter {
         }
     }
 
-    registerReplaceVariable(variable) {
-        if (this.#registeredVariableHandlers.has(variable.definition.handle)) {
+    registerReplaceVariable(variable: ReplaceVariable): void {
+        if (this.registeredVariableHandlers.has(variable.definition.handle)) {
             throw new TypeError(`A variable with the handle ${variable.definition.handle} already exists.`);
         }
-        this.#registeredVariableHandlers.set(variable.definition.handle, {
+        this.registeredVariableHandlers.set(variable.definition.handle, {
             definition: variable.definition,
             handle: variable.definition.handle,
             argsCheck: variable.argsCheck,
@@ -71,7 +154,7 @@ class ReplaceVariableManager extends EventEmitter {
             getSuggestions: variable.getSuggestions
         });
 
-        this.#variableAndAliasHandlers = this._generateVariableAndAliasHandlers();
+        this.variableAndAliasHandlers = this.generateVariableAndAliasHandlers();
 
         logger.debug(`Registered replace variable ${variable.definition.handle}`);
 
@@ -80,14 +163,14 @@ class ReplaceVariableManager extends EventEmitter {
         frontendCommunicator.send("replace-variable-registered", variable.definition);
     }
 
-    unregisterReplaceVariable(handle) {
-        if (!this.#registeredVariableHandlers.has(handle)) {
+    unregisterReplaceVariable(handle: string): void {
+        if (!this.registeredVariableHandlers.has(handle)) {
             logger.warn(`A variable with the handle ${handle} does not exist.`);
             return;
         }
 
-        this.#registeredVariableHandlers.delete(handle);
-        this.#variableAndAliasHandlers = this._generateVariableAndAliasHandlers();
+        this.registeredVariableHandlers.delete(handle);
+        this.variableAndAliasHandlers = this.generateVariableAndAliasHandlers();
 
         logger.debug(`Unregistered replace variable ${handle}`);
 
@@ -96,17 +179,15 @@ class ReplaceVariableManager extends EventEmitter {
         frontendCommunicator.send("replace-variable-unregistered", handle);
     }
 
-    getReplaceVariables() {
-        // Map register variables Map to array
-        const registeredVariables = this.#registeredVariableHandlers;
-        const variables = [];
-        for (const [key, value] of registeredVariables) {
+    getReplaceVariables(): RegisteredVariable[] {
+        const variables: RegisteredVariable[] = [];
+        for (const [_, value] of this.registeredVariableHandlers) {
             variables.push(value);
         }
         return variables;
     }
 
-    #getVariablesForEvent(eventSourceId, eventId) {
+    private getVariablesForEvent(eventSourceId: string, eventId: string): RegisteredVariable[] {
         return this.getReplaceVariables().filter((v) => {
             if (!v.triggers) {
                 return true;
@@ -119,16 +200,16 @@ class ReplaceVariableManager extends EventEmitter {
         });
     }
 
-    getVariableHandlers() {
-        return this.#registeredVariableHandlers;
+    getVariableHandlers(): Map<string, RegisteredVariable> {
+        return this.registeredVariableHandlers;
     }
 
-    registerLookupHandler(prefix, lookup) {
-        this.#registeredLookupHandlers.set(prefix, lookup);
+    registerLookupHandler(prefix: string, lookup: (name: string) => Evaluator): void {
+        this.registeredLookupHandlers.set(prefix, lookup);
     }
 
-    _generateVariableAndAliasHandlers() {
-        return Array.from(this.#registeredVariableHandlers.entries()).reduce((map, [mainHandle, varConfig]) => {
+    private generateVariableAndAliasHandlers(): Map<string, RegisteredVariable> {
+        return Array.from(this.registeredVariableHandlers.entries()).reduce((map, [mainHandle, varConfig]) => {
             map.set(mainHandle, varConfig);
             if (varConfig.definition.aliases) {
                 varConfig.definition.aliases.forEach((alias) => {
@@ -139,25 +220,34 @@ class ReplaceVariableManager extends EventEmitter {
                 });
             }
             return map;
-        }, new Map());
+        }, new Map<string, RegisteredVariable>());
     }
 
-    evaluateText(input, metadata, trigger, onlyValidate) {
+    async evaluateText(
+        input: string,
+        metadata: Record<string, unknown>,
+        trigger: TriggerWithId,
+        onlyValidate = false
+    ): Promise<string> {
         if (input.includes("$")) {
-            return expressionish({
-                handlers: this.#variableAndAliasHandlers,
+            // eslint-disable-next-line
+            return await expressionish({
+                handlers: this.variableAndAliasHandlers,
                 expression: input,
                 metadata,
                 trigger,
-                preeval: (options, variable) => this.#preeval(options, variable),
-                lookups: this.#registeredLookupHandlers,
+                preeval: (
+                    options: { trigger: TriggerWithId },
+                    variable: EvaluatedRegisteredVariable
+                ) => this.preeval(options, variable),
+                lookups: this.registeredLookupHandlers,
                 onlyValidate: !!onlyValidate
-            });
+            }) as string;
         }
         return input;
     }
 
-    async findAndReplaceVariables(data, trigger) {
+    async findAndReplaceVariables(data: Record<string, unknown>, trigger: Trigger): Promise<void> {
         const keys = Object.keys(data);
 
         for (const key of keys) {
@@ -165,7 +255,7 @@ class ReplaceVariableManager extends EventEmitter {
             if (value && typeof value === "string") {
                 if (value.includes("$")) {
                     let replacedValue = value;
-                    const triggerId = util.getTriggerIdFromTriggerData(trigger);
+                    const triggerId = getTriggerIdFromTriggerData(trigger);
                     try {
                         replacedValue = await this.evaluateText(value, trigger, { type: trigger.type, id: triggerId });
                     } catch (err) {
@@ -175,12 +265,16 @@ class ReplaceVariableManager extends EventEmitter {
                 }
             } else if (value && typeof value === "object") {
                 // recurse
-                await this.findAndReplaceVariables(value, trigger);
+                await this.findAndReplaceVariables(value as Record<string, unknown>, trigger);
             }
         }
     }
 
-    async findAndValidateVariables(data, trigger, errors) {
+    async findAndValidateVariables(
+        data: Record<string, unknown>,
+        trigger: TriggerWithId,
+        errors?: VariableError[]
+    ): Promise<VariableError[]> {
         if (errors == null) {
             errors = [];
         }
@@ -195,16 +289,19 @@ class ReplaceVariableManager extends EventEmitter {
                         await this.evaluateText(
                             value,
                             undefined,
-                            { type: trigger && trigger.type, id: trigger && trigger.id },
+                            { type: trigger?.type, id: trigger?.id },
                             true
                         );
-                    } catch (err) {
+                    } catch (error) {
+                        const err = error as VariableError;
                         err.dataField = key;
                         err.rawText = value;
-                        if (err instanceof expressionish.ExpressionArgumentsError) {
-                            errors.push(err);
+                        // eslint-disable-next-line
+                        if (error instanceof expressionishErrs.ExpressionArgumentsError) {
+                            errors.push(error as VariableError);
                             logger.debug(`Found variable error when validating`, err);
-                        } else if (err instanceof expressionish.ExpressionError) {
+                        // eslint-disable-next-line
+                        } else if (error instanceof expressionishErrs.ExpressionError) {
                             errors.push({
                                 dataField: err.dataField,
                                 message: err.message,
@@ -221,15 +318,15 @@ class ReplaceVariableManager extends EventEmitter {
                 }
             } else if (value && typeof value === "object") {
                 // recurse
-                await this.findAndValidateVariables(value, trigger, errors);
+                await this.findAndValidateVariables(value as Record<string, unknown>, trigger, errors);
             }
         }
 
         return errors;
     }
 
-    addEventToVariable(variableHandle, eventSourceId, eventId) {
-        if (this.#getVariablesForEvent(eventSourceId, eventId).some(f => f.handle === variableHandle)
+    addEventToVariable(variableHandle: string, eventSourceId: string, eventId: string): void {
+        if (this.getVariablesForEvent(eventSourceId, eventId).some(f => f.handle === variableHandle)
             || this.additionalVariableEvents[variableHandle]?.some(e => e.eventSourceId === eventSourceId && e.eventId === eventId)) {
             logger.warn(`Variable ${variableHandle} already setup for event ${eventSourceId}:${eventId}`);
             return;
@@ -246,7 +343,7 @@ class ReplaceVariableManager extends EventEmitter {
         frontendCommunicator.send("additional-variable-events-updated", this.additionalVariableEvents);
     }
 
-    removeEventFromVariable(variableHandle, eventSourceId, eventId) {
+    removeEventFromVariable(variableHandle: string, eventSourceId: string, eventId: string): void {
         let additionalEvents = this.additionalVariableEvents[variableHandle] ?? [];
 
         if (!additionalEvents.some(e => e.eventSourceId === eventSourceId && e.eventId === eventId)) {
@@ -262,11 +359,8 @@ class ReplaceVariableManager extends EventEmitter {
         frontendCommunicator.send("additional-variable-events-updated", this.additionalVariableEvents);
     }
 
-    getSuggestionsForVariable(variableHandle, triggerType, triggerMeta) {
-        /**
-         * @type {import("../../types/variables").ReplaceVariable | undefined}
-         */
-        const variable = this.#variableAndAliasHandlers.get(variableHandle);
+    getSuggestionsForVariable(variableHandle: string, triggerType: TriggerType, triggerMeta: TriggerMeta): Awaitable<VariableUsage[]> {
+        const variable = this.variableAndAliasHandlers.get(variableHandle);
 
         if (variable?.getSuggestions) {
             try {
@@ -285,13 +379,13 @@ const manager = new ReplaceVariableManager();
 
 // custom variable shorthand
 manager.registerLookupHandler("$", name => ({
-    evaluator: (trigger, ...path) => {
-        let result = getCustomVariable(name);
+    evaluator: (_, ...path: string[]) => {
+        let result = getCustomVariable(name) as Record<string, unknown>;
         for (const item of path) {
             if (result == null) {
                 return null;
             }
-            result = result[item];
+            result = result[item] as Record<string, unknown>;
         }
         return result == null ? null : result;
     }
@@ -299,15 +393,15 @@ manager.registerLookupHandler("$", name => ({
 
 // Effect Output shorthand
 manager.registerLookupHandler("&", name => ({
-    evaluator: (trigger, ...path) => {
+    evaluator: (trigger, ...path: string[]) => {
         let result = trigger.effectOutputs;
         if (result != null) {
-            result = result[name];
+            result = result[name] as Record<string, unknown>;
             for (const item of path) {
                 if (result == null) {
                     return null;
                 }
-                result = result[item];
+                result = result[item] as Record<string, unknown>;
             }
             return result == null ? null : result;
         }
@@ -318,14 +412,14 @@ manager.registerLookupHandler("&", name => ({
 // Preset effect Args shorthand
 manager.registerLookupHandler("#", name => ({
     evaluator: (trigger) => {
-        const arg = (trigger.metadata?.presetListArgs || {})[name];
+        const arg = (trigger.metadata?.presetListArgs || {})[name] as string;
         return arg == null ? null : arg;
     }
 }));
 
 // Macro Args shorthand
 manager.registerLookupHandler("^", name => ({
-    evaluator: (trigger, ...args) => {
+    evaluator: (trigger: MacroTrigger, ...args) => {
         const { macroArgs, macroArgNames } = trigger;
         if (
             (args == null || args.length === 0) &&
@@ -343,7 +437,7 @@ manager.registerLookupHandler("^", name => ({
 
 // Macro shorthand
 manager.registerLookupHandler("%", name => ({
-    evaluator: (trigger, ...macroArgs) => {
+    evaluator: (trigger: Trigger, ...macroArgs) => {
         const macro = macroManager.getMacroByName(name);
         if (macro != null) {
             return manager.evaluateText(
@@ -364,37 +458,4 @@ manager.registerLookupHandler("!", name => ({
     }
 }));
 
-frontendCommunicator.on("getReplaceVariableDefinitions", () => {
-    logger.debug("got 'get all vars' request");
-    return Array.from(manager.getVariableHandlers().values())
-        .map(v => v.definition)
-        .filter(v => !v.hidden);
-});
-
-frontendCommunicator.onAsync("validateVariables", async (eventData) => {
-    logger.debug("got 'validateVariables' request");
-    const { data, trigger } = eventData;
-
-    let errors = [];
-    try {
-        errors = await manager.findAndValidateVariables(data, trigger);
-    } catch (err) {
-        logger.error("Unable to validate variables.", err);
-    }
-
-    return errors;
-});
-
-frontendCommunicator.onAsync("get-variable-suggestions", async (eventData) => {
-    logger.debug("got 'get-variable-suggestions' request");
-    const { variableHandle, triggerType, triggerMeta } = eventData;
-    const suggestions = await manager.getSuggestionsForVariable(variableHandle, triggerType, triggerMeta);
-    return suggestions;
-});
-
-frontendCommunicator.on("get-additional-variable-events", () => {
-    logger.debug("got 'get-additional-variable-events' request");
-    return manager.additionalVariableEvents;
-});
-
-module.exports = manager;
+export { manager as ReplaceVariableManager };
