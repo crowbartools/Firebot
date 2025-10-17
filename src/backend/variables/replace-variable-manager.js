@@ -326,14 +326,14 @@ manager.registerLookupHandler("#", name => ({
 // Macro Args shorthand
 manager.registerLookupHandler("^", name => ({
     evaluator: (trigger, ...args) => {
-        const { macroArgs, macroNamedArgs } = trigger;
+        const { macroArgs, macroArgNames } = trigger;
         if (
             (args == null || args.length === 0) &&
             macroArgs != null &&
-            macroNamedArgs != null &&
+            macroArgNames != null &&
             typeof name === "string"
         ) {
-            const namedArgIdx = macroNamedArgs.findIndex(item => item === name);
+            const namedArgIdx = macroArgNames.findIndex(item => item === name);
             if (namedArgIdx > -1) {
                 return macroArgs[namedArgIdx];
             }
@@ -348,7 +348,7 @@ manager.registerLookupHandler("%", name => ({
         if (macro != null) {
             return manager.evaluateText(
                 macro.expression,
-                { ...trigger, macro, macroArgs, macroNamedArgs: macro.argNames },
+                { ...trigger, macro, macroArgs, macroArgNames: macro.argNames },
                 trigger,
                 false
             );

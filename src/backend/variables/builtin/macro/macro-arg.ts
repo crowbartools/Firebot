@@ -13,15 +13,15 @@ const model : ReplaceVariable = {
             return;
         }
 
-        const { macroArgs, macroNamedArgs } = <{ macroArgs: string[], macroNamedArgs: string[] }><unknown>trigger;
+        const { macroArgs, macroArgNames } = <{ macroArgs: string[], macroArgNames: string[] }><unknown>trigger;
         const idxNum = Number(argIndex);
 
         if (Number.isInteger(idxNum) && idxNum > 0) {
             return macroArgs[idxNum - 1];
         }
 
-        if (typeof argIndex === 'string' && macroNamedArgs != null) {
-            const namedArgIdx = (macroNamedArgs).findIndex(item => item === argIndex);
+        if (typeof argIndex === 'string' && macroArgNames != null) {
+            const namedArgIdx = (macroArgNames).findIndex(item => item === argIndex);
             if (namedArgIdx > -1) {
                 return macroArgs[namedArgIdx];
             }
