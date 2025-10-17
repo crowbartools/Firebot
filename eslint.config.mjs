@@ -171,7 +171,9 @@ export default defineConfig([{
         "@typescript-eslint/no-unsafe-member-access": "warn",
         "@typescript-eslint/no-unsafe-return": "warn",
         "@typescript-eslint/no-unused-expressions": "warn",
-        "@typescript-eslint/no-unused-vars": "warn",
+        "@typescript-eslint/no-unused-vars": ["warn", {
+             varsIgnorePattern: "^_"
+        }],
         "@typescript-eslint/no-use-before-define": "warn",
         "@typescript-eslint/no-var-requires": "off",
         "@typescript-eslint/no-wrapper-object-types": "warn",
