@@ -1,21 +1,10 @@
 "use strict";
 
+/** @import { EffectQueueConfig } from "../../../types/effects" */
+
 const frontendCommunicator = require("../../common/frontend-communicator");
 const JsonDbManager = require("../../database/json-db-manager");
 const effectQueueRunner = require("./effect-queue-runner").default;
-
-/**
- * @typedef EffectQueueConfig
- * @prop {string} id - the id of the effect queue
- * @prop {string} name - the name of the effect queue
- * @prop {"auto" | "interval" | "custom" | "manual"} mode - the mode of the effect queue
- * @prop {number} [interval] - the interval set for the interval mode
- * @prop {string[]} sortTags - the tags for the effect queue
- * @prop {boolean} active - the effect queue activity status
- * @prop {boolean} runEffectsImmediatelyWhenPaused - whether effects should run immediately when the queue is paused
- * @prop {number} length - amount of items currently in queue. don't save
- * @prop {any[]} queue - effects queue. don't save
- */
 
 /**
  * @extends {JsonDbManager<EffectQueueConfig>}
@@ -121,7 +110,7 @@ class EffectQueueConfigManager extends JsonDbManager {
             queue.runEffectsImmediatelyWhenPaused = runEffectsImmediatelyWhenPaused;
         }
         this.saveItem(queue);
-        frontendCommunicator.send("updateQueueStatus", {id: queue.id, active: status});
+        frontendCommunicator.send("updateQueueStatus", { id: queue.id, active: status });
     }
 
     pauseQueue(queueId, runEffectsImmediatelyWhenPaused = undefined) {

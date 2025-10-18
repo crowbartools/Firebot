@@ -99,3 +99,25 @@ export interface EffectList {
     id: string;
     list: EffectInstance[];
 }
+
+export type PresetEffectList = {
+    id: string;
+    name: string;
+    args: Array<{
+        name: string;
+    }>;
+    effects: EffectList;
+    sortTags: string[];
+};
+
+export type EffectQueueConfig = {
+    id: string;
+    name: string;
+    mode: "auto" | "interval" | "custom" | "manual";
+    interval?: number;
+    sortTags: string[];
+    active: boolean;
+    runEffectsImmediatelyWhenPaused: boolean;
+    length: number;
+    queue: any[];
+};

@@ -45,3 +45,16 @@ export type EventFilter = {
         }
     ): Awaitable<boolean>;
 };
+
+export type FirebotEvent = {
+    id: string;
+    type: string;
+    active: boolean;
+    effectLabel?: string;
+    [x: string]: unknown;
+};
+
+export type EventGroup = {
+    id: string;
+    events: FirebotEvent[];
+};

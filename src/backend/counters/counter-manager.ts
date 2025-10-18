@@ -1,30 +1,32 @@
 import fsp from "fs/promises";
 import path from "path";
 import sanitizeFileName from "sanitize-filename";
-import logger from "../logwrapper";
+
+import { Counter } from "../../types/counters";
+import { EffectList } from "../../types/effects";
+import { Trigger } from "../../types/triggers";
+import { CounterDisplayWidgetConfig } from "../overlay-widgets/builtin-types/counter-display/counter-display";
+
 import JsonDbManager from "../database/json-db-manager";
-import frontendCommunicator from "../common/frontend-communicator";
 import accountAccess from "../common/account-access";
 import effectRunner from "../common/effect-runner";
 import profileManager from "../common/profile-manager";
-import { TriggerType } from "../common/EffectType";
-import { Counter } from "../../types/counters";
-import { EffectList } from "../../types/effects";
 import overlayWidgetConfigManager from "../overlay-widgets/overlay-widget-config-manager";
-import { CounterDisplayWidgetConfig } from "../overlay-widgets/builtin-types/counter-display/counter-display";
+import frontendCommunicator from "../common/frontend-communicator";
+import logger from "../logwrapper";
 
 class CounterManager extends JsonDbManager<Counter> {
     constructor() {
         super("Counter", "/counters/counters");
 
-        frontendCommunicator.onAsync("counters:get-counters",
-            async () => this.getAllItems());
+        frontendCommunicator.on("counters:get-counters",
+            () => this.getAllItems());
 
-        frontendCommunicator.onAsync("counters:save-counter",
-            async (counter: Counter) => this.saveItem(counter));
+        frontendCommunicator.on("counters:save-counter",
+            (counter: Counter) => this.saveItem(counter));
 
-        frontendCommunicator.onAsync("counters:save-all-counters",
-            async (allCounters: Counter[]) => this.saveAllItems(allCounters));
+        frontendCommunicator.on("counters:save-all-counters",
+            (allCounters: Counter[]) => this.saveAllItems(allCounters));
 
         frontendCommunicator.on("counters:delete-counter",
             (counterId: string) => this.deleteItem(counterId));
@@ -34,48 +36,21 @@ class CounterManager extends JsonDbManager<Counter> {
     }
 
     /**
-     * @deprecated Please use `loadItems()` instead.
-     */
-    loadCounters(): void {
-        this.loadItems();
-    }
-
-    /**
-     * @deprecated Please use `saveItem()` instead.
-     */
-    saveCounter(counter: Counter): Counter {
-        const savedCounter = this.saveItem(counter);
-
-        if (savedCounter) {
-            return savedCounter;
-        }
-
-        return {} as Counter;
-    }
-
-    /**
-     * @deprecated Please use `deleteItem()` instead.
-     */
-    deleteCounter(counterId: string): void {
-        this.deleteItem(counterId);
-    }
-
-    /**
-     * @deprecated Please use `getItem()` instead.
+     * @deprecated Please use {@linkcode getItem()} instead.
      */
     getCounter(counterId: string): Counter {
         return this.getItem(counterId);
     }
 
     /**
-     * @deprecated Please use `getItemByName()` instead.
+     * @deprecated Please use {@linkcode getItemByName()} instead.
      */
     getCounterByName(counterName: string): Counter {
         return this.getItemByName(counterName);
     }
 
     override saveItem(counter: Counter): Counter {
-        this.updateCounterTxtFile(counter.name, counter.value);
+        void this.updateCounterTxtFile(counter.name, counter.value);
 
         const savedCounter = super.saveItem(counter);
 
@@ -89,7 +64,7 @@ class CounterManager extends JsonDbManager<Counter> {
 
         const result = super.deleteItem(counterId);
         if (result === true) {
-            this.deleteCounterTxtFile(counter.name);
+            void this.deleteCounterTxtFile(counter.name);
         }
 
         return result;
@@ -112,7 +87,7 @@ class CounterManager extends JsonDbManager<Counter> {
         frontendCommunicator.send("counters:all-counters-updated", this.getAllItems());
     }
 
-    async createCounter(counterName: string): Promise<Counter> {
+    createCounter(counterName: string): Counter {
         const counter = {
             name: counterName,
             value: 0,
@@ -206,7 +181,7 @@ class CounterManager extends JsonDbManager<Counter> {
     private _runEffects(counter: Counter, effects: EffectList, previousValue?: number): void {
         const processEffectsRequest = {
             trigger: {
-                type: TriggerType.COUNTER,
+                type: "counter",
                 metadata: {
                     username: accountAccess.getAccounts().streamer.username,
                     counter: {
@@ -218,10 +193,10 @@ class CounterManager extends JsonDbManager<Counter> {
                         maximum: counter.maximum
                     }
                 }
-            },
+            } as Trigger,
             effects: effects
         };
-        effectRunner.processEffects(processEffectsRequest);
+        void effectRunner.processEffects(processEffectsRequest);
     }
 
     private async _updateCounter(counter: Counter): Promise<void> {

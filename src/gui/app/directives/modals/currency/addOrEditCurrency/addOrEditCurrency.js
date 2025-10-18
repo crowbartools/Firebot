@@ -91,7 +91,7 @@
                     })
                     .then((confirmed) => {
                         if (confirmed) {
-                            currencyService.deleteCurrency(currency);
+                            currencyService.deleteCurrency(currency.id);
                             $ctrl.close({
                                 $value: {
                                     action: "close"

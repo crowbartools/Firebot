@@ -1,7 +1,7 @@
 import { TypedEmitter } from "tiny-typed-emitter";
+import { EffectQueueConfig } from "../../../types/effects";
 import { EffectQueue, QueueState, RunEffectsContext } from "./effect-queue";
 import logger from "../../logwrapper";
-import type { EffectQueueConfig } from "./effect-queue-config-manager";
 import effectManager from "../effectManager";
 
 type Events = {

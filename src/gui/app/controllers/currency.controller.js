@@ -30,7 +30,7 @@
                                 currencyService.updateCurrency(currency);
                                 break;
                             case "delete":
-                                currencyService.deleteCurrency(currency);
+                                currencyService.deleteCurrency(currency.id);
                                 break;
                             case "purge":
                                 currencyService.purgeCurrency(currency);

@@ -1,6 +1,6 @@
-import { EffectType } from "../../../types/effects";
+import { EffectType, EffectQueueConfig } from "../../../types/effects";
 import { EffectCategory } from "../../../shared/effect-constants";
-import effectQueueManager, { EffectQueueConfig } from "../queues/effect-queue-config-manager";
+import effectQueueManager from "../queues/effect-queue-config-manager";
 import logger from "../../logwrapper";
 
 const effect: EffectType<{
@@ -92,7 +92,7 @@ const effect: EffectType<{
         const queue = effectQueuesService.getEffectQueue(effect.effectQueue);
         return `${effect.action} ${queue?.name ?? "Unknown Queue"}`;
     },
-    onTriggerEvent: async ({ effect }) => {
+    onTriggerEvent: ({ effect }) => {
         const queue = effectQueueManager.getItem(effect.effectQueue);
 
         if (queue == null) {

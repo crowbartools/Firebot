@@ -1,11 +1,11 @@
 import { TypedEmitter } from "tiny-typed-emitter";
+import { EffectQueueConfig } from "../../../types/effects";
+import { EffectList } from "../../../types/effects";
 import logger from "../../logwrapper";
 import effectRunner from "../../common/effect-runner";
 import { wait } from "../../utils";
 import eventManager from "../../events/EventManager";
 import { abortEffectList } from "../../common/effect-abort-helpers";
-import { EffectQueueConfig } from "./effect-queue-config-manager";
-import { EffectList } from "../../../types/effects";
 
 export type QueueStatus = "running" | "paused" | "idle" | "canceled";
 

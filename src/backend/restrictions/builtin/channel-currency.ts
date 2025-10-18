@@ -1,5 +1,6 @@
 import { RestrictionType } from "../../../types/restrictions";
-import currencyAccess, { Currency } from "../../currency/currency-access";
+import { Currency } from "../../../types/currency";
+import currencyAccess from "../../currency/currency-access";
 import currencyManager from "../../currency/currency-manager";
 
 type ComparisonType = "less" | "greater" | "equal";

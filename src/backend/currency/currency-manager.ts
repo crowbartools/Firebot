@@ -1,10 +1,11 @@
 import { DateTime, Duration } from "luxon";
 
 import { FirebotViewer } from "../../types/viewers";
+import { Currency } from "../../types/currency";
 
 import logger from "../logwrapper";
 import { commafy } from "../utils";
-import currencyAccess, { Currency } from "./currency-access";
+import currencyAccess from "./currency-access";
 import viewerDatabase from "../viewers/viewer-database";
 import viewerOnlineStatusManager from "../viewers/viewer-online-status-manager";
 import eventManager from "../events/EventManager";
