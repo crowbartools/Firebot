@@ -1,17 +1,21 @@
-"use strict";
+import { TypedEmitter } from "tiny-typed-emitter";
+import { Restriction, RestrictionData, RestrictionType } from "../../types/restrictions";
+import { Trigger, TriggerMeta, TriggerType } from "../../types/triggers";
+import frontendCommunicator from "../common/frontend-communicator";
+import logger from "../logwrapper";
 
-const logger = require("../logwrapper");
-const EventEmitter = require("events");
-const frontendCommunicator = require("../common/frontend-communicator");
+type Events = {
+    "restriction-registered": (restriction: RestrictionType) => void;
+};
 
-class RestrictionsManager extends EventEmitter {
+class RestrictionsManager extends TypedEmitter<Events> {
+    private _registeredRestrictions: RestrictionType[] = [];
+
     constructor() {
         super();
-
-        this._registeredRestrictions = [];
     }
 
-    registerRestriction(restriction) {
+    registerRestriction(restriction: RestrictionType): void {
         const idConflict = this._registeredRestrictions.some(
             r => r.definition.id === restriction.definition.id
         );
@@ -25,18 +29,22 @@ class RestrictionsManager extends EventEmitter {
 
         logger.debug(`Registered Restriction ${restriction.definition.id}`);
 
-        this.emit("restrictionRegistered", restriction);
+        this.emit("restriction-registered", restriction);
     }
 
-    getRestrictionById(restrictionId) {
+    getRestrictionById(restrictionId: string): RestrictionType {
         return this._registeredRestrictions.find(r => r.definition.id === restrictionId);
     }
 
-    getAllRestrictions() {
+    getAllRestrictions(): RestrictionType[] {
         return this._registeredRestrictions;
     }
 
-    checkPermissionsPredicateOnly(restrictionData, username, twitchRoles) {
+    async checkPermissionsPredicateOnly(
+        restrictionData: RestrictionData,
+        username: string,
+        twitchRoles: string[]
+    ): Promise<boolean> {
         if (restrictionData == null || restrictionData.restrictions == null ||
             restrictionData.restrictions.length < 1) {
             return Promise.resolve(true);
@@ -52,7 +60,8 @@ class RestrictionsManager extends EventEmitter {
             mode: restrictionData.mode
         };
 
-        const triggerData = {
+        const triggerData: Trigger = {
+            type: null,
             metadata: {
                 username: username,
                 userTwitchRoles: twitchRoles
@@ -62,30 +71,41 @@ class RestrictionsManager extends EventEmitter {
             .then(() => true, () => false);
     }
 
-    async #runPredicate(restrictionDef, triggerData, restriction, restrictionsAreInherited) {
+    private async runPredicate(
+        restrictionDef: RestrictionType,
+        triggerData: Trigger,
+        restriction: Restriction,
+        restrictionsAreInherited: boolean
+    ) {
         let restrictionPassed = false;
-        let failedReason = null;
+        let failedReason: string = null;
 
         try {
             await restrictionDef.predicate(triggerData, restriction, restrictionsAreInherited);
             restrictionPassed = true;
         } catch (reason) {
-            failedReason = reason?.toLowerCase();
+            failedReason = (reason as string)?.toLowerCase();
         }
 
         if (restriction.invertCondition) {
             restrictionPassed = !restrictionPassed;
             if (restrictionPassed === false) {
-                failedReason = restrictionDef.failedReasonWhenInverted || "You don't meet the requirements.";
+                failedReason = restrictionDef.failedReasonWhenInverted
+                    ?? "You don't meet the requirements.";
             }
         }
 
         if (!restrictionPassed) {
+            // eslint-disable-next-line @typescript-eslint/only-throw-error
             throw failedReason;
         }
     }
 
-    async runRestrictionPredicates(triggerData, restrictionData, restrictionsAreInherited = false) {
+    async runRestrictionPredicates(
+        triggerData: Trigger,
+        restrictionData: RestrictionData,
+        restrictionsAreInherited = false
+    ) {
         if (restrictionData == null || restrictionData.restrictions == null ||
             restrictionData.restrictions.length < 1) {
             return Promise.resolve();
@@ -99,7 +119,7 @@ class RestrictionsManager extends EventEmitter {
                 const restrictionDef = this.getRestrictionById(restriction.type);
                 if (restrictionDef && restrictionDef.predicate) {
                     try {
-                        await this.#runPredicate(restrictionDef, triggerData, restriction, restrictionsAreInherited);
+                        await this.runPredicate(restrictionDef, triggerData, restriction, restrictionsAreInherited);
                         restrictionPassed = true;
                         if (restrictionData.mode !== "none" && restrictionDef.onSuccessful) {
                             restrictionDef.onSuccessful(triggerData, restriction, restrictionsAreInherited);
@@ -107,7 +127,7 @@ class RestrictionsManager extends EventEmitter {
                         break;
                     } catch (reason) {
                         if (reason) {
-                            reasons.push(reason.toLowerCase());
+                            reasons.push((reason as string).toLowerCase());
                         }
                     }
                 }
@@ -115,23 +135,24 @@ class RestrictionsManager extends EventEmitter {
 
             if (restrictionData.mode === "none") {
                 if (restrictionPassed) {
+                    // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                     return Promise.reject(`You don't meet the requirements.`);
                 }
                 return Promise.resolve();
             }
 
-            //restrictionData.mode === "any"
             if (!restrictionPassed) {
+                // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                 return Promise.reject(reasons.join(", or "));
             }
             return Promise.resolve();
 
-        } else if (restrictionData.mode !== "any" && restrictionData.mode !== "none") {
+        } else if (restrictionData.mode === "all") {
             const predicatePromises = [];
             for (const restriction of restrictions) {
                 const restrictionDef = this.getRestrictionById(restriction.type);
                 if (restrictionDef && restrictionDef.predicate) {
-                    predicatePromises.push(this.#runPredicate(restrictionDef, triggerData, restriction, restrictionsAreInherited));
+                    predicatePromises.push(this.runPredicate(restrictionDef, triggerData, restriction, restrictionsAreInherited));
                 }
             }
 
@@ -149,7 +170,7 @@ class RestrictionsManager extends EventEmitter {
 
 const manager = new RestrictionsManager();
 
-function mapRestrictionForFrontEnd(restriction) {
+function mapRestrictionForFrontEnd(restriction: RestrictionType) {
     return {
         definition: restriction.definition,
         optionsTemplate: restriction.optionsTemplate,
@@ -160,7 +181,10 @@ function mapRestrictionForFrontEnd(restriction) {
     };
 }
 
-frontendCommunicator.on("getRestrictions", (triggerData) => {
+frontendCommunicator.on("getRestrictions", (triggerData: {
+    triggerType: TriggerType;
+    triggerMeta: TriggerMeta;
+}) => {
     logger.debug("got 'get restrictions' request");
 
     const triggerType = triggerData.triggerType,
@@ -208,4 +232,4 @@ frontendCommunicator.on("getRestrictions", (triggerData) => {
     });
 });
 
-module.exports = manager;
+export { manager as RestrictionsManager };

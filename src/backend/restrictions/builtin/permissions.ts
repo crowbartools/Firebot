@@ -1,14 +1,27 @@
-"use strict";
+/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 
-const chatRolesManager = require("../../roles/chat-roles-manager");
-const customRolesManager = require("../../roles/custom-roles-manager");
-const teamRolesManager = require("../../roles/team-roles-manager");
-const twitchRolesManager = require("../../../shared/twitch-roles");
-const { TwitchApi } = require("../../streaming-platforms/twitch/api");
-const rankManager = require("../../ranks/rank-manager");
-const viewerDatabase = require("../../viewers/viewer-database");
+import { RestrictionType } from "../../../types/restrictions";
+import { TwitchApi } from "../../streaming-platforms/twitch/api";
+import chatRolesManager from "../../roles/chat-roles-manager";
+import customRolesManager from "../../roles/custom-roles-manager";
+import teamRolesManager from "../../roles/team-roles-manager";
+import twitchRolesManager from "../../../shared/twitch-roles";
+import rankManager from "../../ranks/rank-manager";
+import viewerDatabase from "../../viewers/viewer-database";
+import { FirebotRole } from "../../../types/roles";
 
-const model = {
+type PermissionMode = "roles" | "viewer";
+type Rank = {
+    rankId: string;
+    ladderId: string;
+};
+
+const model: RestrictionType<{
+    mode: PermissionMode;
+    username: string;
+    roleIds: string[];
+    ranks: Rank[];
+}> = {
     definition: {
         id: "firebot:permissions",
         name: "Permissions",
@@ -100,11 +113,11 @@ const model = {
         $scope.getTeamRoles = viewerRolesService.getTeamRoles;
         $scope.getTwitchRoles = viewerRolesService.getTwitchRoles;
 
-        $scope.isRoleChecked = function(role) {
+        $scope.isRoleChecked = (role: FirebotRole) => {
             return $scope.restriction.roleIds.includes(role.id);
         };
 
-        $scope.toggleRole = function(role) {
+        $scope.toggleRole = (role: FirebotRole) => {
             if ($scope.isRoleChecked(role)) {
                 $scope.restriction.roleIds = $scope.restriction.roleIds.filter(id => id !== role.id);
             } else {
@@ -180,7 +193,7 @@ const model = {
     predicate: (triggerData, restrictionData) => {
         return new Promise(async (resolve, reject) => {
             if (restrictionData.mode === "roles") {
-                let userId = triggerData.metadata.userId;
+                let userId = triggerData.metadata.userId as string;
 
                 if (userId == null) {
                     const username = triggerData.metadata.username;
@@ -193,8 +206,7 @@ const model = {
                     userId = user.id;
                 }
 
-                /** @type {string[]} */
-                let twitchUserRoles = triggerData.metadata.userTwitchRoles;
+                let twitchUserRoles = triggerData.metadata.userTwitchRoles as string[];
 
                 // For sub tier-specific/known bot permission checking, we have to get live data
                 if (twitchUserRoles == null
@@ -219,7 +231,7 @@ const model = {
 
                 // convert any mixer roles to twitch roles
                 const expectedRoleIds = (restrictionData.roleIds || [])
-                    .map(r => twitchRolesManager.mapMixerRoleIdToTwitchRoleId(r));
+                    .map(r => twitchRolesManager.mapMixerRoleIdToTwitchRoleId(r) as string);
 
                 const hasARole = allRoles.some(r => expectedRoleIds.includes(r.id));
 
@@ -236,7 +248,7 @@ const model = {
                         if (ladder != null) {
                             const rank = ladder.getRank(rankDetails.rankId);
                             if (rank != null) {
-                                hasARank = await viewerDatabase.viewerHasRank(viewer, ladder.id, rank.id);
+                                hasARank = viewerDatabase.viewerHasRank(viewer, ladder.id, rank.id);
                                 if (hasARank) {
                                     break;
                                 }
@@ -246,22 +258,22 @@ const model = {
                 }
 
                 if (hasARole || hasARank) {
-                    resolve();
+                    resolve(true);
                 } else {
                     reject("You do not have permission");
                 }
             } else if (restrictionData.mode === "viewer") {
                 const username = (triggerData.metadata.username || "").toLowerCase();
                 if (username === restrictionData.username.toLowerCase()) {
-                    resolve();
+                    resolve(true);
                 } else {
                     reject("You do not have permission");
                 }
             } else {
-                resolve();
+                resolve(true);
             }
         });
     }
 };
 
-module.exports = model;
+export = model;

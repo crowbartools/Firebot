@@ -1,6 +1,11 @@
-"use strict";
+/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 
-const model = {
+import { RestrictionType } from "../../../types/restrictions";
+import viewerDatabase from '../../viewers/viewer-database';
+
+const model: RestrictionType<{
+    messages: number;
+}> = {
     definition: {
         id: "firebot:chatMessages",
         name: "Chat Messages",
@@ -26,7 +31,6 @@ const model = {
     predicate: (triggerData, restrictionData) => {
         return new Promise(async (resolve, reject) => {
             let passed = false;
-            const viewerDatabase = require('../../viewers/viewer-database');
             const viewer = await viewerDatabase.getViewerByUsername(triggerData.metadata.username);
             const chatMessages = viewer.chatMessages;
 
@@ -35,7 +39,7 @@ const model = {
             }
 
             if (passed) {
-                resolve();
+                resolve(true);
             } else {
                 reject("You have not sent enough chat messages in this channel");
             }
@@ -43,4 +47,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export = model;

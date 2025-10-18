@@ -1,6 +1,15 @@
-"use strict";
+/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 
-const model = {
+import { RestrictionType } from "../../../types/restrictions";
+import userAccess from "../../common/user-access";
+import accountAccess from "../../common/account-access";
+
+const model: RestrictionType<{
+    checkMode: "streamer" | "custom";
+    value: string;
+    useFollowAge: boolean;
+    followAgeSeconds: number;
+}> = {
     definition: {
         id: "firebot:followcheck",
         name: "Follow Check",
@@ -47,13 +56,11 @@ const model = {
             </div>
         </div>
     `,
-
     optionsController: ($scope) => {
         if ($scope.restriction.checkMode == null) {
             $scope.restriction.checkMode = "custom";
         }
     },
-
     optionsValueDisplay: (restriction) => {
         const value = restriction.checkMode === "custom" ? restriction.value : "Follows my channel";
 
@@ -63,19 +70,13 @@ const model = {
 
         return value;
     },
-    /*
-      function that resolves/rejects a promise based on if the restriction criteria is met
-    */
     predicate: async (trigger, restrictionData) => {
         return new Promise(async (resolve, reject) => {
-            const userAccess = require("../../common/user-access");
-            const accountAccess = require("../../common/account-access");
-
             const triggerUsername = trigger.metadata.username || "";
             const followListString = restrictionData.checkMode === "custom" ? restrictionData.value || "" : accountAccess.getAccounts().streamer.username;
 
             if (triggerUsername === "" || followListString === "") {
-                return resolve();
+                return resolve(true);
             }
 
             const followCheckList = followListString.split(',')
@@ -87,12 +88,12 @@ const model = {
             const followCheck = await userAccess.userFollowsChannels(triggerUsername, followCheckList, seconds);
 
             if (followCheck) {
-                return resolve();
+                resolve(true);
+            } else {
+                reject(`You must be following: ${followListString}`);
             }
-
-            return reject(`You must be following: ${followListString}`);
         });
     }
 };
 
-module.exports = model;
+export = model;

@@ -1,9 +1,13 @@
-"use strict";
+/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 
-const accountAccess = require("../../common/account-access");
-const { TwitchApi } = require("../../streaming-platforms/twitch/api");
+import { RestrictionType } from "../../../types/restrictions";
+import { TwitchApi } from "../../streaming-platforms/twitch/api";
+import accountAccess from "../../common/account-access";
 
-const model = {
+const model: RestrictionType<{
+    gameId: string;
+    name: string;
+}> = {
     definition: {
         id: "firebot:channelGame",
         name: "Channel Category/Game",
@@ -33,7 +37,9 @@ const model = {
 
         $scope.games = [];
         $scope.searchGames = function (gameQuery) {
+            // eslint-disable-next-line
             $q.when(backendCommunicator.fireEventAsync("search-twitch-games", gameQuery))
+                // eslint-disable-next-line
                 .then((games) => {
                     if (games != null) {
                         $scope.games = games;
@@ -41,14 +47,16 @@ const model = {
                 });
         };
 
+        // eslint-disable-next-line
         $q.when(backendCommunicator.fireEventAsync("get-twitch-game", restriction.gameId))
+            // eslint-disable-next-line
             .then((game) => {
                 if (game != null) {
                     $scope.selectedGame = game;
                 }
             });
 
-        $scope.gameSelected = function (game) {
+        $scope.gameSelected = function (game: { id: string, name: string }) {
             if (game != null) {
                 restriction.gameId = game.id;
                 restriction.name = game.name;
@@ -56,19 +64,16 @@ const model = {
         };
     },
     optionsValueDisplay: (restriction) => {
-        return new Promise((resolve) => {
-            if (restriction.name != null) {
-                resolve(restriction.name);
-            } else {
-                resolve('[Category/Game Not Set]');
-            }
-        });
+        if (restriction.name != null) {
+            return restriction.name;
+        }
+        return "[Category/Game Not Set]";
     },
-    predicate: (triggerData, restrictionData) => {
+    predicate: (_, restrictionData) => {
         return new Promise(async (resolve, reject) => {
             const expectedGameId = restrictionData.gameId;
             if (expectedGameId == null) {
-                return resolve();
+                return resolve(true);
             }
 
             const streamerId = accountAccess.getAccounts().streamer.userId;
@@ -89,7 +94,7 @@ const model = {
             }
 
             if (passed) {
-                resolve();
+                resolve(true);
             } else {
                 const expectedGame = await TwitchApi.categories.getCategoryById(expectedGameId);
                 reject(
@@ -100,4 +105,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export = model;

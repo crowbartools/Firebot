@@ -1,4 +1,4 @@
 export interface FirebotRole {
-    id: string,
-    name: string
+    id: string;
+    name: string;
 }

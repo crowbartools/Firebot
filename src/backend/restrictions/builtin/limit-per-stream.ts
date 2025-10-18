@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
+
 import { Trigger } from "../../../types/triggers";
 import { RestrictionType } from "../../../types/restrictions";
 import accountAccess from "../../common/account-access";
@@ -126,7 +128,7 @@ const limitPerStreamRestriction: RestrictionType<RestrictionData> = {
             return resolve(true);
         });
     },
-    onSuccessful: async (triggerData, _, inherited) => {
+    onSuccessful: (triggerData, _, inherited) => {
         const commandId = triggerData.metadata.command?.id;
         if (!commandId) {
             return;
@@ -154,4 +156,4 @@ frontendCommunicator.on("reset-per-stream-usages-for-command", (commandId: strin
     commandKeys.forEach(key => delete usageCache[key]);
 });
 
-module.exports = limitPerStreamRestriction;
+export = limitPerStreamRestriction;

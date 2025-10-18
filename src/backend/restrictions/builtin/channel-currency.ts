@@ -1,6 +1,15 @@
-"use strict";
+import { RestrictionType } from "../../../types/restrictions";
+import currencyAccess, { Currency } from "../../currency/currency-access";
+import currencyManager from "../../currency/currency-manager";
 
-const model = {
+type ComparisonType = "less" | "greater" | "equal";
+
+const model: RestrictionType<{
+    selectedCurrency: string;
+    comparison: ComparisonType;
+    amount: number;
+    autoDeductCurrency: boolean;
+}> = {
     definition: {
         id: "firebot:channelcurrency",
         name: "Channel Currency",
@@ -48,7 +57,6 @@ const model = {
         </div>
     `,
     optionsController: ($scope, currencyService) => {
-
         $scope.showAutoDeduct = () => {
             return ['greater', 'equal'].includes($scope.restriction.comparison) &&
                 ['any', 'all'].includes($scope.restrictionMode);
@@ -85,17 +93,13 @@ const model = {
             comparisonDisplay = "equal to";
         }
 
-        const currency = currencyService.getCurrency(currencyId);
+        const currency = currencyService.getCurrency(currencyId) as Currency;
 
         const currencyName = currency ? currency.name : "[None Selected]";
 
         return `${currencyName} is ${comparisonDisplay} ${amount}`;
     },
     predicate: async ({ metadata }, { selectedCurrency, comparison, amount: currencyAmount }) => {
-        // we require this here to workaround circle dep issues :(
-        const currencyAccess = require("../../currency/currency-access").default;
-        const currencyManager = require("../../currency/currency-manager");
-
         const username = metadata.username;
         const userCurrency = await currencyManager.getViewerCurrencyAmount(username, selectedCurrency);
 
@@ -118,6 +122,8 @@ const model = {
             const amountText = comparison !== "equal" ? `${comparison} than ${currencyAmount}` : `${currencyAmount}`;
             throw new Error(`you need ${amountText} ${currencyName}`);
         }
+
+        return passed;
     },
     onSuccessful: async ({ metadata }, {
         selectedCurrency: currencyId,
@@ -130,9 +136,6 @@ const model = {
             return;
         }
 
-        // we require this here to workaround circle dep issues :(
-        const currencyManager = require("../../currency/currency-manager");
-
         const username = metadata.username;
 
         await currencyManager.adjustCurrencyForViewer(
@@ -143,4 +146,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export = model;

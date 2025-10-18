@@ -1,8 +1,14 @@
-"use strict";
+/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 
-const moment = require("moment");
+import moment from "moment";
+import { RestrictionType } from "../../../types/restrictions";
 
-const model = {
+const model: RestrictionType<{
+    mode: "time" | "days";
+    days: string[];
+    startTime: string;
+    endTime: string;
+}> = {
     definition: {
         id: "firebot:timeRange",
         name: "Time / Day",
@@ -36,7 +42,7 @@ const model = {
                 </div>
                 <div uib-timepicker ng-model="restriction.endTime" show-spinners="false"></div>
             </div>
-            
+
             <div ng-if="restriction.mode === 'days'">
                 <div id="roles" class="modal-subheader" style="padding: 0 0 4px 0">
                     Days
@@ -50,7 +56,7 @@ const model = {
             </div>
         </div>
     `,
-    optionsController: ($scope, viewerRolesService) => {
+    optionsController: ($scope) => {
         if (!$scope.restriction.mode) {
             $scope.restriction.mode = "time";
         }
@@ -69,15 +75,15 @@ const model = {
             'Saturday'
         ];
 
-        $scope.getAllDays = function () {
+        $scope.getAllDays = () => {
             return $scope.allDays;
         };
 
-        $scope.isDayChecked = function(day) {
+        $scope.isDayChecked = (day: string) => {
             return $scope.restriction.days.includes(day);
         };
 
-        $scope.toggleDay = function(day) {
+        $scope.toggleDay = (day: string) => {
             if ($scope.isDayChecked(day)) {
                 $scope.restriction.days = $scope.restriction.days.filter(id => id !== day);
             } else {
@@ -86,27 +92,28 @@ const model = {
         };
     },
     optionsValueDisplay: (restriction) => {
-        function formatAMPM(date) {
-            date = new Date(date);
+        function formatAMPM(dateString: string) {
+            const date = new Date(dateString);
             let hours = date.getHours();
-            let minutes = date.getMinutes();
+            let minutes: string | number = date.getMinutes();
             const ampm = hours >= 12 ? 'pm' : 'am';
             hours = hours % 12;
             hours = hours ? hours : 12; // the hour '0' should be '12'
-            minutes = minutes < 10 ? `0${minutes}` : minutes;
+
+            if (isNaN(minutes)) {
+                minutes = "00";
+            } else {
+                minutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+            }
 
             if (isNaN(hours)) {
                 hours = 12;
             }
 
-            if (isNaN(minutes)) {
-                minutes = "00";
-            }
-
             return `${hours}:${minutes} ${ampm}`;
         }
 
-        function daySorter(a, b) {
+        function daySorter(a: string, b: string) {
             const dayOrder = [
                 'Sunday',
                 'Monday',
@@ -135,19 +142,15 @@ const model = {
         }
 
         return "";
-
     },
-    /*
-      function that resolves/rejects a promise based on if the restriction criteria is met
-    */
-    predicate: async (trigger, restrictionData) => {
-        return new Promise(async (resolve, reject) => {
+    predicate: async (_, restrictionData) => {
+        return new Promise((resolve, reject) => {
 
             if (restrictionData.mode === "days") {
                 const currentDayOfWeek = new Date().toLocaleString('en-us', { weekday: 'long' });
                 const restrictionDays = restrictionData.days;
                 if (restrictionDays.includes(currentDayOfWeek)) {
-                    resolve();
+                    resolve(true);
                 } else {
                     reject(`Day must be ${restrictionDays.join(", ")}.`);
                 }
@@ -162,7 +165,7 @@ const model = {
                 }
 
                 if (time.isBetween(startTime, endTime)) {
-                    resolve();
+                    resolve(true);
                 } else {
                     reject(`Time must be between ${moment(restrictionData.startTime).format('hh:mm A')} and ${moment(restrictionData.endTime).format('hh:mm A')}.`);
                 }
@@ -171,4 +174,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export = model;

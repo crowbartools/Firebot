@@ -1,8 +1,9 @@
-"use strict";
+/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 
-const { ActiveUserHandler } = require("../../chat/active-user-handler");
+import { RestrictionType } from "../../../types/restrictions";
+import { ActiveUserHandler } from "../../chat/active-user-handler";
 
-const model = {
+const model: RestrictionType<never> = {
     definition: {
         id: "firebot:activeChatUsers",
         name: "Active Chat Users",
@@ -16,21 +17,17 @@ const model = {
             </div>
         </div>
     `,
-    /*
-      function that resolves/rejects a promise based on if the restriction critera is met
-    */
-    predicate: (triggerData) => {
+    predicate: async (triggerData) => {
         return new Promise((resolve, reject) => {
             const username = triggerData.metadata.username;
 
             if (ActiveUserHandler.userIsActive(username)) {
-                resolve();
+                resolve(true);
             } else {
                 reject("You haven't sent a chat message recently");
             }
         });
     }
-
 };
 
-module.exports = model;
+export = model;

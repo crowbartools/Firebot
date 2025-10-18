@@ -1,17 +1,17 @@
 import { JsonDB } from "node-json-db";
-import logger from "../logwrapper";
+import { RewardRedemptionMetadata, SavedChannelReward } from "../../types/channel-rewards";
+import { EffectList } from "../../types/effects";
+import { Trigger } from "../../types/triggers";
+import { CustomReward, RewardRedemption, RewardRedemptionsApprovalRequest } from "../streaming-platforms/twitch/api/resource/channel-rewards";
+import { ActiveUserHandler } from "../chat/active-user-handler";
+import { RestrictionsManager } from "../restrictions/restriction-manager";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
+import { EffectTrigger } from "../../shared/effect-constants";
 import accountAccess from "../common/account-access";
 import profileManager from "../common/profile-manager";
-import frontendCommunicator from "../common/frontend-communicator";
-import { TwitchApi } from "../streaming-platforms/twitch/api";
-import { ActiveUserHandler } from "../chat/active-user-handler";
-import { CustomReward, RewardRedemption, RewardRedemptionsApprovalRequest } from "../streaming-platforms/twitch/api/resource/channel-rewards";
-import { EffectTrigger } from "../../shared/effect-constants";
-import { RewardRedemptionMetadata, SavedChannelReward } from "../../types/channel-rewards";
-import { TriggerType } from "../common/EffectType";
-import { EffectList } from "../../types/effects";
 import effectRunner from "../common/effect-runner";
-import restrictionsManager from "../restrictions/restriction-manager";
+import frontendCommunicator from "../common/frontend-communicator";
+import logger from "../logwrapper";
 
 class ChannelRewardManager {
     channelRewards: Record<string, SavedChannelReward> = {};
@@ -353,8 +353,8 @@ class ChannelRewardManager {
         const restrictionData = savedReward.restrictionData;
         if (restrictionData) {
             logger.debug("Reward has restrictions...checking them.");
-            const triggerData = {
-                type: TriggerType.CHANNEL_REWARD,
+            const triggerData: Trigger = {
+                type: "channel_reward",
                 metadata
             };
 
@@ -363,7 +363,7 @@ class ChannelRewardManager {
                 savedReward.autoApproveRedemptions;
 
             try {
-                await restrictionsManager.runRestrictionPredicates(triggerData, savedReward.restrictionData);
+                await RestrictionsManager.runRestrictionPredicates(triggerData, savedReward.restrictionData);
                 logger.debug("Restrictions passed!");
                 if (shouldAutoApproveOrReject) {
                     logger.debug("auto accepting redemption");

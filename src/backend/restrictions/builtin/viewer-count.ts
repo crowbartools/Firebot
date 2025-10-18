@@ -1,11 +1,16 @@
-"use strict";
+/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 
-const { TwitchApi } = require("../../streaming-platforms/twitch/api");
+import { RestrictionType } from "../../../types/restrictions";
+import { TwitchApi } from "../../streaming-platforms/twitch/api";
+import accountAccess from "../../common/account-access";
+import logger from "../../logwrapper";
 
-const accountAccess = require("../../common/account-access");
-const logger = require("../../logwrapper");
+type ComparisonType = "less" | "greater" | "equal";
 
-const model = {
+const model: RestrictionType<{
+    comparison: ComparisonType;
+    amount: number;
+}> = {
     definition: {
         id: "firebot:channelViewers",
         name: "Channel Viewer Count",
@@ -47,20 +52,22 @@ const model = {
         const amount = restriction.amount;
 
         if (comparison != null) {
-            comparison = comparison.toLowerCase();
+            comparison = comparison.toLowerCase() as ComparisonType;
         } else {
             return "";
         }
 
+        let comparisionString: string;
+
         if (comparison === "less") {
-            comparison = "less than";
+            comparisionString = "less than";
         } else if (comparison === "greater") {
-            comparison = "greater than";
+            comparisionString = "greater than";
         } else if (comparison === "equal") {
-            comparison = "equal to";
+            comparisionString = "equal to";
         }
 
-        return `Viewers ${comparison} ${amount}`;
+        return `Viewers ${comparisionString} ${amount}`;
     },
     /*
       function that resolves/rejects a promise based on if the restriction criteria is met
@@ -106,7 +113,7 @@ const model = {
             }
 
             if (passed) {
-                resolve();
+                resolve(true);
             } else {
                 reject(`Viewer count must be ${comparisonText} ${numViewers}.`);
             }
@@ -114,4 +121,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export = model;

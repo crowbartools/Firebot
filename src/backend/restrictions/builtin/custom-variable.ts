@@ -1,6 +1,12 @@
-"use strict";
+/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 
-const model = {
+import { RestrictionType } from "../../../types/restrictions";
+import customVariableManager from "../../common/custom-variable-manager";
+
+const model: RestrictionType<{
+    name: string;
+    value: string;
+}> = {
     definition: {
         id: "firebot:customvariable",
         name: "Custom Variable",
@@ -30,20 +36,15 @@ const model = {
 
         return `${name} is ${value}`;
     },
-    /*
-      function that resolves/rejects a promise based on if the restriction criteria is met
-    */
     predicate: (_, restrictionData) => {
-        return new Promise(async (resolve, reject) => {
-            const customVariableManager = require("../../common/custom-variable-manager");
-
+        return new Promise((resolve, reject) => {
             let passed = false;
             const cachedVariable = customVariableManager.getCustomVariable(restrictionData.name);
 
             let value = restrictionData.value;
             try {
                 value = JSON.parse(value);
-            } catch (error) {
+            } catch {
                 //fail silently
             }
 
@@ -53,7 +54,7 @@ const model = {
             }
 
             if (passed) {
-                resolve();
+                resolve(true);
             } else {
                 reject("A flag is not set to the correct value");
             }
@@ -61,4 +62,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export = model;

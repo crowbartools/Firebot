@@ -1,17 +1,17 @@
 import { CommandDefinition, SystemCommandDefinition, UserCommand } from "../../../types/commands";
 import { FirebotChatMessage } from "../../../types/chat";
-import { TriggerType } from "../../common/EffectType";
+import { Trigger } from "../../../types/triggers";
 
-import logger from "../../logwrapper";
-import { escapeRegExp, humanizeTime } from "../../utils";
+import { RestrictionsManager } from "../../restrictions/restriction-manager";
+import { SettingsManager } from "../../common/settings-manager";
+import { TwitchApi } from "../../streaming-platforms/twitch/api";
 import accountAccess from "../../common/account-access";
-import frontendCommunicator from "../../common/frontend-communicator";
-import restrictionsManager from "../../restrictions/restriction-manager";
 import commandManager from "./command-manager";
 import commandCooldownManager from "./command-cooldown-manager";
-import { TwitchApi } from "../../streaming-platforms/twitch/api";
 import commandRunner from "./command-runner";
-import { SettingsManager } from "../../common/settings-manager";
+import { escapeRegExp, humanizeTime } from "../../utils";
+import frontendCommunicator from "../../common/frontend-communicator";
+import logger from "../../logwrapper";
 
 const DEFAULT_COOLDOWN_MESSAGE = "This command is still on cooldown for: {timeLeft}";
 const DEFAULT_RESTRICTION_MESSAGE = "Sorry, you cannot use this command because: {reason}";
@@ -117,8 +117,8 @@ class CommandHandler {
 
         if (restrictionData) {
             logger.debug("Command has restrictions...checking them.");
-            const triggerData = {
-                type: TriggerType.COMMAND,
+            const triggerData: Trigger = {
+                type: "command",
                 metadata: {
                     username: commandSender,
                     userId: firebotChatMessage.userId,
@@ -130,7 +130,7 @@ class CommandHandler {
                 }
             };
             try {
-                await restrictionsManager.runRestrictionPredicates(triggerData, restrictionData, restrictionsAreInherited);
+                await RestrictionsManager.runRestrictionPredicates(triggerData, restrictionData, restrictionsAreInherited);
                 logger.debug("Restrictions passed!");
                 return true;
             } catch (restrictionReason) {
