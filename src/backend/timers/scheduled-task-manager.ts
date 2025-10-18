@@ -193,6 +193,6 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
     }
 }
 
-const scheduledTaskManager = new ScheduledTaskManager();
+const manager = new ScheduledTaskManager();
 
-export = scheduledTaskManager;
+export { manager as ScheduledTaskManager };
