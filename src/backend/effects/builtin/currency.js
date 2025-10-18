@@ -4,7 +4,7 @@ const currencyAccess = require("../../currency/currency-access").default;
 const currencyManager = require("../../currency/currency-manager");
 const logger = require("../../logwrapper");
 const { EffectCategory } = require('../../../shared/effect-constants');
-const { populateStringWithTriggerData } = require("../../utility");
+const { ReplaceVariableManager } = require("../../variables/replace-variable-manager");
 const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 
 /**
@@ -329,7 +329,7 @@ const currency = {
 
                     // We need to manually evaluate the message here since we skip it in the auto variable replacement step.
                     // This is because we don't want to replace variables for currency amount before it's been updated.
-                    const evaluatedMessage = await populateStringWithTriggerData(
+                    const evaluatedMessage = await ReplaceVariableManager.populateStringWithTriggerData(
                         message,
                         {
                             ...event.trigger,

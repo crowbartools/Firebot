@@ -2,9 +2,9 @@
 
 const { SettingsManager } = require("../settings-manager");
 const { ResourceTokenManager } = require("../../resource-token-manager");
-const util = require("../../utility");
 const { getRandomInt } = require("../../utils");
 const logger = require("../../logwrapper");
+const { ReplaceVariableManager } = require("../../variables/replace-variable-manager");
 const webServer = require("../../../server/http-server-manager");
 const frontendCommunicator = require("../frontend-communicator");
 
@@ -110,7 +110,7 @@ async function imageProcessor(effect, trigger) {
         data.resourceToken = resourceToken;
     } else {
         logger.debug("Populating show image effect url with variables");
-        data.url = await util.populateStringWithTriggerData(data.url, trigger);
+        data.url = await ReplaceVariableManager.populateStringWithTriggerData(data.url, trigger);
     }
 
     webServer.sendToOverlay("image", data);
@@ -187,7 +187,7 @@ async function showText(effect, trigger) {
     };
 
     logger.debug("Populating show text effect text with variables");
-    dto.text = await util.populateStringWithTriggerData(dto.text, trigger);
+    dto.text = await ReplaceVariableManager.populateStringWithTriggerData(dto.text, trigger);
 
     const position = dto.position;
     if (position === "Random") {

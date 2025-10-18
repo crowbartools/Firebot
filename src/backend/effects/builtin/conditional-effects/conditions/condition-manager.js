@@ -1,9 +1,9 @@
 "use strict";
 
-const logger = require("../../../../logwrapper");
 const EventEmitter = require("events");
+const { ReplaceVariableManager } = require("../../../../variables/replace-variable-manager");
 const frontendCommunicator = require("../../../../common/frontend-communicator");
-const util = require("../../../../utility");
+const logger = require("../../../../logwrapper");
 
 class ConditionManager extends EventEmitter {
     constructor() {
@@ -53,7 +53,7 @@ class ConditionManager extends EventEmitter {
 
                         if (conditionType.leftSideValueType === 'text') {
                             try {
-                                condition.leftSideValue = await util.populateStringWithTriggerData(condition.leftSideValue, triggerData);
+                                condition.leftSideValue = await ReplaceVariableManager.populateStringWithTriggerData(condition.leftSideValue, triggerData);
                             } catch (err) {
                                 logger.warn("Unable to process leftSideValue replace variables for condition", err);
                             }
@@ -61,7 +61,7 @@ class ConditionManager extends EventEmitter {
 
                         if (conditionType.rightSideValueType === 'text') {
                             try {
-                                condition.rightSideValue = await util.populateStringWithTriggerData(condition.rightSideValue, triggerData);
+                                condition.rightSideValue = await ReplaceVariableManager.populateStringWithTriggerData(condition.rightSideValue, triggerData);
                             } catch (err) {
                                 logger.warn("Unable to process rightSideValue replace variables for condition", err);
                             }

@@ -59,5 +59,9 @@ export {
 } from "./stringify";
 
 export {
+    getEventIdFromTriggerData
+} from "./trigger-data";
+
+export {
     getUrlRegex
 } from "./url";

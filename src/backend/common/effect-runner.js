@@ -1,17 +1,17 @@
 'use strict';
+const { v4: uuid } = require("uuid");
 const logger = require('../logwrapper');
 const effectManager = require("../effects/effectManager");
 const { EffectTrigger } = require("../../shared/effect-constants");
 const accountAccess = require('./account-access');
 const { ReplaceVariableManager } = require("../variables/replace-variable-manager");
 const webServer = require("../../server/http-server-manager");
-const util = require("../utility");
-const { v4: uuid } = require("uuid");
 const {
     addEffectAbortController,
     removeEffectAbortController
 } = require("./effect-abort-helpers");
 const frontendCommunicator = require('./frontend-communicator');
+const { getEventIdFromTriggerData } = require("../utils");
 
 const SKIP_VARIABLE_PROPERTIES = ["list", "leftSideValue", "rightSideValue", "effectLabel", 'effectListLabel'];
 
@@ -37,7 +37,7 @@ const findAndReplaceVariables = async (data, trigger, effectOutputs) => {
 
         if (value && typeof value === "string") {
             let replacedValue = value;
-            const triggerId = util.getTriggerIdFromTriggerData(trigger);
+            const triggerId = getEventIdFromTriggerData(trigger);
             try {
                 replacedValue = await ReplaceVariableManager.evaluateText(value, {
                     ...trigger,

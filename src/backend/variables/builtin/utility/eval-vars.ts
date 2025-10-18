@@ -1,6 +1,6 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import utils from "../../../utility";
+import { ReplaceVariableManager } from "../../replace-variable-manager";
 
 const model : ReplaceVariable = {
     definition: {
@@ -11,7 +11,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async (trigger, text = "") => {
-        return await utils.populateStringWithTriggerData(text as string, trigger);
+        return await ReplaceVariableManager.populateStringWithTriggerData(text as string, trigger);
     }
 };
 

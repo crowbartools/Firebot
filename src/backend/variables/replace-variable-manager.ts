@@ -13,7 +13,7 @@ import macroManager from "./macro-manager";
 import { SettingsManager } from "../common/settings-manager";
 import { getCustomVariable } from "../common/custom-variable-manager";
 import frontendCommunicator from "../common/frontend-communicator";
-import { getTriggerIdFromTriggerData } from "../utility";
+import { getEventIdFromTriggerData } from "../utils";
 import logger from "../logwrapper";
 
 type Evaluator = {
@@ -223,13 +223,23 @@ class ReplaceVariableManager extends EventEmitter {
         }, new Map<string, RegisteredVariable>());
     }
 
+    async populateStringWithTriggerData(string = "", trigger: Trigger) {
+        if (trigger == null || string === "") {
+            return string;
+        }
+
+        const triggerId = getEventIdFromTriggerData(trigger);
+
+        return await this.evaluateText(string, trigger, { type: trigger.type, id: triggerId });
+    };
+
     async evaluateText(
         input: string,
         metadata: Record<string, unknown>,
         trigger: TriggerWithId,
         onlyValidate = false
     ): Promise<string> {
-        if (input.includes("$")) {
+        if (input.toString().includes("$")) {
             // eslint-disable-next-line
             return await expressionish({
                 handlers: this.variableAndAliasHandlers,
@@ -255,7 +265,7 @@ class ReplaceVariableManager extends EventEmitter {
             if (value && typeof value === "string") {
                 if (value.includes("$")) {
                     let replacedValue = value;
-                    const triggerId = getTriggerIdFromTriggerData(trigger);
+                    const triggerId = getEventIdFromTriggerData(trigger);
                     try {
                         replacedValue = await this.evaluateText(value, trigger, { type: trigger.type, id: triggerId });
                     } catch (err) {
