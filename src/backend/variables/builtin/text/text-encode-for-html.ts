@@ -2,7 +2,7 @@ import { encode } from 'he';
 
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import { convertToString } from '../../../utility';
+import { stringify } from '../../../utils';
 
 const model : ReplaceVariable = {
     definition: {
@@ -22,10 +22,8 @@ const model : ReplaceVariable = {
         trigger: Trigger,
         text: unknown
     ) : string => {
-        return encode(convertToString(text));
+        return encode(stringify(text));
     }
 };
 
 export default model;
-
-

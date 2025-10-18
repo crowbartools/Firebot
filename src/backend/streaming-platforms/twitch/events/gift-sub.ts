@@ -3,17 +3,17 @@ import { DateTime } from "luxon";
 import { SettingsManager } from "../../../common/settings-manager";
 import eventManager from "../../../events/EventManager";
 import logger from "../../../logwrapper";
-import { wait } from "../../../utility";
+import { wait } from "../../../utils";
 
 const communitySubCache = new NodeCache({ stdTTL: 10, checkperiod: 2 });
 
 interface CommunityGiftSubRecipient {
-    gifteeUsername: string
+    gifteeUsername: string;
 }
 
 interface CommunityGiftSubCache {
-    subCount: number,
-    giftReceivers: CommunityGiftSubRecipient[]
+    subCount: number;
+    giftReceivers: CommunityGiftSubRecipient[];
 }
 
 export function triggerCommunitySubGift(
@@ -22,7 +22,7 @@ export function triggerCommunitySubGift(
     subCount: number
 ): void {
     logger.debug(`Received ${subCount} community gift subs from ${gifterDisplayName} (ID: ${communityGiftId}) at ${DateTime.now().toFormat("HH:mm:ss:SSS")}`);
-    communitySubCache.set<CommunityGiftSubCache>(communityGiftId, {subCount, giftReceivers: []});
+    communitySubCache.set<CommunityGiftSubCache>(communityGiftId, { subCount, giftReceivers: [] });
 }
 
 export async function triggerSubGift(
@@ -59,7 +59,7 @@ export async function triggerSubGift(
             giftReceivers.push({ gifteeUsername: gifteeDisplayName });
 
             if (--communityCount > 0) {
-                communitySubCache.set<CommunityGiftSubCache>(communityGiftId, {subCount: communityCount, giftReceivers: giftReceivers});
+                communitySubCache.set<CommunityGiftSubCache>(communityGiftId, { subCount: communityCount, giftReceivers: giftReceivers });
             } else {
                 eventManager.triggerEvent("twitch", "community-subs-gifted", {
                     username: gifterUserName,

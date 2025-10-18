@@ -1,7 +1,7 @@
 "use strict";
 
 
-const util = require("../../../utility");
+const { commafy, humanizeTime } = require("../../../utils");
 const { TwitchApi } = require("../../../streaming-platforms/twitch/api");
 const commandManager = require("../../../chat/commands/command-manager");
 const gameManager = require("../../game-manager");
@@ -70,7 +70,7 @@ const heistCommand = {
         // see if the heist is on cooldown before doing anything else
         if (heistRunner.cooldownExpireTime && moment().isBefore(heistRunner.cooldownExpireTime)) {
             if (heistSettings.settings.generalMessages.onCooldown) {
-                const timeRemainingDisplay = util.secondsForHumans(Math.abs(moment().diff(heistRunner.cooldownExpireTime, 'seconds')));
+                const timeRemainingDisplay = humanizeTime(Math.abs(moment().diff(heistRunner.cooldownExpireTime, 'seconds')));
                 const cooldownMsg = heistSettings.settings.generalMessages.onCooldown
                     .replaceAll("{cooldown}", timeRemainingDisplay);
 
@@ -238,7 +238,7 @@ const heistCommand = {
 
         const onJoinMessage = heistSettings.settings.entryMessages.onJoin
             .replaceAll("{user}", user.displayName)
-            .replaceAll("{wager}", util.commafy(wagerAmount))
+            .replaceAll("{wager}", commafy(wagerAmount))
             .replaceAll("{currency}", currency.name);
 
         if (onJoinMessage) {

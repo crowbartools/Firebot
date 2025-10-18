@@ -1,6 +1,6 @@
 "use strict";
 const { EventEmitter } = require("events");
-const util = require("../utility");
+const { wait } = require("../utils");
 const logger = require("../logwrapper");
 const frontendCommunicator = require("./frontend-communicator");
 const { SettingsManager } = require("./settings-manager");
@@ -186,7 +186,7 @@ class ConnectionManager extends EventEmitter {
 
             try {
                 for (const service of services) {
-                    await util.wait(175);
+                    await wait(175);
                     await waitForServiceConnectDisconnect(service.id, service.action);
                 }
             } catch (error) {
@@ -198,7 +198,7 @@ class ConnectionManager extends EventEmitter {
 
         currentlyWaitingService = null;
 
-        await util.wait(250);
+        await wait(250);
         frontendCommunicator.send("connect-services-complete");
     }
 }

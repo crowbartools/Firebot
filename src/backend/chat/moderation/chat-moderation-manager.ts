@@ -5,10 +5,10 @@ import profileManager from "../../common/profile-manager";
 import frontendCommunicator from "../../common/frontend-communicator";
 import rolesManager from "../../roles/custom-roles-manager";
 import permitCommand from "./url-permit-command";
-import utils from "../../utility";
 import { FirebotChatMessage } from "../../../types/chat";
 import viewerDatabase from '../../viewers/viewer-database';
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
+import { getUrlRegex } from "../../utils";
 
 export interface ModerationTerm {
     text: string;
@@ -650,7 +650,7 @@ class ChatModerationManager {
         ) {
             let shouldDeleteMessage = false;
             const message = chatMessage.rawText;
-            const regex = utils.getUrlRegex();
+            const regex = getUrlRegex();
 
             if (regex.test(message)) {
                 logger.debug("URL moderation: Found URL in message");

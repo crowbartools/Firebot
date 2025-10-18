@@ -8,7 +8,7 @@ const logger = require("../../logwrapper");
 const path = require("path");
 const frontendCommunicator = require("../../common/frontend-communicator");
 const { EffectCategory } = require('../../../shared/effect-constants');
-const { wait, convertByteArrayJsonToByteArray } = require("../../utility");
+const { wait, convertByteArrayJsonToByteArray } = require("../../utils");
 
 const playSound = {
     definition: {

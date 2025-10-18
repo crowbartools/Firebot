@@ -1,6 +1,6 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType } from "../../../../shared/variable-constants";
-import util from "../../../utility";
+import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 
 const model : ReplaceVariable = {
     definition: {
@@ -9,7 +9,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async () => {
-        return await util.getUptime();
+        return await TwitchApi.streams.getStreamUptime();
     }
 };
 

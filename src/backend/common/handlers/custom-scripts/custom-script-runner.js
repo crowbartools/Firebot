@@ -2,7 +2,7 @@
 const { shell } = require("electron");
 const { v4: uuid } = require("uuid");
 const logger = require("../../../logwrapper");
-const utils = require("../../../utility");
+const { wait } = require("../../../utils");
 const profileManager = require("../../profile-manager");
 const { getScriptPath, buildRunRequest, mapParameters } = require("./custom-script-helpers");
 const effectRunner = require("../../effect-runner.js");
@@ -85,7 +85,7 @@ async function executeScript(scriptData, trigger, isStartupScript = false) {
     // wait for script to finish for a maximum of 10 secs
     let response;
     try {
-        response = await Promise.race([Promise.resolve(customScript.run(runRequest)), utils.wait(10 * 1000)]);
+        response = await Promise.race([Promise.resolve(customScript.run(runRequest)), wait(10 * 1000)]);
     } catch (error) {
         logger.error(`Error while running script '${scriptName}'`, error);
         return;

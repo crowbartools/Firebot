@@ -3,8 +3,8 @@ const moment = require("moment");
 const gameManager = require("../../game-manager");
 const commandManager = require("../../../chat/commands/command-manager");
 const currencyManager = require("../../../currency/currency-manager");
-const util = require("../../../utility");
 const { TwitchApi } = require("../../../streaming-platforms/twitch/api");
+const { commafy, getRandomInt, wait } = require("../../../utils");
 
 /**
  * @typedef HeistUser
@@ -57,12 +57,12 @@ async function runHeist() {
     }
 
     // wait a few secs for suspense
-    await util.wait(7 * 1000);
+    await wait(7 * 1000);
 
     const survivers = [];
 
     for (const user of usersInHeist) {
-        const successful = util.getRandomInt(1, 100) <= user.successPercentage;
+        const successful = getRandomInt(1, 100) <= user.successPercentage;
         if (successful) {
             survivers.push(user);
         }
@@ -98,7 +98,7 @@ async function runHeist() {
         ];
     }
 
-    const randomIndex = util.getRandomInt(0, messages.length - 1);
+    const randomIndex = getRandomInt(0, messages.length - 1);
     let outcomeMessage = messages[randomIndex];
 
     if (usersInHeist.length === 1) {
@@ -114,7 +114,7 @@ async function runHeist() {
     let winningsString;
     if (percentSurvived > 0) {
         winningsString = survivers
-            .map(s => `${s.userDisplayName} (${util.commafy(s.winnings)})`)
+            .map(s => `${s.userDisplayName} (${commafy(s.winnings)})`)
             .join(", ");
     } else {
         winningsString = "None";

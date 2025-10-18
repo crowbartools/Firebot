@@ -5,7 +5,7 @@ import { v4 as uuid } from "uuid";
 
 import { CommandDefinition, SystemCommand, SystemCommandDefinition } from "../../../types/commands";
 import logger from "../../logwrapper";
-import util from "../../utility";
+import { deepClone } from "../../utils";
 import profileManager from "../../common/profile-manager";
 import frontendCommunicator from "../../common/frontend-communicator";
 import accountAccess from "../../common/account-access";
@@ -19,7 +19,7 @@ type Events = {
 };
 
 interface SystemCommandOverrides {
-    [overrideId: string]: SystemCommandDefinition
+    [overrideId: string]: SystemCommandDefinition;
 }
 
 interface CommandCache {
@@ -108,7 +108,7 @@ class CommandManager extends TypedEmitter<Events> {
      * @returns The cached `SystemCommand` object that matches the given ID, or `null` if there is no matching system command
      */
     getSystemCommandById(id: string): SystemCommand {
-        return util.deepClone(this._registeredSysCommands.find(c => c.definition.id === id));
+        return deepClone(this._registeredSysCommands.find(c => c.definition.id === id));
     }
 
     /**
@@ -139,7 +139,7 @@ class CommandManager extends TypedEmitter<Events> {
      * @returns An array of all cached `SystemCommand` objects
      */
     getSystemCommands(): SystemCommand[] {
-        return util.deepClone(this._registeredSysCommands.map((c) => {
+        return deepClone(this._registeredSysCommands.map((c) => {
             c.definition.type = "system";
             return c;
         }));
@@ -207,7 +207,7 @@ class CommandManager extends TypedEmitter<Events> {
             return c.definition;
         });
 
-        return util.deepClone(cmdDefs);
+        return deepClone(cmdDefs);
     }
 
     /**
@@ -217,7 +217,7 @@ class CommandManager extends TypedEmitter<Events> {
      * @returns The cached `CommandDefinition` object for the given custom command
      */
     getCustomCommandById(id: string): CommandDefinition {
-        return util.deepClone(this._commandCache.customCommands.find(c => c.id === id));
+        return deepClone(this._commandCache.customCommands.find(c => c.id === id));
     }
 
     /**
@@ -227,7 +227,7 @@ class CommandManager extends TypedEmitter<Events> {
      */
     getAllCustomCommands(): CommandDefinition[] {
         // Deep copy so we don't pollute the cache
-        return util.deepClone(this._commandCache.customCommands);
+        return deepClone(this._commandCache.customCommands);
     }
 
     /**
@@ -296,7 +296,7 @@ class CommandManager extends TypedEmitter<Events> {
             if (fireEvent) {
                 this.emit("updated-item", command);
             }
-        } catch (err) { }
+        } catch { }
 
         frontendCommunicator.send("system-command-override-saved", command);
     }
@@ -317,7 +317,7 @@ class CommandManager extends TypedEmitter<Events> {
             commandDb.delete(`/systemCommandOverrides/${id}`);
             const command = this.getSystemCommandById(id);
             this.emit("updated-item", command);
-        } catch (err) {}
+        } catch {}
 
         frontendCommunicator.send("system-commands-updated");
     }
@@ -360,7 +360,7 @@ class CommandManager extends TypedEmitter<Events> {
         try {
             commandDb.push(`/customCommands/${command.id}`, command);
             this.emit(eventType, command);
-        } catch (err) {}
+        } catch {}
 
         const existingCommandIndex = this._commandCache.customCommands.findIndex(c => c.id === command.id);
         if (existingCommandIndex === -1) {
@@ -402,7 +402,7 @@ class CommandManager extends TypedEmitter<Events> {
                 return acc;
             }, {});
             commandDb.push("/customCommands", customCommandsObj);
-        } catch (err) {}
+        } catch {}
 
         this._commandCache.customCommands = commands;
 

@@ -4,7 +4,7 @@ import currencyAccess, { Currency } from "./currency-access";
 import currencyManager from "./currency-manager";
 import commandManager from "../chat/commands/command-manager";
 import logger from "../logwrapper";
-import util from "../utility";
+import { commafy } from "../utils";
 
 type CurrencyCommandRefreshRequestAction = "create" | "update" | "delete";
 
@@ -256,7 +256,7 @@ class CurrencyCommandManager {
                         const balanceMessage = commandOptions.currencyBalanceMessageTemplate
                             .replaceAll("{user}", event.userCommand.commandSender)
                             .replaceAll("{currency}", currencyName)
-                            .replaceAll("{amount}", util.commafy(amount));
+                            .replaceAll("{amount}", commafy(amount));
 
                         if (commandOptions.whisperCurrencyBalanceMessage) {
                             const user = await TwitchApi.users.getUserByName(event.userCommand.commandSender);
@@ -285,7 +285,7 @@ class CurrencyCommandManager {
                             const addMessageTemplate = commandOptions.addMessageTemplate
                                 .replaceAll("{user}", username)
                                 .replaceAll("{currency}", currencyName)
-                                .replaceAll("{amount}", util.commafy(currencyAdjust));
+                                .replaceAll("{amount}", commafy(currencyAdjust));
                             await TwitchApi.chat.sendChatMessage(addMessageTemplate, null, true);
                         } else {
                             // Error removing currency.
@@ -306,7 +306,7 @@ class CurrencyCommandManager {
                             const removeMessageTemplate = commandOptions.removeMessageTemplate
                                 .replaceAll("{user}", username)
                                 .replaceAll("{currency}", currencyName)
-                                .replaceAll("{amount}", util.commafy(parseInt(args[2])));
+                                .replaceAll("{amount}", commafy(parseInt(args[2])));
                             await TwitchApi.chat.sendChatMessage(removeMessageTemplate, null, true);
                         } else {
                             // Error removing currency.
@@ -328,7 +328,7 @@ class CurrencyCommandManager {
                             const setMessageTemplate = commandOptions.setMessageTemplate
                                 .replaceAll("{user}", username)
                                 .replaceAll("{currency}", currencyName)
-                                .replaceAll("{amount}", util.commafy(currencyAdjust));
+                                .replaceAll("{amount}", commafy(currencyAdjust));
                             await TwitchApi.chat.sendChatMessage(setMessageTemplate, null, true);
                         } else {
                             // Error removing currency.
@@ -384,10 +384,10 @@ class CurrencyCommandManager {
                         const adjustCurrencySuccess = await currencyManager.adjustCurrencyForViewer(username, currencyId, currencyAdjust);
                         if (adjustCurrencySuccess) {
                             // Subtract currency from command user now.
-                            const status = currencyManager.adjustCurrencyForViewer(event.userCommand.commandSender, currencyId, currencyAdjustNeg);
+                            const status = await currencyManager.adjustCurrencyForViewer(event.userCommand.commandSender, currencyId, currencyAdjustNeg);
 
                             if (status) {
-                                await TwitchApi.chat.sendChatMessage(`Gave ${util.commafy(currencyAdjust)} ${currencyName} to ${username}.`, null, true);
+                                await TwitchApi.chat.sendChatMessage(`Gave ${commafy(currencyAdjust)} ${currencyName} to ${username}.`, null, true);
                             } else {
                                 // Error removing currency.
                                 logger.error(`Error removing currency during give transaction for user (${username}) via chat command. Currency: ${currencyId}. Value: ${currencyAdjust}`);
@@ -413,11 +413,11 @@ class CurrencyCommandManager {
                             await TwitchApi.chat.sendChatMessage(`Error: Could not add currency to all online users.`, null, true);
                             return;
                         }
-                        currencyManager.addCurrencyToOnlineViewers(currencyId, currencyAdjust, true);
+                        void currencyManager.addCurrencyToOnlineViewers(currencyId, currencyAdjust, true);
 
                         const addAllMessageTemplate = commandOptions.addAllMessageTemplate
                             .replaceAll("{currency}", currencyName)
-                            .replaceAll("{amount}", util.commafy(currencyAdjust));
+                            .replaceAll("{amount}", commafy(currencyAdjust));
                         await TwitchApi.chat.sendChatMessage(addAllMessageTemplate, null, true);
 
                         break;
@@ -428,11 +428,11 @@ class CurrencyCommandManager {
                             await TwitchApi.chat.sendChatMessage(`Error: Could not remove currency from all online users.`, null, true);
                             return;
                         }
-                        currencyManager.addCurrencyToOnlineViewers(currencyId, currencyAdjust, true);
+                        void currencyManager.addCurrencyToOnlineViewers(currencyId, currencyAdjust, true);
 
                         const removeAllMessageTemplate = commandOptions.removeAllMessageTemplate
                             .replaceAll("{currency}", currencyName)
-                            .replaceAll("{amount}", util.commafy(parseInt(args[1])));
+                            .replaceAll("{amount}", commafy(parseInt(args[1])));
                         await TwitchApi.chat.sendChatMessage(removeAllMessageTemplate, null, true);
 
                         break;
@@ -445,7 +445,7 @@ class CurrencyCommandManager {
                                 const balanceMessage = commandOptions.currencyBalanceMessageTemplate
                                     .replaceAll("{user}", username)
                                     .replaceAll("{currency}", currencyName)
-                                    .replaceAll("{amount}", util.commafy(amount));
+                                    .replaceAll("{amount}", commafy(amount));
 
                                 if (commandOptions.whisperCurrencyBalanceMessage) {
                                     const user = await TwitchApi.users.getUserByName(username);
@@ -462,7 +462,7 @@ class CurrencyCommandManager {
                                 const balanceMessage = commandOptions.currencyBalanceMessageTemplate
                                     .replaceAll("{user}", event.userCommand.commandSender)
                                     .replaceAll("{currency}", currencyName)
-                                    .replaceAll("{amount}", util.commafy(amount));
+                                    .replaceAll("{amount}", commafy(amount));
 
                                 if (commandOptions.whisperCurrencyBalanceMessage) {
                                     const user = await TwitchApi.users.getUserByName(event.userCommand.commandSender);

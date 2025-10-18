@@ -1,6 +1,6 @@
 "use strict";
 
-const util = require("../../../utility");
+const { humanizeTime } = require("../../../utils");
 const commandManager = require("../../../chat/commands/command-manager");
 const gameManager = require("../../game-manager");
 const currencyAccess = require("../../../currency/currency-access").default;
@@ -196,7 +196,7 @@ const bidCommand = {
 
             const cooldownExpireTime = cooldownCache.get(username);
             if (cooldownExpireTime && moment().isBefore(cooldownExpireTime)) {
-                const timeRemainingDisplay = util.secondsForHumans(Math.abs(moment().diff(cooldownExpireTime, 'seconds')));
+                const timeRemainingDisplay = humanizeTime(Math.abs(moment().diff(cooldownExpireTime, 'seconds')));
                 await TwitchApi.chat.sendChatMessage(
                     `You placed a bid recently! Please wait ${timeRemainingDisplay} before placing another bid.`,
                     chatMessage.id,

@@ -1,11 +1,11 @@
 "use strict";
 
-const logger = require("../logwrapper");
 const EventEmitter = require("events");
-const util = require("../utility");
 const eventsRouter = require("./events-router");
 const eventsAccess = require("./events-access");
 const frontendCommunicator = require("../common/frontend-communicator");
+const { flattenArray } = require("../utils");
+const logger = require("../logwrapper");
 
 /**@extends NodeJS.EventEmitter */
 class EventManager extends EventEmitter {
@@ -72,7 +72,7 @@ class EventManager extends EventEmitter {
     getAllEvents() {
         const eventArrays = this._registeredEventSources
             .map(es => es.events);
-        const events = util.flattenArray(eventArrays);
+        const events = flattenArray(eventArrays);
 
         return events;
     }

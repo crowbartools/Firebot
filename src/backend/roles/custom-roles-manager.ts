@@ -2,7 +2,7 @@ import { JsonDB } from "node-json-db";
 import path from "path";
 
 import logger from "../logwrapper";
-import util from "../utility";
+import { findIndexIgnoreCase } from "../utils";
 import accountAccess from "../common/account-access";
 import profileManager from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
@@ -282,7 +282,7 @@ class CustomRolesManager extends TypedEmitter<Events> {
 
     getRoleByName(name: string): CustomRole {
         const roles = this.getCustomRoles();
-        const roleIndex = util.findIndexIgnoreCase(roles.map(r => r.name), name);
+        const roleIndex = findIndexIgnoreCase(roles.map(r => r.name), name);
         return roleIndex < 0 ? null : roles[roleIndex];
     }
 

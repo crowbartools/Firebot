@@ -9,7 +9,7 @@ import {
 import { ApiResourceBase } from "./api-resource-base";
 import logger from "../../../../logwrapper";
 import accountAccess from "../../../../common/account-access";
-import { chunkArray } from "../../../../utils/chunkArray";
+import { chunkArray } from "../../../../utils/arrays";
 
 export interface ImageSet {
     url1x: string;

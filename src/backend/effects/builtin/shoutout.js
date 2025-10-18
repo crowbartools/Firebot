@@ -6,7 +6,7 @@ const webServer = require("../../../server/http-server-manager");
 const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 const { EffectCategory } = require('../../../shared/effect-constants');
 const logger = require("../../logwrapper");
-const { wait } = require("../../utility");
+const { wait } = require("../../utils");
 
 const shoutoutStyles = `
     .firebot-shoutout-wrapper {

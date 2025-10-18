@@ -13,7 +13,7 @@ import eventManager from "../events/EventManager";
 import { BackupManager } from "../backup-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import rankManager from "../ranks/rank-manager";
-import util, { wait } from "../utility";
+import { commafy, wait } from "../utils";
 import { Rank, RankLadder } from "../../types/ranks";
 import roleHelpers from "../roles/role-helpers";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
@@ -331,7 +331,7 @@ class ViewerDatabase extends EventEmitter {
 
             if (affectedDocuments != null) {
                 const updateObj = {};
-                updateObj[fieldName] = util.commafy(affectedDocuments[fieldName] as number);
+                updateObj[fieldName] = commafy(affectedDocuments[fieldName] as number);
             }
         } catch (error) {
             logger.error("incrementDbField error", error);

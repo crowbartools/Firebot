@@ -7,7 +7,7 @@ import frontendCommunicator from "../../../common/frontend-communicator";
 import { SettingsManager } from "../../../common/settings-manager";
 import customRolesManager from "../../../roles/custom-roles-manager";
 import teamRolesManager from "../../../roles/team-roles-manager";
-import util from "../../../utility";
+import { capitalize } from "../../../utils";
 import commandManager from "../command-manager";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 
@@ -678,7 +678,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                 frontendCommunicator.send("custom-commands-updated");
 
                 await TwitchApi.chat.sendChatMessage(
-                    `${util.capitalize(triggeredArg)}d "${trigger}"`, null, true
+                    `${capitalize(triggeredArg)}d "${trigger}"`, null, true
                 );
                 break;
             }

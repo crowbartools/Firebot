@@ -3,11 +3,11 @@ import { TypedEmitter } from "tiny-typed-emitter";
 import frontendCommunicator from "../common/frontend-communicator";
 import overlayWidgetConfigManager from "./overlay-widget-config-manager";
 import websocketServerManager from "../../server/websocket-server-manager";
-import { wait } from "../utility";
+import { wait } from "../utils";
 import logger from "../logwrapper";
 
 type Events = {
-    "overlay-widget-type-registered": (overlayWidgetType: OverlayWidgetType) => void
+    "overlay-widget-type-registered": (overlayWidgetType: OverlayWidgetType) => void;
 };
 
 class OverlayWidgetsManager extends TypedEmitter<Events> {
@@ -47,7 +47,7 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
             }));
     }
 
-    async sendWidgetEventToOverlay<EventName extends WidgetOverlayEvent["name"]>(eventName: EventName, widgetConfig: OverlayWidgetConfig, messageInfo: EventName extends "message" ? { messageName: string; messageData?: unknown } : undefined = undefined, previewMode = false) {
+    async sendWidgetEventToOverlay<EventName extends WidgetOverlayEvent["name"]>(eventName: EventName, widgetConfig: OverlayWidgetConfig, messageInfo: EventName extends "message" ? { messageName: string, messageData?: unknown } : undefined = undefined, previewMode = false) {
         const widgetType = this.getOverlayWidgetType(widgetConfig.type);
         if (!widgetType) {
             logger.warn(`Overlay widget type with ID '${widgetConfig.type}' not found for widget ID '${widgetConfig.id}'.`);
@@ -141,7 +141,7 @@ let livePreviewWidgetConfig: OverlayWidgetConfig | null = null;
 
 const removeCurrentLivePreview = async () => {
     if (livePreviewWidgetConfig) {
-        manager.sendWidgetEventToOverlay("remove", livePreviewWidgetConfig, undefined, true);
+        void manager.sendWidgetEventToOverlay("remove", livePreviewWidgetConfig, undefined, true);
         livePreviewWidgetConfig = null;
         await wait(100);
     }
@@ -258,7 +258,7 @@ frontendCommunicator.onAsync("overlay-widgets:stop-live-preview", async (config:
     }
 });
 
-frontendCommunicator.on("overlay-widgets:trigger-ui-action", async (data: { widgetId: string; actionId: string }) => {
+frontendCommunicator.on("overlay-widgets:trigger-ui-action", async (data: { widgetId: string, actionId: string }) => {
     const config = overlayWidgetConfigManager.getItem(data.widgetId);
     if (!config) {
         logger.warn(`Overlay widget config with ID '${data.widgetId}' not found for UI action.`);

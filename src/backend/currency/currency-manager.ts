@@ -3,7 +3,7 @@ import { DateTime, Duration } from "luxon";
 import { FirebotViewer } from "../../types/viewers";
 
 import logger from "../logwrapper";
-import util from "../utility";
+import { commafy } from "../utils";
 import currencyAccess, { Currency } from "./currency-access";
 import viewerDatabase from "../viewers/viewer-database";
 import viewerOnlineStatusManager from "../viewers/viewer-online-status-manager";
@@ -67,7 +67,7 @@ class CurrencyManager {
                     messageTarget = `everyone`;
                     break;
                 case "allOnlineInRole":
-                    this.addCurrencyToViewerGroupOnlineViewers([role], currencyId, amount);
+                    void this.addCurrencyToViewerGroupOnlineViewers([role], currencyId, amount);
                     messageTarget = `all viewers in role ${role}`;
                     break;
                 case "individual":
@@ -77,7 +77,7 @@ class CurrencyManager {
             }
 
             if (sendChatMessage && messageTarget !== "") {
-                await TwitchApi.chat.sendChatMessage(`${amount < 0 ? "Removed" : "Gave"} ${util.commafy(amount)} ${currency.name} ${amount < 0 ? "from" : "to"} ${messageTarget}!`, null, true);
+                await TwitchApi.chat.sendChatMessage(`${amount < 0 ? "Removed" : "Gave"} ${commafy(amount)} ${currency.name} ${amount < 0 ? "from" : "to"} ${messageTarget}!`, null, true);
             }
         });
 
@@ -155,7 +155,7 @@ class CurrencyManager {
         try {
             // Update the DB with our new currency value.
             await db.updateAsync({ _id: viewer._id }, { $set: updateDoc }, {});
-            eventManager.triggerEvent("firebot", "currency-update", {
+            void eventManager.triggerEvent("firebot", "currency-update", {
                 username: viewer?.username,
                 currencyId: currencyId,
                 currencyName: currencyCache[currencyId]?.name,
@@ -413,7 +413,7 @@ class CurrencyManager {
                     await this.adjustCurrency(viewer, currencyId, value, adjustType);
                 }
             }
-        } catch (error) {
+        } catch {
             return;
         }
     }
@@ -518,7 +518,7 @@ class CurrencyManager {
                 return viewer.currency[currencyId];
             }
             return 0;
-        } catch (error) {
+        } catch {
             return null;
         }
     }

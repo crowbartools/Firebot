@@ -2,7 +2,7 @@ import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 import fs from "fs/promises";
-import util from "../../../utility";
+import { getRandomInt } from "../../../utils";
 import logger from "../../../logwrapper";
 
 const model : ReplaceVariable = {
@@ -121,7 +121,7 @@ const model : ReplaceVariable = {
             return lines[lines.length - 1];
         }
         if (lorStr === 'true' || lorStr === 'random') {
-            return lines[util.getRandomInt(0, lines.length - 1)];
+            return lines[getRandomInt(0, lines.length - 1)];
         }
         return '';
     }

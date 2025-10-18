@@ -4,7 +4,7 @@ import { v4 as uuid } from "uuid";
 import logger from "../logwrapper";
 import profileManager from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
-import utils from "../utility";
+import { deepClone } from "../utils";
 
 export enum NotificationSource {
     EXTERNAL = "external",
@@ -84,7 +84,7 @@ class NotificationManager {
     private checkNotificationDbVersion(): boolean {
         try {
             return this.getNotificationDb().getData("/dbVersion") === "2";
-        } catch (error) {
+        } catch {
             logger.debug("No notification dbVersion detected.");
             return false;
         }
@@ -101,7 +101,7 @@ class NotificationManager {
             this.getNotificationDb().push("/", this._notificationCache);
         }
 
-        this._notificationCache = this.getNotificationDb().getData("/");
+        this._notificationCache = this.getNotificationDb().getData("/") as NotificationCache;
     }
 
     addNotification(notification: NotificationBase, permanentlySave = false): Notification {
@@ -128,7 +128,7 @@ class NotificationManager {
     }
 
     getNotifications(): Notification[] {
-        return utils.deepClone(this._notificationCache.notifications);
+        return deepClone(this._notificationCache.notifications);
     }
 
     deleteNotification(id: string): void {
@@ -156,7 +156,7 @@ class NotificationManager {
     }
 
     private getKnownExternalNotifications(): string[] {
-        const externalNotificationIds: string[] = this.getNotificationDb().getData("/knownExternalIds");
+        const externalNotificationIds = this.getNotificationDb().getData("/knownExternalIds") as string[];
         return externalNotificationIds ? externalNotificationIds : [];
     }
 
@@ -171,7 +171,7 @@ class NotificationManager {
 
             const knownExtNotis = this.getKnownExternalNotifications();
 
-            const newKnownExtNotis = [];
+            const newKnownExtNotis: string[] = [];
 
             externalNotifications.forEach((n) => {
                 newKnownExtNotis.push(n.id);
@@ -189,14 +189,15 @@ class NotificationManager {
 
             this.setKnownExternalNotifications(newKnownExtNotis);
 
-        } catch (error) {
+        } catch (err) {
+            const error = err as Error;
             logger.error("Error loading external notifications", error.message);
         }
     }
 
     startExternalNotificationCheck(): void {
         if (this._externalCheckInterval == null) {
-            this.loadExternalNotifications();
+            void this.loadExternalNotifications();
 
             this._externalCheckInterval = setInterval(
                 () => this.loadExternalNotifications(), 5 * 60 * 1000);

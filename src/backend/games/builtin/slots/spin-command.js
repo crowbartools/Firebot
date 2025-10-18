@@ -1,6 +1,7 @@
 "use strict";
 
-const util = require("../../../utility");
+const moment = require("moment");
+const NodeCache = require("node-cache");
 const commandManager = require("../../../chat/commands/command-manager");
 const gameManager = require("../../game-manager");
 const currencyAccess = require("../../../currency/currency-access").default;
@@ -9,10 +10,9 @@ const customRolesManager = require("../../../roles/custom-roles-manager");
 const teamRolesManager = require("../../../roles/team-roles-manager");
 const twitchRolesManager = require("../../../../shared/twitch-roles");
 const slotMachine = require("./slot-machine");
-const logger = require("../../../logwrapper");
-const moment = require("moment");
-const NodeCache = require("node-cache");
 const { TwitchApi } = require("../../../streaming-platforms/twitch/api");
+const { commafy, humanizeTime } = require("../../../utils");
+const logger = require("../../../logwrapper");
 
 const activeSpinners = new NodeCache({ checkperiod: 2 });
 const cooldownCache = new NodeCache({ checkperiod: 5 });
@@ -97,7 +97,7 @@ const spinCommand = {
         const cooldownExpireTime = cooldownCache.get(username);
         if (cooldownExpireTime && moment().isBefore(cooldownExpireTime)) {
             if (slotsSettings.settings.generalMessages.onCooldown) {
-                const timeRemainingDisplay = util.secondsForHumans(Math.abs(moment().diff(cooldownExpireTime, 'seconds')));
+                const timeRemainingDisplay = humanizeTime(Math.abs(moment().diff(cooldownExpireTime, 'seconds')));
                 const cooldownMsg = slotsSettings.settings.generalMessages.onCooldown
                     .replaceAll("{username}", user.displayName)
                     .replaceAll("{timeRemaining}", timeRemainingDisplay);
@@ -232,7 +232,7 @@ const spinCommand = {
             const spinSuccessfulMsg = slotsSettings.settings.generalMessages.spinSuccessful
                 .replaceAll("{username}", user.displayName)
                 .replaceAll("{successfulRolls}", successfulRolls)
-                .replaceAll("{winningsAmount}", util.commafy(winnings))
+                .replaceAll("{winningsAmount}", commafy(winnings))
                 .replaceAll("{currencyName}", currency.name);
             await TwitchApi.chat.sendChatMessage(spinSuccessfulMsg, null, sendAsBot);
         }

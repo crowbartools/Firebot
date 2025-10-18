@@ -1,7 +1,7 @@
 import { EventFilter, FilterSettings, PresetValue } from "../../../types/events";
 import { Awaitable } from "../../../types/util-types";
 import { ComparisonType } from "../../../shared/filter-constants";
-import { extractPropertyWithPath } from "../../utility";
+import { extractPropertyWithPath } from "../../utils";
 
 type EventData = {
     eventSourceId: string;

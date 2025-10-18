@@ -3,7 +3,7 @@ import { TypedEmitter } from "tiny-typed-emitter";
 import NodeCache from "node-cache";
 
 import logger from "../logwrapper";
-import utils from "../utility";
+import { getRandomInt } from "../utils";
 import chatHelpers from "./chat-helpers";
 import frontendCommunicator from "../common/frontend-communicator";
 import { SettingsManager } from "../common/settings-manager";
@@ -93,7 +93,7 @@ class ActiveUserHandler extends TypedEmitter<Events> {
 
         let randomUser: User;
         do {
-            const randomIndex = utils.getRandomInt(0, allActiveUsers.length - 1);
+            const randomIndex = getRandomInt(0, allActiveUsers.length - 1);
             randomUser = allActiveUsers[randomIndex];
         } while (randomUser?.username?.toLowerCase() === ignoreUser.toLowerCase() && allActiveUsers.length > 1);
 
@@ -125,7 +125,7 @@ class ActiveUserHandler extends TypedEmitter<Events> {
 
         let randomUser: UserDetails;
         do {
-            const randomIndex = utils.getRandomInt(0, allOnlineUsers.length - 1);
+            const randomIndex = getRandomInt(0, allOnlineUsers.length - 1);
             randomUser = allOnlineUsers[randomIndex];
         } while (randomUser.username.toLowerCase() === ignoreUser.toLowerCase() && allOnlineUsers.length > 1);
 

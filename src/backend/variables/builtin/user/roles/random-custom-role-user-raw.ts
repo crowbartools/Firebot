@@ -1,7 +1,7 @@
 import { ReplaceVariable } from "../../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import customRolesManager from "../../../../roles/custom-roles-manager";
-import util from "../../../../utility";
+import { getRandomInt } from "../../../../utils";
 import logger from "../../../../logwrapper";
 
 const model : ReplaceVariable = {
@@ -13,7 +13,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.OBJECT],
         hidden: true
     },
-    evaluator: async (_, role: string) => {
+    evaluator: (_, role: string) => {
         if (role == null || role === '') {
             logger.debug("Unable to evaluate rawRandomCustomRoleUser. No custom role specified");
             return null;
@@ -31,7 +31,7 @@ const model : ReplaceVariable = {
             return null;
         }
 
-        const randIndex = util.getRandomInt(0, customRole.viewers.length - 1);
+        const randIndex = getRandomInt(0, customRole.viewers.length - 1);
 
         return customRole.viewers[randIndex];
     }

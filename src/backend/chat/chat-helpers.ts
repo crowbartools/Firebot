@@ -11,7 +11,7 @@ import { SettingsManager } from "../common/settings-manager";
 import accountAccess, { FirebotAccount } from "../common/account-access";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 import frontendCommunicator from "../common/frontend-communicator";
-import utils from "../utility";
+import { getUrlRegex } from "../utils";
 import viewerDatabase from "../viewers/viewer-database";
 import rankManager from "../ranks/rank-manager";
 import roleManager from "../roles/custom-roles-manager";
@@ -34,8 +34,8 @@ class FirebotChatHelpers {
 
     private _getAllTwitchEmotes = false;
     private _twitchEmotes: {
-        streamer: HelixEmoteBase[],
-        bot: HelixEmoteBase[]
+        streamer: HelixEmoteBase[];
+        bot: HelixEmoteBase[];
     } = { streamer: [], bot: [] };
 
     private _thirdPartyEmotes: ThirdPartyEmote[] = [];
@@ -49,7 +49,7 @@ class FirebotChatHelpers {
 
     private _profilePicUrlCache: Record<string, string> = {};
 
-    private readonly URL_REGEX = utils.getNonGlobalUrlRegex();
+    private readonly URL_REGEX = getUrlRegex(false);
 
     async cacheBadges(): Promise<void> {
         logger.debug("Caching Twitch badges");

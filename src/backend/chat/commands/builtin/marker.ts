@@ -1,6 +1,6 @@
 import { SystemCommand } from "../../../../types/commands";
 import logger from "../../../logwrapper";
-import utils from "../../../utility";
+import { humanizeTime } from "../../../utils";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 
 /**
@@ -76,7 +76,7 @@ export const MarkerSystemCommand: SystemCommand<{
             }
             await TwitchApi.chat.sendChatMessage(
                 commandOptions.successTemplate
-                    .replaceAll("{timestamp}", utils.formattedSeconds(marker.positionInSeconds, true)),
+                    .replaceAll("{timestamp}", humanizeTime(marker.positionInSeconds, "simple")),
                 null,
                 true
             );

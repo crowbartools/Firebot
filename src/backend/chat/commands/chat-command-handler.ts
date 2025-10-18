@@ -3,7 +3,7 @@ import { FirebotChatMessage } from "../../../types/chat";
 import { TriggerType } from "../../common/EffectType";
 
 import logger from "../../logwrapper";
-import util from "../../utility";
+import { escapeRegExp, humanizeTime } from "../../utils";
 import accountAccess from "../../common/account-access";
 import frontendCommunicator from "../../common/frontend-communicator";
 import restrictionsManager from "../../restrictions/restriction-manager";
@@ -25,7 +25,7 @@ class CommandHandler {
     private _handledMessageIds: string[] = [];
 
     private buildCommandRegexStr(trigger: string, scanWholeMessage: boolean): string {
-        const escapedTrigger = util.escapeRegExp(trigger) as string;
+        const escapedTrigger = escapeRegExp(trigger);
         if (scanWholeMessage) {
             return `(?:^|\\s)${escapedTrigger}(?!-)(?:\\b|$|(?=\\s))`;
         }
@@ -288,7 +288,7 @@ class CommandHandler {
                 await TwitchApi.chat.sendChatMessage(
                     cooldownMessage
                         .replaceAll("{user}", commandSender)
-                        .replaceAll("{timeLeft}", util.secondsForHumans(remainingCooldown)),
+                        .replaceAll("{timeLeft}", humanizeTime(remainingCooldown)),
                     // We default to replies on purpose here
                     command.sendCooldownMessageAsReply === false ? null : firebotChatMessage.id,
                     true

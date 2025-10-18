@@ -1,6 +1,6 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import { convertToString } from '../../../utility';
+import { stringify } from '../../../utils';
 
 const model : ReplaceVariable = {
     definition: {
@@ -23,7 +23,7 @@ const model : ReplaceVariable = {
         if (subject == null) {
             return '';
         }
-        return encodeURIComponent(convertToString(subject));
+        return encodeURIComponent(stringify(subject));
     }
 };
 

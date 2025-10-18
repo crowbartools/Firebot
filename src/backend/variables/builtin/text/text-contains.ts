@@ -1,6 +1,6 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import { convertToString } from '../../../utility';
+import { stringify } from '../../../utils';
 
 const model : ReplaceVariable = {
     definition: {
@@ -15,7 +15,7 @@ const model : ReplaceVariable = {
         subject: unknown = "",
         search: unknown = ""
     ) : boolean => {
-        return convertToString(subject).includes(convertToString(search));
+        return stringify(subject).includes(stringify(search));
     }
 };
 

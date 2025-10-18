@@ -2,7 +2,7 @@ import { randomInt } from "crypto";
 import { ApiClient, HelixClip, UserIdResolvable } from "@twurple/api";
 import { ApiResourceBase } from "./api-resource-base";
 import logger from "../../../../logwrapper";
-import utils from "../../../../utility";
+import { wait } from "../../../../utils";
 import accountAccess from "../../../../common/account-access";
 
 export class TwitchClipsApi extends ApiResourceBase {
@@ -40,7 +40,7 @@ export class TwitchClipsApi extends ApiResourceBase {
                     logger.error("Failed to create clip", error);
                 }
                 if (clip == null) {
-                    await utils.wait(1000);
+                    await wait(1000);
                 }
             }
 

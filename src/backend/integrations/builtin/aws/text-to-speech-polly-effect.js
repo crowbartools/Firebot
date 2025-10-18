@@ -12,7 +12,7 @@ const logger = require("../../../logwrapper");
 const frontendCommunicator = require("../../../common/frontend-communicator");
 const integrationManager = require("../../integration-manager");
 const { EffectCategory } = require('../../../../shared/effect-constants');
-const { wait } = require("../../../utility");
+const { wait } = require("../../../utils");
 const { PollyClient, DescribeVoicesCommand, SynthesizeSpeechCommand, ListLexiconsCommand } = require('@aws-sdk/client-polly');
 
 frontendCommunicator.onAsync("getAwsPollyVoices", async () => {

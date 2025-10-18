@@ -2,7 +2,7 @@ import { DateTime } from "luxon";
 
 import { SystemCommand } from "../../../../types/commands";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
-import util from "../../../utility";
+import { getDateDiffString } from "../../../utils";
 
 /**
  * The `!followage` command
@@ -45,7 +45,7 @@ export const FollowAgeSystemCommand: SystemCommand<{
             const followDate = DateTime.fromJSDate(rawFollowDate),
                 now = DateTime.utc();
 
-            const followAgeString = util.getDateDiffString(
+            const followAgeString = getDateDiffString(
                 followDate.toJSDate(),
                 now.toJSDate()
             );

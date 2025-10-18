@@ -1,1 +1,5 @@
-export const timeout = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+/**
+ * Pause between lines of execution
+ * @param ms Time to pause, in milliseconds
+ */
+export const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));

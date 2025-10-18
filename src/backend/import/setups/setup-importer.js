@@ -1,7 +1,5 @@
 "use strict";
 
-const logger = require("../../logwrapper");
-const profileManager = require("../../common/profile-manager");
 const frontendCommunicator = require("../../common/frontend-communicator");
 
 const commandManager = require("../../chat/commands/command-manager");
@@ -16,9 +14,9 @@ const customRolesManager = require("../../roles/custom-roles-manager");
 const { QuickActionManager } = require("../../quick-actions/quick-action-manager");
 const variableMacroManager = require("../../variables/macro-manager");
 const rankManager = require("../../ranks/rank-manager");
-const { escapeRegExp } = require("../../utility");
 const currencyAccess = require("../../currency/currency-access").default;
 const overlayWidgetConfigManager = require("../../overlay-widgets/overlay-widget-config-manager");
+const { escapeRegExp } = require("../../utils");
 
 function findAndReplaceCurrency(data, currency) {
     const entries = Object.entries(data);

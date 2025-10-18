@@ -1,4 +1,4 @@
-import { isPlainObject } from "./isPlainObject";
+import { isPlainObject } from "./objects";
 
 export type MaskPIIOptions = {
     /**

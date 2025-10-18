@@ -5,7 +5,7 @@ const { SettingsManager } = require("../../common/settings-manager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/http-server-manager");
 const logger = require("../../logwrapper");
-const utils = require("../../utility");
+const { wait } = require("../../utils");
 const customVariableManager = require("../../common/custom-variable-manager");
 const { resolveTwitchClipVideoUrl } = require("../../common/handlers/twitch-clip-url-resolver");
 const { TwitchApi } = require("../../streaming-platforms/twitch/api");
@@ -254,7 +254,7 @@ const clip = {
                 });
 
                 if (effect.wait ?? true) {
-                    await utils.wait(clipDuration * 1000);
+                    await wait(clipDuration * 1000);
                 }
             }
 

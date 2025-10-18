@@ -1,6 +1,5 @@
 import { SystemCommand } from "../../../../types/commands";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
-import util from "../../../utility";
 
 /**
  * The `!uptime` command
@@ -32,7 +31,7 @@ export const UptimeSystemCommand: SystemCommand<{
         }
     },
     onTriggerEvent: async (event) => {
-        const uptimeString = await util.getUptime();
+        const uptimeString = await TwitchApi.streams.getStreamUptime();
         const { commandOptions } = event;
         await TwitchApi.chat.sendChatMessage(
             commandOptions.uptimeDisplayTemplate

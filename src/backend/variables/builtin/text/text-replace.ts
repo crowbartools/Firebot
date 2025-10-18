@@ -1,6 +1,6 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import { convertToString, escapeRegExp } from '../../../utility';
+import { stringify, escapeRegExp } from '../../../utils';
 
 const model : ReplaceVariable = {
     definition: {
@@ -22,10 +22,10 @@ const model : ReplaceVariable = {
     },
     evaluator: (
         trigger: Trigger,
-        input: unknown,
-        search: unknown,
+        input: string,
+        search: string,
         replacement: unknown = "",
-        searchIsRegex: unknown = false,
+        searchIsRegex = false,
         flags: unknown = "g"
     ) : string => {
         if (input == null) {
@@ -34,12 +34,12 @@ const model : ReplaceVariable = {
 
 
         if (search == null) {
-            return <string>input;
+            return input;
         }
-        return convertToString(input)
+        return stringify(input)
             .replace(
-                new RegExp(searchIsRegex ? search : escapeRegExp(search), convertToString(flags)),
-                convertToString(replacement)
+                new RegExp(searchIsRegex ? search : escapeRegExp(search), stringify(flags)),
+                stringify(replacement)
             );
     }
 };

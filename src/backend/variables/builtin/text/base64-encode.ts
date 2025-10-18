@@ -1,7 +1,7 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-import { convertToString } from '../../../utility';
+import { stringify } from '../../../utils';
 
 const model: ReplaceVariable = {
     definition: {
@@ -17,9 +17,9 @@ const model: ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    async evaluator(_, text: unknown): Promise<string> {
+    evaluator: (_, text: unknown): string => {
         const encoder = new TextEncoder();
-        return btoa(String.fromCharCode(...encoder.encode(convertToString(text))));
+        return btoa(String.fromCharCode(...encoder.encode(stringify(text))));
     }
 };
 

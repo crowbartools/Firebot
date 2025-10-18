@@ -1,13 +1,13 @@
 "use strict";
 
 const logger = require("../../../logwrapper");
-const utils = require("../../../utility");
+const { getRandomInt, shuffleArray } = require("../../../utils");
 
 const getRandomItem = (array) => {
     if (array == null || !array.length) {
         return null;
     }
-    const randomIndex = utils.getRandomInt(0, array.length - 1);
+    const randomIndex = getRandomInt(0, array.length - 1);
     return array[randomIndex];
 };
 
@@ -86,7 +86,7 @@ exports.getQuestion = async (categories, difficulties, types) => {
                 // using 1 based index since this is how users will answer
                 correctIndex = questionData.correct_answer === "True" ? 1 : 2;
             } else {
-                answers = utils.shuffleArray([...questionData.incorrect_answers, questionData.correct_answer]);
+                answers = shuffleArray([...questionData.incorrect_answers, questionData.correct_answer]);
                 // using 1 based index since this is how users will answer
                 correctIndex = answers.findIndex(a => a === questionData.correct_answer) + 1;
             }

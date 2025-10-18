@@ -1,6 +1,6 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import { convertToString } from '../../../utility';
+import { stringify } from '../../../utils';
 
 const model : ReplaceVariable = {
     definition: {
@@ -14,7 +14,7 @@ const model : ReplaceVariable = {
         trigger: Trigger,
         subject: unknown
     ) : string => {
-        const text = convertToString(subject).split('');
+        const text = stringify(subject).split('');
 
         let result = '';
         while (text.length) {

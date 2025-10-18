@@ -122,7 +122,7 @@ export const countdownToDate: OverlayWidgetType<Settings, State> = {
                 // eslint-disable-next-line
                 const Duration = (window as any).luxon.Duration;
 
-                const units: (keyof DurationLikeObject)[] = ["seconds", "minutes", "hours", "days", "months", "years"];
+                const units: (keyof DurationLikeObject)[] = ["years", "months", "days", "hours", "minutes", "seconds"];
 
                 // eslint-disable-next-line
                 let remainingTime: Duration = (<DateTime>DateTime.fromISO(config.settings?.targetDateTime))
@@ -135,23 +135,16 @@ export const countdownToDate: OverlayWidgetType<Settings, State> = {
 
                 let formatted = "";
                 if (config.settings?.format === "human") {
-                    if (remainingTime.years < 1) {
-                        units.pop();
-                        if (remainingTime.months < 1) {
-                            units.pop();
-                            if (remainingTime.days < 1) {
-                                units.pop();
-                                if (remainingTime.hours < 1) {
-                                    units.pop();
-                                    if (remainingTime.minutes < 1) {
-                                        units.pop();
-                                    }
-                                }
-                            }
+                    const shiftedDuration = remainingTime.shiftToAll();
+                    const includedUnits: (keyof DurationLikeObject)[] = [];
+
+                    for (const unit of units) {
+                        if (shiftedDuration.get(unit) > 0) {
+                            includedUnits.push(unit);
                         }
                     }
 
-                    formatted = remainingTime.shiftTo(...units)
+                    formatted = remainingTime.shiftTo(...includedUnits)
                         .toHuman({
                             maximumFractionDigits: 0,
                             roundingMode: "floor"

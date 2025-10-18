@@ -1,7 +1,7 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-import { convertToString } from '../../../utility';
+import { stringify } from '../../../utils';
 import logger from '../../../logwrapper';
 
 const model: ReplaceVariable = {
@@ -22,12 +22,12 @@ const model: ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    async evaluator(_, text: unknown): Promise<string> {
+    evaluator: (_, text: unknown): string => {
         const decoder = new TextDecoder();
         try {
-            return decoder.decode(Uint8Array.from(atob(convertToString(text)), c => c.charCodeAt(0)));
+            return decoder.decode(Uint8Array.from(atob(stringify(text)), c => c.charCodeAt(0)));
         } catch {
-            logger.error(`Failed to decode base64 string: ${convertToString(text)}`);
+            logger.error(`Failed to decode base64 string: ${stringify(text)}`);
             return "";
         }
     }

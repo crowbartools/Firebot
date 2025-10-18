@@ -3,15 +3,10 @@
 const { SettingsManager } = require("../settings-manager");
 const { ResourceTokenManager } = require("../../resource-token-manager");
 const util = require("../../utility");
+const { getRandomInt } = require("../../utils");
 const logger = require("../../logwrapper");
 const webServer = require("../../../server/http-server-manager");
 const frontendCommunicator = require("../frontend-communicator");
-
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
 
 function getRandomPresetLocation() {
     const presetPositions = [

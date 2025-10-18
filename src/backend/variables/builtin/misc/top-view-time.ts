@@ -2,7 +2,7 @@ import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType } from "../../../../shared/variable-constants";
 
 import viewerOnlineStatusManager from "../../../viewers/viewer-online-status-manager";
-import util from "../../../utility";
+import { commafy } from "../../../utils";
 
 const model : ReplaceVariable = {
     definition: {
@@ -27,7 +27,7 @@ const model : ReplaceVariable = {
 
         const topViewTimeUsersDisplay = topViewTimeUsers.map((u, i) => {
             const hours = u.minutesInChannel > 59 ? Math.floor(u.minutesInChannel / 60) : 0;
-            return `#${i + 1}) ${u.username} - ${util.commafy(hours)}`;
+            return `#${i + 1}) ${u.username} - ${commafy(hours)}`;
         }).join(", ");
 
         return topViewTimeUsersDisplay;

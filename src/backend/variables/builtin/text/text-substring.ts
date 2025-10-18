@@ -1,6 +1,6 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import { convertToString } from '../../../utility';
+import { stringify } from '../../../utils';
 
 const model : ReplaceVariable = {
     definition: {
@@ -16,7 +16,7 @@ const model : ReplaceVariable = {
         start: unknown = 0,
         end: unknown
     ) : string => {
-        const text = convertToString(subject);
+        const text = stringify(subject);
 
         start = Number(start);
         if (!Number.isFinite(start) || <number>start < 1) {

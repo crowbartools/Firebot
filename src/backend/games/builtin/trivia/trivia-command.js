@@ -1,6 +1,7 @@
 "use strict";
 
-const util = require("../../../utility");
+const moment = require("moment");
+const NodeCache = require("node-cache");
 const twitchListeners = require("../../../chat/chat-listeners/twitch-chat-listeners");
 const commandManager = require("../../../chat/commands/command-manager");
 const gameManager = require("../../game-manager");
@@ -10,10 +11,9 @@ const customRolesManager = require("../../../roles/custom-roles-manager");
 const teamRolesManager = require("../../../roles/team-roles-manager");
 const twitchRolesManager = require("../../../../shared/twitch-roles");
 const logger = require("../../../logwrapper");
-const moment = require("moment");
 const triviaHelper = require("./trivia-helper");
-const NodeCache = require("node-cache");
 const { TwitchApi } = require("../../../streaming-platforms/twitch/api");
+const { commafy, humanizeTime } = require("../../../utils");
 
 let fiveSecTimeoutId;
 let answerTimeoutId;
@@ -67,7 +67,7 @@ twitchListeners.events.on("chat-message", async (data) => {
 
         const currency = currencyAccess.getCurrencyById(currencyId);
 
-        await TwitchApi.chat.sendChatMessage(`${chatMessage.userDisplayName ?? username}, that is correct! You have won ${util.commafy(winnings)} ${currency.name}`, null, sendAsBot);
+        await TwitchApi.chat.sendChatMessage(`${chatMessage.userDisplayName ?? username}, that is correct! You have won ${commafy(winnings)} ${currency.name}`, null, sendAsBot);
     } else {
         await TwitchApi.chat.sendChatMessage(`Sorry ${chatMessage.userDisplayName ?? username}, that is incorrect.${postCorrectAnswer ? ` The correct answer was ${question.answers[question.correctIndex - 1]}.` : ""} Better luck next time!`, null, sendAsBot);
     }
@@ -129,7 +129,7 @@ const triviaCommand = {
 
             const cooldownExpireTime = cooldownCache.get(username);
             if (cooldownExpireTime && moment().isBefore(cooldownExpireTime)) {
-                const timeRemainingDisplay = util.secondsForHumans(Math.abs(moment().diff(cooldownExpireTime, 'seconds')));
+                const timeRemainingDisplay = humanizeTime(Math.abs(moment().diff(cooldownExpireTime, 'seconds')));
                 await TwitchApi.chat.sendChatMessage(`${user.displayName}, trivia is currently on cooldown for you. Time remaining: ${timeRemainingDisplay}`, null, sendAsBot);
                 return;
             }

@@ -3,7 +3,7 @@ import { ReplaceVariable } from "../../../../types/variables";
 import { ActiveUserHandler } from '../../../chat/active-user-handler';
 import logger from "../../../logwrapper";
 import customRolesManager from '../../../roles/custom-roles-manager';
-import { getRandomInt } from '../../../utility';
+import { getRandomInt } from '../../../utils';
 
 const model : ReplaceVariable = {
     definition: {

@@ -1,14 +1,14 @@
 import { app } from "electron";
-import path from "path";
-import fsp from "fs/promises";
 import fs from "fs";
+import fsp from "fs/promises";
+import path from "path";
+import unzipper from "unzipper";
+import archiver from "archiver";
 import logger from "./logwrapper";
-import utils from "./utility";
 import { SettingsManager } from "./common/settings-manager";
 import dataAccess from "./common/data-access.js";
 import frontendCommunicator from "./common/frontend-communicator";
-import unzipper from "unzipper";
-import archiver from "archiver";
+import { emptyFolder } from "./utils";
 
 const RESTORE_FOLDER_PATH = dataAccess.getPathInTmpDir("/restore");
 const PROFILES_FOLDER_PATH = dataAccess.getPathInUserData("/profiles");
@@ -50,7 +50,7 @@ class BackupManager {
             frontendCommunicator.send("backups:backup-complete", manualActivation);
         });
 
-        frontendCommunicator.onAsync("backups:restore-backup", async (backupFilePath: string): Promise<{ success: boolean; reason?: string; }> => {
+        frontendCommunicator.onAsync("backups:restore-backup", async (backupFilePath: string): Promise<{ success: boolean, reason?: string }> => {
             return await this.restoreBackup(backupFilePath);
         });
 
@@ -244,7 +244,7 @@ class BackupManager {
         }
     }
 
-    async restoreBackup(backupFilePath: string): Promise<{ success: boolean; reason?: string; }> {
+    async restoreBackup(backupFilePath: string): Promise<{ success: boolean, reason?: string }> {
         // Validate backup zip
         try {
             const valid = await this.validateBackupZip(backupFilePath);
@@ -254,7 +254,7 @@ class BackupManager {
                     reason: "Provided zip is not a valid Firebot V5 backup."
                 };
             }
-        } catch (error) {
+        } catch {
             return {
                 success: false,
                 reason: "Failed to validate the backup zip."
@@ -263,7 +263,7 @@ class BackupManager {
 
         // Clear out the /restore folder
         try {
-            await utils.emptyFolder(RESTORE_FOLDER_PATH);
+            await emptyFolder(RESTORE_FOLDER_PATH);
         } catch (error) {
             logger.warn("Error clearing backup restore folder", error);
         }
@@ -273,7 +273,7 @@ class BackupManager {
 
         // Clear out the profiles folder
         try {
-            await utils.emptyFolder(PROFILES_FOLDER_PATH);
+            await emptyFolder(PROFILES_FOLDER_PATH);
         } catch (error) {
             logger.warn("Error clearing profiles folder", error);
             return {

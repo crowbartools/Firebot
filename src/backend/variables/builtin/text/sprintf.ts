@@ -1,7 +1,7 @@
 import { sprintf } from 'sprintf-js';
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import { ReplaceVariable } from "../../../../types/variables";
-import { convertToString } from '../../../utility';
+import { stringify } from '../../../utils';
 
 const model : ReplaceVariable = {
     definition: {
@@ -25,8 +25,8 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    async evaluator(_, template: unknown, ...args: unknown[]): Promise<string> {
-        return sprintf(convertToString(template), ...args);
+    evaluator: (_, template: unknown, ...args: unknown[]): string => {
+        return sprintf(stringify(template), ...args);
     }
 };
 

@@ -38,7 +38,7 @@ import { SettingsManager } from "../../../../common/settings-manager";
 import accountAccess, { FirebotAccount } from "../../../../common/account-access";
 import { TwitchApi } from "../";
 import frontendCommunicator from "../../../../common/frontend-communicator";
-import utils from "../../../../utility";
+import { getUrlRegex } from "../../../../utils";
 
 interface ChatBadge {
     title: string;
@@ -57,7 +57,7 @@ class TwitchEventSubChatHelpers {
     // Thanks, IRC
     // eslint-disable-next-line no-control-regex
     private readonly CHAT_ACTION_REGEX = /^[\x01]ACTION (.*)[\x01]$/;
-    private readonly URL_REGEX = utils.getNonGlobalUrlRegex();
+    private readonly URL_REGEX = getUrlRegex(false);
 
     readonly HIGHLIGHT_MESSAGE_REWARD_ID = "highlight-message";
 
