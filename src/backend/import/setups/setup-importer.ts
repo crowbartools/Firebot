@@ -5,10 +5,10 @@ import { CounterManager } from "../../counters/counter-manager";
 import { HotkeyManager } from "../../hotkeys/hotkey-manager";
 import { QuickActionManager } from "../../quick-actions/quick-action-manager";
 import { ScheduledTaskManager } from "../../timers/scheduled-task-manager";
+import { TimerManager } from "../../timers/timer-manager";
 import commandManager from "../../chat/commands/command-manager";
 import effectQueueManager from "../../effects/queues/effect-queue-config-manager";
 import eventsAccess from "../../events/events-access";
-import timerManager from "../../timers/timer-manager";
 import presetEffectListManager from "../../effects/preset-lists/preset-effect-list-manager";
 import customRolesManager from "../../roles/custom-roles-manager";
 import variableMacroManager from "../../variables/macro-manager";
@@ -148,9 +148,9 @@ async function importSetup(setup: FirebotSetup, selectedCurrency: Currency): Pro
     // timers
     const timers = setup.components.timers || [];
     for (const timer of timers) {
-        timerManager.saveItem(timer);
+        TimerManager.saveItem(timer);
     }
-    timerManager.triggerUiRefresh();
+    TimerManager.triggerUiRefresh();
 
     // scheduled tasks
     const scheduledTasks = setup.components.scheduledTasks || [];
@@ -232,7 +232,7 @@ function removeSetupComponents(components: Partial<FirebotSetup["components"]>):
                         presetEffectListManager.deleteItem(id);
                         break;
                     case "timers":
-                        timerManager.deleteItem(id);
+                        TimerManager.deleteItem(id);
                         break;
                     case "scheduledTasks":
                         ScheduledTaskManager.deleteScheduledTask(id);
@@ -269,7 +269,7 @@ function removeSetupComponents(components: Partial<FirebotSetup["components"]>):
             } else if (componentType === "presetEffectLists") {
                 presetEffectListManager.triggerUiRefresh();
             } else if (componentType === "timers") {
-                timerManager.triggerUiRefresh();
+                TimerManager.triggerUiRefresh();
             } else if (componentType === "scheduledTasks") {
                 ScheduledTaskManager.triggerUiRefresh();
             } else if (componentType === "variableMacros") {

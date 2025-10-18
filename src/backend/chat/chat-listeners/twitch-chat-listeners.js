@@ -101,8 +101,8 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
 
         const { streamer, bot } = accountAccess.getAccounts();
         if (user !== streamer.username && user !== bot.username) {
-            const timerManager = require("../../timers/timer-manager");
-            timerManager.incrementChatLineCounters();
+            const { TimerManager } = require("../../timers/timer-manager");
+            TimerManager.incrementChatLineCounters();
         }
 
         twitchEventsHandler.chatMessage.triggerChatMessage(

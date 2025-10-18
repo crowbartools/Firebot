@@ -42,9 +42,9 @@ exports.whenReady = async () => {
     const connectionManager = require("../../../common/connection-manager");
 
     windowManagement.updateSplashScreenStatus("Loading timers...");
-    const timerManager = require("../../../timers/timer-manager");
-    await timerManager.loadItems();
-    timerManager.startTimers();
+    const { TimerManager } = require("../../../timers/timer-manager");
+    TimerManager.loadItems();
+    TimerManager.startTimers();
 
     windowManagement.updateSplashScreenStatus("Loading scheduled effect lists...");
     const { ScheduledTaskManager } = require("../../../timers/scheduled-task-manager");
