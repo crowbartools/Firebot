@@ -1,13 +1,15 @@
 import { CronJob } from "cron";
 import { DateTime } from "luxon";
-import { TriggerType } from "../common/EffectType";
+
+import { ScheduledTask } from "../../types/timers";
+import { Trigger } from "../../types/triggers";
+
 import JsonDbManager from "../database/json-db-manager";
-import logger from "../logwrapper";
 import accountAccess from "../common/account-access";
 import connectionManager from "../common/connection-manager";
 import effectRunner from "../common/effect-runner";
 import frontendCommunicator from "../common/frontend-communicator";
-import { ScheduledTask } from "../../types/timers";
+import logger from "../logwrapper";
 
 interface ScheduledTaskRunner {
     taskDefinition: ScheduledTask;
@@ -15,11 +17,26 @@ interface ScheduledTaskRunner {
 }
 
 class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
-    taskCache: Map<string, ScheduledTaskRunner>;
+    taskCache: Map<string, ScheduledTaskRunner> = new Map();
 
     constructor() {
         super("ScheduledTask", "scheduled-tasks");
-        this.taskCache = new Map<string, ScheduledTaskRunner>();
+
+        frontendCommunicator.on("scheduled-tasks:get-scheduled-tasks",
+            () => this.getAllItems()
+        );
+
+        frontendCommunicator.on("scheduled-tasks:save-scheduled-task",
+            (task: ScheduledTask) => this.saveScheduledTask(task)
+        );
+
+        frontendCommunicator.on("scheduled-tasks:save-all-scheduled-tasks",
+            (tasks: ScheduledTask[]) => this.saveAllItems(tasks)
+        );
+
+        frontendCommunicator.on("scheduled-tasks:delete-scheduled-task",
+            (id: string) => this.deleteScheduledTask(id)
+        );
     }
 
     start(): void {
@@ -57,14 +74,14 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
 
                 const effectsRequest = {
                     trigger: {
-                        type: TriggerType.SCHEDULED_TASK,
+                        type: "scheduled_task",
                         metadata: {
                             username: accountAccess.getAccounts().streamer.username,
                             userId: accountAccess.getAccounts().streamer.userId,
                             userDisplayName: accountAccess.getAccounts().streamer.displayName,
                             task: task
                         }
-                    },
+                    } as Trigger,
                     effects: task.effects
                 };
                 void effectRunner.processEffects(effectsRequest);
@@ -97,7 +114,7 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
         }
 
         if (taskRunner.cronjob.isActive) {
-            taskRunner.cronjob.stop();
+            void taskRunner.cronjob.stop();
             logger.debug(`Scheduled task timer for "${taskRunner.taskDefinition.name}" stopped`);
         } else {
             logger.debug(`Scheduled task timer for "${taskRunner.taskDefinition.name}" is not running`);
@@ -108,7 +125,7 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
         }
     }
 
-    private logNextTaskRun(task: ScheduledTask) {
+    private logNextTaskRun(task: ScheduledTask): void {
         if (this.taskCache.has(task.id)) {
             const taskRunner = this.taskCache.get(task.id);
 
@@ -122,7 +139,7 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
         }
     }
 
-    saveScheduledTask(task: ScheduledTask): ScheduledTask | null {
+    saveScheduledTask(task: ScheduledTask): ScheduledTask {
         logger.debug(`Saving scheduled task "${task.name}"...`);
         const savedTask = super.saveItem(task);
 
@@ -177,17 +194,5 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
 }
 
 const scheduledTaskManager = new ScheduledTaskManager();
-
-frontendCommunicator.onAsync("getScheduledTasks", async () => scheduledTaskManager.getAllItems());
-
-frontendCommunicator.onAsync("saveScheduledTask", async (task: ScheduledTask) => scheduledTaskManager.saveScheduledTask(task));
-
-frontendCommunicator.onAsync("saveAllScheduledTasks", async (tasks: ScheduledTask[]) => {
-    scheduledTaskManager.saveAllItems(tasks);
-});
-
-frontendCommunicator.on("deleteScheduledTask", (id: string) => {
-    scheduledTaskManager.deleteScheduledTask(id);
-});
 
 export = scheduledTaskManager;

@@ -9,6 +9,7 @@ export type TriggerType =
     | "event"
     | "hotkey"
     | "timer"
+    | "scheduled_task"
     | "counter"
     | "preset"
     | "quick_action"
@@ -34,11 +35,11 @@ export type Trigger = {
             subcommandId?: string;
         };
         chatMessage?: FirebotChatMessage;
-        event?: { id: string; name: string };
-        eventSource?: { id: string; name: string };
+        event?: { id: string, name: string };
+        eventSource?: { id: string, name: string };
         eventData?: {
             chatMessage?: FirebotChatMessage;
-            [x: string]: unknown
+            [x: string]: unknown;
         };
         counter?: {
             id: string;

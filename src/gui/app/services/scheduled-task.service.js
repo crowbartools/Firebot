@@ -2,7 +2,7 @@
 (function() {
     angular
         .module("firebotApp")
-        .factory("scheduledTaskService", function(backendCommunicator, $q, utilityService, objectCopyHelper, ngToast) {
+        .factory("scheduledTaskService", function(backendCommunicator, utilityService, objectCopyHelper, ngToast) {
             const service = {};
 
             service.scheduledTasks = [];
@@ -24,26 +24,20 @@
                 service.scheduledTasks = scheduledTasks;
             });
 
-            service.loadScheduledTasks = function() {
-                $q.when(backendCommunicator.fireEventAsync("getScheduledTasks"))
-                    .then((scheduledTasks) => {
-                        if (scheduledTasks) {
-                            service.scheduledTasks = scheduledTasks;
-                        }
-                    });
+            service.loadScheduledTasks = () => {
+                service.scheduledTasks = backendCommunicator.fireEventSync("scheduled-tasks:get-scheduled-tasks");
             };
 
             service.getScheduledTasks = () => service.scheduledTasks;
 
             service.saveScheduledTask = function(scheduledTask) {
-                return $q.when(backendCommunicator.fireEventAsync("saveScheduledTask", scheduledTask))
-                    .then((savedScheduledTask) => {
-                        if (savedScheduledTask) {
-                            updateScheduledTask(savedScheduledTask);
-                            return true;
-                        }
-                        return false;
-                    });
+                const savedScheduledTask = backendCommunicator.fireEventAsync("scheduled-tasks:save-scheduled-task", scheduledTask);
+
+                if (savedScheduledTask) {
+                    updateScheduledTask(savedScheduledTask);
+                    return true;
+                }
+                return false;
             };
 
             function parseSchedulePart(part) {
@@ -113,7 +107,7 @@
 
             service.saveAllScheduledTasks = function(scheduledTasks) {
                 service.scheduledTasks = scheduledTasks;
-                backendCommunicator.fireEventAsync("saveAllScheduledTasks", scheduledTasks);
+                backendCommunicator.fireEvent("scheduled-tasks:save-all-scheduled-tasks", scheduledTasks);
             };
 
             service.toggleScheduledTaskEnabledState = function(scheduledTask) {
@@ -161,7 +155,7 @@
 
                 service.scheduledTasks = service.scheduledTasks.filter(t => t.id !== scheduledTask.id);
 
-                backendCommunicator.fireEvent("deleteScheduledTask", scheduledTask.id);
+                backendCommunicator.fireEvent("scheduled-tasks:delete-scheduled-task", scheduledTask.id);
             };
 
             service.showAddEditScheduledTaskModal = function(scheduledTask) {
