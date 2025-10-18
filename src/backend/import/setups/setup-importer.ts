@@ -4,11 +4,11 @@ import { Currency } from "../../../types/currency";
 import { CounterManager } from "../../counters/counter-manager";
 import { HotkeyManager } from "../../hotkeys/hotkey-manager";
 import { QuickActionManager } from "../../quick-actions/quick-action-manager";
+import { ScheduledTaskManager } from "../../timers/scheduled-task-manager";
 import commandManager from "../../chat/commands/command-manager";
 import effectQueueManager from "../../effects/queues/effect-queue-config-manager";
 import eventsAccess from "../../events/events-access";
 import timerManager from "../../timers/timer-manager";
-import scheduledTaskManager from "../../timers/scheduled-task-manager";
 import presetEffectListManager from "../../effects/preset-lists/preset-effect-list-manager";
 import customRolesManager from "../../roles/custom-roles-manager";
 import variableMacroManager from "../../variables/macro-manager";
@@ -155,9 +155,9 @@ async function importSetup(setup: FirebotSetup, selectedCurrency: Currency): Pro
     // scheduled tasks
     const scheduledTasks = setup.components.scheduledTasks || [];
     for (const scheduledTask of scheduledTasks) {
-        scheduledTaskManager.saveScheduledTask(scheduledTask);
+        ScheduledTaskManager.saveScheduledTask(scheduledTask);
     }
-    scheduledTaskManager.triggerUiRefresh();
+    ScheduledTaskManager.triggerUiRefresh();
 
     // variable macros
     const variableMacros = setup.components.variableMacros || [];
@@ -235,7 +235,7 @@ function removeSetupComponents(components: Partial<FirebotSetup["components"]>):
                         timerManager.deleteItem(id);
                         break;
                     case "scheduledTasks":
-                        scheduledTaskManager.deleteScheduledTask(id);
+                        ScheduledTaskManager.deleteScheduledTask(id);
                         break;
                     case "variableMacros":
                         variableMacroManager.deleteItem(id);
@@ -271,7 +271,7 @@ function removeSetupComponents(components: Partial<FirebotSetup["components"]>):
             } else if (componentType === "timers") {
                 timerManager.triggerUiRefresh();
             } else if (componentType === "scheduledTasks") {
-                scheduledTaskManager.triggerUiRefresh();
+                ScheduledTaskManager.triggerUiRefresh();
             } else if (componentType === "variableMacros") {
                 variableMacroManager.triggerUiRefresh();
             } else if (componentType === "viewerRoles") {

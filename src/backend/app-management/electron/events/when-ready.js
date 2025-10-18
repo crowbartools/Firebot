@@ -47,9 +47,9 @@ exports.whenReady = async () => {
     timerManager.startTimers();
 
     windowManagement.updateSplashScreenStatus("Loading scheduled effect lists...");
-    const scheduledTaskManager = require("../../../timers/scheduled-task-manager");
-    scheduledTaskManager.loadItems();
-    scheduledTaskManager.start();
+    const { ScheduledTaskManager } = require("../../../timers/scheduled-task-manager");
+    ScheduledTaskManager.loadItems();
+    ScheduledTaskManager.start();
 
     windowManagement.updateSplashScreenStatus("Refreshing Twitch account data...");
     await accountAccess.refreshTwitchData();

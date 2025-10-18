@@ -1,6 +1,6 @@
 import { EffectType } from "../../../types/effects";
 import { EffectCategory } from '../../../shared/effect-constants';
-import scheduledTaskManager from "../../timers/scheduled-task-manager";
+import { ScheduledTaskManager } from "../../timers/scheduled-task-manager";
 
 const effect: EffectType<{
     scheduledTaskId: string;
@@ -106,19 +106,19 @@ const effect: EffectType<{
     onTriggerEvent: (event) => {
         const { effect } = event;
         if (!effect.useTag) {
-            const scheduledTask = scheduledTaskManager.getItem(effect.scheduledTaskId);
+            const scheduledTask = ScheduledTaskManager.getItem(effect.scheduledTaskId);
             scheduledTask.enabled = effect.toggleType === "toggle" ? !scheduledTask.enabled : effect.toggleType === "enable";
 
-            scheduledTaskManager.saveScheduledTask(scheduledTask);
+            ScheduledTaskManager.saveScheduledTask(scheduledTask);
 
             return true;
         }
 
-        const tasks = scheduledTaskManager.getAllItems().filter(task => task.sortTags?.includes(effect.sortTagId));
+        const tasks = ScheduledTaskManager.getAllItems().filter(task => task.sortTags?.includes(effect.sortTagId));
 
         tasks.forEach((scheduledTask) => {
             scheduledTask.enabled = effect.toggleType === "toggle" ? !scheduledTask.enabled : effect.toggleType === "enable";
-            scheduledTaskManager.saveScheduledTask(scheduledTask);
+            ScheduledTaskManager.saveScheduledTask(scheduledTask);
         });
 
         return true;
