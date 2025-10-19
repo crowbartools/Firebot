@@ -74,9 +74,9 @@
                     backendCommunicator.fireEvent("quick-actions:trigger-quick-action", quickActionId);
                 };
 
-                $ctrl.$onInit = async () => {
+                $ctrl.$onInit = () => {
                     if (quickActionsService.quickActions == null || !quickActionsService.quickActions.length) {
-                        await quickActionsService.loadQuickActions();
+                        quickActionsService.loadQuickActions();
                     }
 
                     if ($ctrl.settings == null) {

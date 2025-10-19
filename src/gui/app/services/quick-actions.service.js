@@ -26,10 +26,10 @@
             };
 
             /**
-             * @returns {Promise.<void>}
+             * @returns {void}
              */
-            service.loadQuickActions = async () => {
-                const quickActions = await backendCommunicator.fireEventSync("quick-actions:get-quick-actions");
+            service.loadQuickActions = () => {
+                const quickActions = backendCommunicator.fireEventSync("quick-actions:get-quick-actions");
 
                 if (quickActions) {
                     service.quickActions = quickActions;
@@ -73,9 +73,9 @@
             /**
              * @returns {QuickAction[]}
              */
-            service.getQuickActions = async () => {
+            service.getQuickActions = () => {
                 if (!service.quickActions || !service.quickActions.length) {
-                    await service.loadQuickActions();
+                    service.loadQuickActions();
                 }
 
                 return service.quickActions || [];
