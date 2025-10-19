@@ -3,14 +3,13 @@ import { OutputDataType, VariableCategory } from "../../../../../shared/variable
 import { EffectTrigger } from "../../../../../shared/effect-constants";
 
 const triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:raid", "twitch:raid-sent-off"];
+triggers[EffectTrigger.EVENT] = ["twitch:raid", "twitch:outgoing-raid-started", "twitch:raid-sent-off"];
 triggers[EffectTrigger.MANUAL] = true;
-
 
 const model : ReplaceVariable = {
     definition: {
         handle: "raidViewerCount",
-        description: "Get the number of viewers brought over by a raid",
+        description: "Get the number of viewers brought or sent over by a raid",
         triggers: triggers,
         categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.NUMBER]
