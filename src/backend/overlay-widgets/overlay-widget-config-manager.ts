@@ -1,6 +1,7 @@
 import { OverlayWidgetConfig } from "../../types/overlay-widgets";
 import JsonDbManager from "../database/json-db-manager";
 import frontendCommunicator from "../common/frontend-communicator";
+import { simpleClone } from "../utils";
 
 type ExtraEvents = {
     "widget-config-updated": (item: OverlayWidgetConfig, previous: OverlayWidgetConfig) => void;
@@ -19,7 +20,7 @@ class OverlayWidgetConfigManager extends JsonDbManager<OverlayWidgetConfig, Extr
             return this.saveItem(config, true);
         }
 
-        const existingConfig = JSON.parse(JSON.stringify(this.getItem(config.id))) as OverlayWidgetConfig;
+        const existingConfig = simpleClone(this.getItem(config.id));
 
         const ifActiveChanged = (existingConfig.active ?? true) !== (config.active ?? true);
 

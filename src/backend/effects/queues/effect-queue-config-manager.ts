@@ -3,6 +3,7 @@ import { EffectQueueConfig } from "../../../types/effects";
 import JsonDbManager from "../../database/json-db-manager";
 import effectQueueRunner from "./effect-queue-runner";
 import frontendCommunicator from "../../common/frontend-communicator";
+import { simpleClone } from "../../utils";
 
 class EffectQueueConfigManager extends JsonDbManager<EffectQueueConfig> {
     constructor() {
@@ -72,7 +73,7 @@ class EffectQueueConfigManager extends JsonDbManager<EffectQueueConfig> {
     }
 
     getAllItems(): EffectQueueConfig[] {
-        const items = JSON.parse(JSON.stringify(super.getAllItems())) as EffectQueueConfig[];
+        const items = simpleClone(super.getAllItems());
         for (const item of items) {
             item.length = effectQueueRunner.getQueueLength(item.id);
         }
@@ -80,7 +81,7 @@ class EffectQueueConfigManager extends JsonDbManager<EffectQueueConfig> {
     }
 
     getItem(id: string): EffectQueueConfig {
-        const item = JSON.parse(JSON.stringify(super.getItem(id))) as EffectQueueConfig;
+        const item = simpleClone(super.getItem(id));
 
         if (item == null) {
             return null;

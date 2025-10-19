@@ -7,7 +7,7 @@ import { EventManager } from "../../events/event-manager";
 import effectRunner from "../../common/effect-runner";
 import logger from "../../logwrapper";
 import { abortEffectList } from "../../common/effect-abort-helpers";
-import { wait } from "../../utils";
+import { simpleClone, wait } from "../../utils";
 
 export type QueueStatus = "running" | "paused" | "idle" | "canceled";
 
@@ -68,7 +68,7 @@ export class EffectQueue extends TypedEmitter<Events> {
     }
 
     get state(): QueueState {
-        return JSON.parse(JSON.stringify(this._state)) as QueueState;
+        return simpleClone(this._state);
     }
 
     get queueLength() {

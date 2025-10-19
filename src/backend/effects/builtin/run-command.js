@@ -6,6 +6,7 @@ const chatHelpers = require("../../chat/chat-helpers");
 const chatCommandHandler = require("../../chat/commands/chat-command-handler");
 const commandRunner = require("../../chat/commands/command-runner");
 const logger = require("../../logwrapper");
+const { simpleClone } = require('../../utils');
 
 /**
  * The Delay effect
@@ -123,7 +124,7 @@ const model = {
     onTriggerEvent: async (event) => {
         const { effect, trigger } = event;
 
-        const clonedTrigger = JSON.parse(JSON.stringify(trigger));
+        const clonedTrigger = simpleClone(trigger);
         if (effect.username != null && effect.username.length > 0) {
             clonedTrigger.metadata.username = effect.username;
         }

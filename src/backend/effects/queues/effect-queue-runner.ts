@@ -3,6 +3,7 @@ import { EffectQueueConfig } from "../../../types/effects";
 import { EffectQueue, QueueState, RunEffectsContext } from "./effect-queue";
 import logger from "../../logwrapper";
 import effectManager from "../effectManager";
+import { simpleClone } from "../../utils";
 
 type Events = {
     "length-updated": (queueData: { id: string, length: number }) => void;
@@ -17,7 +18,7 @@ class EffectQueueRunner extends TypedEmitter<Events> {
     }
 
     get queues(): Record<string, EffectQueue> {
-        return JSON.parse(JSON.stringify(this._queues));
+        return simpleClone(this._queues);
     }
 
     getQueueStateForConfig(config: EffectQueueConfig): QueueState {

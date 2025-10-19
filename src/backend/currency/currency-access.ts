@@ -8,6 +8,7 @@ import { SettingsManager } from "../common/settings-manager";
 import profileManager from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
+import { simpleClone } from "../utils";
 
 type CurrencyCache = {
     [currencyName: string]: Currency;
@@ -79,7 +80,7 @@ class CurrencyAccess extends EventEmitter {
     }
 
     getCurrencies(): CurrencyCache {
-        return JSON.parse(JSON.stringify(this._currencyCache)) as CurrencyCache;
+        return simpleClone(this._currencyCache);
     }
 
     getCurrencyById(id: string): Currency {
@@ -176,7 +177,7 @@ class CurrencyAccess extends EventEmitter {
             return;
         }
 
-        const currency = JSON.parse(JSON.stringify(this._currencyCache[id])) as Currency;
+        const currency = simpleClone(this._currencyCache[id]);
 
         delete this._currencyCache[id];
         this.saveAllCurrencies();
