@@ -43,7 +43,7 @@ const effectDetailModal = {
     },
     computed: {
         effectWithoutDefinition() {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
             const { __definition, ...rest } = this.effect;
             return rest;
         },
