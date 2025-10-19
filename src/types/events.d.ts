@@ -19,18 +19,25 @@ export type PresetValue = {
 };
 
 export type FilterSettings = {
+    type: string;
     comparisonType: ComparisonType;
     value: any;
+};
+
+export type EventSourceAndId = {
+    eventSourceId: string;
+    eventId: string;
+};
+
+export type EventData = EventSourceAndId & {
+    eventMeta: Record<string, unknown>;
 };
 
 export type EventFilter = {
     id: string;
     name: string;
     description: string;
-    events: Array<{
-        eventSourceId: string;
-        eventId: string;
-    }>;
+    events: EventSourceAndId[];
     comparisonTypes: string[];
     valueType: "text" | "preset";
     presetValues?(...args: unknown[]): Awaitable<PresetValue[]>;
@@ -38,12 +45,13 @@ export type EventFilter = {
     getSelectedValueDisplay?(filterSettings: FilterSettings, ...args: unknown[]): Awaitable<string>;
     predicate(
         filterSettings: FilterSettings,
-        eventData: {
-            eventSourceId: string;
-            eventId: string;
-            eventMeta: Record<string, unknown>;
-        }
+        eventData: EventData
     ): Awaitable<boolean>;
+};
+
+export type EventFilterData = {
+    mode: "inclusive" | "exclusive";
+    filters: FilterSettings[];
 };
 
 export type FirebotEvent = {

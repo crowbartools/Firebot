@@ -2,7 +2,7 @@
 
 const NodeCache = require("node-cache");
 const { EffectTrigger } = require("../../shared/effect-constants");
-const filterManager = require("./filters/filter-manager");
+const { FilterManager } = require("./filters/filter-manager");
 const eventsAccess = require("./events-access");
 
 // This cache holds all users who have fired events and what events they fired.
@@ -85,7 +85,7 @@ async function onEventTriggered(event, source, meta, isManual = false, isRetrigg
     for (const eventSetting of eventSettings) {
 
         if (eventSetting.filterData && (isSimulation || !isManual)) {
-            const passed = await filterManager.runFilters(eventSetting.filterData, {
+            const passed = await FilterManager.runFilters(eventSetting.filterData, {
                 eventSourceId: source.id,
                 eventId: event.id,
                 eventMeta: meta
@@ -125,7 +125,7 @@ async function onEventTriggered(event, source, meta, isManual = false, isRetrigg
 
     try {
         await Promise.all(effectPromises);
-    } catch (error) {}
+    } catch { }
 }
 
 // Export Functions

@@ -154,7 +154,7 @@ function buildModules(scriptManifest) {
         restrictionManager: require("../../../restrictions/restriction-manager").RestrictionsManager,
         commandManager: require("../../../chat/commands/command-manager"),
         eventManager: require("../../../events/EventManager"),
-        eventFilterManager: require("../../../events/filters/filter-manager"),
+        eventFilterManager: require("../../../events/filters/filter-manager").FilterManager,
         eventFilterFactory: require("../../../events/filters/filter-factory"),
         replaceVariableManager: require("../../../variables/replace-variable-manager").ReplaceVariableManager,
         replaceVariableFactory: require("../../../variables/variable-factory"),

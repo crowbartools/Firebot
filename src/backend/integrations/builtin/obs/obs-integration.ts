@@ -12,7 +12,7 @@ import { Awaitable } from "../../../../types/util-types";
 import logger from "../../../logwrapper";
 import effectManager from "../../../effects/effectManager";
 import eventManager from "../../../events/EventManager";
-import eventFilterManager from "../../../events/filters/filter-manager";
+import { FilterManager } from "../../../events/filters/filter-manager";
 import { ReplaceVariableManager } from "../../../variables/replace-variable-manager";
 import frontendCommunicator from "../../../common/frontend-communicator";
 
@@ -164,8 +164,8 @@ class ObsIntegration
 
         eventManager.registerEventSource(OBSEventSource);
 
-        eventFilterManager.registerFilter(GroupNameEventFilter);
-        eventFilterManager.registerFilter(SceneNameEventFilter);
+        FilterManager.registerFilter(GroupNameEventFilter);
+        FilterManager.registerFilter(SceneNameEventFilter);
 
         ReplaceVariableManager.registerReplaceVariable(SceneNameVariable);
         ReplaceVariableManager.registerReplaceVariable(SceneCollectionNameVariable);

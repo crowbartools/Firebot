@@ -1,24 +1,37 @@
-"use strict";
+import EventEmitter from "events";
 
-const logger = require("../../logwrapper");
-const EventEmitter = require("events");
-const frontendCommunicator = require("../../common/frontend-communicator");
+import { EventData, EventFilter, EventFilterData, EventSourceAndId } from "../../../types/events";
+
+import frontendCommunicator from "../../common/frontend-communicator";
+import logger from "../../logwrapper";
 
 class FilterManager extends EventEmitter {
-
-    #registeredFilters = [];
-
-    /**
-     * @type {Record<string, Array<{ eventSourceId: string, eventId: string }>>}
-     */
-    #additionalFilterEvents = {};
+    private _registeredFilters: EventFilter[] = [];
+    private _additionalFilterEvents: Record<string, EventSourceAndId[]> = {};
 
     constructor() {
         super();
+
+        frontendCommunicator.on("getFiltersForEvent", (data: EventSourceAndId) => {
+            logger.info("got 'get all filters' request");
+            const { eventSourceId, eventId } = data;
+            return this.getFiltersForEvent(eventSourceId, eventId).map((f) => {
+                return {
+                    id: f.id,
+                    name: f.name,
+                    description: f.description,
+                    comparisonTypes: f.comparisonTypes,
+                    valueType: f.valueType,
+                    getPresetValues: f.presetValues ? f.presetValues.toString() : "() => {}",
+                    getSelectedValueDisplay: f.getSelectedValueDisplay ? f.getSelectedValueDisplay.toString() : "filterSettings => filterSettings.value",
+                    valueIsStillValid: f.valueIsStillValid ? f.valueIsStillValid.toString() : "() => true"
+                };
+            });
+        });
     }
 
-    registerFilter(filter) {
-        const idConflict = this.#registeredFilters.some(
+    registerFilter(filter: EventFilter): void {
+        const idConflict = this._registeredFilters.some(
             f => f.id === filter.id
         );
 
@@ -32,15 +45,15 @@ class FilterManager extends EventEmitter {
             return;
         }
 
-        this.#registeredFilters.push(filter);
+        this._registeredFilters.push(filter);
 
         logger.debug(`Registered Event Filter ${filter.id}`);
 
         this.emit("filterRegistered", filter);
     }
 
-    unregisterFilter(id) {
-        const existing = this.#registeredFilters.some(
+    unregisterFilter(id: string): void {
+        const existing = this._registeredFilters.some(
             f => f.id === id
         );
 
@@ -49,30 +62,30 @@ class FilterManager extends EventEmitter {
             return;
         }
 
-        this.#registeredFilters = this.#registeredFilters.filter(f => f.id !== id);
+        this._registeredFilters = this._registeredFilters.filter(f => f.id !== id);
 
         logger.debug(`Unregistered Event Filter ${id}`);
 
         this.emit("FilterUnregistered", id);
     }
 
-    addEventToFilter(filterId, eventSourceId, eventId) {
+    addEventToFilter(filterId: string, eventSourceId: string, eventId: string): void {
         if (this.getFiltersForEvent(eventSourceId, eventId).some(f => f.id === filterId)) {
             logger.warn(`Filter ${filterId} already setup for event ${eventSourceId}:${eventId}`);
             return;
         }
 
-        const additionalEvents = this.#additionalFilterEvents[filterId] ?? [];
+        const additionalEvents = this._additionalFilterEvents[filterId] ?? [];
 
         additionalEvents.push({ eventSourceId, eventId });
 
-        this.#additionalFilterEvents[filterId] = additionalEvents;
+        this._additionalFilterEvents[filterId] = additionalEvents;
 
         logger.debug(`Added event ${eventSourceId}:${eventId} to filter ${filterId}`);
     }
 
-    removeEventFromFilter(filterId, eventSourceId, eventId) {
-        let additionalEvents = this.#additionalFilterEvents[filterId] ?? [];
+    removeEventFromFilter(filterId: string, eventSourceId: string, eventId: string): void {
+        let additionalEvents = this._additionalFilterEvents[filterId] ?? [];
 
         if (!additionalEvents.some(f => f.eventSourceId === eventSourceId && f.eventId === eventId)) {
             logger.warn(`Filter ${filterId} does not have a plugin registration for event ${eventSourceId}:${eventId}`);
@@ -81,33 +94,33 @@ class FilterManager extends EventEmitter {
 
         additionalEvents = additionalEvents.filter(e => e.eventSourceId !== eventSourceId && e.eventId !== eventId);
 
-        this.#additionalFilterEvents[filterId] = additionalEvents;
+        this._additionalFilterEvents[filterId] = additionalEvents;
 
         logger.debug(`Removed event ${eventSourceId}:${eventId} from filter ${filterId}`);
     }
 
-    getFilterById(filterId) {
-        return this.#registeredFilters.find(f => f.id === filterId);
+    getFilterById(filterId: string): EventFilter {
+        return this._registeredFilters.find(f => f.id === filterId);
     }
 
-    getAllFilters() {
-        return this.#registeredFilters;
+    getAllFilters(): EventFilter[] {
+        return this._registeredFilters;
     }
 
-    getFiltersForEvent(eventSourceId, eventId) {
-        const filters = this.#registeredFilters
+    getFiltersForEvent(eventSourceId: string, eventId: string): EventFilter[] {
+        const filters = this._registeredFilters
             .filter((f) => {
                 if (!f.events || f.events.length === 0) {
                     return true;
                 }
                 const events = f.events;
-                const additionalEvents = this.#additionalFilterEvents[f.id] ?? [];
+                const additionalEvents = this._additionalFilterEvents[f.id] ?? [];
                 return [...events, ...additionalEvents].some(e => e.eventSourceId === eventSourceId && e.eventId === eventId);
             });
         return filters;
     }
 
-    async runFilters(filterData, eventData) {
+    async runFilters(filterData: EventFilterData, eventData: EventData) {
         if (filterData?.filters?.length > 0) {
             const filterSettings = filterData.filters;
 
@@ -144,21 +157,4 @@ class FilterManager extends EventEmitter {
 
 const manager = new FilterManager();
 
-frontendCommunicator.on("getFiltersForEvent", (data) => {
-    logger.info("got 'get all filters' request");
-    const { eventSourceId, eventId } = data;
-    return manager.getFiltersForEvent(eventSourceId, eventId).map((f) => {
-        return {
-            id: f.id,
-            name: f.name,
-            description: f.description,
-            comparisonTypes: f.comparisonTypes,
-            valueType: f.valueType,
-            getPresetValues: f.presetValues ? f.presetValues.toString() : "() => {}",
-            getSelectedValueDisplay: f.getSelectedValueDisplay ? f.getSelectedValueDisplay.toString() : "filterSettings => filterSettings.value",
-            valueIsStillValid: f.valueIsStillValid ? f.valueIsStillValid.toString() : "() => true"
-        };
-    });
-});
-
-module.exports = manager;
+export { manager as FilterManager };
