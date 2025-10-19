@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import effectQueueManager from "../../../../backend/effects/queues/effect-queue-config-manager";
+import { EffectQueueConfigManager } from "../../../../backend/effects/queues/effect-queue-config-manager";
 import effectQueueRunner from "../../../../backend/effects/queues/effect-queue-runner";
 
 function checkQueue(req: Request, res: Response): boolean {
@@ -11,7 +11,7 @@ function checkQueue(req: Request, res: Response): boolean {
         });
         return false;
     }
-    const queue = effectQueueManager.getItem(queueId);
+    const queue = EffectQueueConfigManager.getItem(queueId);
     if (queue == null) {
         res.status(404).send({
             status: "error",
@@ -23,7 +23,7 @@ function checkQueue(req: Request, res: Response): boolean {
 }
 
 export function getQueues(req: Request, res: Response): void {
-    res.json(effectQueueManager.getAllItems());
+    res.json(EffectQueueConfigManager.getAllItems());
 }
 
 export function getQueueById(req: Request, res: Response): void {
@@ -31,7 +31,7 @@ export function getQueueById(req: Request, res: Response): void {
         return;
     }
 
-    res.json(effectQueueManager.getItem(req.params.queueId));
+    res.json(EffectQueueConfigManager.getItem(req.params.queueId));
 }
 
 export function pauseQueue(req: Request, res: Response): void {
@@ -41,9 +41,9 @@ export function pauseQueue(req: Request, res: Response): void {
 
     const queueId = req.params.queueId;
 
-    effectQueueManager.pauseQueue(queueId);
+    EffectQueueConfigManager.pauseQueue(queueId);
 
-    res.json(effectQueueManager.getItem(queueId));
+    res.json(EffectQueueConfigManager.getItem(queueId));
 }
 
 export function resumeQueue(req: Request, res: Response): void {
@@ -53,9 +53,9 @@ export function resumeQueue(req: Request, res: Response): void {
 
     const queueId = req.params.queueId;
 
-    effectQueueManager.resumeQueue(queueId);
+    EffectQueueConfigManager.resumeQueue(queueId);
 
-    res.json(effectQueueManager.getItem(queueId));
+    res.json(EffectQueueConfigManager.getItem(queueId));
 }
 
 export function toggleQueue(req: Request, res: Response): void {
@@ -65,9 +65,9 @@ export function toggleQueue(req: Request, res: Response): void {
 
     const queueId = req.params.queueId;
 
-    effectQueueManager.toggleQueue(queueId);
+    EffectQueueConfigManager.toggleQueue(queueId);
 
-    res.json(effectQueueManager.getItem(queueId));
+    res.json(EffectQueueConfigManager.getItem(queueId));
 }
 
 export function clearQueue(req: Request, res: Response): void {
@@ -79,5 +79,5 @@ export function clearQueue(req: Request, res: Response): void {
 
     effectQueueRunner.removeQueue(queueId);
 
-    res.json(effectQueueManager.getItem(queueId));
+    res.json(EffectQueueConfigManager.getItem(queueId));
 }

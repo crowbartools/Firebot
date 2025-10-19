@@ -292,10 +292,10 @@ async function processEffects(processEffectsRequest) {
 
     const queueId = processEffectsRequest.effects.queue;
 
-    const effectQueueManager = require("../effects/queues/effect-queue-config-manager");
+    const { EffectQueueConfigManager } = require("../effects/queues/effect-queue-config-manager");
     const effectQueueRunner = require("../effects/queues/effect-queue-runner").default;
 
-    const queue = effectQueueManager.getItem(queueId);
+    const queue = EffectQueueConfigManager.getItem(queueId);
     if (queue != null) {
         logger.debug(`Sending effects for list ${processEffectsRequest.effects.id} to queue ${queueId}...`);
         effectQueueRunner.addEffectsToQueue(queue, runEffectsContext,

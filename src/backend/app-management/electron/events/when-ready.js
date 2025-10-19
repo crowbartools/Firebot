@@ -140,8 +140,8 @@ exports.whenReady = async () => {
     await chatRolesManager.loadVips();
 
     windowManagement.updateSplashScreenStatus("Loading effect queues...");
-    const effectQueueManager = require("../../../effects/queues/effect-queue-config-manager");
-    effectQueueManager.loadItems();
+    const { EffectQueueConfigManager } = require("../../../effects/queues/effect-queue-config-manager");
+    EffectQueueConfigManager.loadItems();
 
     windowManagement.updateSplashScreenStatus("Loading preset effect lists...");
     const { PresetEffectListManager } = require("../../../effects/preset-lists/preset-effect-list-manager");

@@ -12,9 +12,9 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
 
 contextBridge.exposeInMainWorld('queueManager', {
     clearQueue: (queueID) => {
-        ipcRenderer.send("clearEffectQueue", queueID);
+        ipcRenderer.send("effect-queues:clear-effect-queue", queueID);
     },
     toggleQueue: (queueID) => {
-        ipcRenderer.send("toggleEffectQueue", queueID);
+        ipcRenderer.send("effect-queues:toggle-effect-queue", queueID);
     }
 });

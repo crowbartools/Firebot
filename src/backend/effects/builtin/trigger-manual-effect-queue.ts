@@ -1,6 +1,6 @@
 import { EffectType, EffectQueueConfig } from "../../../types/effects";
 import { EffectCategory } from "../../../shared/effect-constants";
-import effectQueueManager from "../queues/effect-queue-config-manager";
+import { EffectQueueConfigManager } from "../queues/effect-queue-config-manager";
 import queueRunner from "../queues/effect-queue-runner";
 import logger from "../../logwrapper";
 
@@ -52,7 +52,7 @@ const effect: EffectType<{
         return queue?.name ?? "Unknown Queue";
     },
     onTriggerEvent: ({ effect }) => {
-        const queue = effectQueueManager.getItem(effect.effectQueueId);
+        const queue = EffectQueueConfigManager.getItem(effect.effectQueueId);
 
         if (queue == null) {
             logger.debug(`Effect queue ${effect.effectQueueId} not found`);

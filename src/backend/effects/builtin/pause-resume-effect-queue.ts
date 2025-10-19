@@ -1,6 +1,6 @@
 import { EffectType, EffectQueueConfig } from "../../../types/effects";
 import { EffectCategory } from "../../../shared/effect-constants";
-import effectQueueManager from "../queues/effect-queue-config-manager";
+import { EffectQueueConfigManager } from "../queues/effect-queue-config-manager";
 import logger from "../../logwrapper";
 
 const effect: EffectType<{
@@ -93,18 +93,18 @@ const effect: EffectType<{
         return `${effect.action} ${queue?.name ?? "Unknown Queue"}`;
     },
     onTriggerEvent: ({ effect }) => {
-        const queue = effectQueueManager.getItem(effect.effectQueue);
+        const queue = EffectQueueConfigManager.getItem(effect.effectQueue);
 
         if (queue == null) {
             logger.debug(`Effect queue ${effect.effectQueue} not found`);
             return false;
         }
         if (effect.action === "Pause") {
-            effectQueueManager.pauseQueue(effect.effectQueue, effect.runEffectsImmediatelyWhenPaused);
+            EffectQueueConfigManager.pauseQueue(effect.effectQueue, effect.runEffectsImmediatelyWhenPaused);
         } else if (effect.action === "Resume") {
-            effectQueueManager.resumeQueue(effect.effectQueue);
+            EffectQueueConfigManager.resumeQueue(effect.effectQueue);
         } else {
-            effectQueueManager.toggleQueue(effect.effectQueue, effect.runEffectsImmediatelyWhenPaused);
+            EffectQueueConfigManager.toggleQueue(effect.effectQueue, effect.runEffectsImmediatelyWhenPaused);
         }
 
         return true;

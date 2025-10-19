@@ -2,13 +2,13 @@ import { FirebotSetup, SetupImportQuestion } from "../../../types/setups";
 import { Currency } from "../../../types/currency";
 
 import { CounterManager } from "../../counters/counter-manager";
+import { EffectQueueConfigManager } from "../../effects/queues/effect-queue-config-manager";
 import { HotkeyManager } from "../../hotkeys/hotkey-manager";
 import { PresetEffectListManager } from "../../effects/preset-lists/preset-effect-list-manager";
 import { QuickActionManager } from "../../quick-actions/quick-action-manager";
 import { ScheduledTaskManager } from "../../timers/scheduled-task-manager";
 import { TimerManager } from "../../timers/timer-manager";
 import commandManager from "../../chat/commands/command-manager";
-import effectQueueManager from "../../effects/queues/effect-queue-config-manager";
 import eventsAccess from "../../events/events-access";
 import customRolesManager from "../../roles/custom-roles-manager";
 import variableMacroManager from "../../variables/macro-manager";
@@ -115,9 +115,9 @@ async function importSetup(setup: FirebotSetup, selectedCurrency: Currency): Pro
     // effect queues
     const effectQueues = setup.components.effectQueues || [];
     for (const queue of effectQueues) {
-        effectQueueManager.saveItem(queue);
+        EffectQueueConfigManager.saveItem(queue);
     }
-    effectQueueManager.triggerUiRefresh();
+    EffectQueueConfigManager.triggerUiRefresh();
 
     // events
     const events = setup.components.events || [];
@@ -217,7 +217,7 @@ function removeSetupComponents(components: Partial<FirebotSetup["components"]>):
                         currencyAccess.deleteCurrency(id);
                         break;
                     case "effectQueues":
-                        effectQueueManager.deleteItem(id);
+                        EffectQueueConfigManager.deleteItem(id);
                         break;
                     case "events":
                         eventsAccess.removeEventFromMainEvents(id);
@@ -261,7 +261,7 @@ function removeSetupComponents(components: Partial<FirebotSetup["components"]>):
             } else if (componentType === "counters") {
                 CounterManager.triggerUiRefresh();
             } else if (componentType === "effectQueues") {
-                effectQueueManager.triggerUiRefresh();
+                EffectQueueConfigManager.triggerUiRefresh();
             } else if (componentType === "events") {
                 eventsAccess.triggerUiRefresh();
             } else if (componentType === "eventGroups") {

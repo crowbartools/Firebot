@@ -3,13 +3,13 @@ import webSocketServerManager from "./websocket-server-manager";
 
 // Firebot Component Managers
 import { CounterManager } from "../backend/counters/counter-manager";
+import { EffectQueueConfigManager } from "../backend/effects/queues/effect-queue-config-manager";
 import { PresetEffectListManager } from "../backend/effects/preset-lists/preset-effect-list-manager";
 import { QuoteManager } from "../backend/quotes/quote-manager";
 import { TimerManager } from "../backend/timers/timer-manager";
 import commandManager from "../backend/chat/commands/command-manager";
 import customRolesManager from "../backend/roles/custom-roles-manager";
 import { events as customVariablesEvents } from "../backend/common/custom-variable-manager";
-import effectQueueManager from "../backend/effects/queues/effect-queue-config-manager";
 import effectQueueRunner from "../backend/effects/queues/effect-queue-runner";
 import viewerMetadataManager from "../backend/viewers/viewer-metadata-manager";
 
@@ -50,7 +50,7 @@ const FIREBOT_COMPONENT_MANAGERS: Array<ComponentManager> = [
     },
     {
         componentName: "effect-queue",
-        manager: effectQueueManager
+        manager: EffectQueueConfigManager
     },
     {
         componentName: "effect-queue",

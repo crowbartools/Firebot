@@ -19,8 +19,8 @@
                 }
             };
 
-            service.loadEffectQueues = async () => {
-                const effectQueues = await backendCommunicator.fireEventAsync("getEffectQueues");
+            service.loadEffectQueues = () => {
+                const effectQueues = backendCommunicator.fireEventSync("effect-queues:get-effect-queues");
                 if (effectQueues != null) {
                     service.effectQueues = effectQueues;
                 }
@@ -81,8 +81,8 @@
                 return service.effectQueues.find(eq => eq.id === id);
             };
 
-            service.saveEffectQueue = async (effectQueue) => {
-                const savedEffectQueue = await backendCommunicator.fireEventAsync("saveEffectQueue", effectQueue);
+            service.saveEffectQueue = (effectQueue) => {
+                const savedEffectQueue = backendCommunicator.fireEventSync("effect-queues:save-effect-queue", effectQueue);
 
                 if (savedEffectQueue != null) {
                     updateEffectQueue(savedEffectQueue);
@@ -94,17 +94,17 @@
             };
 
             service.toggleEffectQueue = (queue) => {
-                backendCommunicator.fireEvent("toggleEffectQueue", queue.id);
+                backendCommunicator.fireEvent("effect-queues:toggle-effect-queue", queue.id);
                 queue.active = !queue.active;
             };
 
             service.clearEffectQueue = (queueId) => {
-                backendCommunicator.fireEvent("clearEffectQueue", queueId);
+                backendCommunicator.fireEvent("effect-queues:clear-effect-queue", queueId);
             };
 
             service.saveAllEffectQueues = (effectQueues) => {
                 service.effectQueues = effectQueues;
-                backendCommunicator.fireEvent("saveAllEffectQueues", effectQueues);
+                backendCommunicator.fireEvent("effect-queues:save-all-effect-queues", effectQueues);
             };
 
             service.effectQueueNameExists = (name) => {
@@ -138,7 +138,7 @@
 
             service.deleteEffectQueue = (effectQueueId) => {
                 service.effectQueues = service.effectQueues.filter(eq => eq.id !== effectQueueId);
-                backendCommunicator.fireEvent("deleteEffectQueue", effectQueueId);
+                backendCommunicator.fireEvent("effect-queues:delete-effect-queue", effectQueueId);
             };
 
             service.showAddEditEffectQueueModal = (effectQueueId) => {
