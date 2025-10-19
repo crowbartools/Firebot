@@ -3,13 +3,13 @@ import { Currency } from "../../../types/currency";
 
 import { CounterManager } from "../../counters/counter-manager";
 import { HotkeyManager } from "../../hotkeys/hotkey-manager";
+import { PresetEffectListManager } from "../../effects/preset-lists/preset-effect-list-manager";
 import { QuickActionManager } from "../../quick-actions/quick-action-manager";
 import { ScheduledTaskManager } from "../../timers/scheduled-task-manager";
 import { TimerManager } from "../../timers/timer-manager";
 import commandManager from "../../chat/commands/command-manager";
 import effectQueueManager from "../../effects/queues/effect-queue-config-manager";
 import eventsAccess from "../../events/events-access";
-import presetEffectListManager from "../../effects/preset-lists/preset-effect-list-manager";
 import customRolesManager from "../../roles/custom-roles-manager";
 import variableMacroManager from "../../variables/macro-manager";
 import rankManager from "../../ranks/rank-manager";
@@ -141,9 +141,9 @@ async function importSetup(setup: FirebotSetup, selectedCurrency: Currency): Pro
     // preset effect lists
     const presetEffectLists = setup.components.presetEffectLists || [];
     for (const presetLists of presetEffectLists) {
-        presetEffectListManager.saveItem(presetLists);
+        PresetEffectListManager.saveItem(presetLists);
     }
-    presetEffectListManager.triggerUiRefresh();
+    PresetEffectListManager.triggerUiRefresh();
 
     // timers
     const timers = setup.components.timers || [];
@@ -229,7 +229,7 @@ function removeSetupComponents(components: Partial<FirebotSetup["components"]>):
                         HotkeyManager.deleteHotkey(id);
                         break;
                     case "presetEffectLists":
-                        presetEffectListManager.deleteItem(id);
+                        PresetEffectListManager.deleteItem(id);
                         break;
                     case "timers":
                         TimerManager.deleteItem(id);
@@ -267,7 +267,7 @@ function removeSetupComponents(components: Partial<FirebotSetup["components"]>):
             } else if (componentType === "eventGroups") {
                 eventsAccess.triggerUiRefresh();
             } else if (componentType === "presetEffectLists") {
-                presetEffectListManager.triggerUiRefresh();
+                PresetEffectListManager.triggerUiRefresh();
             } else if (componentType === "timers") {
                 TimerManager.triggerUiRefresh();
             } else if (componentType === "scheduledTasks") {

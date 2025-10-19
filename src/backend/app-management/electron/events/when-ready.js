@@ -144,8 +144,8 @@ exports.whenReady = async () => {
     effectQueueManager.loadItems();
 
     windowManagement.updateSplashScreenStatus("Loading preset effect lists...");
-    const presetEffectListManager = require("../../../effects/preset-lists/preset-effect-list-manager");
-    presetEffectListManager.loadItems();
+    const { PresetEffectListManager } = require("../../../effects/preset-lists/preset-effect-list-manager");
+    PresetEffectListManager.loadItems();
 
     windowManagement.updateSplashScreenStatus("Loading quick actions...");
     const { QuickActionManager } = require("../../../quick-actions/quick-action-manager");

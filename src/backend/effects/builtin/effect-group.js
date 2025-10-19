@@ -2,7 +2,7 @@
 
 const effectRunner = require("../../common/effect-runner");
 const { EffectCategory, EffectTrigger } = require('../../../shared/effect-constants');
-const presetEffectListManager = require("../preset-lists/preset-effect-list-manager");
+const { PresetEffectListManager } = require("../preset-lists/preset-effect-list-manager");
 
 const effectGroup = {
     definition: {
@@ -146,7 +146,7 @@ const effectGroup = {
             let processEffectsRequest = {};
 
             if (effect.listType === "preset") {
-                const presetList = presetEffectListManager.getItem(effect.presetListId);
+                const presetList = PresetEffectListManager.getItem(effect.presetListId);
                 if (presetList == null) {
                     // preset list doesnt exist anymore
                     return resolve(true);

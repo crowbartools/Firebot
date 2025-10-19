@@ -1,12 +1,13 @@
 import { QuickActionDefinition, SystemQuickAction } from "../../types/quick-actions";
 import { EffectList } from "../../types/effects";
-import { EffectTrigger } from "../../shared/effect-constants";
+import { Trigger } from "../../types/triggers";
+
 import JsonDbManager from "../database/json-db-manager";
-import frontendCommunicator from "../common/frontend-communicator";
-import effectRunner from "../common/effect-runner";
-import presetEffectListManager from "../effects/preset-lists/preset-effect-list-manager";
-import accountAccess from "../common/account-access";
+import { PresetEffectListManager } from "../effects/preset-lists/preset-effect-list-manager";
 import { SettingsManager } from "../common/settings-manager";
+import accountAccess from "../common/account-access";
+import effectRunner from "../common/effect-runner";
+import frontendCommunicator from "../common/frontend-communicator";
 
 import { GiveCurrencyQuickAction } from "./builtin/give-currency";
 import { OpenRewardQueueQuickAction } from "./builtin/open-reward-request-queue";
@@ -99,7 +100,7 @@ class QuickActionManager extends JsonDbManager<QuickActionDefinition> {
             let presetArgValues: Record<string, unknown> = null;
 
             if (triggeredQuickAction.presetListId != null) {
-                const presetList = presetEffectListManager.getItem(triggeredQuickAction.presetListId);
+                const presetList = PresetEffectListManager.getItem(triggeredQuickAction.presetListId);
                 if (triggeredQuickAction.promptForArgs && presetList?.args?.length > 0) {
                     frontendCommunicator.send("show-run-preset-list-modal", triggeredQuickAction.presetListId);
                     return;
@@ -112,12 +113,12 @@ class QuickActionManager extends JsonDbManager<QuickActionDefinition> {
 
             const request = {
                 trigger: {
-                    type: EffectTrigger.QUICK_ACTION,
+                    type: "quick_action",
                     metadata: {
                         username: accountAccess.getAccounts().streamer.username,
                         presetListArgs: presetArgValues
                     }
-                },
+                } as Trigger,
                 effects: effects
             };
 
