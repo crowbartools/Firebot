@@ -164,6 +164,10 @@ class WebSocketServerManager extends EventEmitter {
             return;
         }
 
+        if (overlayInstance != null && overlayInstance !== "") {
+            meta.overlayInstance = overlayInstance;
+        }
+
         const data = { event: eventName, meta: meta, overlayInstance: overlayInstance };
 
         const message: EventMessage = {
