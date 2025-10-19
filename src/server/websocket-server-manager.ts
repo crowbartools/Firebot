@@ -1,12 +1,15 @@
-import effectManager from "../backend/effects/effectManager";
 import { EventEmitter } from "events";
-import eventManager from "../backend/events/EventManager";
 import http from "http";
-import logger from "../backend/logwrapper";
 import WebSocket from "ws";
+
 import { OverlayConnectedData, Message, ResponseMessage, EventMessage, InvokePluginMessage, CustomWebSocketHandler } from "../types/websocket";
+import { EffectInstance } from "../types/effects";
+
 import { WebSocketClient } from "./websocket-client";
+import { EventManager } from "../backend/events/event-manager";
+import effectManager from "../backend/effects/effectManager";
 import frontendCommunicator from "../backend/common/frontend-communicator";
+import logger from "../backend/logwrapper";
 
 function sendResponse(ws: WebSocketClient, messageId: string | number, data: unknown = null) {
     const response: ResponseMessage = {
@@ -88,7 +91,7 @@ class WebSocketServerManager extends EventEmitter {
                                     sendResponse(ws, message.id);
 
                                     const instanceName = (message.data as Array<OverlayConnectedData>)[0].instanceName;
-                                    eventManager.triggerEvent("firebot", "overlay-connected", {
+                                    void EventManager.triggerEvent("firebot", "overlay-connected", {
                                         instanceName
                                     });
                                     this.emit("overlay-connected", instanceName);
@@ -136,12 +139,12 @@ class WebSocketServerManager extends EventEmitter {
                         }
                     }
                 } catch (error) {
-                    ws.close(4006, error.message);
+                    ws.close(4006, (error as Error).message);
                 }
             });
         });
 
-        effectManager.on("effectRegistered", (effect) => {
+        effectManager.on("effectRegistered", (effect: EffectInstance) => {
             if (effect.overlayExtension) {
                 // tell the overlay to refresh because a new effect with an overlay extension has been registered
                 this.refreshOverlays();

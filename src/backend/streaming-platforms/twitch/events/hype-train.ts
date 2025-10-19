@@ -1,5 +1,5 @@
-import eventManager from "../../../events/EventManager";
 import { EventSubChannelHypeTrainContribution, EventSubChannelHypeTrainType } from "@twurple/eventsub-base";
+import { EventManager } from "../../../events/event-manager";
 import frontendCommunicator from "../../../common/frontend-communicator";
 
 let hypeTrainLevel = 0;
@@ -50,7 +50,7 @@ export function triggerHypeTrainStart(
     const isGoldenKappaTrain = hypeTrainType === "golden_kappa";
     const isTreasureTrain = hypeTrainType === "treasure";
 
-    eventManager.triggerEvent("twitch", "hype-train-start", {
+    void EventManager.triggerEvent("twitch", "hype-train-start", {
         total,
         progress,
         goal,
@@ -80,7 +80,7 @@ export function triggerHypeTrainProgress(
     const isGoldenKappaTrain = hypeTrainType === "golden_kappa";
     const isTreasureTrain = hypeTrainType === "treasure";
 
-    eventManager.triggerEvent("twitch", "hype-train-progress", {
+    void EventManager.triggerEvent("twitch", "hype-train-progress", {
         total,
         progress,
         goal,
@@ -97,7 +97,7 @@ export function triggerHypeTrainProgress(
     hypeTrainLevel = level;
 
     if (previousLevel !== level) {
-        eventManager.triggerEvent("twitch", "hype-train-level-up", {
+        void EventManager.triggerEvent("twitch", "hype-train-level-up", {
             previousLevel,
             level
         });
@@ -121,7 +121,7 @@ export function triggerHypeTrainEnd(
     const isGoldenKappaTrain = hypeTrainType === "golden_kappa";
     const isTreasureTrain = hypeTrainType === "treasure";
 
-    eventManager.triggerEvent("twitch", "hype-train-end", {
+    void EventManager.triggerEvent("twitch", "hype-train-end", {
         total,
         level,
         startDate,

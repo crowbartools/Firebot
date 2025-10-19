@@ -153,7 +153,7 @@ function buildModules(scriptManifest) {
         conditionManager: require("../../../effects/builtin/conditional-effects/conditions/condition-manager"),
         restrictionManager: require("../../../restrictions/restriction-manager").RestrictionsManager,
         commandManager: require("../../../chat/commands/command-manager"),
-        eventManager: require("../../../events/EventManager"),
+        eventManager: require("../../../events/event-manager").EventManager,
         eventFilterManager: require("../../../events/filters/filter-manager").FilterManager,
         eventFilterFactory: require("../../../events/filters/filter-factory"),
         replaceVariableManager: require("../../../variables/replace-variable-manager").ReplaceVariableManager,

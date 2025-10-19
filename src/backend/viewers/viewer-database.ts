@@ -9,7 +9,7 @@ import profileManager from "../common/profile-manager";
 import accountAccess from "../common/account-access";
 import userAccess from "../common/user-access";
 import currencyAccess from "../currency/currency-access";
-import eventManager from "../events/EventManager";
+import { EventManager } from "../events/event-manager";
 import { BackupManager } from "../backup-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import rankManager from "../ranks/rank-manager";
@@ -220,7 +220,7 @@ class ViewerDatabase extends EventEmitter {
         try {
             const newViewer = await this._db.insertAsync(viewer);
 
-            void eventManager.triggerEvent("firebot", "viewer-created", {
+            void EventManager.triggerEvent("firebot", "viewer-created", {
                 username,
                 userId,
                 userDisplayName: displayName
@@ -501,7 +501,7 @@ class ViewerDatabase extends EventEmitter {
         const newRank = ladder.getRank(newRankId);
         const previousRank = ladder.getRank(currentRankId);
 
-        void eventManager.triggerEvent("firebot", "viewer-rank-updated", {
+        void EventManager.triggerEvent("firebot", "viewer-rank-updated", {
             username: viewer.username,
             userId: viewer._id,
             userDisplayName: viewer.displayName,

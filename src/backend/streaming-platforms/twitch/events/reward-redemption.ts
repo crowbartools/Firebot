@@ -1,6 +1,6 @@
-import eventManager from "../../../events/EventManager";
-import frontendCommunicator from "../../../common/frontend-communicator";
+import { EventManager } from "../../../events/event-manager";
 import rewardManager from "../../../channel-rewards/channel-reward-manager";
+import frontendCommunicator from "../../../common/frontend-communicator";
 
 export function handleRewardRedemption(
     redemptionId: string,
@@ -48,7 +48,7 @@ export function handleRewardRedemption(
         };
 
         void rewardManager.triggerChannelReward(rewardId, redemptionMeta);
-        void eventManager.triggerEvent("twitch", "channel-reward-redemption", redemptionMeta);
+        void void EventManager.triggerEvent("twitch", "channel-reward-redemption", redemptionMeta);
     }, 100);
 }
 
@@ -82,10 +82,10 @@ export function handleRewardUpdated(
     // Possible values for status are 'fulfilled' and 'canceled' according to Twitch docs
     if (status === 'fulfilled') {
         void rewardManager.triggerChannelRewardFulfilled(rewardId, redemptionMeta);
-        void eventManager.triggerEvent("twitch", "channel-reward-redemption-fulfilled", redemptionMeta);
+        void void EventManager.triggerEvent("twitch", "channel-reward-redemption-fulfilled", redemptionMeta);
     } else {
         void rewardManager.triggerChannelRewardCanceled(rewardId, redemptionMeta);
-        void eventManager.triggerEvent("twitch", "channel-reward-redemption-canceled", redemptionMeta);
+        void void EventManager.triggerEvent("twitch", "channel-reward-redemption-canceled", redemptionMeta);
     }
 }
 
@@ -96,7 +96,7 @@ export function triggerRedemptionSingleMessageBypassSubMode(
     rewardCost: number
 ): void {
     const rewardDescription = "Send a Message in Sub-Only Mode";
-    void eventManager.triggerEvent("twitch", "channel-reward-redemption-single-message-bypass-sub-mode", {
+    void void EventManager.triggerEvent("twitch", "channel-reward-redemption-single-message-bypass-sub-mode", {
         username,
         userId,
         userDisplayName,
@@ -113,7 +113,7 @@ export function triggerRedemptionSendHighlightedMessage(
     messageText: string
 ): void {
     const rewardDescription = "Highlight My Message";
-    void eventManager.triggerEvent("twitch", "channel-reward-redemption-send-highlighted-message", {
+    void void EventManager.triggerEvent("twitch", "channel-reward-redemption-send-highlighted-message", {
         username,
         userId,
         userDisplayName,
@@ -132,7 +132,7 @@ export function triggerRedemptionRandomSubEmoteUnlock(
     emoteUrl: string
 ): void {
     const rewardDescription = "Unlock a Random Sub Emote";
-    void eventManager.triggerEvent("twitch", "channel-reward-redemption-random-sub-emote-unlock", {
+    void void EventManager.triggerEvent("twitch", "channel-reward-redemption-random-sub-emote-unlock", {
         username,
         userId,
         userDisplayName,
@@ -152,7 +152,7 @@ export function triggerRedemptionChosenSubEmoteUnlock(
     emoteUrl: string
 ): void {
     const rewardDescription = "Choose an Emote to Unlock";
-    void eventManager.triggerEvent("twitch", "channel-reward-redemption-chosen-sub-emote-unlock", {
+    void void EventManager.triggerEvent("twitch", "channel-reward-redemption-chosen-sub-emote-unlock", {
         username,
         userId,
         userDisplayName,
@@ -172,7 +172,7 @@ export function triggerRedemptionChosenModifiedSubEmoteUnlock(
     emoteUrl: string
 ): void {
     const rewardDescription = "Modify a Single Emote";
-    void eventManager.triggerEvent("twitch", "channel-reward-redemption-chosen-modified-sub-emote-unlock", {
+    void void EventManager.triggerEvent("twitch", "channel-reward-redemption-chosen-modified-sub-emote-unlock", {
         username,
         userId,
         userDisplayName,

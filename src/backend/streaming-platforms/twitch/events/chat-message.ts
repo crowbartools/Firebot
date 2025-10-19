@@ -1,6 +1,6 @@
 import { FirebotChatMessage } from "../../../../types/chat";
 import { CommandDefinition, UserCommand } from "../../../../types/commands";
-import eventManager from "../../../events/EventManager";
+import { EventManager } from "../../../events/event-manager";
 
 export function triggerChatMessage(
     firebotChatMessage: FirebotChatMessage,
@@ -8,7 +8,7 @@ export function triggerChatMessage(
     command?: CommandDefinition,
     userCommand?: UserCommand
 ): void {
-    eventManager.triggerEvent("twitch", "chat-message", {
+    void EventManager.triggerEvent("twitch", "chat-message", {
         username: firebotChatMessage.username,
         userId: firebotChatMessage.userId,
         userDisplayName: firebotChatMessage.userDisplayName,
@@ -29,7 +29,7 @@ export function triggerChatMessageDeleted(
     messageText: string,
     messageId: string
 ): void {
-    eventManager.triggerEvent("twitch", "chat-message-deleted", {
+    void EventManager.triggerEvent("twitch", "chat-message-deleted", {
         username,
         userId,
         userDisplayName,
@@ -39,7 +39,7 @@ export function triggerChatMessageDeleted(
 }
 
 export function triggerFirstTimeChat(firebotChatMessage: FirebotChatMessage): void {
-    eventManager.triggerEvent("twitch", "first-time-chat", {
+    void EventManager.triggerEvent("twitch", "first-time-chat", {
         username: firebotChatMessage.username,
         userId: firebotChatMessage.userId,
         userDisplayName: firebotChatMessage.userDisplayName,

@@ -1,23 +1,26 @@
 import { ComparisonType } from "../shared/filter-constants";
+import { EffectList } from "./effects";
 import { Awaitable } from "./util-types";
+
+export type EventDefinition = {
+    id: string;
+    name: string;
+    description: string;
+    cached?: boolean;
+    cacheMetaKey?: string;
+    cacheTtlInSecs?: number;
+    manualMetadata?: Record<string, unknown>;
+    activityFeed?: {
+        icon: string;
+        getMessage: (eventData: Record<string, any>) => string;
+    };
+};
 
 export type EventSource = {
     id: string;
     name: string;
     description?: string;
-    events: Array<{
-        id: string;
-        name: string;
-        description: string;
-        cached?: boolean;
-        cacheMetaKey?: string;
-        cacheTtlInSecs?: number;
-        manualMetadata?: Record<string, unknown>;
-        activityFeed?: {
-            icon: string;
-            getMessage: (eventData: Record<string, any>) => string;
-        };
-    }>;
+    events: EventDefinition[];
 };
 
 export type PresetValue = {
@@ -61,15 +64,17 @@ export type EventFilterData = {
     filters: FilterSettings[];
 };
 
-export type FirebotEvent = {
+export type EventSettings = {
     id: string;
     type: string;
     active: boolean;
     effectLabel?: string;
+    filterData?: EventFilterData;
+    effects: EffectList;
     [x: string]: unknown;
 };
 
 export type EventGroup = {
     id: string;
-    events: FirebotEvent[];
+    events: EventSettings[];
 };

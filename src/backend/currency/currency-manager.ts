@@ -8,7 +8,7 @@ import { commafy } from "../utils";
 import currencyAccess from "./currency-access";
 import viewerDatabase from "../viewers/viewer-database";
 import viewerOnlineStatusManager from "../viewers/viewer-online-status-manager";
-import eventManager from "../events/EventManager";
+import { EventManager } from "../events/event-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import connectionManager from "../common/connection-manager";
 import twitchChat from "../chat/twitch-chat";
@@ -156,7 +156,7 @@ class CurrencyManager {
         try {
             // Update the DB with our new currency value.
             await db.updateAsync({ _id: viewer._id }, { $set: updateDoc }, {});
-            void eventManager.triggerEvent("firebot", "currency-update", {
+            void EventManager.triggerEvent("firebot", "currency-update", {
                 username: viewer?.username,
                 currencyId: currencyId,
                 currencyName: currencyCache[currencyId]?.name,

@@ -1,4 +1,4 @@
-import eventManager from "../../../events/EventManager";
+import { EventManager } from "../../../events/event-manager";
 
 export function triggerAnnouncement(
     username: string,
@@ -8,7 +8,7 @@ export function triggerAnnouncement(
     messageText: string,
     messageId: string
 ): void {
-    eventManager.triggerEvent("twitch", "announcement", {
+    void EventManager.triggerEvent("twitch", "announcement", {
         username,
         userId,
         userDisplayName,

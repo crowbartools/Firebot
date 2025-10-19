@@ -94,7 +94,7 @@
                     return capitalized.join(" ");
                 };
 
-                $ctrl.eventChanged = async (event) => {
+                $ctrl.eventChanged = (event) => {
                     $ctrl.eventData.eventId = event.eventId;
                     $ctrl.eventData.sourceId = event.sourceId;
                     $ctrl.eventData.metadata = {};
@@ -104,7 +104,7 @@
                         event.eventId
                     );
 
-                    const eventSource = await backendCommunicator.fireEventAsync("getEventSource", event);
+                    const eventSource = backendCommunicator.fireEventSync("events:get-event-source", event);
                     if (eventSource.manualMetadata) {
                         $ctrl.manualMetadata = eventSource.manualMetadata;
                         $ctrl.eventData.metadata = {
@@ -163,7 +163,7 @@
                         $ctrl.eventData.metadata
                     );
 
-                    backendCommunicator.fireEventSync("simulateEvent", $ctrl.eventData);
+                    backendCommunicator.fireEventSync("events:simulate-event", $ctrl.eventData);
                     ngToast.create({
                         className: 'success',
                         content: "Event simulated!"

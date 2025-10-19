@@ -1,4 +1,4 @@
-import eventManager from "../../../events/EventManager";
+import { EventManager } from "../../../events/event-manager";
 
 export function triggerChatModeChanged(
     chatMode: string,
@@ -6,7 +6,7 @@ export function triggerChatModeChanged(
     moderator: string,
     duration?: number
 ): void {
-    eventManager.triggerEvent("twitch", "chat-mode-changed", {
+    void EventManager.triggerEvent("twitch", "chat-mode-changed", {
         chatMode,
         chatModeState,
         moderator,

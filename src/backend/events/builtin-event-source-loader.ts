@@ -1,9 +1,9 @@
-import eventManager from "./EventManager";
+import { EventManager } from "./event-manager";
 
 import { FirebotEventSource } from "./builtin/firebot-event-source";
 import { TwitchEventSource } from "../streaming-platforms/twitch/events";
 
 export function loadEventSources() {
-    eventManager.registerEventSource(FirebotEventSource);
-    eventManager.registerEventSource(TwitchEventSource);
+    EventManager.registerEventSource(FirebotEventSource);
+    EventManager.registerEventSource(TwitchEventSource);
 };

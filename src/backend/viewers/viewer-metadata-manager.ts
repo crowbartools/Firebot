@@ -4,7 +4,7 @@ import logger from "../logwrapper";
 import viewerDatabase from "./viewer-database";
 import jsonDataHelpers from "../common/json-data-helpers";
 import frontendCommunicator from "../common/frontend-communicator";
-import eventManager from "../events/EventManager";
+import { EventManager } from "../events/event-manager";
 import { TypedEmitter } from "tiny-typed-emitter";
 
 type Events = {
@@ -30,12 +30,12 @@ class ViewerMetadataManager extends TypedEmitter<Events> {
 
         frontendCommunicator.onAsync("update-viewer-metadata",
             async (updateRequest: ViewerMetadataUpdateRequest) => {
-                this.updateViewerMetadata(updateRequest.username, updateRequest.key, updateRequest.value);
+                void this.updateViewerMetadata(updateRequest.username, updateRequest.key, updateRequest.value);
             });
 
         frontendCommunicator.onAsync("delete-viewer-metadata",
             async (deleteRequest: ViewerMetadataDeleteRequest) => {
-                this.removeViewerMetadata(deleteRequest.username, deleteRequest.key);
+                void this.removeViewerMetadata(deleteRequest.username, deleteRequest.key);
             });
     }
 
@@ -63,7 +63,7 @@ class ViewerMetadataManager extends TypedEmitter<Events> {
         const sortObj = {};
         sortObj[`metadata.${metadataKey}`] = -1;
 
-        const projectionObj = { username: 1, displayName: 1, metadata: 1};
+        const projectionObj = { username: 1, displayName: 1, metadata: 1 };
 
         try {
             const metadata = await viewerDatabase.getViewerDb()
@@ -88,7 +88,7 @@ class ViewerMetadataManager extends TypedEmitter<Events> {
         const sortObj = {};
         sortObj[`metadata.${metadataKey}`] = -1;
 
-        const projectionObj = { username: 1, displayName: 1, metadata: 1};
+        const projectionObj = { username: 1, displayName: 1, metadata: 1 };
 
         try {
             const metadata = await viewerDatabase.getViewerDb()
@@ -134,11 +134,11 @@ class ViewerMetadataManager extends TypedEmitter<Events> {
                 metadataValue: dataToSet
             };
 
-            eventManager.triggerEvent("firebot", "viewer-metadata-updated", eventData);
+            void EventManager.triggerEvent("firebot", "viewer-metadata-updated", eventData);
 
             this.emit(eventType, eventData);
         } catch (error) {
-            logger.error("Unable to set metadata for viewer");
+            logger.error("Unable to set metadata for viewer", error);
         }
     }
 
@@ -168,7 +168,7 @@ class ViewerMetadataManager extends TypedEmitter<Events> {
             metadataValue: null
         };
 
-        eventManager.triggerEvent("firebot", "viewer-metadata-updated", eventData);
+        void EventManager.triggerEvent("firebot", "viewer-metadata-updated", eventData);
 
         this.emit("deleted-item", eventData);
     }

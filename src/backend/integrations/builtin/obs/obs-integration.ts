@@ -5,13 +5,12 @@ import {
     IntegrationData,
     IntegrationEvents
 } from "@crowbartools/firebot-custom-scripts-types";
-import { EventManager } from "@crowbartools/firebot-custom-scripts-types/types/modules/event-manager";
 
 import { Awaitable } from "../../../../types/util-types";
 
 import logger from "../../../logwrapper";
 import effectManager from "../../../effects/effectManager";
-import eventManager from "../../../events/EventManager";
+import { EventManager } from "../../../events/event-manager";
 import { FilterManager } from "../../../events/filters/filter-manager";
 import { ReplaceVariableManager } from "../../../variables/replace-variable-manager";
 import frontendCommunicator from "../../../common/frontend-communicator";
@@ -96,7 +95,7 @@ class ObsIntegration
     connected = false;
     private _isConfigured = false;
 
-    constructor(private readonly eventManager: EventManager) {
+    constructor(private readonly eventManager: typeof EventManager) {
         super();
 
         frontendCommunicator.on(
@@ -162,7 +161,7 @@ class ObsIntegration
         effectManager.registerEffect(SendRawOBSWebSocketRequestEffectType);
         effectManager.registerEffect(TakeOBSSourceScreenshotEffectType);
 
-        eventManager.registerEventSource(OBSEventSource);
+        EventManager.registerEventSource(OBSEventSource);
 
         FilterManager.registerFilter(GroupNameEventFilter);
         FilterManager.registerFilter(SceneNameEventFilter);
@@ -259,7 +258,7 @@ const integrationConfig: Integration<ObsSettings> = {
             }
         }
     },
-    integration: new ObsIntegration(eventManager)
+    integration: new ObsIntegration(EventManager)
 };
 
 export const definition = integrationConfig.definition;

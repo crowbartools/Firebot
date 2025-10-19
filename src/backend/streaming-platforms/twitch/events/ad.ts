@@ -1,5 +1,5 @@
 import adManager from "../ad-manager";
-import eventManager from "../../../events/EventManager";
+import { EventManager } from "../../../events/event-manager";
 
 export function triggerAdBreakStart(
     username: string,
@@ -12,7 +12,7 @@ export function triggerAdBreakStart(
     const adBreakEnd = new Date(adBreakStart.getTime());
     adBreakEnd.setSeconds(adBreakStart.getSeconds() + adBreakDuration);
 
-    eventManager.triggerEvent("twitch", "ad-break-start", {
+    void EventManager.triggerEvent("twitch", "ad-break-start", {
         username,
         userId,
         userDisplayName,
@@ -32,7 +32,7 @@ export function triggerAdBreakEnd(
     adBreakDuration: number,
     isAdBreakScheduled: boolean
 ): void {
-    eventManager.triggerEvent("twitch", "ad-break-end", {
+    void EventManager.triggerEvent("twitch", "ad-break-end", {
         username,
         userId,
         userDisplayName,

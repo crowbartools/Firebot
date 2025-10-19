@@ -1,4 +1,4 @@
-import eventManager from "../../../events/EventManager";
+import { EventManager } from "../../../events/event-manager";
 
 export function triggerSub(
     username: string,
@@ -11,7 +11,7 @@ export function triggerSub(
     isPrime: boolean,
     isResub: boolean
 ): void {
-    eventManager.triggerEvent("twitch", "sub", {
+    void EventManager.triggerEvent("twitch", "sub", {
         username,
         userId,
         userDisplayName,
@@ -30,7 +30,7 @@ export function triggerPrimeUpgrade(
     userDisplayName: string,
     subPlan: string
 ): void {
-    eventManager.triggerEvent("twitch", "prime-sub-upgraded", {
+    void EventManager.triggerEvent("twitch", "prime-sub-upgraded", {
         username,
         userId,
         userDisplayName,

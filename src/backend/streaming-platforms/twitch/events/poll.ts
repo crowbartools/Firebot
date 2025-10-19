@@ -1,10 +1,10 @@
-import { pick } from "../../../utils";
-import eventManager from "../../../events/EventManager";
 import {
     EventSubChannelPollBeginChoice,
     EventSubChannelPollChoice,
     EventSubChannelPollEndStatus
 } from "@twurple/eventsub-base";
+import { EventManager } from "../../../events/event-manager";
+import { pick } from "../../../utils";
 
 interface TwitchPollWinningChoice {
     winningChoiceName: string;
@@ -38,7 +38,7 @@ export function triggerChannelPollBegin(
     isChannelPointsVotingEnabled: boolean,
     channelPointsPerVote: number
 ) {
-    eventManager.triggerEvent("twitch", "channel-poll-begin", {
+    void EventManager.triggerEvent("twitch", "channel-poll-begin", {
         title,
         choices: choices.map(c => pick(c, ["id", "title"])),
         startDate,
@@ -59,7 +59,7 @@ export function triggerChannelPollProgress(
     const { winningChoiceName, winningChoiceVotes } = getWinningChoices(choices);
 
 
-    eventManager.triggerEvent("twitch", "channel-poll-progress", {
+    void EventManager.triggerEvent("twitch", "channel-poll-progress", {
         title,
         choices: mapChoices(choices),
         winningChoiceName,
@@ -82,7 +82,7 @@ export function triggerChannelPollEnd(
 ) {
     const { winningChoiceName, winningChoiceVotes } = getWinningChoices(choices);
 
-    eventManager.triggerEvent("twitch", "channel-poll-end", {
+    void EventManager.triggerEvent("twitch", "channel-poll-end", {
         title,
         choices: mapChoices(choices),
         winningChoiceName,

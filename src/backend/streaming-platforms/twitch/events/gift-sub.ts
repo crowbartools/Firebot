@@ -1,7 +1,7 @@
 import NodeCache from "node-cache";
 import { DateTime } from "luxon";
 import { SettingsManager } from "../../../common/settings-manager";
-import eventManager from "../../../events/EventManager";
+import { EventManager } from "../../../events/event-manager";
 import logger from "../../../logwrapper";
 import { wait } from "../../../utils";
 
@@ -61,7 +61,7 @@ export async function triggerSubGift(
             if (--communityCount > 0) {
                 communitySubCache.set<CommunityGiftSubCache>(communityGiftId, { subCount: communityCount, giftReceivers: giftReceivers });
             } else {
-                eventManager.triggerEvent("twitch", "community-subs-gifted", {
+                void EventManager.triggerEvent("twitch", "community-subs-gifted", {
                     username: gifterUserName,
                     userId: gifterUserId,
                     userDisplayName: gifterDisplayName,
@@ -80,7 +80,7 @@ export async function triggerSubGift(
     }
 
     if (communityGiftId == null || SettingsManager.getSetting("IgnoreSubsequentSubEventsAfterCommunitySub") !== true) {
-        eventManager.triggerEvent("twitch", "subs-gifted", {
+        void EventManager.triggerEvent("twitch", "subs-gifted", {
             username: gifterUserName,
             userId: gifterUserId,
             userDisplayName: gifterDisplayName,
@@ -102,7 +102,7 @@ export function triggerSubGiftUpgrade(
     gifterDisplayName: string,
     subPlan: string
 ): void {
-    eventManager.triggerEvent("twitch", "gift-sub-upgraded", {
+    void EventManager.triggerEvent("twitch", "gift-sub-upgraded", {
         username: gifteeUsername,
         userId: gifteeUserId,
         userDisplayName: gifteeDisplayName,

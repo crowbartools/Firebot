@@ -168,6 +168,9 @@ function saveGroupFromImport(group) {
     saveGroup(group);
 }
 
+/**
+ * @returns {import("../../types/events").EventSettings[]}
+ */
 function getAllActiveEvents() {
     let activeEventsArray = Array.isArray(mainEvents) ? mainEvents : Object.values(mainEvents);
 

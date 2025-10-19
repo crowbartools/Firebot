@@ -2,7 +2,7 @@ import { CommandDefinition } from "./commands";
 import { Counter } from "./counters";
 import { Currency } from "./currency";
 import { EffectQueueConfig, PresetEffectList } from "./effects";
-import { EventGroup, FirebotEvent } from "./events";
+import { EventGroup, EventSettings } from "./events";
 import { FirebotHotkey } from "./hotkeys";
 import { OverlayWidgetConfig } from "./overlay-widgets";
 import { QuickActionDefinition } from "./quick-actions";
@@ -24,7 +24,7 @@ export type FirebotSetup = {
         counters: Counter[];
         currencies: Currency[];
         effectQueues: EffectQueueConfig[];
-        events: FirebotEvent[];
+        events: EventSettings[];
         eventGroups: EventGroup[];
         hotkeys: FirebotHotkey[];
         presetEffectLists: PresetEffectList[];

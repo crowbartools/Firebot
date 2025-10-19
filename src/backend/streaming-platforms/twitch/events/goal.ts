@@ -1,5 +1,5 @@
-import eventManager from "../../../events/EventManager";
 import { EventSubChannelGoalType } from "@twurple/eventsub-base";
+import { EventManager } from "../../../events/event-manager";
 
 function getFriendlyTypeName(type: EventSubChannelGoalType): string {
     switch (type) {
@@ -32,7 +32,7 @@ export function triggerChannelGoalBegin(
 ) {
     const friendlyTypeName = getFriendlyTypeName(type);
 
-    eventManager.triggerEvent("twitch", "channel-goal-begin", {
+    void EventManager.triggerEvent("twitch", "channel-goal-begin", {
         description,
         type,
         friendlyTypeName,
@@ -51,7 +51,7 @@ export function triggerChannelGoalProgress(
 ) {
     const friendlyTypeName = getFriendlyTypeName(type);
 
-    eventManager.triggerEvent("twitch", "channel-goal-progress", {
+    void EventManager.triggerEvent("twitch", "channel-goal-progress", {
         description,
         type,
         friendlyTypeName,
@@ -72,7 +72,7 @@ export function triggerChannelGoalEnd(
 ) {
     const friendlyTypeName = getFriendlyTypeName(type);
 
-    eventManager.triggerEvent("twitch", "channel-goal-end", {
+    void EventManager.triggerEvent("twitch", "channel-goal-end", {
         description,
         type,
         friendlyTypeName,

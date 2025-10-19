@@ -1,4 +1,4 @@
-import eventManager from "../../../events/EventManager";
+import { EventManager } from "../../../events/event-manager";
 
 export function triggerCheer(
     username: string,
@@ -8,7 +8,7 @@ export function triggerCheer(
     totalBits: number,
     cheerMessage: string
 ): void {
-    eventManager.triggerEvent("twitch", "cheer", {
+    void EventManager.triggerEvent("twitch", "cheer", {
         username,
         userId,
         userDisplayName,
@@ -26,7 +26,7 @@ export function triggerBitsBadgeUnlock(
     message: string,
     badgeTier: number
 ): void {
-    eventManager.triggerEvent("twitch", "bits-badge-unlocked", {
+    void EventManager.triggerEvent("twitch", "bits-badge-unlocked", {
         username,
         userId,
         userDisplayName,
@@ -43,7 +43,7 @@ export function triggerPowerupMessageEffect(
     totalBits: number,
     cheerMessage: string
 ): void {
-    eventManager.triggerEvent("twitch", "bits-powerup-message-effect", {
+    void EventManager.triggerEvent("twitch", "bits-powerup-message-effect", {
         username,
         userId,
         userDisplayName,
@@ -61,7 +61,7 @@ export function triggerPowerupCelebration(
     bits: number,
     totalBits: number
 ): void {
-    eventManager.triggerEvent("twitch", "bits-powerup-celebration", {
+    void EventManager.triggerEvent("twitch", "bits-powerup-celebration", {
         username,
         userId,
         userDisplayName,
@@ -81,7 +81,7 @@ export function triggerPowerupGigantifyEmote(
     emoteName: string,
     emoteUrl: string
 ): void {
-    eventManager.triggerEvent("twitch", "bits-powerup-gigantified-emote", {
+    void EventManager.triggerEvent("twitch", "bits-powerup-gigantified-emote", {
         username,
         userId,
         userDisplayName,
