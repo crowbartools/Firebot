@@ -26,7 +26,7 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
         this.overlayWidgetTypes.set(overlayWidgetType.id, overlayWidgetType);
         this.emit("overlay-widget-type-registered", overlayWidgetType);
         frontendCommunicator.send("overlay-widgets:type-registered", this.formatForFrontend(overlayWidgetType));
-        websocketServerManager.refreshOverlays();
+        websocketServerManager.refreshAllOverlays();
     }
 
     getOverlayWidgetType(id: string): OverlayWidgetType | null {

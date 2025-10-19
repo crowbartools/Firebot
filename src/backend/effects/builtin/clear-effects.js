@@ -168,16 +168,15 @@ const delay = {
         if (effect.overlay) {
             if (SettingsManager.getSetting("UseOverlayInstances") && effect.overlayInstance != null) {
                 if (effect.overlayInstance === "all") {
-                    webServer.sendToOverlay("OVERLAY:REFRESH", { global: true });
-
+                    webServer.refreshAllOverlays();
                     return true;
                 }
 
-                webServer.sendToOverlay("OVERLAY:REFRESH", { overlayInstance: effect.overlayInstance });
+                webServer.refreshOverlayInstance(effect.overlayInstance);
                 return true;
             }
 
-            webServer.sendToOverlay("OVERLAY:REFRESH");
+            webServer.refreshOverlayInstance();
         }
 
         if (effect.activeEffectLists) {

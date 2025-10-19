@@ -250,6 +250,18 @@ class HttpServerManager extends EventEmitter {
         websocketServerManager.sendToOverlay(eventName, meta, overlayInstance);
     }
 
+    refreshAllOverlays() {
+        websocketServerManager.refreshAllOverlays();
+    }
+
+    /**
+     * Refresh a specific overlay instance
+     * @param overlayInstance the instance to refresh, leave undefined to refresh default
+     */
+    refreshOverlayInstance(overlayInstance?: string) {
+        websocketServerManager.sendToOverlay("OVERLAY:REFRESH", undefined, overlayInstance);
+    }
+
     triggerCustomWebSocketEvent(eventType: string, payload: object) {
         websocketServerManager.triggerEvent(`custom-event:${eventType}`, payload);
     }
