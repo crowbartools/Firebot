@@ -320,13 +320,13 @@
                         delete $ctrl.widget.exitAnimation;
                     }
 
-                    overlayWidgetsService.saveOverlayWidgetConfig($ctrl.widget, $ctrl.isNewWidget).then((successful) => {
-                        if (successful) {
-                            $ctrl.dismiss();
-                        } else {
-                            ngToast.create("Failed to save overlay widget. Please try again or view logs for details.");
-                        }
-                    });
+                    const successful = overlayWidgetsService.saveOverlayWidgetConfig($ctrl.widget, $ctrl.isNewWidget);
+
+                    if (successful) {
+                        $ctrl.dismiss();
+                    } else {
+                        ngToast.create("Failed to save overlay widget. Please try again or view logs for details.");
+                    }
                 };
 
                 $ctrl.delete = function() {

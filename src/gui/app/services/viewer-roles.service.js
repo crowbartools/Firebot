@@ -14,7 +14,7 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
 
             let teamRoles = [];
 
-            service.loadCustomRoles = async function() {
+            service.loadCustomRoles = function() {
                 // Check for legacy custom roles file and alert the user if it still exists (it shouldn't by this point)
                 const hasLegacyCustomRoles = backendCommunicator.fireEventSync("check-for-legacy-custom-roles");
                 if (hasLegacyCustomRoles === true) {
@@ -22,7 +22,7 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
                     return;
                 }
 
-                const roles = await backendCommunicator.fireEventAsync("get-custom-roles");
+                const roles = backendCommunicator.fireEventSync("get-custom-roles");
                 if (roles != null) {
                     customRoles = roles;
                 }

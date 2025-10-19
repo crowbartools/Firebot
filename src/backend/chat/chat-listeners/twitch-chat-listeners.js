@@ -7,7 +7,7 @@ const { ActiveUserHandler } = require("../active-user-handler");
 const accountAccess = require("../../common/account-access");
 const { ChatModerationManager } = require("../moderation/chat-moderation-manager");
 const chatRolesManager = require("../../roles/chat-roles-manager");
-const twitchEventsHandler = require("../../events/twitch-events");
+const { TwitchEventHandlers } = require("../../streaming-platforms/twitch/events");
 const raidMessageChecker = require(".././moderation/raid-message-checker");
 const viewerDatabase = require("../../viewers/viewer-database");
 const logger = require("../../logwrapper");
@@ -40,7 +40,7 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
 
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
 
-        twitchEventsHandler.announcement.triggerAnnouncement(
+        TwitchEventHandlers.announcement.triggerAnnouncement(
             firebotChatMessage.username,
             firebotChatMessage.userId,
             firebotChatMessage.userDisplayName,
@@ -91,7 +91,7 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
 
         await ActiveUserHandler.addActiveUser(msg.userInfo, true);
 
-        twitchEventsHandler.viewerArrived.triggerViewerArrived(
+        TwitchEventHandlers.viewerArrived.triggerViewerArrived(
             msg.userInfo.userName,
             msg.userInfo.userId,
             msg.userInfo.displayName,
@@ -101,18 +101,18 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
 
         const { streamer, bot } = accountAccess.getAccounts();
         if (user !== streamer.username && user !== bot.username) {
-            const timerManager = require("../../timers/timer-manager");
-            timerManager.incrementChatLineCounters();
+            const { TimerManager } = require("../../timers/timer-manager");
+            TimerManager.incrementChatLineCounters();
         }
 
-        twitchEventsHandler.chatMessage.triggerChatMessage(
+        TwitchEventHandlers.chatMessage.triggerChatMessage(
             firebotChatMessage,
             ranCommand,
             ranCommand ? command : null,
             ranCommand ? userCommand : null
         );
         if (firebotChatMessage.isFirstChat) {
-            twitchEventsHandler.chatMessage.triggerFirstTimeChat(firebotChatMessage);
+            TwitchEventHandlers.chatMessage.triggerFirstTimeChat(firebotChatMessage);
         }
         await raidMessageChecker.sendMessageToCache({
             rawText: firebotChatMessage.rawText,
@@ -127,7 +127,7 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
 
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
 
-        twitchEventsHandler.whisper.triggerWhisper(
+        TwitchEventHandlers.whisper.triggerWhisper(
             msg.userInfo.userName,
             msg.userInfo.userId,
             msg.userInfo.displayName,
@@ -158,17 +158,17 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
 
         await ActiveUserHandler.addActiveUser(msg.userInfo, true);
 
-        twitchEventsHandler.chatMessage.triggerChatMessage(
+        TwitchEventHandlers.chatMessage.triggerChatMessage(
             firebotChatMessage,
             ranCommand,
             ranCommand ? command : null,
             ranCommand ? userCommand : null
         );
         if (firebotChatMessage.isFirstChat) {
-            twitchEventsHandler.chatMessage.triggerFirstTimeChat(firebotChatMessage);
+            TwitchEventHandlers.chatMessage.triggerFirstTimeChat(firebotChatMessage);
         }
 
-        twitchEventsHandler.viewerArrived.triggerViewerArrived(
+        TwitchEventHandlers.viewerArrived.triggerViewerArrived(
             msg.userInfo.userName,
             msg.userInfo.userId,
             msg.userInfo.displayName,

@@ -58,10 +58,10 @@ export type FirebotSettingsTypes = {
     DefaultToAdvancedCommandMode: boolean;
     DefaultTtsVoiceId: string;
     DeleteProfile: string;
-    EventSettings: object; //TODO
+    EventSettings: object; // Pretty sure this is no longer used
     FirstTimeUse: boolean;
     ForceOverlayEffectsToContinueOnRefresh: boolean;
-    GlobalValues: Array<{ name: string; secret?: boolean, value: string; }>;
+    GlobalValues: Array<{ name: string, secret?: boolean, value: string }>;
     IgnoreSubsequentSubEventsAfterCommunitySub: boolean;
     JustUpdated: boolean;
     LastBackupDate: Date;
@@ -75,7 +75,7 @@ export type FirebotSettingsTypes = {
     OverlayResolution: {
         width: number;
         height: number;
-    },
+    };
     OverlayInstances: string[];
     PersistCustomVariables: boolean;
     QuickActions: Record<string, {

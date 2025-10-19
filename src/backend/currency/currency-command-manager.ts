@@ -1,6 +1,7 @@
 import { SystemCommand } from "../../types/commands";
+import { Currency } from "../../types/currency";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
-import currencyAccess, { Currency } from "./currency-access";
+import currencyAccess from "./currency-access";
 import currencyManager from "./currency-manager";
 import commandManager from "../chat/commands/command-manager";
 import logger from "../logwrapper";

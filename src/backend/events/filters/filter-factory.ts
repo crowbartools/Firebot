@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-base-to-string */
 import { EventFilter, FilterSettings, PresetValue } from "../../../types/events";
 import { Awaitable } from "../../../types/util-types";
 import { ComparisonType } from "../../../shared/filter-constants";
@@ -128,7 +129,7 @@ export function createTextFilter({
         ...config,
         comparisonTypes: TEXT_COMPARISON_TYPES,
         valueType: "text",
-        async predicate(filterSettings, eventData) {
+        predicate(filterSettings, eventData) {
             const { comparisonType, value } = filterSettings;
             const { eventMeta } = eventData;
 
@@ -154,7 +155,7 @@ export function createNumberFilter({
         ...config,
         comparisonTypes: NUMBER_COMPARISON_TYPES,
         valueType: "number",
-        async predicate(filterSettings, eventData) {
+        predicate(filterSettings, eventData) {
             const { comparisonType, value } = filterSettings;
             const { eventMeta } = eventData;
 
@@ -174,7 +175,7 @@ export function createTextOrNumberFilter({
         ...config,
         comparisonTypes: NUMBER_TEXT_COMPARISON_TYPES,
         valueType: "text",
-        async predicate(filterSettings, eventData) {
+        predicate(filterSettings, eventData) {
             const { comparisonType, value } = filterSettings;
             const { eventMeta } = eventData;
 
@@ -202,7 +203,7 @@ export function createPresetFilter({
         comparisonTypes.push(ComparisonType.IS_NOT);
     }
 
-    const valueDisplay = getSelectedValueDisplay ?? (async (filterSettings, presetValues?: PresetValue[]) => {
+    const valueDisplay = getSelectedValueDisplay ?? ((filterSettings, presetValues?: PresetValue[]) => {
         return presetValues.find(pv => pv.value === filterSettings.value)?.display ?? "[Not Set]";
     });
 
@@ -213,7 +214,7 @@ export function createPresetFilter({
         presetValues,
         getSelectedValueDisplay: valueDisplay,
         valueIsStillValid,
-        async predicate(filterSettings, eventData) {
+        predicate(filterSettings, eventData) {
             const { value, comparisonType } = filterSettings;
             const { eventMeta } = eventData;
 

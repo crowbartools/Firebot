@@ -47,7 +47,8 @@ export {
     deepClone,
     deepFreeze,
     extractPropertyWithPath,
-    isPlainObject
+    isPlainObject,
+    simpleClone
 } from "./objects";
 
 export {

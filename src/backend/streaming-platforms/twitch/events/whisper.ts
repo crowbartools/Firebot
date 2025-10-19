@@ -1,4 +1,4 @@
-import eventManager from "../../../events/EventManager";
+import { EventManager } from "../../../events/event-manager";
 
 export function triggerWhisper(
     username: string,
@@ -7,7 +7,7 @@ export function triggerWhisper(
     message: string,
     sentTo: "streamer" | "bot"
 ): void {
-    eventManager.triggerEvent("twitch", "whisper", {
+    void EventManager.triggerEvent("twitch", "whisper", {
         username,
         userId,
         userDisplayName,

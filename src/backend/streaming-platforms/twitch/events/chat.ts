@@ -1,7 +1,7 @@
-import eventManager from "../../../events/EventManager";
+import { EventManager } from "../../../events/event-manager";
 
 export function triggerChatCleared(username: string, userId: string): void {
-    eventManager.triggerEvent("twitch", "chat-cleared", {
+    void EventManager.triggerEvent("twitch", "chat-cleared", {
         username,
         userId
     });

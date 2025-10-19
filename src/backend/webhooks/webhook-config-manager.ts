@@ -2,14 +2,14 @@ import { WebhookConfig } from "../../types/webhooks";
 import frontendCommunicator from "../common/frontend-communicator";
 import JsonDbManager from "../database/json-db-manager";
 import { crowbarRelayWebSocket } from "../crowbar-relay/crowbar-relay-websocket";
-import eventManager from "../events/EventManager";
+import { EventManager } from "../events/event-manager";
 import { SettingsManager } from "../common/settings-manager";
 import { maskPII } from "../utils";
 import logger from "../logwrapper";
 import accountAccess from "../common/account-access";
 
 type ExtraEvents = {
-    "webhook-received": (data: { config: WebhookConfig; payload: unknown; headers: Record<string, string>; }) => void
+    "webhook-received": (data: { config: WebhookConfig, payload: unknown, headers: Record<string, string> }) => void;
 };
 
 class WebhookConfigManager extends JsonDbManager<WebhookConfig, ExtraEvents> {
@@ -36,7 +36,7 @@ class WebhookConfigManager extends JsonDbManager<WebhookConfig, ExtraEvents> {
                 logger.debug("Webhook received:", maskPII(msg.data));
             }
 
-            const data = msg.data as { webhookId: string; payload: unknown; headers: Record<string, string>; };
+            const data = msg.data as { webhookId: string, payload: unknown, headers: Record<string, string> };
 
             const webhookConfig = this.getItem(data.webhookId);
             if (!webhookConfig) {
@@ -57,7 +57,7 @@ class WebhookConfigManager extends JsonDbManager<WebhookConfig, ExtraEvents> {
                 headers: data.headers ?? {}
             });
 
-            eventManager.triggerEvent("firebot", "webhook-received", {
+            void EventManager.triggerEvent("firebot", "webhook-received", {
                 webhookId: webhookConfig.id,
                 webhookName: webhookConfig.name,
                 webhookPayload: payload,

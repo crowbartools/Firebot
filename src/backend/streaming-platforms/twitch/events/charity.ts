@@ -1,4 +1,4 @@
-import eventManager from "../../../events/EventManager";
+import { EventManager } from "../../../events/event-manager";
 
 export function triggerCharityCampaignStart(
     charityName: string,
@@ -10,7 +10,7 @@ export function triggerCharityCampaignStart(
     targetTotalAmount: number,
     targetTotalCurrency: string
 ) {
-    eventManager.triggerEvent("twitch", "charity-campaign-start", {
+    void EventManager.triggerEvent("twitch", "charity-campaign-start", {
         charityName,
         charityDescription,
         charityLogo,
@@ -33,7 +33,7 @@ export function triggerCharityDonation(
     donationAmount: number,
     donationCurrency: string
 ) {
-    eventManager.triggerEvent("twitch", "charity-donation", {
+    void EventManager.triggerEvent("twitch", "charity-donation", {
         username,
         userId,
         userDisplayName,
@@ -57,7 +57,7 @@ export function triggerCharityCampaignProgress(
     targetTotalAmount: number,
     targetTotalCurrency: string
 ) {
-    eventManager.triggerEvent("twitch", "charity-campaign-progress", {
+    void EventManager.triggerEvent("twitch", "charity-campaign-progress", {
         charityName,
         charityDescription,
         charityLogo,
@@ -79,7 +79,7 @@ export function triggerCharityCampaignEnd(
     targetTotalAmount: number,
     targetTotalCurrency: string
 ) {
-    eventManager.triggerEvent("twitch", "charity-campaign-end", {
+    void EventManager.triggerEvent("twitch", "charity-campaign-end", {
         charityName,
         charityDescription,
         charityLogo,

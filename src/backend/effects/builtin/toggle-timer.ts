@@ -1,6 +1,6 @@
-import timerManager from "../../timers/timer-manager";
-import {EffectCategory} from "../../../shared/effect-constants";
-import {EffectType} from "../../../types/effects";
+import { EffectType } from "../../../types/effects";
+import { EffectCategory } from "../../../shared/effect-constants";
+import { TimerManager } from "../../timers/timer-manager";
 
 const effect: EffectType<{
     selectedTimerId?: string;
@@ -103,20 +103,20 @@ const effect: EffectType<{
         const timer = timerService.getTimers().find(timer => timer.id === effect.selectedTimerId);
         return `${action} ${timer?.name ?? "Unknown Timer"}`;
     },
-    onTriggerEvent: async (event) => {
+    onTriggerEvent: (event) => {
         const { effect } = event;
         if (!effect.useTag) {
-            const timer = timerManager.getItem(effect.selectedTimerId);
+            const timer = TimerManager.getItem(effect.selectedTimerId);
             const isActive = effect.toggleType === "toggle" ? !timer.active : effect.toggleType === "enable";
 
-            timerManager.updateTimerActiveStatus(effect.selectedTimerId, isActive);
+            TimerManager.updateTimerActiveStatus(effect.selectedTimerId, isActive);
 
             return true;
         }
-        const timers = timerManager.getAllItems().filter(timer => timer.sortTags?.includes(effect.sortTagId));
+        const timers = TimerManager.getAllItems().filter(timer => timer.sortTags?.includes(effect.sortTagId));
         timers.forEach((timer) => {
             const isActive = effect.toggleType === "toggle" ? !timer.active : effect.toggleType === "enable";
-            timerManager.updateTimerActiveStatus(timer.id, isActive);
+            TimerManager.updateTimerActiveStatus(timer.id, isActive);
         });
 
         return true;

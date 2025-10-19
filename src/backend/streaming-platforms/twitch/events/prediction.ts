@@ -1,10 +1,10 @@
-import { pick } from "../../../utils";
-import eventManager from "../../../events/EventManager";
 import {
     EventSubChannelPredictionBeginOutcome,
     EventSubChannelPredictionOutcome,
     EventSubChannelPredictionEndStatus
 } from "@twurple/eventsub-base";
+import { EventManager } from "../../../events/event-manager";
+import { pick } from "../../../utils";
 
 function mapOutcome(outcome: EventSubChannelPredictionOutcome) {
     const mapped = {
@@ -20,7 +20,7 @@ export function triggerChannelPredictionBegin(
     startDate: Date,
     lockDate: Date
 ) {
-    eventManager.triggerEvent("twitch", "channel-prediction-begin", {
+    void EventManager.triggerEvent("twitch", "channel-prediction-begin", {
         title,
         outcomes: outcomes.map(o => pick(o, ["id", "title", "color"])),
         startDate,
@@ -34,7 +34,7 @@ export function triggerChannelPredictionProgress(
     startDate: Date,
     lockDate: Date
 ) {
-    eventManager.triggerEvent("twitch", "channel-prediction-progress", {
+    void EventManager.triggerEvent("twitch", "channel-prediction-progress", {
         title,
         outcomes: outcomes.map(mapOutcome),
         startDate,
@@ -48,7 +48,7 @@ export function triggerChannelPredictionLock(
     startDate: Date,
     lockDate: Date
 ) {
-    eventManager.triggerEvent("twitch", "channel-prediction-lock", {
+    void EventManager.triggerEvent("twitch", "channel-prediction-lock", {
         title,
         outcomes: outcomes.map(mapOutcome),
         startDate,
@@ -64,7 +64,7 @@ export function triggerChannelPredictionEnd(
     endDate: Date,
     status: EventSubChannelPredictionEndStatus
 ) {
-    eventManager.triggerEvent("twitch", "channel-prediction-end", {
+    void EventManager.triggerEvent("twitch", "channel-prediction-end", {
         title,
         outcomes: outcomes.map(mapOutcome),
         winningOutcome: mapOutcome(winningOutcome),

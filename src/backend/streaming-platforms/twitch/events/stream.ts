@@ -1,11 +1,11 @@
-import eventManager from "../../../events/EventManager";
+import { EventManager } from "../../../events/event-manager";
 
 export function triggerStreamOnline(
     username: string,
     userId: string,
     userDisplayName: string
 ) {
-    eventManager.triggerEvent("twitch", "stream-online", {
+    void EventManager.triggerEvent("twitch", "stream-online", {
         username,
         userId,
         userDisplayName
@@ -17,7 +17,7 @@ export function triggerStreamOffline(
     userId: string,
     userDisplayName: string
 ) {
-    eventManager.triggerEvent("twitch", "stream-offline", {
+    void EventManager.triggerEvent("twitch", "stream-offline", {
         username,
         userId,
         userDisplayName
@@ -28,7 +28,7 @@ export function triggerCategoryChanged(
     category: string,
     categoryId: string
 ) {
-    eventManager.triggerEvent("twitch", "category-changed", {
+    void EventManager.triggerEvent("twitch", "category-changed", {
         category,
         categoryId
     });
@@ -37,7 +37,7 @@ export function triggerCategoryChanged(
 export function triggerTitleChanged(
     title: string
 ) {
-    eventManager.triggerEvent("twitch", "title-changed", {
+    void EventManager.triggerEvent("twitch", "title-changed", {
         title
     });
 }

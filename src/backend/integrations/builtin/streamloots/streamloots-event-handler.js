@@ -2,7 +2,7 @@
 
 const logger = require("../../../logwrapper");
 
-const eventManager = require("../../../events/EventManager");
+const { EventManager } = require("../../../events/event-manager");
 
 const EVENT_SOURCE_ID = "streamloots";
 const EventId = {
@@ -55,7 +55,7 @@ const eventSourceDefinition = {
 };
 
 exports.registerEvents = () => {
-    eventManager.registerEventSource(eventSourceDefinition);
+    EventManager.registerEventSource(eventSourceDefinition);
 };
 
 function getFieldValue(fieldName, fields) {
@@ -103,5 +103,5 @@ exports.processStreamLootsEvent = (eventData) => {
         metadata.cardName = eventData.data.cardName;
     }
 
-    eventManager.triggerEvent(EVENT_SOURCE_ID, eventId, metadata);
+    EventManager.triggerEvent(EVENT_SOURCE_ID, eventId, metadata);
 };

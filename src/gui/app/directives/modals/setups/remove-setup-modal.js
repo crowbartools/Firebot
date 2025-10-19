@@ -164,23 +164,19 @@
                 };
 
                 $ctrl.removeSetup = () => {
+                    const success = backendCommunicator.fireEventSync("remove-setup-components", {
+                        components: $ctrl.componentsToRemove
+                    });
 
-                    $.when(
-                        backendCommunicator.fireEventAsync("remove-setup-components", {
-                            components: $ctrl.componentsToRemove
-                        })
-                    )
-                        .then((successful) => {
-                            if (successful) {
-                                ngToast.create({
-                                    className: 'success',
-                                    content: `Successfully removed components for Setup: ${$ctrl.setup.name}`
-                                });
-                                $ctrl.dismiss();
-                            } else {
-                                ngToast.create(`Failed to remove components for Setup: ${$ctrl.setup.name}`);
-                            }
+                    if (success) {
+                        ngToast.create({
+                            className: 'success',
+                            content: `Successfully removed components for Setup: ${$ctrl.setup.name}`
                         });
+                        $ctrl.dismiss();
+                    } else {
+                        ngToast.create(`Failed to remove components for Setup: ${$ctrl.setup.name}`);
+                    }
                 };
 
                 $ctrl.$onInit = () => {

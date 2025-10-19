@@ -1,4 +1,4 @@
-import eventManager from "../../../events/EventManager";
+import { EventManager } from "../../../events/event-manager";
 
 export function triggerIncomingRaid(
     username: string,
@@ -6,7 +6,7 @@ export function triggerIncomingRaid(
     userDisplayName: string,
     viewerCount = 0
 ): void {
-    eventManager.triggerEvent("twitch", "raid", {
+    void EventManager.triggerEvent("twitch", "raid", {
         username,
         userId,
         userDisplayName,
@@ -26,7 +26,7 @@ export function triggerOutgoingRaidStarted(
     moderatorDisplayName: string,
     viewerCount = 0
 ) {
-    eventManager.triggerEvent("twitch", "outgoing-raid-started", {
+    void EventManager.triggerEvent("twitch", "outgoing-raid-started", {
         username,
         userId,
         userDisplayName,
@@ -52,7 +52,7 @@ export function triggerOutgoingRaidCanceled(
     moderatorId: string,
     moderatorDisplayName: string
 ) {
-    eventManager.triggerEvent("twitch", "outgoing-raid-canceled", {
+    void EventManager.triggerEvent("twitch", "outgoing-raid-canceled", {
         username,
         userId,
         userDisplayName,
@@ -75,7 +75,7 @@ export function triggerRaidSentOff(
     raidTargetUserDisplayName: string,
     viewerCount = 0
 ): void {
-    eventManager.triggerEvent("twitch", "raid-sent-off", {
+    void EventManager.triggerEvent("twitch", "raid-sent-off", {
         username,
         userId,
         userDisplayName,

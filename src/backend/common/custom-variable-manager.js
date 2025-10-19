@@ -1,19 +1,19 @@
 
 "use strict";
-const logger = require('../logwrapper');
-const eventManager = require("../events/EventManager");
+const EventEmitter = require("events");
+const NodeCache = require("node-cache");
+
+const { EventManager } = require("../events/event-manager");
 const windowManagement = require("../app-management/electron/window-management");
 const frontendCommunicator = require('./frontend-communicator');
-
-const EventEmitter = require("events");
-
-const NodeCache = require("node-cache");
+const logger = require('../logwrapper');
+const { simpleClone } = require('../utils');
 
 const cache = new NodeCache({ stdTTL: 0, checkperiod: 1 });
 exports._cache = cache;
 
 const onCustomVariableExpire = (key, value) => {
-    eventManager.triggerEvent("firebot", "custom-variable-expired", {
+    EventManager.triggerEvent("firebot", "custom-variable-expired", {
         username: "Firebot",
         expiredCustomVariableName: key,
         expiredCustomVariableData: value
@@ -33,7 +33,7 @@ const onCustomVariableDelete = (key, value) => {
 cache.on("expired", onCustomVariableExpire);
 
 cache.on("set", function(key, value) {
-    eventManager.triggerEvent("firebot", "custom-variable-set", {
+    EventManager.triggerEvent("firebot", "custom-variable-set", {
         username: "Firebot",
         createdCustomVariableName: key,
         createdCustomVariableData: value
@@ -58,7 +58,7 @@ exports.getInitialInspectorVariables = () =>
             ttl: value.t
         }));
 
-exports.getAllVariables = () => JSON.parse(JSON.stringify(cache.data));
+exports.getAllVariables = () => simpleClone(cache.data);
 
 exports.persistVariablesToFile = () => {
     const db = getVariableCacheDb();

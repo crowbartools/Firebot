@@ -2,15 +2,15 @@ import { TypedEmitter } from "tiny-typed-emitter";
 import webSocketServerManager from "./websocket-server-manager";
 
 // Firebot Component Managers
-import commandManager from "../backend/chat/commands/command-manager";
 import { CounterManager } from "../backend/counters/counter-manager";
+import { EffectQueueConfigManager } from "../backend/effects/queues/effect-queue-config-manager";
+import { PresetEffectListManager } from "../backend/effects/preset-lists/preset-effect-list-manager";
+import { QuoteManager } from "../backend/quotes/quote-manager";
+import { TimerManager } from "../backend/timers/timer-manager";
+import commandManager from "../backend/chat/commands/command-manager";
 import customRolesManager from "../backend/roles/custom-roles-manager";
 import { events as customVariablesEvents } from "../backend/common/custom-variable-manager";
-import effectQueueManager from "../backend/effects/queues/effect-queue-config-manager";
 import effectQueueRunner from "../backend/effects/queues/effect-queue-runner";
-import presetEffectListManager from "../backend/effects/preset-lists/preset-effect-list-manager";
-import { QuoteManager } from "../backend/quotes/quote-manager";
-import timerManager from "../backend/timers/timer-manager";
 import viewerMetadataManager from "../backend/viewers/viewer-metadata-manager";
 
 type ComponentEvents = {
@@ -50,7 +50,7 @@ const FIREBOT_COMPONENT_MANAGERS: Array<ComponentManager> = [
     },
     {
         componentName: "effect-queue",
-        manager: effectQueueManager
+        manager: EffectQueueConfigManager
     },
     {
         componentName: "effect-queue",
@@ -61,7 +61,7 @@ const FIREBOT_COMPONENT_MANAGERS: Array<ComponentManager> = [
     },
     {
         componentName: "preset-effect-list",
-        manager: presetEffectListManager
+        manager: PresetEffectListManager
     },
     {
         componentName: "quote",
@@ -69,7 +69,7 @@ const FIREBOT_COMPONENT_MANAGERS: Array<ComponentManager> = [
     },
     {
         componentName: "timer",
-        manager: timerManager
+        manager: TimerManager
     },
     {
         componentName: "viewer-metadata",

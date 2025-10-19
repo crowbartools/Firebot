@@ -1,4 +1,4 @@
-import eventManager from "../../../events/EventManager";
+import { EventManager } from "../../../events/event-manager";
 
 export function triggerTimeout(
     username: string,
@@ -10,7 +10,7 @@ export function triggerTimeout(
     timeoutDuration: string | number,
     modReason: string
 ): void {
-    eventManager.triggerEvent("twitch", "timeout", {
+    void EventManager.triggerEvent("twitch", "timeout", {
         username,
         userId,
         userDisplayName,

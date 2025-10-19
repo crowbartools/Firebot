@@ -268,7 +268,6 @@ async function createAppMenu() {
                     toolTip: "Open the custom variable inspector",
                     sublabel: "Open the custom variable inspector",
                     click: () => {
-
                         createVariableInspectorWindow();
                     },
                     icon: await createIconImage("../../../gui/images/icons/mdi/text-search.png")
@@ -511,8 +510,8 @@ async function createMainWindow() {
         const startupScriptsManager = require("../../common/handlers/custom-scripts/startup-scripts-manager");
         await startupScriptsManager.runStartupScripts();
 
-        const eventManager = require("../../events/EventManager");
-        eventManager.triggerEvent("firebot", "firebot-started", {
+        const { EventManager } = require("../../events/event-manager");
+        EventManager.triggerEvent("firebot", "firebot-started", {
             username: "Firebot"
         });
 

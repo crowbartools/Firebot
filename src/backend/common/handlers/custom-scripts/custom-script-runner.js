@@ -1,13 +1,14 @@
 "use strict";
 const { shell } = require("electron");
 const { v4: uuid } = require("uuid");
-const logger = require("../../../logwrapper");
-const { wait } = require("../../../utils");
+
+import { SettingsManager } from "../../settings-manager";
 const profileManager = require("../../profile-manager");
-const { getScriptPath, buildRunRequest, mapParameters } = require("./custom-script-helpers");
 const effectRunner = require("../../effect-runner.js");
 import frontendCommunicator from "../../frontend-communicator";
-import { SettingsManager } from "../../settings-manager";
+const logger = require("../../../logwrapper");
+const { wait, simpleClone } = require("../../../utils");
+const { getScriptPath, buildRunRequest, mapParameters } = require("./custom-script-helpers");
 
 /**
  * @typedef { import('./script-types').ScriptData } ScriptData
@@ -132,7 +133,7 @@ async function executeScript(scriptData, trigger, isStartupScript = false) {
                 })
         };
 
-        const clonedTrigger = JSON.parse(JSON.stringify(trigger || {}));
+        const clonedTrigger = simpleClone(trigger || {});
 
         const processEffectsRequest = {
             trigger: clonedTrigger,

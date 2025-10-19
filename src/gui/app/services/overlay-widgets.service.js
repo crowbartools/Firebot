@@ -37,18 +37,18 @@
                 }
             };
 
-            service.loadOverlayWidgetTypesAndConfigs = async () => {
-                const overlayWidgetTypes = await backendCommunicator.fireEventAsync("overlay-widgets:get-all-types");
+            service.loadOverlayWidgetTypesAndConfigs = () => {
+                const overlayWidgetTypes = backendCommunicator.fireEventSync("overlay-widgets:get-all-types");
                 if (overlayWidgetTypes) {
                     service.overlayWidgetTypes = overlayWidgetTypes;
                 }
 
-                const overlayWidgetConfigs = await backendCommunicator.fireEventAsync("overlay-widgets:get-all-configs");
+                const overlayWidgetConfigs = backendCommunicator.fireEventSync("overlay-widgets:get-all-configs");
                 if (overlayWidgetConfigs) {
                     service.overlayWidgetConfigs = overlayWidgetConfigs;
                 }
 
-                const stateDisplays = await backendCommunicator.fireEventAsync("overlay-widgets:get-state-displays");
+                const stateDisplays = backendCommunicator.fireEventSync("overlay-widgets:get-state-displays");
                 if (stateDisplays) {
                     service.overlayWidgetStateDisplays = stateDisplays;
                 }
@@ -108,7 +108,7 @@
              * @param {OverlayWidgetConfig} config
              * @returns {Promise.<void>}
              */
-            service.saveOverlayWidgetConfig = async (config, isNew = false) => {
+            service.saveOverlayWidgetConfig = (config, isNew = false) => {
                 const copiedConfig = JSON.parse(angular.toJson(config));
 
                 if (isNew) {
@@ -118,7 +118,7 @@
                     }
                 }
 
-                const savedConfig = await backendCommunicator.fireEventAsync(
+                const savedConfig = backendCommunicator.fireEventSync(
                     isNew ? "overlay-widgets:save-new-config" : "overlay-widgets:save-config",
                     JSON.parse(angular.toJson(copiedConfig))
                 );

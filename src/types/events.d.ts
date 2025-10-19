@@ -1,16 +1,26 @@
 import { ComparisonType } from "../shared/filter-constants";
+import { EffectList } from "./effects";
 import { Awaitable } from "./util-types";
+
+export type EventDefinition = {
+    id: string;
+    name: string;
+    description: string;
+    cached?: boolean;
+    cacheMetaKey?: string;
+    cacheTtlInSecs?: number;
+    manualMetadata?: Record<string, unknown>;
+    activityFeed?: {
+        icon: string;
+        getMessage: (eventData: Record<string, any>) => string;
+    };
+};
 
 export type EventSource = {
     id: string;
     name: string;
-    events: Array<{
-        id: string;
-        name: string;
-        description: string;
-        cached?: boolean;
-        manualMetadata?: Record<string, unknown>;
-    }>;
+    description?: string;
+    events: EventDefinition[];
 };
 
 export type PresetValue = {
@@ -19,18 +29,25 @@ export type PresetValue = {
 };
 
 export type FilterSettings = {
+    type: string;
     comparisonType: ComparisonType;
     value: any;
+};
+
+export type EventSourceAndId = {
+    eventSourceId: string;
+    eventId: string;
+};
+
+export type EventData = EventSourceAndId & {
+    eventMeta: Record<string, any>;
 };
 
 export type EventFilter = {
     id: string;
     name: string;
     description: string;
-    events: Array<{
-        eventSourceId: string;
-        eventId: string;
-    }>;
+    events: EventSourceAndId[];
     comparisonTypes: string[];
     valueType: "text" | "preset";
     presetValues?(...args: unknown[]): Awaitable<PresetValue[]>;
@@ -38,10 +55,26 @@ export type EventFilter = {
     getSelectedValueDisplay?(filterSettings: FilterSettings, ...args: unknown[]): Awaitable<string>;
     predicate(
         filterSettings: FilterSettings,
-        eventData: {
-            eventSourceId: string;
-            eventId: string;
-            eventMeta: Record<string, unknown>;
-        }
+        eventData: EventData
     ): Awaitable<boolean>;
+};
+
+export type EventFilterData = {
+    mode: "inclusive" | "exclusive";
+    filters: FilterSettings[];
+};
+
+export type EventSettings = {
+    id: string;
+    type: string;
+    active: boolean;
+    effectLabel?: string;
+    filterData?: EventFilterData;
+    effects: EffectList;
+    [x: string]: unknown;
+};
+
+export type EventGroup = {
+    id: string;
+    events: EventSettings[];
 };

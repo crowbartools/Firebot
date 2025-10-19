@@ -1,6 +1,6 @@
 import overlayWidgetConfigManager from "../../overlay-widget-config-manager";
 import { DynamicCountdownWidgetConfig, State as CountdownState } from "./countdown-dynamic";
-import eventManager from "../../../events/EventManager";
+import { EventManager } from "../../../events/event-manager";
 import logger from "../../../logwrapper";
 
 class CountdownManager {
@@ -68,7 +68,7 @@ class CountdownManager {
         overlayWidgetConfigManager.setWidgetStateById(config.id, newState);
 
         if (hasCompleted) {
-            eventManager.triggerEvent("firebot", "dynamic-countdown-finished", {
+            void EventManager.triggerEvent("firebot", "dynamic-countdown-finished", {
                 dynamicCountdownWidgetId: config.id,
                 dynamicCountdownWidgetName: config.name
             });

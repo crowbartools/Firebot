@@ -1,7 +1,7 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { EffectTrigger } from "../../../../shared/effect-constants";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import effectQueueManager from "../../../effects/queues/effect-queue-config-manager";
+import { EffectQueueConfigManager } from "../../../effects/queues/effect-queue-config-manager";
 
 const triggers = {};
 triggers[EffectTrigger.EVENT] = ["firebot:effect-queue-cleared", "firebot:effect-queue-added", "firebot:effect-queue-status"];
@@ -16,8 +16,8 @@ const model: ReplaceVariable = {
         possibleDataOutput: [OutputDataType.BOOLEAN, OutputDataType.NULL]
     },
     evaluator: (trigger) => {
-        const queueId = trigger?.metadata?.eventData?.effectQueueId;
-        const effectQueue = effectQueueManager.getItem(queueId);
+        const queueId = trigger?.metadata?.eventData?.effectQueueId as string;
+        const effectQueue = EffectQueueConfigManager.getItem(queueId);
 
         return effectQueue?.active ?? null;
     }

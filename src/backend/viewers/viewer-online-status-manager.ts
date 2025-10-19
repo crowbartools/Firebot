@@ -5,7 +5,7 @@ import { SettingsManager } from "../common/settings-manager";
 import viewerDatabase from "./viewer-database";
 import chatRolesManager from "../roles/chat-roles-manager";
 import connectionManager from "../common/connection-manager";
-import eventManager from "../events/EventManager";
+import { EventManager } from "../events/event-manager";
 import twitchChat from "../chat/twitch-chat";
 import twitchChatterPoll from "../streaming-platforms/twitch/chatter-poll";
 import frontendCommunicator from "../common/frontend-communicator";
@@ -261,7 +261,7 @@ class ViewerOnlineStatusManager {
         }
         if (newHours !== previousHours) {
 
-            void eventManager.triggerEvent("firebot", "view-time-update", {
+            void EventManager.triggerEvent("firebot", "view-time-update", {
                 username: viewer.username,
                 previousViewTime: previousHours,
                 newViewTime: newHours

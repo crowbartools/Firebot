@@ -42,14 +42,14 @@ exports.whenReady = async () => {
     const connectionManager = require("../../../common/connection-manager");
 
     windowManagement.updateSplashScreenStatus("Loading timers...");
-    const timerManager = require("../../../timers/timer-manager");
-    await timerManager.loadItems();
-    timerManager.startTimers();
+    const { TimerManager } = require("../../../timers/timer-manager");
+    TimerManager.loadItems();
+    TimerManager.startTimers();
 
     windowManagement.updateSplashScreenStatus("Loading scheduled effect lists...");
-    const scheduledTaskManager = require("../../../timers/scheduled-task-manager");
-    scheduledTaskManager.loadItems();
-    scheduledTaskManager.start();
+    const { ScheduledTaskManager } = require("../../../timers/scheduled-task-manager");
+    ScheduledTaskManager.loadItems();
+    ScheduledTaskManager.start();
 
     windowManagement.updateSplashScreenStatus("Refreshing Twitch account data...");
     await accountAccess.refreshTwitchData();
@@ -140,12 +140,12 @@ exports.whenReady = async () => {
     await chatRolesManager.loadVips();
 
     windowManagement.updateSplashScreenStatus("Loading effect queues...");
-    const effectQueueManager = require("../../../effects/queues/effect-queue-config-manager");
-    effectQueueManager.loadItems();
+    const { EffectQueueConfigManager } = require("../../../effects/queues/effect-queue-config-manager");
+    EffectQueueConfigManager.loadItems();
 
     windowManagement.updateSplashScreenStatus("Loading preset effect lists...");
-    const presetEffectListManager = require("../../../effects/preset-lists/preset-effect-list-manager");
-    presetEffectListManager.loadItems();
+    const { PresetEffectListManager } = require("../../../effects/preset-lists/preset-effect-list-manager");
+    PresetEffectListManager.loadItems();
 
     windowManagement.updateSplashScreenStatus("Loading quick actions...");
     const { QuickActionManager } = require("../../../quick-actions/quick-action-manager");

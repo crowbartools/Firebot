@@ -46,8 +46,8 @@ function emitServiceConnectionUpdateEvents(serviceId, connectionState) {
     frontendCommunicator.send("service-connection-update", eventData);
 
     if (serviceId === "chat" && connectionState === ConnectionState.Connected) {
-        const eventManager = require("../events/EventManager");
-        eventManager.triggerEvent("firebot", "chat-connected");
+        const { EventManager } = require("../events/event-manager");
+        EventManager.triggerEvent("firebot", "chat-connected");
     }
 }
 

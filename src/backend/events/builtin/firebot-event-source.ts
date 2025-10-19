@@ -1,9 +1,6 @@
-"use strict";
+import { EventSource } from "../../../types/events";
 
-/**
- * The firebot event source
- */
-const firebotEventSource = {
+export const FirebotEventSource: EventSource = {
     id: "firebot",
     name: "Firebot",
     description: "Various events that can happen within Firebot.",
@@ -188,5 +185,3 @@ const firebotEventSource = {
         }
     ]
 };
-
-module.exports = firebotEventSource;

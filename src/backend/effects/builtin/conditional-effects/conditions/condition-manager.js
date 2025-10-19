@@ -4,6 +4,7 @@ const EventEmitter = require("events");
 const { ReplaceVariableManager } = require("../../../../variables/replace-variable-manager");
 const frontendCommunicator = require("../../../../common/frontend-communicator");
 const logger = require("../../../../logwrapper");
+const { simpleClone } = require("../../../../utils");
 
 class ConditionManager extends EventEmitter {
     constructor() {
@@ -41,7 +42,7 @@ class ConditionManager extends EventEmitter {
 
     async runConditions(conditionData, triggerData) {
         if (conditionData?.conditions?.length > 0) {
-            const conditions = JSON.parse(JSON.stringify(conditionData.conditions));
+            const conditions = simpleClone(conditionData.conditions);
 
             let didPass = conditionData.mode !== "inclusive";
             for (const condition of conditions) {
@@ -81,7 +82,7 @@ class ConditionManager extends EventEmitter {
                             }
                         }
 
-                    } catch (err) {
+                    } catch {
                         // Tell front end an error happened
                         //logger.warn(`An error happened when attempting to process the conditionType ${conditionTypeSetting.type} for event ${eventData.eventSourceId}:${eventData.eventId}: "${err}"`);
                     }

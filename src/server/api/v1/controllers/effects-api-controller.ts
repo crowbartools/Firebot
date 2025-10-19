@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { EffectInstance } from "../../../../types/effects";
 import { EffectTrigger } from "../../../../shared/effect-constants";
+import { PresetEffectListManager } from "../../../../backend/effects/preset-lists/preset-effect-list-manager";
 import effectsManager from "../../../../backend/effects/effectManager";
 import effectRunner from "../../../../backend/common/effect-runner";
-import presetEffectListManager from "../../../../backend/effects/preset-lists/preset-effect-list-manager";
 
 export function getEffects(req: Request, res: Response): void {
     let effectDefs = effectsManager.getEffectDefinitions();
@@ -66,7 +66,7 @@ export async function runEffects(
 };
 
 export function getPresetLists(req: Request, res: Response): void {
-    const presetLists = presetEffectListManager.getAllItems();
+    const presetLists = PresetEffectListManager.getAllItems();
 
     if (presetLists == null) {
         res.status(500).send({
@@ -100,7 +100,7 @@ async function runPresetEffectList(
         });
     }
 
-    const presetList = presetEffectListManager.getItem(presetListId);
+    const presetList = PresetEffectListManager.getItem(presetListId);
     if (presetList == null) {
         res.status(404).send({
             status: "error",

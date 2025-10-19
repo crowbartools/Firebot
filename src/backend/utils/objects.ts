@@ -99,3 +99,12 @@ export const extractPropertyWithPath = <T = unknown>(
  */
 export const isPlainObject = (v: unknown): v is Record<string, unknown> =>
     Object.prototype.toString.call(v) === "[object Object]";
+
+/**
+ * Creates a simple clone of an object by using `JSON.stringify` then `JSON.parse`
+ * @param obj Object to clone
+ * @returns Clone of the object
+ */
+export const simpleClone = <T = unknown>(obj: T): T => {
+    return JSON.parse(JSON.stringify(obj)) as T;
+};

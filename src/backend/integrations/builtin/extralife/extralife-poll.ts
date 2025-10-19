@@ -1,5 +1,5 @@
 import { TypedEmitter } from "tiny-typed-emitter";
-import eventManager from "../../../events/EventManager";
+import { EventManager } from "../../../events/event-manager";
 import logger from "../../../logwrapper";
 
 type ExtraLifeDonation = {
@@ -67,7 +67,7 @@ class ExtraLifePollService extends TypedEmitter<ConnectionEvents> {
             }
             this.cacheDonation(d);
 
-            eventManager.triggerEvent("extralife", "donation", {
+            void EventManager.triggerEvent("extralife", "donation", {
                 formattedDonationAmount: `$${d.amount}`,
                 donationAmount: d.amount,
                 donationMessage: d.message,

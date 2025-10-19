@@ -61,13 +61,13 @@ exports.setupCommonListeners = () => {
     });
 
     frontendCommunicator.on("highlight-message", (data) => {
-        const eventsManager = require("../events/EventManager");
-        eventsManager.triggerEvent("firebot", "highlight-message", data);
+        const { EventManager } = require("../events/event-manager");
+        EventManager.triggerEvent("firebot", "highlight-message", data);
     });
 
     frontendCommunicator.on("category-changed", (category) => {
-        const eventsManager = require("../events/EventManager");
-        eventsManager.triggerEvent("firebot", "category-changed", { category: category });
+        const { EventManager } = require("../events/event-manager");
+        EventManager.triggerEvent("firebot", "category-changed", { category: category });
     });
 
     frontendCommunicator.on("restartApp", () => restartApp());
@@ -104,11 +104,6 @@ exports.setupCommonListeners = () => {
         }
         webServer.sendToOverlay(data.event, data.meta);
     });
-
-    const updaterOptions = {
-        repo: "crowbartools/firebot",
-        currentVersion: app.getVersion()
-    };
 
     const updateFeedUrl = `https://update.electronjs.org/crowbartools/Firebot/win32/${app.getVersion()}`;
 

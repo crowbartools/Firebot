@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Timer } from "../../../../types/timers";
-import timersManager from "../../../../backend/timers/timer-manager";
+import { TimerManager } from "../../../../backend/timers/timer-manager";
 
 function findTimer(req: Request, res: Response): Timer {
     const timerId: string = req.params.timerId;
@@ -13,7 +13,7 @@ function findTimer(req: Request, res: Response): Timer {
         return undefined;
     }
 
-    const timer = timersManager.getItem(timerId);
+    const timer = TimerManager.getItem(timerId);
 
     if (timer == null) {
         res.status(404).send({
@@ -27,7 +27,7 @@ function findTimer(req: Request, res: Response): Timer {
 }
 
 export function getTimers(req: Request, res: Response): void {
-    const timers = timersManager.getAllItems()
+    const timers = TimerManager.getAllItems()
         .map((c) => {
             return {
                 id: c.id,
@@ -69,11 +69,11 @@ export function updateTimerById(req: Request, res: Response): void {
     }
 
     if (action === "clear") {
-        timersManager.updateIntervalForTimer(timer);
+        TimerManager.updateIntervalForTimer(timer);
         res.status(200).send();
     }
 
     const isActive = action === "toggle" ? !timer.active : action === "enable";
-    timersManager.updateTimerActiveStatus(timer.id, isActive);
+    TimerManager.updateTimerActiveStatus(timer.id, isActive);
     res.status(200).send();
 }

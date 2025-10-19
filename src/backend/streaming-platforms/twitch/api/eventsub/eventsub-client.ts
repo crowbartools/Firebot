@@ -4,7 +4,7 @@ import { EventSubWsListener } from "@twurple/eventsub-ws";
 import logger from "../../../../logwrapper";
 import accountAccess from "../../../../common/account-access";
 import frontendCommunicator from "../../../../common/frontend-communicator";
-import twitchEventsHandler from '../../../../events/twitch-events';
+import { TwitchEventHandlers } from "../../events";
 import { TwitchApi } from "..";
 import twitchStreamInfoPoll from "../../stream-info-manager";
 import rewardManager from "../../../../channel-rewards/channel-reward-manager";
@@ -24,7 +24,7 @@ class TwitchEventSubClient {
 
         // Stream online
         const onlineSubscription = this._eventSubListener.onStreamOnline(streamer.userId, (event) => {
-            twitchEventsHandler.stream.triggerStreamOnline(
+            TwitchEventHandlers.stream.triggerStreamOnline(
                 event.broadcasterName,
                 event.broadcasterId,
                 event.broadcasterDisplayName
@@ -34,7 +34,7 @@ class TwitchEventSubClient {
 
         // Stream offline
         const offlineSubscription = this._eventSubListener.onStreamOffline(streamer.userId, (event) => {
-            twitchEventsHandler.stream.triggerStreamOffline(
+            TwitchEventHandlers.stream.triggerStreamOffline(
                 event.broadcasterName,
                 event.broadcasterId,
                 event.broadcasterDisplayName
@@ -44,7 +44,7 @@ class TwitchEventSubClient {
 
         // Follows
         const followSubscription = this._eventSubListener.onChannelFollow(streamer.userId, streamer.userId, (event) => {
-            twitchEventsHandler.follow.triggerFollow(
+            TwitchEventHandlers.follow.triggerFollow(
                 event.userName,
                 event.userId,
                 event.userDisplayName
@@ -60,7 +60,7 @@ class TwitchEventSubClient {
                     // Future: We could parse event.messageParts into a FirebotChatMessage
                     // This would allow us to expose cheermotes to the cheer event,
                     // rather than just chat messages which happen to be cheers.
-                    twitchEventsHandler.bits.triggerCheer(
+                    TwitchEventHandlers.bits.triggerCheer(
                         event.userName,
                         event.userId,
                         event.userDisplayName,
@@ -76,7 +76,7 @@ class TwitchEventSubClient {
                     const totalBits = (await TwitchApi.bits.getChannelBitsLeaderboard(1, "all", new Date(), event.userId))[0]?.amount ?? 0;
                     switch (event.powerUp.type) {
                         case "celebration":
-                            twitchEventsHandler.bits.triggerPowerupCelebration(
+                            TwitchEventHandlers.bits.triggerPowerupCelebration(
                                 event.userName,
                                 event.userId,
                                 event.userDisplayName,
@@ -85,7 +85,7 @@ class TwitchEventSubClient {
                             );
                             break;
                         case "gigantify_an_emote": {
-                            twitchEventsHandler.bits.triggerPowerupGigantifyEmote(
+                            TwitchEventHandlers.bits.triggerPowerupGigantifyEmote(
                                 event.userName,
                                 event.userId,
                                 event.userDisplayName,
@@ -98,7 +98,7 @@ class TwitchEventSubClient {
                             break;
                         }
                         case "message_effect": {
-                            twitchEventsHandler.bits.triggerPowerupMessageEffect(
+                            TwitchEventHandlers.bits.triggerPowerupMessageEffect(
                                 event.userName,
                                 event.userId,
                                 event.userDisplayName,
@@ -140,7 +140,7 @@ class TwitchEventSubClient {
         const channelAutomaticRewardSubscription = this._eventSubListener.onChannelAutomaticRewardRedemptionAddV2(streamer.userId, (event) => {
             switch (event.reward.type) {
                 case "single_message_bypass_sub_mode":
-                    twitchEventsHandler.rewardRedemption.triggerRedemptionSingleMessageBypassSubMode(
+                    TwitchEventHandlers.rewardRedemption.triggerRedemptionSingleMessageBypassSubMode(
                         event.userName,
                         event.userId,
                         event.userDisplayName,
@@ -148,7 +148,7 @@ class TwitchEventSubClient {
                     );
                     break;
                 case "send_highlighted_message":
-                    twitchEventsHandler.rewardRedemption.triggerRedemptionSendHighlightedMessage(
+                    TwitchEventHandlers.rewardRedemption.triggerRedemptionSendHighlightedMessage(
                         event.userName,
                         event.userId,
                         event.userDisplayName,
@@ -157,7 +157,7 @@ class TwitchEventSubClient {
                     );
                     break;
                 case "random_sub_emote_unlock":
-                    twitchEventsHandler.rewardRedemption.triggerRedemptionRandomSubEmoteUnlock(
+                    TwitchEventHandlers.rewardRedemption.triggerRedemptionRandomSubEmoteUnlock(
                         event.userName,
                         event.userId,
                         event.userDisplayName,
@@ -167,7 +167,7 @@ class TwitchEventSubClient {
                     );
                     break;
                 case "chosen_sub_emote_unlock":
-                    twitchEventsHandler.rewardRedemption.triggerRedemptionChosenSubEmoteUnlock(
+                    TwitchEventHandlers.rewardRedemption.triggerRedemptionChosenSubEmoteUnlock(
                         event.userName,
                         event.userId,
                         event.userDisplayName,
@@ -177,7 +177,7 @@ class TwitchEventSubClient {
                     );
                     break;
                 case "chosen_modified_sub_emote_unlock":
-                    twitchEventsHandler.rewardRedemption.triggerRedemptionChosenModifiedSubEmoteUnlock(
+                    TwitchEventHandlers.rewardRedemption.triggerRedemptionChosenModifiedSubEmoteUnlock(
                         event.userName,
                         event.userId,
                         event.userDisplayName,
@@ -225,10 +225,9 @@ class TwitchEventSubClient {
 
             const imageUrl = getChannelRewardImageUrl(reward.twitchData);
 
-            twitchEventsHandler.rewardRedemption.handleRewardRedemption(
+            TwitchEventHandlers.rewardRedemption.handleRewardRedemption(
                 event.id,
                 event.status,
-                !reward.twitchData.shouldRedemptionsSkipRequestQueue,
                 event.input,
                 event.userId,
                 event.userName,
@@ -268,7 +267,7 @@ class TwitchEventSubClient {
 
             const imageUrl = getChannelRewardImageUrl(reward.twitchData);
 
-            twitchEventsHandler.rewardRedemption.handleRewardUpdated(
+            TwitchEventHandlers.rewardRedemption.handleRewardUpdated(
                 event.id,
                 event.status,
                 event.input,
@@ -290,7 +289,7 @@ class TwitchEventSubClient {
 
         // Incoming Raid
         const incomingRaidSubscription = this._eventSubListener.onChannelRaidTo(streamer.userId, (event) => {
-            twitchEventsHandler.raid.triggerIncomingRaid(
+            TwitchEventHandlers.raid.triggerIncomingRaid(
                 event.raidingBroadcasterName,
                 event.raidingBroadcasterId,
                 event.raidingBroadcasterDisplayName,
@@ -303,7 +302,7 @@ class TwitchEventSubClient {
         const outboundRaidSubscription = this._eventSubListener.onChannelRaidFrom(streamer.userId, (event) => {
             // sent off
             if (event.raidingBroadcasterId === streamer.userId && event.raidedBroadcasterId !== streamer.userId) {
-                twitchEventsHandler.raid.triggerRaidSentOff(
+                TwitchEventHandlers.raid.triggerRaidSentOff(
                     event.raidingBroadcasterName,
                     event.raidingBroadcasterId,
                     event.raidingBroadcasterDisplayName,
@@ -318,7 +317,7 @@ class TwitchEventSubClient {
 
         // Shoutout sent to another channel
         const shoutoutSentSubscription = this._eventSubListener.onChannelShoutoutCreate(streamer.userId, streamer.userId, (event) => {
-            twitchEventsHandler.shoutout.triggerShoutoutSent(
+            TwitchEventHandlers.shoutout.triggerShoutoutSent(
                 event.shoutedOutBroadcasterName,
                 event.shoutedOutBroadcasterId,
                 event.shoutedOutBroadcasterDisplayName,
@@ -332,7 +331,7 @@ class TwitchEventSubClient {
 
         // Shoutout received from another channel
         const shoutoutReceivedSubscription = this._eventSubListener.onChannelShoutoutReceive(streamer.userId, streamer.userId, (event) => {
-            twitchEventsHandler.shoutout.triggerShoutoutReceived(
+            TwitchEventHandlers.shoutout.triggerShoutoutReceived(
                 event.shoutingOutBroadcasterName,
                 event.shoutingOutBroadcasterId,
                 event.shoutingOutBroadcasterDisplayName,
@@ -343,7 +342,7 @@ class TwitchEventSubClient {
 
         // Hype Train start
         const hypeTrainBeginSubscription = this._eventSubListener.onChannelHypeTrainBeginV2(streamer.userId, (event) => {
-            twitchEventsHandler.hypeTrain.triggerHypeTrainStart(
+            TwitchEventHandlers.hypeTrain.triggerHypeTrainStart(
                 event.total,
                 event.progress,
                 event.goal,
@@ -359,7 +358,7 @@ class TwitchEventSubClient {
 
         // Hype Train progress
         const hypeTrainProgressSubscription = this._eventSubListener.onChannelHypeTrainProgressV2(streamer.userId, (event) => {
-            twitchEventsHandler.hypeTrain.triggerHypeTrainProgress(
+            TwitchEventHandlers.hypeTrain.triggerHypeTrainProgress(
                 event.total,
                 event.progress,
                 event.goal,
@@ -375,7 +374,7 @@ class TwitchEventSubClient {
 
         // Hype Train end
         const hypeTrainEndSubscription = this._eventSubListener.onChannelHypeTrainEndV2(streamer.userId, (event) => {
-            twitchEventsHandler.hypeTrain.triggerHypeTrainEnd(
+            TwitchEventHandlers.hypeTrain.triggerHypeTrainEnd(
                 event.total,
                 event.level,
                 event.startDate,
@@ -390,7 +389,7 @@ class TwitchEventSubClient {
 
         // Channel goal begin
         const channelGoalBeginSubscription = this._eventSubListener.onChannelGoalBegin(streamer.userId, (event) => {
-            twitchEventsHandler.goal.triggerChannelGoalBegin(
+            TwitchEventHandlers.goal.triggerChannelGoalBegin(
                 event.description,
                 event.type,
                 event.startDate,
@@ -402,7 +401,7 @@ class TwitchEventSubClient {
 
         // Channel goal progress
         const channelGoalProgressSubscription = this._eventSubListener.onChannelGoalProgress(streamer.userId, (event) => {
-            twitchEventsHandler.goal.triggerChannelGoalProgress(
+            TwitchEventHandlers.goal.triggerChannelGoalProgress(
                 event.description,
                 event.type,
                 event.startDate,
@@ -414,7 +413,7 @@ class TwitchEventSubClient {
 
         // Channel goal end
         const channelGoalEndSubscription = this._eventSubListener.onChannelGoalEnd(streamer.userId, (event) => {
-            twitchEventsHandler.goal.triggerChannelGoalEnd(
+            TwitchEventHandlers.goal.triggerChannelGoalEnd(
                 event.description,
                 event.type,
                 event.startDate,
@@ -428,7 +427,7 @@ class TwitchEventSubClient {
 
         // Channel poll begin
         const pollBeginSubscription = this._eventSubListener.onChannelPollBegin(streamer.userId, (event) => {
-            twitchEventsHandler.poll.triggerChannelPollBegin(
+            TwitchEventHandlers.poll.triggerChannelPollBegin(
                 event.title,
                 event.choices,
                 event.startDate,
@@ -441,7 +440,7 @@ class TwitchEventSubClient {
 
         // Channel poll progress
         const pollProgressSubscription = this._eventSubListener.onChannelPollProgress(streamer.userId, (event) => {
-            twitchEventsHandler.poll.triggerChannelPollProgress(
+            TwitchEventHandlers.poll.triggerChannelPollProgress(
                 event.title,
                 event.choices,
                 event.startDate,
@@ -455,7 +454,7 @@ class TwitchEventSubClient {
         // Channel poll end
         const pollEndSubscription = this._eventSubListener.onChannelPollEnd(streamer.userId, (event) => {
             if (event.status !== "archived") {
-                twitchEventsHandler.poll.triggerChannelPollEnd(
+                TwitchEventHandlers.poll.triggerChannelPollEnd(
                     event.title,
                     event.choices,
                     event.startDate,
@@ -470,7 +469,7 @@ class TwitchEventSubClient {
 
         // Channel prediction begin
         const predictionBeginSubscription = this._eventSubListener.onChannelPredictionBegin(streamer.userId, (event) => {
-            twitchEventsHandler.prediction.triggerChannelPredictionBegin(
+            TwitchEventHandlers.prediction.triggerChannelPredictionBegin(
                 event.title,
                 event.outcomes,
                 event.startDate,
@@ -481,7 +480,7 @@ class TwitchEventSubClient {
 
         // Channel prediction progress
         const predictionProgressSubscription = this._eventSubListener.onChannelPredictionProgress(streamer.userId, (event) => {
-            twitchEventsHandler.prediction.triggerChannelPredictionProgress(
+            TwitchEventHandlers.prediction.triggerChannelPredictionProgress(
                 event.title,
                 event.outcomes,
                 event.startDate,
@@ -492,7 +491,7 @@ class TwitchEventSubClient {
 
         // Channel prediction lock
         const predictionLockSubscription = this._eventSubListener.onChannelPredictionLock(streamer.userId, (event) => {
-            twitchEventsHandler.prediction.triggerChannelPredictionLock(
+            TwitchEventHandlers.prediction.triggerChannelPredictionLock(
                 event.title,
                 event.outcomes,
                 event.startDate,
@@ -503,7 +502,7 @@ class TwitchEventSubClient {
 
         // Channel prediction end
         const predictionEndSubscription = this._eventSubListener.onChannelPredictionEnd(streamer.userId, (event) => {
-            twitchEventsHandler.prediction.triggerChannelPredictionEnd(
+            TwitchEventHandlers.prediction.triggerChannelPredictionEnd(
                 event.title,
                 event.outcomes,
                 event.winningOutcome,
@@ -518,7 +517,7 @@ class TwitchEventSubClient {
         const banSubscription = this._eventSubListener.onChannelBan(streamer.userId, (event) => {
             if (event.endDate) {
                 const timeoutDuration = (event.endDate.getTime() - event.startDate.getTime()) / 1000;
-                twitchEventsHandler.viewerTimeout.triggerTimeout(
+                TwitchEventHandlers.viewerTimeout.triggerTimeout(
                     event.userName,
                     event.userId,
                     event.userDisplayName,
@@ -529,7 +528,7 @@ class TwitchEventSubClient {
                     event.reason
                 );
             } else {
-                twitchEventsHandler.viewerBanned.triggerBanned(
+                TwitchEventHandlers.viewerBanned.triggerBanned(
                     event.userName,
                     event.userId,
                     event.userDisplayName,
@@ -546,7 +545,7 @@ class TwitchEventSubClient {
 
         // Charity Campaign Start
         const charityCampaignStartSubscription = this._eventSubListener.onChannelCharityCampaignStart(streamer.userId, (event) => {
-            twitchEventsHandler.charity.triggerCharityCampaignStart(
+            TwitchEventHandlers.charity.triggerCharityCampaignStart(
                 event.charityName,
                 event.charityDescription,
                 event.charityLogo,
@@ -561,7 +560,7 @@ class TwitchEventSubClient {
 
         // Charity Donation
         const charityDonationSubscription = this._eventSubListener.onChannelCharityDonation(streamer.userId, (event) => {
-            twitchEventsHandler.charity.triggerCharityDonation(
+            TwitchEventHandlers.charity.triggerCharityDonation(
                 event.donorName,
                 event.donorId,
                 event.donorDisplayName,
@@ -577,7 +576,7 @@ class TwitchEventSubClient {
 
         // Charity Campaign Progress
         const charityCampaignProgressSubscription = this._eventSubListener.onChannelCharityCampaignProgress(streamer.userId, (event) => {
-            twitchEventsHandler.charity.triggerCharityCampaignProgress(
+            TwitchEventHandlers.charity.triggerCharityCampaignProgress(
                 event.charityName,
                 event.charityDescription,
                 event.charityLogo,
@@ -592,7 +591,7 @@ class TwitchEventSubClient {
 
         // Charity Campaign End
         const charityCampaignEndSubscription = this._eventSubListener.onChannelCharityCampaignStop(streamer.userId, (event) => {
-            twitchEventsHandler.charity.triggerCharityCampaignEnd(
+            TwitchEventHandlers.charity.triggerCharityCampaignEnd(
                 event.charityName,
                 event.charityDescription,
                 event.charityLogo,
@@ -617,7 +616,7 @@ class TwitchEventSubClient {
 
         // Ad break start/end
         const channelAdBreakBeginSubscription = this._eventSubListener.onChannelAdBreakBegin(streamer.userId, (event) => {
-            twitchEventsHandler.ad.triggerAdBreakStart(
+            TwitchEventHandlers.ad.triggerAdBreakStart(
                 event.requesterName,
                 event.requesterId,
                 event.requesterDisplayName,
@@ -630,7 +629,7 @@ class TwitchEventSubClient {
             adBreakEndTime.setSeconds(event.startDate.getSeconds() + event.durationSeconds);
 
             setTimeout(() => {
-                twitchEventsHandler.ad.triggerAdBreakEnd(
+                TwitchEventHandlers.ad.triggerAdBreakEnd(
                     event.requesterName,
                     event.requesterId,
                     event.requesterDisplayName,
@@ -646,7 +645,7 @@ class TwitchEventSubClient {
             switch (event.moderationAction) {
                 case "clear":
                     frontendCommunicator.send("twitch:chat:clear-feed", event.moderatorName);
-                    twitchEventsHandler.chat.triggerChatCleared(event.moderatorName, event.moderatorId);
+                    TwitchEventHandlers.chat.triggerChatCleared(event.moderatorName, event.moderatorId);
                     break;
                 case "mod":
                     chatRolesManager.addModeratorToModeratorsList({
@@ -680,7 +679,7 @@ class TwitchEventSubClient {
                 case "slowoff":
                 case "uniquechat":
                 case "uniquechatoff":
-                    twitchEventsHandler.chatModeChanged.triggerChatModeChanged(
+                    TwitchEventHandlers.chatModeChanged.triggerChatModeChanged(
                         event.moderationAction,
                         event.moderationAction.includes("off") ? "disabled" : "enabled",
                         event.moderatorName,
@@ -690,7 +689,7 @@ class TwitchEventSubClient {
 
                 // Chat Message Deleted
                 case "delete":
-                    twitchEventsHandler.chatMessage.triggerChatMessageDeleted(
+                    TwitchEventHandlers.chatMessage.triggerChatMessageDeleted(
                         event.userName,
                         event.userId,
                         event.userDisplayName,
@@ -702,7 +701,7 @@ class TwitchEventSubClient {
 
                 // Outbound Raid Starting
                 case "raid":
-                    twitchEventsHandler.raid.triggerOutgoingRaidStarted(
+                    TwitchEventHandlers.raid.triggerOutgoingRaidStarted(
                         event.broadcasterName,
                         event.broadcasterId,
                         event.broadcasterDisplayName,
@@ -718,7 +717,7 @@ class TwitchEventSubClient {
 
                 // Outbound Raid Canceled
                 case "unraid":
-                    twitchEventsHandler.raid.triggerOutgoingRaidCanceled(
+                    TwitchEventHandlers.raid.triggerOutgoingRaidCanceled(
                         event.broadcasterName,
                         event.broadcasterId,
                         event.broadcasterDisplayName,
@@ -733,7 +732,7 @@ class TwitchEventSubClient {
 
                 case "unban":
                 case "untimeout":
-                    twitchEventsHandler.viewerBanned.triggerUnbanned(
+                    TwitchEventHandlers.viewerBanned.triggerUnbanned(
                         event.userName,
                         event.userId,
                         event.userDisplayName,
@@ -766,7 +765,7 @@ class TwitchEventSubClient {
         const chatNotificationSubscription = this._eventSubListener.onChannelChatNotification(streamer.userId, streamer.userId, async (event) => {
             switch (event.type) {
                 case "bits_badge_tier":
-                    twitchEventsHandler.bits.triggerBitsBadgeUnlock(
+                    TwitchEventHandlers.bits.triggerBitsBadgeUnlock(
                         event.chatterName ?? "ananonymouscheerer",
                         event.chatterId,
                         event.chatterDisplayName ?? "An Anonymous Cheerer",
@@ -777,7 +776,7 @@ class TwitchEventSubClient {
 
                 case "resub":
                 case "sub":
-                    twitchEventsHandler.sub.triggerSub(
+                    TwitchEventHandlers.sub.triggerSub(
                         event.chatterName,
                         event.chatterId,
                         event.chatterDisplayName,
@@ -791,7 +790,7 @@ class TwitchEventSubClient {
                     break;
 
                 case "community_sub_gift":
-                    twitchEventsHandler.giftSub.triggerCommunitySubGift(
+                    TwitchEventHandlers.giftSub.triggerCommunitySubGift(
                         event.chatterDisplayName ?? "An Anonymous Gifter",
                         event.id,
                         event.amount
@@ -799,7 +798,7 @@ class TwitchEventSubClient {
                     break;
 
                 case "sub_gift":
-                    await twitchEventsHandler.giftSub.triggerSubGift(
+                    await TwitchEventHandlers.giftSub.triggerSubGift(
                         event.chatterDisplayName ?? "An Anonymous Gifter",
                         event.chatterName,
                         event.chatterId,
@@ -818,7 +817,7 @@ class TwitchEventSubClient {
                         // IRC chat included this in the event payload. EventSub does not.
                         const upgradeTier = (await (await event.getBroadcaster()).getSubscriber(event.chatterId)).tier;
 
-                        twitchEventsHandler.giftSub.triggerSubGiftUpgrade(
+                        TwitchEventHandlers.giftSub.triggerSubGiftUpgrade(
                             event.chatterName,
                             event.chatterId,
                             event.chatterDisplayName,
@@ -830,7 +829,7 @@ class TwitchEventSubClient {
                     break;
 
                 case "prime_paid_upgrade":
-                    twitchEventsHandler.sub.triggerPrimeUpgrade(
+                    TwitchEventHandlers.sub.triggerPrimeUpgrade(
                         event.chatterName,
                         event.chatterId,
                         event.chatterDisplayName,

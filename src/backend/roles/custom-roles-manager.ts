@@ -1,26 +1,17 @@
+import { TypedEmitter } from "tiny-typed-emitter";
 import { JsonDB } from "node-json-db";
 import path from "path";
 
-import logger from "../logwrapper";
-import { findIndexIgnoreCase } from "../utils";
+import { BasicViewer } from "../../types/viewers";
+import { CustomRole, LegacyCustomRole } from "../../types/roles";
+
+import { TwitchApi } from "../streaming-platforms/twitch/api";
 import accountAccess from "../common/account-access";
 import profileManager from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
-import { TwitchApi } from "../streaming-platforms/twitch/api";
 import twitchRoleManager from "../../shared/twitch-roles";
-import { BasicViewer } from "../../types/viewers";
-import { TypedEmitter } from "tiny-typed-emitter";
-
-interface CustomRole {
-    id: string;
-    name: string;
-    viewers: Array<{
-        id: string;
-        username: string;
-        displayName: string;
-    }>;
-    showBadgeInChat?: boolean;
-}
+import logger from "../logwrapper";
+import { findIndexIgnoreCase } from "../utils";
 
 type Events = {
     "created-item": (item: object) => void;
@@ -28,12 +19,6 @@ type Events = {
     "deleted-item": (item: object) => void;
     "viewer-role-updated": (userId: string, roleId: string, action: "added" | "removed") => void;
 };
-
-interface LegacyCustomRole {
-    id: string;
-    name: string;
-    viewers: string[];
-}
 
 const ROLES_FOLDER = "roles";
 
@@ -43,7 +28,7 @@ class CustomRolesManager extends TypedEmitter<Events> {
     constructor() {
         super();
 
-        frontendCommunicator.onAsync("get-custom-roles", async () => this._customRoles);
+        frontendCommunicator.on("get-custom-roles", () => this._customRoles);
 
         frontendCommunicator.on("save-custom-role", (role: CustomRole) => {
             this.saveCustomRole(role);
@@ -67,7 +52,7 @@ class CustomRolesManager extends TypedEmitter<Events> {
 
             try {
                 const legacyCustomRolesDb = profileManager.getJsonDbInProfile(path.join(ROLES_FOLDER, "customroles"));
-                const legacyCustomRoles: Record<string, LegacyCustomRole> = legacyCustomRolesDb.getData("/");
+                const legacyCustomRoles = legacyCustomRolesDb.getData("/") as Record<string, LegacyCustomRole>;
 
                 if (Object.keys(legacyCustomRoles).length > 0) {
                     if (accountAccess.getAccounts().streamer?.loggedIn !== true) {
@@ -178,7 +163,7 @@ class CustomRolesManager extends TypedEmitter<Events> {
         const rolesDb = this.getCustomRolesDb();
 
         try {
-            const customRolesData = rolesDb.getData("/");
+            const customRolesData = rolesDb.getData("/") as Record<string, CustomRole>;
 
             if (customRolesData != null) {
                 this._customRoles = customRolesData;
@@ -221,7 +206,7 @@ class CustomRolesManager extends TypedEmitter<Events> {
         }
 
         if (role.viewers?.length && !role.viewers[0].id) {
-            logger.error(`Cannot save custom role ${role} as it is in an older format`);
+            logger.error(`Cannot save custom role as it is in an older format`, role);
             return;
         }
 

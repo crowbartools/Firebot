@@ -111,11 +111,11 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
 
 const manager = new OverlayWidgetsManager();
 
-frontendCommunicator.onAsync("overlay-widgets:get-all-types", async () => {
-    return manager.getOverlayWidgetTypesForFrontend();
-});
+frontendCommunicator.on("overlay-widgets:get-all-types",
+    () => manager.getOverlayWidgetTypesForFrontend()
+);
 
-frontendCommunicator.onAsync("overlay-widgets:get-state-displays", async () => {
+frontendCommunicator.on("overlay-widgets:get-state-displays", () => {
     const configs = overlayWidgetConfigManager.getAllItems();
     return configs.reduce((acc, config) => {
         const type = manager.getOverlayWidgetType(config.type);
@@ -131,9 +131,9 @@ frontendCommunicator.onAsync("overlay-widgets:get-state-displays", async () => {
 
 overlayWidgetConfigManager.on("widget-config-active-changed", (config) => {
     if (config.active === false) {
-        manager.sendWidgetEventToOverlay("remove", config);
+        void manager.sendWidgetEventToOverlay("remove", config);
     } else {
-        manager.sendWidgetEventToOverlay("show", config);
+        void manager.sendWidgetEventToOverlay("show", config);
     }
 });
 
@@ -167,7 +167,7 @@ overlayWidgetConfigManager.on("widget-state-updated", (config) => {
     if (config.active === false) {
         return;
     }
-    manager.sendWidgetEventToOverlay("state-update", config);
+    void manager.sendWidgetEventToOverlay("state-update", config);
 });
 
 overlayWidgetConfigManager.on("created-item", async (config) => {
@@ -179,7 +179,7 @@ overlayWidgetConfigManager.on("created-item", async (config) => {
     if (config.active === false) {
         return;
     }
-    manager.sendWidgetEventToOverlay("show", config);
+    void manager.sendWidgetEventToOverlay("show", config);
 });
 
 overlayWidgetConfigManager.on("widget-config-updated", async (config, previous) => {
@@ -193,11 +193,11 @@ overlayWidgetConfigManager.on("widget-config-updated", async (config, previous) 
     }
     if (config.overlayInstance !== previous.overlayInstance) {
         // If the overlay instance changed, remove from the previous instance and show on the new one
-        manager.sendWidgetEventToOverlay("remove", previous);
-        manager.sendWidgetEventToOverlay("show", config);
+        void manager.sendWidgetEventToOverlay("remove", previous);
+        void manager.sendWidgetEventToOverlay("show", config);
         return;
     }
-    manager.sendWidgetEventToOverlay(shouldShow ? "show" : "settings-update", config);
+    void manager.sendWidgetEventToOverlay(shouldShow ? "show" : "settings-update", config);
 });
 
 overlayWidgetConfigManager.on("widget-config-removed", async (config) => {
@@ -207,7 +207,7 @@ overlayWidgetConfigManager.on("widget-config-removed", async (config) => {
     if (config.active === false) {
         return;
     }
-    manager.sendWidgetEventToOverlay("remove", config);
+    void manager.sendWidgetEventToOverlay("remove", config);
 });
 
 const handleLivePreviewUpdate = async (config: OverlayWidgetConfig) => {
@@ -234,7 +234,7 @@ const handleLivePreviewUpdate = async (config: OverlayWidgetConfig) => {
 
     livePreviewWidgetConfig = config;
 
-    manager.sendWidgetEventToOverlay(isNew ? "show" : "settings-update", livePreviewWidgetConfig, undefined, true);
+    void manager.sendWidgetEventToOverlay(isNew ? "show" : "settings-update", livePreviewWidgetConfig, undefined, true);
 };
 
 frontendCommunicator.onAsync("overlay-widgets:start-live-preview", handleLivePreviewUpdate);
@@ -253,7 +253,7 @@ frontendCommunicator.onAsync("overlay-widgets:stop-live-preview", async (config:
     if (config?.id) {
         const existingConfig = overlayWidgetConfigManager.getItem(config.id);
         if (existingConfig && existingConfig.active !== false) {
-            manager.sendWidgetEventToOverlay("show", existingConfig);
+            void manager.sendWidgetEventToOverlay("show", existingConfig);
         }
     }
 });
@@ -289,7 +289,7 @@ frontendCommunicator.on("overlay-widgets:trigger-ui-action", async (data: { widg
     }
 });
 
-websocketServerManager.on("overlay-connected", (instanceName: "Default" | string) => {
+websocketServerManager.on("overlay-connected", (instanceName: string = "Default") => {
     const widgetConfigs = overlayWidgetConfigManager
         .getAllItems()
         .filter(w => w.active !== false && (
@@ -298,11 +298,11 @@ websocketServerManager.on("overlay-connected", (instanceName: "Default" | string
         );
 
     for (const widgetConfig of widgetConfigs) {
-        manager.sendWidgetEventToOverlay("show", widgetConfig);
+        void manager.sendWidgetEventToOverlay("show", widgetConfig);
     }
 
     if (livePreviewWidgetConfig) {
-        manager.sendWidgetEventToOverlay("show", livePreviewWidgetConfig, undefined, true);
+        void manager.sendWidgetEventToOverlay("show", livePreviewWidgetConfig, undefined, true);
     }
 });
 

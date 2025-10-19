@@ -1,4 +1,56 @@
-export const TwitchEventSource = {
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+import { EventSource } from "../../../../types/events";
+
+import * as ad from "./ad";
+import * as announcement from "./announcement";
+import * as bits from "./bits";
+import * as charity from "./charity";
+import * as chat from "./chat";
+import * as chatMessage from "./chat-message";
+import * as chatModeChanged from "./chat-mode-changed";
+import * as follow from "./follow";
+import * as giftSub from "./gift-sub";
+import * as goal from "./goal";
+import * as hypeTrain from "./hype-train";
+import * as poll from "./poll";
+import * as prediction from "./prediction";
+import * as raid from "./raid";
+import * as rewardRedemption from "./reward-redemption";
+import * as shoutout from "./shoutout";
+import * as stream from "./stream";
+import * as sub from "./sub";
+import * as viewerArrived from "./viewer-arrived";
+import * as viewerBanned from "./viewer-banned";
+import * as viewerTimeout from "./viewer-timeout";
+import * as whisper from "./whisper";
+
+export const TwitchEventHandlers = {
+    ad,
+    announcement,
+    bits,
+    charity,
+    chat,
+    chatMessage,
+    chatModeChanged,
+    follow,
+    giftSub,
+    goal,
+    hypeTrain,
+    poll,
+    prediction,
+    raid,
+    rewardRedemption,
+    shoutout,
+    stream,
+    sub,
+    viewerArrived,
+    viewerBanned,
+    viewerTimeout,
+    whisper
+};
+
+export const TwitchEventSource: EventSource = {
     id: "twitch",
     name: "Twitch",
     description: "Events like Follow, Subscribe, and more from Twitch",
@@ -463,7 +515,6 @@ export const TwitchEventSource = {
             name: "Chat Cleared",
             description: "When chat is cleared in your channel",
             cached: false,
-            queued: false,
             manualMetadata: {
                 username: "firebot",
                 userId: ""
@@ -474,7 +525,6 @@ export const TwitchEventSource = {
             name: "Chat Message",
             description: "When someone chats in your channel",
             cached: false,
-            queued: false,
             manualMetadata: {
                 username: "firebot",
                 userDisplayName: "Firebot",
@@ -487,7 +537,6 @@ export const TwitchEventSource = {
             name: "Chat Message Deleted",
             description: "When a chat message is deleted in your channel",
             cached: false,
-            queued: false,
             manualMetadata: {
                 username: "firebot",
                 messageText: "Test message"
@@ -498,7 +547,6 @@ export const TwitchEventSource = {
             name: "First Time Chat",
             description: "When someone chats in your channel for the very first time",
             cached: false,
-            queued: false,
             manualMetadata: {
                 username: "firebot",
                 userDisplayName: "Firebot",
@@ -520,7 +568,6 @@ export const TwitchEventSource = {
             name: "Announcement",
             description: "When you or a mod sends an announcement in your channel",
             cached: false,
-            queued: false,
             manualMetadata: {
                 username: "firebot",
                 userDisplayName: "Firebot",
@@ -533,7 +580,6 @@ export const TwitchEventSource = {
             name: "Viewer Banned",
             description: "When someone is banned in your channel",
             cached: false,
-            queued: false,
             manualMetadata: {
                 username: "cavemobster",
                 userDisplayName: "CaveMobster",
@@ -561,7 +607,6 @@ export const TwitchEventSource = {
             name: "Viewer Unbanned",
             description: "When someone is unbanned in your channel",
             cached: false,
-            queued: false,
             manualMetadata: {
                 username: "cavemobster",
                 userDisplayName: "CaveMobster",
@@ -583,7 +628,6 @@ export const TwitchEventSource = {
             name: "Viewer Timeout",
             description: "When someone is timed out in your channel",
             cached: false,
-            queued: false,
             manualMetadata: {
                 username: "alca",
                 userDisplayName: "Alca",
@@ -614,7 +658,6 @@ export const TwitchEventSource = {
             cached: true,
             cacheMetaKey: "username",
             cacheTtlInSecs: 1,
-            queued: false,
             manualMetadata: {
                 username: "firebot",
                 userDisplayName: "Firebot",
@@ -643,7 +686,6 @@ export const TwitchEventSource = {
             cached: false,
             cacheMetaKey: "username",
             cacheTtlInSecs: 1,
-            queued: false,
             manualMetadata: {
                 username: "firebot",
                 userDisplayName: "Firebot",
@@ -672,7 +714,6 @@ export const TwitchEventSource = {
             cached: false,
             cacheMetaKey: "username",
             cacheTtlInSecs: 1,
-            queued: false,
             manualMetadata: {
                 username: "firebot",
                 userDisplayName: "Firebot",
@@ -699,7 +740,6 @@ export const TwitchEventSource = {
             name: "Channel Reward Redemption: Send a Message in Sub-Only Mode",
             description: "When someone redeems \"Send a Message in Sub-Only Mode\" to post a message in your channel",
             cached: false,
-            queued: false,
             manualMetadata: {
                 username: "firebot",
                 userDisplayName: "Firebot",
@@ -724,7 +764,6 @@ export const TwitchEventSource = {
             name: "Channel Reward Redemption: Highlight My Message",
             description: "When someone redeems \"Highlight My Message\" in your channel",
             cached: false,
-            queued: false,
             manualMetadata: {
                 username: "firebot",
                 userDisplayName: "Firebot",
@@ -749,7 +788,6 @@ export const TwitchEventSource = {
             name: "Channel Reward Redemption: Unlock a Random Sub Emote",
             description: "When someone redeems \"Unlock a Random Sub Emote\" to unlock an emote in your channel",
             cached: false,
-            queued: false,
             manualMetadata: {
                 username: "firebot",
                 userDisplayName: "Firebot",
@@ -775,7 +813,6 @@ export const TwitchEventSource = {
             name: "Channel Reward Redemption: Choose an Emote to Unlock",
             description: "When someone redeems \"Choose an Emote to Unlock\" to unlock an emote in your channel",
             cached: false,
-            queued: false,
             manualMetadata: {
                 username: "firebot",
                 userDisplayName: "Firebot",
@@ -801,7 +838,6 @@ export const TwitchEventSource = {
             name: "Channel Reward Redemption: Modify a Single Emote",
             description: "When someone redeems \"Modify a Single Emote\" to modify and unlock an emote in your channel",
             cached: false,
-            queued: false,
             manualMetadata: {
                 username: "firebot",
                 userDisplayName: "Firebot",
@@ -856,7 +892,6 @@ export const TwitchEventSource = {
             name: "Chat Mode Changed",
             description: "When the chat mode settings have been updated by a moderator.",
             cached: false,
-            queued: false,
             manualMetadata: {
                 chatMode: {
                     type: "enum",
@@ -892,7 +927,6 @@ export const TwitchEventSource = {
             name: "Channel Poll Started",
             description: "When a channel poll begins on your channel.",
             cached: false,
-            queued: false,
             manualMetadata: {
                 choices: {
                     options: { hideVotes: true },
@@ -901,7 +935,7 @@ export const TwitchEventSource = {
                         { id: "c0113c14-144e-475c-9647-a65f9177665d", title: "Test Choice 1" },
                         { id: "6d86797a-d88a-4fc2-b4f6-1895afdc503e", title: "Test Choice 2" },
                         { id: "791bc06c-c4d5-4c74-b950-8596c04dbb0d", title: "Test Choice 3" }
-                    ]},
+                    ] },
                 title: "Test Poll Name"
             },
             activityFeed: {
@@ -916,7 +950,6 @@ export const TwitchEventSource = {
             name: "Channel Poll Progress",
             description: "When a channel poll progresses on your channel.",
             cached: false,
-            queued: false,
             manualMetadata: {
                 choices: {
                     type: "poll-choice-list",
@@ -924,7 +957,7 @@ export const TwitchEventSource = {
                         { id: "c0113c14-144e-475c-9647-a65f9177665d", title: "Test Choice 1", totalVotes: 120, channelPointsVotes: 60 },
                         { id: "6d86797a-d88a-4fc2-b4f6-1895afdc503e", title: "Test Choice 2", totalVotes: 140, channelPointsVotes: 40 },
                         { id: "791bc06c-c4d5-4c74-b950-8596c04dbb0d", title: "Test Choice 3", totalVotes: 80, channelPointsVotes: 70 }
-                    ]},
+                    ] },
                 title: "Test Poll Name",
                 winningChoiceName: "Test Choice 2",
                 winningChoiceVotes: 140
@@ -941,7 +974,6 @@ export const TwitchEventSource = {
             name: "Channel Poll Ended",
             description: "When a channel poll ends on your channel.",
             cached: false,
-            queued: false,
             manualMetadata: {
                 choices: {
                     type: "poll-choice-list",
@@ -949,7 +981,7 @@ export const TwitchEventSource = {
                         { id: "c0113c14-144e-475c-9647-a65f9177665d", title: "Test Choice 1", totalVotes: 125, channelPointsVotes: 62 },
                         { id: "6d86797a-d88a-4fc2-b4f6-1895afdc503e", title: "Test Choice 2", totalVotes: 145, channelPointsVotes: 42 },
                         { id: "791bc06c-c4d5-4c74-b950-8596c04dbb0d", title: "Test Choice 3", totalVotes: 85, channelPointsVotes: 72 }
-                    ]},
+                    ] },
                 title: "Test Poll Name",
                 winningChoiceName: "Test Choice 2",
                 winningChoiceVotes: 145
@@ -966,14 +998,13 @@ export const TwitchEventSource = {
             name: "Channel Goal Started",
             description: "When a channel goal begins on your channel.",
             cached: false,
-            queued: false,
             manualMetadata: {
                 description: "Goal name"
             },
             activityFeed: {
                 icon: "fad fa-bullseye-arrow",
                 getMessage: (eventData) => {
-                    let message;
+                    let message: string;
                     if (eventData.description) {
                         message = `Channel ${eventData.type} goal **${eventData.description}** has begun (**${eventData.currentAmount}**/**${eventData.targetAmount}**).`;
                     } else {
@@ -988,14 +1019,13 @@ export const TwitchEventSource = {
             name: "Channel Goal Progress",
             description: "When a channel goal progresses on your channel.",
             cached: false,
-            queued: false,
             manualMetadata: {
                 description: "Goal name"
             },
             activityFeed: {
                 icon: "fad fa-bullseye-arrow",
                 getMessage: (eventData) => {
-                    let message;
+                    let message: string;
                     if (eventData.description) {
                         message = `Channel ${eventData.type} goal **${eventData.description}** has progressed (**${eventData.currentAmount}**/**${eventData.targetAmount}**).`;
                     } else {
@@ -1010,14 +1040,13 @@ export const TwitchEventSource = {
             name: "Channel Goal Ended",
             description: "When a channel goal ends on your channel.",
             cached: false,
-            queued: false,
             manualMetadata: {
                 description: "Goal name"
             },
             activityFeed: {
                 icon: "fad fa-bullseye-arrow",
                 getMessage: (eventData) => {
-                    let message;
+                    let message: string;
                     if (eventData.description) {
                         message = `Channel ${eventData.type} goal **${eventData.description}** has ended. Goal **${
                             eventData.isAchieved ? "was" : "was not"
@@ -1036,7 +1065,6 @@ export const TwitchEventSource = {
             name: "Channel Prediction Started",
             description: "When a channel prediction begins on your channel.",
             cached: false,
-            queued: false,
             manualMetadata: {
                 title: "Title"
             },
@@ -1052,7 +1080,6 @@ export const TwitchEventSource = {
             name: "Channel Prediction Progress",
             description: "When a channel prediction progresses on your channel.",
             cached: false,
-            queued: false,
             manualMetadata: {
                 title: "Title"
             },
@@ -1068,7 +1095,6 @@ export const TwitchEventSource = {
             name: "Channel Prediction Locked",
             description: "When a channel prediction is locked on your channel.",
             cached: false,
-            queued: false,
             manualMetadata: {
                 title: "Title"
             },
@@ -1084,7 +1110,6 @@ export const TwitchEventSource = {
             name: "Channel Prediction Ended",
             description: "When a channel prediction ends on your channel.",
             cached: false,
-            queued: false,
             manualMetadata: {
                 title: "Title"
             },
@@ -1100,7 +1125,6 @@ export const TwitchEventSource = {
             name: "Hype Train Started",
             description: "When a hype train starts on your channel.",
             cached: false,
-            queued: false,
             manualMetadata: {
                 total: "150",
                 progress: "150",
@@ -1122,7 +1146,6 @@ export const TwitchEventSource = {
             name: "Hype Train Progress",
             description: "When a hype train progresses on your channel.",
             cached: false,
-            queued: false,
             manualMetadata: {
                 total: "150",
                 progress: "150",
@@ -1146,7 +1169,6 @@ export const TwitchEventSource = {
             name: "Hype Train Level Up",
             description: "When a hype train on your channel advances to the next level.",
             cached: false,
-            queued: false,
             manualMetadata: {
                 previousLevel: "1",
                 level: "2"
@@ -1163,7 +1185,6 @@ export const TwitchEventSource = {
             name: "Hype Train Ended",
             description: "When a hype train ends on your channel.",
             cached: false,
-            queued: false,
             manualMetadata: {
                 total: "150",
                 level: "1",
@@ -1183,7 +1204,6 @@ export const TwitchEventSource = {
             name: "Stream Started",
             description: "When your stream starts.",
             cached: false,
-            queued: false,
             manualMetadata: {},
             activityFeed: {
                 icon: "fad fa-play-circle",
@@ -1197,7 +1217,6 @@ export const TwitchEventSource = {
             name: "Stream Ended",
             description: "When your stream ends.",
             cached: false,
-            queued: false,
             manualMetadata: {},
             activityFeed: {
                 icon: "fad fa-stop-circle",
@@ -1211,7 +1230,6 @@ export const TwitchEventSource = {
             name: "Charity Campaign Started",
             description: "When you start a charity campaign in your channel.",
             cached: false,
-            queued: false,
             manualMetadata: {
                 charityName: "Great Cause, LLC",
                 charityDescription: "They do really great stuff",
@@ -1234,7 +1252,6 @@ export const TwitchEventSource = {
             name: "Charity Donation",
             description: "When someone donates to your channel's charity campaign.",
             cached: false,
-            queued: false,
             manualMetadata: {
                 from: "Firebot",
                 charityName: "Great Cause, LLC",
@@ -1256,7 +1273,6 @@ export const TwitchEventSource = {
             name: "Charity Campaign Progress",
             description: "When your channel's charity campaign progresses.",
             cached: false,
-            queued: false,
             manualMetadata: {
                 charityName: "Great Cause, LLC",
                 charityDescription: "They do really great stuff",
@@ -1279,7 +1295,6 @@ export const TwitchEventSource = {
             name: "Charity Campaign Ended",
             description: "When your channel's charity campaign ends.",
             cached: false,
-            queued: false,
             manualMetadata: {
                 charityName: "Great Cause, LLC",
                 charityDescription: "They do really great stuff",
@@ -1304,7 +1319,6 @@ export const TwitchEventSource = {
             name: "Shoutout Sent",
             description: "When you or a moderator sends a Twitch shoutout to another channel.",
             cached: false,
-            queued: false,
             manualMetadata: {
                 moderator: "Firebot",
                 username: "zunderscore",
@@ -1327,7 +1341,6 @@ export const TwitchEventSource = {
             name: "Shoutout Received",
             description: "When another channel sends you a Twitch shoutout.",
             cached: false,
-            queued: false,
             manualMetadata: {
                 username: "firebot",
                 userDisplayName: "Firebot",

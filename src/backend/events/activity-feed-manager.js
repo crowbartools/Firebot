@@ -4,7 +4,7 @@ const moment = require("moment");
 const { v4: uuid } = require("uuid");
 const frontendCommunicator = require("../common/frontend-communicator");
 const rewardManager = require("../channel-rewards/channel-reward-manager");
-const eventManager = require("./EventManager");
+const { EventManager } = require("./event-manager");
 
 const { SettingsManager } = require("../common/settings-manager");
 
@@ -63,11 +63,11 @@ function retriggerActivity(activity) {
 
     if (activity.eventId === "channel-reward-redemption") {
         // Manually triggered by streamer, must pass in userId and userDisplayName can be falsy
-        const metadata = {userId: "", userDisplayName: "", ...activity.metadata };
+        const metadata = { userId: "", userDisplayName: "", ...activity.metadata };
         rewardManager.triggerChannelReward(activity.metadata.rewardId, metadata);
     }
 
-    eventManager.triggerEvent(activity.sourceId, activity.eventId,
+    EventManager.triggerEvent(activity.sourceId, activity.eventId,
         activity.metadata, false, true, false);
 }
 
@@ -79,7 +79,7 @@ export function retriggerLastActivity() {
     retriggerActivity(lastRetriggerableActivity);
 }
 
-eventManager.on("event-triggered", ({
+EventManager.on("event-triggered", ({
     event,
     source,
     meta,
@@ -100,7 +100,7 @@ frontendCommunicator.on("retrigger-event", (activityId) => {
 frontendCommunicator.onAsync("get-all-activity-events", async () => previousActivity);
 
 frontendCommunicator.onAsync("get-activity-feed-supported-events", async () => {
-    return eventManager
+    return EventManager
         .getAllEventSources()
         .map(es =>
             es.events

@@ -1,6 +1,6 @@
 "use strict";
 
-const eventManager = require("../../../../events/EventManager");
+const { EventManager } = require("../../../../events/event-manager");
 
 const EVENT_SOURCE_ID = "streamlabs";
 const EventId = {
@@ -26,7 +26,6 @@ const eventSourceDefinition = {
                 donationMessage: "Test message"
             },
             isIntegration: true,
-            queued: true,
             activityFeed: {
                 icon: "fad fa-money-bill",
                 getMessage: (eventData) => {
@@ -46,7 +45,6 @@ const eventSourceDefinition = {
                 donationMessage: "Test message"
             },
             isIntegration: true,
-            queued: true,
             activityFeed: {
                 icon: "fad fa-money-bill",
                 getMessage: (eventData) => {
@@ -75,7 +73,7 @@ const eventSourceDefinition = {
 };
 
 exports.registerEvents = () => {
-    eventManager.registerEventSource(eventSourceDefinition);
+    EventManager.registerEventSource(eventSourceDefinition);
 };
 
 exports.processStreamLabsEvent = (eventData) => {
@@ -84,7 +82,7 @@ exports.processStreamLabsEvent = (eventData) => {
     }
     if (eventData.type === "donation") {
         const donoData = eventData.message[0];
-        eventManager.triggerEvent(EVENT_SOURCE_ID, EventId.DONATION, {
+        EventManager.triggerEvent(EVENT_SOURCE_ID, EventId.DONATION, {
             formattedDonationAmount: donoData.formatted_amount,
             donationAmount: donoData.amount,
             donationMessage: donoData.message,
@@ -92,7 +90,7 @@ exports.processStreamLabsEvent = (eventData) => {
         });
     } else if (eventData.type === "eldonation") {
         const donoData = eventData.message[0];
-        eventManager.triggerEvent(
+        EventManager.triggerEvent(
             EVENT_SOURCE_ID,
             EventId.EXTRA_LIFE_DONATION,
             {
@@ -104,7 +102,7 @@ exports.processStreamLabsEvent = (eventData) => {
         );
     } else if (eventData.type === "follow" && eventData.for === 'twitch_account') {
         for (const message of eventData.message) {
-            eventManager.triggerEvent(
+            EventManager.triggerEvent(
                 EVENT_SOURCE_ID,
                 EventId.FOLLOW,
                 {
@@ -115,4 +113,3 @@ exports.processStreamLabsEvent = (eventData) => {
         }
     }
 };
-

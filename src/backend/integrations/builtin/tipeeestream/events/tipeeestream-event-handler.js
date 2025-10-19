@@ -1,6 +1,6 @@
 "use strict";
 const logger = require('../../../../logwrapper');
-const eventManager = require("../../../../events/EventManager");
+const { EventManager } = require("../../../../events/event-manager");
 
 const EVENT_SOURCE_ID = "tipeeestream";
 const EventId = {
@@ -25,7 +25,6 @@ const eventSourceDefinition = {
                 donationMessage: "Test message"
             },
             isIntegration: true,
-            queued: true,
             activityFeed: {
                 icon: "fad fa-money-bill",
                 getMessage: (eventData) => {
@@ -54,7 +53,7 @@ const eventSourceDefinition = {
 };
 
 exports.registerEvents = () => {
-    eventManager.registerEventSource(eventSourceDefinition);
+    EventManager.registerEventSource(eventSourceDefinition);
 };
 
 exports.processTipeeeStreamEvent = (eventData) => {
@@ -64,14 +63,14 @@ exports.processTipeeeStreamEvent = (eventData) => {
     }
     if (eventData.type === "donation") {
         const donoData = eventData.parameters;
-        eventManager.triggerEvent(EVENT_SOURCE_ID, EventId.DONATION, {
+        EventManager.triggerEvent(EVENT_SOURCE_ID, EventId.DONATION, {
             formattedDonationAmount: eventData.formattedAmount,
             donationAmount: donoData.amount,
             donationMessage: donoData.formattedMessage,
             from: donoData.username
         });
     } else if (eventData.type === "follow" && eventData.origin === "twitch") {
-        eventManager.triggerEvent(
+        EventManager.triggerEvent(
             EVENT_SOURCE_ID,
             EventId.FOLLOW,
             {
