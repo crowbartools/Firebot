@@ -1,3 +1,51 @@
+import * as ad from "./ad";
+import * as announcement from "./announcement";
+import * as bits from "./bits";
+import * as charity from "./charity";
+import * as chat from "./chat";
+import * as chatMessage from "./chat-message";
+import * as chatModeChanged from "./chat-mode-changed";
+import * as follow from "./follow";
+import * as giftSub from "./gift-sub";
+import * as goal from "./goal";
+import * as hypeTrain from "./hype-train";
+import * as poll from "./poll";
+import * as prediction from "./prediction";
+import * as raid from "./raid";
+import * as rewardRedemption from "./reward-redemption";
+import * as shoutout from "./shoutout";
+import * as stream from "./stream";
+import * as sub from "./sub";
+import * as viewerArrived from "./viewer-arrived";
+import * as viewerBanned from "./viewer-banned";
+import * as viewerTimeout from "./viewer-timeout";
+import * as whisper from "./whisper";
+
+export const TwitchEventHandlers = {
+    ad,
+    announcement,
+    bits,
+    charity,
+    chat,
+    chatMessage,
+    chatModeChanged,
+    follow,
+    giftSub,
+    goal,
+    hypeTrain,
+    poll,
+    prediction,
+    raid,
+    rewardRedemption,
+    shoutout,
+    stream,
+    sub,
+    viewerArrived,
+    viewerBanned,
+    viewerTimeout,
+    whisper
+};
+
 export const TwitchEventSource = {
     id: "twitch",
     name: "Twitch",
@@ -901,7 +949,7 @@ export const TwitchEventSource = {
                         { id: "c0113c14-144e-475c-9647-a65f9177665d", title: "Test Choice 1" },
                         { id: "6d86797a-d88a-4fc2-b4f6-1895afdc503e", title: "Test Choice 2" },
                         { id: "791bc06c-c4d5-4c74-b950-8596c04dbb0d", title: "Test Choice 3" }
-                    ]},
+                    ] },
                 title: "Test Poll Name"
             },
             activityFeed: {
@@ -924,7 +972,7 @@ export const TwitchEventSource = {
                         { id: "c0113c14-144e-475c-9647-a65f9177665d", title: "Test Choice 1", totalVotes: 120, channelPointsVotes: 60 },
                         { id: "6d86797a-d88a-4fc2-b4f6-1895afdc503e", title: "Test Choice 2", totalVotes: 140, channelPointsVotes: 40 },
                         { id: "791bc06c-c4d5-4c74-b950-8596c04dbb0d", title: "Test Choice 3", totalVotes: 80, channelPointsVotes: 70 }
-                    ]},
+                    ] },
                 title: "Test Poll Name",
                 winningChoiceName: "Test Choice 2",
                 winningChoiceVotes: 140
@@ -949,7 +997,7 @@ export const TwitchEventSource = {
                         { id: "c0113c14-144e-475c-9647-a65f9177665d", title: "Test Choice 1", totalVotes: 125, channelPointsVotes: 62 },
                         { id: "6d86797a-d88a-4fc2-b4f6-1895afdc503e", title: "Test Choice 2", totalVotes: 145, channelPointsVotes: 42 },
                         { id: "791bc06c-c4d5-4c74-b950-8596c04dbb0d", title: "Test Choice 3", totalVotes: 85, channelPointsVotes: 72 }
-                    ]},
+                    ] },
                 title: "Test Poll Name",
                 winningChoiceName: "Test Choice 2",
                 winningChoiceVotes: 145
