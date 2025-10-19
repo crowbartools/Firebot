@@ -5,7 +5,6 @@ import rewardManager from "../../../channel-rewards/channel-reward-manager";
 export function handleRewardRedemption(
     redemptionId: string,
     status: string,
-    isQueued: boolean,
     messageText: string,
     userId: string,
     username: string,
@@ -19,7 +18,6 @@ export function handleRewardRedemption(
     frontendCommunicator.send("twitch:chat:rewardredemption", {
         id: redemptionId,
         status,
-        queued: isQueued,
         messageText,
         user: {
             id: userId,
@@ -49,8 +47,8 @@ export function handleRewardRedemption(
             rewardCost: rewardCost
         };
 
-        rewardManager.triggerChannelReward(rewardId, redemptionMeta);
-        eventManager.triggerEvent("twitch", "channel-reward-redemption", redemptionMeta);
+        void rewardManager.triggerChannelReward(rewardId, redemptionMeta);
+        void eventManager.triggerEvent("twitch", "channel-reward-redemption", redemptionMeta);
     }, 100);
 }
 
@@ -83,11 +81,11 @@ export function handleRewardUpdated(
 
     // Possible values for status are 'fulfilled' and 'canceled' according to Twitch docs
     if (status === 'fulfilled') {
-        rewardManager.triggerChannelRewardFulfilled(rewardId, redemptionMeta);
-        eventManager.triggerEvent("twitch", "channel-reward-redemption-fulfilled", redemptionMeta);
+        void rewardManager.triggerChannelRewardFulfilled(rewardId, redemptionMeta);
+        void eventManager.triggerEvent("twitch", "channel-reward-redemption-fulfilled", redemptionMeta);
     } else {
-        rewardManager.triggerChannelRewardCanceled(rewardId, redemptionMeta);
-        eventManager.triggerEvent("twitch", "channel-reward-redemption-canceled", redemptionMeta);
+        void rewardManager.triggerChannelRewardCanceled(rewardId, redemptionMeta);
+        void eventManager.triggerEvent("twitch", "channel-reward-redemption-canceled", redemptionMeta);
     }
 }
 
@@ -98,7 +96,7 @@ export function triggerRedemptionSingleMessageBypassSubMode(
     rewardCost: number
 ): void {
     const rewardDescription = "Send a Message in Sub-Only Mode";
-    eventManager.triggerEvent("twitch", "channel-reward-redemption-single-message-bypass-sub-mode", {
+    void eventManager.triggerEvent("twitch", "channel-reward-redemption-single-message-bypass-sub-mode", {
         username,
         userId,
         userDisplayName,
@@ -115,7 +113,7 @@ export function triggerRedemptionSendHighlightedMessage(
     messageText: string
 ): void {
     const rewardDescription = "Highlight My Message";
-    eventManager.triggerEvent("twitch", "channel-reward-redemption-send-highlighted-message", {
+    void eventManager.triggerEvent("twitch", "channel-reward-redemption-send-highlighted-message", {
         username,
         userId,
         userDisplayName,
@@ -134,7 +132,7 @@ export function triggerRedemptionRandomSubEmoteUnlock(
     emoteUrl: string
 ): void {
     const rewardDescription = "Unlock a Random Sub Emote";
-    eventManager.triggerEvent("twitch", "channel-reward-redemption-random-sub-emote-unlock", {
+    void eventManager.triggerEvent("twitch", "channel-reward-redemption-random-sub-emote-unlock", {
         username,
         userId,
         userDisplayName,
@@ -154,7 +152,7 @@ export function triggerRedemptionChosenSubEmoteUnlock(
     emoteUrl: string
 ): void {
     const rewardDescription = "Choose an Emote to Unlock";
-    eventManager.triggerEvent("twitch", "channel-reward-redemption-chosen-sub-emote-unlock", {
+    void eventManager.triggerEvent("twitch", "channel-reward-redemption-chosen-sub-emote-unlock", {
         username,
         userId,
         userDisplayName,
@@ -174,7 +172,7 @@ export function triggerRedemptionChosenModifiedSubEmoteUnlock(
     emoteUrl: string
 ): void {
     const rewardDescription = "Modify a Single Emote";
-    eventManager.triggerEvent("twitch", "channel-reward-redemption-chosen-modified-sub-emote-unlock", {
+    void eventManager.triggerEvent("twitch", "channel-reward-redemption-chosen-modified-sub-emote-unlock", {
         username,
         userId,
         userDisplayName,

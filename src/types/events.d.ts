@@ -4,12 +4,19 @@ import { Awaitable } from "./util-types";
 export type EventSource = {
     id: string;
     name: string;
+    description?: string;
     events: Array<{
         id: string;
         name: string;
         description: string;
         cached?: boolean;
+        cacheMetaKey?: string;
+        cacheTtlInSecs?: number;
         manualMetadata?: Record<string, unknown>;
+        activityFeed?: {
+            icon: string;
+            getMessage: (eventData: Record<string, any>) => string;
+        };
     }>;
 };
 
@@ -30,7 +37,7 @@ export type EventSourceAndId = {
 };
 
 export type EventData = EventSourceAndId & {
-    eventMeta: Record<string, unknown>;
+    eventMeta: Record<string, any>;
 };
 
 export type EventFilter = {

@@ -43,7 +43,6 @@ class ExtraLifeIntegration extends EventEmitter {
                         donationMessage: "Test message"
                     },
                     isIntegration: true,
-                    queued: true,
                     activityFeed: {
                         icon: "fad fa-money-bill",
                         getMessage: (eventData) => {

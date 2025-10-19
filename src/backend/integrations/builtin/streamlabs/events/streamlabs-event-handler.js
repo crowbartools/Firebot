@@ -26,7 +26,6 @@ const eventSourceDefinition = {
                 donationMessage: "Test message"
             },
             isIntegration: true,
-            queued: true,
             activityFeed: {
                 icon: "fad fa-money-bill",
                 getMessage: (eventData) => {
@@ -46,7 +45,6 @@ const eventSourceDefinition = {
                 donationMessage: "Test message"
             },
             isIntegration: true,
-            queued: true,
             activityFeed: {
                 icon: "fad fa-money-bill",
                 getMessage: (eventData) => {
@@ -115,4 +113,3 @@ exports.processStreamLabsEvent = (eventData) => {
         }
     }
 };
-

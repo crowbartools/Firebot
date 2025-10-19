@@ -228,7 +228,6 @@ class TwitchEventSubClient {
             TwitchEventHandlers.rewardRedemption.handleRewardRedemption(
                 event.id,
                 event.status,
-                !reward.twitchData.shouldRedemptionsSkipRequestQueue,
                 event.input,
                 event.userId,
                 event.userName,
