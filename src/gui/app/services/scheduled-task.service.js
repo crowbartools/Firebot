@@ -30,8 +30,8 @@
 
             service.getScheduledTasks = () => service.scheduledTasks;
 
-            service.saveScheduledTask = function(scheduledTask) {
-                const savedScheduledTask = backendCommunicator.fireEventAsync("scheduled-tasks:save-scheduled-task", scheduledTask);
+            service.saveScheduledTask = (scheduledTask) => {
+                const savedScheduledTask = backendCommunicator.fireEventSync("scheduled-tasks:save-scheduled-task", scheduledTask);
 
                 if (savedScheduledTask) {
                     updateScheduledTask(savedScheduledTask);
@@ -135,16 +135,15 @@
                     copiedScheduledTask.name += " copy";
                 }
 
-                service.saveScheduledTask(copiedScheduledTask).then((successful) => {
-                    if (successful) {
-                        ngToast.create({
-                            className: 'success',
-                            content: 'Successfully duplicated scheduled effect list!'
-                        });
-                    } else {
-                        ngToast.create("Unable to duplicate scheduled effect list.");
-                    }
-                });
+                const successful = service.saveScheduledTask(copiedScheduledTask);
+                if (successful) {
+                    ngToast.create({
+                        className: 'success',
+                        content: 'Successfully duplicated scheduled effect list!'
+                    });
+                } else {
+                    ngToast.create("Unable to duplicate scheduled effect list.");
+                }
             };
 
             // Deletes a scheduled task.

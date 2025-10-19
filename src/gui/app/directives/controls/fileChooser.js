@@ -31,7 +31,7 @@
 
                 ctrl.clearPath = function() {
                     ctrl.model = null;
-                    ctrl.onUpdate({filepath: ''});
+                    ctrl.onUpdate({ filepath: '' });
                 };
 
                 const { trigger, triggerMeta } = $scope.$parent;
@@ -47,7 +47,7 @@
                         },
                         (path) => {
                             ctrl.model = path;
-                            ctrl.onUpdate({filepath: path});
+                            ctrl.onUpdate({ filepath: path });
                         });
                 };
 
@@ -63,7 +63,7 @@
                             }
 
                             ctrl.model = response.path;
-                            ctrl.onUpdate({filepath: response.path});
+                            ctrl.onUpdate({ filepath: response.path });
                         });
                 };
             }

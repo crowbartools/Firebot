@@ -196,7 +196,7 @@
                     let realDir;
                     try {
                         realDir = fs.realpathSync(dir);
-                    } catch (e) {
+                    } catch {
                         // If realpath fails, skip this directory
                         return result;
                     }
@@ -209,7 +209,7 @@
                     let scriptFileNames;
                     try {
                         scriptFileNames = fs.readdirSync(dir);
-                    } catch (e) {
+                    } catch {
                         // If readdir fails, skip this directory
                         return result;
                     }
@@ -220,7 +220,7 @@
                         let stat;
                         try {
                             stat = fs.statSync(fullPath);
-                        } catch (e) {
+                        } catch {
                             // If stat fails for whatever reason, skip this entry
                             continue;
                         }

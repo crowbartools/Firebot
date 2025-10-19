@@ -124,16 +124,15 @@
                     copiedEffectQueue.name += " copy";
                 }
 
-                service.saveEffectQueue(copiedEffectQueue).then((successful) => {
-                    if (successful) {
-                        ngToast.create({
-                            className: 'success',
-                            content: 'Successfully duplicated an effect queue!'
-                        });
-                    } else {
-                        ngToast.create("Unable to duplicate effect queue.");
-                    }
-                });
+                const successful = service.saveEffectQueue(copiedEffectQueue);
+                if (successful) {
+                    ngToast.create({
+                        className: 'success',
+                        content: 'Successfully duplicated an effect queue!'
+                    });
+                } else {
+                    ngToast.create("Unable to duplicate effect queue.");
+                }
             };
 
             service.deleteEffectQueue = (effectQueueId) => {

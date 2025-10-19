@@ -69,16 +69,15 @@
                     copiedTimer.name += " copy";
                 }
 
-                service.saveTimer(copiedTimer).then((successful) => {
-                    if (successful) {
-                        ngToast.create({
-                            className: 'success',
-                            content: 'Successfully duplicated a timer!'
-                        });
-                    } else {
-                        ngToast.create("Unable to duplicate timer.");
-                    }
-                });
+                const successful = service.saveTimer(copiedTimer);
+                if (successful) {
+                    ngToast.create({
+                        className: 'success',
+                        content: 'Successfully duplicated a timer!'
+                    });
+                } else {
+                    ngToast.create("Unable to duplicate timer.");
+                }
             };
 
             // Deletes a timer.

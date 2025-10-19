@@ -121,7 +121,7 @@
                     if (crontime == null) {
                         return false;
                     }
-                } catch (error) {
+                } catch {
                     return false;
                 }
 
@@ -162,17 +162,16 @@
                     return;
                 }
 
-                scheduledTaskService.saveScheduledTask($ctrl.scheduledTask).then((successful) => {
-                    if (successful) {
-                        $ctrl.close({
-                            $value: {
-                                scheduledTask: $ctrl.scheduledTask
-                            }
-                        });
-                    } else {
-                        ngToast.create("Failed to save scheduled effect list. Please try again or view logs for details.");
-                    }
-                });
+                const successful = scheduledTaskService.saveScheduledTask($ctrl.scheduledTask);
+                if (successful) {
+                    $ctrl.close({
+                        $value: {
+                            scheduledTask: $ctrl.scheduledTask
+                        }
+                    });
+                } else {
+                    ngToast.create("Failed to save scheduled effect list. Please try again or view logs for details.");
+                }
             };
         }
     });

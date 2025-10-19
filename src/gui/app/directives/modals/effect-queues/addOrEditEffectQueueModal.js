@@ -1,7 +1,5 @@
 "use strict";
 
-const { run } = require("node:test");
-
 (function () {
     angular.module("firebotApp").component("addOrEditEffectQueueModal", {
         template: `
@@ -100,17 +98,16 @@ const { run } = require("node:test");
                     return;
                 }
 
-                effectQueuesService.saveEffectQueue($ctrl.effectQueue).then((successful) => {
-                    if (successful) {
-                        $ctrl.close({
-                            $value: {
-                                effectQueue: $ctrl.effectQueue
-                            }
-                        });
-                    } else {
-                        ngToast.create("Failed to save effect queue. Please try again or view logs for details.");
-                    }
-                });
+                const successful = effectQueuesService.saveEffectQueue($ctrl.effectQueue);
+                if (successful) {
+                    $ctrl.close({
+                        $value: {
+                            effectQueue: $ctrl.effectQueue
+                        }
+                    });
+                } else {
+                    ngToast.create("Failed to save effect queue. Please try again or view logs for details.");
+                }
             };
         }
     });

@@ -68,16 +68,15 @@
                     copiedCounter.name += " copy";
                 }
 
-                service.saveCounter(copiedCounter).then((successful) => {
-                    if (successful) {
-                        ngToast.create({
-                            className: 'success',
-                            content: 'Successfully duplicated a counter!'
-                        });
-                    } else {
-                        ngToast.create("Unable to duplicate counter.");
-                    }
-                });
+                const successful = service.saveCounter(copiedCounter);
+                if (successful) {
+                    ngToast.create({
+                        className: 'success',
+                        content: 'Successfully duplicated a counter!'
+                    });
+                } else {
+                    ngToast.create("Unable to duplicate counter.");
+                }
             };
 
             service.getTxtFilePath = (counterName) => {

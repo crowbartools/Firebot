@@ -131,17 +131,16 @@
                     return;
                 }
 
-                countersService.saveCounter($ctrl.counter).then((successful) => {
-                    if (successful) {
-                        $ctrl.close({
-                            $value: {
-                                counter: $ctrl.counter
-                            }
-                        });
-                    } else {
-                        ngToast.create("Failed to save counter. Please try again or view logs for details.");
-                    }
-                });
+                const successful = countersService.saveCounter($ctrl.counter);
+                if (successful) {
+                    $ctrl.close({
+                        $value: {
+                            counter: $ctrl.counter
+                        }
+                    });
+                } else {
+                    ngToast.create("Failed to save counter. Please try again or view logs for details.");
+                }
             };
 
             $ctrl.editMinimum = () => {

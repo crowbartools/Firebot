@@ -111,17 +111,16 @@
                     return;
                 }
 
-                timerService.saveTimer($ctrl.timer).then((successful) => {
-                    if (successful) {
-                        $ctrl.close({
-                            $value: {
-                                timer: $ctrl.timer
-                            }
-                        });
-                    } else {
-                        ngToast.create("Failed to save timer. Please try again or view logs for details.");
-                    }
-                });
+                const successful = timerService.saveTimer($ctrl.timer);
+                if (successful) {
+                    $ctrl.close({
+                        $value: {
+                            timer: $ctrl.timer
+                        }
+                    });
+                } else {
+                    ngToast.create("Failed to save timer. Please try again or view logs for details.");
+                }
             };
         }
     });

@@ -110,16 +110,15 @@
                     copiedPresetEffectList.name += " copy";
                 }
 
-                service.savePresetEffectList(copiedPresetEffectList, true).then((savedList) => {
-                    if (savedList != null) {
-                        ngToast.create({
-                            className: 'success',
-                            content: 'Successfully duplicated a preset effect list!'
-                        });
-                    } else {
-                        ngToast.create("Unable to duplicate preset effect list.");
-                    }
-                });
+                const savedList = service.savePresetEffectList(copiedPresetEffectList, true);
+                if (savedList != null) {
+                    ngToast.create({
+                        className: 'success',
+                        content: 'Successfully duplicated a preset effect list!'
+                    });
+                } else {
+                    ngToast.create("Unable to duplicate preset effect list.");
+                }
             };
 
             service.deletePresetEffectList = (presetEffectListId) => {

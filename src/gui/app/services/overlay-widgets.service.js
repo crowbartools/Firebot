@@ -106,7 +106,7 @@
 
             /**
              * @param {OverlayWidgetConfig} config
-             * @returns {Promise.<void>}
+             * @returns {void}
              */
             service.saveOverlayWidgetConfig = (config, isNew = false) => {
                 const copiedConfig = JSON.parse(angular.toJson(config));
@@ -164,17 +164,15 @@
                     copiedWidget.name += " copy";
                 }
 
-                service.saveOverlayWidgetConfig(copiedWidget, true)
-                    .then((successful) => {
-                        if (successful) {
-                            ngToast.create({
-                                className: 'success',
-                                content: 'Successfully duplicated overlay widget!'
-                            });
-                        } else {
-                            ngToast.create("Unable to duplicate overlay widget.");
-                        }
+                const successful = service.saveOverlayWidgetConfig(copiedWidget, true);
+                if (successful) {
+                    ngToast.create({
+                        className: 'success',
+                        content: 'Successfully duplicated overlay widget!'
                     });
+                } else {
+                    ngToast.create("Unable to duplicate overlay widget.");
+                }
             };
 
             /**

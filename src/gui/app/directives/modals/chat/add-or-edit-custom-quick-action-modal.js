@@ -154,13 +154,12 @@
                         $ctrl.quickAction.icon = "far fa-magic";
                     }
 
-                    quickActionsService.saveCustomQuickAction($ctrl.quickAction).then((successful) => {
-                        if (successful) {
-                            $ctrl.close();
-                        } else {
-                            ngToast.create("Failed to save custom quick action. Please try again or view logs for details.");
-                        }
-                    });
+                    const successful = quickActionsService.saveCustomQuickAction($ctrl.quickAction);
+                    if (successful) {
+                        $ctrl.close();
+                    } else {
+                        ngToast.create("Failed to save custom quick action. Please try again or view logs for details.");
+                    }
                 };
             }
         });

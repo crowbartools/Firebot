@@ -136,18 +136,16 @@
                     return;
                 }
 
-                presetEffectListsService.savePresetEffectList($ctrl.presetList, $ctrl.isNewPresetList)
-                    .then((savedList) => {
-                        if (savedList != null) {
-                            $ctrl.close({
-                                $value: {
-                                    presetEffectList: savedList
-                                }
-                            });
-                        } else {
-                            ngToast.create("Failed to save preset effect list. Please try again or view logs for details.");
+                const savedList = presetEffectListsService.savePresetEffectList($ctrl.presetList, $ctrl.isNewPresetList);
+                if (savedList != null) {
+                    $ctrl.close({
+                        $value: {
+                            presetEffectList: savedList
                         }
                     });
+                } else {
+                    ngToast.create("Failed to save preset effect list. Please try again or view logs for details.");
+                }
             };
         }
     });

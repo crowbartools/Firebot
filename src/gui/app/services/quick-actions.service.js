@@ -93,8 +93,8 @@
              * @param {QuickAction} customQuickAction
              * @returns {Promise.<void>}
              */
-            service.saveCustomQuickAction = async (customQuickAction) => {
-                const savedCustomQuickAction = await backendCommunicator.fireEventSync("quick-actions:save-custom-quick-action", customQuickAction);
+            service.saveCustomQuickAction = (customQuickAction) => {
+                const savedCustomQuickAction = backendCommunicator.fireEventSync("quick-actions:save-custom-quick-action", customQuickAction);
 
                 if (savedCustomQuickAction) {
                     updateQuickActions(savedCustomQuickAction);
