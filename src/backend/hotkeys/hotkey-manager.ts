@@ -5,7 +5,7 @@ import { v4 as uuid } from "uuid";
 import { FirebotHotkey } from "../../types/hotkeys";
 import { Trigger } from "../../types/triggers";
 
-import { ProfileManager } from "../../backend/common/profile-manager";
+import { ProfileManager } from "../common/profile-manager";
 import accountAccess from "../common/account-access";
 import effectRunner from "../common/effect-runner";
 import frontendCommunicator from "../common/frontend-communicator";
