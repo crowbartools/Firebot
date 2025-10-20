@@ -1,6 +1,7 @@
 "use strict";
 const { app } = require("electron");
-const path = require('node:path');
+const os = require("os");
+const path = require("path");
 
 const logger = require("./backend/logwrapper");
 const { SecretsManager } = require("./backend/secrets-manager");
@@ -15,6 +16,7 @@ const {
 } = require("./backend/app-management/electron/electron-events");
 
 logger.info("Starting Firebot...");
+logger.info(`Firebot v${app.getVersion()}; Platform: ${os.platform()} ${os.arch()}; Version: ${os.type()} ${os.release()}`);
 
 if (!SecretsManager.testSecrets()) {
     logger.debug("...Testing for secrets failed");
@@ -55,7 +57,7 @@ logger.debug("...Single instance lock acquired");
 
 // Enable Text-To-Speech on Linux through speech-dispatcher
 if (process.platform === "linux") {
-    app.commandLine.appendSwitch('enable-speech-dispatcher');
+    app.commandLine.appendSwitch("enable-speech-dispatcher");
 }
 
 // attempt to get logged in profile
@@ -67,7 +69,7 @@ if (loggedInProfile == null) {
 }
 
 // Setup app listeners
-app.on('second-instance', secondInstance);
+app.on("second-instance", secondInstance);
 app.on("open-file", openFile);
 app.on("window-all-closed", windowsAllClosed);
 app.on("will-quit", willQuit);

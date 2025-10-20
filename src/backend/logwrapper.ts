@@ -1,4 +1,3 @@
-import electron from "electron";
 import { createLogger, format, transports } from "winston";
 import "winston-daily-rotate-file";
 import Transport from "winston-transport";
@@ -9,7 +8,6 @@ import frontendCommunicator from "./common/frontend-communicator";
 
 const DATE_FORMAT = "YYYY-MM-DD HH:mm:ss.SSS";
 const LOG_FOLDER = getPathInUserData("/logs");
-const app = electron.app ?? globalThis.firebotAppDetails as Electron.App;
 
 let fileLogLevel = "info";
 let debugMode = false;
@@ -59,7 +57,7 @@ class FrontendTransport extends Transport {
     }
 }
 
-const consoleFormat = format.combine(
+const logFormat = format.combine(
     format.timestamp({ format: DATE_FORMAT }),
     format.printf(
         // eslint-disable-next-line @typescript-eslint/no-base-to-string, @typescript-eslint/restrict-template-expressions
@@ -73,27 +71,20 @@ const logger = createLogger({
     transports: [
         new FrontendTransport({
             format: format.combine(
-                consoleFormat,
+                logFormat,
                 format.colorize({ all: true })
             ),
             level: "silly"
         }),
         new transports.Console({
             format: format.combine(
-                consoleFormat,
+                logFormat,
                 format.colorize({ all: true })
             ),
             level: "silly"
         }),
         new transports.DailyRotateFile({
-            format: format.combine(
-                format.timestamp({ format: DATE_FORMAT }),
-                format.label({ label: `[v${app.getVersion()}]` }),
-                format.printf(
-                    // eslint-disable-next-line @typescript-eslint/no-base-to-string, @typescript-eslint/restrict-template-expressions
-                    info => `[${info.timestamp}] ${info.label} [${info.level.toUpperCase()}] ${info.message}${formatMetadata(info)}`
-                )
-            ),
+            format: logFormat,
             level: fileLogLevel,
             dirname: LOG_FOLDER,
             filename: "%DATE%.log",
