@@ -1,13 +1,12 @@
 "use strict";
 (function() {
 
-    const dataAccess = require("../../backend/common/data-access.js");
-
     angular
         .module("firebotApp")
         .factory("modalFactory", function(
             $rootScope,
             modalService,
+            dataAccess,
             backendCommunicator,
             logger
         ) {

@@ -1,12 +1,19 @@
 "use strict";
 
 (function() {
-    const dataAccess = require("../../backend/common/data-access.js");
-
     angular
         .module("firebotApp")
-        .factory("connectionService", function(soundService, $rootScope, backendCommunicator,
-            logger, accountAccess, settingsService, utilityService, integrationService) {
+        .factory("connectionService", function(
+            soundService,
+            $rootScope,
+            backendCommunicator,
+            logger,
+            accountAccess,
+            dataAccess,
+            settingsService,
+            utilityService,
+            integrationService
+        ) {
             const service = {};
 
             backendCommunicator.on("accountUpdate", (accounts) => {

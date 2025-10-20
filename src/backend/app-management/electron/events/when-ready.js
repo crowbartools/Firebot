@@ -1,6 +1,6 @@
 "use strict";
 
-
+const { ipcMain } = require("electron");
 const { checkForFirebotSetupPathInArgs } = require("../../file-open-helpers");
 
 exports.whenReady = async () => {
@@ -279,16 +279,8 @@ exports.whenReady = async () => {
     windowManagement.updateSplashScreenStatus("Here we go!");
     await windowManagement.createMainWindow();
 
-    // forward backend logs to front end
-    logger.on("logging", (transport, level, msg, meta) => {
-        const mainWindow = windowManagement.mainWindow;
-        if (mainWindow != null && !mainWindow.isDestroyed() && mainWindow.webContents != null) {
-            mainWindow.webContents.send("logging", {
-                transport: transport ? { name: transport.name } : null,
-                level: level,
-                msg: msg,
-                meta: meta
-            });
-        }
+    // Receive log messages from frontend
+    ipcMain.on("logging", (_, data) => {
+        logger.log(data.level, data.message, data.meta);
     });
 };

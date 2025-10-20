@@ -2,8 +2,6 @@
 const electron = require("electron");
 const { ipcRenderer } = electron;
 
-const logger = require("../../backend/logwrapper");
-
 /* eslint-disable @typescript-eslint/no-unused-vars */
 //from old Gobal.js
 const shell = require("electron").shell;
@@ -72,14 +70,19 @@ document.addEventListener("DOMContentLoaded", boot);
 
 // Catch browser window (renderer) errors and log them via Winston
 window.onerror = function(error, url, line) {
-    let message = `(Renderer) ${error}`;
+    let message = `[Renderer] ${error}`;
     if (url) {
         message += ` [url=${url}]`;
     }
     if (line) {
         message += ` [line=${line}]`;
     }
-    logger.error(message, error);
+
+    ipcRenderer.send("logging", {
+        type: "error",
+        message,
+        meta: [error]
+    });
 };
 
 // pointless fancy firebot at the top of the log
@@ -120,54 +123,11 @@ printRow(ruleColor, spaceColor, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 //extra line for breathing room
 console.log("");
 
-function getLogLevelColor(level) {
-    switch (level) {
-        case "error":
-            return "#CC3128";
-        case "warn":
-            return "#E3D919";
-        case "info":
-            return "#0DAD4A";
-        case "verbose":
-            return "#11A7AB";
-        case "debug":
-            return "#2171C7";
-        case "silly":
-            return "#973EBB";
-        default:
-            return "gray";
-    }
-}
-
-// Prints all logs from the "console" transport into the Browser Console
-
-function printLogToBrowserConsole(transport, level, msg, meta) {
-    if (transport != null && transport.name === "console") {
-        if (msg != null && msg.trim() !== "(Renderer)") {
-            // Only print if the msg isnt 'empty' aka has more than just the prefix
-            console.log(
-                `%c${level.toUpperCase()}%c ${msg}`,
-                `color:${getLogLevelColor(level)}`,
-                "color:gray"
-            );
-        }
-        if (meta && Object.keys(meta).length > 0) {
-            console.log(meta);
-        }
-    }
-}
-
-
 // Back end log feed
 ipcRenderer.on("logging", (event, data) => {
-    const transport = data.transport,
-        level = data.level,
-        msg = data.msg,
-        meta = data.meta;
-    printLogToBrowserConsole(transport, level, msg, meta);
-});
+    console.log(data.message);
 
-// front end log feed
-logger.on("logging", (transport, level, msg, meta) => {
-    printLogToBrowserConsole(transport, level, msg, meta);
+    if (data.meta && Object.keys(data.meta).length > 0) {
+        console.log(data.meta);
+    }
 });
