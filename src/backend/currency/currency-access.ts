@@ -5,7 +5,7 @@ import { Currency } from "../../types/currency";
 import { FirebotViewer } from "../../types/viewers";
 
 import { SettingsManager } from "../common/settings-manager";
-import profileManager from "../common/profile-manager";
+import { ProfileManager } from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
 import { simpleClone } from "../utils";
@@ -50,7 +50,7 @@ class CurrencyAccess extends EventEmitter {
     }
 
     getCurrencyDb(): JsonDB {
-        return profileManager.getJsonDbInProfile("/currency/currency");
+        return ProfileManager.getJsonDbInProfile("/currency/currency");
     }
 
     loadCurrencies(): void {

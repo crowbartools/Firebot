@@ -3,7 +3,7 @@ const { shell } = require("electron");
 const { v4: uuid } = require("uuid");
 
 import { SettingsManager } from "../../settings-manager";
-const profileManager = require("../../profile-manager");
+const { ProfileManager } = require("../../profile-manager");
 const effectRunner = require("../../effect-runner.js");
 import frontendCommunicator from "../../frontend-communicator";
 const logger = require("../../../logwrapper");
@@ -256,7 +256,7 @@ async function stopAllScripts() {
 }
 
 frontendCommunicator.on("openScriptsFolder", () => {
-    shell.openPath(profileManager.getPathInProfile("/scripts"));
+    shell.openPath(ProfileManager.getPathInProfile("/scripts"));
 });
 
 exports.runScript = runScript;

@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import dataAccess from "../../../common/data-access";
+import * as dataAccess from "../../../common/data-access";
 
 const model : ReplaceVariable = {
     definition: {
@@ -17,7 +17,7 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: async (trigger, ...values: unknown[]) =>
+    evaluator: (_, ...values: string[]) =>
         (
             (values != null || values.length > 0)
                 ? `${path.resolve(dataAccess.getPathInUserData("/overlay-resources"), values.join("/"))}`

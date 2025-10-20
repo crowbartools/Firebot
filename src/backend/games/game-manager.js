@@ -1,9 +1,9 @@
 "use strict";
 
-const profileManager = require("../common/profile-manager");
+const { ProfileManager } = require("../common/profile-manager");
 const frontendCommunicator = require("../common/frontend-communicator");
 
-const getGameDb = () => profileManager.getJsonDbInProfile("/games");
+const getGameDb = () => ProfileManager.getJsonDbInProfile("/games");
 
 /**
  * @typedef {"string" | "number" | "boolean" | "enum" | "filepath" | "currency-select" | "chatter-select" | "editable-list" | "role-percentages" | "role-numbers"} SettingType
@@ -164,17 +164,13 @@ function loadGameSettings() {
         if (savedGameSettings != null) {
             allGamesSettings = savedGameSettings;
         }
-    } catch (error) {
-        //
-    }
+    } catch { }
 }
 
 function saveAllGameSettings() {
     try {
         getGameDb().push("/", allGamesSettings);
-    } catch (error) {
-        //
-    }
+    } catch { }
 }
 
 function getGames() {

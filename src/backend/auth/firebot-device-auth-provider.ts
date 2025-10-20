@@ -1,11 +1,14 @@
 import { AccessToken, getExpiryDateOfAccessToken } from "@twurple/auth";
-import logger from "../logwrapper";
-import { AuthDetails, AuthProviderDefinition } from "./auth";
-import accountAccess, { FirebotAccount } from "../common/account-access";
-import twitchAuth from "../streaming-platforms/twitch/auth/twitch-auth";
-import { TwitchApi } from "../streaming-platforms/twitch/api";
+
+import { AuthDetails, AuthProviderDefinition } from "../../types/auth";
+import { FirebotAccount } from "../../types/accounts";
+
 import { DeviceAuthProvider } from "../streaming-platforms/twitch/auth/twitch-device-auth-provider";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
+import accountAccess from "../common/account-access";
+import twitchAuth from "../streaming-platforms/twitch/auth/twitch-auth";
 import frontendCommunicator from "../common/frontend-communicator";
+import logger from "../logwrapper";
 
 type ValidationRequest = {
     accountType: "streamer" | "bot";
@@ -23,7 +26,7 @@ class FirebotDeviceAuthProvider {
 
         logger.debug(`Persisting ${accountType} access token`);
 
-        const auth: AuthDetails = account.auth ?? { } as AuthDetails;
+        const auth = (account.auth ?? {}) as AuthDetails;
         auth.access_token = token.accessToken; // eslint-disable-line camelcase
         auth.refresh_token = token.refreshToken; // eslint-disable-line camelcase
         auth.expires_in = token.expiresIn; // eslint-disable-line camelcase
@@ -41,7 +44,7 @@ class FirebotDeviceAuthProvider {
         if (accountAccess.getAccounts().streamer.loggedIn) {
             const streamerAcccount = accountAccess.getAccounts().streamer;
 
-            const scopes: string[] = Array.isArray(twitchAuth.streamerAccountProvider.scopes)
+            const scopes = Array.isArray(twitchAuth.streamerAccountProvider.scopes)
                 ? twitchAuth.streamerAccountProvider.scopes
                 : twitchAuth.streamerAccountProvider.scopes.split(" ");
 

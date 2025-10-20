@@ -7,10 +7,10 @@ import { EffectList } from "../../types/effects";
 import { Trigger } from "../../types/triggers";
 import { CounterDisplayWidgetConfig } from "../overlay-widgets/builtin-types/counter-display/counter-display";
 
+import { ProfileManager } from "../common/profile-manager";
 import JsonDbManager from "../database/json-db-manager";
 import accountAccess from "../common/account-access";
 import effectRunner from "../common/effect-runner";
-import profileManager from "../common/profile-manager";
 import overlayWidgetConfigManager from "../overlay-widgets/overlay-widget-config-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
@@ -98,7 +98,7 @@ class CounterManager extends JsonDbManager<Counter> {
     }
 
     getCounterTxtFilePath(counterName: string): string {
-        const folder = profileManager.getPathInProfile("/counters/");
+        const folder = ProfileManager.getPathInProfile("/counters/");
         const sanitizedCounterName = sanitizeFileName(counterName);
 
         return path.join(folder, `${sanitizedCounterName}.txt`) || "";

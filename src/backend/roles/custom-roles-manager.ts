@@ -6,10 +6,10 @@ import { BasicViewer } from "../../types/viewers";
 import { CustomRole, LegacyCustomRole } from "../../types/roles";
 
 import { TwitchApi } from "../streaming-platforms/twitch/api";
+import { ProfileManager } from "../common/profile-manager";
 import accountAccess from "../common/account-access";
-import profileManager from "../common/profile-manager";
-import frontendCommunicator from "../common/frontend-communicator";
 import twitchRoleManager from "../../shared/twitch-roles";
+import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
 import { findIndexIgnoreCase } from "../utils";
 
@@ -41,17 +41,17 @@ class CustomRolesManager extends TypedEmitter<Events> {
         });
 
         frontendCommunicator.on("check-for-legacy-custom-roles", () => {
-            return profileManager.profileDataPathExistsSync(path.join(ROLES_FOLDER, "customroles.json"));
+            return ProfileManager.profileDataPathExistsSync(path.join(ROLES_FOLDER, "customroles.json"));
         });
     }
 
     async migrateLegacyCustomRoles(): Promise<void> {
         // Check for legacy custom roles file
-        if (profileManager.profileDataPathExistsSync(path.join(ROLES_FOLDER, "customroles.json"))) {
+        if (ProfileManager.profileDataPathExistsSync(path.join(ROLES_FOLDER, "customroles.json"))) {
             logger.info("Legacy custom roles file detected. Starting migration.");
 
             try {
-                const legacyCustomRolesDb = profileManager.getJsonDbInProfile(path.join(ROLES_FOLDER, "customroles"));
+                const legacyCustomRolesDb = ProfileManager.getJsonDbInProfile(path.join(ROLES_FOLDER, "customroles"));
                 const legacyCustomRoles = legacyCustomRolesDb.getData("/") as Record<string, LegacyCustomRole>;
 
                 if (Object.keys(legacyCustomRoles).length > 0) {
@@ -66,7 +66,7 @@ class CustomRolesManager extends TypedEmitter<Events> {
                 }
 
                 logger.info("Deleting legacy custom roles database");
-                profileManager.deletePathInProfile(path.join(ROLES_FOLDER, "customroles.json"));
+                ProfileManager.deletePathInProfile(path.join(ROLES_FOLDER, "customroles.json"));
 
                 logger.info("Legacy custom role migration complete");
             } catch (error) {
@@ -152,7 +152,7 @@ class CustomRolesManager extends TypedEmitter<Events> {
     }
 
     private getCustomRolesDb(): JsonDB {
-        return profileManager.getJsonDbInProfile(path.join(ROLES_FOLDER, "custom-roles"));
+        return ProfileManager.getJsonDbInProfile(path.join(ROLES_FOLDER, "custom-roles"));
     }
 
     async loadCustomRoles(): Promise<void> {

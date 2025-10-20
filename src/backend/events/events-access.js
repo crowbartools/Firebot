@@ -1,8 +1,8 @@
 "use strict";
 
-const logger = require("../logwrapper");
-const profileManager = require("../common/profile-manager");
+const { ProfileManager } = require("../common/profile-manager");
 const frontendCommunicator = require("../common/frontend-communicator");
+const logger = require("../logwrapper");
 
 const EVENTS_FOLDER = "/events/";
 
@@ -11,7 +11,7 @@ let groups = {};
 let sortTags = [];
 
 function getEventsDb() {
-    return profileManager.getJsonDbInProfile(`${EVENTS_FOLDER}events`);
+    return ProfileManager.getJsonDbInProfile(`${EVENTS_FOLDER}events`);
 }
 
 function saveGroup(group) {

@@ -19,7 +19,7 @@ import {
     EventSubChatMessageMentionPart,
     EventSubChatMessagePart
 } from "./twurple-private-types";
-import { ThirdPartyEmote, ThirdPartyEmoteProvider } from "../../../../chat/third-party/third-party-emote-provider";
+
 import {
     FirebotChatMessage,
     FirebotChatMessageCheermotePart,
@@ -30,16 +30,19 @@ import {
     FirebotCheermoteInstance,
     FirebotParsedMessagePart
 } from "../../../../../types/chat";
+import { FirebotAccount } from "../../../../../types/accounts";
+
+import { SettingsManager } from "../../../../common/settings-manager";
+import { TwitchApi } from "../";
+import { ThirdPartyEmote, ThirdPartyEmoteProvider } from "../../../../chat/third-party/third-party-emote-provider";
+import accountAccess from "../../../../common/account-access";
+import frontendCommunicator from "../../../../common/frontend-communicator";
+import logger from "../../../../logwrapper";
+import { getUrlRegex } from "../../../../utils";
+
 import { BTTVEmoteProvider } from "../../../../chat/third-party/bttv";
 import { FFZEmoteProvider } from "../../../../chat/third-party/ffz";
 import { SevenTVEmoteProvider } from "../../../../chat/third-party/7tv";
-import logger from "../../../../logwrapper";
-import { SettingsManager } from "../../../../common/settings-manager";
-import accountAccess, { FirebotAccount } from "../../../../common/account-access";
-import { TwitchApi } from "../";
-import frontendCommunicator from "../../../../common/frontend-communicator";
-import { getUrlRegex } from "../../../../utils";
-
 interface ChatBadge {
     title: string;
     url: string;

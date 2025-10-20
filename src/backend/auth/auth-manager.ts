@@ -1,11 +1,13 @@
 import { EventEmitter } from "events";
 import ClientOAuth2 from "client-oauth2";
-import logger from "../logwrapper";
-import { AuthProvider, AuthProviderDefinition } from "./auth";
+
+import { AuthProvider, AuthProviderDefinition } from "../../types/auth";
+
 import { SettingsManager } from "../common/settings-manager";
-import frontendCommunicator from "../common/frontend-communicator";
 import { Notification, app } from "electron";
 import windowManagement from "../app-management/electron/window-management";
+import frontendCommunicator from "../common/frontend-communicator";
+import logger from "../logwrapper";
 
 class AuthManager extends EventEmitter {
     private readonly _httpPort: number;
@@ -66,7 +68,7 @@ class AuthManager extends EventEmitter {
     }
 
     buildOAuthClientForProvider(provider: AuthProviderDefinition, redirectUri: string): ClientOAuth2 {
-        let scopes;
+        let scopes: string[];
         if (provider.scopes) {
             scopes = Array.isArray(provider.scopes)
                 ? (scopes = provider.scopes)
@@ -120,7 +122,7 @@ class AuthManager extends EventEmitter {
             // Revokes both tokens, refresh token is only revoked if the access_token is properly revoked
             // TODO
         } catch (error) {
-            logger.error("Error revoking token: ", error.message);
+            logger.error("Error revoking token: ", (error as Error).message);
         }
     }
 

@@ -5,7 +5,7 @@ import { v4 as uuid } from "uuid";
 import { FirebotHotkey } from "../../types/hotkeys";
 import { Trigger } from "../../types/triggers";
 
-import profileManager from "../../backend/common/profile-manager.js";
+import { ProfileManager } from "../../backend/common/profile-manager";
 import accountAccess from "../common/account-access";
 import effectRunner from "../common/effect-runner";
 import frontendCommunicator from "../common/frontend-communicator";
@@ -41,7 +41,7 @@ class HotkeyManager {
     }
 
     private getHotkeyDb(): JsonDB {
-        return profileManager.getJsonDbInProfile("/hotkeys");
+        return ProfileManager.getJsonDbInProfile("/hotkeys");
     }
 
     loadHotkeys(): void {

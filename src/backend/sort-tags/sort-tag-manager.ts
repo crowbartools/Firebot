@@ -1,7 +1,7 @@
-import logger from "../logwrapper";
-import profileManager from "../common/profile-manager";
-import frontendCommunicator from "../common/frontend-communicator";
 import { SettingsManager } from "../common/settings-manager";
+import { ProfileManager } from "../common/profile-manager";
+import frontendCommunicator from "../common/frontend-communicator";
+import logger from "../logwrapper";
 
 interface SortTag {
     id: string;
@@ -9,7 +9,7 @@ interface SortTag {
 }
 
 interface SortTagCache {
-    [context: string]: SortTag[]
+    [context: string]: SortTag[];
 }
 
 class SortTagManager {
@@ -26,14 +26,14 @@ class SortTagManager {
     }
 
     getSortTagsDb() {
-        return profileManager.getJsonDbInProfile("sort-tags");
+        return ProfileManager.getJsonDbInProfile("sort-tags");
     }
 
     loadSortTags() {
         logger.debug("Attempting to load tags");
 
         try {
-            const sortTagsData = this.getSortTagsDb().getData("/");
+            const sortTagsData = this.getSortTagsDb().getData("/") as SortTagCache;
 
             if (sortTagsData) {
                 this.sortTags = sortTagsData;
@@ -57,17 +57,17 @@ class SortTagManager {
             };
 
             try {
-                const commandsDb = profileManager.getJsonDbInProfile("/chat/commands");
+                const commandsDb = ProfileManager.getJsonDbInProfile("/chat/commands");
 
-                legacySortTags.commands = commandsDb.getData("/sortTags");
+                legacySortTags.commands = commandsDb.getData("/sortTags") as SortTag[];
 
                 commandsDb.delete("/sortTags");
             } catch { }
 
             try {
-                const eventsDb = profileManager.getJsonDbInProfile("/events/events");
+                const eventsDb = ProfileManager.getJsonDbInProfile("/events/events");
 
-                legacySortTags.events = eventsDb.getData("/sortTags");
+                legacySortTags.events = eventsDb.getData("/sortTags") as SortTag[];
 
                 eventsDb.delete("/sortTags");
             } catch { }

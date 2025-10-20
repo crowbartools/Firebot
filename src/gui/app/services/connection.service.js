@@ -9,7 +9,7 @@
             backendCommunicator,
             logger,
             accountAccess,
-            dataAccess,
+            profileManager,
             settingsService,
             utilityService,
             integrationService
@@ -112,22 +112,22 @@
             };
 
             // Create new profile
-            service.createNewProfile = function(profileId) {
-                backendCommunicator.send("createProfile", profileId);
+            service.createNewProfile = (profileId) => {
+                backendCommunicator.send("profiles:create-profile", profileId);
             };
 
-            service.renameProfile = function(newProfileId) {
-                backendCommunicator.send("renameProfile", newProfileId);
+            service.renameProfile = (newProfileId) => {
+                backendCommunicator.send("profiles:rename-profile", newProfileId);
             };
 
             // delete profile
-            service.deleteProfile = function() {
-                backendCommunicator.send("deleteProfile");
+            service.deleteProfile = () => {
+                backendCommunicator.send("profiles:delete-profile");
             };
 
             // switch profile
-            service.switchProfiles = function(profileId) {
-                backendCommunicator.send("switchProfile", profileId);
+            service.switchProfiles = (profileId) => {
+                backendCommunicator.send("profiles:switch-profile", profileId);
             };
 
             service.profiles = [];
@@ -135,14 +135,7 @@
             service.loadProfiles = () => {
                 // Get full list of active profiles.
 
-                let activeProfileIds;
-                try {
-                    const globalSettingDb = dataAccess.getJsonDbInUserData("./global-settings");
-                    activeProfileIds = globalSettingDb.getData("./profiles/activeProfiles");
-                } catch (err) {
-                    logger.warn(`Couldn't load active profiles.`, err);
-                    return;
-                }
+                const activeProfileIds = profileManager.getActiveProfiles();
 
                 if (activeProfileIds == null) {
                     return;
@@ -158,13 +151,7 @@
 
                     // Try to get streamer settings for this profile.
                     // If it exists, overwrite defaults.
-                    let streamer;
-                    try {
-                        const profileDb = dataAccess.getJsonDbInUserData(`./profiles/${profileId}/auth-twitch`);
-                        streamer = profileDb.getData("/streamer");
-                    } catch (err) {
-                        logger.info(`Couldn't get streamer data for profile ${profileId} while updating the UI. It's possible this account hasn't logged in yet.`, err);
-                    }
+                    const streamer = profileManager.getAccountInfo(profileId, "streamer");
 
                     if (streamer) {
                         if (streamer.username) {

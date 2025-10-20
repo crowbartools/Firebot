@@ -4,11 +4,12 @@ import { DateTime } from "luxon";
 import { v4 as uuid } from "uuid";
 
 import { CommandDefinition, SystemCommand, SystemCommandDefinition } from "../../../types/commands";
+
+import { ProfileManager } from "../../common/profile-manager";
+import accountAccess from "../../common/account-access";
+import frontendCommunicator from "../../common/frontend-communicator";
 import logger from "../../logwrapper";
 import { deepClone } from "../../utils";
-import profileManager from "../../common/profile-manager";
-import frontendCommunicator from "../../common/frontend-communicator";
-import accountAccess from "../../common/account-access";
 
 type Events = {
     "created-item": (item: object) => void;
@@ -44,7 +45,7 @@ class CommandManager extends TypedEmitter<Events> {
     }
 
     private getCommandsDb(): JsonDB {
-        return profileManager.getJsonDbInProfile("/chat/commands");
+        return ProfileManager.getJsonDbInProfile("/chat/commands");
     }
 
     /**
@@ -159,7 +160,7 @@ class CommandManager extends TypedEmitter<Events> {
                     if (override.options) {
                         for (const key of Object.keys(options)) {
                             if (override.options[key]?.value) {
-                                options[key].value = override.options[key].value;
+                                options[key].value = override.options[key].value as unknown;
                             }
                         }
                     }
@@ -426,7 +427,7 @@ class CommandManager extends TypedEmitter<Events> {
             commandDb.delete(`/customCommands/${id}`);
             this.emit("deleted-item", command);
         } catch (err) {
-            logger.warn("error when deleting command", err.message);
+            logger.warn("error when deleting command", (err as Error).message);
         }
 
         this._commandCache.customCommands = this._commandCache.customCommands.filter(c => c.id !== id);
@@ -454,7 +455,7 @@ class CommandManager extends TypedEmitter<Events> {
         const commandsDb = this.getCommandsDb();
 
         if (commandsDb != null) {
-            const cmdData: CommandCache = commandsDb.getData("/");
+            const cmdData = commandsDb.getData("/") as CommandCache;
 
             if (cmdData.systemCommandOverrides) {
                 this._commandCache.systemCommandOverrides = cmdData.systemCommandOverrides;

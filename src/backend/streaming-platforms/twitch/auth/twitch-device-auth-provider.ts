@@ -155,9 +155,9 @@ async function refreshUserToken(
 }
 
 interface DeviceAuthProviderConfig {
-    userId: UserIdResolvable,
-    clientId: string,
-    accessToken: AccessToken
+    userId: UserIdResolvable;
+    clientId: string;
+    accessToken: AccessToken;
 }
 
 /**
@@ -242,7 +242,7 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
 
             } catch (error) {
                 this._refreshPromise = null;
-                return reject(error);
+                return reject(error as Error);
             }
         });
     }

@@ -4,6 +4,7 @@ const EventEmitter = require("events");
 const NodeCache = require("node-cache");
 
 const { EventManager } = require("../events/event-manager");
+const { ProfileManager } = require("../common/profile-manager");
 const windowManagement = require("../app-management/electron/window-management");
 const frontendCommunicator = require('./frontend-communicator');
 const logger = require('../logwrapper');
@@ -45,8 +46,7 @@ cache.on("set", function(key, value) {
 cache.on("del", onCustomVariableDelete);
 
 function getVariableCacheDb() {
-    const profileManager = require("../common/profile-manager");
-    return profileManager
+    return ProfileManager
         .getJsonDbInProfile("custom-variable-cache");
 }
 

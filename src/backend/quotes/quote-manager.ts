@@ -1,7 +1,9 @@
 import Datastore from "@seald-io/nedb";
 import { TypedEmitter } from "tiny-typed-emitter";
+
 import { Quote, QuoteAutoid } from "../../types/quotes";
-import profileManager from "../common/profile-manager";
+
+import { ProfileManager } from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
 
@@ -57,7 +59,7 @@ class QuoteManager {
     }
 
     async loadQuoteDatabase(): Promise<void> {
-        const path = profileManager.getPathInProfile("db/quotes.db");
+        const path = ProfileManager.getPathInProfile("db/quotes.db");
         this.db = new Datastore({ filename: path });
         try {
             await this.db.loadDatabaseAsync();

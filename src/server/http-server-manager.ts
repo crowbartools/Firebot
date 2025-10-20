@@ -14,7 +14,7 @@ import { CustomWebSocketHandler } from "../types/websocket";
 import overlayWidgetManager from "../backend/overlay-widgets/overlay-widgets-manager";
 import logger from "../backend/logwrapper";
 
-import dataAccess from "../backend/common/data-access";
+import * as dataAccess from "../backend/common/data-access";
 import frontendCommunicator from "../backend/common/frontend-communicator";
 
 const cwd = dataAccess.getWorkingDirectoryPath();

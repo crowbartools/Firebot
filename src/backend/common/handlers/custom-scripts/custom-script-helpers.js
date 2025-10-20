@@ -4,14 +4,13 @@ const { app } = require("electron");
 const EventEmitter = require("events");
 const path = require("path");
 
-const twitchChat = require("../../../chat/twitch-chat");
 const { TwitchApi } = require("../../../streaming-platforms/twitch/api");
-const profileManager = require("../../profile-manager");
-const settings = require("../../settings-manager").SettingsManager;
+const { ProfileManager } = require("../../profile-manager");
+const { SettingsManager } = require("../../settings-manager");
+const webhookManager = require("../../../webhooks/webhook-config-manager");
+const twitchChat = require("../../../chat/twitch-chat");
 const logger = require("../../../logwrapper");
 const utils = require("../../../utils");
-
-const webhookManager = require("../../../webhooks/webhook-config-manager");
 
 /**
  * Shim around the webhook manager to filter webhooks by script name and re-emit events
@@ -119,7 +118,7 @@ function buildModules(scriptManifest) {
 
     const scriptNameNormalized = scriptManifest.name.replace(/[#%&{}\\<>*?/$!'":@`|=\s-]+/g, "-").toLowerCase();
 
-    const scriptDataDir = path.resolve(profileManager.getPathInProfile("/script-data/"), `./${scriptNameNormalized}/`);
+    const scriptDataDir = path.resolve(ProfileManager.getPathInProfile("/script-data/"), `./${scriptNameNormalized}/`);
 
     return {
         request: customRequest,
@@ -254,7 +253,7 @@ function buildRunRequest(scriptManifest, params, trigger) {
         },
         firebot: {
             accounts: accountAccess.getAccounts(),
-            settings: settings,
+            settings: SettingsManager,
             version: app.getVersion()
         },
         parameters: params,
@@ -263,7 +262,7 @@ function buildRunRequest(scriptManifest, params, trigger) {
 }
 
 function getScriptPath(scriptName) {
-    const scriptsFolder = profileManager.getPathInProfile("/scripts");
+    const scriptsFolder = ProfileManager.getPathInProfile("/scripts");
     return path.resolve(scriptsFolder, scriptName);
 }
 

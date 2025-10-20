@@ -1,18 +1,18 @@
 "use strict";
-const logger = require("../logwrapper");
-const dataAccess = require("../common/data-access");
-const profileManager = require("../common/profile-manager");
 const fs = require("fs");
+const { ProfileManager } = require("../common/profile-manager");
+const dataAccess = require("../common/data-access");
+const logger = require("../logwrapper");
 
 function handleProfileRename() {
-    if (!profileManager.hasProfileRename()) {
+    if (!ProfileManager.hasProfileRename()) {
         return;
     }
     const globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
 
     try {
-        const currentProfileId = profileManager.getLoggedInProfile(),
-            newProfileId = profileManager.getNewProfileName(),
+        const currentProfileId = ProfileManager.getLoggedInProfile(),
+            newProfileId = ProfileManager.getNewProfileName(),
             activeProfiles = globalSettingsDb.getData("./profiles/activeProfiles");
 
         // Stop here if we have no deleted profile info.

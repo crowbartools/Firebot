@@ -131,7 +131,7 @@ async function createIconImage(relativeIconPath) {
 }
 
 async function createAppMenu() {
-    const profileManager = require("../../common/profile-manager");
+    const { ProfileManager } = require("../../common/profile-manager");
     const dataAccess = require("../../common/data-access");
 
     const overlayInstances = SettingsManager.getSetting("OverlayInstances");
@@ -161,7 +161,7 @@ async function createAppMenu() {
                     sublabel: "Open the folder where Firebot data is stored",
                     click: () => {
                         const rootFolder = path.resolve(
-                            profileManager.getPathInProfile("/")
+                            ProfileManager.getPathInProfile("/")
                         );
                         shell.openPath(rootFolder);
                     },

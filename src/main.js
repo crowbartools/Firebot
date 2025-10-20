@@ -62,8 +62,8 @@ if (process.platform === "linux") {
 
 // attempt to get logged in profile
 // if not found, stop app start up as app will be restarted
-const profileManager = require("./backend/common/profile-manager");
-const loggedInProfile = profileManager.getLoggedInProfile();
+const { ProfileManager } = require("./backend/common/profile-manager");
+const loggedInProfile = ProfileManager.getLoggedInProfile();
 if (loggedInProfile == null) {
     return;
 }

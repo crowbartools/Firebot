@@ -6,7 +6,6 @@
     const electron = require("electron");
     const shell = electron.shell;
 
-    const profileManager = require("../../backend/common/profile-manager");
     const secrets = require("../../secrets.json");
 
     const moment = require("moment");
@@ -380,7 +379,7 @@
                 templateUrl: "renameProfileModal.html",
                 size: 'sm',
                 resolveObj: {
-                    currentProfileId: () => profileManager.getLoggedInProfile()
+                    currentProfileId: () => ipcRenderer.sendSync("profiles:get-logged-in-profile")
                 },
                 // This is the controller to be used for the modal.
                 controllerFunc: ($scope, $uibModalInstance, connectionService, ngToast, currentProfileId) => {
@@ -450,7 +449,7 @@
             }
         };
 
-        $scope.currentProfileId = profileManager.getLoggedInProfile();
+        $scope.currentProfileId = ipcRenderer.sendSync("profiles:get-logged-in-profile");
 
         /**
          * Initial App Load

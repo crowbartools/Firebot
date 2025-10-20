@@ -23,7 +23,7 @@ exports.whenReady = async () => {
     logger.debug("...Ensuring required folders exist");
     // Ensure required folders are created
     const { ensureRequiredFoldersExist } = require("../../data-tasks");
-    ensureRequiredFoldersExist();
+    await ensureRequiredFoldersExist();
 
     // load twitch auth
     windowManagement.updateSplashScreenStatus("Loading Twitch login system...");
@@ -232,8 +232,8 @@ exports.whenReady = async () => {
     // change anything until we are ready as changing this will break most scripts
     const Effect = require("../../../common/EffectType");
     global.EffectType = Effect.EffectTypeV5Map;
-    const profileManager = require("../../../common/profile-manager");
-    global.SCRIPTS_DIR = profileManager.getPathInProfile("/scripts/");
+    const { ProfileManager } = require("../../../common/profile-manager");
+    global.SCRIPTS_DIR = ProfileManager.getPathInProfile("/scripts/");
 
     windowManagement.updateSplashScreenStatus("Running daily backup...");
     const { BackupManager } = require("../../../backup-manager");

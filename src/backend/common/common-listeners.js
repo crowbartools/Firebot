@@ -6,7 +6,6 @@ const { restartApp } = require("../app-management/electron/app-helpers");
 
 exports.setupCommonListeners = () => {
     const frontendCommunicator = require("./frontend-communicator");
-    const profileManager = require("./profile-manager");
     const { SettingsManager } = require("./settings-manager");
     const { BackupManager } = require("../backup-manager");
     const webServer = require("../../server/http-server-manager");
@@ -74,27 +73,6 @@ exports.setupCommonListeners = () => {
 
     frontendCommunicator.on("open-backup-folder", () => {
         shell.openPath(BackupManager.backupFolderPath);
-    });
-
-    // Front old main
-
-    // When we get an event from the renderer to create a new profile.
-    frontendCommunicator.on("createProfile", (profileName) => {
-        profileManager.createNewProfile(profileName);
-    });
-
-    // When we get an event from the renderer to delete a particular profile.
-    frontendCommunicator.on("deleteProfile", () => {
-        profileManager.deleteProfile();
-    });
-
-    // Change profile when we get event from renderer
-    frontendCommunicator.on("switchProfile", (profileId) => {
-        profileManager.logInProfile(profileId);
-    });
-
-    frontendCommunicator.on("renameProfile", (newProfileId) => {
-        profileManager.renameProfile(newProfileId);
     });
 
     // Change profile when we get event from renderer

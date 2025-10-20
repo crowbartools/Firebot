@@ -1,21 +1,28 @@
 import { HelixChatBadgeSet, HelixCheermoteList } from "@twurple/api";
 import { ChatMessage, ParsedMessageCheerPart, ParsedMessagePart, findCheermotePositions, parseChatMessage } from "@twurple/chat";
 import { EventSubAutoModMessageHoldV2Event } from "@twurple/eventsub-base";
+
+import {
+    FirebotChatMessage,
+    FirebotCheermoteInstance,
+    FirebotParsedMessagePart
+} from "../../types/chat";
+import { FirebotAccount } from "../../types/accounts";
+
+import { SettingsManager } from "../common/settings-manager";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
+import accountAccess from "../common/account-access";
+import viewerDatabase from "../viewers/viewer-database";
+import rankManager from "../ranks/rank-manager";
+import roleManager from "../roles/custom-roles-manager";
+import frontendCommunicator from "../common/frontend-communicator";
+import logger from "../logwrapper";
+import { getUrlRegex } from "../utils";
+
 import { ThirdPartyEmote, ThirdPartyEmoteProvider } from "./third-party/third-party-emote-provider";
 import { BTTVEmoteProvider } from "./third-party/bttv";
 import { FFZEmoteProvider } from "./third-party/ffz";
 import { SevenTVEmoteProvider } from "./third-party/7tv";
-import { FirebotChatMessage, FirebotCheermoteInstance, FirebotParsedMessagePart } from "../../types/chat";
-import logger from "../logwrapper";
-import { SettingsManager } from "../common/settings-manager";
-import accountAccess, { FirebotAccount } from "../common/account-access";
-import { TwitchApi } from "../streaming-platforms/twitch/api";
-import frontendCommunicator from "../common/frontend-communicator";
-import { getUrlRegex } from "../utils";
-import viewerDatabase from "../viewers/viewer-database";
-import rankManager from "../ranks/rank-manager";
-import roleManager from "../roles/custom-roles-manager";
-
 interface ExtensionBadge {
     id: string;
     version: string;

@@ -1,13 +1,8 @@
 "use strict";
 const os = require('os');
-const electron = require("electron");
+const { app, ipcMain } = require("electron");
 
 module.exports = function () {
-    const {
-        app,
-        ipcMain
-    } = electron;
-
     ipcMain.on('preload.getAppDetails', (event) => {
         event.returnValue = {
             version: app.getVersion(),

@@ -7,26 +7,28 @@ const dataAccess = require("../common/data-access");
  * Ensures a dir at the given path exists. Creates one if it doesn't
  * @param {string} path - The dirs relative path
  */
-function ensureDirExists(path) {
-    if (!dataAccess.userDataPathExistsSync(path)) {
+async function ensureDirExists(path) {
+    if (!await dataAccess.userDataPathExists(path)) {
         logger.info(`Can't find "${path}", creating...`);
-        dataAccess.makeDirInUserDataSync(path);
+        await dataAccess.makeDirInUserData(path);
     }
 }
 
-function ensureRequiredFoldersExist() {
-
+/**
+ * @returns {Promise<void>}
+ */
+async function ensureRequiredFoldersExist() {
     logger.info("Ensuring required data folders exist...");
 
     //create the root "firebot-data" folder
-    dataAccess.createFirebotDataDir();
+    await dataAccess.createFirebotDataDir();
 
     // copy over overlay wrapper
     dataAccess.copyResourceToUserData(null, "overlay.html", "");
 
     const requiredRootDirPaths = ["/profiles", "/backups", "/clips", "/overlay-resources"];
     for (const path of requiredRootDirPaths) {
-        ensureDirExists(path);
+        await ensureDirExists(path);
     }
 
     // Setup required folders for each profile
@@ -38,7 +40,7 @@ function ensureRequiredFoldersExist() {
     // This could happen if someone manually deletes a profile.
     try {
         activeProfiles = globalSettingsDb.getData("/profiles/activeProfiles");
-    } catch (err) {
+    } catch {
         globalSettingsDb.push("/profiles/activeProfiles", ["Main Profile"]);
         activeProfiles = ["Main Profile"];
     }
@@ -53,7 +55,7 @@ function ensureRequiredFoldersExist() {
         } else {
             logger.debug("Last logged in profile is still active!");
         }
-    } catch (err) {
+    } catch {
         globalSettingsDb.push("/profiles/loggedInProfile", activeProfiles[0]);
         logger.info("Last logged in profile info is missing or this is a new install. Adding it in now.");
     }
@@ -77,7 +79,7 @@ function ensureRequiredFoldersExist() {
         ];
 
         for (const profilePath of requiredProfileDirPaths) {
-            ensureDirExists(profilePath);
+            await ensureDirExists(profilePath);
         }
     }
 

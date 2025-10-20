@@ -1,9 +1,9 @@
 import { JsonDB } from "node-json-db";
 import { v4 as uuid } from "uuid";
 
-import logger from "../logwrapper";
-import profileManager from "../common/profile-manager";
+import { ProfileManager } from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
+import logger from "../logwrapper";
 import { deepClone } from "../utils";
 
 export enum NotificationSource {
@@ -78,7 +78,7 @@ class NotificationManager {
     }
 
     private getNotificationDb(): JsonDB {
-        return profileManager.getJsonDbInProfile("notifications");
+        return ProfileManager.getJsonDbInProfile("notifications");
     }
 
     private checkNotificationDbVersion(): boolean {

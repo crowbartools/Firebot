@@ -4,11 +4,17 @@ import fsp from "fs/promises";
 import path from "path";
 import unzipper from "unzipper";
 import archiver from "archiver";
-import logger from "./logwrapper";
+
 import { SettingsManager } from "./common/settings-manager";
-import dataAccess from "./common/data-access.js";
+import * as dataAccess from "./common/data-access";
 import frontendCommunicator from "./common/frontend-communicator";
+import logger from "./logwrapper";
 import { emptyFolder } from "./utils";
+
+interface ZipEntry {
+    path: string;
+    autodrain: () => Promise<void>;
+}
 
 const RESTORE_FOLDER_PATH = dataAccess.getPathInTmpDir("/restore");
 const PROFILES_FOLDER_PATH = dataAccess.getPathInUserData("/profiles");
@@ -209,7 +215,7 @@ class BackupManager {
             varIgnoreInArchive.push("overlay-resources/**");
         }
 
-        archive.glob('**/*', {
+        archive.glob("**/*", {
             ignore: varIgnoreInArchive,
             cwd: path.resolve(dataAccess.getPathInUserData("/"))
         });
@@ -303,13 +309,13 @@ class BackupManager {
 
         await fs.createReadStream(backupFilePath)
             .pipe(unzipper.Parse() //eslint-disable-line new-cap
-                .on('entry', (entry) => {
+                .on("entry", (entry: ZipEntry) => {
                     if (entry.path.includes("profiles")) {
                         hasProfilesDir = true;
                     } else if (entry.path.includes("global-settings")) {
                         hasGlobalSettings = true;
                     }
-                    entry.autodrain();
+                    void entry.autodrain();
                 }))
             .promise();
 

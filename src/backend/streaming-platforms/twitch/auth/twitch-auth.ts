@@ -1,10 +1,13 @@
 import { getExpiryDateOfAccessToken } from "@twurple/auth";
-import logger from "../../../logwrapper";
+
+import { AuthProviderDefinition } from "../../../../types/auth";
+import { FirebotAccount } from "../../../../types/accounts";
+
 import { SecretsManager } from "../../../secrets-manager";
 import authManager from "../../../auth/auth-manager";
-import accountAccess, { FirebotAccount } from "../../../common/account-access";
-import { AuthProviderDefinition } from "../../../auth/auth";
+import accountAccess from "../../../common/account-access";
 import channelRewardManager from "../../../channel-rewards/channel-reward-manager";
+import logger from "../../../logwrapper";
 
 class TwitchAuthProviders {
     private readonly _host = "https://id.twitch.tv";

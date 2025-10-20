@@ -1,15 +1,13 @@
 "use strict";
+
 (function() {
-
-    const { getPathInUserData, getJsonDbInUserData } = require("../../backend/common/data-access");
-
     angular
         .module("firebotApp")
-        .factory("dataAccess", function() {
+        .factory("dataAccess", (backendCommunicator) => {
             const service = {};
 
-            service.getJsonDbInUserData = getJsonDbInUserData;
-            service.getPathInUserData = getPathInUserData;
+            service.getPathInUserData = path =>
+                backendCommunicator.fireEventSync("data-access:get-path-in-user-data", path);
 
             return service;
         });

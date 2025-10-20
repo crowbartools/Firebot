@@ -3,20 +3,21 @@ import Datastore from "@seald-io/nedb";
 import { DateTime } from "luxon";
 
 import { BasicViewer, FirebotViewer } from "../../types/viewers";
+
 import { SettingsManager } from "../common/settings-manager";
-import logger from "../logwrapper";
-import profileManager from "../common/profile-manager";
+import { ProfileManager } from "../common/profile-manager";
+import { EventManager } from "../events/event-manager";
+import { BackupManager } from "../backup-manager";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
 import accountAccess from "../common/account-access";
 import userAccess from "../common/user-access";
 import currencyAccess from "../currency/currency-access";
-import { EventManager } from "../events/event-manager";
-import { BackupManager } from "../backup-manager";
-import frontendCommunicator from "../common/frontend-communicator";
 import rankManager from "../ranks/rank-manager";
+import roleHelpers from "../roles/role-helpers";
+import frontendCommunicator from "../common/frontend-communicator";
+import logger from "../logwrapper";
 import { commafy, wait } from "../utils";
 import { Rank, RankLadder } from "../../types/ranks";
-import roleHelpers from "../roles/role-helpers";
-import { TwitchApi } from "../streaming-platforms/twitch/api";
 
 interface ViewerDbChangePacket {
     userId: string;
@@ -147,7 +148,7 @@ class ViewerDatabase extends EventEmitter {
             return;
         }
 
-        const path = profileManager.getPathInProfile("db/users.db");
+        const path = ProfileManager.getPathInProfile("db/users.db");
         this._db = new Datastore({ filename: path });
         try {
             await this._db.loadDatabaseAsync();

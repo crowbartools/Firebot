@@ -1,27 +1,14 @@
 "use strict";
 
-const profileManager = require("./profile-manager");
-const logger = require("../logwrapper");
+/** @import { FirebotAccount } from "../../types/accounts" */
+
+const { ProfileManager } = require("./profile-manager");
 const frontendCommunicator = require("./frontend-communicator");
+const logger = require("../logwrapper");
 const EventEmitter = require("events");
 
 /**@type {NodeJS.EventEmitter} */
 const accountEvents = new EventEmitter();
-
-/**
- * A streamer or bot account
- * @typedef {Object} FirebotAccount
- * @property {string} username - The account username
- * @property {string} displayName - The users displayName
- * @property {string} description - The users description
- * @property {string} userId - The user id for the account
- * @property {number} channelId - DEPRECATED: The channel id for the account (same as userId)
- * @property {string} avatar - The avatar url for the account
- * @property {string} broadcasterType - "partner", "affiliate" or ""
- * @property {import("../auth/auth").AuthDetails} auth - Auth token details for the account
- * @property {boolean=} loggedIn - If the account is linked/logged in
- */
-
 
 /**
  * A streamer and bot account cache
@@ -74,7 +61,7 @@ async function updateStreamerAccountSettings(streamerAccount) {
 }
 
 function saveAccountDataToFile(accountType) {
-    const authDb = profileManager.getJsonDbInProfile("/auth-twitch");
+    const authDb = ProfileManager.getJsonDbInProfile("/auth-twitch");
     const account = cache[accountType];
     try {
         authDb.push(`/${accountType}`, account);
@@ -90,7 +77,7 @@ function saveAccountDataToFile(accountType) {
  * @param {boolean} [emitUpdate=true] - If an account update event should be emitted
  */
 async function loadAccountData(emitUpdate = true) {
-    const authDb = profileManager.getJsonDbInProfile("/auth-twitch");
+    const authDb = ProfileManager.getJsonDbInProfile("/auth-twitch");
     try {
         const dbData = authDb.getData("/"),
             streamer = dbData.streamer,
@@ -112,7 +99,7 @@ async function loadAccountData(emitUpdate = true) {
             bot.loggedIn = true;
             cache.bot = bot;
         }
-    } catch (err) {
+    } catch {
         logger.warn("Couldn't update auth cache");
     }
 
@@ -214,7 +201,7 @@ function removeAccount(accountType) {
         return;
     }
 
-    const authDb = profileManager.getJsonDbInProfile("/auth-twitch");
+    const authDb = ProfileManager.getJsonDbInProfile("/auth-twitch");
     try {
         authDb.delete(`/${accountType}`);
     } catch (error) {
