@@ -21,7 +21,7 @@ export function getFont(req: Request, res: Response): void {
         const font = FontManager.getFont(fontName);
         if (font) {
             const path = font.path;
-            res.sendFile(path);
+            res.sendFile(path, { dotfiles: "allow" });
             return;
         }
     }
