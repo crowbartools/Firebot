@@ -176,7 +176,7 @@ class HttpServerManager extends EventEmitter {
                 let resourcePath = ResourceTokenManager.getResourcePath(token) || null;
                 if (resourcePath !== null) {
                     resourcePath = resourcePath.replace(/\\/g, "/");
-                    res.sendFile(resourcePath);
+                    res.sendFile(resourcePath, { dotfiles: "allow" });
                     return;
                 }
             }
