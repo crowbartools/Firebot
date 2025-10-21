@@ -1,12 +1,9 @@
+import { SortTag } from "../../types/sort-tags";
+
 import { SettingsManager } from "../common/settings-manager";
 import { ProfileManager } from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
-
-interface SortTag {
-    id: string;
-    name: string;
-}
 
 interface SortTagCache {
     [context: string]: SortTag[];
