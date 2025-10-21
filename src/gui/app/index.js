@@ -13,7 +13,6 @@ const shell = require("electron").shell;
  */
 const fs = require("fs");
 const request = require("request");
-const List = require("list.js");
 const path = require("path");
 
 require("angular");
