@@ -195,8 +195,8 @@ exports.whenReady = async () => {
     // get importer in memory
     windowManagement.updateSplashScreenStatus("Loading importers...");
 
-    const setupImporter = require("../../../import/setups/setup-importer");
-    setupImporter.setupListeners();
+    const { SetupManager } = require("../../../setups/setup-manager");
+    SetupManager.setupListeners();
 
     const slcbImporter = require("../../../import/third-party/streamlabs-chatbot");
     slcbImporter.setupListeners();

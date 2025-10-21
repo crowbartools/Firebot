@@ -17,6 +17,8 @@ export type SetupImportQuestion = {
 };
 
 export type FirebotSetup = {
+    name: string;
+    description: string;
     importQuestions: SetupImportQuestion[];
     requireCurrency: boolean;
     components: {

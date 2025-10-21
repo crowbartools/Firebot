@@ -1,8 +1,6 @@
 "use strict";
 
 (function() {
-    const fsp = require("fs/promises");
-
     angular.module("firebotApp")
         .component("removeSetupModal", {
             template: `
@@ -55,7 +53,7 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function($q, logger, ngToast, commandsService, countersService, currencyService,
+            controller: function(ngToast, commandsService, countersService, currencyService,
                 effectQueuesService, eventsService, hotkeyService, presetEffectListsService,
                 timerService, scheduledTaskService, viewerRolesService, quickActionsService, variableMacroService, viewerRanksService, backendCommunicator) {
                 const $ctrl = this;
@@ -131,40 +129,36 @@
                     $ctrl.setupFilePath = null;
                 };
 
-                $ctrl.onFileSelected = (filepath) => {
-                    $q.when(fsp.readFile(filepath))
-                        .then((setup) => {
-                            setup = JSON.parse(setup);
-                            if (setup == null || setup.components == null) {
-                                $ctrl.resetSelectedFile("Unable to load setup file: file is invalid");
-                                return;
-                            }
-                            $ctrl.setup = setup;
+                $ctrl.onFileSelected = async (filepath) => {
+                    /** @type {import("../../../../../backend/setups/setup-manager").LoadSetupResult} */
+                    const result = await backendCommunicator.fireEventAsync("setups:load-setup", filepath);
 
-                            Object.entries($ctrl.setup.components)
-                                .forEach(([componentType, components]) => {
-                                    components.forEach((component) => {
-                                        if ($ctrl.currentIds[component.id]) {
-                                            $ctrl.componentsToRemove[componentType].push({
-                                                id: component.id,
-                                                name: component.trigger || component.name
-                                            });
-                                            $ctrl.hasComponentsToRemove = true;
-                                        }
-                                    });
+                    if (result.success) {
+                        $ctrl.setup = result.setup;
+
+                        Object.entries($ctrl.setup.components)
+                            .forEach(([componentType, components]) => {
+                                components.forEach((component) => {
+                                    if ($ctrl.currentIds[component.id]) {
+                                        $ctrl.componentsToRemove[componentType].push({
+                                            id: component.id,
+                                            name: component.trigger || component.name
+                                        });
+                                        $ctrl.hasComponentsToRemove = true;
+                                    }
                                 });
+                            });
 
-                            $ctrl.setupSelected = true;
-                        }, (reason) => {
-                            logger.error("Failed to load setup file", reason);
-                            $ctrl.allowCancel = true;
-                            $ctrl.resetSelectedFile("Failed to load setup file: file is invalid");
-                            return;
-                        });
+                        $ctrl.setupSelected = true;
+                    } else {
+                        $ctrl.allowCancel = true;
+                        $ctrl.resetSelectedFile(result.error ?? "Failed to load setup file");
+                        return;
+                    }
                 };
 
                 $ctrl.removeSetup = () => {
-                    const success = backendCommunicator.fireEventSync("remove-setup-components", {
+                    const success = backendCommunicator.fireEventSync("setups:remove-setup-components", {
                         components: $ctrl.componentsToRemove
                     });
 
