@@ -147,7 +147,6 @@
 .sticky-bottom {
   position: sticky;
   bottom: 0;
-  z-index: 99999999;
 
   &.is-stuck {
       border-top: 1px solid #24262A;
