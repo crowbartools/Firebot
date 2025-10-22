@@ -1,12 +1,11 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType } from "../../../../shared/variable-constants";
 
 const model : ReplaceVariable = {
     definition: {
         handle: 'macroArg',
         description: 'gets the nth argument passed into the macro',
         hidden: true,
-        possibleDataOutput: [OutputDataType.ALL]
+        possibleDataOutput: ["ALL"]
     },
     evaluator(trigger: Trigger, argIndex: number | string) {
         if (argIndex == null || argIndex === '') {

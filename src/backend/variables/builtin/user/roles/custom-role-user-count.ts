@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import customRolesManager from "../../../../roles/custom-roles-manager";
 
 const model : ReplaceVariable = {
@@ -7,8 +6,8 @@ const model : ReplaceVariable = {
         handle: "customRoleUserCount",
         description: "Get the number of people in a custom role.",
         usage: "customRoleUserCount[role]",
-        categories: [VariableCategory.NUMBERS],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["numbers"],
+        possibleDataOutput: ["number"]
     },
     evaluator: async (trigger, roleName: string) => {
         if (roleName == null || roleName == null) {

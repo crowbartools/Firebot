@@ -1,18 +1,16 @@
-import { ReplaceVariable } from "../../../../../../types/variables";
-import { EffectTrigger } from "../../../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../../../shared/variable-constants";
+import { ReplaceVariable , TriggersObject } from "../../../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:whisper"];
-triggers[EffectTrigger.MANUAL] = true;
+const triggers: TriggersObject = {};
+triggers["event"] = ["twitch:whisper"];
+triggers["manual"] = true;
 
 const model: ReplaceVariable = {
     definition: {
         handle: "whisperRecipient",
         description: "The account type (either 'streamer' or 'bot') that received the whisper.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (trigger) => {
         return trigger.metadata.eventData.sentTo;

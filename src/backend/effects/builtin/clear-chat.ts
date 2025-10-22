@@ -1,7 +1,6 @@
-import { EffectCategory, EffectDependency } from '../../../shared/effect-constants';
+import { EffectType } from '../../../types/effects';
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
 import logger from '../../logwrapper';
-import { EffectType } from '../../../types/effects';
 
 const effect: EffectType = {
     definition: {
@@ -9,8 +8,8 @@ const effect: EffectType = {
         name: "Clear Chat",
         description: "Clear all chat messages.",
         icon: "fad fa-eraser",
-        categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
-        dependencies: [EffectDependency.CHAT]
+        categories: ["common", "Moderation", "twitch"],
+        dependencies: ["chat"]
     },
     optionsTemplate: `
         <eos-container>

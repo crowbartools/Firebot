@@ -1,7 +1,6 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
-import integrationManager from "../../../../integrations/integration-manager";
 import { getParticipantMilestones, getParticipant } from 'extra-life-ts';
+import { ReplaceVariable } from "../../../../../types/variables";
+import integrationManager from "../../../../integrations/integration-manager";
 
 const ExtraLifeMilestones: ReplaceVariable = {
     definition: {
@@ -29,8 +28,8 @@ const ExtraLifeMilestones: ReplaceVariable = {
                 description: "Returns three milestones in JSON format."
             }
         ],
-        categories: [VariableCategory.COMMON, VariableCategory.INTEGRATION],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "integrations"],
+        possibleDataOutput: ["text"]
     },
     evaluator: async (_, milestoneGoal: string, numResults: number, participantID: number, returnJson: boolean) => {
         if (numResults == null) {
@@ -53,7 +52,7 @@ const ExtraLifeMilestones: ReplaceVariable = {
             return 0;
         });
 
-        let extraLifeCall = await getParticipantMilestones(participantID, {orderBy: 'fundraisingGoal ASC'}).then(({ data }) => {
+        let extraLifeCall = await getParticipantMilestones(participantID, { orderBy: 'fundraisingGoal ASC' }).then(({ data }) => {
             let result = data;
             if (milestoneGoal != null) {
                 result = result.filter(function (milestone) {

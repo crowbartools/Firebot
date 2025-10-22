@@ -1,5 +1,4 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import { stringify } from '../../../utils';
 
 const model : ReplaceVariable = {
@@ -7,8 +6,8 @@ const model : ReplaceVariable = {
         handle: "trim",
         description: "Removes any whitespace from the beginning and end of input text.",
         usage: "trim[text]",
-        categories: [VariableCategory.TEXT],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["text"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (
         trigger: Trigger,

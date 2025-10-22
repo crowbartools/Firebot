@@ -1,6 +1,5 @@
 import { DateTime } from "luxon";
 import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import { TwitchApi } from "../../api";
 import adManager from "../../ad-manager";
 
@@ -8,8 +7,8 @@ const model : ReplaceVariable = {
     definition: {
         handle: "secondsUntilNextAdBreak",
         description: "The number of seconds until the next schduled ad break",
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["common", "trigger based"],
+        possibleDataOutput: ["number"]
     },
     evaluator: async (trigger) => {
         let secondsUntilNextAdBreak = trigger.metadata?.eventData?.secondsUntilNextAdBreak

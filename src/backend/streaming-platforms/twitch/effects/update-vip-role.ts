@@ -1,8 +1,7 @@
 import { EffectType } from '../../../../types/effects';
-import { EffectCategory, EffectDependency } from '../../../../shared/effect-constants';
-import logger from '../../../logwrapper';
 import { TwitchApi } from "../api";
 import chatRolesManager from "../../../roles/chat-roles-manager";
+import logger from '../../../logwrapper';
 
 const model: EffectType<{
     action: "Add VIP" | "Remove VIP";
@@ -13,8 +12,8 @@ const model: EffectType<{
         name: "VIP",
         description: "Add or remove the VIP role of a user",
         icon: "far fa-gem",
-        categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
-        dependencies: [EffectDependency.CHAT]
+        categories: ["common", "Moderation", "twitch"],
+        dependencies: ["chat"]
     },
     optionsTemplate: `
     <eos-container header="Action" pad-top="true">

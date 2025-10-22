@@ -1,7 +1,6 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
-import integrationManager from "../../../../integrations/integration-manager";
 import { getParticipant } from 'extra-life-ts';
+import { ReplaceVariable } from "../../../../../types/variables";
+import integrationManager from "../../../../integrations/integration-manager";
 
 const ExtraLifeInfo: ReplaceVariable = {
     definition: {
@@ -57,8 +56,8 @@ const ExtraLifeInfo: ReplaceVariable = {
                 description: "Get all profile data for the current logged in extra life account in JSON format."
             }
         ],
-        categories: [VariableCategory.COMMON, VariableCategory.INTEGRATION],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "integrations"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (_, infoPath: string, participantID: number, returnJson: boolean) => {
         if (participantID == null) {

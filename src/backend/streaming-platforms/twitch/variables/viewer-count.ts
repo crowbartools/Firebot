@@ -1,18 +1,16 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { EffectTrigger } from "../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import { ReplaceVariable, TriggersObject } from "../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:shoutout-sent", "twitch:shoutout-received"];
-triggers[EffectTrigger.MANUAL] = true;
+const triggers: TriggersObject = {};
+triggers["event"] = ["twitch:shoutout-sent", "twitch:shoutout-received"];
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
         handle: "viewerCount",
         description: "The number of viewers that saw the event occur",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["common", "trigger based"],
+        possibleDataOutput: ["number"]
     },
     evaluator: (trigger) => {
         return trigger.metadata.eventData.viewerCount;

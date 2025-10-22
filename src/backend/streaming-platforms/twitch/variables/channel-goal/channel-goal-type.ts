@@ -1,21 +1,19 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
-import { EffectTrigger } from "../../../../../shared/effect-constants";
+import { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.EVENT] = [
+const triggers: TriggersObject = {};
+triggers["event"] = [
     "twitch:channel-goal-begin",
     "twitch:channel-goal-progress",
     "twitch:channel-goal-end"
 ];
-triggers[EffectTrigger.MANUAL] = true;
+triggers["manual"] = true;
 
 const model: ReplaceVariable = {
     definition: {
         handle: "channelGoalType",
         description: "The type of channel goal that triggered the event.",
-        categories: [VariableCategory.TEXT],
-        possibleDataOutput: [OutputDataType.TEXT],
+        categories: ["text"],
+        possibleDataOutput: ["text"],
         triggers: triggers
     },
     evaluator: async (trigger) => {

@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import { ActiveUserHandler } from "../../../chat/active-user-handler";
 import customRolesManager from "../../../roles/custom-roles-manager";
 import logger from "../../../logwrapper";
@@ -8,8 +7,8 @@ const model : ReplaceVariable = {
     definition: {
         handle: "activeChatUserCount",
         description: "Get the number of active viewers in chat.",
-        categories: [VariableCategory.NUMBERS],
-        possibleDataOutput: [OutputDataType.NUMBER],
+        categories: ["numbers"],
+        possibleDataOutput: ["number"],
         examples: [
             {
                 usage: "activeChatUserCount[CustomRole]",

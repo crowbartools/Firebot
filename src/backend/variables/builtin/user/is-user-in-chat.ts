@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 
 const model : ReplaceVariable = {
@@ -7,8 +6,8 @@ const model : ReplaceVariable = {
         handle: "isUserInChat",
         usage: "isUserInChat[username]",
         description: "Outputs `true` if a user is currently connected to Twitch chat, `false` if not",
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.BOOLEAN]
+        categories: ["advanced"],
+        possibleDataOutput: ["bool"]
     },
     evaluator: async (_, username: string) => {
         if (!username?.length) {

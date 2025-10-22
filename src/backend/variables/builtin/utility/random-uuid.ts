@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import { randomUUID } from "crypto";
 
 const model : ReplaceVariable = {
@@ -7,8 +6,8 @@ const model : ReplaceVariable = {
         handle: "randomUUID",
         usage: "randomUUID",
         description: "Returns a random formated UUID eg 00000000-0000-0000-0000-000000000000",
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["text"]
     },
     evaluator: () => {
         return randomUUID();

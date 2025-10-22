@@ -1,5 +1,4 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import { evaluate } from 'mathjs';
 import logger from "../../../logwrapper";
 
@@ -18,8 +17,8 @@ const model : ReplaceVariable = {
                 description: `Returns 25`
             }
         ],
-        categories: [VariableCategory.COMMON, VariableCategory.NUMBERS],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["common", "numbers"],
+        possibleDataOutput: ["number"]
     },
     evaluator: (
         trigger: Trigger,

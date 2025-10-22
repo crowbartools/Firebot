@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { EffectInstance } from "../../../../types/effects";
-import { EffectTrigger } from "../../../../shared/effect-constants";
 import { PresetEffectListManager } from "../../../../backend/effects/preset-lists/preset-effect-list-manager";
 import effectsManager from "../../../../backend/effects/effectManager";
 import effectRunner from "../../../../backend/common/effect-runner";
+import { Trigger } from "../../../../types/triggers";
 
 export function getEffects(req: Request, res: Response): void {
     let effectDefs = effectsManager.getEffectDefinitions();
@@ -47,9 +47,9 @@ export async function runEffects(
 
         const processEffectsRequest = {
             trigger: {
-                type: EffectTrigger.API,
+                type: "api",
                 metadata: triggerData
-            },
+            } as Trigger,
             effects: req.body.effects
         };
 
@@ -129,12 +129,12 @@ async function runPresetEffectList(
 
     const processEffectsRequest = {
         trigger: {
-            type: EffectTrigger.PRESET_LIST,
+            type: "preset",
             metadata: {
                 username,
                 presetListArgs: args
             }
-        },
+        } as Trigger,
         effects: presetList.effects
     };
 

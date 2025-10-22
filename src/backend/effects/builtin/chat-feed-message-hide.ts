@@ -1,12 +1,12 @@
-import { EffectCategory, EffectDependency, EffectTrigger } from '../../../shared/effect-constants';
 import { EffectType } from "../../../types/effects";
+import { TriggersObject } from '../../../types/triggers';
 import frontendCommunicator from "../../common/frontend-communicator";
 import logger from "../../logwrapper";
 
-const triggers = {};
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.EVENT] = ["twitch:chat-message"];
-triggers[EffectTrigger.PRESET_LIST] = true;
+const triggers: TriggersObject = {};
+triggers["command"] = true;
+triggers["event"] = ["twitch:chat-message"];
+triggers["preset"] = true;
 
 const effect: EffectType<{
     hidden: boolean;
@@ -16,8 +16,8 @@ const effect: EffectType<{
         name: "Hide Message In Chat Feed",
         description: "Hide a message in Firebot's chat feed",
         icon: "fad fa-eye-slash",
-        categories: [EffectCategory.COMMON, EffectCategory.CHAT_BASED],
-        dependencies: [EffectDependency.CHAT],
+        categories: ["common", "chat based"],
+        dependencies: ["chat"],
         triggers: triggers
     },
     optionsTemplate: `

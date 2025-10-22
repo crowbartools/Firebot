@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import { processDice } from "../../../common/handlers/diceProcessor";
 
 const model : ReplaceVariable = {
@@ -21,8 +20,8 @@ const model : ReplaceVariable = {
             }
         ],
         description: "Rolls some dice based on the provided config, ie 2d6 or 2d10+1d12 or 1d10+3",
-        categories: [VariableCategory.COMMON, VariableCategory.NUMBERS],
-        possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
+        categories: ["common", "numbers"],
+        possibleDataOutput: ["number", "text"]
     },
     evaluator: (_, diceConfig, option: string) => {
         const showEach = option?.toLowerCase() === "show each";

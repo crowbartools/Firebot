@@ -1,11 +1,11 @@
-import { EffectCategory, EffectDependency, EffectTrigger } from '../../../shared/effect-constants';
 import { EffectType } from "../../../types/effects";
+import { TriggersObject } from '../../../types/triggers';
 import frontendCommunicator from "../../common/frontend-communicator";
 import logger from "../../logwrapper";
 
-const triggers = {};
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.EVENT] = ["twitch:chat-message", "twitch:viewer-arrived"];
+const triggers: TriggersObject = {};
+triggers["command"] = true;
+triggers["event"] = ["twitch:chat-message", "twitch:viewer-arrived"];
 
 const effect: EffectType<{
     highlightEnabled: boolean;
@@ -19,8 +19,8 @@ const effect: EffectType<{
         name: "Highlight Message In Chat Feed",
         description: "Apply a custom highlight and/or banner to a message in the Firebot chat feed",
         icon: "fas fa-highlighter",
-        categories: [EffectCategory.COMMON, EffectCategory.CHAT_BASED],
-        dependencies: [EffectDependency.CHAT],
+        categories: ["common", "chat based"],
+        dependencies: ["chat"],
         triggers: triggers
     },
     optionsTemplate: `
@@ -107,9 +107,9 @@ const effect: EffectType<{
         const { effect, trigger } = event;
 
         let messageId: string | null = null;
-        if (trigger.type === EffectTrigger.COMMAND) {
+        if (trigger.type === "command") {
             messageId = trigger.metadata.chatMessage?.id;
-        } else if (trigger.type === EffectTrigger.EVENT) {
+        } else if (trigger.type === "event") {
             messageId = trigger.metadata.eventData?.chatMessage?.id;
         }
 

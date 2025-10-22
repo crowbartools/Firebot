@@ -1,19 +1,17 @@
-import { ReplaceVariable } from "../../../../../../types/variables";
-import { EffectTrigger } from "../../../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../../../shared/variable-constants";
+import { ReplaceVariable , TriggersObject } from "../../../../../../types/variables";
 
 
-const triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:banned", "twitch:unbanned", "twitch:timeout", "twitch:chat-mode-changed", "twitch:shoutout-sent", "twitch:outgoing-raid-canceled", "twitch:outgoing-raid-started"];
-triggers[EffectTrigger.MANUAL] = true;
+const triggers: TriggersObject = {};
+triggers["event"] = ["twitch:banned", "twitch:unbanned", "twitch:timeout", "twitch:chat-mode-changed", "twitch:shoutout-sent", "twitch:outgoing-raid-canceled", "twitch:outgoing-raid-started"];
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
         handle: "moderator",
         description: "The name of the moderator that performed the action (ban, unban, timeout, chat mode change, shoutout, or raid create/cancel).",
         triggers: triggers,
-        categories: [VariableCategory.USER, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["user based", "trigger based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (trigger) => {
         return trigger.metadata.eventData.moderator;

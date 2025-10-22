@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType } from "../../../../shared/variable-constants";
 
 import currencyAccess from "../../../currency/currency-access";
 import currencyManager from "../../../currency/currency-manager";
@@ -11,7 +10,7 @@ const model : ReplaceVariable = {
         usage: "rawTopCurrency[currencyName]",
         hasSuggestions: true,
         noSuggestionsText: "No currencies have been created yet.",
-        possibleDataOutput: [OutputDataType.ARRAY]
+        possibleDataOutput: ["array"]
     },
     getSuggestions: async () => {
         const currencies = Object.values(currencyAccess.getCurrencies());

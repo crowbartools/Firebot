@@ -2,7 +2,6 @@ import { join, resolve, sep } from 'node:path';
 import { readdirSync } from 'node:fs';
 
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const model : ReplaceVariable = {
     definition: {
@@ -15,8 +14,8 @@ const model : ReplaceVariable = {
                 description: "Lists files matching the regexp filter"
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (trigger: Trigger, dirpath: string, filter?: string | RegExp, flags?: string) => {
         if (typeof dirpath === 'string' || <unknown>dirpath instanceof String) {

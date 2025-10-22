@@ -1,13 +1,12 @@
 import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import adManager from "../../ad-manager";
 
 const model : ReplaceVariable = {
     definition: {
         handle: "isAdBreakRunning",
         description: "Whether or not an ad break is currently running",
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.BOOLEAN]
+        categories: ["common", "trigger based"],
+        possibleDataOutput: ["bool"]
     },
     evaluator: () => {
         return adManager.isAdBreakRunning;

@@ -1,19 +1,17 @@
 // Deprecated
-import { ReplaceVariable } from "../../../../../types/variables";
-import { EffectTrigger } from "../../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import { ReplaceVariable , TriggersObject } from "../../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:subs-gifted"];
-triggers[EffectTrigger.MANUAL] = true;
+const triggers: TriggersObject = {};
+triggers["event"] = ["twitch:subs-gifted"];
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
         handle: "giftSubMonths",
         description: "(Deprecated: removed from Twitch data) The total number of months the gift receiver has been subscribed since the beginning of time.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.NUMBER],
+        categories: ["common", "trigger based"],
+        possibleDataOutput: ["number"],
         hidden: true
     },
     evaluator: (trigger) => {

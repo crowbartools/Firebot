@@ -1,12 +1,10 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { EffectTrigger } from "../../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import { ReplaceVariable , TriggersObject } from "../../../../../types/variables";
 import { FirebotParsedMessagePart } from "../../../../../types/chat";
 
-const triggers = {};
-triggers[EffectTrigger.MANUAL] = true;
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.EVENT] = [
+const triggers: TriggersObject = {};
+triggers["manual"] = true;
+triggers["command"] = true;
+triggers["event"] = [
     "twitch:chat-message",
     "twitch:first-time-chat",
     "firebot:highlight-message",
@@ -24,14 +22,14 @@ const model: ReplaceVariable = {
         ],
         description: "Outputs the amounts cheered for each instance of a chat message's cheermotes from the associated command or event.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "trigger based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (trigger, target: number = null) => {
         let messageParts: FirebotParsedMessagePart[] = [];
-        if (trigger.type === EffectTrigger.COMMAND) {
+        if (trigger.type === "command") {
             messageParts = trigger.metadata.chatMessage.parts;
-        } else if (trigger.type === EffectTrigger.EVENT) {
+        } else if (trigger.type === "event") {
             messageParts = trigger.metadata.eventData.chatMessage.parts;
         }
 

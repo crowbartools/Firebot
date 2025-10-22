@@ -1,5 +1,4 @@
 import { sprintf } from 'sprintf-js';
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import { ReplaceVariable } from "../../../../types/variables";
 import { stringify } from '../../../utils';
 
@@ -22,8 +21,8 @@ const model : ReplaceVariable = {
                 description: 'Formats the string into "Alice tipped $5.00".'
             }
         ],
-        categories: [VariableCategory.TEXT],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["text"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (_, template: unknown, ...args: unknown[]): string => {
         return sprintf(stringify(template), ...args);

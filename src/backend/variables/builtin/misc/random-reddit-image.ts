@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType } from "../../../../shared/variable-constants";
 
 import randomRedditImage from "../../../common/handlers/redditProcessor";
 
@@ -8,7 +7,7 @@ const model : ReplaceVariable = {
         handle: "randomRedditImage",
         usage: "randomRedditImage[subredditName]",
         description: "Get a random image from a subreddit. (We do our best to check for bad images, but content warning none the less.)",
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: ["text"]
     },
     evaluator: async (_, subreddit) => {
         if (subreddit != null) {

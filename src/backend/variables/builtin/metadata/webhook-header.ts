@@ -1,4 +1,3 @@
-import { EffectTrigger } from "../../../../shared/effect-constants";
 import { ReplaceVariable } from "../../../../types/variables";
 
 export const webhookHeader: ReplaceVariable = {
@@ -8,8 +7,8 @@ export const webhookHeader: ReplaceVariable = {
         description: "The value of a specific header included with the webhook request.",
         possibleDataOutput: ["text"],
         triggers: {
-            [EffectTrigger.EVENT]: ["firebot:webhook-received"],
-            [EffectTrigger.MANUAL]: true
+            ["event"]: ["firebot:webhook-received"],
+            ["manual"]: true
         }
     },
     evaluator(trigger, key: string) {

@@ -1,9 +1,8 @@
 import { EffectType } from "../../../../types/effects";
-import { EffectCategory } from '../../../../shared/effect-constants';
+import { OverlayWidgetConfig, Position } from "../../../../types/overlay-widgets";
 import overlayWidgetConfigManager from "../../../overlay-widgets/overlay-widget-config-manager";
 import overlayWidgetsManager from "../../../overlay-widgets/overlay-widgets-manager";
 import logger from "../../../logwrapper";
-import { OverlayWidgetConfig, Position } from "../../../../types/overlay-widgets";
 
 const model: EffectType<{
     widgetConfigId: string;
@@ -19,7 +18,7 @@ const model: EffectType<{
         name: "Update Overlay Widget Settings",
         description: "Update the settings of an overlay widget.",
         icon: "fad fa-layer-plus",
-        categories: [EffectCategory.OVERLAY, EffectCategory.ADVANCED],
+        categories: ["overlay", "advanced"],
         dependencies: []
     },
     optionsTemplate: `
@@ -239,7 +238,7 @@ const model: EffectType<{
         const overlayWidgetName = overlayWidgetsService.getOverlayWidgetConfig(effect.widgetConfigId)?.name ?? "Unknown Overlay Widget";
         return `${effect.mode === "update" ? "Update" : "Reset"} ${overlayWidgetName}`;
     },
-    onTriggerEvent: async (event) => {
+    onTriggerEvent: (event) => {
         const { effect } = event;
 
         if (effect.widgetConfigId == null) {
@@ -254,7 +253,7 @@ const model: EffectType<{
         }
 
         if (effect.mode === "reset") {
-            overlayWidgetsManager.sendWidgetEventToOverlay("settings-update", widgetConfig);
+            void overlayWidgetsManager.sendWidgetEventToOverlay("settings-update", widgetConfig);
         } else if (effect.mode === "update") {
             const updatedConfig: OverlayWidgetConfig = {
                 ...widgetConfig,
@@ -271,7 +270,7 @@ const model: EffectType<{
                 overlayWidgetConfigManager.saveWidgetConfig(updatedConfig);
                 overlayWidgetConfigManager.triggerUiRefresh();
             } else {
-                overlayWidgetsManager.sendWidgetEventToOverlay("settings-update", updatedConfig);
+                void overlayWidgetsManager.sendWidgetEventToOverlay("settings-update", updatedConfig);
             }
         }
 

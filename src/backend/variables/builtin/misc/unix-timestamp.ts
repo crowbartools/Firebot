@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const moment = require("moment");
 
@@ -25,8 +24,8 @@ const model : ReplaceVariable = {
             }
         ],
         description: "The current date formatted as seconds since January 1, 1970 00:00:00 UTC",
-        categories: [VariableCategory.COMMON],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["common"],
+        possibleDataOutput: ["number"]
     },
 
     evaluator: (_, date?: string, format?: string) => {

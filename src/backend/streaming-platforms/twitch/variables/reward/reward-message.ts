@@ -1,25 +1,23 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { EffectTrigger } from "../../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import { ReplaceVariable , TriggersObject } from "../../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.EVENT] = [
+const triggers: TriggersObject = {};
+triggers["event"] = [
     "twitch:channel-reward-redemption",
     "twitch:channel-reward-redemption-fulfilled",
     "twitch:channel-reward-redemption-canceled",
     "twitch:channel-reward-redemption-send-highlighted-message"
 ];
-triggers[EffectTrigger.CHANNEL_REWARD] = true;
-triggers[EffectTrigger.PRESET_LIST] = true;
-triggers[EffectTrigger.MANUAL] = true;
+triggers["channel_reward"] = true;
+triggers["preset"] = true;
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
         handle: "rewardMessage",
         description: "The reward message text",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "trigger based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (trigger) => {
         return (trigger.metadata.eventData ?

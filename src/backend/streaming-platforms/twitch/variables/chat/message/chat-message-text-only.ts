@@ -1,12 +1,10 @@
-import { EffectTrigger } from "../../../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../../../shared/variable-constants";
+import { ReplaceVariable, TriggersObject } from "../../../../../../types/variables";
 import { FirebotParsedMessagePart } from "../../../../../../types/chat";
-import { ReplaceVariable } from "../../../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.MANUAL] = true;
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.EVENT] = [
+const triggers: TriggersObject = {};
+triggers["manual"] = true;
+triggers["command"] = true;
+triggers["event"] = [
     "twitch:chat-message",
     "twitch:first-time-chat",
     "firebot:highlight-message",
@@ -33,14 +31,14 @@ const model: ReplaceVariable = {
             }
         ],
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "trigger based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (trigger, ...args: unknown[]) => {
         let messageParts: FirebotParsedMessagePart[] = [];
-        if (trigger?.type === EffectTrigger.COMMAND && trigger.metadata?.chatMessage?.parts) {
+        if (trigger?.type === "command" && trigger.metadata?.chatMessage?.parts) {
             messageParts = trigger.metadata.chatMessage.parts;
-        } else if (trigger?.type === EffectTrigger.EVENT && trigger.metadata?.eventData?.chatMessage?.parts) {
+        } else if (trigger?.type === "event" && trigger.metadata?.eventData?.chatMessage?.parts) {
             messageParts = trigger.metadata.eventData.chatMessage.parts;
         }
 
@@ -52,7 +50,7 @@ const model: ReplaceVariable = {
             .filter(tp => tp !== "");
 
         // Trim the command trigger if this was a command, unless an optional argument of false was provided.
-        if (trigger?.type === EffectTrigger.COMMAND && trigger?.metadata?.userCommand?.trigger !== null &&
+        if (trigger?.type === "command" && trigger?.metadata?.userCommand?.trigger !== null &&
             (args.length < 1 || !(args[0] === false || `${args[0]}`.toLowerCase() === "false"))) {
 
             const triggerRegex = new RegExp(trigger.metadata.userCommand.trigger, "i");

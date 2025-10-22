@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import { AccountAccess } from "../../../../common/account-access";
 import { TwitchApi } from "../../api";
 import channelRewardManager from "../../../../channel-rewards/channel-reward-manager";
@@ -15,8 +14,8 @@ const model : ReplaceVariable = {
                 description: "The channel point cost of the given reward. Name must be exact!"
             }
         ],
-        categories: [VariableCategory.COMMON],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["common"],
+        possibleDataOutput: ["number"]
     },
     evaluator: async (trigger, rewardName: string) => {
         let rewardData;

@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 import viewerDatabase from "../../../viewers/viewer-database";
 
@@ -18,8 +17,8 @@ const model : ReplaceVariable = {
                 description: "Returns view time for specified viewer"
             }
         ],
-        categories: [VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
+        categories: ["user based"],
+        possibleDataOutput: ["number", "text"]
     },
     evaluator: async (trigger, username: string) => {
         if (username == null) {

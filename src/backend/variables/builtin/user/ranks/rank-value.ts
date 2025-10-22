@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import viewerRankManager from "../../../../ranks/rank-manager";
 import viewerDatabase from "../../../../viewers/viewer-database";
 import logger from "../../../../logwrapper";
@@ -9,8 +8,8 @@ const model : ReplaceVariable = {
         handle: "rankValue",
         usage: "rankValue[rankLadderName, rankName]",
         description: "Returns the threshold value of the specified rank in the rank ladder. Only applicable to auto rank ladders.",
-        categories: [VariableCategory.COMMON, VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["common", "user based"],
+        possibleDataOutput: ["number"]
     },
     evaluator: async (trigger, rankLadderName: string, rankName: string) : Promise<number> => {
         if (!rankLadderName?.length || !rankName?.length) {

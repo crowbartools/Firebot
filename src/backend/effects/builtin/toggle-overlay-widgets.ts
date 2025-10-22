@@ -1,7 +1,6 @@
 import { EffectType } from "../../../types/effects";
-import { EffectCategory } from '../../../shared/effect-constants';
-import overlayWidgetConfigManager from "../../overlay-widgets/overlay-widget-config-manager";
 import { OverlayWidgetConfig } from "../../../types/overlay-widgets";
+import overlayWidgetConfigManager from "../../overlay-widgets/overlay-widget-config-manager";
 
 const effect: EffectType<{
     mode: "toggle" | "disable" | "enable";
@@ -12,7 +11,7 @@ const effect: EffectType<{
         name: "Toggle Overlay Widgets",
         description: "Toggle the active status of overlay widgets.",
         icon: "fad fa-toggle-off",
-        categories: [EffectCategory.OVERLAY, EffectCategory.ADVANCED],
+        categories: ["overlay", "advanced"],
         dependencies: []
     },
     optionsTemplate: `

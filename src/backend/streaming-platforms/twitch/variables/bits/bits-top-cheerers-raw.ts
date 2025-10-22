@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 
 import topBitsCheerers from './bits-top-cheerers';
 
@@ -21,8 +20,8 @@ const model : ReplaceVariable = {
                 description: "Returns a raw array of the usernames up to the specified count, of the users who have cheered the most bits in the streamer's channel during the specified period that occurred on the specified date. Period can be 'day', 'week', 'month', 'year', or 'all'."
             }
         ],
-        categories: [VariableCategory.COMMON, VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.ARRAY],
+        categories: ["common", "user based"],
+        possibleDataOutput: ["array"],
         hidden: true
     },
     argsCheck: topBitsCheerers.argsCheck,

@@ -1,5 +1,4 @@
 import { EffectType } from "../../../types/effects";
-import { EffectCategory } from "../../../shared/effect-constants";
 import { TimerManager } from "../../timers/timer-manager";
 
 const effect: EffectType<{
@@ -13,7 +12,7 @@ const effect: EffectType<{
         name: "Toggle Timer",
         description: "Toggle a timer's active status",
         icon: "fad fa-toggle-off",
-        categories: [EffectCategory.COMMON],
+        categories: ["common"],
         dependencies: []
     },
     optionsTemplate: `

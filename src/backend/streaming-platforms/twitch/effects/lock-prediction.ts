@@ -1,7 +1,6 @@
 import { EffectType } from "../../../../types/effects";
-import { EffectCategory } from "../../../../shared/effect-constants";
-import logger from "../../../logwrapper";
 import { TwitchApi } from "../api";
+import logger from "../../../logwrapper";
 
 const model: EffectType = {
     definition: {
@@ -9,7 +8,7 @@ const model: EffectType = {
         name: "Lock Twitch Prediction",
         description: "Locks the currently active Twitch prediction so that no more predictions can be made",
         icon: "fad fa-lock",
-        categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
+        categories: ["common", "twitch"],
         dependencies: {
             twitch: true
         }

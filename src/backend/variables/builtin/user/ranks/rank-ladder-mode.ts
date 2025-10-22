@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import viewerRankManager from "../../../../ranks/rank-manager";
 import viewerDatabase from "../../../../viewers/viewer-database";
 import logger from "../../../../logwrapper";
@@ -9,8 +8,8 @@ const model : ReplaceVariable = {
         handle: "rankLadderMode",
         usage: "rankLadderMode[rankLadderName]",
         description: "Returns the mode of the specified rank ladder (e.g. 'auto' or 'manual')",
-        categories: [VariableCategory.COMMON, VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "user based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: async (trigger, rankLadderName: string) : Promise<string | null> => {
         if (!rankLadderName?.length) {

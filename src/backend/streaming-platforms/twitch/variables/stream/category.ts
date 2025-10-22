@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import { TwitchApi } from "../../api";
 import { AccountAccess } from "../../../../common/account-access";
 
@@ -22,8 +21,8 @@ const model : ReplaceVariable = {
                 description: "Gets the category/game set for a specific channel."
             }
         ],
-        categories: [VariableCategory.COMMON, VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "user based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: async (trigger, username: string) => {
         if (username == null) {

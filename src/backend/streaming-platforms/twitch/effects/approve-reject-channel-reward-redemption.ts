@@ -1,5 +1,4 @@
 import { EffectType } from "../../../../types/effects";
-import { EffectCategory } from "../../../../shared/effect-constants";
 import channelRewardManager from "../../../channel-rewards/channel-reward-manager";
 
 const model: EffectType<{
@@ -14,7 +13,7 @@ const model: EffectType<{
         name: "Approve/Reject Channel Reward Redemption",
         description: "Approves or rejects a pending Twitch channel reward redemption",
         icon: "fad fa-check-circle",
-        categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
+        categories: ["common", "twitch"],
         dependencies: {
             twitch: true
         }

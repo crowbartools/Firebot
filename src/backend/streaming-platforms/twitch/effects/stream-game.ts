@@ -1,7 +1,6 @@
 import { EffectType } from "../../../../types/effects";
-import { EffectCategory } from "../../../../shared/effect-constants";
-import { TwitchApi } from "../api";
 import { EventManager } from "../../../events/event-manager";
+import { TwitchApi } from "../api";
 import logger from "../../../logwrapper";
 
 const model: EffectType<{
@@ -15,7 +14,7 @@ const model: EffectType<{
         name: "Set Stream Category",
         description: "Set the stream category/game.",
         icon: "fad fa-gamepad",
-        categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
+        categories: ["common", "Moderation", "twitch"],
         dependencies: {
             twitch: true
         }

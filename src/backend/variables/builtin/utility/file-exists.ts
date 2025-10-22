@@ -1,5 +1,4 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import fs from "fs";
 import logger from "../../../logwrapper";
 
@@ -8,8 +7,8 @@ const model : ReplaceVariable = {
         handle: "fileExists",
         usage: 'fileExists[path\\to\\file.txt]',
         description: "Returns true if a file exists, otherwise returns false.",
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (
         trigger: Trigger,

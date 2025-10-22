@@ -1,11 +1,9 @@
-import { ReplaceVariable } from "../../../../../../types/variables";
-import { EffectTrigger } from "../../../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../../../shared/variable-constants";
+import { ReplaceVariable , TriggersObject } from "../../../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.MANUAL] = true;
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.EVENT] = [
+const triggers: TriggersObject = {};
+triggers["manual"] = true;
+triggers["command"] = true;
+triggers["event"] = [
     "twitch:chat-message",
     "twitch:chat-message-deleted",
     "twitch:first-time-chat",
@@ -19,8 +17,8 @@ const model : ReplaceVariable = {
         handle: "chatMessage",
         description: "Outputs the chat message from the associated command or event.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
+        categories: ["common", "trigger based"],
+        possibleDataOutput: ["number", "text"]
     },
     evaluator: (trigger) => {
 
@@ -28,13 +26,13 @@ const model : ReplaceVariable = {
         if (trigger.metadata.chatMessage) {
             chatMessage = trigger.metadata.chatMessage.rawText;
 
-        } else if (trigger.type === EffectTrigger.COMMAND) {
+        } else if (trigger.type === "command") {
 
             //if trigger is command, rebuild chat message with trigger and args
             const userCommand = trigger.metadata.userCommand;
             chatMessage = `${userCommand.trigger} ${userCommand.args.join(" ")}`;
 
-        } else if (trigger.type === EffectTrigger.EVENT || trigger.type === EffectTrigger.MANUAL) {
+        } else if (trigger.type === "event" || trigger.type === "manual") {
             // if trigger is event/manual event, build chat message from chat event data
             chatMessage = trigger.metadata.eventData.messageText as string;
         }

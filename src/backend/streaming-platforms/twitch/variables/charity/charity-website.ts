@@ -1,23 +1,21 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { EffectTrigger } from "../../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import { ReplaceVariable , TriggersObject } from "../../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.EVENT] = [
+const triggers: TriggersObject = {};
+triggers["event"] = [
     "twitch:charity-campaign-start",
     "twitch:charity-donation",
     "twitch:charity-campaign-progress",
     "twitch:charity-campaign-end"
 ];
-triggers[EffectTrigger.MANUAL] = true;
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
         handle: "charityWebsite",
         description: "The URL of the charity's website",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "trigger based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (trigger) => {
         const charityWebsite = (trigger.metadata.eventData && trigger.metadata.eventData.charityWebsite) || "";

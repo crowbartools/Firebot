@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import logger from "../../../../logwrapper";
 import { TwitchApi } from "../../api";
 import { TwitchGoalTypes } from "../../../../../types/goals";
@@ -18,8 +17,8 @@ const model: ReplaceVariable = {
                 description: "Gets the description for the active channel goal of this specific type. Types are `follow`, `sub`, `subpoint`, `newsub`, or `newsubpoint`."
             }
         ],
-        categories: [VariableCategory.TEXT],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["text"],
+        possibleDataOutput: ["text"]
     },
     evaluator: async (trigger, type: string) => {
         const goals = await TwitchApi.goals.getCurrentChannelGoals();

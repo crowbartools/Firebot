@@ -1,15 +1,13 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { EffectTrigger } from "../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import { ReplaceVariable, Trigger, TriggersObject } from "../../../../types/variables";
 import { UserCommand } from "../../../../types/commands";
 
-const triggers = {};
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.CHANNEL_REWARD] = true;
-triggers[EffectTrigger.EVENT] = [
+const triggers: TriggersObject = {};
+triggers["command"] = true;
+triggers["channel_reward"] = true;
+triggers["event"] = [
     "twitch:chat-message"
 ];
-triggers[EffectTrigger.MANUAL] = true;
+triggers["manual"] = true;
 
 /**
  * The $target variable
@@ -26,8 +24,8 @@ const model : ReplaceVariable = {
             }
         ],
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "trigger based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (trigger: Trigger, index: number) => {
         let args = trigger.metadata.userCommand?.args

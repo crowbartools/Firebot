@@ -1,7 +1,6 @@
 import { EffectType } from "../../../../types/effects";
-import { EffectCategory } from "../../../../shared/effect-constants";
-import logger from "../../../logwrapper";
 import { TwitchApi } from "../api";
+import logger from "../../../logwrapper";
 
 const model: EffectType<{
     archivePoll: boolean;
@@ -11,7 +10,7 @@ const model: EffectType<{
         name: "End Twitch Poll",
         description: "Ends the currently active Twitch poll",
         icon: "fad fa-stop-circle",
-        categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
+        categories: ["common", "twitch"],
         dependencies: {
             twitch: true
         }

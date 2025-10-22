@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const moment = require("moment");
 
@@ -25,8 +24,8 @@ const model : ReplaceVariable = {
             }
         ],
         description: "The current date formatted as MMM Do YYYY",
-        categories: [VariableCategory.COMMON],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common"],
+        possibleDataOutput: ["text"]
     },
 
     evaluator: (_, template = 'MMM Do YYYY', steps: number = 0, key) => {

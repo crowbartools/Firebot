@@ -1,6 +1,5 @@
-import { EffectType } from "../../../../types/effects";
-import { EffectCategory } from "../../../../shared/effect-constants";
 import { HelixChatAnnouncementColor } from "@twurple/api";
+import { EffectType } from "../../../../types/effects";
 import { TwitchApi } from "../api";
 
 const model: EffectType<{
@@ -13,7 +12,7 @@ const model: EffectType<{
         name: "Announce",
         description: "Send an announcement to your chat",
         icon: "fad fa-bullhorn",
-        categories: [EffectCategory.COMMON, EffectCategory.CHAT_BASED, EffectCategory.TWITCH],
+        categories: ["common", "chat based", "twitch"],
         dependencies: {
             twitch: true
         }

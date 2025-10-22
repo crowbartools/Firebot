@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType } from "../../../../../shared/variable-constants";
 import { AccountAccess } from "../../../../common/account-access";
 import { TwitchApi } from "../../api";
 import logger from "../../../../logwrapper";
@@ -15,7 +14,7 @@ const model : ReplaceVariable = {
                 description: 'Returns: [{username: "firebottle", displayname: "FireBottle", tier: 2000, isGift:false}, {username: "ebiggz", displayname: "EBiggz", tier: 1000, isGift:true}] To be used with array or custom variables.'
             }
         ],
-        possibleDataOutput: [OutputDataType.ARRAY]
+        possibleDataOutput: ["array"]
     },
     evaluator: async () => {
         const { streamer } = AccountAccess.getAccounts();

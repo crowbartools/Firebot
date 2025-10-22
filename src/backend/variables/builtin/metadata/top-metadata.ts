@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType } from "../../../../shared/variable-constants";
 
 import viewerMetadataManager from "../../../viewers/viewer-metadata-manager";
 import { commafy } from "../../../utils";
@@ -15,7 +14,7 @@ const model : ReplaceVariable = {
                 description: "Returns comma-separated list of top 5 users with their death counts"
             }
         ],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: ["text"]
     },
 
 

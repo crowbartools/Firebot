@@ -1,9 +1,6 @@
-"use strict";
-
 import { EffectType } from "../../../types/effects";
-import { EffectCategory } from "../../../shared/effect-constants";
-import logger from "../../logwrapper";
 import { evalSandboxedJs } from "../../common/handlers/js-sandbox/sandbox-eval";
+import logger from "../../logwrapper";
 
 const effect: EffectType<{
     code: string;
@@ -14,7 +11,7 @@ const effect: EffectType<{
         name: "Evaluate JavaScript",
         description: "Evaluate a JavaScript expression",
         icon: "fab fa-js",
-        categories: [EffectCategory.ADVANCED],
+        categories: ["advanced"],
         dependencies: [],
         outputs: [
             {

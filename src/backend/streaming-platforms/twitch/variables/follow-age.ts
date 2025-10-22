@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import { TwitchApi } from "../api";
 
 import moment from "moment";
@@ -23,8 +22,8 @@ const model : ReplaceVariable = {
                 description: "Gets how long the specified username has been following the channel in a specific unit of time (in years, months, days, hours, or minutes)."
             }
         ],
-        categories: [VariableCategory.NUMBERS, VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["numbers", "user based"],
+        possibleDataOutput: ["number"]
     },
     evaluator: async (
         trigger,

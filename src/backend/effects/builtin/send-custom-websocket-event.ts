@@ -1,7 +1,6 @@
 import { EffectType } from "../../../types/effects";
-import { EffectCategory } from "../../../shared/effect-constants";
-import logger from "../../logwrapper";
 import HttpServerManager from "../../../server/http-server-manager";
+import logger from "../../logwrapper";
 
 const effect: EffectType<{
     eventName: string;
@@ -12,7 +11,7 @@ const effect: EffectType<{
         name: "Send Custom WebSocket Event",
         description: "Sends a custom event and any relevant data to all connected WebSocket clients",
         icon: "fad fa-plug",
-        categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
+        categories: ["advanced", "scripting"],
         dependencies: []
     },
     optionsTemplate: `
@@ -49,7 +48,7 @@ const effect: EffectType<{
                 inputType: "codemirror",
                 menuPosition: "under",
                 codeMirrorOptions: {
-                    mode: {name: "javascript", json: true},
+                    mode: { name: "javascript", json: true },
                     theme: 'blackboard',
                     lineNumbers: true,
                     autoRefresh: true,
@@ -70,7 +69,7 @@ const effect: EffectType<{
     getDefaultLabel: (effect) => {
         return effect.eventName;
     },
-    onTriggerEvent: async ({ effect }) => {
+    onTriggerEvent: ({ effect }) => {
         try {
             let data: unknown = effect.eventData ?? {};
 

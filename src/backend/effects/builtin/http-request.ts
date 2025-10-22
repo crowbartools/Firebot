@@ -1,11 +1,11 @@
 import { EffectType, EffectList } from "../../../types/effects";
 import { KeyValuePair } from "../../../types/util-types";
-import { EffectCategory } from "../../../shared/effect-constants";
-import logger from "../../logwrapper";
-import twitchAuth from "../../streaming-platforms/twitch/auth/twitch-auth";
+
 import { AccountAccess } from "../../common/account-access";
 import customVariableManager from "../../common/custom-variable-manager";
 import effectRunner from "../../common/effect-runner";
+import twitchAuth from "../../streaming-platforms/twitch/auth/twitch-auth";
+import logger from "../../logwrapper";
 
 type ErrorWithResponseData = Error & {
     responseData: string;
@@ -37,7 +37,7 @@ const effect: EffectType<{
         name: "HTTP Request",
         description: "Send an HTTP request to a given url",
         icon: "fad fa-terminal",
-        categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
+        categories: ["advanced", "scripting"],
         dependencies: [],
         outputs: [
             {

@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import logger from '../../../logwrapper';
 
 
@@ -8,8 +7,8 @@ const model : ReplaceVariable = {
         handle: "objectKeys",
         description: "Gets an array of the keys for a given object.",
         usage: "objectKeys[object]",
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.ARRAY]
+        categories: ["advanced"],
+        possibleDataOutput: ["array"]
     },
     evaluator: (
         _,

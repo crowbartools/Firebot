@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType } from "../../../../shared/variable-constants";
 import apiProcessor from "../../../common/handlers/apiProcessor";
 
 const model : ReplaceVariable = {
@@ -7,7 +6,7 @@ const model : ReplaceVariable = {
         handle: "randomAdvice",
         usage: "randomAdvice",
         description: "Get some random advice!",
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: ["text"]
     },
     evaluator: async () => {
         return await apiProcessor.getApiResponse("Advice");

@@ -1,18 +1,16 @@
-import { ReplaceVariable } from "../../../../../../types/variables";
-import { EffectTrigger } from "../../../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../../../shared/variable-constants";
+import { ReplaceVariable , TriggersObject } from "../../../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:chat-mode-changed"];
-triggers[EffectTrigger.MANUAL] = true;
+const triggers: TriggersObject = {};
+triggers["event"] = ["twitch:chat-mode-changed"];
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
         handle: "chatModeState",
         description: "The state of the chat mode, either 'enabled' or 'disabled'.",
         triggers: triggers,
-        categories: [VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["trigger based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (trigger) => {
         return trigger.metadata.eventData.chatModeState;

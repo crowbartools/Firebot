@@ -1,5 +1,4 @@
 import { EffectType } from "../../../types/effects";
-import { EffectCategory } from "../../../shared/effect-constants";
 import frontendCommunicator from "../../common/frontend-communicator";
 
 const effect: EffectType<{
@@ -10,7 +9,7 @@ const effect: EffectType<{
         name: "Copy Text to Clipboard",
         description: "Copy text to the system clipboard",
         icon: "fad fa-copy",
-        categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
+        categories: ["advanced", "scripting"],
         dependencies: []
     },
     optionsTemplate: `

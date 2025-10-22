@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import frontendCommunicator from "../../../common/frontend-communicator";
 import logger from "../../../logwrapper";
 
@@ -18,8 +17,8 @@ const model : ReplaceVariable = {
                 description: "Returns the duration of the video file from a URL in seconds."
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
+        categories: ["advanced"],
+        possibleDataOutput: ["text", "number"]
     },
     evaluator: async (trigger, url: string) => {
         if (url == null) {

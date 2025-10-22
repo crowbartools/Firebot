@@ -1,7 +1,6 @@
 import { EffectType } from "../../../../types/effects";
-import { EffectCategory } from "../../../../shared/effect-constants";
-import logger from "../../../logwrapper";
 import { TwitchApi } from "../api";
+import logger from "../../../logwrapper";
 
 const model: EffectType<{
     outcome: number;
@@ -12,7 +11,7 @@ const model: EffectType<{
         description:
             "Resolves the currently active Twitch prediction by selecting an outcome and pays out channel points to the winners",
         icon: "fad fa-trophy-alt",
-        categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
+        categories: ["common", "twitch"],
         dependencies: {
             twitch: true
         }

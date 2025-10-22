@@ -1,18 +1,16 @@
-import { ReplaceVariable, Trigger } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
-import { EffectTrigger } from "../../../../../shared/effect-constants";
+import { ReplaceVariable, Trigger, TriggersObject } from "../../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:bits-powerup-gigantified-emote"];
-triggers[EffectTrigger.MANUAL] = true;
+const triggers: TriggersObject = {};
+triggers["event"] = ["twitch:bits-powerup-gigantified-emote"];
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
         handle: "gigantifiedEmoteName",
         description: "The name of the gigantified emote.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "trigger based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (trigger: Trigger) => trigger.metadata.eventData.emoteName
 };

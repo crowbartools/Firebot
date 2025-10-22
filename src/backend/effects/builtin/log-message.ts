@@ -1,5 +1,4 @@
 import { EffectType } from "../../../types/effects";
-import { EffectCategory } from "../../../shared/effect-constants";
 import logger from "../../logwrapper";
 
 const effect: EffectType<{
@@ -11,7 +10,7 @@ const effect: EffectType<{
         name: "Log Message",
         description: "Adds an entry to the Firebot log. This is useful for debugging.",
         icon: "fad fa-file-alt",
-        categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
+        categories: ["advanced", "scripting"],
         dependencies: []
     },
     optionsTemplate: `

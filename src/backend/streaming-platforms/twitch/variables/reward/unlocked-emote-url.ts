@@ -1,22 +1,19 @@
-import { ReplaceVariable, Trigger } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import { ReplaceVariable, Trigger, TriggersObject } from "../../../../../types/variables";
 
-import { EffectTrigger } from "../../../../../shared/effect-constants";
-
-const triggers = {};
-triggers[EffectTrigger.EVENT] = [
+const triggers: TriggersObject = {};
+triggers["event"] = [
     "twitch:channel-reward-redemption-random-sub-emote-unlock",
     "twitch:channel-reward-redemption-chosen-sub-emote-unlock",
     "twitch:channel-reward-redemption-chosen-modified-sub-emote-unlock"
 ];
-triggers[EffectTrigger.MANUAL] = true;
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
         handle: "unlockedEmoteUrl",
         description: "The URL of the unlocked emote",
-        categories: [VariableCategory.COMMON],
-        possibleDataOutput: [OutputDataType.TEXT],
+        categories: ["common"],
+        possibleDataOutput: ["text"],
         triggers: triggers
     },
     evaluator: (trigger: Trigger) => trigger.metadata.eventData.emoteUrl || ""

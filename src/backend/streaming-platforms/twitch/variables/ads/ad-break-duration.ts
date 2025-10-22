@@ -1,22 +1,20 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { EffectTrigger } from "../../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.EVENT] = [
+const triggers: TriggersObject = {};
+triggers["event"] = [
     "twitch:ad-break-upcoming",
     "twitch:ad-break-start",
     "twitch:ad-break-end"
 ];
-triggers[EffectTrigger.MANUAL] = true;
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
         handle: "adBreakDuration",
         description: "The duration of the triggered ad break, in seconds",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["common", "trigger based"],
+        possibleDataOutput: ["number"]
     },
     evaluator: (trigger) => {
         const adBreakDuration = trigger.metadata?.eventData?.adBreakDuration ?? 0;

@@ -1,5 +1,4 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 import currencyAccess from "../../../currency/currency-access";
 import currencyManager from "../../../currency/currency-manager";
@@ -11,8 +10,8 @@ const model : ReplaceVariable = {
         usage: "currencyRank[currencyName]",
         hasSuggestions: true,
         noSuggestionsText: "No currencies have been created yet.",
-        categories: [VariableCategory.USER, VariableCategory.NUMBERS],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["user based", "numbers"],
+        possibleDataOutput: ["number"]
     },
     getSuggestions: async () => {
         const currencies = Object.values(currencyAccess.getCurrencies());

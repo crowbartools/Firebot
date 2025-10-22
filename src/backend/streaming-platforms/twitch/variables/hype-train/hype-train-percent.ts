@@ -1,18 +1,16 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { EffectTrigger } from "../../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import { ReplaceVariable , TriggersObject } from "../../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:hype-train-start", "twitch:hype-train-progress"];
-triggers[EffectTrigger.MANUAL] = true;
+const triggers: TriggersObject = {};
+triggers["event"] = ["twitch:hype-train-start", "twitch:hype-train-progress"];
+triggers["manual"] = true;
 
 const model: ReplaceVariable = {
     definition: {
         handle: "hypeTrainPercent",
         description: "The percent completion of the current level of the Twitch Hype Train.",
         triggers: triggers,
-        categories: [VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["trigger based"],
+        possibleDataOutput: ["number"]
     },
     evaluator: (trigger) => {
         const progress = trigger.metadata.eventData.progress as number;

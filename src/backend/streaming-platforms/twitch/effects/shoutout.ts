@@ -1,8 +1,7 @@
 import { EffectType } from "../../../../types/effects";
-import { EffectCategory } from "../../../../shared/effect-constants";
-import logger from "../../../logwrapper";
 import { TwitchApi } from "../api";
 import frontendCommunicator from "../../../common/frontend-communicator";
+import logger from "../../../logwrapper";
 
 const model: EffectType<{
     username: string;
@@ -12,7 +11,7 @@ const model: EffectType<{
         name: "Twitch Shoutout",
         description: "Send a Twitch shoutout to another channel",
         icon: "fad fa-bullhorn",
-        categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
+        categories: ["common", "twitch"],
         dependencies: {
             twitch: true
         }

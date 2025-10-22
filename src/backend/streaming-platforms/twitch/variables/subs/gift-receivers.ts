@@ -1,10 +1,8 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { EffectTrigger } from "../../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import { ReplaceVariable , TriggersObject } from "../../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:community-subs-gifted"];
-triggers[EffectTrigger.MANUAL] = true;
+const triggers: TriggersObject = {};
+triggers["event"] = ["twitch:community-subs-gifted"];
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
@@ -21,8 +19,8 @@ const model : ReplaceVariable = {
             }
         ],
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.USER, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.ALL]
+        categories: ["common", "user based", "trigger based"],
+        possibleDataOutput: ["ALL"]
     },
     evaluator: (trigger, target: null | number = null, property) => {
         if (trigger == null || trigger.metadata == null || trigger.metadata.eventData == null || trigger.metadata.eventData.giftReceivers == null) {

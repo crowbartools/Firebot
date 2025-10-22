@@ -1,5 +1,4 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 import arrayFindIndex from "./array-find-index";
 
@@ -30,8 +29,8 @@ const model : ReplaceVariable = {
                 description: 'Searches each item in the array for an item that has a "key" property that equals "value"'
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
+        categories: ["advanced"],
+        possibleDataOutput: ["text", "number"]
     },
 
     evaluator: (

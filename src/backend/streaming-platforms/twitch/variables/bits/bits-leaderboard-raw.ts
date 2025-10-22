@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 
 import bitsLeaderboard from './bits-leaderboard';
 
@@ -18,8 +17,8 @@ const model : ReplaceVariable = {
                 description: "Returns a raw array of the bits leaderboard of the streamer's channel during the specified period that occurred on the specified date, up to the specified count. Each object in the array has a `username` and `amount`. Period can be 'day', 'week', 'month', 'year', or 'all'."
             }
         ],
-        categories: [VariableCategory.COMMON, VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.ARRAY],
+        categories: ["common", "advanced"],
+        possibleDataOutput: ["array"],
         hidden: true
     },
     evaluator: bitsLeaderboard.evaluator,

@@ -1,18 +1,16 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { EffectTrigger } from "../../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import { ReplaceVariable , TriggersObject } from "../../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:sub", "twitch:prime-sub-upgraded"];
-triggers[EffectTrigger.MANUAL] = true;
+const triggers: TriggersObject = {};
+triggers["event"] = ["twitch:sub", "twitch:prime-sub-upgraded"];
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
         handle: "subType",
         description: "The type of subscription (Tier 1, Tier 2, Tier 3, Prime)",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "trigger based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (trigger) => {
         switch (trigger.metadata.eventData.subPlan) {

@@ -1,4 +1,3 @@
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import { ReplaceVariable } from "../../../../types/variables";
 import { ActiveUserHandler } from '../../../chat/active-user-handler';
 import logger from "../../../logwrapper";
@@ -36,8 +35,8 @@ const model : ReplaceVariable = {
                 description: "Get an object representing a random active chatter. The result will include `username` and `id` properties."
             }
         ],
-        categories: [VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.OBJECT]
+        categories: ["user based"],
+        possibleDataOutput: ["text", "object"]
     },
     evaluator: (_trigger, roles?: string | string[], ignoreUsers?: string | string[], ignoreRoles?: string | string[], propName?: string) => {
         const failResult = "[Unable to get random active user]";

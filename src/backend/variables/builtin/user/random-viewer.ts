@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import { ActiveUserHandler } from "../../../chat/active-user-handler";
 import logger from "../../../logwrapper";
 import customRolesManager from "../../../roles/custom-roles-manager";
@@ -9,8 +8,8 @@ const model : ReplaceVariable = {
     definition: {
         handle: "randomViewer",
         description: "Get a random viewer's username that is presently in your channel's chat.",
-        categories: [VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.OBJECT],
+        categories: ["user based"],
+        possibleDataOutput: ["text", "object"],
         examples: [
             {
                 usage: "randomViewer[customRolesToInclude, usersToExclude, customRolesToExclude, username|displayName|id|raw]",

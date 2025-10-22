@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import { AccountAccess } from "../../../../common/account-access";
 import { TwitchApi } from "../../api";
 
@@ -17,8 +16,8 @@ const model: ReplaceVariable = {
                 description: "Gets the URL for the latest Twitch clip from the specified user's channel."
             }
         ],
-        categories: [VariableCategory.TEXT],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["text"],
+        possibleDataOutput: ["text"]
     },
     evaluator: async (trigger, username: string) => {
         if (!username) {

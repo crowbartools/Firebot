@@ -1,5 +1,4 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { TriggerType } from "../../../../common/EffectType";
+import { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
 import {
     OBS_EVENT_SOURCE_ID,
     OBS_INPUT_CREATED_EVENT_ID,
@@ -15,10 +14,9 @@ import {
     OBS_INPUT_AUDIO_MONITOR_TYPE_CHANGED_EVENT_ID,
     OBS_INPUT_AUDIO_TRACKS_CHANGED_EVENT_ID
 } from "../constants";
-import { VariableCategory } from "../../../../../shared/variable-constants";
 
-const triggers = {};
-triggers[TriggerType.EVENT] = [
+const triggers: TriggersObject = {};
+triggers["event"] = [
     `${OBS_EVENT_SOURCE_ID}:${OBS_INPUT_CREATED_EVENT_ID}`,
     `${OBS_EVENT_SOURCE_ID}:${OBS_INPUT_REMOVED_EVENT_ID}`,
     `${OBS_EVENT_SOURCE_ID}:${OBS_INPUT_NAME_CHANGED_EVENT_ID}`,
@@ -32,16 +30,16 @@ triggers[TriggerType.EVENT] = [
     `${OBS_EVENT_SOURCE_ID}:${OBS_INPUT_AUDIO_MONITOR_TYPE_CHANGED_EVENT_ID}`,
     `${OBS_EVENT_SOURCE_ID}:${OBS_INPUT_AUDIO_TRACKS_CHANGED_EVENT_ID}`
 ];
-triggers[TriggerType.MANUAL] = true;
+triggers["manual"] = true;
 
 export const InputUuidVariable: ReplaceVariable = {
     definition: {
         handle: "obsInputUuid",
         description: "Returns the UUID of the OBS input.",
         possibleDataOutput: ["text"],
-        categories: [VariableCategory.ADVANCED, VariableCategory.INTEGRATION, VariableCategory.OBS]
+        categories: ["advanced", "integrations", "obs"]
     },
-    evaluator: async (trigger) => {
+    evaluator: (trigger) => {
         const inputUuid = trigger.metadata?.eventData?.inputUuid;
         return inputUuid ?? "Unknown";
     }

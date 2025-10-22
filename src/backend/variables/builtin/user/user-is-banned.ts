@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 
 const UserIsBannedVariable: ReplaceVariable = {
@@ -7,8 +6,8 @@ const UserIsBannedVariable: ReplaceVariable = {
         handle: "userIsBanned",
         usage: "userIsBanned[username]",
         description: "Returns `true` if the specified user is currently banned (not just timed out), otherwise returns `false`.",
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER, VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.BOOLEAN]
+        categories: ["common", "trigger based", "user based"],
+        possibleDataOutput: ["text", "bool"]
     },
     evaluator: async (trigger, username: string) => {
         if (username == null || username === "") {

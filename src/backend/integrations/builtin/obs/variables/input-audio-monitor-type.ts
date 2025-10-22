@@ -1,25 +1,23 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { TriggerType } from "../../../../common/EffectType";
+import { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
 import {
     OBS_EVENT_SOURCE_ID,
     OBS_INPUT_AUDIO_MONITOR_TYPE_CHANGED_EVENT_ID
 } from "../constants";
-import { VariableCategory } from "../../../../../shared/variable-constants";
 
-const triggers = {};
-triggers[TriggerType.EVENT] = [
+const triggers: TriggersObject = {};
+triggers["event"] = [
     `${OBS_EVENT_SOURCE_ID}:${OBS_INPUT_AUDIO_MONITOR_TYPE_CHANGED_EVENT_ID}`
 ];
-triggers[TriggerType.MANUAL] = true;
+triggers["manual"] = true;
 
 export const InputAudioMonitorTypeVariable: ReplaceVariable = {
     definition: {
         handle: "obsInputMonitorType",
         description: "Returns the audio monitor type of the OBS input. Values are `None`, `Monitor Only`, or `Monitor and Output`.",
         possibleDataOutput: ["text"],
-        categories: [VariableCategory.ADVANCED, VariableCategory.INTEGRATION, VariableCategory.OBS]
+        categories: ["advanced", "integrations", "obs"]
     },
-    evaluator: async (trigger) => {
+    evaluator: (trigger) => {
         const monitorType = trigger.metadata?.eventData?.monitorType;
 
         switch (monitorType) {

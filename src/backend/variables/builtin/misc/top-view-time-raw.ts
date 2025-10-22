@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType } from "../../../../shared/variable-constants";
 
 import viewerOnlineStatusManager from "../../../viewers/viewer-online-status-manager";
 
@@ -8,7 +7,7 @@ const model : ReplaceVariable = {
         handle: "rawTopViewTime",
         description: "Returns a raw array containing users with the most view time (in hours). Items contain `username`, 'place` and `minutes` properties.",
         usage: "rawTopViewTime[count]",
-        possibleDataOutput: [OutputDataType.ARRAY]
+        possibleDataOutput: ["array"]
     },
 
 

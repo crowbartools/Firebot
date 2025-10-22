@@ -1,5 +1,4 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import fs from "fs";
 import logger from "../../../logwrapper";
 
@@ -8,8 +7,8 @@ const model : ReplaceVariable = {
         handle: "fileLineCount",
         usage: "fileLineCount[\"path/to/file.txt\"]",
         description: "Count the number of lines in a text file.",
-        categories: [VariableCategory.NUMBERS],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["numbers"],
+        possibleDataOutput: ["number"]
     },
     evaluator: (
         trigger: Trigger,

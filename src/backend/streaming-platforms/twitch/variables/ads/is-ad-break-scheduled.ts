@@ -1,21 +1,19 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { EffectTrigger } from "../../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.EVENT] = [
+const triggers: TriggersObject = {};
+triggers["event"] = [
     "twitch:ad-break-start",
     "twitch:ad-break-end"
 ];
-triggers[EffectTrigger.MANUAL] = true;
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
         handle: "isAdBreakScheduled",
         description: "Whether or not the triggered ad break was scheduled",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.BOOLEAN]
+        categories: ["common", "trigger based"],
+        possibleDataOutput: ["bool"]
     },
     evaluator: (trigger) => {
         const isAdBreakScheduled = trigger.metadata?.eventData?.isAdBreakScheduled ?? false;

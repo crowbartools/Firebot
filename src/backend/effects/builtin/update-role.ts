@@ -1,10 +1,9 @@
 import { EffectType } from "../../../types/effects";
-import { EffectCategory } from "../../../shared/effect-constants";
+import { BasicViewer } from "../../../types/viewers";
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
 import customRolesManager from "../../roles/custom-roles-manager";
-import logger from "../../logwrapper";
 import viewerDatabase from "../../viewers/viewer-database";
-import { BasicViewer } from "../../../types/viewers";
+import logger from "../../logwrapper";
 
 /**
  * The 'Update Role' effect
@@ -24,7 +23,7 @@ const effect: EffectType<{
         name: "Update Viewer Roles",
         description: "Add, remove, or clear users from a custom role.",
         icon: "fad fa-user-tag",
-        categories: [EffectCategory.ADVANCED],
+        categories: ["advanced"],
         dependencies: []
     },
     optionsTemplate: `

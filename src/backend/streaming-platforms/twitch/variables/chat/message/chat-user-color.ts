@@ -1,6 +1,4 @@
-import { ReplaceVariable } from "../../../../../../types/variables";
-import { EffectTrigger } from "../../../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../../../shared/variable-constants";
+import { ReplaceVariable , TriggersObject } from "../../../../../../types/variables";
 import { AccountAccess } from "../../../../../common/account-access";
 import { TwitchApi } from "../../../api";
 import viewerDatabase from "../../../../../viewers/viewer-database";
@@ -21,8 +19,8 @@ const model : ReplaceVariable = {
                 description: "Gets the color for associated user (Ie who triggered command, pressed button, etc)."
             }
         ],
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER, VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "trigger based", "user based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: async (trigger, username: string) => {
         try {
@@ -36,7 +34,7 @@ const model : ReplaceVariable = {
             }
             if (trigger.metadata.chatMessage) {
                 chatColor = trigger?.metadata?.chatMessage?.color;
-            } else if (trigger.type === EffectTrigger.EVENT || trigger.type === EffectTrigger.MANUAL) {
+            } else if (trigger.type === "event" || trigger.type === "manual") {
                 chatColor = trigger?.metadata?.eventData?.chatMessage?.color;
             }
             if (chatColor == null) {

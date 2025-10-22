@@ -1,25 +1,23 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { EffectTrigger } from "../../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
 import { TwitchApi } from "../../api";
 
-const triggers = {};
-triggers[EffectTrigger.EVENT] = [
+const triggers: TriggersObject = {};
+triggers["event"] = [
     "twitch:charity-campaign-start",
     "twitch:charity-campaign-progress",
     "twitch:charity-campaign-end"
 ];
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.PRESET_LIST] = true;
-triggers[EffectTrigger.MANUAL] = true;
+triggers["command"] = true;
+triggers["preset"] = true;
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
         handle: "charityCampaignGoal",
         description: "The goal amount for the current charity campaign",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["common", "trigger based"],
+        possibleDataOutput: ["number"]
     },
     evaluator: async (trigger) => {
         let charityCampaignGoal = 0;

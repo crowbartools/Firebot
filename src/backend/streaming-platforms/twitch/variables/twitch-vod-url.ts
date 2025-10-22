@@ -1,4 +1,3 @@
-import { OutputDataType } from "../../../../shared/variable-constants";
 import { ReplaceVariable } from "../../../../types/variables";
 import { TwitchApi } from "../api";
 
@@ -12,7 +11,7 @@ const model : ReplaceVariable = {
                 description: "The current Twitch VOD URL including the current timestamp"
             }
         ],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: ["text"]
     },
     evaluator: async (trigger, includeCurrentTimestamp: boolean | string) => {
         const channelData = await TwitchApi.streams.getStreamersCurrentStream();

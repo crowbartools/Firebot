@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 import { stringify } from '../../../utils';
 import logger from '../../../logwrapper';
@@ -19,8 +18,8 @@ const model: ReplaceVariable = {
                 description: 'Returns an empty string because "test string" is not valid base64.'
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (_, text: unknown): string => {
         const decoder = new TextDecoder();

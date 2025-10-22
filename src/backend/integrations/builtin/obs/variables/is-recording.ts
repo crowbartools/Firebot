@@ -1,6 +1,5 @@
 import { ReplaceVariable } from "../../../../../types/variables";
 import { isRecording } from "../obs-remote";
-import { VariableCategory } from "../../../../../shared/variable-constants";
 
 export const IsRecordingVariable: ReplaceVariable = {
     definition: {
@@ -8,7 +7,7 @@ export const IsRecordingVariable: ReplaceVariable = {
         description:
       "Returns 'true' if OBS is currently recording or 'false' if it is not.",
         possibleDataOutput: ["bool"],
-        categories: [VariableCategory.ADVANCED, VariableCategory.INTEGRATION, VariableCategory.OBS]
+        categories: ["advanced", "integrations", "obs"]
     },
     evaluator: async () => {
         const recordState = await isRecording();

@@ -1,5 +1,4 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import { stringify, escapeRegExp } from '../../../utils';
 
 const model : ReplaceVariable = {
@@ -17,8 +16,8 @@ const model : ReplaceVariable = {
                 description: "Add flags when using a [regular expression](https://developer.mozilla.org/docs/Web/JavaScript/Guide/Regular_expressions)."
             }
         ],
-        categories: [VariableCategory.TEXT],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
+        categories: ["text"],
+        possibleDataOutput: ["text", "number"]
     },
     evaluator: (
         trigger: Trigger,

@@ -1,7 +1,6 @@
 import { app } from "electron";
 
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 import logger from "../../../logwrapper";
 
@@ -41,8 +40,8 @@ const model : ReplaceVariable = {
                 description: "Returns 'her' pronoun in she/her set if available, otherwise uses them."
             }
         ],
-        categories: [VariableCategory.COMMON],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common"],
+        possibleDataOutput: ["text"]
     },
     evaluator: async (
         trigger,

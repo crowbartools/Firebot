@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 import currencyAccess from "../../../currency/currency-access";
 import currencyManager from "../../../currency/currency-manager";
@@ -9,8 +8,8 @@ const model : ReplaceVariable = {
         handle: "topCurrencyUser",
         description: "Get the username or amount for a specific position in the top currency",
         usage: "topCurrencyUser[currencyName, position, username/amount]",
-        categories: [VariableCategory.USER, VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
+        categories: ["user based", "advanced"],
+        possibleDataOutput: ["text", "number"]
     },
     getSuggestions: async () => {
         const currencies = Object.values(currencyAccess.getCurrencies());

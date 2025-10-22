@@ -1,7 +1,6 @@
 import { EffectType } from "../../../../types/effects";
-import { EffectCategory } from "../../../../shared/effect-constants";
-import logger from "../../../logwrapper";
 import { TwitchApi } from "../api";
+import logger from "../../../logwrapper";
 
 const model: EffectType<{
     title: string;
@@ -13,7 +12,7 @@ const model: EffectType<{
         name: "Create Twitch Prediction",
         description: "Creates a Twitch prediction",
         icon: "fad fa-question-circle",
-        categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
+        categories: ["common", "twitch"],
         dependencies: {
             twitch: true
         }

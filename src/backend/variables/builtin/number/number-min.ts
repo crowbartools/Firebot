@@ -1,5 +1,4 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const normalizeNumber = (input) => {
     const value = Number(input);
@@ -29,8 +28,8 @@ const model : ReplaceVariable = {
                 description: "Returns 3, the lowest value from the input stringified array and numbers"
             }
         ],
-        categories: [VariableCategory.NUMBERS],
-        possibleDataOutput: [OutputDataType.NULL, OutputDataType.NUMBER]
+        categories: ["numbers"],
+        possibleDataOutput: ["null", "number"]
     },
     evaluator: (
         trigger: Trigger,

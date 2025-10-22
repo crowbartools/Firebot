@@ -1,5 +1,4 @@
 import { EffectType } from "../../../types/effects";
-import { EffectCategory } from "../../../shared/effect-constants";
 import * as cloudSync from "../../cloud-sync";
 
 const effect: EffectType<{
@@ -10,7 +9,7 @@ const effect: EffectType<{
         name: "Sync Data to Profile Page",
         description: "Syncs your data to your Firebot profile page",
         icon: "fad fa-sync",
-        categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
+        categories: ["advanced", "scripting"],
         dependencies: {
             twitch: true
         }

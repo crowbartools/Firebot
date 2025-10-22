@@ -1,5 +1,4 @@
 import { EffectType } from "../../../../types/effects";
-import { EffectCategory } from '../../../../shared/effect-constants';
 import overlayWidgetConfigManager from "../../../overlay-widgets/overlay-widget-config-manager";
 import logger from "../../../logwrapper";
 import type { DynamicCountdownWidgetConfig } from "../../../overlay-widgets/builtin-types/countdown/countdown-dynamic";
@@ -17,7 +16,7 @@ const model: EffectType<{
         name: "Update Countdown (Dynamic)",
         description: "Update a dynamic countdown timer's remaining time.",
         icon: "fad fa-hourglass-half",
-        categories: [EffectCategory.OVERLAY, EffectCategory.ADVANCED],
+        categories: ["overlay", "advanced"],
         dependencies: []
     },
     optionsTemplate: `
@@ -130,7 +129,7 @@ const model: EffectType<{
         const countdownName = overlayWidgetsService.getOverlayWidgetConfig(effect.countdownWidgetId)?.name ?? "Unknown Countdown";
         return `${effect.action === "add" ? "Update" : "Set"} ${countdownName} ${effect.action === "add" ? "by" : "to"} ${effect.value}`;
     },
-    onTriggerEvent: async (event) => {
+    onTriggerEvent: (event) => {
         const { effect } = event;
 
         if (effect.countdownWidgetId == null || effect.action == null) {

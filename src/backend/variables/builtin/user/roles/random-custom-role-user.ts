@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import customRolesManager from "../../../../roles/custom-roles-manager";
 import logger from "../../../../logwrapper";
 import { getRandomInt } from "../../../../utils";
@@ -9,8 +8,8 @@ const model : ReplaceVariable = {
         handle: "randomCustomRoleUser",
         usage: "randomCustomRoleUser[role]",
         description: "Returns a random user's display name that is in any of the specified custom role(s).",
-        categories: [VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.OBJECT],
+        categories: ["user based"],
+        possibleDataOutput: ["text", "object"],
         examples: [
             {
                 usage: "randomCustomRoleUser[customRolesToInclude, usersToExclude, customRolesToExclude, displayName|username|id|raw]",

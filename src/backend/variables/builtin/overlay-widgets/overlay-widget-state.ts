@@ -1,6 +1,5 @@
 import logger from "../../../logwrapper";
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 import overlayWidgetConfigManager from "../../../overlay-widgets/overlay-widget-config-manager";
 
@@ -19,8 +18,8 @@ const model: ReplaceVariable = {
                 description: "Traverse the state JSON object."
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.ALL]
+        categories: ["advanced"],
+        possibleDataOutput: ["ALL"]
     },
     evaluator: async (
         trigger: Trigger,

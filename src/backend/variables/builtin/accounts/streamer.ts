@@ -1,12 +1,11 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType } from "../../../../shared/variable-constants";
 import { AccountAccess } from "../../../common/account-access";
 
 const model : ReplaceVariable = {
     definition: {
         handle: "streamer",
         description: "Outputs the Streamer account username.",
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: ["text"]
     },
     evaluator: () => {
         return AccountAccess.getAccounts().streamer.username;

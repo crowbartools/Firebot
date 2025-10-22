@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import { AccountAccess } from "../../../../common/account-access";
 import { TwitchApi } from "../../api";
 import logger from "../../../../logwrapper";
@@ -8,8 +7,8 @@ const model : ReplaceVariable = {
     definition: {
         handle: "currentViewerCount",
         description: "Get the number of people viewing your stream.",
-        categories: [VariableCategory.NUMBERS],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["numbers"],
+        possibleDataOutput: ["number"]
     },
     evaluator: async () => {
         logger.debug("Getting number of viewers in chat for variable.");

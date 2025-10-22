@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import roleManager from "../../../roles/chat-roles-manager";
 
 const model : ReplaceVariable = {
@@ -7,8 +6,8 @@ const model : ReplaceVariable = {
         handle: "vipArray",
         usage: "vipArray",
         description: "Returns an array of all `VIPs`",
-        categories: [VariableCategory.COMMON, VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.ARRAY]
+        categories: ["common", "user based"],
+        possibleDataOutput: ["array"]
     },
     evaluator: () => {
         try {

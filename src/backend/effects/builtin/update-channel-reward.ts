@@ -1,5 +1,4 @@
 import { validate } from "uuid";
-import { EffectCategory } from '../../../shared/effect-constants';
 import { SavedChannelReward } from "../../../types/channel-rewards";
 import { EffectType } from "../../../types/effects";
 import channelRewardsManager from "../../channel-rewards/channel-reward-manager";
@@ -44,7 +43,7 @@ const effect: EffectType<EffectMeta> = {
         name: "Update Channel Reward",
         description: "Update settings for a channel reward",
         icon: "fad fa-gifts",
-        categories: [EffectCategory.ADVANCED, EffectCategory.TWITCH],
+        categories: ["advanced", "twitch"],
         dependencies: []
     },
     optionsTemplate: `

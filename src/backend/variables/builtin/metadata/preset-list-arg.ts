@@ -1,11 +1,9 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { EffectTrigger } from "../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import { ReplaceVariable, TriggersObject } from "../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.QUICK_ACTION] = true;
-triggers[EffectTrigger.PRESET_LIST] = true;
-triggers[EffectTrigger.MANUAL] = true;
+const triggers: TriggersObject = {};
+triggers["quick_action"] = true;
+triggers["preset"] = true;
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
@@ -13,8 +11,8 @@ const model : ReplaceVariable = {
         usage: "presetListArg[name]",
         description: "Represents the given argument passed to this preset effect list.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
+        categories: ["common", "trigger based"],
+        possibleDataOutput: ["number", "text"]
     },
 
     evaluator: (trigger, argName: string = "") => {

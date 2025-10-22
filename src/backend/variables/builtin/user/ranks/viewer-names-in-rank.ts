@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import viewerRankManager from "../../../../ranks/rank-manager";
 import viewerDatabase from "../../../../viewers/viewer-database";
 import logger from "../../../../logwrapper";
@@ -10,8 +9,8 @@ const model : ReplaceVariable = {
         handle: "viewerNamesInRank",
         usage: "viewerNamesInRank[rankLadderName, rankName]",
         description: "Returns an comma separated list of viewer names in the specified rank",
-        categories: [VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["user based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: async (trigger, rankLadderName: string, rankName: string) : Promise<string> => {
         if (!rankLadderName?.length || !rankName?.length) {

@@ -1,5 +1,4 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import logger from '../../../logwrapper';
 
 const model : ReplaceVariable = {
@@ -21,8 +20,8 @@ const model : ReplaceVariable = {
                 description: `Removes the age property. Result: {"name": "John"}`
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (
         trigger: Trigger,

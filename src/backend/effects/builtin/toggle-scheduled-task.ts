@@ -1,5 +1,4 @@
 import { EffectType } from "../../../types/effects";
-import { EffectCategory } from '../../../shared/effect-constants';
 import { ScheduledTaskManager } from "../../timers/scheduled-task-manager";
 
 const effect: EffectType<{
@@ -13,7 +12,7 @@ const effect: EffectType<{
         name: "Toggle Scheduled Effect List",
         description: "Toggle a scheduled effect list's enabled status",
         icon: "fad fa-toggle-off",
-        categories: [EffectCategory.COMMON],
+        categories: ["common"],
         dependencies: []
     },
     optionsTemplate: `

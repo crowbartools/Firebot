@@ -1,15 +1,13 @@
-import { TriggerType } from "../../../../common/EffectType";
-import { ReplaceVariable } from "../../../../../types/variables";
+import { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
 import {
     OBS_EVENT_SOURCE_ID,
     OBS_VENDOR_EVENT_EVENT_ID
 } from "../constants";
 
-const triggers = {};
-triggers[TriggerType.EVENT] = [
+const triggers: TriggersObject = {};
+triggers["event"] = [
     `${OBS_EVENT_SOURCE_ID}:${OBS_VENDOR_EVENT_EVENT_ID}`
 ];
-import { VariableCategory } from "../../../../../shared/variable-constants";
 
 export const VendorEventDataVariable: ReplaceVariable = {
     definition: {
@@ -17,10 +15,10 @@ export const VendorEventDataVariable: ReplaceVariable = {
         description:
       "The vendor-specified raw JSON data from the OBS vendor event.",
         possibleDataOutput: ["text"],
-        categories: [VariableCategory.ADVANCED, VariableCategory.INTEGRATION, VariableCategory.OBS],
+        categories: ["advanced", "integrations", "obs"],
         triggers: triggers
     },
-    evaluator: async (trigger) => {
+    evaluator: (trigger) => {
         const eventData = trigger.metadata?.eventData?.eventData;
         return JSON.stringify(eventData ?? {});
     }

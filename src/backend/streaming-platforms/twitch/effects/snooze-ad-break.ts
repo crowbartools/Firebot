@@ -1,5 +1,4 @@
 import { EffectType } from "../../../../types/effects";
-import { EffectCategory } from "../../../../shared/effect-constants";
 import { TwitchApi } from "../api";
 import adManager from "../ad-manager";
 
@@ -10,9 +9,9 @@ const model: EffectType = {
         description: "Pushes back the next scheduled mid-roll ad break by 5 minutes",
         icon: "fad fa-snooze",
         categories: [
-            EffectCategory.COMMON,
-            EffectCategory.MODERATION,
-            EffectCategory.TWITCH
+            "common",
+            "Moderation",
+            "twitch"
         ],
         dependencies: {
             twitch: true

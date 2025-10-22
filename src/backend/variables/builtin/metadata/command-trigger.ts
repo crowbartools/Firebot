@@ -1,22 +1,20 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, TriggersObject } from "../../../../types/variables";
 import { UserCommand } from "../../../../types/commands";
-import { EffectTrigger } from "../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-const triggers = {};
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.EVENT] = [
+const triggers: TriggersObject = {};
+triggers["command"] = true;
+triggers["event"] = [
     "twitch:chat-message"
 ];
-triggers[EffectTrigger.MANUAL] = true;
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
         handle: "commandTrigger",
         description: "The trigger of the issued command.",
         triggers: triggers,
-        categories: [VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["trigger based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (trigger) => {
         return trigger.metadata.userCommand?.trigger

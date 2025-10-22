@@ -1,7 +1,4 @@
-"use strict";
-
 import { EffectType } from "../../../types/effects";
-import { EffectCategory } from "../../../shared/effect-constants";
 import viewerDatabase from "../../viewers/viewer-database";
 import viewerRanksService from "../../ranks/rank-manager";
 
@@ -16,7 +13,7 @@ const effect: EffectType<{
         name: "Update Viewer Rank",
         description: "Update a viewers rank within a given rank ladder",
         icon: "fad fa-award",
-        categories: [EffectCategory.COMMON],
+        categories: ["common"],
         dependencies: []
     },
     optionsTemplate: `

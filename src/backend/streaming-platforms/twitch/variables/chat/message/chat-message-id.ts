@@ -1,11 +1,9 @@
-import { ReplaceVariable } from "../../../../../../types/variables";
-import { EffectTrigger } from "../../../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../../../shared/variable-constants";
+import { ReplaceVariable , TriggersObject } from "../../../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.MANUAL] = true;
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.EVENT] = [
+const triggers: TriggersObject = {};
+triggers["manual"] = true;
+triggers["command"] = true;
+triggers["event"] = [
     "twitch:chat-message",
     "twitch:chat-message-deleted",
     "twitch:first-time-chat",
@@ -18,8 +16,8 @@ const model : ReplaceVariable = {
         handle: "chatMessageId",
         description: "Outputs the chat message ID from the associated command or event.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
+        categories: ["common", "trigger based"],
+        possibleDataOutput: ["number", "text"]
     },
     evaluator: (trigger) => {
 
@@ -27,7 +25,7 @@ const model : ReplaceVariable = {
         if (trigger.metadata.chatMessage) {
             chatMessageId = trigger.metadata.chatMessage.id;
 
-        } else if (trigger.type === EffectTrigger.EVENT || trigger.type === EffectTrigger.MANUAL) {
+        } else if (trigger.type === "event" || trigger.type === "manual") {
             chatMessageId = trigger.metadata.eventData.messageId as string;
         }
 

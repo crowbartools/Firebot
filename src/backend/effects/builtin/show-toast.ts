@@ -1,5 +1,4 @@
 import { EffectType } from "../../../types/effects";
-import { EffectCategory } from "../../../shared/effect-constants";
 import frontendCommunicator from "../../common/frontend-communicator";
 
 const effect: EffectType<{
@@ -11,7 +10,7 @@ const effect: EffectType<{
         name: "Show Toast Notification",
         description: "Displays a toast notification at the top of the Firebot main window.",
         icon: "fad fa-comment-alt-exclamation",
-        categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
+        categories: ["advanced", "scripting"],
         dependencies: []
     },
     optionsTemplate: `

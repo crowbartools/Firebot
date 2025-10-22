@@ -1,7 +1,6 @@
 import { FirebotChatMessage } from "../../../types/chat";
 import { CommandDefinition, UserCommand } from "../../../types/commands";
 import { Trigger } from "../../../types/triggers";
-import { TriggerType } from "../../common/EffectType";
 
 import { AccountAccess } from "../../common/account-access";
 import effectRunner from "../../common/effect-runner";
@@ -118,7 +117,7 @@ class CommandRunner {
 
         const processEffectsRequest = {
             trigger: {
-                type: manual ? TriggerType.MANUAL : TriggerType.COMMAND,
+                type: manual ? "manual" : "command",
                 metadata: {
                     username: userCommand.commandSender,
                     userId: undefined,
@@ -127,7 +126,7 @@ class CommandRunner {
                     userCommand: userCommand,
                     chatMessage: firebotChatMessage
                 }
-            },
+            } as Trigger,
             effects: effects
         };
 

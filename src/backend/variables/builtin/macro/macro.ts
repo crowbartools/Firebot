@@ -1,5 +1,4 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType } from "../../../../shared/variable-constants";
 
 import macroManager from '../../macro-manager';
 
@@ -10,7 +9,7 @@ const model : ReplaceVariable = {
         handle: 'macro',
         description: 'calls a user-defined macro',
         hidden: true,
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: ["text"]
     },
     evaluator(trigger: Trigger, name: string, ...macroArgs: unknown[]) {
         const macro = macroManager.getMacroByName(name);

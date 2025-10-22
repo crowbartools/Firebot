@@ -1,6 +1,4 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import { EffectTrigger } from "../../../../shared/effect-constants";
 import { UserCommand } from "../../../../types/commands";
 
 const expressionish = require('expressionish');
@@ -25,15 +23,15 @@ const model : ReplaceVariable = {
             }
         ],
         triggers: {
-            [EffectTrigger.COMMAND]: true,
-            [EffectTrigger.CHANNEL_REWARD]: true,
-            [EffectTrigger.EVENT]: [
+            ["command"]: true,
+            ["channel_reward"]: true,
+            ["event"]: [
                 "twitch:chat-message"
             ],
-            [EffectTrigger.MANUAL]: true
+            ["manual"]: true
         },
-        categories: [VariableCategory.COMMON],
-        possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
+        categories: ["common"],
+        possibleDataOutput: ["number", "text"]
     },
     evaluator: (
         trigger: Trigger,

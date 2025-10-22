@@ -1,19 +1,17 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
+import { ReplaceVariable, Trigger, TriggersObject } from "../../../../types/variables";
 import { UserCommand } from "../../../../types/commands";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import { EffectTrigger } from "../../../../shared/effect-constants";
 
-const triggers = {};
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.MANUAL] = true;
+const triggers: TriggersObject = {};
+triggers["command"] = true;
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
         handle: "rawArgArray",
         description: "(Deprecated: use $argArray) Returns the raw array of command arguments",
         triggers: triggers,
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.ARRAY],
+        categories: ["advanced"],
+        possibleDataOutput: ["array"],
         hidden: true
     },
     evaluator: (trigger: Trigger) : string[] => {

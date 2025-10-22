@@ -1,7 +1,6 @@
 import { EffectType } from "../../../../types/effects";
-import { EffectCategory } from "../../../../shared/effect-constants";
-import { TwitchSlashCommandHelpers } from "../chat/slash-commands/twitch-command-helpers";
 import { TwitchApi } from "../api";
+import { TwitchSlashCommandHelpers } from "../chat/slash-commands/twitch-command-helpers";
 
 const model: EffectType<{
     setFollowersOnly: boolean;
@@ -26,7 +25,7 @@ const model: EffectType<{
         name: "Set Chat Mode",
         description: "Sets the chat mode(s) for your Twitch channel",
         icon: "fad fa-comment-check",
-        categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
+        categories: ["common", "twitch"],
         dependencies: {
             twitch: true
         }

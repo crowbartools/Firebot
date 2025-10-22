@@ -1,19 +1,17 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { EffectTrigger } from "../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import { ReplaceVariable, TriggersObject } from "../../../../types/variables";
 import { EffectQueueConfigManager } from "../../../effects/queues/effect-queue-config-manager";
 
-const triggers = {};
-triggers[EffectTrigger.EVENT] = ["firebot:effect-queue-cleared", "firebot:effect-queue-added", "firebot:effect-queue-status"];
-triggers[EffectTrigger.MANUAL] = true;
+const triggers: TriggersObject = {};
+triggers["event"] = ["firebot:effect-queue-cleared", "firebot:effect-queue-added", "firebot:effect-queue-status"];
+triggers["manual"] = true;
 
 const model: ReplaceVariable = {
     definition: {
         handle: "effectQueueName",
         description: "The name of the effect queue.",
         triggers: triggers,
-        categories: [VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["trigger based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (trigger) => {
         const queueId = trigger?.metadata?.eventData?.effectQueueId as string;

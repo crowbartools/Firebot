@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 
 const model : ReplaceVariable = {
@@ -18,8 +17,8 @@ const model : ReplaceVariable = {
                 description: "Gets the bio/description of a specific user."
             }
         ],
-        categories: [VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["user based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: async (trigger, username: string) => {
         if (username == null) {

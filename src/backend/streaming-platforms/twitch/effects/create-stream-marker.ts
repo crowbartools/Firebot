@@ -1,5 +1,4 @@
 import { EffectType } from "../../../../types/effects";
-import { EffectCategory } from "../../../../shared/effect-constants";
 import { TwitchApi } from "../api";
 
 const model: EffectType<{
@@ -10,7 +9,7 @@ const model: EffectType<{
         name: "Create Stream Marker",
         description: "Create a stream marker in your Twitch VOD",
         icon: "fad fa-map-pin",
-        categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
+        categories: ["common", "twitch"],
         dependencies: {
             twitch: true
         }

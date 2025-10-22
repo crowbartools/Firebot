@@ -1,22 +1,20 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import { EffectTrigger } from "../../../../shared/effect-constants";
+import { ReplaceVariable, Trigger, TriggersObject } from "../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.EVENT] = true;
-triggers[EffectTrigger.MANUAL] = true;
-triggers[EffectTrigger.CUSTOM_SCRIPT] = true;
-triggers[EffectTrigger.PRESET_LIST] = true;
-triggers[EffectTrigger.CHANNEL_REWARD] = true;
+const triggers: TriggersObject = {};
+triggers["command"] = true;
+triggers["event"] = true;
+triggers["manual"] = true;
+triggers["custom_script"] = true;
+triggers["preset"] = true;
+triggers["channel_reward"] = true;
 
 const model : ReplaceVariable = {
     definition: {
         handle: "user",
         description: "The associated user (if there is one) for the given trigger",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "user based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (trigger: Trigger) => {
         return trigger.metadata.username;

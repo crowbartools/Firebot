@@ -1,6 +1,5 @@
 import path from 'node:path';
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import * as dataAccess from "../../../common/data-access";
 
 const model : ReplaceVariable = {
@@ -14,8 +13,8 @@ const model : ReplaceVariable = {
                 description: "Gets the full path to the `/sub/dir/path/image.gif` in the overlay-resources folder as a text string."
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (_, ...values: string[]) =>
         (

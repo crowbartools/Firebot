@@ -2,7 +2,6 @@ import moment from "moment";
 
 import { ReplaceVariable } from "../../../../types/variables";
 
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import { AccountAccess } from "../../../common/account-access";
 import { TwitchApi } from "../api";
 import logger from "../../../logwrapper";
@@ -26,8 +25,8 @@ const model : ReplaceVariable = {
                 description: "Gets the creation date for a specific user's Twitch account/channel."
             }
         ],
-        categories: [VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["user based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: async (trigger, username: string) => {
         if (username == null) {

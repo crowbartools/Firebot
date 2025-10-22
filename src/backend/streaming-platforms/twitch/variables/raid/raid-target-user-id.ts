@@ -1,18 +1,16 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
-import { EffectTrigger } from "../../../../../shared/effect-constants";
+import { ReplaceVariable , TriggersObject } from "../../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:outgoing-raid-canceled", "twitch:outgoing-raid-started", "twitch:raid-sent-off"];
-triggers[EffectTrigger.MANUAL] = true;
+const triggers: TriggersObject = {};
+triggers["event"] = ["twitch:outgoing-raid-canceled", "twitch:outgoing-raid-started", "twitch:raid-sent-off"];
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
         handle: "raidTargetUserId",
         description: "Gets the user ID for the raid target.",
         triggers: triggers,
-        categories: [VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["user based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: async (trigger) => {
         return trigger.metadata.eventData?.raidTargetUserId ?? "";

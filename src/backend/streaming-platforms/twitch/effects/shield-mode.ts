@@ -1,5 +1,4 @@
 import { EffectType } from "../../../../types/effects";
-import { EffectCategory } from "../../../../shared/effect-constants";
 import { AccountAccess } from "../../../common/account-access";
 import { TwitchApi } from "../api";
 
@@ -11,7 +10,7 @@ const model: EffectType<{
         name: "Enable/Disable Shield Mode",
         description: "Enable or disable Shield Mode on your Twitch channel",
         icon: "fad fa-shield",
-        categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
+        categories: ["common", "twitch"],
         dependencies: {
             twitch: true
         }

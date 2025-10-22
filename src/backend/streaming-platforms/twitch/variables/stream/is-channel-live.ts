@@ -1,4 +1,3 @@
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import { ReplaceVariable } from "../../../../../types/variables";
 import { TwitchApi } from "../../api";
 import logger from "../../../../logwrapper";
@@ -24,8 +23,8 @@ const model : ReplaceVariable = {
                 description: "Gets whether a specific channel is live."
             }
         ],
-        categories: [VariableCategory.COMMON, VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "user based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: async (_trigger, username: string) => {
         if (!username) {

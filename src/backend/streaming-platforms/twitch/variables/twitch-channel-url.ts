@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const model: ReplaceVariable = {
     definition: {
@@ -20,8 +19,8 @@ const model: ReplaceVariable = {
                 description: "Returns the Twitch URL for the given channel name (e.g. https://www.twitch.tv/reallycoolfirebotuser).(Not all Display Names will work)"
             }
         ],
-        categories: [VariableCategory.TEXT, VariableCategory.COMMON],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["text", "common"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (trigger, channelName: string) => {
 

@@ -1,7 +1,6 @@
 import { EffectType } from "../../../../types/effects";
-import { EffectCategory } from '../../../../shared/effect-constants';
-import logger from '../../../logwrapper';
 import { TwitchApi } from "../api";
+import logger from '../../../logwrapper';
 
 const model: EffectType<{
     action: "Block" | "Unblock";
@@ -12,7 +11,7 @@ const model: EffectType<{
         name: "Block User",
         description: "block or unblock a user on Twitch.",
         icon: "fad fa-user-slash",
-        categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
+        categories: ["common", "twitch"],
         dependencies: []
     },
     optionsTemplate: `

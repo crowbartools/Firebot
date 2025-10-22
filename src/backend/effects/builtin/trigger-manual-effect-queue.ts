@@ -1,5 +1,4 @@
 import { EffectType, EffectQueueConfig } from "../../../types/effects";
-import { EffectCategory } from "../../../shared/effect-constants";
 import { EffectQueueConfigManager } from "../queues/effect-queue-config-manager";
 import queueRunner from "../queues/effect-queue-runner";
 import logger from "../../logwrapper";
@@ -12,7 +11,7 @@ const effect: EffectType<{
         name: "Trigger Manual Effect Queue",
         description: "Runs the next effect list in a manual effect queue.",
         icon: "fad fa-step-forward",
-        categories: [EffectCategory.SCRIPTING]
+        categories: ["scripting"]
     },
     optionsTemplate: `
         <eos-container header="Manual Effect Queue">

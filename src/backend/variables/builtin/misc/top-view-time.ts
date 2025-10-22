@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType } from "../../../../shared/variable-constants";
 
 import viewerOnlineStatusManager from "../../../viewers/viewer-online-status-manager";
 import { commafy } from "../../../utils";
@@ -9,7 +8,7 @@ const model : ReplaceVariable = {
         handle: "topViewTime",
         description: "Comma separated list of users with the most view time (in hours). Defaults to top 10, you can provide a custom number as a second argument.",
         usage: "topViewTime[count]",
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: ["text"]
     },
 
 

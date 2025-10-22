@@ -1,18 +1,16 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { EffectTrigger } from "../../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import { ReplaceVariable , TriggersObject } from "../../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:sub"];
-triggers[EffectTrigger.MANUAL] = true;
+const triggers: TriggersObject = {};
+triggers["event"] = ["twitch:sub"];
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
         handle: "subCurrentStreak",
         description: "Number of consecutive months a user has been subscribed to your channel.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["common", "trigger based"],
+        possibleDataOutput: ["number"]
     },
     evaluator: (trigger) => {
         return trigger.metadata.eventData.streak || 1;

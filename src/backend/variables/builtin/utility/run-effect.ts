@@ -1,6 +1,5 @@
 import { v4 as uuid } from "uuid";
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 import logger from "../../../logwrapper";
 import effectRunner from "../../../common/effect-runner";
@@ -15,8 +14,8 @@ const model : ReplaceVariable = {
             usage: "runEffect[``{\"type\":\"firebot:chat\",\"message\":\"Hello world\"}``]",
             description: "Runs a chat message effect. You can get an effects JSON data via the UI via the overflow menu in the top right of the Edit Effect modal. (Copy Effect Json > For $runEffect[])"
         }],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["text"]
     },
     evaluator: async (
         trigger: Trigger,

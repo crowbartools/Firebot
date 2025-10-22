@@ -1,11 +1,9 @@
-import { ReplaceVariable } from "../../../../../../types/variables";
-import { EffectTrigger } from "../../../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../../../shared/variable-constants";
+import { ReplaceVariable , TriggersObject } from "../../../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.MANUAL] = true;
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.EVENT] = [
+const triggers: TriggersObject = {};
+triggers["manual"] = true;
+triggers["command"] = true;
+triggers["event"] = [
     "twitch:chat-message",
     "twitch:chat-message-deleted",
     "twitch:first-time-chat",
@@ -18,8 +16,8 @@ const model : ReplaceVariable = {
         handle: "isSharedChatMessage",
         description: "'true' when chat message was sent in another channel during a Shared Chat session, 'false' otherwise.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.BOOLEAN]
+        categories: ["common", "trigger based"],
+        possibleDataOutput: ["bool"]
     },
     evaluator: (trigger) => {
         if (trigger.metadata.chatMessage) {

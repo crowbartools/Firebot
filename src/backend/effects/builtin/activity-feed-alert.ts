@@ -1,5 +1,4 @@
 import { EffectType } from "../../../types/effects";
-import { EffectCategory } from "../../../shared/effect-constants";
 import { handleTriggeredEvent } from "../../events/activity-feed-manager";
 
 const effect: EffectType<{
@@ -11,7 +10,7 @@ const effect: EffectType<{
         name: "Activity Feed Alert",
         description: "Display an alert in Firebot's activity feed",
         icon: "fad fa-comment-exclamation",
-        categories: [EffectCategory.FUN],
+        categories: ["fun"],
         dependencies: []
     },
     optionsTemplate: `

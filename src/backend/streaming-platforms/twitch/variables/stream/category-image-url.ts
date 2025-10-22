@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import { AccountAccess } from "../../../../common/account-access";
 import { TwitchApi } from "../../api";
 
@@ -26,8 +25,8 @@ const model : ReplaceVariable = {
                 description: "Get a different image size (use aspect ratio 4:3). Default is 285x380."
             }
         ],
-        categories: [VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["user based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: async (_, username: string, size = "285x380") => {
         if (username == null) {

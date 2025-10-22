@@ -1,8 +1,7 @@
-import { TwitchApi } from "../../streaming-platforms/twitch/api";
-import { QuoteManager } from "../../quotes/quote-manager";
-import { EffectCategory } from '../../../shared/effect-constants';
 import moment from "moment";
 import { EffectType } from "../../../types/effects";
+import { QuoteManager } from "../../quotes/quote-manager";
+import { TwitchApi } from "../../streaming-platforms/twitch/api";
 
 const effect: EffectType<{
     creator: string;
@@ -14,7 +13,7 @@ const effect: EffectType<{
         name: "Add Quote",
         description: "Adds a quote to the quote database.",
         icon: "fad fa-quote-right",
-        categories: [EffectCategory.FUN],
+        categories: ["fun"],
         dependencies: [],
         outputs: [
             {

@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 import viewerMetadataManager from "../../../viewers/viewer-metadata-manager";
 
@@ -18,8 +17,8 @@ const model : ReplaceVariable = {
             }
         ],
         usage: "topMetadataUser[metadataKey, position, username/amount]",
-        categories: [VariableCategory.USER, VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
+        categories: ["user based", "advanced"],
+        possibleDataOutput: ["text", "number"]
     },
 
     evaluator: async (_, metadataKey: string, position: number = 1, usernameOrPosition = "username") => {

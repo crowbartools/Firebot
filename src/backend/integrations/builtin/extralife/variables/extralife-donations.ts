@@ -1,6 +1,5 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import { GetDonationsOptions, getParticipantDonations } from 'extra-life-ts';
+import { ReplaceVariable } from "../../../../../types/variables";
 import integrationManager from "../../../../integrations/integration-manager";
 
 const ExtraLifeDonations: ReplaceVariable = {
@@ -33,8 +32,8 @@ const ExtraLifeDonations: ReplaceVariable = {
                 description: "Returns top 3 donations for current signed in extra life account in JSON format."
             }
         ],
-        categories: [VariableCategory.COMMON, VariableCategory.INTEGRATION],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "integrations"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (_, sortName: string, numResults: number, participantID: number, returnJson: boolean) => {
         if (numResults == null) {

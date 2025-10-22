@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const moment = require("moment");
 
@@ -7,8 +6,8 @@ const model : ReplaceVariable = {
     definition: {
         handle: "time",
         description: "Outputs the current time.",
-        categories: [VariableCategory.COMMON],
-        possibleDataOutput: [OutputDataType.TEXT],
+        categories: ["common"],
+        possibleDataOutput: ["text"],
         examples: [
             {
                 usage: "time[format]",

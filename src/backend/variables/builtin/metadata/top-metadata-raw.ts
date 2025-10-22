@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType } from "../../../../shared/variable-constants";
 
 import viewerMetadataManager from "../../../viewers/viewer-metadata-manager";
 
@@ -8,7 +7,7 @@ const model : ReplaceVariable = {
         handle: "rawTopMetadata",
         description: "Returns a raw array of users with the most of a given metadata key. Items contain `username`, `place` and `amount` properties.",
         usage: "rawTopMetadata[metadataKey]",
-        possibleDataOutput: [OutputDataType.ARRAY, OutputDataType.TEXT]
+        possibleDataOutput: ["array", "text"]
     },
 
 

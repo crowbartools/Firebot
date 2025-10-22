@@ -1,5 +1,4 @@
 import { ReplaceVariable, Trigger } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import { TwitchApi } from "../../api";
 import { HelixBitsLeaderboardPeriod } from "@twurple/api";
 
@@ -24,8 +23,8 @@ const model : ReplaceVariable = {
                 description: "Returns an array of the usernames up to the specified count, of the users who have cheered the most bits in the streamer's channel during the specified period that occurred on the specified date. Period can be 'day', 'week', 'month', 'year', or 'all'."
             }
         ],
-        categories: [VariableCategory.COMMON, VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.ARRAY]
+        categories: ["common", "user based"],
+        possibleDataOutput: ["array"]
     },
     argsCheck: (count: null | number = 1, period: null | string = "all", startDate = null) => {
         if (count == null && period == null && startDate == null) {

@@ -10,7 +10,6 @@ import { ActiveUserHandler } from "../chat/active-user-handler";
 import { ProfileManager } from "../common/profile-manager";
 import { RestrictionsManager } from "../restrictions/restriction-manager";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
-import { EffectTrigger } from "../../shared/effect-constants";
 import effectRunner from "../common/effect-runner";
 import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
@@ -323,9 +322,9 @@ class ChannelRewardManager {
 
         const processEffectsRequest = {
             trigger: {
-                type: manual ? EffectTrigger.MANUAL : EffectTrigger.CHANNEL_REWARD,
+                type: manual ? "manual" : "channel_reward",
                 metadata: metadata
-            },
+            } as Trigger,
             effects: effectList
         };
 

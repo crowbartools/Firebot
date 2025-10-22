@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import frontendCommunicator from "../../../common/frontend-communicator";
 
 const model : ReplaceVariable = {
@@ -17,8 +16,8 @@ const model : ReplaceVariable = {
                 description: "Returns the duration of the audio file from a URL in seconds."
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["number", "text"]
     },
     evaluator: async (trigger, url) => {
         if (url == null) {

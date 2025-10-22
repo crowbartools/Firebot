@@ -1,5 +1,4 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 import logger from "../../../logwrapper";
 import { app } from "electron";
@@ -33,8 +32,8 @@ const model: ReplaceVariable = {
                 description: "Traverse a JSON response object."
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
+        categories: ["advanced"],
+        possibleDataOutput: ["text", "number"]
     },
     evaluator: async (
         trigger: Trigger,

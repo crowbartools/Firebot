@@ -1,7 +1,6 @@
 import { EffectType } from "../../../../types/effects";
-import { EffectCategory } from "../../../../shared/effect-constants";
-import logger from "../../../logwrapper";
 import { TwitchApi } from "../api";
+import logger from "../../../logwrapper";
 
 const model: EffectType = {
     definition: {
@@ -9,7 +8,7 @@ const model: EffectType = {
         name: "Cancel Twitch Prediction",
         description: "Cancels the currently active Twitch prediction and refunds all channel points wagered",
         icon: "fad fa-ban",
-        categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
+        categories: ["common", "twitch"],
         dependencies: {
             twitch: true
         }

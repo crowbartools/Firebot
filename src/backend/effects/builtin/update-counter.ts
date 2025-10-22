@@ -1,5 +1,4 @@
 import { EffectType } from "../../../types/effects";
-import { EffectCategory } from '../../../shared/effect-constants';
 import { CounterManager } from "../../counters/counter-manager";
 import logger from "../../logwrapper";
 
@@ -13,7 +12,7 @@ const effect: EffectType<{
         name: "Update Counter",
         description: "Update a counter's value.",
         icon: "fad fa-tally",
-        categories: [EffectCategory.COMMON, EffectCategory.ADVANCED],
+        categories: ["common", "advanced"],
         dependencies: []
     },
     optionsTemplate: `

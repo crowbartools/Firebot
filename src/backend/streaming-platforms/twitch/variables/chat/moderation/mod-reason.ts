@@ -1,18 +1,16 @@
-import { ReplaceVariable } from "../../../../../../types/variables";
-import { EffectTrigger } from "../../../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../../../shared/variable-constants";
+import { ReplaceVariable , TriggersObject } from "../../../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:banned", "twitch:timeout"];
-triggers[EffectTrigger.MANUAL] = true;
+const triggers: TriggersObject = {};
+triggers["event"] = ["twitch:banned", "twitch:timeout"];
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
         handle: "modReason",
         description: "The reason why the user was banned or timed out.",
         triggers: triggers,
-        categories: [VariableCategory.USER, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["user based", "trigger based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (trigger) => {
         return trigger.metadata.eventData.modReason;

@@ -1,6 +1,5 @@
 import { HelixBitsLeaderboardPeriod } from "@twurple/api";
 import { ReplaceVariable, Trigger } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import { TwitchApi } from "../../api";
 import logger from "../../../../logwrapper";
 
@@ -22,8 +21,8 @@ const model : ReplaceVariable = {
                 description: "Returns the number of bits the specified user has cheered in the streamer's channel during the specified period that occurred on the specified date. Period can be 'day', 'week', 'month', 'year', or 'all'."
             }
         ],
-        categories: [VariableCategory.COMMON, VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "advanced"],
+        possibleDataOutput: ["text"]
     },
     argsCheck: (
         username: string,

@@ -1,18 +1,16 @@
-import { ReplaceVariable, Trigger } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
-import { EffectTrigger } from "../../../../../shared/effect-constants";
+import { ReplaceVariable, Trigger, TriggersObject } from "../../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:bits-badge-unlocked"];
-triggers[EffectTrigger.MANUAL] = true;
+const triggers: TriggersObject = {};
+triggers["event"] = ["twitch:bits-badge-unlocked"];
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
         handle: "bitsBadgeTier",
         description: "The tier of the bits badge that was unlocked (100, 1000, 5000, etc.).",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["common", "trigger based"],
+        possibleDataOutput: ["number"]
     },
     evaluator: (trigger: Trigger) => {
         const badgeTier = trigger.metadata.eventData.badgeTier || 0;

@@ -1,5 +1,3 @@
-"use strict";
-
 import { EffectScope, EffectType } from "../../../../../types/effects";
 import hueManager from "../hue-manager";
 
@@ -28,10 +26,10 @@ type HueLightData = {
     type: string;
     capabilities: {
         control?: {
-            mindimlevel?: undefined,
-            colorgamuttype?: "C",
-            colorgamut?: [number, number][],
-        }
+            mindimlevel?: undefined;
+            colorgamuttype?: "C";
+            colorgamut?: [number, number][];
+        };
     };
 };
 
@@ -137,7 +135,7 @@ const model: EffectType<HueControlLightEffectData> = {
             selectedLightCapabilities: {
                 color: boolean;
                 dimming: boolean;
-            }
+            };
         },
         backendCommunicator
     ) => {

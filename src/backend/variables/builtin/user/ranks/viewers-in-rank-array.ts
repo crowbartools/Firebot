@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import viewerRankManager from "../../../../ranks/rank-manager";
 import viewerDatabase from "../../../../viewers/viewer-database";
 import logger from "../../../../logwrapper";
@@ -10,8 +9,8 @@ const model : ReplaceVariable = {
         handle: "viewersInRankArray",
         usage: "viewersInRankArray[rankLadderName, rankName]",
         description: "Returns an array of viewer objects in the specified rank. Viewer object properties: _id, username, displayName",
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.ARRAY]
+        categories: ["advanced"],
+        possibleDataOutput: ["array"]
     },
     evaluator: async (trigger, rankLadderName: string, rankName: string) : Promise<FirebotViewer[]> => {
         if (!rankLadderName?.length || !rankName?.length) {
