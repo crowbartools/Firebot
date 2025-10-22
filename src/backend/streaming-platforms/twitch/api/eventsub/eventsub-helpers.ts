@@ -31,7 +31,7 @@ export function mapEventSubRewardToTwitchData(event: EventSubChannelRewardEvent)
         },
         globalCooldownSetting: {
             isEnabled: event.globalCooldown !== null,
-            globalCooldownSeconds: event.globalCooldown ? Math.ceil((new Date(event.globalCooldown).getTime() - Date.now()) / 1000) : null
+            globalCooldownSeconds: event.globalCooldown
         },
         isPaused: event.isPaused,
         isInStock: event.isInStock,
