@@ -5,8 +5,8 @@ import { v4 as uuid } from "uuid";
 import { FirebotHotkey } from "../../types/hotkeys";
 import { Trigger } from "../../types/triggers";
 
+import { AccountAccess } from "../common/account-access";
 import { ProfileManager } from "../common/profile-manager";
-import accountAccess from "../common/account-access";
 import effectRunner from "../common/effect-runner";
 import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
@@ -158,7 +158,7 @@ class HotkeyManager {
             trigger: {
                 type: "hotkey",
                 metadata: {
-                    username: accountAccess.getAccounts().streamer.username,
+                    username: AccountAccess.getAccounts().streamer.username,
                     hotkey: hotkey
                 }
             } as Trigger,

@@ -18,7 +18,7 @@ import {
     EventSubChatMessageEmotePart,
     EventSubChatMessageMentionPart,
     EventSubChatMessagePart
-} from "./twurple-private-types";
+} from "../twurple-private-types";
 
 import {
     FirebotChatMessage,
@@ -32,17 +32,18 @@ import {
 } from "../../../../../types/chat";
 import { FirebotAccount } from "../../../../../types/accounts";
 
+import { AccountAccess } from "../../../../common/account-access";
 import { SettingsManager } from "../../../../common/settings-manager";
 import { TwitchApi } from "../";
-import { ThirdPartyEmote, ThirdPartyEmoteProvider } from "../../../../chat/third-party/third-party-emote-provider";
-import accountAccess from "../../../../common/account-access";
 import frontendCommunicator from "../../../../common/frontend-communicator";
 import logger from "../../../../logwrapper";
 import { getUrlRegex } from "../../../../utils";
 
+import { ThirdPartyEmote, ThirdPartyEmoteProvider } from "../../../../chat/third-party/third-party-emote-provider";
 import { BTTVEmoteProvider } from "../../../../chat/third-party/bttv";
 import { FFZEmoteProvider } from "../../../../chat/third-party/ffz";
 import { SevenTVEmoteProvider } from "../../../../chat/third-party/7tv";
+
 interface ChatBadge {
     title: string;
     url: string;
@@ -83,9 +84,31 @@ class TwitchEventSubChatHelpers {
 
     private _profilePicUrlCache: Record<string, string> = {};
 
+    constructor() {
+        AccountAccess.on("account-update",
+            (cache) => {
+                if (cache.streamer?.loggedIn) {
+                    this.setUserProfilePicUrl(
+                        cache.streamer.userId,
+                        cache.streamer.avatar,
+                        false
+                    );
+                }
+
+                if (cache.bot?.loggedIn) {
+                    this.setUserProfilePicUrl(
+                        cache.bot.userId,
+                        cache.bot.avatar,
+                        false
+                    );
+                }
+            }
+        );
+    }
+
     async cacheBadges(): Promise<void> {
         logger.debug("Caching Twitch badges");
-        const streamer = accountAccess.getAccounts().streamer;
+        const streamer = AccountAccess.getAccounts().streamer;
         const client = TwitchApi.streamerClient;
         if (streamer.loggedIn && client) {
             try {
@@ -109,7 +132,7 @@ class TwitchEventSubChatHelpers {
         this._getAllTwitchEmotes = SettingsManager.getSetting("ChatGetAllEmotes") === true;
         const client = TwitchApi.streamerClient;
 
-        const { streamer, bot } = accountAccess.getAccounts();
+        const { streamer, bot } = AccountAccess.getAccounts();
 
         if (client == null || !streamer.loggedIn) {
             return;
@@ -221,7 +244,7 @@ class TwitchEventSubChatHelpers {
             return [];
         }
 
-        const { streamer, bot } = accountAccess.getAccounts();
+        const { streamer, bot } = AccountAccess.getAccounts();
 
         return parts.flatMap((p: EventSubChatMessagePart | FirebotChatMessagePart) => {
             if (p.type === "text" && p.text != null) {
@@ -447,9 +470,13 @@ class TwitchEventSubChatHelpers {
         return chatBadges;
     }
 
-    private updateAccountAvatar(accountType: "streamer" | "bot", account: FirebotAccount, url: string) {
+    private updateAccountAvatar(
+        accountType: "streamer" | "bot",
+        account: FirebotAccount,
+        url: string
+    ): void {
         account.avatar = url;
-        accountAccess.updateAccount(accountType, account, true);
+        AccountAccess.updateAccount(accountType, account, false);
     }
 
     async getUserProfilePicUrl(userId: string): Promise<string> {
@@ -461,7 +488,7 @@ class TwitchEventSubChatHelpers {
             return this._profilePicUrlCache[userId];
         }
 
-        const streamer = accountAccess.getAccounts().streamer;
+        const streamer = AccountAccess.getAccounts().streamer;
         const client = TwitchApi.streamerClient;
         if (streamer.loggedIn && client) {
             const user = await TwitchApi.users.getUserById(userId);
@@ -482,10 +509,10 @@ class TwitchEventSubChatHelpers {
         this._profilePicUrlCache[userId] = url;
 
         if (updateAccountAvatars) {
-            if (userId === accountAccess.getAccounts().streamer.userId) {
-                this.updateAccountAvatar("streamer", accountAccess.getAccounts().streamer, url);
-            } else if (userId === accountAccess.getAccounts().bot.userId) {
-                this.updateAccountAvatar("bot", accountAccess.getAccounts().bot, url);
+            if (userId === AccountAccess.getAccounts().streamer.userId) {
+                this.updateAccountAvatar("streamer", AccountAccess.getAccounts().streamer, url);
+            } else if (userId === AccountAccess.getAccounts().bot.userId) {
+                this.updateAccountAvatar("bot", AccountAccess.getAccounts().bot, url);
             }
         }
     }
@@ -504,11 +531,11 @@ class TwitchEventSubChatHelpers {
     private async buildBaseChatMessage(
         event: EventSubChannelChatMessageEvent | EventSubChannelChatNotificationEvent
     ): Promise<FirebotChatMessage> {
-        const { streamer, bot } = accountAccess.getAccounts();
+        const { streamer, bot } = AccountAccess.getAccounts();
 
         const isAction = this.CHAT_ACTION_REGEX.test(event.messageText);
         const isSharedChatMessage = event.sourceMessageId != null
-            && event.sourceBroadcasterId !== accountAccess.getAccounts().streamer.userId;
+            && event.sourceBroadcasterId !== AccountAccess.getAccounts().streamer.userId;
 
         let isAnnouncement = false;
         let announcementColor = undefined;
@@ -702,7 +729,7 @@ class TwitchEventSubChatHelpers {
             isSharedChatMessage: false
         };
 
-        const { streamer, bot } = accountAccess.getAccounts();
+        const { streamer, bot } = AccountAccess.getAccounts();
         if (this.accountTaggedInText(event.messageText, streamer)
             || this.accountTaggedInText(event.messageText, bot)
         ) {

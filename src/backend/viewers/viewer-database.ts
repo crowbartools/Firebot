@@ -3,13 +3,14 @@ import Datastore from "@seald-io/nedb";
 import { DateTime } from "luxon";
 
 import { BasicViewer, FirebotViewer } from "../../types/viewers";
+import { Rank, RankLadder } from "../../types/ranks";
 
+import { AccountAccess } from "../common/account-access";
 import { SettingsManager } from "../common/settings-manager";
 import { ProfileManager } from "../common/profile-manager";
 import { EventManager } from "../events/event-manager";
 import { BackupManager } from "../backup-manager";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
-import accountAccess from "../common/account-access";
 import userAccess from "../common/user-access";
 import currencyAccess from "../currency/currency-access";
 import rankManager from "../ranks/rank-manager";
@@ -17,7 +18,6 @@ import roleHelpers from "../roles/role-helpers";
 import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
 import { commafy, wait } from "../utils";
-import { Rank, RankLadder } from "../../types/ranks";
 
 interface ViewerDbChangePacket {
     userId: string;
@@ -187,8 +187,8 @@ class ViewerDatabase extends EventEmitter {
             return;
         }
 
-        const streamerUserId = accountAccess.getAccounts().streamer.userId;
-        const botUserId = accountAccess.getAccounts().bot.userId;
+        const streamerUserId = AccountAccess.getAccounts().streamer.userId;
+        const botUserId = AccountAccess.getAccounts().bot.userId;
 
         const disableAutoStatAccrual = userId === streamerUserId || userId === botUserId;
 

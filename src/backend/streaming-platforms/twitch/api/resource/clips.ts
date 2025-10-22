@@ -1,13 +1,12 @@
+import { extractUserId, HelixClip, UserIdResolvable } from "@twurple/api";
 import { randomInt } from "crypto";
-import { ApiClient, HelixClip, UserIdResolvable } from "@twurple/api";
 import { ApiResourceBase } from "./api-resource-base";
-import logger from "../../../../logwrapper";
+import { TwitchApiBase } from "../api";
 import { wait } from "../../../../utils";
-import accountAccess from "../../../../common/account-access";
 
 export class TwitchClipsApi extends ApiResourceBase {
-    constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        super(streamerClient, botClient);
+    constructor(apiBase: TwitchApiBase) {
+        super(apiBase);
     }
 
     /**
@@ -16,10 +15,10 @@ export class TwitchClipsApi extends ApiResourceBase {
      */
     async createClip(): Promise<HelixClip> {
         try {
-            const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
+            const streamerUserId: string = this.accounts.streamer.userId;
 
             // First, we actually create the clip and get the ID
-            const clipId = await this._streamerClient.clips.createClip({
+            const clipId = await this.streamerClient.clips.createClip({
                 channel: streamerUserId
             });
 
@@ -29,15 +28,15 @@ export class TwitchClipsApi extends ApiResourceBase {
             }
 
             // Try to get the clip. Sometimes it can take a few seconds, so retry.
-            let clip = await this._streamerClient.clips.getClipById(clipId);
+            let clip = await this.streamerClient.clips.getClipById(clipId);
             let attempts = 1;
             while (clip == null && attempts < 15) {
                 attempts++;
                 try {
-                    clip = await this._streamerClient.clips.getClipById(clipId);
+                    clip = await this.streamerClient.clips.getClipById(clipId);
                 } catch (error) {
                     //Failed to get clip
-                    logger.error("Failed to create clip", error);
+                    this.logger.error("Failed to create clip", error);
                 }
                 if (clip == null) {
                     await wait(1000);
@@ -46,7 +45,7 @@ export class TwitchClipsApi extends ApiResourceBase {
 
             return clip;
         } catch (error) {
-            logger.error("Error creating clip", error);
+            this.logger.error("Error creating clip", error);
         }
     }
 
@@ -57,21 +56,21 @@ export class TwitchClipsApi extends ApiResourceBase {
      */
     async getClipFromClipUrl(url: string): Promise<HelixClip> {
         if (url == null) {
-            logger.warn("No URL specified for getClipFromClipUrl");
+            this.logger.warn("No URL specified for getClipFromClipUrl");
             return null;
         }
 
         const clipId = url.split("/").pop();
         try {
-            const clip = await this._streamerClient.clips.getClipById(clipId);
+            const clip = await this.streamerClient.clips.getClipById(clipId);
 
             if (clip == null) {
-                logger.warn(`No Twitch clip found with clip ID ${clipId}`);
+                this.logger.warn(`No Twitch clip found with clip ID ${clipId}`);
             }
 
             return clip;
         } catch (error) {
-            logger.error(`Error while getting Twitch clip from clip ID ${clipId} or URL ${url}`, error);
+            this.logger.error(`Error while getting Twitch clip from clip ID ${clipId} or URL ${url}`, error);
         }
 
         return null;
@@ -101,16 +100,16 @@ export class TwitchClipsApi extends ApiResourceBase {
                 endDate: endDate?.toISOString()
             };
 
-            const clips = await this._streamerClient.clips.getClipsForBroadcaster(userId, filter);
+            const clips = await this.streamerClient.clips.getClipsForBroadcaster(userId, filter);
 
             if (clips?.data?.length > 0) {
                 const index = randomInt(1, clips.data.length) - 1;
                 return clips.data[index];
             }
 
-            logger.warn(`Cannot get random clip for user ID ${userId}; user has no clips or does not exist`);
+            this.logger.warn(`Cannot get random clip for user ID ${extractUserId(userId)}; user has no clips or does not exist`);
         } catch (error) {
-            logger.error(`Error while getting random clip for user ID ${userId}`, error);
+            this.logger.error(`Error while getting random clip for user ID ${extractUserId(userId)}: ${(error as Error).message}`);
         }
 
         return null;
@@ -133,15 +132,15 @@ export class TwitchClipsApi extends ApiResourceBase {
         endDate?: Date
     ): Promise<HelixClip> {
         try {
-            const user = await this._streamerClient.users.getUserByName(username);
+            const user = await this.streamerClient.users.getUserByName(username);
 
             if (user) {
                 return await this.getRandomClipForUserById(user.id, limit, isFeatured, startDate, endDate);
             }
 
-            logger.warn(`Cannot get random clip for non-existent user ${username}`);
+            this.logger.warn(`Cannot get random clip for non-existent user ${username}`);
         } catch (error) {
-            logger.error(`Error while getting random clip for user ${username}`, error);
+            this.logger.error(`Error while getting random clip for user ${username}`, error);
         }
 
         return null;
@@ -160,7 +159,7 @@ export class TwitchClipsApi extends ApiResourceBase {
         isFeatured?: boolean
     ): Promise<HelixClip> {
         try {
-            const clips = await this._streamerClient.clips.getClipsForBroadcasterPaginated(userId, { isFeatured }).getAll();
+            const clips = await this.streamerClient.clips.getClipsForBroadcasterPaginated(userId, { isFeatured }).getAll();
 
             if (clips?.length > 0) {
                 // Reverse sort by creation date
@@ -168,9 +167,9 @@ export class TwitchClipsApi extends ApiResourceBase {
                 return clip;
             }
 
-            logger.warn(`Cannot get latest clip for user ID ${userId}; user has no clips or does not exist`);
+            this.logger.warn(`Cannot get latest clip for user ID ${extractUserId(userId)}; user has no clips or does not exist`);
         } catch (error) {
-            logger.error(`Error while getting latest clip for user ID ${userId}`, error);
+            this.logger.error(`Error while getting latest clip for user ID ${extractUserId(userId)}: ${(error as Error).message}`);
         }
 
         return null;
@@ -189,15 +188,15 @@ export class TwitchClipsApi extends ApiResourceBase {
         isFeatured?: boolean
     ): Promise<HelixClip> {
         try {
-            const user = await this._streamerClient.users.getUserByName(username);
+            const user = await this.streamerClient.users.getUserByName(username);
 
             if (user) {
                 return await this.getLatestClipForUserById(user.id, isFeatured);
             }
 
-            logger.warn(`Cannot get latest clip for non-existent user ${username}`);
+            this.logger.warn(`Cannot get latest clip for non-existent user ${username}`);
         } catch (error) {
-            logger.error(`Error while getting latest clip for user ${username}`, error);
+            this.logger.error(`Error while getting latest clip for user ${username}`, error);
         }
 
         return null;

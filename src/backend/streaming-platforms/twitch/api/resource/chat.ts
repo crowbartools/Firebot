@@ -1,5 +1,4 @@
 import {
-    ApiClient,
     HelixChatAnnouncementColor,
     HelixChatChatter,
     HelixSendChatAnnouncementParams,
@@ -8,10 +7,9 @@ import {
     HelixUserEmote
 } from "@twurple/api";
 import { ApiResourceBase } from "./api-resource-base";
-import logger from '../../../../logwrapper';
-import accountAccess from "../../../../common/account-access";
-import frontendCommunicator from '../../../../common/frontend-communicator';
+import { TwitchApiBase } from "../api";
 import { TwitchSlashCommandHandler } from "../../chat/twitch-slash-command-handler";
+import frontendCommunicator from '../../../../common/frontend-communicator';
 
 interface ResultWithError<TResult, TError> {
     success: boolean;
@@ -26,8 +24,8 @@ interface ChatMessageRequest {
 }
 
 export class TwitchChatApi extends ApiResourceBase {
-    constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        super(streamerClient, botClient);
+    constructor(apiBase: TwitchApiBase) {
+        super(apiBase);
 
         frontendCommunicator.onAsync("send-chat-message", async (sendData: ChatMessageRequest) => {
             const { message, accountType, replyToMessageId } = sendData;
@@ -47,11 +45,11 @@ export class TwitchChatApi extends ApiResourceBase {
         const chatters: HelixChatChatter[] = [];
 
         try {
-            const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
+            const streamerUserId: string = this.accounts.streamer.userId;
 
-            chatters.push(...await this._streamerClient.chat.getChattersPaginated(streamerUserId).getAll());
+            chatters.push(...await this.streamerClient.chat.getChattersPaginated(streamerUserId).getAll());
         } catch (error) {
-            logger.error("Error getting chatter list", (error as Error).message);
+            this.logger.error("Error getting chatter list", (error as Error).message);
         }
 
         return chatters;
@@ -73,10 +71,10 @@ export class TwitchChatApi extends ApiResourceBase {
 
         try {
             // Determine sender
-            const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
+            const streamerUserId: string = this.accounts.streamer.userId;
             const willSendAsBot: boolean = sendAsBot === true
-                && accountAccess.getAccounts().bot?.userId != null
-                && this._botClient != null;
+                && this.accounts.bot?.userId != null
+                && this.botClient != null;
 
             // Slash command processing
             const slashCommandValidationResult = TwitchSlashCommandHandler.validateChatCommand(message);
@@ -118,20 +116,20 @@ export class TwitchChatApi extends ApiResourceBase {
 
             for (const fragment of messageFragments) {
                 if (willSendAsBot === true) {
-                    result = await this._botClient.chat.sendChatMessage(streamerUserId, fragment, { replyParentMessageId: replyToMessageId });
+                    result = await this.botClient.chat.sendChatMessage(streamerUserId, fragment, { replyParentMessageId: replyToMessageId });
                 } else {
-                    result = await this._streamerClient.chat.sendChatMessage(streamerUserId, fragment, { replyParentMessageId: replyToMessageId });
+                    result = await this.streamerClient.chat.sendChatMessage(streamerUserId, fragment, { replyParentMessageId: replyToMessageId });
                 }
 
                 if (result.isSent !== true) {
-                    logger.error(`Twitch dropped chat message. Reason: ${result.dropReasonMessage}`);
+                    this.logger.error(`Twitch dropped chat message. Reason: ${result.dropReasonMessage}`);
                     return false;
                 }
             }
 
             return result.isSent;
         } catch (error) {
-            logger.error(`Unable to send ${sendAsBot === true ? "bot" : "steamer"} chat message`, error);
+            this.logger.error(`Unable to send ${sendAsBot === true ? "bot" : "steamer"} chat message`, error);
         }
 
         return false;
@@ -152,10 +150,10 @@ export class TwitchChatApi extends ApiResourceBase {
         color: HelixChatAnnouncementColor = "primary",
         sendAsBot = false
     ): Promise<boolean> {
-        const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
+        const streamerUserId: string = this.accounts.streamer.userId;
         const willSendAsBot: boolean = sendAsBot === true
-            && accountAccess.getAccounts().bot?.userId != null
-            && this._botClient != null;
+            && this.accounts.bot?.userId != null
+            && this.botClient != null;
 
         if (message?.length < 1) {
             return;
@@ -174,15 +172,15 @@ export class TwitchChatApi extends ApiResourceBase {
                 };
 
                 if (willSendAsBot === true) {
-                    await this._botClient.chat.sendAnnouncement(streamerUserId, announcement);
+                    await this.botClient.chat.sendAnnouncement(streamerUserId, announcement);
                 } else {
-                    await this._streamerClient.chat.sendAnnouncement(streamerUserId, announcement);
+                    await this.streamerClient.chat.sendAnnouncement(streamerUserId, announcement);
                 }
             }
 
             return true;
         } catch (error) {
-            logger.error("Error sending announcement", (error as Error).message);
+            this.logger.error("Error sending announcement", (error as Error).message);
         }
 
         return false;
@@ -195,12 +193,12 @@ export class TwitchChatApi extends ApiResourceBase {
      * @returns true when successful, error message string when unsuccessful
      */
     async sendShoutout(targetUserId: string): Promise<ResultWithError<undefined, string>> {
-        const streamerId = accountAccess.getAccounts().streamer.userId;
+        const streamerId = this.accounts.streamer.userId;
 
         try {
-            await this._streamerClient.chat.shoutoutUser(streamerId, targetUserId);
+            await this.streamerClient.chat.shoutoutUser(streamerId, targetUserId);
         } catch (error) {
-            logger.error("Error sending shoutout", (error as Error).message);
+            this.logger.error("Error sending shoutout", (error as Error).message);
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             const body = JSON.parse(error._body as string) as { message?: string };
             return { success: false, error: body.message };
@@ -215,14 +213,14 @@ export class TwitchChatApi extends ApiResourceBase {
      * @returns `true` if the message was deleted or `false` if it failed
      */
     async deleteChatMessage(messageId: string): Promise<boolean> {
-        const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
+        const streamerUserId: string = this.accounts.streamer.userId;
 
         try {
-            await this._streamerClient.moderation.deleteChatMessages(streamerUserId, messageId);
+            await this.streamerClient.moderation.deleteChatMessages(streamerUserId, messageId);
 
             return true;
         } catch (error) {
-            logger.error("Error deleting chat message", (error as Error).message);
+            this.logger.error("Error deleting chat message", (error as Error).message);
         }
 
         return false;
@@ -234,14 +232,14 @@ export class TwitchChatApi extends ApiResourceBase {
      * @returns `true` if chat was cleared or `false` if it failed
      */
     async clearChat(): Promise<boolean> {
-        const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
+        const streamerUserId: string = this.accounts.streamer.userId;
 
         try {
-            await this._streamerClient.moderation.deleteChatMessages(streamerUserId);
+            await this.streamerClient.moderation.deleteChatMessages(streamerUserId);
 
             return true;
         } catch (error) {
-            logger.error("Error clearing chat", (error as Error).message);
+            this.logger.error("Error clearing chat", (error as Error).message);
         }
 
         return false;
@@ -254,18 +252,18 @@ export class TwitchChatApi extends ApiResourceBase {
      * @returns `true` if the update succeeded or `false` if it failed
      */
     async setEmoteOnlyMode(enable = true): Promise<boolean> {
-        const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
+        const streamerUserId: string = this.accounts.streamer.userId;
 
         try {
             const chatSettings: HelixUpdateChatSettingsParams = {
                 emoteOnlyModeEnabled: enable
             };
 
-            await this._streamerClient.chat.updateSettings(streamerUserId, chatSettings);
+            await this.streamerClient.chat.updateSettings(streamerUserId, chatSettings);
 
             return true;
         } catch (error) {
-            logger.error("Error setting emote-only mode", (error as Error).message);
+            this.logger.error("Error setting emote-only mode", (error as Error).message);
         }
 
         return false;
@@ -279,7 +277,7 @@ export class TwitchChatApi extends ApiResourceBase {
      * @returns `true` if the update succeeded or `false` if it failed
      */
     async setFollowerOnlyMode(enable = true, duration = 0): Promise<boolean> {
-        const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
+        const streamerUserId: string = this.accounts.streamer.userId;
 
         try {
             const chatSettings: HelixUpdateChatSettingsParams = {
@@ -287,11 +285,11 @@ export class TwitchChatApi extends ApiResourceBase {
                 followerOnlyModeDelay: duration
             };
 
-            await this._streamerClient.chat.updateSettings(streamerUserId, chatSettings);
+            await this.streamerClient.chat.updateSettings(streamerUserId, chatSettings);
 
             return true;
         } catch (error) {
-            logger.error("Error setting follower-only mode", (error as Error).message);
+            this.logger.error("Error setting follower-only mode", (error as Error).message);
         }
 
         return false;
@@ -304,18 +302,18 @@ export class TwitchChatApi extends ApiResourceBase {
      * @returns `true` if the update succeeded or `false` if it failed
      */
     async setSubscriberOnlyMode(enable = true): Promise<boolean> {
-        const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
+        const streamerUserId: string = this.accounts.streamer.userId;
 
         try {
             const chatSettings: HelixUpdateChatSettingsParams = {
                 subscriberOnlyModeEnabled: enable
             };
 
-            await this._streamerClient.chat.updateSettings(streamerUserId, chatSettings);
+            await this.streamerClient.chat.updateSettings(streamerUserId, chatSettings);
 
             return true;
         } catch (error) {
-            logger.error("Error setting subscriber-only mode", (error as Error).message);
+            this.logger.error("Error setting subscriber-only mode", (error as Error).message);
         }
 
         return false;
@@ -329,7 +327,7 @@ export class TwitchChatApi extends ApiResourceBase {
      * @returns `true` if the update succeeded or `false` if it failed
      */
     async setSlowMode(enable = true, duration = 5): Promise<boolean> {
-        const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
+        const streamerUserId: string = this.accounts.streamer.userId;
 
         try {
             const chatSettings: HelixUpdateChatSettingsParams = {
@@ -337,11 +335,11 @@ export class TwitchChatApi extends ApiResourceBase {
                 slowModeDelay: enable === true ? duration : null
             };
 
-            await this._streamerClient.chat.updateSettings(streamerUserId, chatSettings);
+            await this.streamerClient.chat.updateSettings(streamerUserId, chatSettings);
 
             return true;
         } catch (error) {
-            logger.error("Error setting slow mode", (error as Error).message);
+            this.logger.error("Error setting slow mode", (error as Error).message);
         }
 
         return false;
@@ -354,18 +352,18 @@ export class TwitchChatApi extends ApiResourceBase {
      * @returns `true` if the update succeeded or `false` if it failed
      */
     async setUniqueMode(enable = true): Promise<boolean> {
-        const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
+        const streamerUserId: string = this.accounts.streamer.userId;
 
         try {
             const chatSettings: HelixUpdateChatSettingsParams = {
                 uniqueChatModeEnabled: enable
             };
 
-            await this._streamerClient.chat.updateSettings(streamerUserId, chatSettings);
+            await this.streamerClient.chat.updateSettings(streamerUserId, chatSettings);
 
             return true;
         } catch (error) {
-            logger.error("Error setting unique mode", (error as Error).message);
+            this.logger.error("Error setting unique mode", (error as Error).message);
         }
 
         return false;
@@ -379,9 +377,9 @@ export class TwitchChatApi extends ApiResourceBase {
      */
     async getColorForUser(targetUserId: string): Promise<string> {
         try {
-            return await this._streamerClient.chat.getColorForUser(targetUserId);
+            return await this.streamerClient.chat.getColorForUser(targetUserId);
         } catch (error) {
-            logger.error("Error Receiving user color", (error as Error).message);
+            this.logger.error("Error Receiving user color", (error as Error).message);
             return null;
         }
     }
@@ -393,18 +391,18 @@ export class TwitchChatApi extends ApiResourceBase {
      * @returns An array of {@link HelixUserEmote} containing all the emotes the user can use on Twitch, or null if the request failed
      */
     async getAllUserEmotes(account: "streamer" | "bot" = "streamer"): Promise<HelixUserEmote[]> {
-        const streamerUserId = accountAccess.getAccounts().streamer.userId;
+        const streamerUserId = this.accounts.streamer.userId;
         let userId = streamerUserId;
-        let client = this._streamerClient;
+        let client = this.streamerClient;
 
         if (account === "bot") {
-            const bot = accountAccess.getAccounts().bot;
+            const bot = this.accounts.bot;
             if (bot.loggedIn !== true) {
                 return [];
             }
 
             userId = bot.userId;
-            client = this._botClient;
+            client = this.botClient;
         }
 
         try {
@@ -413,7 +411,7 @@ export class TwitchChatApi extends ApiResourceBase {
             // Filter out any duplicates that may come back from the API
             return emotes.filter((emote, index, arr) => arr.findIndex(e => emote.id === e.id) === index);
         } catch (error) {
-            logger.error(`Error getting all user emotes for ${account}`, (error as Error).message);
+            this.logger.error(`Error getting all user emotes for ${account}`, (error as Error).message);
             return null;
         }
     }

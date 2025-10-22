@@ -7,7 +7,7 @@ import { CustomRole, LegacyCustomRole } from "../../types/roles";
 
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 import { ProfileManager } from "../common/profile-manager";
-import accountAccess from "../common/account-access";
+import { AccountAccess } from "../common/account-access";
 import twitchRoleManager from "../../shared/twitch-roles";
 import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
@@ -55,7 +55,7 @@ class CustomRolesManager extends TypedEmitter<Events> {
                 const legacyCustomRoles = legacyCustomRolesDb.getData("/") as Record<string, LegacyCustomRole>;
 
                 if (Object.keys(legacyCustomRoles).length > 0) {
-                    if (accountAccess.getAccounts().streamer?.loggedIn !== true) {
+                    if (AccountAccess.getAccounts().streamer?.loggedIn !== true) {
                         logger.warn("Unable to migrate legacy custom roles. Streamer account is not logged in. Please login and restart Firebot.");
                         return;
                     }

@@ -1,11 +1,10 @@
-import { ApiClient, HelixPoll } from "@twurple/api";
+import { HelixPoll } from "@twurple/api";
 import { ApiResourceBase } from './api-resource-base';
-import logger from '../../../../logwrapper';
-import accountAccess from "../../../../common/account-access";
+import { TwitchApiBase } from "../api";
 
 export class TwitchPollsApi extends ApiResourceBase {
-    constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        super(streamerClient, botClient);
+    constructor(apiBase: TwitchApiBase) {
+        super(apiBase);
     }
 
     /**
@@ -18,16 +17,16 @@ export class TwitchPollsApi extends ApiResourceBase {
      */
     async createPoll(title: string, choices: string[], duration: number, channelPointsPerVote: number = null): Promise<void> {
         try {
-            const streamerId = accountAccess.getAccounts().streamer.userId;
+            const streamerId = this.accounts.streamer.userId;
 
-            this._streamerClient.polls.createPoll(streamerId, {
+            await this.streamerClient.polls.createPoll(streamerId, {
                 title: title,
                 choices: choices,
                 duration: duration,
                 channelPointsPerVote: channelPointsPerVote
             });
         } catch (error) {
-            logger.error("Failed to create Twitch poll", error.message);
+            this.logger.error(`Failed to create Twitch poll: ${(error as Error).message}`);
         }
     }
 
@@ -39,11 +38,11 @@ export class TwitchPollsApi extends ApiResourceBase {
      */
     async endPoll(pollId: string, showResult = true): Promise<void> {
         try {
-            const streamerId = accountAccess.getAccounts().streamer.userId;
+            const streamerId = this.accounts.streamer.userId;
 
-            await this._streamerClient.polls.endPoll(streamerId, pollId, showResult);
+            await this.streamerClient.polls.endPoll(streamerId, pollId, showResult);
         } catch (error) {
-            logger.error("Failed to end Twitch poll", error.message);
+            this.logger.error(`Failed to end Twitch poll: ${(error as Error).message}`);
         }
     }
 
@@ -54,14 +53,14 @@ export class TwitchPollsApi extends ApiResourceBase {
      */
     async getMostRecentPoll(): Promise<HelixPoll> {
         try {
-            const streamerId = accountAccess.getAccounts().streamer.userId;
+            const streamerId = this.accounts.streamer.userId;
 
-            const polls = await this._streamerClient.polls.getPolls(streamerId);
+            const polls = await this.streamerClient.polls.getPolls(streamerId);
 
             return polls.data[0];
 
         } catch (error) {
-            logger.error("Failed to get most recent Twitch poll", error.message);
+            this.logger.error(`Failed to get most recent Twitch poll: ${(error as Error).message}`);
             return null;
         }
     }

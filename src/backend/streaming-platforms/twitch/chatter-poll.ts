@@ -1,7 +1,7 @@
-import logger from "../../logwrapper";
-import accountAccess from "../../common/account-access";
+import { AccountAccess } from "../../common/account-access";
 import { ActiveUserHandler } from "../../chat/active-user-handler";
 import { TwitchApi } from "./api";
+import logger from "../../logwrapper";
 
 // Every 5 mins
 const POLL_INTERVAL: number = 5 * 60 * 1000;
@@ -18,7 +18,7 @@ class TwitchChatterPoll {
 
     private async handleChatters(): Promise<void> {
         try {
-            const streamer = accountAccess.getAccounts().streamer;
+            const streamer = AccountAccess.getAccounts().streamer;
 
             if (TwitchApi.streamerClient == null || !streamer.loggedIn) {
                 return;

@@ -1,14 +1,15 @@
 "use strict";
 
-const accountAccess = require("../common/account-access");
 const NodeCache = require('node-cache');
-const { TwitchApi } = require("../streaming-platforms/twitch/api");
-const logger = require("../logwrapper");
-const chatHelpers = require("../chat/chat-helpers");
+
+const { AccountAccess } = require("../common/account-access");
 const { ActiveUserHandler } = require("../chat/active-user-handler");
-const frontendCommunicator = require("../common/frontend-communicator");
+const { TwitchApi } = require("../streaming-platforms/twitch/api");
+const chatHelpers = require("../chat/chat-helpers");
 const chatRolesManager = require("../roles/chat-roles-manager");
 const teamRolesManager = require("../roles/team-roles-manager");
+const frontendCommunicator = require("../common/frontend-communicator");
+const logger = require("../logwrapper");
 
 const followCache = new NodeCache({ stdTTL: 10, checkperiod: 10 });
 
@@ -108,7 +109,7 @@ async function getUserDetails(userId) {
         });
     }
 
-    const streamerData = accountAccess.getAccounts().streamer;
+    const streamerData = AccountAccess.getAccounts().streamer;
 
     const client = TwitchApi.streamerClient;
 

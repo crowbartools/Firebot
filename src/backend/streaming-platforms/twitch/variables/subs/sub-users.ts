@@ -1,7 +1,7 @@
 import { ReplaceVariable } from "../../../../../types/variables";
 import { OutputDataType } from "../../../../../shared/variable-constants";
+import { AccountAccess } from "../../../../common/account-access";
 import { TwitchApi } from "../../api";
-import accountAccess from "../../../../common/account-access";
 import logger from "../../../../logwrapper";
 
 const model : ReplaceVariable = {
@@ -18,8 +18,13 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.ARRAY]
     },
     evaluator: async () => {
-        const { streamer } = accountAccess.getAccounts();
-        let viewers = [];
+        const { streamer } = AccountAccess.getAccounts();
+        let viewers: Array<{
+            username: string;
+            displayname: string;
+            tier: string;
+            isGift: boolean;
+        }> = [];
         try {
             const response = await TwitchApi.streamerClient.subscriptions
                 .getSubscriptionsPaginated(streamer.channelId).getAll();

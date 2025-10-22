@@ -1,5 +1,4 @@
 import {
-    ApiClient,
     HelixCustomReward,
     HelixCreateCustomRewardData,
     HelixUpdateCustomRewardData,
@@ -7,8 +6,7 @@ import {
     HelixCustomRewardRedemptionFilter
 } from "@twurple/api";
 import { ApiResourceBase } from "./api-resource-base";
-import logger from "../../../../logwrapper";
-import accountAccess from "../../../../common/account-access";
+import { TwitchApiBase } from "../api";
 import { chunkArray } from "../../../../utils/arrays";
 
 export interface ImageSet {
@@ -66,8 +64,8 @@ export interface RewardRedemptionsApprovalRequest {
 }
 
 export class TwitchChannelRewardsApi extends ApiResourceBase {
-    constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        super(streamerClient, botClient);
+    constructor(apiBase: TwitchApiBase) {
+        super(apiBase);
     }
 
     private mapCustomRewardToCreateRewardPayload(reward: CustomReward): HelixCreateCustomRewardData {
@@ -191,8 +189,8 @@ export class TwitchChannelRewardsApi extends ApiResourceBase {
     async getCustomChannelRewards(onlyManageable = false): Promise<CustomReward[]> {
         let rewards: HelixCustomReward[] = [];
         try {
-            const response = await this._streamerClient?.channelPoints?.getCustomRewards(
-                accountAccess.getAccounts().streamer.userId,
+            const response = await this.streamerClient?.channelPoints?.getCustomRewards(
+                this.accounts.streamer.userId,
                 onlyManageable
             );
             if (response) {
@@ -201,7 +199,7 @@ export class TwitchChannelRewardsApi extends ApiResourceBase {
                 return null;
             }
         } catch (err) {
-            logger.debug("Failed to get twitch custom channel rewards", err.message);
+            this.logger.debug(`Failed to get twitch custom channel rewards: ${(err as Error).message}`);
             return null;
         }
         return rewards.map(r => this.mapCustomRewardResponse(r));
@@ -211,8 +209,8 @@ export class TwitchChannelRewardsApi extends ApiResourceBase {
         let reward: HelixCustomReward;
 
         try {
-            const response = await this._streamerClient?.channelPoints?.getCustomRewardById(
-                accountAccess.getAccounts().streamer.userId,
+            const response = await this.streamerClient?.channelPoints?.getCustomRewardById(
+                this.accounts.streamer.userId,
                 rewardId
             );
             if (response) {
@@ -221,7 +219,7 @@ export class TwitchChannelRewardsApi extends ApiResourceBase {
                 return null;
             }
         } catch (err) {
-            logger.error("Failed to get Twitch custom channel reward", err.message);
+            this.logger.error(`Failed to get Twitch custom channel reward: ${(err as Error).message}`);
             return null;
         }
 
@@ -251,38 +249,38 @@ export class TwitchChannelRewardsApi extends ApiResourceBase {
         const data = this.mapCustomRewardToCreateRewardPayload(reward);
 
         try {
-            const response = await this._streamerClient.channelPoints.createCustomReward(
-                accountAccess.getAccounts().streamer.userId,
+            const response = await this.streamerClient.channelPoints.createCustomReward(
+                this.accounts.streamer.userId,
                 data
             );
 
             return this.mapCustomRewardResponse(response);
         } catch (err) {
-            logger.error("Failed to create twitch custom channel reward", err.message);
+            this.logger.error(`Failed to create Twitch custom channel reward: ${(err as Error).message}`);
             return null;
         }
     }
 
     async updateCustomChannelReward(reward: CustomReward): Promise<boolean> {
         try {
-            await this._streamerClient.channelPoints.updateCustomReward(
-                accountAccess.getAccounts().streamer.userId,
+            await this.streamerClient.channelPoints.updateCustomReward(
+                this.accounts.streamer.userId,
                 reward.id,
                 this.mapCustomRewardToUpdateRewardPayload(reward)
             );
             return true;
         } catch (err) {
-            logger.error("Failed to update twitch custom channel reward", err.message);
+            this.logger.error(`Failed to update Twitch custom channel reward: ${(err as Error).message}`);
             return false;
         }
     }
 
     async deleteCustomChannelReward(rewardId: string): Promise<boolean> {
         try {
-            await this._streamerClient.channelPoints.deleteCustomReward(accountAccess.getAccounts().streamer.userId, rewardId);
+            await this.streamerClient.channelPoints.deleteCustomReward(this.accounts.streamer.userId, rewardId);
             return true;
         } catch (err) {
-            logger.error("Failed to update twitch custom channel reward", err.message);
+            this.logger.error(`Failed to update Twitch custom channel reward: ${(err as Error).message}`);
             return false;
         }
     }
@@ -298,8 +296,8 @@ export class TwitchChannelRewardsApi extends ApiResourceBase {
 
             if (rewards?.length) {
                 for (const reward of rewards) {
-                    const response = await this._streamerClient.channelPoints.getRedemptionsForBroadcasterPaginated(
-                        accountAccess.getAccounts().streamer.userId,
+                    const response = await this.streamerClient.channelPoints.getRedemptionsForBroadcasterPaginated(
+                        this.accounts.streamer.userId,
                         reward.id,
                         "UNFULFILLED",
                         filter
@@ -309,7 +307,7 @@ export class TwitchChannelRewardsApi extends ApiResourceBase {
                 }
             }
         } catch (error) {
-            logger.warn(`There was an error retrieving channel reward redemptions.`, error);
+            this.logger.warn(`There was an error retrieving Twitch channel reward redemptions: ${(error as Error).message}`);
         }
 
         return redemptions;
@@ -321,19 +319,19 @@ export class TwitchChannelRewardsApi extends ApiResourceBase {
             const chunkedRedemptionIds = chunkArray(request.redemptionIds, 50);
 
             for (const chunk of chunkedRedemptionIds) {
-                const response = await this._streamerClient.channelPoints.updateRedemptionStatusByIds(
-                    accountAccess.getAccounts().streamer.userId,
+                const response = await this.streamerClient.channelPoints.updateRedemptionStatusByIds(
+                    this.accounts.streamer.userId,
                     request.rewardId,
                     chunk,
                     approve ? "FULFILLED" : "CANCELED"
                 );
 
-                logger.debug(`Redemptions ${chunk.join(",")} for channel reward ${request.rewardId} was ${response[0].isFulfilled ? "approved" : "rejected"}`);
+                this.logger.debug(`Redemptions ${chunk.join(",")} for channel reward ${request.rewardId} was ${response[0].isFulfilled ? "approved" : "rejected"}`);
             }
 
             return true;
         } catch (error) {
-            logger.error(`Failed to ${approve ? "approve" : "reject"} channel reward redemption`, error.message);
+            this.logger.error(`Failed to ${approve ? "approve" : "reject"} channel reward redemption: ${(error as Error).message}`);
             return false;
         }
     }
@@ -346,8 +344,8 @@ export class TwitchChannelRewardsApi extends ApiResourceBase {
 
             for (const rewardId of rewardIds) {
 
-                const redemptions = await this._streamerClient.channelPoints.getRedemptionsForBroadcasterPaginated(
-                    accountAccess.getAccounts().streamer.userId,
+                const redemptions = await this.streamerClient.channelPoints.getRedemptionsForBroadcasterPaginated(
+                    this.accounts.streamer.userId,
                     rewardId,
                     "UNFULFILLED",
                     filter
@@ -358,13 +356,13 @@ export class TwitchChannelRewardsApi extends ApiResourceBase {
                     redemptionIds: redemptions.map(r => r.id),
                     approve
                 }) !== true) {
-                    logger.warn(`Could not complete ${approve ? "approving" : "rejecting"} all channel reward redemptions for ${rewardId}`);
+                    this.logger.warn(`Could not complete ${approve ? "approving" : "rejecting"} all channel reward redemptions for ${rewardId}`);
                 }
             }
 
             return true;
         } catch (error) {
-            logger.error(`Failed to ${approve ? "approve" : "reject"} all channel reward redemptions for rewards ${rewardIds.join(", ")}`, error.message);
+            this.logger.error(`Failed to ${approve ? "approve" : "reject"} all channel reward redemptions for rewards ${rewardIds.join(", ")}: ${(error as Error).message}`);
             return false;
         }
     }

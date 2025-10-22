@@ -2,7 +2,7 @@
 
 const { TwitchApi } = require("../../../streaming-platforms/twitch/api");
 
-const accountAccess = require("../../../common/account-access");
+const { AccountAccess } = require("../../../common/account-access");
 
 function parseColor(color = "#29b9ed") {
     let colorInt = parseInt(color.substring(1), 16);
@@ -39,7 +39,7 @@ async function buildChannelEmbed(color) {
     let currentStream;
     try {
         currentStream = await TwitchApi.streams.getStreamersCurrentStream();
-    } catch (error) {
+    } catch {
         // stream not running
     }
 
@@ -54,7 +54,7 @@ async function buildChannelEmbed(color) {
     try {
         user = await currentStream.getUser();
         game = await currentStream.getGame();
-    } catch (error) {
+    } catch {
         //some other error
     }
 
@@ -86,7 +86,7 @@ async function buildChannelEmbed(color) {
  * @param color
  */
 async function buildClipEmbed(clip, color) {
-    const streamer = accountAccess.getAccounts().streamer;
+    const streamer = AccountAccess.getAccounts().streamer;
     const game = await clip.getGame();
     return {
         title: clip.title,
@@ -111,7 +111,7 @@ async function buildClipEmbed(clip, color) {
 }
 
 async function buildScreenshotEmbed(imageUrl, color) {
-    const streamer = accountAccess.getAccounts().streamer;
+    const streamer = AccountAccess.getAccounts().streamer;
     const channelInfo = await TwitchApi.channels.getChannelInformation();
     return {
         title: channelInfo.title,

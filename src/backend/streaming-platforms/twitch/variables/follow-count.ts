@@ -1,7 +1,7 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import { AccountAccess } from "../../../common/account-access";
 import { TwitchApi } from "../api";
-import accountAccess from "../../../common/account-access";
 
 const model: ReplaceVariable = {
     definition: {
@@ -27,7 +27,7 @@ const model: ReplaceVariable = {
     evaluator: async (trigger, username: string) => {
         let count = 0;
 
-        const streamer = accountAccess.getAccounts().streamer;
+        const streamer = AccountAccess.getAccounts().streamer;
 
         if (username == null) {
             username = streamer.username;

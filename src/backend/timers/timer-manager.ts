@@ -4,7 +4,7 @@ import { Timer, TimerIntervalTracker } from "../../types/timers";
 import { Trigger } from "../../types/triggers";
 
 import JsonDbManager from "../database/json-db-manager";
-import accountAccess from "../common/account-access";
+import { AccountAccess } from "../common/account-access";
 import connectionManager from "../common/connection-manager";
 import effectRunner from "../common/effect-runner";
 import frontendCommunicator from "../common/frontend-communicator";
@@ -160,9 +160,9 @@ class TimerManager extends JsonDbManager<Timer> {
                 trigger: {
                     type: "timer",
                     metadata: {
-                        username: accountAccess.getAccounts().streamer.username,
-                        userId: accountAccess.getAccounts().streamer.userId,
-                        userDisplayName: accountAccess.getAccounts().streamer.displayName,
+                        username: AccountAccess.getAccounts().streamer.username,
+                        userId: AccountAccess.getAccounts().streamer.userId,
+                        userDisplayName: AccountAccess.getAccounts().streamer.displayName,
                         timer: timer
                     }
                 } as Trigger,

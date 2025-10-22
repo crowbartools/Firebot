@@ -15,7 +15,7 @@ export class BTTVEmoteProvider extends ThirdPartyEmoteProvider<BTTVEmotesRespons
     providerName = "BTTV";
 
     globalEmoteUrl = "https://api.betterttv.net/3/cached/emotes/global";
-    getChannelEmotesUrl(streamerUserId: number): string {
+    getChannelEmotesUrl(streamerUserId: string): string {
         return `https://api.betterttv.net/3/cached/users/twitch/${streamerUserId}`;
     }
 

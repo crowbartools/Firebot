@@ -2,7 +2,7 @@ import EventEmitter from "events";
 
 import { EventDefinition, EventSource } from "../../types/events";
 
-import accountAccess from "../common/account-access";
+import { AccountAccess } from "../common/account-access";
 import eventsAccess from "./events-access";
 import eventsRouter from "./events-router";
 import frontendCommunicator from "../common/frontend-communicator";
@@ -54,7 +54,7 @@ class EventManager extends EventEmitter {
                 meta[key] = value.value;
             }
             if (meta.username == null) {
-                meta.username = accountAccess.getAccounts().streamer.username;
+                meta.username = AccountAccess.getAccounts().streamer.username;
             }
 
             const eventSettings = eventsAccess.getAllActiveEvents().find(e => e.id === eventSettingsId);
@@ -170,7 +170,7 @@ class EventManager extends EventEmitter {
         }
 
         if (meta.username == null) {
-            meta.username = accountAccess.getAccounts().streamer.username;
+            meta.username = AccountAccess.getAccounts().streamer.username;
         }
 
         const eventTriggeredPromise = eventsRouter.onEventTriggered(event, source, meta, isManual, isRetrigger, isSimulation);

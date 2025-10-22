@@ -12,7 +12,7 @@ export class FFZEmoteProvider extends ThirdPartyEmoteProvider<FFZEmotesResponse>
     providerName = "FFZ";
 
     globalEmoteUrl = "https://api.betterttv.net/3/cached/frankerfacez/emotes/global";
-    getChannelEmotesUrl(streamerUserId: number): string {
+    getChannelEmotesUrl(streamerUserId: string): string {
         return `https://api.betterttv.net/3/cached/frankerfacez/users/twitch/${streamerUserId}`;
     }
 

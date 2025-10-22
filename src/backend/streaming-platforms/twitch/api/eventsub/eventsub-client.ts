@@ -1,18 +1,19 @@
 import { EventSubSubscription } from "@twurple/eventsub-base";
 import { EventSubWsListener } from "@twurple/eventsub-ws";
 
-import logger from "../../../../logwrapper";
-import accountAccess from "../../../../common/account-access";
-import frontendCommunicator from "../../../../common/frontend-communicator";
+import { SavedChannelReward } from "../../../../../types/channel-rewards";
+
+import { AccountAccess } from "../../../../common/account-access";
 import { TwitchEventHandlers } from "../../events";
 import { TwitchApi } from "..";
-import twitchStreamInfoPoll from "../../stream-info-manager";
-import rewardManager from "../../../../channel-rewards/channel-reward-manager";
+import channelRewardManager from "../../../../channel-rewards/channel-reward-manager";
 import chatRolesManager from "../../../../roles/chat-roles-manager";
 import chatHelpers from "../../../../chat/chat-helpers";
+import rewardManager from "../../../../channel-rewards/channel-reward-manager";
+import twitchStreamInfoPoll from "../../stream-info-manager";
 import viewerDatabase from "../../../../viewers/viewer-database";
-import { SavedChannelReward } from "../../../../../types/channel-rewards";
-import channelRewardManager from "../../../../channel-rewards/channel-reward-manager";
+import frontendCommunicator from "../../../../common/frontend-communicator";
+import logger from "../../../../logwrapper";
 import { getChannelRewardImageUrl, mapEventSubRewardToTwitchData } from "./eventsub-helpers";
 
 class TwitchEventSubClient {
@@ -20,7 +21,7 @@ class TwitchEventSubClient {
     private _subscriptions: Array<EventSubSubscription> = [];
 
     private createSubscriptions(): void {
-        const streamer = accountAccess.getAccounts().streamer;
+        const streamer = AccountAccess.getAccounts().streamer;
 
         // Stream online
         const onlineSubscription = this._eventSubListener.onStreamOnline(streamer.userId, (event) => {

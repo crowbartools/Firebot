@@ -1,14 +1,15 @@
 import { DateTime } from "luxon";
-import logger from "../../logwrapper";
-import accountAccess from "../../common/account-access";
+
+import { AccountAccess } from "../../common/account-access";
 import { SettingsManager } from "../../common/settings-manager";
-import frontendCommunicator from "../../common/frontend-communicator";
 import { TwitchApi } from "./api";
+import adManager from "./ad-manager";
 import {
     triggerCategoryChanged,
     triggerTitleChanged
 } from "./events/stream";
-import adManager from "./ad-manager";
+import frontendCommunicator from "../../common/frontend-communicator";
+import logger from "../../logwrapper";
 
 interface TwitchStreamInfo {
     isLive?: boolean;
@@ -49,19 +50,19 @@ class TwitchStreamInfoManager {
             if (Math.abs(this._lastWebCheckin.diffNow("minutes").minutes) >= WEB_CHECKIN_INTERVAL) {
                 logger.debug("Sending online heartbeat to firebot.app");
 
-                await fetch(`https://firebot.app/api/live-now/${accountAccess.getAccounts().streamer.userId}`, {
+                await fetch(`https://firebot.app/api/live-now/${AccountAccess.getAccounts().streamer.userId}`, {
                     method: "POST"
                 });
 
                 this._lastWebCheckin = DateTime.utc();
             }
         } catch (error) {
-            logger.warn(`Unable to do online web check-in: ${error.message}`);
+            logger.warn(`Unable to do online web check-in: ${(error as Error).message}`);
         }
     }
 
     private async handleStreamInfo(triggerEventsOnMetaChanges = true): Promise<void> {
-        const streamer = accountAccess.getAccounts().streamer;
+        const streamer = AccountAccess.getAccounts().streamer;
         const client = TwitchApi.streamerClient;
 
         if (client == null || !streamer.loggedIn) {
@@ -115,7 +116,7 @@ class TwitchStreamInfoManager {
     startStreamInfoPoll(): void {
         this.clearPollInterval();
         // Don't trigger events on first run
-        this.handleStreamInfo(false);
+        void this.handleStreamInfo(false);
         this._streamInfoPollIntervalId = setInterval(() => this.handleStreamInfo(), POLL_INTERVAL);
     }
 

@@ -1,6 +1,6 @@
 import * as commandList from "./sync-handlers/command-list";
 import * as quoteList from "./sync-handlers/quotes-list";
-import accountAccess from "../common/account-access";
+import { AccountAccess } from "../common/account-access";
 import { SettingsManager } from "../common/settings-manager";
 import rankManager from "../ranks/rank-manager";
 import { ReplaceVariableManager } from "../variables/replace-variable-manager";
@@ -15,7 +15,7 @@ interface ProfileSyncData {
 }
 
 export async function sync<T = unknown>(jsonData: T): Promise<string> {
-    const streamer = accountAccess.getAccounts().streamer;
+    const streamer = AccountAccess.getAccounts().streamer;
 
     if (!streamer?.loggedIn) {
         return null;
@@ -66,7 +66,7 @@ export async function getData<T = unknown>(shareCode: string): Promise<T> {
 };
 
 export async function syncProfileData(profileSyncData: ProfileSyncData): Promise<string> {
-    const streamer = accountAccess.getAccounts().streamer;
+    const streamer = AccountAccess.getAccounts().streamer;
 
     if (!streamer?.loggedIn) {
         return null;

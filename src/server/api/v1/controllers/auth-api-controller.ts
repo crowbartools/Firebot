@@ -1,7 +1,10 @@
 import { Request, Response } from 'express';
+import { Options, Token } from 'client-oauth2';
+
+import { AuthDetails } from '../../../../types/auth';
+
 import authManager from '../../../../backend/auth/auth-manager';
 import logger from '../../../../backend/logwrapper';
-import { Options, Token } from 'client-oauth2';
 
 export function getAuth(req: Request, res: Response): void {
     const providerId = req.query.providerId as string;
@@ -54,7 +57,7 @@ export async function getAuthCallback(req: Request, res: Response): Promise<void
         const tokenData = {
             ...token.data,
             scope: token.data.scope?.split(" ")
-        };
+        } as unknown as AuthDetails;
 
         authManager.successfulAuth(provider.id, tokenData);
 

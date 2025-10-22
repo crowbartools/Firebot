@@ -1,27 +1,32 @@
 import ReconnectingWebSocket from '../reconnecting-websocket';
-import accountAccess from "../common/account-access";
+import { AccountAccess } from "../common/account-access";
 import { TypedEmitter } from "tiny-typed-emitter";
 import logger from "../logwrapper";
 
 class CrowbarRelayWebSocket extends TypedEmitter<{
-    "ready": () => void,
+    "ready": () => void;
     "message": (msg: {
         event: string;
         data: unknown;
-    }) => void
+    }) => void;
 }> {
     private ws: ReconnectingWebSocket | null = null;
 
     constructor() {
         super();
-        accountAccess.readyPromise.then(() => {
+
+        void AccountAccess.readyPromise.then(() => {
             this.start();
         });
-        accountAccess.events.on("account-update", () => {
+
+        AccountAccess.on("account-update", () => {
             this.start();
         });
-        accountAccess.events.on("account-auth-update:streamer", () => {
-            this.start();
+
+        AccountAccess.on("account-auth-update", (data) => {
+            if (data.accountType === "streamer") {
+                this.start();
+            }
         });
     }
 
@@ -31,7 +36,7 @@ class CrowbarRelayWebSocket extends TypedEmitter<{
             this.ws = null;
         }
 
-        const streamer = accountAccess.getAccounts().streamer;
+        const streamer = AccountAccess.getAccounts().streamer;
 
         if (!streamer.loggedIn) {
             return;

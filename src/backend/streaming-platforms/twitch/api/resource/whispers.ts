@@ -1,11 +1,10 @@
-import { ApiClient, UserIdResolvable } from "@twurple/api";
+import { UserIdResolvable } from "@twurple/api";
 import { ApiResourceBase } from "./api-resource-base";
-import logger from '../../../../logwrapper';
-import accountAccess from "../../../../common/account-access";
+import { TwitchApiBase } from "../api";
 
 export class TwitchWhispersApi extends ApiResourceBase {
-    constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        super(streamerClient, botClient);
+    constructor(apiBase: TwitchApiBase) {
+        super(apiBase);
     }
 
     /**
@@ -24,11 +23,11 @@ export class TwitchWhispersApi extends ApiResourceBase {
         sendAsBot = false
     ): Promise<boolean> {
         const willSendAsBot: boolean = sendAsBot === true
-            && accountAccess.getAccounts().bot?.userId != null
-            && this._botClient != null;
+            && this.accounts.bot?.userId != null
+            && this.botClient != null;
         const senderUserId: string = willSendAsBot === true ?
-            accountAccess.getAccounts().bot.userId :
-            accountAccess.getAccounts().streamer.userId;
+            this.accounts.bot.userId :
+            this.accounts.streamer.userId;
 
         try {
             const messageFragments = message
@@ -38,15 +37,15 @@ export class TwitchWhispersApi extends ApiResourceBase {
 
             for (const fragment of messageFragments) {
                 if (willSendAsBot === true) {
-                    await this._botClient.whispers.sendWhisper(senderUserId, recipientUserId, fragment);
+                    await this.botClient.whispers.sendWhisper(senderUserId, recipientUserId, fragment);
                 } else {
-                    await this._streamerClient.whispers.sendWhisper(senderUserId, recipientUserId, fragment);
+                    await this.streamerClient.whispers.sendWhisper(senderUserId, recipientUserId, fragment);
                 }
             }
 
             return true;
         } catch (error) {
-            logger.error("Error sending whisper", (error as Error).message);
+            this.logger.error(`Error sending whisper: ${(error as Error).message}`);
         }
 
         return false;

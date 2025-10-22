@@ -1,11 +1,9 @@
-import { ApiClient } from "@twurple/api";
 import { ApiResourceBase } from './api-resource-base';
-import logger from '../../../../logwrapper';
-import accountAccess from "../../../../common/account-access";
+import { TwitchApiBase } from "../api";
 
 export class TwitchSubscriptionsApi extends ApiResourceBase {
-    constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        super(streamerClient, botClient);
+    constructor(apiBase: TwitchApiBase) {
+        super(apiBase);
     }
 
     /**
@@ -15,12 +13,12 @@ export class TwitchSubscriptionsApi extends ApiResourceBase {
      */
     async getSubscriberCount(): Promise<number> {
         try {
-            const streamerId = accountAccess.getAccounts().streamer.userId;
-            const subscriberInfo = await this._streamerClient.subscriptions.getSubscriptions(streamerId);
+            const streamerId = this.accounts.streamer.userId;
+            const subscriberInfo = await this.streamerClient.subscriptions.getSubscriptions(streamerId);
 
             return subscriberInfo.total;
         } catch (error) {
-            logger.error("Error getting channel subscriber count", error.message);
+            this.logger.error(`Error getting channel subscriber count: ${(error as Error).message}`);
             return 0;
         }
     }
@@ -32,12 +30,12 @@ export class TwitchSubscriptionsApi extends ApiResourceBase {
      */
     async getSubPointCount(): Promise<number> {
         try {
-            const streamerId = accountAccess.getAccounts().streamer.userId;
-            const subscriberInfo = await this._streamerClient.subscriptions.getSubscriptions(streamerId);
+            const streamerId = this.accounts.streamer.userId;
+            const subscriberInfo = await this.streamerClient.subscriptions.getSubscriptions(streamerId);
 
             return subscriberInfo.points;
         } catch (error) {
-            logger.error("Error getting channel sub point count", error.message);
+            this.logger.error(`Error getting channel sub point count: ${(error as Error).message}`);
             return 0;
         }
     }

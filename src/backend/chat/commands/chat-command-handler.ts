@@ -2,16 +2,16 @@ import { CommandDefinition, SystemCommandDefinition, UserCommand } from "../../.
 import { FirebotChatMessage } from "../../../types/chat";
 import { Trigger } from "../../../types/triggers";
 
+import { AccountAccess } from "../../common/account-access";
 import { RestrictionsManager } from "../../restrictions/restriction-manager";
 import { SettingsManager } from "../../common/settings-manager";
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
-import accountAccess from "../../common/account-access";
 import commandManager from "./command-manager";
 import commandCooldownManager from "./command-cooldown-manager";
 import commandRunner from "./command-runner";
-import { escapeRegExp, humanizeTime } from "../../utils";
 import frontendCommunicator from "../../common/frontend-communicator";
 import logger from "../../logwrapper";
+import { escapeRegExp, humanizeTime } from "../../utils";
 
 const DEFAULT_COOLDOWN_MESSAGE = "This command is still on cooldown for: {timeLeft}";
 const DEFAULT_RESTRICTION_MESSAGE = "Sorry, you cannot use this command because: {reason}";
@@ -217,7 +217,7 @@ class CommandHandler {
             }
         }
 
-        const { streamer, bot } = accountAccess.getAccounts();
+        const { streamer, bot } = AccountAccess.getAccounts();
 
         // check if chat came from the streamer and if we should ignore it.
         if (command.ignoreStreamer && firebotChatMessage.username === streamer.username) {

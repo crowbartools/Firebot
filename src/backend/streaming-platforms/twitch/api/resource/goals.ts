@@ -1,11 +1,10 @@
-import { ApiClient, HelixGoal } from "@twurple/api";
+import { HelixGoal } from "@twurple/api";
 import { ApiResourceBase } from './api-resource-base';
-import logger from '../../../../logwrapper';
-import accountAccess from "../../../../common/account-access";
+import { TwitchApiBase } from "../api";
 
 export class TwitchGoalsApi extends ApiResourceBase {
-    constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        super(streamerClient, botClient);
+    constructor(apiBase: TwitchApiBase) {
+        super(apiBase);
     }
 
     /**
@@ -15,13 +14,13 @@ export class TwitchGoalsApi extends ApiResourceBase {
      */
     async getCurrentChannelGoals(): Promise<HelixGoal[]> {
         try {
-            const streamerId = accountAccess.getAccounts().streamer.userId;
+            const streamerId = this.accounts.streamer.userId;
 
-            const goals = await this._streamerClient.goals.getGoals(streamerId);
+            const goals = await this.streamerClient.goals.getGoals(streamerId);
 
             return goals;
         } catch (error) {
-            logger.error("Failed to get channel goals", error.message);
+            this.logger.error(`Failed to get channel goals: ${(error as Error).message}`);
             return null;
         }
     }

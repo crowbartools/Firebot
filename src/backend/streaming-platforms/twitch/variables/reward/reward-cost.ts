@@ -1,8 +1,8 @@
 import { ReplaceVariable } from "../../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import { AccountAccess } from "../../../../common/account-access";
 import { TwitchApi } from "../../api";
 import channelRewardManager from "../../../../channel-rewards/channel-reward-manager";
-import accountAccess from "../../../../common/account-access";
 
 
 const model : ReplaceVariable = {
@@ -32,7 +32,7 @@ const model : ReplaceVariable = {
             }
 
             const reward = await TwitchApi.streamerClient.channelPoints.getCustomRewardById(
-                accountAccess.getAccounts().streamer.userId,
+                AccountAccess.getAccounts().streamer.userId,
                 channelRewardId
             );
             if (reward) {

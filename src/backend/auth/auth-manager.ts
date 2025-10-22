@@ -1,7 +1,7 @@
-import { EventEmitter } from "events";
+import { TypedEmitter } from "tiny-typed-emitter";
 import ClientOAuth2 from "client-oauth2";
 
-import { AuthProvider, AuthProviderDefinition } from "../../types/auth";
+import { AuthDetails, AuthProvider, AuthProviderDefinition } from "../../types/auth";
 
 import { SettingsManager } from "../common/settings-manager";
 import { Notification, app } from "electron";
@@ -9,7 +9,16 @@ import windowManagement from "../app-management/electron/window-management";
 import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
 
-class AuthManager extends EventEmitter {
+type Events = {
+    "auth-success": (event: AuthSuccessEventArgs) => void;
+};
+
+interface AuthSuccessEventArgs {
+    providerId: string;
+    tokenData: AuthDetails;
+}
+
+class AuthManager extends TypedEmitter<Events> {
     private readonly _httpPort: number;
     private _authProviders: AuthProvider[];
 
@@ -126,7 +135,7 @@ class AuthManager extends EventEmitter {
         }
     }
 
-    successfulAuth(providerId: string, tokenData: unknown): void {
+    successfulAuth(providerId: string, tokenData: AuthDetails): void {
         this.emit("auth-success", { providerId: providerId, tokenData: tokenData });
     }
 }
@@ -153,7 +162,7 @@ frontendCommunicator.onAsync("begin-device-auth", async (providerId: string): Pr
     });
 
     if (response.ok) {
-        const deviceAuthData = await response.json();
+        const deviceAuthData = await response.json() as ClientOAuth2.Data;
 
         frontendCommunicator.send("device-code-received", {
             loginUrl: deviceAuthData.verification_uri,
@@ -178,7 +187,7 @@ frontendCommunicator.onAsync("begin-device-auth", async (providerId: string): Pr
             if (tokenResponse.ok) {
                 clearInterval(tokenCheckInterval);
 
-                const tokenData = await tokenResponse.json();
+                const tokenData = await tokenResponse.json() as AuthDetails;
                 manager.successfulAuth(providerId, tokenData);
 
                 if (
@@ -198,7 +207,7 @@ frontendCommunicator.onAsync("begin-device-auth", async (providerId: string): Pr
                     });
                 }
             }
-        }, deviceAuthData.interval * 1000);
+        }, Number(deviceAuthData.interval) * 1000);
 
         frontendCommunicator.on("cancel-device-token-check", () => {
             if (tokenCheckInterval) {

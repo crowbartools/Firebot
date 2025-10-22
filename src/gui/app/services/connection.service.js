@@ -16,12 +16,12 @@
         ) {
             const service = {};
 
-            backendCommunicator.on("accountUpdate", (accounts) => {
+            backendCommunicator.on("accounts:account-update", (accounts) => {
                 service.accounts = accounts;
                 service.loadProfiles();
             });
             service.getAccounts = () => {
-                service.accounts = backendCommunicator.fireEventSync("getAccounts");
+                service.accounts = backendCommunicator.fireEventSync("accounts:get-accounts");
             };
             service.getAccounts();
 
@@ -105,7 +105,7 @@
                 });
             };
 
-            backendCommunicator.on("invalidate-accounts", service.invalidateAccounts);
+            backendCommunicator.on("accounts:invalidate-accounts", service.invalidateAccounts);
 
             service.validateAccounts = () => {
                 backendCommunicator.fireEventSync("validate-twitch-accounts");

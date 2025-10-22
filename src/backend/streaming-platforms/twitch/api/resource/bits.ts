@@ -1,11 +1,15 @@
-import { ApiClient, HelixBitsLeaderboardEntry, HelixBitsLeaderboardPeriod, HelixBitsLeaderboardQuery, HelixCheermoteList } from "@twurple/api";
+import {
+    HelixBitsLeaderboardEntry,
+    HelixBitsLeaderboardPeriod,
+    HelixBitsLeaderboardQuery,
+    HelixCheermoteList
+} from "@twurple/api";
 import { ApiResourceBase } from "./api-resource-base";
-import logger from "../../../../logwrapper";
-import accountAccess from "../../../../common/account-access";
+import { TwitchApiBase } from "../api";
 
 export class TwitchBitsApi extends ApiResourceBase {
-    constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        super(streamerClient, botClient);
+    constructor(apiBase: TwitchApiBase) {
+        super(apiBase);
     }
 
     async getChannelBitsLeaderboard(
@@ -14,7 +18,7 @@ export class TwitchBitsApi extends ApiResourceBase {
         startDate: Date = new Date(),
         userId?: string
     ): Promise<HelixBitsLeaderboardEntry[]> {
-        const streamerId: string = accountAccess.getAccounts().streamer.userId;
+        const streamerId: string = this.accounts.streamer.userId;
         const leaderboard: HelixBitsLeaderboardEntry[] = [];
 
         try {
@@ -24,9 +28,9 @@ export class TwitchBitsApi extends ApiResourceBase {
                 startDate: startDate,
                 contextUserId: userId
             };
-            leaderboard.push(...(await this._streamerClient.bits.getLeaderboard(streamerId, params)).entries);
+            leaderboard.push(...(await this.streamerClient.bits.getLeaderboard(streamerId, params)).entries);
         } catch (error) {
-            logger.error("Failed to get channel bits leaderboard", error.message);
+            this.logger.error(`Failed to get channel bits leaderboard: ${(error as Error).message}`);
         }
 
         return leaderboard;
@@ -46,10 +50,10 @@ export class TwitchBitsApi extends ApiResourceBase {
 
     async getChannelCheermotes(): Promise<HelixCheermoteList> {
         try {
-            const streamerId: string = accountAccess.getAccounts().streamer.userId;
-            return await this._streamerClient.bits.getCheermotes(streamerId);
+            const streamerId: string = this.accounts.streamer.userId;
+            return await this.streamerClient.bits.getCheermotes(streamerId);
         } catch (error) {
-            logger.error(`Error getting channel cheermotes: ${error.message}`);
+            this.logger.error(`Error getting channel cheermotes: ${(error as Error).message}`);
             return null;
         }
     }

@@ -5,8 +5,8 @@ import { v4 as uuid } from "uuid";
 
 import { CommandDefinition, SystemCommand, SystemCommandDefinition } from "../../../types/commands";
 
+import { AccountAccess } from "../../common/account-access";
 import { ProfileManager } from "../../common/profile-manager";
-import accountAccess from "../../common/account-access";
 import frontendCommunicator from "../../common/frontend-communicator";
 import logger from "../../logwrapper";
 import { deepClone } from "../../utils";
@@ -341,12 +341,12 @@ class CommandManager extends TypedEmitter<Events> {
 
             command.createdBy = user
                 ? user
-                : accountAccess.getAccounts().streamer.username;
+                : AccountAccess.getAccounts().streamer.username;
             command.createdAt = DateTime.now().toISO();
         } else {
             command.lastEditBy = user
                 ? user
-                : accountAccess.getAccounts().streamer.username;
+                : AccountAccess.getAccounts().streamer.username;
             command.lastEditAt = DateTime.now().toISO();
         }
 

@@ -1,9 +1,9 @@
 import { DateTime } from "luxon";
 
-import { TwitchApi } from "./api";
-import { SettingsManager } from "../../common/settings-manager";
+import { AccountAccess } from "../../common/account-access";
 import { EventManager } from "../../events/event-manager";
-import accountAccess from "../../common/account-access";
+import { SettingsManager } from "../../common/settings-manager";
+import { TwitchApi } from "./api";
 import frontendCommunicator from "../../common/frontend-communicator";
 import logger from "../../logwrapper";
 
@@ -40,7 +40,7 @@ class AdManager {
             return;
         }
 
-        const streamer = accountAccess.getAccounts().streamer;
+        const streamer = AccountAccess.getAccounts().streamer;
         if (streamer.broadcasterType === "") {
             logger.debug("Streamer is not affiliate/partner. Skipping ad timer check.");
             return;

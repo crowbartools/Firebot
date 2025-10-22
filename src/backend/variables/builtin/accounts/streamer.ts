@@ -1,6 +1,6 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType } from "../../../../shared/variable-constants";
-import accountAccess from "../../../common/account-access";
+import { AccountAccess } from "../../../common/account-access";
 
 const model : ReplaceVariable = {
     definition: {
@@ -9,7 +9,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: () => {
-        return accountAccess.getAccounts().streamer.username;
+        return AccountAccess.getAccounts().streamer.username;
     }
 };
 

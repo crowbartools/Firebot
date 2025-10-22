@@ -5,12 +5,12 @@ import { EffectList } from "../../types/effects";
 import { Trigger } from "../../types/triggers";
 import { CustomReward, RewardRedemption, RewardRedemptionsApprovalRequest } from "../streaming-platforms/twitch/api/resource/channel-rewards";
 
+import { AccountAccess } from "../common/account-access";
 import { ActiveUserHandler } from "../chat/active-user-handler";
+import { ProfileManager } from "../common/profile-manager";
 import { RestrictionsManager } from "../restrictions/restriction-manager";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 import { EffectTrigger } from "../../shared/effect-constants";
-import { ProfileManager } from "../common/profile-manager";
-import accountAccess from "../common/account-access";
 import effectRunner from "../common/effect-runner";
 import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
@@ -59,7 +59,7 @@ class ChannelRewardManager {
                 rewardCost: savedReward.twitchData.cost,
                 rewardImage: savedReward.twitchData.image ? savedReward.twitchData.image.url4x : savedReward.twitchData.defaultImage.url4x,
                 rewardName: savedReward.twitchData.title,
-                username: accountAccess.getAccounts().streamer.displayName,
+                username: AccountAccess.getAccounts().streamer.displayName,
                 userId: "",
                 userDisplayName: ""
             }, true);
@@ -433,7 +433,7 @@ class ChannelRewardManager {
     }
 
     async refreshChannelRewardRedemptions(): Promise<void> {
-        if (accountAccess.getAccounts().streamer.broadcasterType === "") {
+        if (AccountAccess.getAccounts().streamer.broadcasterType === "") {
             return;
         }
 

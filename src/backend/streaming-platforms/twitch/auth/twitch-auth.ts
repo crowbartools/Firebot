@@ -1,11 +1,13 @@
+import { HelixPaginatedResponse } from "@twurple/api";
 import { getExpiryDateOfAccessToken } from "@twurple/auth";
+import { HelixUserData } from "../api/twurple-private-types";
 
 import { AuthProviderDefinition } from "../../../../types/auth";
 import { FirebotAccount } from "../../../../types/accounts";
 
 import { SecretsManager } from "../../../secrets-manager";
+import { AccountAccess } from "../../../common/account-access";
 import authManager from "../../../auth/auth-manager";
-import accountAccess from "../../../common/account-access";
 import channelRewardManager from "../../../channel-rewards/channel-reward-manager";
 import logger from "../../../logwrapper";
 
@@ -145,7 +147,7 @@ async function getUserCurrent(accessToken: string) {
         });
 
         if (response.ok) {
-            const userData = await response.json();
+            const userData = await response.json() as HelixPaginatedResponse<HelixUserData>;
             if (userData.data && userData.data.length > 0) {
                 return userData.data[0];
             }
@@ -161,14 +163,17 @@ authManager.on("auth-success", async (authData) => {
 
     if (providerId === twitchAuthProviders.streamerAccountProviderId
         || providerId === twitchAuthProviders.botAccountProviderId) {
-        const userData = await getUserCurrent(tokenData.access_token as string);
+        const userData = await getUserCurrent(tokenData.access_token);
         if (userData == null) {
             return;
         }
 
         const obtainmentTimestamp = Date.now();
 
-        const accountType = providerId === twitchAuthProviders.streamerAccountProviderId ? "streamer" : "bot";
+        const accountType = providerId === twitchAuthProviders.streamerAccountProviderId
+            ? "streamer"
+            : "bot";
+
         const accountObject: FirebotAccount = {
             username: userData.login,
             displayName: userData.display_name,
@@ -181,13 +186,13 @@ authManager.on("auth-success", async (authData) => {
                 ...tokenData,
                 obtainment_timestamp: obtainmentTimestamp, // eslint-disable-line camelcase
                 expires_at: getExpiryDateOfAccessToken({ // eslint-disable-line camelcase
-                    expiresIn: tokenData.expires_in,
+                    expiresIn: Number(tokenData.expires_in),
                     obtainmentTimestamp: obtainmentTimestamp
                 })
             }
         };
 
-        accountAccess.updateAccount(accountType, accountObject);
+        AccountAccess.updateAccount(accountType, accountObject);
 
         if (accountType === "streamer") {
             void channelRewardManager.loadChannelRewards();

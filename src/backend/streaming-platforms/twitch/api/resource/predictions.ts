@@ -1,11 +1,10 @@
-import { ApiClient, HelixPrediction } from "@twurple/api";
+import { HelixPrediction } from "@twurple/api";
 import { ApiResourceBase } from './api-resource-base';
-import logger from '../../../../logwrapper';
-import accountAccess from "../../../../common/account-access";
+import { TwitchApiBase } from "../api";
 
 export class TwitchPredictionsApi extends ApiResourceBase {
-    constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        super(streamerClient, botClient);
+    constructor(apiBase: TwitchApiBase) {
+        super(apiBase);
     }
 
     /**
@@ -17,15 +16,15 @@ export class TwitchPredictionsApi extends ApiResourceBase {
      */
     async createPrediction(title: string, outcomes: string[], duration: number): Promise<void> {
         try {
-            const streamerId = accountAccess.getAccounts().streamer.userId;
+            const streamerId = this.accounts.streamer.userId;
 
-            this._streamerClient.predictions.createPrediction(streamerId, {
+            await this.streamerClient.predictions.createPrediction(streamerId, {
                 title: title,
                 outcomes: outcomes,
                 autoLockAfter: duration
             });
         } catch (error) {
-            logger.error("Failed to create Twitch prediction", error.message);
+            this.logger.error("Failed to create Twitch prediction: ", (error as Error).message);
         }
     }
 
@@ -36,11 +35,11 @@ export class TwitchPredictionsApi extends ApiResourceBase {
      */
     async lockPrediciton(predictionId: string): Promise<void> {
         try {
-            const streamerId = accountAccess.getAccounts().streamer.userId;
+            const streamerId = this.accounts.streamer.userId;
 
-            await this._streamerClient.predictions.lockPrediction(streamerId, predictionId);
+            await this.streamerClient.predictions.lockPrediction(streamerId, predictionId);
         } catch (error) {
-            logger.error("Failed to lock Twitch prediction", error.message);
+            this.logger.error(`Failed to lock Twitch prediction: ${(error as Error).message}`);
         }
     }
 
@@ -51,11 +50,11 @@ export class TwitchPredictionsApi extends ApiResourceBase {
      */
     async cancelPrediction(predictionId: string): Promise<void> {
         try {
-            const streamerId = accountAccess.getAccounts().streamer.userId;
+            const streamerId = this.accounts.streamer.userId;
 
-            await this._streamerClient.predictions.cancelPrediction(streamerId, predictionId);
+            await this.streamerClient.predictions.cancelPrediction(streamerId, predictionId);
         } catch (error) {
-            logger.error("Failed to cancel Twitch prediction", error.message);
+            this.logger.error(`Failed to cancel Twitch prediction: ${(error as Error).message}`);
         }
     }
 
@@ -67,11 +66,11 @@ export class TwitchPredictionsApi extends ApiResourceBase {
      */
     async resolvePrediction(predictionId: string, outcomeId: string): Promise<void> {
         try {
-            const streamerId = accountAccess.getAccounts().streamer.userId;
+            const streamerId = this.accounts.streamer.userId;
 
-            await this._streamerClient.predictions.resolvePrediction(streamerId, predictionId, outcomeId);
+            await this.streamerClient.predictions.resolvePrediction(streamerId, predictionId, outcomeId);
         } catch (error) {
-            logger.error("Failed to resolve Twitch prediction", error.message);
+            this.logger.error(`Failed to resolve Twitch prediction: ${(error as Error).message}`);
         }
     }
 
@@ -82,14 +81,14 @@ export class TwitchPredictionsApi extends ApiResourceBase {
      */
     async getMostRecentPrediction(): Promise<HelixPrediction> {
         try {
-            const streamerId = accountAccess.getAccounts().streamer.userId;
+            const streamerId = this.accounts.streamer.userId;
 
-            const predictions = await this._streamerClient.predictions.getPredictions(streamerId);
+            const predictions = await this.streamerClient.predictions.getPredictions(streamerId);
 
             return predictions.data[0];
 
         } catch (error) {
-            logger.error("Failed to get most recent Twitch prediction", error.message);
+            this.logger.error(`Failed to get most recent Twitch prediction: ${(error as Error).message}`);
             return null;
         }
     }

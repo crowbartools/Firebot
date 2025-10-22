@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 
 import { RestrictionType } from "../../../types/restrictions";
+import { AccountAccess } from "../../common/account-access";
 import userAccess from "../../common/user-access";
-import accountAccess from "../../common/account-access";
 
 const model: RestrictionType<{
     checkMode: "streamer" | "custom";
@@ -73,7 +73,9 @@ const model: RestrictionType<{
     predicate: async (trigger, restrictionData) => {
         return new Promise(async (resolve, reject) => {
             const triggerUsername = trigger.metadata.username || "";
-            const followListString = restrictionData.checkMode === "custom" ? restrictionData.value || "" : accountAccess.getAccounts().streamer.username;
+            const followListString = restrictionData.checkMode === "custom"
+                ? restrictionData.value || ""
+                : AccountAccess.getAccounts().streamer.username;
 
             if (triggerUsername === "" || followListString === "") {
                 return resolve(true);

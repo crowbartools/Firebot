@@ -92,10 +92,10 @@ class ScriptWebhookManager extends EventEmitter {
     }
 }
 
-const accountAccess = require("../../account-access");
+const { AccountAccess } = require("../../account-access");
 
 function buildModules(scriptManifest) {
-    const streamerName = accountAccess.getAccounts().streamer.username || "Unknown Streamer";
+    const streamerName = AccountAccess.getAccounts().streamer.username || "Unknown Streamer";
     const appVersion = app.getVersion();
 
     const request = require("request");
@@ -252,7 +252,7 @@ function buildRunRequest(scriptManifest, params, trigger) {
             name: trigger?.metadata?.username
         },
         firebot: {
-            accounts: accountAccess.getAccounts(),
+            accounts: AccountAccess.getAccounts(),
             settings: SettingsManager,
             version: app.getVersion()
         },

@@ -5,7 +5,7 @@ import { ScheduledTask } from "../../types/timers";
 import { Trigger } from "../../types/triggers";
 
 import JsonDbManager from "../database/json-db-manager";
-import accountAccess from "../common/account-access";
+import { AccountAccess } from "../common/account-access";
 import connectionManager from "../common/connection-manager";
 import effectRunner from "../common/effect-runner";
 import frontendCommunicator from "../common/frontend-communicator";
@@ -76,9 +76,9 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
                     trigger: {
                         type: "scheduled_task",
                         metadata: {
-                            username: accountAccess.getAccounts().streamer.username,
-                            userId: accountAccess.getAccounts().streamer.userId,
-                            userDisplayName: accountAccess.getAccounts().streamer.displayName,
+                            username: AccountAccess.getAccounts().streamer.username,
+                            userId: AccountAccess.getAccounts().streamer.userId,
+                            userDisplayName: AccountAccess.getAccounts().streamer.displayName,
                             task: task
                         }
                     } as Trigger,

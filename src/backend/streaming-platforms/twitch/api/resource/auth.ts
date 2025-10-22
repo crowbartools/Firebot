@@ -1,11 +1,10 @@
 import { ApiClient } from "@twurple/api";
 import { ApiResourceBase } from './api-resource-base';
-import logger from '../../../../logwrapper';
-import accountAccess from "../../../../common/account-access";
+import { TwitchApiBase } from "../api";
 
 export class TwitchAuthApi extends ApiResourceBase {
-    constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        super(streamerClient, botClient);
+    constructor(apiBase: TwitchApiBase) {
+        super(apiBase);
     }
 
     async isTokenValid(type: "streamer" | "bot"): Promise<boolean> {
@@ -14,13 +13,13 @@ export class TwitchAuthApi extends ApiResourceBase {
 
             switch (type) {
                 case "streamer":
-                    userId = accountAccess.getAccounts().streamer.userId;
-                    apiClient = this._streamerClient;
+                    userId = this.accounts.streamer.userId;
+                    apiClient = this.streamerClient;
                     break;
 
                 case "bot":
-                    userId = accountAccess.getAccounts().bot.userId;
-                    apiClient = this._botClient;
+                    userId = this.accounts.bot.userId;
+                    apiClient = this.botClient;
                     break;
             }
 
@@ -32,7 +31,7 @@ export class TwitchAuthApi extends ApiResourceBase {
             const token = await apiClient.getTokenInfo();
             return token?.userId === userId;
         } catch (error) {
-            logger.error(`Failed to validate token`, error.message);
+            this.logger.error(`Failed to validate token`, (error as Error).message);
             return false;
         }
     }

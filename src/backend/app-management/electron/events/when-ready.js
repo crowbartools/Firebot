@@ -33,8 +33,9 @@ exports.whenReady = async () => {
 
     // load accounts
     windowManagement.updateSplashScreenStatus("Loading accounts...");
-    const accountAccess = require("../../../common/account-access");
-    await accountAccess.updateAccountCache(false);
+
+    const { AccountAccess } = require("../../../common/account-access");
+    AccountAccess.loadAccountData(false);
 
     const firebotDeviceAuthProvider = require("../../../auth/firebot-device-auth-provider");
     firebotDeviceAuthProvider.setupDeviceAuthProvider();
@@ -52,7 +53,13 @@ exports.whenReady = async () => {
     ScheduledTaskManager.start();
 
     windowManagement.updateSplashScreenStatus("Refreshing Twitch account data...");
-    await accountAccess.refreshTwitchData();
+
+    // Loading these first so that the refresh caches the account avatar URLs
+    const _chatHelpers = require("../../../chat/chat-helpers");
+    const _eventSubChatHelpers = require("../../../streaming-platforms/twitch/api/eventsub/eventsub-chat-helpers");
+
+    const { TwitchApi } = require("../../../streaming-platforms/twitch/api");
+    await TwitchApi.refreshAccounts();
 
     windowManagement.updateSplashScreenStatus("Starting stream status poll...");
     connectionManager.startOnlineCheckInterval();

@@ -54,8 +54,8 @@ function createStreamPreviewWindow() {
         return;
     }
 
-    const accountAccess = require("../../common/account-access");
-    const streamer = accountAccess.getAccounts().streamer;
+    const { AccountAccess } = require("../../common/account-access");
+    const streamer = AccountAccess.getAccounts().streamer;
 
     if (!streamer.loggedIn) {
         return;

@@ -1,6 +1,6 @@
-import { ReplaceVariable} from "../../../../types/variables";
+import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType } from "../../../../shared/variable-constants";
-import accountAccess from "../../../common/account-access";
+import { AccountAccess } from "../../../common/account-access";
 
 const model : ReplaceVariable = {
     definition: {
@@ -9,10 +9,9 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: () => {
-        if (accountAccess.getAccounts().bot.loggedIn) {
-            return accountAccess.getAccounts().bot.username;
-        }
-        return "Unknown Bot";
+        return AccountAccess.getAccounts().bot?.loggedIn === true
+            ? AccountAccess.getAccounts().bot.username
+            : "Unknown Bot";
     }
 };
 

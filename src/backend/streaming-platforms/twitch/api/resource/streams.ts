@@ -1,22 +1,21 @@
-import { ApiClient, HelixStream, HelixStreamMarker } from "@twurple/api";
+import { HelixStream, HelixStreamMarker } from "@twurple/api";
 import { ApiResourceBase } from './api-resource-base';
-import logger from '../../../../logwrapper';
-import accountAccess from "../../../../common/account-access";
+import { TwitchApiBase } from "../api";
 import { getDateDiffString } from "../../../../utils";
 
 export class TwitchStreamsApi extends ApiResourceBase {
-    constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        super(streamerClient, botClient);
+    constructor(apiBase: TwitchApiBase) {
+        super(apiBase);
     }
 
     async createStreamMarker(description?: string): Promise<HelixStreamMarker> {
         try {
-            const streamerId = accountAccess.getAccounts().streamer.userId;
+            const streamerId = this.accounts.streamer.userId;
 
-            return await this._streamerClient.streams.createStreamMarker(streamerId, description);
+            return await this.streamerClient.streams.createStreamMarker(streamerId, description);
         } catch (err) {
             const error = err as Error;
-            logger.error(`Failed to create stream marker`, error.message);
+            this.logger.error(`Failed to create stream marker`, error.message);
         }
     }
 
@@ -24,22 +23,22 @@ export class TwitchStreamsApi extends ApiResourceBase {
      * Get the streamers current stream. Null if offline.
      */
     async getStreamersCurrentStream(): Promise<HelixStream | null> {
-        if (this._streamerClient == null) {
+        if (this.streamerClient == null) {
             return null;
         }
 
-        const streamer = accountAccess.getAccounts().streamer;
+        const streamer = this.accounts.streamer;
 
         if (!streamer?.loggedIn) {
             return null;
         }
 
         try {
-            const stream = await this._streamerClient.streams.getStreamByUserId(streamer.userId);
+            const stream = await this.streamerClient.streams.getStreamByUserId(streamer.userId);
             return stream;
         } catch (err) {
             const error = err as Error;
-            logger.error("Error while trying to get streamers broadcast", error.message);
+            this.logger.error("Error while trying to get streamers broadcast", error.message);
         }
 
         return null;

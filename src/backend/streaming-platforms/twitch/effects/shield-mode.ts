@@ -1,6 +1,6 @@
 import { EffectType } from "../../../../types/effects";
 import { EffectCategory } from "../../../../shared/effect-constants";
-import accountAccess from "../../../common/account-access";
+import { AccountAccess } from "../../../common/account-access";
 import { TwitchApi } from "../api";
 
 const model: EffectType<{
@@ -48,7 +48,7 @@ const model: EffectType<{
     },
     onTriggerEvent: async ({ effect }) => {
         const activate = effect.action === "Enable Shield Mode";
-        const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
+        const streamerUserId: string = AccountAccess.getAccounts().streamer.userId;
         await TwitchApi.streamerClient.moderation.updateShieldModeStatus(streamerUserId, activate);
     }
 };

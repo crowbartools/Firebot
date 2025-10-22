@@ -11,20 +11,20 @@ type SevenTVEmotesResponse = {
                     name: string;
                     static_name: string;
                 }>;
-            }
-        }
-    }>
+            };
+        };
+    }>;
 };
 
 type SevenTVChannelEmotesResponse = {
-    emote_set: SevenTVEmotesResponse
+    emote_set: SevenTVEmotesResponse;
 };
 
 export class SevenTVEmoteProvider extends ThirdPartyEmoteProvider<SevenTVEmotesResponse, SevenTVChannelEmotesResponse> {
     providerName = "7TV";
 
     globalEmoteUrl = "https://7tv.io/v3/emote-sets/global";
-    getChannelEmotesUrl(streamerUserId: number): string {
+    getChannelEmotesUrl(streamerUserId: string): string {
         return `https://7tv.io/v3/users/twitch/${streamerUserId}`;
     }
 

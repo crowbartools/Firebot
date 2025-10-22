@@ -1,11 +1,10 @@
-import { ApiClient, HelixHypeTrainEvent } from "@twurple/api";
+import { HelixHypeTrainEvent } from "@twurple/api";
 import { ApiResourceBase } from './api-resource-base';
-import logger from '../../../../logwrapper';
-import accountAccess from "../../../../common/account-access";
+import { TwitchApiBase } from "../api";
 
 export class TwitchHypeTrainApi extends ApiResourceBase {
-    constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        super(streamerClient, botClient);
+    constructor(apiBase: TwitchApiBase) {
+        super(apiBase);
     }
 
     /**
@@ -13,13 +12,13 @@ export class TwitchHypeTrainApi extends ApiResourceBase {
      */
     async getRecentHypeTrainEvents(): Promise<HelixHypeTrainEvent[]> {
         try {
-            const streamerId = accountAccess.getAccounts().streamer.userId;
+            const streamerId = this.accounts.streamer.userId;
 
-            const goals = await this._streamerClient.hypeTrain.getHypeTrainEventsForBroadcaster(streamerId);
+            const goals = await this.streamerClient.hypeTrain.getHypeTrainEventsForBroadcaster(streamerId);
 
             return goals.data;
         } catch (error) {
-            logger.error("Failed to get current hypetrain events", error.message);
+            this.logger.error(`Failed to get current hype train events: ${(error as Error).message}`);
             return null;
         }
     }

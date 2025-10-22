@@ -1,5 +1,4 @@
 import {
-    ApiClient,
     CommercialLength,
     HelixAdSchedule,
     HelixChannel,
@@ -8,13 +7,12 @@ import {
     HelixUserRelation
 } from "@twurple/api";
 import { ApiResourceBase } from './api-resource-base';
-import logger from '../../../../logwrapper';
-import accountAccess from "../../../../common/account-access";
+import { TwitchApiBase } from "../api";
 import frontendCommunicator from '../../../../common/frontend-communicator';
 
 export class TwitchChannelsApi extends ApiResourceBase {
-    constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        super(streamerClient, botClient);
+    constructor(apiBase: TwitchApiBase) {
+        super(apiBase);
     }
 
     /**
@@ -25,14 +23,14 @@ export class TwitchChannelsApi extends ApiResourceBase {
     async getChannelInformation(broadcasterId?: string): Promise<HelixChannel> {
         // default to streamer id
         if (broadcasterId == null || broadcasterId === "") {
-            broadcasterId = accountAccess.getAccounts().streamer.userId;
+            broadcasterId = this.accounts.streamer.userId;
         }
 
         try {
-            const response = await this._streamerClient.channels.getChannelInfoById(broadcasterId);
+            const response = await this.streamerClient.channels.getChannelInfoById(broadcasterId);
             return response;
         } catch (error) {
-            logger.error("Failed to get twitch channel info", error.message);
+            this.logger.error(`Failed to get Twitch channel info; ${(error as Error).message}`);
             return null;
         }
     }
@@ -43,17 +41,17 @@ export class TwitchChannelsApi extends ApiResourceBase {
      * @param userId
      */
     async getOnlineStatus(userId: string): Promise<boolean> {
-        if (this._streamerClient == null) {
+        if (this.streamerClient == null) {
             return false;
         }
 
         try {
-            const stream = await this._streamerClient.streams.getStreamByUserId(userId);
+            const stream = await this.streamerClient.streams.getStreamByUserId(userId);
             if (stream != null) {
                 return true;
             }
         } catch (error) {
-            logger.error("Error while trying to get streamers broadcast", error.message);
+            this.logger.error(`Error while trying to get streamer's broadcast: ${(error as Error).message}`);
         }
 
         return false;
@@ -65,7 +63,7 @@ export class TwitchChannelsApi extends ApiResourceBase {
      * @param data
      */
     async updateChannelInformation(data: HelixChannelUpdate): Promise<void> {
-        await this._streamerClient.channels.updateChannelInfo(accountAccess.getAccounts().streamer.userId, data);
+        await this.streamerClient.channels.updateChannelInfo(this.accounts.streamer.userId, data);
     }
 
     /**
@@ -80,9 +78,9 @@ export class TwitchChannelsApi extends ApiResourceBase {
 
         let user: HelixUser;
         try {
-            user = await this._streamerClient.users.getUserByName(username);
+            user = await this.streamerClient.users.getUserByName(username);
         } catch (error) {
-            logger.error(`Error getting user with username ${username}`, error.message);
+            this.logger.error(`Error getting Twitch user with username ${username}: ${(error as Error).message}`);
         }
 
         if (user == null) {
@@ -98,18 +96,18 @@ export class TwitchChannelsApi extends ApiResourceBase {
     async getAdSchedule(): Promise<HelixAdSchedule> {
         try {
             let adSchedule: HelixAdSchedule = null;
-            const streamer = accountAccess.getAccounts().streamer;
+            const streamer = this.accounts.streamer;
 
             const isOnline = await this.getOnlineStatus(streamer.userId);
             if (isOnline && streamer.broadcasterType !== "") {
-                adSchedule = await this._streamerClient.channels.getAdSchedule(streamer.userId);
+                adSchedule = await this.streamerClient.channels.getAdSchedule(streamer.userId);
             } else {
-                logger.warn(`Unable to get ad schedule. ${isOnline !== true ? "Stream is offline." : "Streamer must be affiliate or partner."}`);
+                this.logger.warn(`Unable to get ad schedule. ${isOnline !== true ? "Stream is offline." : "Streamer must be affiliate or partner."}`);
             }
 
             return adSchedule;
         } catch (error) {
-            logger.error("There was an error getting the ad schedule", error.message);
+            this.logger.error(`There was an error getting the ad schedule: ${(error as Error).message}`);
             return null;
         }
     }
@@ -121,18 +119,18 @@ export class TwitchChannelsApi extends ApiResourceBase {
      */
     async triggerAdBreak(adLength = 30): Promise<boolean> {
         try {
-            const streamer = accountAccess.getAccounts().streamer;
+            const streamer = this.accounts.streamer;
 
             const isOnline = await this.getOnlineStatus(streamer.userId);
             if (isOnline && streamer.broadcasterType !== "") {
-                await this._streamerClient.channels.startChannelCommercial(streamer.userId, adLength as CommercialLength);
+                await this.streamerClient.channels.startChannelCommercial(streamer.userId, adLength as CommercialLength);
             }
 
-            logger.debug(`A commercial was run. Length: ${adLength}. Twitch does not send confirmation, so we can't be sure it ran.`);
+            this.logger.debug(`A commercial was run. Length: ${adLength}. Twitch does not send confirmation, so we can't be sure it ran.`);
             return true;
         } catch (error) {
             /** @ts-ignore */
-            frontendCommunicator.send("error", `Failed to trigger ad-break because: ${error.message}`);
+            frontendCommunicator.send("error", `Failed to trigger ad-break because: ${(error as Error).message}`);
             return false;
         }
     }
@@ -142,19 +140,19 @@ export class TwitchChannelsApi extends ApiResourceBase {
      */
     async snoozeAdBreak(): Promise<boolean> {
         try {
-            const streamer = accountAccess.getAccounts().streamer;
+            const streamer = this.accounts.streamer;
 
             const isOnline = await this.getOnlineStatus(streamer.userId);
             if (isOnline && streamer.broadcasterType !== "") {
-                const result = await this._streamerClient.channels.snoozeNextAd(streamer.userId);
-                logger.debug(`Ads were snoozed. ${result.snoozeCount} snooze${result.snoozeCount !== 1 ? "s" : ""} remaining. Next scheduled ad break: ${result.nextAdDate.toLocaleTimeString()}`);
+                const result = await this.streamerClient.channels.snoozeNextAd(streamer.userId);
+                this.logger.debug(`Ads were snoozed. ${result.snoozeCount} snooze${result.snoozeCount !== 1 ? "s" : ""} remaining. Next scheduled ad break: ${result.nextAdDate.toLocaleTimeString()}`);
             } else {
-                logger.warn(`Unable to snooze ads. ${isOnline !== true ? "Stream is offline." : "Streamer must be affiliate or partner."}`);
+                this.logger.warn(`Unable to snooze ads. ${isOnline !== true ? "Stream is offline." : "Streamer must be affiliate or partner."}`);
             }
 
             return true;
         } catch (error) {
-            logger.error("Failed to snooze ads", error.message);
+            this.logger.error(`Failed to snooze ads: ${(error as Error).message}`);
             return false;
         }
     }
@@ -166,13 +164,13 @@ export class TwitchChannelsApi extends ApiResourceBase {
      */
     async raidChannel(targetUserId: string): Promise<boolean> {
         try {
-            const streamerId = accountAccess.getAccounts().streamer.userId;
+            const streamerId = this.accounts.streamer.userId;
 
-            await this._streamerClient.raids.startRaid(streamerId, targetUserId);
+            await this.streamerClient.raids.startRaid(streamerId, targetUserId);
 
             return true;
         } catch (error) {
-            logger.error("Unable to start raid", error.message);
+            this.logger.error(`Unable to start raid: ${(error as Error).message}`);
         }
 
         return false;
@@ -183,13 +181,13 @@ export class TwitchChannelsApi extends ApiResourceBase {
      */
     async cancelRaid(): Promise<boolean> {
         try {
-            const streamerId = accountAccess.getAccounts().streamer.userId;
+            const streamerId = this.accounts.streamer.userId;
 
-            await this._streamerClient.raids.cancelRaid(streamerId);
+            await this.streamerClient.raids.cancelRaid(streamerId);
 
             return true;
         } catch (error) {
-            logger.error("Unable to cancel raid", error.message);
+            this.logger.error(`Unable to cancel raid: ${(error as Error).message}`);
         }
 
         return false;
@@ -200,17 +198,17 @@ export class TwitchChannelsApi extends ApiResourceBase {
      */
     async getVips(): Promise<HelixUserRelation[]> {
         const vips: HelixUserRelation[] = [];
-        const streamerId = accountAccess.getAccounts().streamer?.userId;
+        const streamerId = this.accounts.streamer?.userId;
 
         try {
             if (streamerId == null) {
-                logger.warn("Unable to get channel VIP list. Streamer is not logged in.");
+                this.logger.warn("Unable to get channel VIP list. Streamer is not logged in.");
                 return vips;
             }
 
-            vips.push(...await this._streamerClient.channels.getVipsPaginated(streamerId).getAll());
+            vips.push(...await this.streamerClient.channels.getVipsPaginated(streamerId).getAll());
         } catch (error) {
-            logger.error("Error getting VIPs", error.message);
+            this.logger.error(`Error getting VIPs: ${(error as Error).message}`);
         }
 
         return vips;

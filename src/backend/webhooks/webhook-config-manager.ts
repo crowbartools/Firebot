@@ -1,12 +1,13 @@
 import { WebhookConfig } from "../../types/webhooks";
-import frontendCommunicator from "../common/frontend-communicator";
+
 import JsonDbManager from "../database/json-db-manager";
+import { AccountAccess } from "../common/account-access";
 import { crowbarRelayWebSocket } from "../crowbar-relay/crowbar-relay-websocket";
 import { EventManager } from "../events/event-manager";
 import { SettingsManager } from "../common/settings-manager";
-import { maskPII } from "../utils";
+import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
-import accountAccess from "../common/account-access";
+import { maskPII } from "../utils";
 
 type ExtraEvents = {
     "webhook-received": (data: { config: WebhookConfig, payload: unknown, headers: Record<string, string> }) => void;
@@ -68,7 +69,7 @@ class WebhookConfigManager extends JsonDbManager<WebhookConfig, ExtraEvents> {
     }
 
     getWebhookUrlById(webhookId: string): string {
-        const streamer = accountAccess.getAccounts().streamer;
+        const streamer = AccountAccess.getAccounts().streamer;
         return `https://api.crowbar.tools/v1/webhook/${streamer.channelId}/${webhookId}`;
     }
 }

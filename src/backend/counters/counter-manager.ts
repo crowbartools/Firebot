@@ -7,9 +7,9 @@ import { EffectList } from "../../types/effects";
 import { Trigger } from "../../types/triggers";
 import { CounterDisplayWidgetConfig } from "../overlay-widgets/builtin-types/counter-display/counter-display";
 
+import { AccountAccess } from "../common/account-access";
 import { ProfileManager } from "../common/profile-manager";
 import JsonDbManager from "../database/json-db-manager";
-import accountAccess from "../common/account-access";
 import effectRunner from "../common/effect-runner";
 import overlayWidgetConfigManager from "../overlay-widgets/overlay-widget-config-manager";
 import frontendCommunicator from "../common/frontend-communicator";
@@ -183,7 +183,7 @@ class CounterManager extends JsonDbManager<Counter> {
             trigger: {
                 type: "counter",
                 metadata: {
-                    username: accountAccess.getAccounts().streamer.username,
+                    username: AccountAccess.getAccounts().streamer.username,
                     counter: {
                         id: counter.id,
                         name: counter.name,

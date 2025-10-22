@@ -3,7 +3,7 @@ const { v4: uuid } = require("uuid");
 const logger = require('../logwrapper');
 const effectManager = require("../effects/effectManager");
 const { EffectTrigger } = require("../../shared/effect-constants");
-const accountAccess = require('./account-access');
+const { AccountAccess } = require('./account-access');
 const { ReplaceVariableManager } = require("../variables/replace-variable-manager");
 const webServer = require("../../server/http-server-manager");
 const {
@@ -311,7 +311,7 @@ function runEffectsManually(effects, metadata = {}, triggerType = EffectTrigger.
         return;
     }
 
-    const streamerName = accountAccess.getAccounts().streamer.username || "";
+    const streamerName = AccountAccess.getAccounts().streamer.username || "";
 
     const processEffectsRequest = {
         trigger: {

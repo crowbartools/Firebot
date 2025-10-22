@@ -3,7 +3,7 @@ import { KeyValuePair } from "../../../types/util-types";
 import { EffectCategory } from "../../../shared/effect-constants";
 import logger from "../../logwrapper";
 import twitchAuth from "../../streaming-platforms/twitch/auth/twitch-auth";
-import accountAccess from "../../common/account-access";
+import { AccountAccess } from "../../common/account-access";
 import customVariableManager from "../../common/custom-variable-manager";
 import effectRunner from "../../common/effect-runner";
 
@@ -246,7 +246,7 @@ const effect: EffectType<{
         };
 
         if (effect.options.useTwitchAuth && effect.url.startsWith("https://api.twitch.tv")) {
-            const accessToken = accountAccess.getAccounts().streamer.auth.access_token;
+            const accessToken = AccountAccess.getAccounts().streamer.auth.access_token;
             headers = {
                 ...headers,
                 "Authorization": `Bearer ${accessToken}`,

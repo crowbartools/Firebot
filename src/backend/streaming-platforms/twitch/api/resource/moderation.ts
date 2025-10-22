@@ -1,15 +1,13 @@
 import {
-    ApiClient,
     HelixBanUserRequest,
     HelixModerator,
     UserIdResolvable,
     extractUserId
 } from "@twurple/api";
-import { ApiResourceBase } from './api-resource-base';
-import logger from '../../../../logwrapper';
-import accountAccess from "../../../../common/account-access";
-import frontendCommunicator from '../../../../common/frontend-communicator';
 import { BasicViewer } from '../../../../../types/viewers';
+import { ApiResourceBase } from './api-resource-base';
+import { TwitchApiBase } from "../api";
+import frontendCommunicator from '../../../../common/frontend-communicator';
 
 interface UserModRequest {
     username: string;
@@ -34,8 +32,8 @@ type ModerationEvents = {
 };
 
 export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
-    constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        super(streamerClient, botClient);
+    constructor(apiBase: TwitchApiBase) {
+        super(apiBase);
 
         frontendCommunicator.onAsync("update-user-banned-status", async (data: UserBanRequest) => {
             if (data == null) {
@@ -47,7 +45,7 @@ export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
                 return;
             }
 
-            const user = await this._streamerClient.users.getUserByName(username);
+            const user = await this.streamerClient.users.getUserByName(username);
             if (user == null) {
                 return;
             }
@@ -69,7 +67,7 @@ export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
                 return;
             }
 
-            const user = await this._streamerClient.users.getUserByName(username);
+            const user = await this.streamerClient.users.getUserByName(username);
             if (user == null) {
                 return;
             }
@@ -91,7 +89,7 @@ export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
                 return;
             }
 
-            const user = await this._streamerClient.users.getUserByName(username);
+            const user = await this.streamerClient.users.getUserByName(username);
             if (user == null) {
                 return;
             }
@@ -111,17 +109,17 @@ export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
      * @returns `true` if the user is timed out, or `false` if they're either banned indefinitely or not timed out
      */
     async isUserTimedOut(userId: UserIdResolvable): Promise<boolean> {
-        const streamerId = accountAccess.getAccounts().streamer.userId;
+        const streamerId = this.accounts.streamer.userId;
 
         try {
             userId = extractUserId(userId);
-            const response = await this._streamerClient.moderation.getBannedUsers(streamerId, {
+            const response = await this.streamerClient.moderation.getBannedUsers(streamerId, {
                 userId: [userId]
             });
 
             return response.data.some(b => b.userId === userId && b.expiryDate != null);
         } catch (error) {
-            logger.error(`Error checking if user ${userId} is timed out`, error.message);
+            this.logger.error(`Error checking if user ${extractUserId(userId)} is timed out: ${(error as Error).message}`);
             return null;
         }
     }
@@ -139,7 +137,7 @@ export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
         duration: number,
         reason: string = null
     ): Promise<boolean> {
-        const streamerId = accountAccess.getAccounts().streamer.userId;
+        const streamerId = this.accounts.streamer.userId;
 
         try {
             const timeoutRequest: HelixBanUserRequest = {
@@ -148,11 +146,11 @@ export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
                 reason: reason
             };
 
-            const response = await this._streamerClient.moderation.banUser(streamerId, timeoutRequest);
+            const response = await this.streamerClient.moderation.banUser(streamerId, timeoutRequest);
 
             return !!response;
         } catch (error) {
-            logger.error("Error timing out user", (error as Error).message);
+            this.logger.error("Error timing out user", (error as Error).message);
         }
 
         return false;
@@ -165,17 +163,17 @@ export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
      * @returns `true` if the user is banned, or `false` if they're either not banned or only timed out
      */
     async isUserBanned(userId: UserIdResolvable): Promise<boolean> {
-        const streamerId = accountAccess.getAccounts().streamer.userId;
+        const streamerId = this.accounts.streamer.userId;
 
         try {
             userId = extractUserId(userId);
-            const response = await this._streamerClient.moderation.getBannedUsers(streamerId, {
+            const response = await this.streamerClient.moderation.getBannedUsers(streamerId, {
                 userId: [userId]
             });
 
             return response.data.some(b => b.userId === userId && b.expiryDate == null);
         } catch (error) {
-            logger.error(`Error checking if user ${userId} is banned`, (error as Error).message);
+            this.logger.error(`Error checking if user ${extractUserId(userId)} is banned: ${(error as Error).message}`);
             return null;
         }
     }
@@ -188,7 +186,7 @@ export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
      * @returns `true` if the ban was successful or `false` if it failed
      */
     async banUser(userId: UserIdResolvable, reason: string = null): Promise<boolean> {
-        const streamerId = accountAccess.getAccounts().streamer.userId;
+        const streamerId = this.accounts.streamer.userId;
 
         try {
             const banRequest: HelixBanUserRequest = {
@@ -197,11 +195,11 @@ export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
                 reason: reason
             };
 
-            await this._streamerClient.moderation.banUser(streamerId, banRequest);
+            await this.streamerClient.moderation.banUser(streamerId, banRequest);
 
             return true;
         } catch (error) {
-            logger.error("Error banning user", (error as Error).message);
+            this.logger.error("Error banning user", (error as Error).message);
         }
 
         return false;
@@ -214,14 +212,14 @@ export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
      * @returns `true` if the unban/removal from timeout was successful or `false` if it failed
      */
     async unbanUser(userId: UserIdResolvable): Promise<boolean> {
-        const streamerId = accountAccess.getAccounts().streamer.userId;
+        const streamerId = this.accounts.streamer.userId;
 
         try {
-            await this._streamerClient.moderation.unbanUser(streamerId, userId);
+            await this.streamerClient.moderation.unbanUser(streamerId, userId);
 
             return true;
         } catch (error) {
-            logger.error("Error unbanning/removing timeout for user", (error as Error).message);
+            this.logger.error("Error unbanning/removing timeout for user", (error as Error).message);
         }
 
         return false;
@@ -232,17 +230,17 @@ export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
      */
     async getModerators(): Promise<HelixModerator[]> {
         const moderators: HelixModerator[] = [];
-        const streamerId = accountAccess.getAccounts().streamer?.userId;
+        const streamerId = this.accounts.streamer?.userId;
 
         try {
             if (streamerId == null) {
-                logger.warn("Unable to get channel moderator list. Streamer is not logged in.");
+                this.logger.warn("Unable to get channel moderator list. Streamer is not logged in.");
                 return moderators;
             }
 
-            moderators.push(...await this._streamerClient.moderation.getModeratorsPaginated(streamerId).getAll());
+            moderators.push(...await this.streamerClient.moderation.getModeratorsPaginated(streamerId).getAll());
         } catch (error) {
-            logger.error("Error getting moderators", (error as Error).message);
+            this.logger.error("Error getting moderators", (error as Error).message);
         }
 
         return moderators;
@@ -255,12 +253,12 @@ export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
      * @returns `true` if the user was added as a mod successfully or `false` if it failed
      */
     async addChannelModerator(userId: UserIdResolvable): Promise<boolean> {
-        const streamerId = accountAccess.getAccounts().streamer.userId;
+        const streamerId = this.accounts.streamer.userId;
 
         try {
-            await this._streamerClient.moderation.addModerator(streamerId, userId);
+            await this.streamerClient.moderation.addModerator(streamerId, userId);
 
-            const user = await this._streamerClient.users.getUserById(userId);
+            const user = await this.streamerClient.users.getUserById(userId);
             this.emit("moderator:added", {
                 id: user.id,
                 username: user.name,
@@ -268,7 +266,7 @@ export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
             });
             return true;
         } catch (error) {
-            logger.error("Error adding moderator", (error as Error).message);
+            this.logger.error("Error adding moderator", (error as Error).message);
         }
 
         return false;
@@ -281,14 +279,14 @@ export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
      * @returns `true` if the user was removed as a mod successfully or `false` if it failed
      */
     async removeChannelModerator(userId: UserIdResolvable): Promise<boolean> {
-        const streamerId = accountAccess.getAccounts().streamer.userId;
+        const streamerId = this.accounts.streamer.userId;
 
         try {
-            await this._streamerClient.moderation.removeModerator(streamerId, userId);
+            await this.streamerClient.moderation.removeModerator(streamerId, userId);
             this.emit("moderator:removed", userId as string);
             return true;
         } catch (error) {
-            logger.error("Error removing moderator", (error as Error).message);
+            this.logger.error("Error removing moderator", (error as Error).message);
         }
 
         return false;
@@ -301,12 +299,12 @@ export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
      * @returns `true` if the user was added as a VUP successfully or `false` if it failed
      */
     async addChannelVip(userId: UserIdResolvable): Promise<boolean> {
-        const streamerId = accountAccess.getAccounts().streamer.userId;
+        const streamerId = this.accounts.streamer.userId;
 
         try {
-            await this._streamerClient.channels.addVip(streamerId, userId);
+            await this.streamerClient.channels.addVip(streamerId, userId);
 
-            const user = await this._streamerClient.users.getUserById(userId);
+            const user = await this.streamerClient.users.getUserById(userId);
             this.emit("vip:added", {
                 id: user.id,
                 username: user.name,
@@ -314,7 +312,7 @@ export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
             });
             return true;
         } catch (error) {
-            logger.error("Error adding VIP", (error as Error).message);
+            this.logger.error("Error adding VIP", (error as Error).message);
         }
 
         return false;
@@ -327,14 +325,14 @@ export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
      * @returns `true` if the user was removed as a VIP successfully or `false` if it failed
      */
     async removeChannelVip(userId: UserIdResolvable): Promise<boolean> {
-        const streamerId = accountAccess.getAccounts().streamer.userId;
+        const streamerId = this.accounts.streamer.userId;
 
         try {
-            await this._streamerClient.channels.removeVip(streamerId, userId);
+            await this.streamerClient.channels.removeVip(streamerId, userId);
             this.emit("vip:removed", userId as string);
             return true;
         } catch (error) {
-            logger.error("Error removing VIP", (error as Error).message);
+            this.logger.error("Error removing VIP", (error as Error).message);
         }
 
         return false;
@@ -347,13 +345,13 @@ export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
      */
     async processHeldAutoModMessage(messageId: string, allow: boolean) {
         try {
-            const streamerId = accountAccess.getAccounts().streamer.userId;
-            await this._streamerClient.moderation.processHeldAutoModMessage(streamerId, messageId, allow);
+            const streamerId = this.accounts.streamer.userId;
+            await this.streamerClient.moderation.processHeldAutoModMessage(streamerId, messageId, allow);
         } catch (error) {
             // eslint-disable-next-line
-            const likelyExpired = error?.body?.includes("attempted to update a message status that was either already set");
+            const likelyExpired = error?.body?.includes("attempted to update a message status that was either already set") === true;
             frontendCommunicator.send("twitch:chat:automod-update-error", { messageId, likelyExpired });
-            logger.error("Error processing held AutoMod message", (error as Error).message);
+            this.logger.error(`Error processing held AutoMod message: ${(error as Error).message}`);
         }
     }
 }

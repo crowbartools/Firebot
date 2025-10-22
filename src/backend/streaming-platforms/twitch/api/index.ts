@@ -1,7 +1,7 @@
-import { ApiClient, HelixChannelUpdate } from "@twurple/api";
+import { ApiClient, HelixChannelUpdate, HelixUser } from "@twurple/api";
 import { AuthProvider } from "@twurple/auth";
 
-import { UserContextApiClient } from "./user-context-api-client";
+import { FirebotAccount } from "../../../../types/accounts";
 
 import { TwitchAuthApi } from "./resource/auth";
 import { TwitchBitsApi } from "./resource/bits";
@@ -23,11 +23,13 @@ import { TwitchUsersApi } from "./resource/users";
 import { TwitchVideosApi } from "./resource/videos";
 import { TwitchWhispersApi } from "./resource/whispers";
 
-import logger from "../../../logwrapper";
-import accountAccess from "../../../common/account-access";
+import { UserContextApiClient } from "./user-context-api-client";
+import { TwitchApiBase } from "./api";
+import { AccountAccess } from "../../../common/account-access";
 import frontendCommunicator from "../../../common/frontend-communicator";
+import logger from "../../../logwrapper";
 
-class TwitchApi {
+class TwitchApi implements TwitchApiBase {
     private _streamerClient: ApiClient;
     private _botClient: UserContextApiClient;
 
@@ -82,6 +84,44 @@ class TwitchApi {
         });
     }
 
+    private async refreshAccountData(accountType: "streamer" | "bot"): Promise<FirebotAccount> {
+        const account = accountType === "streamer"
+            ? AccountAccess.getAccounts().streamer
+            : AccountAccess.getAccounts().bot;
+
+        let data: HelixUser;
+        try {
+            data = await this.users.getUserById(account.userId);
+        } catch (error) {
+            logger.warn("[accounts.getTwitchData] Failed to get account data", (error as Error).message);
+            return account;
+        }
+
+        account.username = data.name;
+        account.displayName = data.displayName;
+        account.avatar = data.profilePictureUrl;
+
+        if (accountType === "streamer") {
+            account.broadcasterType = data.broadcasterType;
+        }
+
+        return account;
+    }
+
+    async refreshAccounts(): Promise<void> {
+        const accounts = AccountAccess.getAccounts();
+
+        if (accounts.streamer?.loggedIn) {
+            accounts.streamer = await this.refreshAccountData("streamer");
+            AccountAccess.updateAccount("streamer", accounts.streamer);
+        }
+
+        if (accounts.bot?.loggedIn) {
+            accounts.bot = await this.refreshAccountData("bot");
+            AccountAccess.updateAccount("bot", accounts.bot);
+        }
+    }
+
     setupApiClients(streamerProvider: AuthProvider, botProvider: AuthProvider): void {
         logger.debug("Call to setupApiClients");
 
@@ -89,43 +129,22 @@ class TwitchApi {
             return;
         }
 
-        if (accountAccess.getAccounts().streamer.loggedIn) {
+        if (AccountAccess.getAccounts().streamer.loggedIn) {
             this._streamerClient = new ApiClient({ authProvider: streamerProvider });
         }
 
-        if (accountAccess.getAccounts().bot.loggedIn) {
+        if (AccountAccess.getAccounts().bot.loggedIn) {
             this._botClient = new UserContextApiClient(
                 { authProvider: botProvider },
-                accountAccess.getAccounts().bot.userId
+                AccountAccess.getAccounts().bot.userId
             );
         }
-
-        logger.debug("Updating Twitch API resource clients...");
-
-        this.auth.updateApiClients(this._streamerClient, this._botClient);
-        this.bits.updateApiClients(this._streamerClient, this._botClient);
-        this.categories.updateApiClients(this._streamerClient, this._botClient);
-        this.channelRewards.updateApiClients(this._streamerClient, this._botClient);
-        this.channels.updateApiClients(this._streamerClient, this._botClient);
-        this.chat.updateApiClients(this._streamerClient, this._botClient);
-        this.clips.updateApiClients(this._streamerClient, this._botClient);
-        this.goals.updateApiClients(this._streamerClient, this._botClient);
-        this.hypeTrain.updateApiClients(this._streamerClient, this._botClient);
-        this.moderation.updateApiClients(this._streamerClient, this._botClient);
-        this.polls.updateApiClients(this._streamerClient, this._botClient);
-        this.predictions.updateApiClients(this._streamerClient, this._botClient);
-        this.streams.updateApiClients(this._streamerClient, this._botClient);
-        this.subscriptions.updateApiClients(this._streamerClient, this._botClient);
-        this.teams.updateApiClients(this._streamerClient, this._botClient);
-        this.users.updateApiClients(this._streamerClient, this._botClient);
-        this.videos.updateApiClients(this._streamerClient, this._botClient);
-        this.whispers.updateApiClients(this._streamerClient, this._botClient);
 
         logger.info("Finished setting up Twitch API clients");
     }
 
     /**
-     * @deprecated Use the `streamerClient` and `botClient` properties going forward
+     * @deprecated Use the {@linkcode streamerClient} and {@linkcode botClient} properties going forward
      */
     getClient(): ApiClient {
         return this.streamerClient;
@@ -139,99 +158,107 @@ class TwitchApi {
         return this._botClient;
     }
 
+    get accounts() {
+        return AccountAccess.getAccounts();
+    }
+
+    get logger() {
+        return logger;
+    }
+
     private _auth: TwitchAuthApi;
     get auth() {
-        return this._auth ??= new TwitchAuthApi(this._streamerClient, this._botClient);
+        return this._auth ??= new TwitchAuthApi(this);
     }
 
     private _bits: TwitchBitsApi;
     get bits() {
-        return this._bits ??= new TwitchBitsApi(this._streamerClient, this._botClient);
+        return this._bits ??= new TwitchBitsApi(this);
     }
 
     private _categories: TwitchCategoriesApi;
     get categories() {
-        return this._categories ??= new TwitchCategoriesApi(this._streamerClient, this._botClient);
+        return this._categories ??= new TwitchCategoriesApi(this);
     }
 
     private _channelRewards: TwitchChannelRewardsApi;
     get channelRewards() {
-        return this._channelRewards ??= new TwitchChannelRewardsApi(this._streamerClient, this._botClient);
+        return this._channelRewards ??= new TwitchChannelRewardsApi(this);
     }
 
     private _channels: TwitchChannelsApi;
     get channels() {
-        return this._channels ??= new TwitchChannelsApi(this._streamerClient, this._botClient);
+        return this._channels ??= new TwitchChannelsApi(this);
     }
 
     private _charity: TwitchCharityApi;
     get charity() {
-        return this._charity ??= new TwitchCharityApi(this._streamerClient, this._botClient);
+        return this._charity ??= new TwitchCharityApi(this);
     }
 
     private _chat: TwitchChatApi;
     get chat() {
-        return this._chat ??= new TwitchChatApi(this._streamerClient, this._botClient);
+        return this._chat ??= new TwitchChatApi(this);
     }
 
     private _clips: TwitchClipsApi;
     get clips() {
-        return this._clips ??= new TwitchClipsApi(this._streamerClient, this._botClient);
+        return this._clips ??= new TwitchClipsApi(this);
     }
 
     private _goals: TwitchGoalsApi;
     get goals() {
-        return this._goals ??= new TwitchGoalsApi(this._streamerClient, this._botClient);
-    }
-
-    private _moderation: TwitchModerationApi;
-    get moderation() {
-        return this._moderation ??= new TwitchModerationApi(this._streamerClient, this._botClient);
-    }
-
-    private _polls: TwitchPollsApi;
-    get polls() {
-        return this._polls ??= new TwitchPollsApi(this._streamerClient, this._botClient);
-    }
-
-    private _preditions: TwitchPredictionsApi;
-    get predictions() {
-        return this._preditions ??= new TwitchPredictionsApi(this._streamerClient, this._botClient);
+        return this._goals ??= new TwitchGoalsApi(this);
     }
 
     private _hypeTrain: TwitchHypeTrainApi;
     get hypeTrain() {
-        return this._hypeTrain ??= new TwitchHypeTrainApi(this._streamerClient, this._botClient);
+        return this._hypeTrain ??= new TwitchHypeTrainApi(this);
+    }
+
+    private _moderation: TwitchModerationApi;
+    get moderation() {
+        return this._moderation ??= new TwitchModerationApi(this);
+    }
+
+    private _polls: TwitchPollsApi;
+    get polls() {
+        return this._polls ??= new TwitchPollsApi(this);
+    }
+
+    private _preditions: TwitchPredictionsApi;
+    get predictions() {
+        return this._preditions ??= new TwitchPredictionsApi(this);
     }
 
     private _streams: TwitchStreamsApi;
     get streams() {
-        return this._streams ??= new TwitchStreamsApi(this._streamerClient, this._botClient);
+        return this._streams ??= new TwitchStreamsApi(this);
     }
 
     private _subscriptions: TwitchSubscriptionsApi;
     get subscriptions() {
-        return this._subscriptions ??= new TwitchSubscriptionsApi(this._streamerClient, this._botClient);
+        return this._subscriptions ??= new TwitchSubscriptionsApi(this);
     }
 
     private _teams: TwitchTeamsApi;
     get teams() {
-        return this._teams ??= new TwitchTeamsApi(this._streamerClient, this._botClient);
+        return this._teams ??= new TwitchTeamsApi(this);
     }
 
     private _users: TwitchUsersApi;
     get users() {
-        return this._users ??= new TwitchUsersApi(this._streamerClient, this._botClient);
+        return this._users ??= new TwitchUsersApi(this);
     }
 
     private _videos: TwitchVideosApi;
     get videos() {
-        return this._videos ??= new TwitchVideosApi(this._streamerClient, this._botClient);
+        return this._videos ??= new TwitchVideosApi(this);
     }
 
     private _whispers: TwitchWhispersApi;
     get whispers() {
-        return this._whispers ??= new TwitchWhispersApi(this._streamerClient, this._botClient);
+        return this._whispers ??= new TwitchWhispersApi(this);
     }
 }
 

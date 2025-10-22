@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 
 import { RestrictionType } from "../../../types/restrictions";
+
+import { AccountAccess } from "../../common/account-access";
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
-import accountAccess from "../../common/account-access";
 
 const model: RestrictionType<{
     gameId: string;
@@ -76,7 +77,7 @@ const model: RestrictionType<{
                 return resolve(true);
             }
 
-            const streamerId = accountAccess.getAccounts().streamer.userId;
+            const streamerId = AccountAccess.getAccounts().streamer.userId;
             const channel = await TwitchApi.channels.getChannelInformation(streamerId);
 
             if (channel == null) {

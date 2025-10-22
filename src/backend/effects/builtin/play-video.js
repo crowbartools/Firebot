@@ -6,7 +6,7 @@ const webServer = require("../../../server/http-server-manager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const { EffectCategory } = require('../../../shared/effect-constants');
 const logger = require("../../logwrapper");
-const accountAccess = require("../../common/account-access");
+const { AccountAccess } = require("../../common/account-access");
 const fs = require('fs/promises');
 const path = require("path");
 const frontendCommunicator = require('../../common/frontend-communicator');
@@ -453,7 +453,7 @@ const playVideo = {
             if (effect.videoType === "Twitch Clip") {
                 clip = await TwitchApi.clips.getClipFromClipUrl(effect.twitchClipUrl);
             } else if (effect.videoType === "Random Twitch Clip") {
-                const username = effect.twitchClipUsername || accountAccess.getAccounts().streamer.username;
+                const username = effect.twitchClipUsername || AccountAccess.getAccounts().streamer.username;
                 const dateNow = new Date();
 
                 clip = await TwitchApi.clips.getRandomClipForUserByName(
@@ -574,7 +574,7 @@ const playVideo = {
         if (effect.wait) {
             try {
                 await waitPromise;
-            } catch (error) {
+            } catch {
                 return false;
             }
         }

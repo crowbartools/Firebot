@@ -1,10 +1,12 @@
+import moment from "moment";
+
 import { ReplaceVariable } from "../../../../types/variables";
+
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import { AccountAccess } from "../../../common/account-access";
 import { TwitchApi } from "../api";
-import accountAccess from "../../../common/account-access";
 import logger from "../../../logwrapper";
 
-const moment = require("moment");
 
 const model : ReplaceVariable = {
     definition: {
@@ -29,7 +31,7 @@ const model : ReplaceVariable = {
     },
     evaluator: async (trigger, username: string) => {
         if (username == null) {
-            username = accountAccess.getAccounts().streamer.username;
+            username = AccountAccess.getAccounts().streamer.username;
         }
 
         try {

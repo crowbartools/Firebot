@@ -1,8 +1,10 @@
 import { TypedEmitter } from "tiny-typed-emitter";
-import logger from "../logwrapper";
-import { TwitchApi } from "../streaming-platforms/twitch/api";
-import accountAccess from "../common/account-access";
+
 import { BasicViewer } from "../../types/viewers";
+
+import { AccountAccess } from "../common/account-access";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
+import logger from "../logwrapper";
 
 const VIEWLIST_BOTS_URL = "https://api.twitchinsights.net/v1/bots/all";
 
@@ -141,7 +143,7 @@ class ChatRolesManager extends TypedEmitter<Events> {
             ? (await TwitchApi.users.getUserByName(userIdOrName)).id
             : userIdOrName;
 
-        const streamer = accountAccess.getAccounts().streamer;
+        const streamer = AccountAccess.getAccounts().streamer;
         const subInfo = await client.subscriptions.getSubscriptionForUser(streamer.userId, userId);
 
         if (subInfo == null || subInfo.tier == null) {
@@ -176,7 +178,7 @@ class ChatRolesManager extends TypedEmitter<Events> {
                 roles.push("viewerlistbot");
             }
 
-            const streamer = accountAccess.getAccounts().streamer;
+            const streamer = AccountAccess.getAccounts().streamer;
             if (userId === streamer.userId) {
                 roles.push("broadcaster");
             }

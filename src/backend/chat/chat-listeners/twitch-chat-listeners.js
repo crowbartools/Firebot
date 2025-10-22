@@ -3,11 +3,11 @@
 const frontendCommunicator = require("../../common/frontend-communicator");
 const chatCommandHandler = require("../commands/chat-command-handler");
 const chatHelpers = require("../chat-helpers");
+const { AccountAccess } = require("../../common/account-access");
 const { ActiveUserHandler } = require("../active-user-handler");
-const accountAccess = require("../../common/account-access");
 const { ChatModerationManager } = require("../moderation/chat-moderation-manager");
-const chatRolesManager = require("../../roles/chat-roles-manager");
 const { TwitchEventHandlers } = require("../../streaming-platforms/twitch/events");
+const chatRolesManager = require("../../roles/chat-roles-manager");
 const raidMessageChecker = require(".././moderation/raid-message-checker");
 const viewerDatabase = require("../../viewers/viewer-database");
 const logger = require("../../logwrapper");
@@ -99,7 +99,7 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
             firebotChatMessage
         );
 
-        const { streamer, bot } = accountAccess.getAccounts();
+        const { streamer, bot } = AccountAccess.getAccounts();
         if (user !== streamer.username && user !== bot.username) {
             const { TimerManager } = require("../../timers/timer-manager");
             TimerManager.incrementChatLineCounters();

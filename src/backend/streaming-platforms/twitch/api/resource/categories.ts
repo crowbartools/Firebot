@@ -1,6 +1,6 @@
-import { ApiClient, HelixGame } from "@twurple/api";
+import { HelixGame } from "@twurple/api";
 import { ApiResourceBase } from "./api-resource-base";
-import logger from "../../../../logwrapper";
+import { TwitchApiBase } from "../api";
 
 /**
  * Defines a Twitch category
@@ -17,8 +17,8 @@ export interface TwitchCategory {
 }
 
 export class TwitchCategoriesApi extends ApiResourceBase {
-    constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        super(streamerClient, botClient);
+    constructor(apiBase: TwitchApiBase) {
+        super(apiBase);
     }
 
     private mapTwitchCategory(category: HelixGame, size?: string): TwitchCategory {
@@ -31,13 +31,13 @@ export class TwitchCategoriesApi extends ApiResourceBase {
 
     async getCategoryById(categoryId: string, size = "285x380"): Promise<TwitchCategory> {
         try {
-            const category = await this._streamerClient.games.getGameById(categoryId);
+            const category = await this.streamerClient.games.getGameById(categoryId);
             if (category == null) {
                 return null;
             }
             return this.mapTwitchCategory(category, size);
         } catch (error) {
-            logger.error("Failed to get twitch category", error.message);
+            this.logger.error(`Failed to get Twitch category: ${(error as Error).message}`);
             return null;
         }
     }
@@ -46,12 +46,12 @@ export class TwitchCategoriesApi extends ApiResourceBase {
         let categories: HelixGame[] = [];
 
         try {
-            const response = await this._streamerClient.search.searchCategories(categoryName);
+            const response = await this.streamerClient.search.searchCategories(categoryName);
             if (response && response.data) {
                 categories = response.data;
             }
         } catch (error) {
-            logger.error("Failed to search Twitch categories", error.message);
+            this.logger.error(`Failed to search Twitch categories: ${(error as Error).message}`);
         }
 
         return categories.map(c => this.mapTwitchCategory(c));

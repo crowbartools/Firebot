@@ -3,9 +3,9 @@ import { EffectList } from "../../types/effects";
 import { Trigger } from "../../types/triggers";
 
 import JsonDbManager from "../database/json-db-manager";
+import { AccountAccess } from "../common/account-access";
 import { PresetEffectListManager } from "../effects/preset-lists/preset-effect-list-manager";
 import { SettingsManager } from "../common/settings-manager";
-import accountAccess from "../common/account-access";
 import effectRunner from "../common/effect-runner";
 import frontendCommunicator from "../common/frontend-communicator";
 
@@ -115,7 +115,7 @@ class QuickActionManager extends JsonDbManager<QuickActionDefinition> {
                 trigger: {
                     type: "quick_action",
                     metadata: {
-                        username: accountAccess.getAccounts().streamer.username,
+                        username: AccountAccess.getAccounts().streamer.username,
                         presetListArgs: presetArgValues
                     }
                 } as Trigger,

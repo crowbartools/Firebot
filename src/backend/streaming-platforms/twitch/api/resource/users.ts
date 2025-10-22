@@ -1,20 +1,18 @@
 import {
-    ApiClient,
     HelixChannelFollower,
     HelixUser,
     UserIdResolvable
 } from "@twurple/api";
 import { ApiResourceBase } from "./api-resource-base";
-import logger from "../../../../logwrapper";
-import accountAccess from "../../../../common/account-access";
+import { TwitchApiBase } from "../api";
 
 export class TwitchUsersApi extends ApiResourceBase {
-    constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        super(streamerClient, botClient);
+    constructor(apiBase: TwitchApiBase) {
+        super(apiBase);
     }
 
     async getUserById(userId: string): Promise<HelixUser> {
-        return await this._streamerClient.users.getUserById(userId);
+        return await this.streamerClient.users.getUserById(userId);
     }
 
     async getUsersByIds(userIds: string[]): Promise<HelixUser[]> {
@@ -22,16 +20,16 @@ export class TwitchUsersApi extends ApiResourceBase {
         for (let x = 0; x < userIds.length; x += 100) {
             const userBatch = userIds.slice(x, x + 100);
             try {
-                users.push(...await this._streamerClient.users.getUsersByIds(userBatch));
+                users.push(...await this.streamerClient.users.getUsersByIds(userBatch));
             } catch (error) {
-                logger.error(`Error trying to get users by ID from Twitch API`, error);
+                this.logger.error(`Error trying to get users by ID from Twitch API`, error);
             }
         }
         return users;
     }
 
     async getUserByName(username: string): Promise<HelixUser> {
-        return await this._streamerClient.users.getUserByName(username);
+        return await this.streamerClient.users.getUserByName(username);
     }
 
     async getUsersByNames(usernames: string[]): Promise<HelixUser[]> {
@@ -39,20 +37,20 @@ export class TwitchUsersApi extends ApiResourceBase {
         for (let x = 0; x < usernames.length; x += 100) {
             const userBatch = usernames.slice(x, x + 100);
             try {
-                users.push(...await this._streamerClient.users.getUsersByNames(userBatch));
+                users.push(...await this.streamerClient.users.getUsersByNames(userBatch));
             } catch (error) {
-                logger.error(`Error trying to get users by name from Twitch API`, error);
+                this.logger.error(`Error trying to get users by name from Twitch API`, error);
             }
         }
         return users;
     }
 
     async getFollowDateForUser(username: string): Promise<Date> {
-        const streamerData = accountAccess.getAccounts().streamer;
+        const streamerData = this.accounts.streamer;
 
         const userId = (await this.getUserByName(username)).id;
 
-        const followData = await this._streamerClient.channels.getChannelFollowers(streamerData.userId, userId);
+        const followData = await this.streamerClient.channels.getChannelFollowers(streamerData.userId, userId);
 
         if (followData?.data[0] == null) {
             return null;
@@ -82,10 +80,10 @@ export class TwitchUsersApi extends ApiResourceBase {
         }
 
         try {
-            const userFollowResponse = await this._streamerClient.channels.getChannelFollowers(channel.id, user.id);
+            const userFollowResponse = await this.streamerClient.channels.getChannelFollowers(channel.id, user.id);
             return userFollowResponse?.data?.[0];
         } catch (err) {
-            logger.error(`Failed to check if ${username} follows ${channelName}`, err.message);
+            this.logger.error(`Failed to check if ${username} follows ${channelName}: ${(err as Error).message}`);
             return false;
         }
     }
@@ -99,14 +97,14 @@ export class TwitchUsersApi extends ApiResourceBase {
             return false;
         }
 
-        const streamerId = accountAccess.getAccounts().streamer.userId;
+        const streamerId = this.accounts.streamer.userId;
 
         try {
-            await this._streamerClient.users.createBlock(streamerId, userId, {
+            await this.streamerClient.users.createBlock(streamerId, userId, {
                 reason
             });
         } catch (error) {
-            logger.error("Error blocking user", error.message);
+            this.logger.error(`Error blocking user: ${(error as Error).message}`);
             return false;
         }
 
@@ -118,12 +116,12 @@ export class TwitchUsersApi extends ApiResourceBase {
             return false;
         }
 
-        const streamerId = accountAccess.getAccounts().streamer.userId;
+        const streamerId = this.accounts.streamer.userId;
 
         try {
-            await this._streamerClient.users.deleteBlock(streamerId, userId);
+            await this.streamerClient.users.deleteBlock(streamerId, userId);
         } catch (error) {
-            logger.error("Error unblocking user", error.message);
+            this.logger.error(`Error unblocking user: ${(error as Error).message}`);
             return false;
         }
 

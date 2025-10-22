@@ -1,11 +1,10 @@
-import { ApiClient, HelixVideo } from "@twurple/api";
+import { HelixVideo } from "@twurple/api";
 import { ApiResourceBase } from "./api-resource-base";
-import logger from "../../../../logwrapper";
-import accountAccess from "../../../../common/account-access";
+import { TwitchApiBase } from "../api";
 
 export class TwitchVideosApi extends ApiResourceBase {
-    constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        super(streamerClient, botClient);
+    constructor(apiBase: TwitchApiBase) {
+        super(apiBase);
     }
 
     /**
@@ -14,14 +13,14 @@ export class TwitchVideosApi extends ApiResourceBase {
      * @returns A {@linkcode HelixVideo} object representing the VOD
      */
     async getVodByStreamId(streamId: string): Promise<HelixVideo> {
-        const streamer = accountAccess.getAccounts().streamer;
-        const vods = await this._streamerClient.videos.getVideosByUser(streamer.userId, { type: 'archive', limit: 1 });
+        const streamer = this.accounts.streamer;
+        const vods = await this.streamerClient.videos.getVideosByUser(streamer.userId, { type: 'archive', limit: 1 });
         if (vods.data.length === 0) {
-            logger.warn(`No VOD found for stream ID ${streamId}`);
+            this.logger.warn(`No VOD found for stream ID ${streamId}`);
             return null;
         }
         if (!vods.data[0].streamId || vods.data[0].streamId !== streamId) {
-            logger.warn(`No VOD found for stream ID ${streamId}`);
+            this.logger.warn(`No VOD found for stream ID ${streamId}`);
             return null;
         }
         return vods.data[0];

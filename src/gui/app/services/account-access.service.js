@@ -20,15 +20,15 @@
             };
 
             service.getAccounts = () => {
-                service.accounts = backendCommunicator.fireEventSync("getAccounts");
+                service.accounts = backendCommunicator.fireEventSync("accounts:get-accounts");
             };
             service.getAccounts();
 
             service.logoutAccount = (accountType) => {
-                backendCommunicator.fireEvent("logoutAccount", accountType);
+                backendCommunicator.fireEvent("accounts:logout-account", accountType);
             };
 
-            backendCommunicator.on("accountUpdate", (accounts) => {
+            backendCommunicator.on("accounts:account-update", (accounts) => {
                 service.accounts = accounts;
             });
 

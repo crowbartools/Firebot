@@ -1,6 +1,6 @@
 import { ReplaceVariable } from "../../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
-import accountAccess from "../../../../common/account-access";
+import { AccountAccess } from "../../../../common/account-access";
 import { TwitchApi } from "../../api";
 
 const model: ReplaceVariable = {
@@ -22,7 +22,7 @@ const model: ReplaceVariable = {
     },
     evaluator: async (trigger, username: string) => {
         if (!username) {
-            username = accountAccess.getAccounts().streamer.username;
+            username = AccountAccess.getAccounts().streamer.username;
         }
 
         const clip = await TwitchApi.clips.getLatestClipForUserByName(username);
