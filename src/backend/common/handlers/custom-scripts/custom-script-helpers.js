@@ -118,8 +118,6 @@ function buildModules(scriptManifest) {
 
     const scriptNameNormalized = scriptManifest.name.replace(/[#%&{}\\<>*?/$!'":@`|=\s-]+/g, "-").toLowerCase();
 
-    const scriptDataDir = path.resolve(ProfileManager.getPathInProfile("/script-data/"), `./${scriptNameNormalized}/`);
-
     return {
         request: customRequest,
         spawn: require("child_process").spawn,
@@ -239,12 +237,14 @@ function buildModules(scriptManifest) {
                     .forEach(n => notificationManager.deleteNotification(n.id));
             }
         },
-        uiExtensionManager: require("../../../ui-extensions/ui-extension-manager"),
-        scriptDataDir
+        uiExtensionManager: require("../../../ui-extensions/ui-extension-manager")
     };
 }
 
 function buildRunRequest(scriptManifest, params, trigger) {
+    const scriptNameNormalized = scriptManifest.name.replace(/[#%&{}\\<>*?/$!'":@`|=\s-]+/g, "-").toLowerCase();
+    const scriptDataDir = path.resolve(ProfileManager.getPathInProfile("/script-data/"), `./${scriptNameNormalized}/`);
+
     return {
         modules: buildModules(scriptManifest),
         command: trigger?.metadata?.userCommand,
@@ -257,7 +257,8 @@ function buildRunRequest(scriptManifest, params, trigger) {
             version: app.getVersion()
         },
         parameters: params,
-        trigger: trigger
+        trigger: trigger,
+        scriptDataDir
     };
 }
 
