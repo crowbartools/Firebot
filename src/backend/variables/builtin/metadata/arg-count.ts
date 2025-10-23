@@ -1,5 +1,5 @@
-import { ReplaceVariable, Trigger, TriggersObject } from "../../../../types/variables";
-import { UserCommand } from "../../../../types/commands";
+import type { ReplaceVariable, Trigger, TriggersObject } from "../../../../types/variables";
+import type { UserCommand } from "../../../../types/commands";
 
 const triggers: TriggersObject = {};
 triggers["command"] = true;

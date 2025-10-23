@@ -1,4 +1,4 @@
-import { FirebotRole } from "../../types/roles";
+import type { FirebotRole } from "../../types/roles";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 import frontendCommunicator from "../common/frontend-communicator";
 
@@ -6,12 +6,12 @@ interface TwitchTeam {
     mappedRole: {
         id: string;
         name: string;
-    },
+    };
     members: Array<{
         id: string;
         username: string;
         displayName: string;
-    }>
+    }>;
 }
 
 class TeamRolesManager {

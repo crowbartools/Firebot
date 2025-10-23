@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import type { ReplaceVariable } from "../../../../types/variables";
 import * as cloudSync from "../../../cloud-sync";
 
 const model : ReplaceVariable = {

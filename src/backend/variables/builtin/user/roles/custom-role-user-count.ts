@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../../types/variables";
+import type { ReplaceVariable } from "../../../../../types/variables";
 import customRolesManager from "../../../../roles/custom-roles-manager";
 
 const model : ReplaceVariable = {
@@ -9,7 +9,7 @@ const model : ReplaceVariable = {
         categories: ["numbers"],
         possibleDataOutput: ["number"]
     },
-    evaluator: async (trigger, roleName: string) => {
+    evaluator: (trigger, roleName: string) => {
         if (roleName == null || roleName == null) {
             return 0;
         }

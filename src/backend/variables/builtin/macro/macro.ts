@@ -1,4 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 import macroManager from '../../macro-manager';
 

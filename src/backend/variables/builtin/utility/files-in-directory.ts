@@ -1,7 +1,7 @@
-import { join, resolve, sep } from 'node:path';
-import { readdirSync } from 'node:fs';
+import { join, resolve, sep } from "path";
+import { readdirSync } from "fs";
 
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {

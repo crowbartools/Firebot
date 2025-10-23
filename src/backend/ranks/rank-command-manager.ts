@@ -1,10 +1,10 @@
-import { SystemCommand } from "../../types/commands";
-import { RankLadder } from "../../types/ranks";
+import type { SystemCommand } from "../../types/commands";
+import type { RankLadder } from "../../types/ranks";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
 import commandManager from "../chat/commands/command-manager";
 import rankManager from "./rank-manager";
 import viewerDatabase from "../viewers/viewer-database";
 import logger from "../logwrapper";
-import { TwitchApi } from "../streaming-platforms/twitch/api";
 
 type RankCommandRefreshRequestAction = "create" | "update" | "delete";
 

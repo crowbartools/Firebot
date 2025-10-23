@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 import currencyAccess from "../../../currency/currency-access";
 import currencyManager from "../../../currency/currency-manager";

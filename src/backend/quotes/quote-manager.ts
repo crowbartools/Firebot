@@ -1,7 +1,7 @@
 import Datastore from "@seald-io/nedb";
 import { TypedEmitter } from "tiny-typed-emitter";
 
-import { Quote, QuoteAutoid } from "../../types/quotes";
+import type { Quote, QuoteAutoid } from "../../types/quotes";
 
 import { ProfileManager } from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";

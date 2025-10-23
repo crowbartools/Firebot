@@ -1,5 +1,5 @@
-import { TriggersObject } from "../../../../types/triggers";
-import { ReplaceVariable } from "../../../../types/variables";
+import type { ReplaceVariable } from "../../../../types/variables";
+import type { TriggersObject } from "../../../../types/triggers";
 
 const triggers: TriggersObject = {
     counter: true

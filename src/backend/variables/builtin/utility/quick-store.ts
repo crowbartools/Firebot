@@ -1,4 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
@@ -36,7 +36,7 @@ const model : ReplaceVariable = {
         if (meta.quickstore == null) {
             meta.quickstore = Object.create(null);
         }
-        const quickstore = meta.quickstore;
+        const quickstore = meta.quickstore as Record<string, unknown>;
 
         // Retrieve value
         if (arguments.length < 3) {

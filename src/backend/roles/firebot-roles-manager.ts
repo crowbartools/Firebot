@@ -1,4 +1,4 @@
-import { FirebotRole } from "../../types/roles";
+import type { FirebotRole } from "../../types/roles";
 import firebotRoles from "../../shared/firebot-roles";
 import { ActiveUserHandler } from "../chat/active-user-handler";
 

@@ -1,5 +1,5 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { basename, extname } from "path";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
@@ -19,7 +19,7 @@ const model : ReplaceVariable = {
 
         try {
             return basename(filePath, extname(filePath));
-        } catch (err) {
+        } catch {
             // Probably a directory or invalid filename
             return "[Invalid File Path]";
         }

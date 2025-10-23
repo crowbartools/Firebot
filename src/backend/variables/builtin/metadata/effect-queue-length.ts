@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 import { EffectQueueConfigManager } from "../../../effects/queues/effect-queue-config-manager";
 import effectQueueRunner from "../../../effects/queues/effect-queue-runner";

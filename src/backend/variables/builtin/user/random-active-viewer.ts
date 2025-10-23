@@ -1,7 +1,7 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import type { ReplaceVariable } from "../../../../types/variables";
 import { ActiveUserHandler } from '../../../chat/active-user-handler';
-import logger from "../../../logwrapper";
 import customRolesManager from '../../../roles/custom-roles-manager';
+import logger from "../../../logwrapper";
 import { getRandomInt } from '../../../utils';
 
 const model : ReplaceVariable = {

@@ -27,7 +27,7 @@ export type AngularJsComponent = {
     name: string;
     bindings: Record<string, string>;
     template: string;
-    transclude?: boolean | string | {[slot: string]: string};
+    transclude?: boolean | string | { [slot: string]: string };
     controller: Function;
 };
 
@@ -49,7 +49,7 @@ export type AngularJsFirebotParameterComponent = {
         type: string;
         hideTitle?: boolean;
         hideDescription?: boolean;
-    },
+    };
     template: string;
     controller: Function;
 };
@@ -64,12 +64,12 @@ export type AngularJsDirective = {
         multiElement?: boolean;
         name?: string;
         priority?: number;
-        require?: string | string[] | {[controller: string]: string};
+        require?: string | string[] | { [controller: string]: string };
         restrict?: string;
         scope?: boolean | object;
         template?: string;
         terminal?: boolean;
-        transclude?: boolean | string | {[slot: string]: string};
+        transclude?: boolean | string | { [slot: string]: string };
     };
 };
 
@@ -99,5 +99,5 @@ export type UIExtension = {
          * Add your own parameter components for rendering custom parameter types
          */
         parameters?: AngularJsFirebotParameterComponent[];
-    }
+    };
 };

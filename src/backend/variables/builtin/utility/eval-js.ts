@@ -1,4 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 import logger from '../../../logwrapper';
 import { evalSandboxedJs } from '../../../common/handlers/js-sandbox/sandbox-eval';
 

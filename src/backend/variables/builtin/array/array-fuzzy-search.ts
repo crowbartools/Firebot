@@ -1,5 +1,5 @@
 import Fuse, { IFuseOptions } from "fuse.js";
-import { ReplaceVariable } from "../../../../types/variables";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 const model: ReplaceVariable = {
     definition: {

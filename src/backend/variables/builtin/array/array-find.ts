@@ -1,4 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 import arrayFindIndex from "./array-find-index";
 

@@ -2,8 +2,8 @@ import { TypedEmitter } from "tiny-typed-emitter";
 import { JsonDB } from "node-json-db";
 import path from "path";
 
-import { BasicViewer } from "../../types/viewers";
-import { CustomRole, LegacyCustomRole } from "../../types/roles";
+import type { BasicViewer } from "../../types/viewers";
+import type { CustomRole, LegacyCustomRole } from "../../types/roles";
 
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 import { ProfileManager } from "../common/profile-manager";

@@ -1,5 +1,5 @@
-import { RestrictionType } from "../../../types/restrictions";
-import { Currency } from "../../../types/currency";
+import type { RestrictionType } from "../../../types/restrictions";
+import type { Currency } from "../../../types/currency";
 import currencyAccess from "../../currency/currency-access";
 import currencyManager from "../../currency/currency-manager";
 

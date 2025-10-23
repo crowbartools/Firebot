@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 export const webhookHeader: ReplaceVariable = {
     definition: {
@@ -12,10 +12,8 @@ export const webhookHeader: ReplaceVariable = {
         }
     },
     evaluator(trigger, key: string) {
-        const headers = trigger?.metadata?.eventData?.webhookHeaders ?? {};
-        return (
-            headers[key] ?? ""
-        );
+        const headers = (trigger?.metadata?.eventData?.webhookHeaders ?? {}) as Record<string, string>;
+        return headers[key] ?? "";
     }
 };
 

@@ -1,5 +1,5 @@
-import { ReplaceVariable } from "../../../../types/variables";
 import { randomUUID } from "crypto";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {

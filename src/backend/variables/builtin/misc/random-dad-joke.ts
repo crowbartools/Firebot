@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import type { ReplaceVariable } from "../../../../types/variables";
 import apiProcessor from "../../../common/handlers/apiProcessor";
 
 const model : ReplaceVariable = {

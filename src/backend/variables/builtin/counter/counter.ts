@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import type { ReplaceVariable } from "../../../../types/variables";
 import { CounterManager } from "../../../counters/counter-manager";
 
 const model: ReplaceVariable = {

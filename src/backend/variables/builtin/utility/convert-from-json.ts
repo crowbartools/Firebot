@@ -1,4 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
@@ -23,9 +23,9 @@ const model : ReplaceVariable = {
         }
         if (typeof jsonText === 'string' || jsonText instanceof String) {
             try {
-                return JSON.parse(`${jsonText}`);
+                return JSON.parse(`${jsonText.toString()}`);
 
-            } catch (err) {
+            } catch {
                 return "[PARSE ERROR]";
             }
         }

@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 
-import { RestrictionType } from "../../../types/restrictions";
+import type { RestrictionType } from "../../../types/restrictions";
+import type { FirebotRole } from "../../../types/roles";
+
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
 import chatRolesManager from "../../roles/chat-roles-manager";
 import customRolesManager from "../../roles/custom-roles-manager";
+import rankManager from "../../ranks/rank-manager";
 import teamRolesManager from "../../roles/team-roles-manager";
 import twitchRolesManager from "../../../shared/twitch-roles";
-import rankManager from "../../ranks/rank-manager";
 import viewerDatabase from "../../viewers/viewer-database";
-import { FirebotRole } from "../../../types/roles";
 
 type PermissionMode = "roles" | "viewer";
 type Rank = {

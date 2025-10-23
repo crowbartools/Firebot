@@ -1,5 +1,5 @@
 import moment from "moment";
-import { ReplaceVariable, TriggersObject } from "../../../../types/variables";
+import type { ReplaceVariable, TriggersObject } from "../../../../types/variables";
 import logger from "../../../logwrapper";
 
 const triggers: TriggersObject = {};

@@ -1,5 +1,5 @@
-import path from 'node:path';
-import { ReplaceVariable } from "../../../../types/variables";
+import path from "path";
+import type { ReplaceVariable } from "../../../../types/variables";
 import * as dataAccess from "../../../common/data-access";
 
 const model : ReplaceVariable = {

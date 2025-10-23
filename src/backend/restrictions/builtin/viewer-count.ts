@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 
-import { RestrictionType } from "../../../types/restrictions";
+import type { RestrictionType } from "../../../types/restrictions";
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
 import { AccountAccess } from "../../common/account-access";
 import logger from "../../logwrapper";

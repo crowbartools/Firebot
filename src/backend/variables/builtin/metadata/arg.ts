@@ -1,5 +1,5 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { UserCommand } from "../../../../types/commands";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
+import type { UserCommand } from "../../../../types/commands";
 
 const expressionish = require('expressionish');
 

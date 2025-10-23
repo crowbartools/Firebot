@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../../types/variables";
+import type { ReplaceVariable } from "../../../../../types/variables";
 import customRolesManager from "../../../../roles/custom-roles-manager";
 
 const model : ReplaceVariable = {
@@ -19,7 +19,7 @@ const model : ReplaceVariable = {
             }
         ]
     },
-    evaluator: async (_, role: string, propertyName?: string) => {
+    evaluator: (_, role: string, propertyName?: string) => {
         if (role == null || role === '') {
             return [];
         }

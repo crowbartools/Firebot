@@ -1,4 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 import customVariableManager from "../../../common/custom-variable-manager";
 
 function isObject(data: unknown) {

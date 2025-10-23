@@ -1,4 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
@@ -24,7 +24,7 @@ const model : ReplaceVariable = {
         }
         try {
             return JSON.stringify(jsonText, null, prettyPrint === "true" ? 4 : null);
-        } catch (ignore) {
+        } catch {
             return "null";
         }
     }

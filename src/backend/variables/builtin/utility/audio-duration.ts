@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import type { ReplaceVariable } from "../../../../types/variables";
 import frontendCommunicator from "../../../common/frontend-communicator";
 
 const model : ReplaceVariable = {
@@ -27,7 +27,7 @@ const model : ReplaceVariable = {
             return await frontendCommunicator.fireEventAsync("getSoundDuration", {
                 path: url
             });
-        } catch (err) {
+        } catch {
             return "[ERROR FETCHING DURATION]";
         }
     }

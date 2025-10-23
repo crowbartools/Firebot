@@ -1,4 +1,4 @@
-import { ReplaceVariable, TriggersObject } from "../../../../types/variables";
+import type { ReplaceVariable, TriggersObject } from "../../../../types/variables";
 
 const triggers: TriggersObject = {};
 triggers["event"] = ["streamlabs:donation", "streamlabs:eldonation", "tipeeestream:donation", "streamelements:donation", "extralife:donation"];

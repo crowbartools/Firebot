@@ -1,5 +1,5 @@
 import { sprintf } from 'sprintf-js';
-import { ReplaceVariable } from "../../../../types/variables";
+import type { ReplaceVariable } from "../../../../types/variables";
 import { stringify } from '../../../utils';
 
 const model : ReplaceVariable = {

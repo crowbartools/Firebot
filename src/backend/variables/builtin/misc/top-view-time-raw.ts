@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 import viewerOnlineStatusManager from "../../../viewers/viewer-online-status-manager";
 

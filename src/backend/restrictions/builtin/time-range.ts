@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 
 import moment from "moment";
-import { RestrictionType } from "../../../types/restrictions";
+
+import type { RestrictionType } from "../../../types/restrictions";
 
 const model: RestrictionType<{
     mode: "time" | "days";

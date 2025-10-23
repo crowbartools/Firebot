@@ -1,8 +1,9 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-
 import fs from "fs/promises";
-import { getRandomInt } from "../../../utils";
+
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
+
 import logger from "../../../logwrapper";
+import { getRandomInt } from "../../../utils";
 
 const model : ReplaceVariable = {
     definition: {

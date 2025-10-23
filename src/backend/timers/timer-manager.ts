@@ -1,7 +1,7 @@
 import { DateTime } from "luxon";
 
-import { Timer, TimerIntervalTracker } from "../../types/timers";
-import { Trigger } from "../../types/triggers";
+import type { Timer, TimerIntervalTracker } from "../../types/timers";
+import type { Trigger } from "../../types/triggers";
 
 import JsonDbManager from "../database/json-db-manager";
 import { AccountAccess } from "../common/account-access";

@@ -1,4 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
@@ -23,7 +23,7 @@ const model : ReplaceVariable = {
         try {
             const regex = RegExp(`${expression}`, `${flags}`);
             return regex.test(`${stringToEvaluate}`);
-        } catch (err) {
+        } catch {
             return false;
         }
     }

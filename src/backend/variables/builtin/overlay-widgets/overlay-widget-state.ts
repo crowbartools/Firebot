@@ -1,5 +1,5 @@
 import logger from "../../../logwrapper";
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 import overlayWidgetConfigManager from "../../../overlay-widgets/overlay-widget-config-manager";
 
@@ -21,7 +21,7 @@ const model: ReplaceVariable = {
         categories: ["advanced"],
         possibleDataOutput: ["ALL"]
     },
-    evaluator: async (
+    evaluator: (
         trigger: Trigger,
         nameOrId: string,
         responseJsonPath: string
@@ -39,7 +39,7 @@ const model: ReplaceVariable = {
                 if (widgetState != null) {
                     const jsonPathNodes = responseJsonPath.split(".");
                     try {
-                        let currentObject = null;
+                        let currentObject: unknown = null;
                         for (const node of jsonPathNodes) {
                             const objToTraverse = currentObject === null ? widgetState : currentObject;
                             if (objToTraverse[node] != null) {
@@ -58,7 +58,7 @@ const model: ReplaceVariable = {
             }
 
             return widgetState;
-        } catch (err) {
+        } catch {
             return "[API ERROR]";
         }
     }

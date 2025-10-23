@@ -1,5 +1,5 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import fs from "fs";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 import logger from "../../../logwrapper";
 
 const model : ReplaceVariable = {

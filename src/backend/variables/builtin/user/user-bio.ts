@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import type { ReplaceVariable } from "../../../../types/variables";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 
 const model : ReplaceVariable = {
@@ -28,7 +28,7 @@ const model : ReplaceVariable = {
         try {
             const userInfo = await TwitchApi.users.getUserByName(username);
             return userInfo.description ? userInfo.description : "[No Description Found]";
-        } catch (err) {
+        } catch {
             return "[No Description Found]";
         }
     }

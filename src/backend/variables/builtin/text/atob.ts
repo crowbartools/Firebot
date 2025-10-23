@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import type { ReplaceVariable } from "../../../../types/variables";
 import base64Decode from './base64-decode';
 
 const model: ReplaceVariable = {

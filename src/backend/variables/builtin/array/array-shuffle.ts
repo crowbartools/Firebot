@@ -1,4 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const shuffle = (subject: unknown[]) : unknown[] => {
     const arrayCopy = subject.slice(0);

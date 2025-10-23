@@ -1,4 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 import logger from '../../../logwrapper';
 
 const model : ReplaceVariable = {
@@ -16,8 +16,8 @@ const model : ReplaceVariable = {
     ) : unknown => {
         if (typeof subject == 'string' || subject instanceof String) {
             try {
-                subject = JSON.parse(`${subject}`);
-            } catch (err) {
+                subject = JSON.parse(`${subject.toString()}`);
+            } catch {
                 return null;
             }
         }

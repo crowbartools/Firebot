@@ -1,5 +1,5 @@
+import type { UIExtension } from "./extension-types";
 import frontendCommunicator from "../common/frontend-communicator";
-import { UIExtension } from "./extension-types";
 
 class UIExtensionManager {
     private _extensions: UIExtension[] = [];

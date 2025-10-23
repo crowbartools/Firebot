@@ -1,6 +1,5 @@
-import { ReplaceVariable } from "../../../../../types/variables";
+import type { ReplaceVariable } from "../../../../../types/variables";
 import viewerRankManager from "../../../../ranks/rank-manager";
-import viewerDatabase from "../../../../viewers/viewer-database";
 import logger from "../../../../logwrapper";
 
 const model : ReplaceVariable = {
@@ -11,7 +10,7 @@ const model : ReplaceVariable = {
         categories: ["common", "user based"],
         possibleDataOutput: ["text"]
     },
-    evaluator: async (trigger, rankLadderName: string) : Promise<string | null> => {
+    evaluator: (trigger, rankLadderName: string): string => {
         if (!rankLadderName?.length) {
             logger.debug(`$rankLadderMode: rank ladder name provided`);
             return null;

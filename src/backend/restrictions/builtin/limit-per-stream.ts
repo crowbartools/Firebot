@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 
-import { Trigger } from "../../../types/triggers";
-import { RestrictionType } from "../../../types/restrictions";
+import type { RestrictionType } from "../../../types/restrictions";
+import type { Trigger } from "../../../types/triggers";
 
 import { AccountAccess } from "../../common/account-access";
 import connectionManager from "../../common/connection-manager";

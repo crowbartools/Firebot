@@ -1,10 +1,11 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { Quote } from "../../../../types/quotes";
+import moment from "moment";
+
+import type { ReplaceVariable } from "../../../../types/variables";
+import type { Quote } from "../../../../types/quotes";
+
 import { QuoteManager } from "../../../quotes/quote-manager";
 import commandManager from "../../../chat/commands/command-manager";
 import logger from "../../../logwrapper";
-
-const moment = require("moment");
 
 const model : ReplaceVariable = {
     definition: {
@@ -21,7 +22,7 @@ const model : ReplaceVariable = {
     },
     evaluator: async (_, quoteId: number) => {
         const quoteCommand = commandManager.getSystemCommandById("firebot:quotesmanagement");
-        const quoteDateFormat = quoteCommand.definition.options.quoteDateFormat.value;
+        const quoteDateFormat = quoteCommand.definition.options.quoteDateFormat.value as string;
         let quote: Quote;
         quoteId = parseInt(`${quoteId}`);
 

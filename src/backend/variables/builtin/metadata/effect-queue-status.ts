@@ -1,4 +1,4 @@
-import { ReplaceVariable, TriggersObject } from "../../../../types/variables";
+import type { ReplaceVariable, TriggersObject } from "../../../../types/variables";
 import { EffectQueueConfigManager } from "../../../effects/queues/effect-queue-config-manager";
 
 const triggers: TriggersObject = {};

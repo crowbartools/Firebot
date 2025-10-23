@@ -1,6 +1,6 @@
+import type { VariableMacro } from "../../types/variable-macros";
 import JsonDbManager from "../database/json-db-manager";
 import frontendCommunicator from "../common/frontend-communicator";
-import { VariableMacro } from "../../types/variable-macros";
 
 class MacroManager extends JsonDbManager<VariableMacro> {
     constructor() {

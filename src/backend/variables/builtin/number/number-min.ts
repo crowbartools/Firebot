@@ -1,4 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const normalizeNumber = (input) => {
     const value = Number(input);
@@ -41,11 +41,11 @@ const model : ReplaceVariable = {
             }
             if (typeof value === "string") {
                 try {
-                    const parsed = JSON.parse(value);
+                    const parsed = JSON.parse(value) as object;
                     if (Array.isArray(parsed)) {
                         return parsed.map(normalizeNumber);
                     }
-                } catch (e) {
+                } catch {
                     return normalizeNumber(value);
                 }
             }

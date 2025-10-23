@@ -1,5 +1,5 @@
-import { ReplaceVariable } from "../../../../types/variables";
 import tinycolor from "tinycolor2";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 const model: ReplaceVariable = {
     definition: {
@@ -46,7 +46,7 @@ const model: ReplaceVariable = {
         description: "outputs color in specified format",
         possibleDataOutput: ["text"]
     },
-    evaluator: async (
+    evaluator: (
         _,
         colorString: string,
         type: string,
@@ -56,7 +56,7 @@ const model: ReplaceVariable = {
         alpha = Number(alpha) > 1 ? Number(alpha) / 255 : Number(alpha);
         color.setAlpha(Number(alpha));
         let hexColor = color.toHex8String();
-        let output;
+        let output: string | number;
         switch (type) {
             case "hex":
                 output = color.toHexString();

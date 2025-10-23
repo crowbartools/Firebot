@@ -1,7 +1,7 @@
 import fsp from "fs/promises";
 
-import { FirebotSetup, SetupImportQuestion } from "../../types/setups";
-import { Currency } from "../../types/currency";
+import type { FirebotSetup, SetupImportQuestion } from "../../types/setups";
+import type { Currency } from "../../types/currency";
 
 import { CounterManager } from "../counters/counter-manager";
 import { EffectQueueConfigManager } from "../effects/queues/effect-queue-config-manager";

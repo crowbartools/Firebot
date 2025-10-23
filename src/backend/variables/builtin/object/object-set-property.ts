@@ -1,4 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 import logger from '../../../logwrapper';
 
 const model : ReplaceVariable = {
@@ -25,15 +25,15 @@ const model : ReplaceVariable = {
     },
     evaluator: (
         trigger: Trigger,
-        subject: string | unknown,
+        subject: unknown,
         propertyPath: string | Array<string | number>,
         value: unknown
     ) : unknown => {
 
         if (typeof subject === 'string' || subject instanceof String) {
             try {
-                subject = JSON.parse(`${subject}`);
-            } catch (err) {
+                subject = JSON.parse(`${subject.toString()}`);
+            } catch {
                 logger.error("Invalid object specified", subject);
                 return null;
             }
@@ -64,7 +64,7 @@ const model : ReplaceVariable = {
         }
 
         // walk subject
-        let currentSubject = subject,
+        let currentSubject: unknown = subject,
             key : string | number = nodes.shift();
         do {
             if (currentSubject == null || typeof currentSubject !== 'object') {

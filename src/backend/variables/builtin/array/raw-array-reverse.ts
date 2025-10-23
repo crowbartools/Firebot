@@ -1,5 +1,5 @@
 // Deprecated
-import { ReplaceVariable } from "../../../../types/variables";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 import arrayReverse from './array-reverse';
 

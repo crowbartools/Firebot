@@ -1,10 +1,10 @@
-import { FirebotRole } from "../../types/roles";
+import { TypedEmitter } from "tiny-typed-emitter";
+import type { FirebotRole } from "../../types/roles";
 import firebotRolesManager from "./firebot-roles-manager";
 import chatRolesManager from "./chat-roles-manager";
 import teamRolesManager from "./team-roles-manager";
 import customRolesManager from "./custom-roles-manager";
 import twitchRolesManager from "../../shared/twitch-roles";
-import { TypedEmitter } from "tiny-typed-emitter";
 
 export interface FirebotViewerRoles {
     twitchRoles: FirebotRole[];

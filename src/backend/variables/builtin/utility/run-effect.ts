@@ -1,8 +1,8 @@
 import { v4 as uuid } from "uuid";
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
-import logger from "../../../logwrapper";
 import effectRunner from "../../../common/effect-runner";
+import logger from "../../../logwrapper";
 
 
 const model : ReplaceVariable = {
@@ -34,7 +34,7 @@ const model : ReplaceVariable = {
                             }
 
                             try {
-                                return JSON.parse(`${json}`);
+                                return JSON.parse(`${json.toString()}`);
                             } catch (error) {
                                 logger.warn("Failed to parse effect json in $runEffect", json, error);
                                 return null;

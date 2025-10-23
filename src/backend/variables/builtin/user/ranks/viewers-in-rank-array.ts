@@ -1,8 +1,8 @@
-import { ReplaceVariable } from "../../../../../types/variables";
+import type { ReplaceVariable } from "../../../../../types/variables";
+import type { FirebotViewer } from "../../../../../types/viewers";
 import viewerRankManager from "../../../../ranks/rank-manager";
 import viewerDatabase from "../../../../viewers/viewer-database";
 import logger from "../../../../logwrapper";
-import { FirebotViewer } from "../../../../../types/viewers";
 
 const model : ReplaceVariable = {
     definition: {

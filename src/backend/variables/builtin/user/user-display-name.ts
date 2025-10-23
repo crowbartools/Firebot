@@ -1,8 +1,8 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import type { ReplaceVariable } from "../../../../types/variables";
 
-import logger from "../../../logwrapper";
-import viewerDatabase from "../../../viewers/viewer-database";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
+import viewerDatabase from "../../../viewers/viewer-database";
+import logger from "../../../logwrapper";
 
 const model : ReplaceVariable = {
     definition: {

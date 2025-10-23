@@ -1,6 +1,6 @@
 import { app } from "electron";
 
-import { ReplaceVariable } from "../../../../types/variables";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 import logger from "../../../logwrapper";
 
@@ -17,7 +17,7 @@ const callUrl = async (url: string): Promise<Response> => {
             return response;
         }
     } catch (error) {
-        logger.warn(`error calling readApi url: ${url}`, error.message);
+        logger.warn(`error calling readApi url: ${url}`, (error as Error).message);
         return null;
     }
 };

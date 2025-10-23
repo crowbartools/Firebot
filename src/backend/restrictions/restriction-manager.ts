@@ -1,6 +1,6 @@
 import { TypedEmitter } from "tiny-typed-emitter";
-import { Restriction, RestrictionData, RestrictionType } from "../../types/restrictions";
-import { Trigger, TriggerMeta, TriggerType } from "../../types/triggers";
+import type { Restriction, RestrictionData, RestrictionType } from "../../types/restrictions";
+import type { Trigger, TriggerMeta, TriggerType } from "../../types/triggers";
 import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
 

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 
-import { RestrictionType } from "../../../types/restrictions";
+import type { RestrictionType } from "../../../types/restrictions";
 import customVariableManager from "../../common/custom-variable-manager";
 
 const model: RestrictionType<{

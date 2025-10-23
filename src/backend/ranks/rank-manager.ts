@@ -1,7 +1,7 @@
-import frontendCommunicator from "../common/frontend-communicator";
-import JsonDbManager from "../database/json-db-manager.js";
-import { RankLadder, Rank } from "../../types/ranks";
+import type { RankLadder, Rank } from "../../types/ranks";
+import JsonDbManager from "../database/json-db-manager";
 import { RankLadderHelper } from "./rank-ladder-helper";
+import frontendCommunicator from "../common/frontend-communicator";
 
 class RankManager extends JsonDbManager<RankLadder> {
     constructor() {

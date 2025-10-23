@@ -1,7 +1,7 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import type { ReplaceVariable } from "../../../../types/variables";
 
-import { stringify } from '../../../utils';
 import logger from '../../../logwrapper';
+import { stringify } from '../../../utils';
 
 const model: ReplaceVariable = {
     definition: {

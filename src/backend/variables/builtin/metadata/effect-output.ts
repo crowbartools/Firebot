@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
@@ -49,7 +49,7 @@ const model : ReplaceVariable = {
         if (typeof data === "string") {
             try {
                 data = JSON.parse(data);
-            } catch (_) { }
+            } catch { }
         }
 
         try {
@@ -60,7 +60,7 @@ const model : ReplaceVariable = {
                 data = data[node];
             }
             return data ?? defaultData;
-        } catch (error) {
+        } catch {
             return defaultData;
         }
     }

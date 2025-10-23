@@ -1,5 +1,5 @@
 // Deprecated
-import { ReplaceVariable, TriggersObject } from "../../../../types/variables";
+import type { ReplaceVariable, TriggersObject } from "../../../../types/variables";
 import user from "../metadata/user";
 
 const triggers: TriggersObject = {};
