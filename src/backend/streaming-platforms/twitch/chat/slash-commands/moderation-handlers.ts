@@ -1,7 +1,5 @@
-import { TwitchApi } from "../../api";
 import { TwitchSlashCommand } from "../twitch-slash-commands";
 import { TwitchSlashCommandHelpers } from "./twitch-command-helpers";
-import chatRolesManager from "../../../../roles/chat-roles-manager";
 
 export const timeoutHandler: TwitchSlashCommand<[string, number, string]> = {
     commands: ["/timeout"],
@@ -29,14 +27,14 @@ export const timeoutHandler: TwitchSlashCommand<[string, number, string]> = {
             args: [targetUsername, parsedDuration, formattedReason]
         };
     },
-    handle: async ([targetUsername, duration, reason]) => {
-        const targetUserId = (await TwitchApi.users.getUserByName(targetUsername))?.id;
+    handle: async (twitchApi, _, targetUsername, duration, reason) => {
+        const targetUserId = (await twitchApi.users.getUserByName(targetUsername))?.id;
 
         if (targetUserId == null) {
             return false;
         }
 
-        return await TwitchApi.moderation.timeoutUser(targetUserId, duration, reason);
+        return await twitchApi.moderation.timeoutUser(targetUserId, duration, reason);
     }
 };
 
@@ -58,14 +56,14 @@ export const banHandler: TwitchSlashCommand<[string, string]> = {
             args: [targetUsername, formattedReason]
         };
     },
-    handle: async ([targetUsername, reason]) => {
-        const targetUserId = (await TwitchApi.users.getUserByName(targetUsername))?.id;
+    handle: async (twitchApi, _, targetUsername, reason) => {
+        const targetUserId = (await twitchApi.users.getUserByName(targetUsername))?.id;
 
         if (targetUserId == null) {
             return false;
         }
 
-        return await TwitchApi.moderation.banUser(targetUserId, reason);
+        return await twitchApi.moderation.banUser(targetUserId, reason);
     }
 };
 
@@ -86,14 +84,14 @@ export const unbanHandler: TwitchSlashCommand<[string]> = {
             args: [targetUsername]
         };
     },
-    handle: async ([targetUsername]) => {
-        const targetUserId = (await TwitchApi.users.getUserByName(targetUsername))?.id;
+    handle: async (twitchApi, _, targetUsername) => {
+        const targetUserId = (await twitchApi.users.getUserByName(targetUsername))?.id;
 
         if (targetUserId == null) {
             return false;
         }
 
-        return await TwitchApi.moderation.unbanUser(targetUserId);
+        return await twitchApi.moderation.unbanUser(targetUserId);
     }
 };
 
@@ -114,22 +112,14 @@ export const vipHandler: TwitchSlashCommand<[string]> = {
             args: [targetUsername]
         };
     },
-    handle: async ([targetUsername]) => {
-        const targetUser = await TwitchApi.users.getUserByName(targetUsername);
+    handle: async (twitchApi, _, targetUsername) => {
+        const targetUser = await twitchApi.users.getUserByName(targetUsername);
 
         if (targetUser == null) {
             return false;
         }
 
-        const result = await TwitchApi.moderation.addChannelVip(targetUser.id);
-        if (result === true) {
-            chatRolesManager.addVipToVipList({
-                id: targetUser.id,
-                username: targetUser.name,
-                displayName: targetUser.displayName
-            });
-        }
-        return result;
+        return await twitchApi.moderation.addChannelVip(targetUser.id);
     }
 };
 
@@ -150,18 +140,14 @@ export const unvipHandler: TwitchSlashCommand<[string]> = {
             args: [targetUsername]
         };
     },
-    handle: async ([targetUsername]) => {
-        const targetUserId = (await TwitchApi.users.getUserByName(targetUsername))?.id;
+    handle: async (twitchApi, _, targetUsername) => {
+        const targetUserId = (await twitchApi.users.getUserByName(targetUsername))?.id;
 
         if (targetUserId == null) {
             return false;
         }
 
-        const result = await TwitchApi.moderation.removeChannelVip(targetUserId);
-        if (result === true) {
-            chatRolesManager.removeVipFromVipList(targetUserId);
-        }
-        return result;
+        return await twitchApi.moderation.removeChannelVip(targetUserId);
     }
 };
 
@@ -182,14 +168,14 @@ export const modHandler: TwitchSlashCommand<[string]> = {
             args: [targetUsername]
         };
     },
-    handle: async ([targetUsername]) => {
-        const targetUserId = (await TwitchApi.users.getUserByName(targetUsername))?.id;
+    handle: async (twitchApi, _, targetUsername) => {
+        const targetUserId = (await twitchApi.users.getUserByName(targetUsername))?.id;
 
         if (targetUserId == null) {
             return false;
         }
 
-        return await TwitchApi.moderation.addChannelModerator(targetUserId);
+        return await twitchApi.moderation.addChannelModerator(targetUserId);
     }
 };
 
@@ -210,13 +196,13 @@ export const unmodHandler: TwitchSlashCommand<[string]> = {
             args: [targetUsername]
         };
     },
-    handle: async ([targetUsername]) => {
-        const targetUserId = (await TwitchApi.users.getUserByName(targetUsername))?.id;
+    handle: async (twitchApi, _, targetUsername) => {
+        const targetUserId = (await twitchApi.users.getUserByName(targetUsername))?.id;
 
         if (targetUserId == null) {
             return false;
         }
 
-        return await TwitchApi.moderation.removeChannelModerator(targetUserId);
+        return await twitchApi.moderation.removeChannelModerator(targetUserId);
     }
 };

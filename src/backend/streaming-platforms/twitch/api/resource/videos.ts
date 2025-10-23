@@ -1,9 +1,9 @@
 import { HelixVideo } from "@twurple/api";
 import { ApiResourceBase } from "./api-resource-base";
-import { TwitchApiBase } from "../api";
+import type { TwitchApi } from "../";
 
 export class TwitchVideosApi extends ApiResourceBase {
-    constructor(apiBase: TwitchApiBase) {
+    constructor(apiBase: typeof TwitchApi) {
         super(apiBase);
     }
 

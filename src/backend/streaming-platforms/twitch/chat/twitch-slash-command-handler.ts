@@ -1,4 +1,6 @@
 import { TwitchSlashCommand, TwitchSlashCommandValidationResult } from './twitch-slash-commands';
+import type { TwitchApi } from '../api';
+
 import {
     timeoutHandler,
     banHandler,
@@ -33,10 +35,15 @@ import {
     raidHandler,
     unraidHandler
 } from "./slash-commands/channel-handlers";
-import logger from '../../../logwrapper';
 
 export class TwitchSlashCommandHandler {
-    private static _handlers: TwitchSlashCommand[] = [
+    private _apiBase: typeof TwitchApi;
+
+    constructor(apiBase: typeof TwitchApi) {
+        this._apiBase = apiBase;
+    }
+
+    private _handlers: TwitchSlashCommand[] = [
         timeoutHandler,
         banHandler,
         unbanHandler,
@@ -69,7 +76,7 @@ export class TwitchSlashCommandHandler {
         unraidHandler
     ];
 
-    static validateChatCommand(message: string): TwitchSlashCommandValidationResult<unknown[]> {
+    validateChatCommand(message: string): TwitchSlashCommandValidationResult<unknown[]> {
         const [command, ...args] = message.split(" ");
 
         const matchedHandler = this._handlers.find(h => h.commands.includes(command?.toLowerCase()));
@@ -83,7 +90,8 @@ export class TwitchSlashCommandHandler {
 
         return matchedHandler.validateArgs(args);
     }
-    static async processChatCommand(message: string, sendAsBot = false): Promise<boolean> {
+
+    async processChatCommand(message: string, sendAsBot = false): Promise<boolean> {
         const validationResult = this.validateChatCommand(message);
 
         if (validationResult.success === false) {
@@ -91,9 +99,9 @@ export class TwitchSlashCommandHandler {
         }
 
         const [command] = message.split(" ");
-        logger.debug(`Found slash command handler for ${command}`);
+        this._apiBase.logger.debug(`Found slash command handler for ${command}`);
 
         const matchedHandler = this._handlers.find(h => h.commands.includes(command?.toLowerCase()));
-        return await matchedHandler.handle(validationResult.args, sendAsBot);
+        return await matchedHandler.handle(this._apiBase, sendAsBot, ...validationResult.args);
     }
 }

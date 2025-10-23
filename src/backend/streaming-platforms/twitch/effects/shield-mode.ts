@@ -1,4 +1,4 @@
-import { EffectType } from "../../../../types/effects";
+import type { EffectType } from "../../../../types/effects";
 import { AccountAccess } from "../../../common/account-access";
 import { TwitchApi } from "../api";
 

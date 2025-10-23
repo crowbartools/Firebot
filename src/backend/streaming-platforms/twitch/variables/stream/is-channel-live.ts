@@ -1,7 +1,7 @@
-import { ReplaceVariable } from "../../../../../types/variables";
+import type { ReplaceVariable } from "../../../../../types/variables";
 import { TwitchApi } from "../../api";
-import logger from "../../../../logwrapper";
 import twitchStreamInfoManager from "../../stream-info-manager";
+import logger from "../../../../logwrapper";
 
 
 const model : ReplaceVariable = {

@@ -1,4 +1,4 @@
-import { EffectType } from "../../../../types/effects";
+import type { EffectType } from "../../../../types/effects";
 import channelRewardManager from "../../../channel-rewards/channel-reward-manager";
 
 const model: EffectType<{

@@ -1,4 +1,4 @@
-import { ReplaceVariable , TriggersObject } from "../../../../../types/variables";
+import type { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
 import logger from "../../../../logwrapper";
 
 const triggers: TriggersObject = {};
@@ -11,10 +11,10 @@ triggers["manual"] = true;
 
 // From ../../../../events/twitch-events/poll.ts mapChoices(...)
 type PollChoice = {
-    channelPointsVotes?: number,
-    id: string,
-    title: string,
-    totalVotes?: number
+    channelPointsVotes?: number;
+    id: string;
+    title: string;
+    totalVotes?: number;
 };
 
 const model: ReplaceVariable = {

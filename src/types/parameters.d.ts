@@ -1,4 +1,4 @@
-import { EffectList } from "./effects";
+import type { EffectList } from "./effects";
 
 export type BaseParameter = {
     /**

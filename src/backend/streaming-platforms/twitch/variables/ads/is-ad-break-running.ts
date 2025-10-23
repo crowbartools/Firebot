@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../../types/variables";
+import type { ReplaceVariable } from "../../../../../types/variables";
 import adManager from "../../ad-manager";
 
 const model : ReplaceVariable = {

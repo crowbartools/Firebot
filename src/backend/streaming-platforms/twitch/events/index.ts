@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { EventSource } from "../../../../types/events";
+import type { EventSource } from "../../../../types/events";
 
 import * as ad from "./ad";
 import * as announcement from "./announcement";

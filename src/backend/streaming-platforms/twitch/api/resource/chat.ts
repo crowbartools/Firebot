@@ -7,7 +7,7 @@ import {
     HelixUserEmote
 } from "@twurple/api";
 import { ApiResourceBase } from "./api-resource-base";
-import { TwitchApiBase } from "../api";
+import type { TwitchApi } from "../";
 import { TwitchSlashCommandHandler } from "../../chat/twitch-slash-command-handler";
 import frontendCommunicator from '../../../../common/frontend-communicator';
 
@@ -24,8 +24,12 @@ interface ChatMessageRequest {
 }
 
 export class TwitchChatApi extends ApiResourceBase {
-    constructor(apiBase: TwitchApiBase) {
+    private _slashCommandHandler: TwitchSlashCommandHandler;
+
+    constructor(apiBase: typeof TwitchApi) {
         super(apiBase);
+
+        this._slashCommandHandler = new TwitchSlashCommandHandler(apiBase);
 
         frontendCommunicator.onAsync("send-chat-message", async (sendData: ChatMessageRequest) => {
             const { message, accountType, replyToMessageId } = sendData;
@@ -77,16 +81,18 @@ export class TwitchChatApi extends ApiResourceBase {
                 && this.botClient != null;
 
             // Slash command processing
-            const slashCommandValidationResult = TwitchSlashCommandHandler.validateChatCommand(message);
+            const slashCommandValidationResult = this._slashCommandHandler
+                .validateChatCommand(message);
 
             // If the slash command handler finds, validates, and successfully executes a command, no need to continue.
             if (slashCommandValidationResult != null
                 && slashCommandValidationResult.success === true
             ) {
-                const slashCommandResult = await TwitchSlashCommandHandler.processChatCommand(
-                    message,
-                    willSendAsBot
-                );
+                const slashCommandResult = await this._slashCommandHandler
+                    .processChatCommand(
+                        message,
+                        willSendAsBot
+                    );
 
                 if (!slashCommandResult) {
                     frontendCommunicator.send("chatUpdate", {

@@ -1,6 +1,6 @@
 // These are private in Twurple, but we need them, so we redeclare them here.
 
-import { HelixUserType } from "@twurple/api";
+import type { HelixUserType } from "@twurple/api";
 
 export interface EventSubChatMessageTextPart {
     type: 'text';

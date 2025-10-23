@@ -1,15 +1,15 @@
-import { CommandDefinition } from "./commands";
-import { Counter } from "./counters";
-import { Currency } from "./currency";
-import { EffectQueueConfig, PresetEffectList } from "./effects";
-import { EventGroup, EventSettings } from "./events";
-import { FirebotHotkey } from "./hotkeys";
-import { OverlayWidgetConfig } from "./overlay-widgets";
-import { QuickActionDefinition } from "./quick-actions";
-import { RankLadder } from "./ranks";
-import { CustomRole, LegacyCustomRole } from "./roles";
-import { ScheduledTask, Timer } from "./timers";
-import { VariableMacro } from "./variable-macros";
+import type { CommandDefinition } from "./commands";
+import type { Counter } from "./counters";
+import type { Currency } from "./currency";
+import type { EffectQueueConfig, PresetEffectList } from "./effects";
+import type { EventGroup, EventSettings } from "./events";
+import type { FirebotHotkey } from "./hotkeys";
+import type { OverlayWidgetConfig } from "./overlay-widgets";
+import type { QuickActionDefinition } from "./quick-actions";
+import type { RankLadder } from "./ranks";
+import type { CustomRole, LegacyCustomRole } from "./roles";
+import type { ScheduledTask, Timer } from "./timers";
+import type { VariableMacro } from "./variable-macros";
 
 export type SetupImportQuestion = {
     replaceToken: string;

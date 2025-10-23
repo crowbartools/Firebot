@@ -1,5 +1,5 @@
-import { FirebotChatMessage } from "../../../../types/chat";
-import { CommandDefinition, UserCommand } from "../../../../types/commands";
+import type { FirebotChatMessage } from "../../../../types/chat";
+import type { CommandDefinition, UserCommand } from "../../../../types/commands";
 import { EventManager } from "../../../events/event-manager";
 
 export function triggerChatMessage(

@@ -1,6 +1,6 @@
-import { ComparisonType } from "../shared/filter-constants";
-import { EffectList } from "./effects";
-import { Awaitable } from "./util-types";
+import type { ComparisonType } from "../shared/filter-constants";
+import type { EffectList } from "./effects";
+import type { Awaitable } from "./util-types";
 
 export type EventDefinition = {
     id: string;

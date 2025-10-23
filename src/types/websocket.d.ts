@@ -1,4 +1,4 @@
-import { Awaitable } from "./util-types";
+import type { Awaitable } from "./util-types";
 
 export type WebSocketEventType =
 "subscribe-events" |

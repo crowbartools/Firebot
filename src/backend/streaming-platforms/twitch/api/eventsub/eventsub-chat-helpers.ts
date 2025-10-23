@@ -1,4 +1,4 @@
-import {
+import type {
     HelixChatBadgeSet,
     HelixCheermoteList,
     HelixEmoteFormat,
@@ -6,13 +6,13 @@ import {
     HelixEmoteThemeMode
 } from "@twurple/api";
 import {
-    EventSubAutoModMessageHoldV2Event,
+    type EventSubAutoModMessageHoldV2Event,
+    type EventSubChannelChatNotificationEvent,
+    type EventSubUserWhisperMessageEvent,
     EventSubChannelChatAnnouncementNotificationEvent,
-    EventSubChannelChatMessageEvent,
-    EventSubChannelChatNotificationEvent,
-    EventSubUserWhisperMessageEvent
+    EventSubChannelChatMessageEvent
 } from "@twurple/eventsub-base";
-import {
+import type {
     EventSubChatMessageCheermote,
     EventSubChatMessageCheermotePart,
     EventSubChatMessageEmotePart,
@@ -20,7 +20,7 @@ import {
     EventSubChatMessagePart
 } from "../twurple-private-types";
 
-import {
+import type {
     FirebotChatMessage,
     FirebotChatMessageCheermotePart,
     FirebotChatMessageEmotePart,
@@ -30,7 +30,7 @@ import {
     FirebotCheermoteInstance,
     FirebotParsedMessagePart
 } from "../../../../../types/chat";
-import { FirebotAccount } from "../../../../../types/accounts";
+import type { FirebotAccount } from "../../../../../types/accounts";
 
 import { AccountAccess } from "../../../../common/account-access";
 import { SettingsManager } from "../../../../common/settings-manager";

@@ -1,5 +1,5 @@
-import { HelixBitsLeaderboardPeriod } from "@twurple/api";
-import { ReplaceVariable, Trigger } from "../../../../../types/variables";
+import type { HelixBitsLeaderboardPeriod } from "@twurple/api";
+import type { ReplaceVariable, Trigger } from "../../../../../types/variables";
 import { TwitchApi } from "../../api";
 import logger from "../../../../logwrapper";
 

@@ -1,11 +1,11 @@
 import { ApiClient } from "@twurple/api";
 import { ListenerSignature, TypedEmitter } from "tiny-typed-emitter";
-import { TwitchApiBase } from "../api";
+import type { TwitchApi } from "../";
 
 export abstract class ApiResourceBase<T extends ListenerSignature<T> = unknown> extends TypedEmitter<T> {
-    private _apiBase: TwitchApiBase;
+    private _apiBase: typeof TwitchApi;
 
-    constructor(apiBase: TwitchApiBase) {
+    constructor(apiBase: typeof TwitchApi) {
         super();
 
         this._apiBase = apiBase;

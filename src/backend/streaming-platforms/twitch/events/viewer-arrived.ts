@@ -1,4 +1,4 @@
-import { FirebotChatMessage } from "../../../../types/chat";
+import type { FirebotChatMessage } from "../../../../types/chat";
 import { EventManager } from "../../../events/event-manager";
 
 export function triggerViewerArrived(

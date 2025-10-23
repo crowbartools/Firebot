@@ -1,5 +1,5 @@
-import { FirebotChatMessage } from "./chat";
-import { CommandDefinition, SubCommand } from "./commands";
+import type { FirebotChatMessage } from "./chat";
+import type { CommandDefinition, SubCommand } from "./commands";
 
 export type TriggerType =
     | "command"

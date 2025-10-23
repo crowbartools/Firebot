@@ -1,7 +1,7 @@
 import { EventSubSubscription } from "@twurple/eventsub-base";
 import { EventSubWsListener } from "@twurple/eventsub-ws";
 
-import { SavedChannelReward } from "../../../../../types/channel-rewards";
+import type { SavedChannelReward } from "../../../../../types/channel-rewards";
 
 import { AccountAccess } from "../../../../common/account-access";
 import { TwitchEventHandlers } from "../../events";

@@ -1,6 +1,6 @@
-import { CustomReward } from "../backend/streaming-platforms/twitch/api/resource/channel-rewards";
-import { EffectList } from "./effects";
-import { RestrictionData } from "./restrictions";
+import type { CustomReward } from "../backend/streaming-platforms/twitch/api/resource/channel-rewards";
+import type { EffectList } from "./effects";
+import type { RestrictionData } from "./restrictions";
 
 export type SavedChannelReward = {
     id: string;

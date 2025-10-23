@@ -1,7 +1,7 @@
-import { HelixBitsLeaderboardPeriod } from "@twurple/api";
+import type { HelixBitsLeaderboardPeriod } from "@twurple/api";
 import moment from "moment";
 
-import { ReplaceVariable, Trigger } from "../../../../../types/variables";
+import type { ReplaceVariable, Trigger } from "../../../../../types/variables";
 import { TwitchApi } from "../../api";
 
 const expressionish = require('expressionish');

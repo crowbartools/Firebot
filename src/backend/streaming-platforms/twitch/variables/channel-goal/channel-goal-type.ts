@@ -1,4 +1,4 @@
-import { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
+import type { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
 
 const triggers: TriggersObject = {};
 triggers["event"] = [
@@ -16,7 +16,7 @@ const model: ReplaceVariable = {
         possibleDataOutput: ["text"],
         triggers: triggers
     },
-    evaluator: async (trigger) => {
+    evaluator: (trigger) => {
         return trigger.metadata?.eventData?.friendlyType ?? "No active goal";
     }
 };

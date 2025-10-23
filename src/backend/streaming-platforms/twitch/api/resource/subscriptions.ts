@@ -1,8 +1,8 @@
 import { ApiResourceBase } from './api-resource-base';
-import { TwitchApiBase } from "../api";
+import type { TwitchApi } from "../";
 
 export class TwitchSubscriptionsApi extends ApiResourceBase {
-    constructor(apiBase: TwitchApiBase) {
+    constructor(apiBase: typeof TwitchApi) {
         super(apiBase);
     }
 

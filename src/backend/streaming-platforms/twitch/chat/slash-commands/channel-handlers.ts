@@ -1,4 +1,3 @@
-import { TwitchApi } from "../../api";
 import { TwitchSlashCommand } from "../twitch-slash-commands";
 import { TwitchSlashCommandHelpers } from "./twitch-command-helpers";
 
@@ -19,8 +18,8 @@ export const commercialHandler: TwitchSlashCommand<[number]> = {
             args: [parsedDuration]
         };
     },
-    handle: async ([duration]) => {
-        return await TwitchApi.channels.triggerAdBreak(duration);
+    handle: async (twitchApi, _, duration) => {
+        return await twitchApi.channels.triggerAdBreak(duration);
     }
 };
 
@@ -41,14 +40,14 @@ export const raidHandler: TwitchSlashCommand<[string]> = {
             args: [targetUsername]
         };
     },
-    handle: async([targetUsername]) => {
-        const targetUserId = (await TwitchApi.users.getUserByName(targetUsername))?.id;
+    handle: async(twitchApi, _, targetUsername) => {
+        const targetUserId = (await twitchApi.users.getUserByName(targetUsername))?.id;
 
         if (targetUserId == null) {
             return false;
         }
 
-        return await TwitchApi.channels.raidChannel(targetUserId);
+        return await twitchApi.channels.raidChannel(targetUserId);
     }
 };
 
@@ -60,7 +59,7 @@ export const unraidHandler: TwitchSlashCommand<[]> = {
             args: []
         };
     },
-    handle: async() => {
-        return await TwitchApi.channels.cancelRaid();
+    handle: async(twitchApi) => {
+        return await twitchApi.channels.cancelRaid();
     }
 };

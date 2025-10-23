@@ -1,4 +1,4 @@
-import { ReplaceVariable , TriggersObject } from "../../../../../types/variables";
+import type { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
 
 const triggers: TriggersObject = {};
 triggers["event"] = ["twitch:outgoing-raid-canceled", "twitch:outgoing-raid-started", "twitch:raid-sent-off"];
@@ -12,7 +12,7 @@ const model : ReplaceVariable = {
         categories: ["user based"],
         possibleDataOutput: ["text"]
     },
-    evaluator: async (trigger) => {
+    evaluator: (trigger) => {
         return trigger.metadata.eventData?.raidTargetUserId ?? "";
     }
 };

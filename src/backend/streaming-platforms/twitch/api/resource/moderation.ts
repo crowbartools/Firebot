@@ -1,12 +1,12 @@
 import {
-    HelixBanUserRequest,
-    HelixModerator,
-    UserIdResolvable,
+    type HelixBanUserRequest,
+    type HelixModerator,
+    type UserIdResolvable,
     extractUserId
 } from "@twurple/api";
-import { BasicViewer } from '../../../../../types/viewers';
+import type { BasicViewer } from '../../../../../types/viewers';
 import { ApiResourceBase } from './api-resource-base';
-import { TwitchApiBase } from "../api";
+import type { TwitchApi } from "../";
 import frontendCommunicator from '../../../../common/frontend-communicator';
 
 interface UserModRequest {
@@ -32,7 +32,7 @@ type ModerationEvents = {
 };
 
 export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
-    constructor(apiBase: TwitchApiBase) {
+    constructor(apiBase: typeof TwitchApi) {
         super(apiBase);
 
         frontendCommunicator.onAsync("update-user-banned-status", async (data: UserBanRequest) => {

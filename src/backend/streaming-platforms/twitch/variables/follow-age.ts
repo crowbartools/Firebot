@@ -1,7 +1,7 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { TwitchApi } from "../api";
-
 import moment from "moment";
+
+import type { ReplaceVariable } from "../../../../types/variables";
+import { TwitchApi } from "../api";
 
 const model : ReplaceVariable = {
     definition: {

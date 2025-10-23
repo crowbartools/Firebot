@@ -1,11 +1,11 @@
 import { extractUserId, HelixClip, UserIdResolvable } from "@twurple/api";
 import { randomInt } from "crypto";
 import { ApiResourceBase } from "./api-resource-base";
-import { TwitchApiBase } from "../api";
+import type { TwitchApi } from "../";
 import { wait } from "../../../../utils";
 
 export class TwitchClipsApi extends ApiResourceBase {
-    constructor(apiBase: TwitchApiBase) {
+    constructor(apiBase: typeof TwitchApi) {
         super(apiBase);
     }
 

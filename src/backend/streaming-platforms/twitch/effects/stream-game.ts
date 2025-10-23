@@ -1,4 +1,4 @@
-import { EffectType } from "../../../../types/effects";
+import type { EffectType } from "../../../../types/effects";
 import { EventManager } from "../../../events/event-manager";
 import { TwitchApi } from "../api";
 import logger from "../../../logwrapper";

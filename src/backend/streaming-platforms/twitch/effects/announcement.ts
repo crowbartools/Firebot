@@ -1,5 +1,5 @@
-import { HelixChatAnnouncementColor } from "@twurple/api";
-import { EffectType } from "../../../../types/effects";
+import type { HelixChatAnnouncementColor } from "@twurple/api";
+import type { EffectType } from "../../../../types/effects";
 import { TwitchApi } from "../api";
 
 const model: EffectType<{
@@ -44,7 +44,7 @@ const model: EffectType<{
         }
     },
     optionsValidator: ({ message }) => {
-        const errors = [];
+        const errors: string[] = [];
         if (message?.length < 1) {
             errors.push("Announcement message can't be blank.");
         }

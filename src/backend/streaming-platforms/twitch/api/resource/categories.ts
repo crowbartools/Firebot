@@ -1,6 +1,6 @@
 import { HelixGame } from "@twurple/api";
 import { ApiResourceBase } from "./api-resource-base";
-import { TwitchApiBase } from "../api";
+import type { TwitchApi } from "../";
 
 /**
  * Defines a Twitch category
@@ -17,7 +17,7 @@ export interface TwitchCategory {
 }
 
 export class TwitchCategoriesApi extends ApiResourceBase {
-    constructor(apiBase: TwitchApiBase) {
+    constructor(apiBase: typeof TwitchApi) {
         super(apiBase);
     }
 

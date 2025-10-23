@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import type { ReplaceVariable } from "../../../../types/variables";
 import roleManager from "../../../roles/chat-roles-manager";
 
 const model : ReplaceVariable = {

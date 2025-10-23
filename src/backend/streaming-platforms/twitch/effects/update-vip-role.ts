@@ -1,6 +1,5 @@
-import { EffectType } from '../../../../types/effects';
+import type { EffectType } from '../../../../types/effects';
 import { TwitchApi } from "../api";
-import chatRolesManager from "../../../roles/chat-roles-manager";
 import logger from '../../../logwrapper';
 
 const model: EffectType<{
@@ -40,7 +39,7 @@ const model: EffectType<{
     `,
     optionsController: () => {},
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.action == null) {
             errors.push("Please choose an action.");
         }
@@ -60,11 +59,6 @@ const model: EffectType<{
                 const result = await TwitchApi.moderation.addChannelVip(user.id);
 
                 if (result === true) {
-                    chatRolesManager.addVipToVipList({
-                        id: user.id,
-                        username: user.name,
-                        displayName: user.displayName
-                    });
                     logger.debug(`${event.effect.username} was assigned VIP via the VIP effect.`);
                 } else {
                     logger.error(`${event.effect.username} was unable to be assigned VIP via the VIP effect.`);
@@ -79,7 +73,6 @@ const model: EffectType<{
                 const result = await TwitchApi.moderation.removeChannelVip(user.id);
 
                 if (result === true) {
-                    chatRolesManager.removeVipFromVipList(user.id);
                     logger.debug(`${event.effect.username} was unassigned VIP via the VIP effect.`);
                 } else {
                     logger.error(`${event.effect.username} was unable to be unassigned VIP via the VIP effect.`);

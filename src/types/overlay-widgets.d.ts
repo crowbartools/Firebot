@@ -1,5 +1,5 @@
-import { FirebotParameterArray, FontOptions } from "./parameters";
-import { Awaitable } from "./util-types";
+import type { FirebotParameterArray, FontOptions } from "./parameters";
+import type { Awaitable } from "./util-types";
 
 export type Position = {
     x: number;

@@ -1,5 +1,5 @@
-import { ReplaceVariable , TriggersObject } from "../../../../../types/variables";
-import { FirebotParsedMessagePart } from "../../../../../types/chat";
+import type { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
+import type { FirebotParsedMessagePart } from "../../../../../types/chat";
 
 const triggers: TriggersObject = {};
 triggers["manual"] = true;

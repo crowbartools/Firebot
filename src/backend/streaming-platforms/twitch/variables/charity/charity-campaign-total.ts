@@ -1,4 +1,4 @@
-import { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
+import type { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
 import { TwitchApi } from "../../api";
 
 const triggers: TriggersObject = {};
@@ -26,7 +26,7 @@ const model : ReplaceVariable = {
         } else {
             try {
                 charityCampaignTotal = await TwitchApi.charity.getCurrentCharityFundraiserTotal();
-            } catch (err) {
+            } catch {
                 return 0;
             }
         }

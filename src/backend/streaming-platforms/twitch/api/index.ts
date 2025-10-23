@@ -1,7 +1,11 @@
-import { ApiClient, HelixChannelUpdate, HelixUser } from "@twurple/api";
-import { AuthProvider } from "@twurple/auth";
+import {
+    ApiClient,
+    type HelixChannelUpdate,
+    type HelixUser
+} from "@twurple/api";
+import type { AuthProvider } from "@twurple/auth";
 
-import { FirebotAccount } from "../../../../types/accounts";
+import type { FirebotAccount } from "../../../../types/accounts";
 
 import { TwitchAuthApi } from "./resource/auth";
 import { TwitchBitsApi } from "./resource/bits";
@@ -24,12 +28,11 @@ import { TwitchVideosApi } from "./resource/videos";
 import { TwitchWhispersApi } from "./resource/whispers";
 
 import { UserContextApiClient } from "./user-context-api-client";
-import { TwitchApiBase } from "./api";
 import { AccountAccess } from "../../../common/account-access";
 import frontendCommunicator from "../../../common/frontend-communicator";
 import logger from "../../../logwrapper";
 
-class TwitchApi implements TwitchApiBase {
+class TwitchApi {
     private _streamerClient: ApiClient;
     private _botClient: UserContextApiClient;
 

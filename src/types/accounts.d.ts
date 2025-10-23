@@ -1,4 +1,4 @@
-import { AuthDetails } from "./auth";
+import type { AuthDetails } from "./auth";
 
 export type FirebotAccount = {
     username: string;

@@ -1,6 +1,6 @@
 import ng from "angular";
-import { TriggerType, TriggersObject, Trigger } from "./triggers";
-import { Awaitable } from "./util-types";
+import type { TriggerType, TriggersObject, Trigger } from "./triggers";
+import type { Awaitable } from "./util-types";
 
 type Func<T> = (...args: unknown[]) => T;
 

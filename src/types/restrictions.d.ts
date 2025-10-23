@@ -1,5 +1,5 @@
-import { Trigger, TriggerType, TriggersObject } from "./triggers";
-import { Awaitable } from "./util-types";
+import type { Trigger, TriggerType, TriggersObject } from "./triggers";
+import type { Awaitable } from "./util-types";
 
 interface RestrictionScope<RestrictionModel> extends ng.IScope {
     restriction: Restriction<RestrictionModel>;

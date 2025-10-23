@@ -1,4 +1,4 @@
-import { ReplaceVariable , TriggersObject } from "../../../../../types/variables";
+import type { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
 
 const triggers: TriggersObject = {};
 triggers["event"] = ["twitch:raid", "twitch:outgoing-raid-started", "twitch:raid-sent-off"];
@@ -12,7 +12,7 @@ const model : ReplaceVariable = {
         categories: ["common", "trigger based"],
         possibleDataOutput: ["number"]
     },
-    evaluator: async (trigger) => {
+    evaluator: (trigger) => {
         return trigger.metadata.eventData?.viewerCount || 0;
     }
 };

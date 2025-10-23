@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../../types/variables";
+import type { ReplaceVariable } from "../../../../../types/variables";
 import { AccountAccess } from "../../../../common/account-access";
 import { TwitchApi } from "../../api";
 

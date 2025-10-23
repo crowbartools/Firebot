@@ -1,6 +1,5 @@
-import { Awaitable } from "./util-types";
-
-import { Trigger, TriggersObject, TriggerType, TriggerMeta } from "./triggers";
+import type { Trigger, TriggersObject, TriggerType, TriggerMeta } from "./triggers";
+import type { Awaitable } from "./util-types";
 
 export { Trigger, TriggersObject, TriggerType, TriggerMeta };
 

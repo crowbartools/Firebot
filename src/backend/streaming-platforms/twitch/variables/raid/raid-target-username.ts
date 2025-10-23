@@ -1,6 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../../types/variables";
-
-import { TriggersObject } from "../../../../../types/variables";
+import type { ReplaceVariable, Trigger, TriggersObject } from "../../../../../types/variables";
 
 const triggers: TriggersObject = {};
 triggers["event"] = ["twitch:outgoing-raid-canceled", "twitch:outgoing-raid-started", "twitch:raid-sent-off"];

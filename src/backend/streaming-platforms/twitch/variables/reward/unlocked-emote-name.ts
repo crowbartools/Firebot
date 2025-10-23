@@ -1,4 +1,4 @@
-import { ReplaceVariable, Trigger, TriggersObject } from "../../../../../types/variables";
+import type { ReplaceVariable, Trigger, TriggersObject } from "../../../../../types/variables";
 
 const triggers: TriggersObject = {};
 triggers["event"] = [

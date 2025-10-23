@@ -1,9 +1,9 @@
-import { HelixPaginatedResponse } from "@twurple/api";
+import type { HelixPaginatedResponse } from "@twurple/api";
 import { getExpiryDateOfAccessToken } from "@twurple/auth";
-import { HelixUserData } from "../api/twurple-private-types";
+import type { HelixUserData } from "../api/twurple-private-types";
 
-import { AuthProviderDefinition } from "../../../../types/auth";
-import { FirebotAccount } from "../../../../types/accounts";
+import type { AuthProviderDefinition } from "../../../../types/auth";
+import type { FirebotAccount } from "../../../../types/accounts";
 
 import { SecretsManager } from "../../../secrets-manager";
 import { AccountAccess } from "../../../common/account-access";

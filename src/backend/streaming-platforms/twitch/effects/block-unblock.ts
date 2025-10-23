@@ -1,4 +1,4 @@
-import { EffectType } from "../../../../types/effects";
+import type { EffectType } from "../../../../types/effects";
 import { TwitchApi } from "../api";
 import logger from '../../../logwrapper';
 
@@ -39,7 +39,7 @@ const model: EffectType<{
     `,
     optionsController: () => {},
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.action == null) {
             errors.push("Please choose a block action.");
         }

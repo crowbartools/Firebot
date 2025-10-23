@@ -1,5 +1,5 @@
-import { EffectList } from "./effects";
-import { Awaitable } from "./util-types";
+import type { EffectList } from "./effects";
+import type { Awaitable } from "./util-types";
 
 export type QuickActionDefinition = {
     id: string;
