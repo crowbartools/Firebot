@@ -79,6 +79,12 @@ class FirebotChatHelpers {
                 }
             }
         );
+
+        viewerDatabase.on("updated-viewer-avatar",
+            ({ userId, url }) => {
+                this.setUserProfilePicUrl(userId, url);
+            }
+        );
     }
 
     async cacheBadges(): Promise<void> {

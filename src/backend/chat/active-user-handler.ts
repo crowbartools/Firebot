@@ -1,15 +1,15 @@
-import { HelixChatChatter } from "@twurple/api";
 import { TypedEmitter } from "tiny-typed-emitter";
 import NodeCache from "node-cache";
+import type { HelixChatChatter } from "@twurple/api";
 
+import { SettingsManager } from "../common/settings-manager";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
+import chatHelpers from "./chat-helpers";
+import chatRolesManager from "../roles/chat-roles-manager";
+import viewerDatabase from "../viewers/viewer-database";
+import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
 import { getRandomInt } from "../utils";
-import chatHelpers from "./chat-helpers";
-import frontendCommunicator from "../common/frontend-communicator";
-import { SettingsManager } from "../common/settings-manager";
-import chatRolesManager from "../roles/chat-roles-manager";
-import { TwitchApi } from "../streaming-platforms/twitch/api";
-import viewerDatabase from "../viewers/viewer-database";
 
 type User = {
     id: string;

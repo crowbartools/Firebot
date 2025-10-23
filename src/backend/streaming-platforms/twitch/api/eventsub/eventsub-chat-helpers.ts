@@ -35,6 +35,7 @@ import type { FirebotAccount } from "../../../../../types/accounts";
 import { AccountAccess } from "../../../../common/account-access";
 import { SettingsManager } from "../../../../common/settings-manager";
 import { TwitchApi } from "../";
+import viewerDatabase from "../../../../viewers/viewer-database";
 import frontendCommunicator from "../../../../common/frontend-communicator";
 import logger from "../../../../logwrapper";
 import { getUrlRegex } from "../../../../utils";
@@ -102,6 +103,12 @@ class TwitchEventSubChatHelpers {
                         false
                     );
                 }
+            }
+        );
+
+        viewerDatabase.on("updated-viewer-avatar",
+            ({ userId, url }) => {
+                this.setUserProfilePicUrl(userId, url);
             }
         );
     }

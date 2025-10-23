@@ -1,20 +1,22 @@
-import { EventEmitter } from "events";
+import { TypedEmitter } from "tiny-typed-emitter";
 import Datastore from "@seald-io/nedb";
 import { DateTime } from "luxon";
+import type { HelixUser } from "@twurple/api";
 
 import { BasicViewer, FirebotViewer } from "../../types/viewers";
 import { Rank, RankLadder } from "../../types/ranks";
 
 import { AccountAccess } from "../common/account-access";
-import { SettingsManager } from "../common/settings-manager";
-import { ProfileManager } from "../common/profile-manager";
-import { EventManager } from "../events/event-manager";
 import { BackupManager } from "../backup-manager";
+import { EventManager } from "../events/event-manager";
+import { ProfileManager } from "../common/profile-manager";
+import { SettingsManager } from "../common/settings-manager";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
-import userAccess from "../common/user-access";
+import chatRolesManager from "../roles/chat-roles-manager";
 import currencyAccess from "../currency/currency-access";
 import rankManager from "../ranks/rank-manager";
 import roleHelpers from "../roles/role-helpers";
+import teamRolesManager from "../roles/team-roles-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
 import { commafy, wait } from "../utils";
@@ -46,7 +48,17 @@ interface ViewerPurgeOptions {
     };
 }
 
-class ViewerDatabase extends EventEmitter {
+interface UserDetails {
+    firebotData: FirebotViewer;
+    twitchData: Record<string, unknown>;
+    streamerFollowsUser: boolean;
+    userFollowsStreamer: boolean;
+}
+
+class ViewerDatabase extends TypedEmitter<{
+    "viewer-database-loaded": () => void;
+    "updated-viewer-avatar": (event: { userId: string, url: string }) => void;
+}> {
     private _db: Datastore<FirebotViewer>;
     private _dbCompactionInterval = 30000;
 
@@ -107,7 +119,7 @@ class ViewerDatabase extends EventEmitter {
         });
 
         frontendCommunicator.onAsync("get-viewer-details", async (userId: string) => {
-            return await userAccess.getUserDetails(userId);
+            return await this.getUserDetails(userId);
         });
 
         frontendCommunicator.onAsync("update-firebot-viewer-data-field", async (data: ViewerDbChangePacket) => {
@@ -717,6 +729,102 @@ class ViewerDatabase extends EventEmitter {
 
     removeActiveViewer(userId: string) {
         this._activeViewers = this._activeViewers.filter(v => v !== userId);
+    }
+
+    async getUserDetails(userId: string): Promise<Partial<UserDetails>> {
+        await this.calculateAutoRanks(userId);
+
+        const firebotUserData = await this.getViewerById(userId);
+
+        if (firebotUserData != null && !firebotUserData.twitch) {
+            return {
+                firebotData: (firebotUserData ?? {}) as FirebotViewer
+            };
+        }
+
+        let twitchUser: HelixUser;
+        try {
+            twitchUser = await TwitchApi.users.getUserById(userId);
+        } catch {
+            // fail silently for now
+        }
+
+        if (twitchUser == null) {
+            return {
+                firebotData: (firebotUserData ?? {}) as FirebotViewer
+            };
+        }
+
+        const twitchUserData: Record<string, unknown> = {
+            id: twitchUser.id,
+            username: twitchUser.name,
+            displayName: twitchUser.displayName,
+            profilePicUrl: twitchUser.profilePictureUrl,
+            creationDate: twitchUser.creationDate
+        };
+
+        const userRoles = await chatRolesManager.getUsersChatRoles(twitchUser.id);
+
+        if (firebotUserData && firebotUserData.profilePicUrl !== twitchUser.profilePictureUrl) {
+            this.emit("updated-viewer-avatar", { userId: twitchUser.id, url: twitchUser.profilePictureUrl });
+
+            firebotUserData.profilePicUrl = twitchUser.profilePictureUrl;
+            await this.updateViewer(firebotUserData);
+
+            frontendCommunicator.send("twitch:chat:user-updated", {
+                id: firebotUserData._id,
+                username: firebotUserData.username,
+                displayName: firebotUserData.displayName,
+                roles: userRoles,
+                profilePicUrl: firebotUserData.profilePicUrl,
+                active: this._activeViewers.includes(firebotUserData._id)
+            });
+        }
+
+        const streamerData = AccountAccess.getAccounts().streamer;
+
+        const client = TwitchApi.streamerClient;
+
+        let isBanned: boolean;
+        try {
+            isBanned = await client.moderation.checkUserBan(streamerData.userId, twitchUser.id);
+        } catch (error) {
+            logger.warn("Unable to get banned status", error);
+        }
+
+        const teamRoles = await teamRolesManager.getAllTeamRolesForViewer(twitchUser.name);
+
+        const userFollowsStreamerResponse = await client.channels.getChannelFollowers(
+            streamerData.userId,
+            userId
+        );
+
+        const streamerFollowsUserResponse = await client.channels.getFollowedChannels(
+            streamerData.userId,
+            userId
+        );
+
+        const streamerFollowsUser = streamerFollowsUserResponse.data != null &&
+            streamerFollowsUserResponse.data.length === 1;
+        const userFollowsStreamer = userFollowsStreamerResponse.data != null &&
+            userFollowsStreamerResponse.data.length === 1;
+
+        if (twitchUserData) {
+            twitchUserData.followDate = userFollowsStreamer &&
+                userFollowsStreamerResponse.data[0].followDate;
+            twitchUserData.isBanned = isBanned;
+            twitchUserData.userRoles = userRoles || [];
+            twitchUserData.teamRoles = teamRoles || [];
+        }
+
+        const userDetails: UserDetails = {
+            firebotData: (firebotUserData ?? {}) as FirebotViewer,
+            twitchData: twitchUserData,
+            streamerFollowsUser: streamerFollowsUser,
+            userFollowsStreamer: userFollowsStreamer
+        };
+
+        return userDetails;
     }
 }
 
