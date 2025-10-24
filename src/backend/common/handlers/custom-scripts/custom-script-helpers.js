@@ -114,7 +114,7 @@ function buildModules(scriptManifest) {
         customRequest.prototype.init.call(this, options);
     };
 
-    const notificationManager = require("../../../notifications/notification-manager").default;
+    const notificationManager = require("../../../notifications/notification-manager").NotificationManager;
 
     const scriptNameNormalized = scriptManifest.name.replace(/[#%&{}\\<>*?/$!'":@`|=\s-]+/g, "-").toLowerCase();
 

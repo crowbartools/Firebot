@@ -270,8 +270,8 @@ exports.whenReady = async () => {
     streamInfoPoll.startStreamInfoPoll();
 
     windowManagement.updateSplashScreenStatus("Starting notification manager...");
-    const notificationManager = require("../../../notifications/notification-manager").default;
-    notificationManager.loadNotificationCache();
+    const { NotificationManager } = require("../../../notifications/notification-manager");
+    NotificationManager.loadNotificationCache();
 
     // get ui extension manager in memory
     require("../../../ui-extensions/ui-extension-manager");
