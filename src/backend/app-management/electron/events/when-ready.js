@@ -205,8 +205,8 @@ exports.whenReady = async () => {
     const { SetupManager } = require("../../../setups/setup-manager");
     SetupManager.setupListeners();
 
-    const slcbImporter = require("../../../import/third-party/streamlabs-chatbot");
-    slcbImporter.setupListeners();
+    const { ImportManager } = require("../../../import/import-manager");
+    ImportManager.registerDefaultImporters();
 
     const { setupCommonListeners } = require("../../../common/common-listeners");
     setupCommonListeners();

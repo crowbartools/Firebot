@@ -133,8 +133,8 @@
                     }
                 };
 
-                $ctrl.onFileSelected = (filepath) => {
-                    const data = importService.parseStreamlabsChatbotData(filepath);
+                $ctrl.onFileSelected = async (filepath) => {
+                    const data = await importService.loadViewers("streamlabs-chatbot", filepath);
                     if (data && data.viewers) {
                         $ctrl.viewers = data.viewers;
                         $ctrl.search = "";
@@ -171,9 +171,10 @@
                     };
 
                     $ctrl.importing = true;
-                    const success = await backendCommunicator.fireEventAsync("importSlcbViewers", data);
+                    /** @type {import("../../../../../types/import").ImportResult} */
+                    const response = await backendCommunicator.fireEventAsync("import:import-viewers", data);
 
-                    if (success) {
+                    if (response.success) {
                         logger.debug(`Viewer import completed`);
 
                         $ctrl.importing = false;

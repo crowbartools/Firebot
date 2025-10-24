@@ -97,14 +97,14 @@
                     }
                 ];
 
-                $ctrl.onFileSelected = (filepath) => {
+                $ctrl.onFileSelected = async (filepath) => {
                     //get the file type from the filepath
                     const fileType = filepath.split(".").pop();
                     let data;
                     if (fileType === "xlsx") {
-                        data = importService.parseStreamlabsChatbotData(filepath);
+                        data = await importService.loadQuotes("streamlabs-chatbot", filepath);
                     } else if (fileType === "txt") {
-                        data = importService.parseMixItUpData(filepath, "quotes");
+                        data = await importService.loadQuotes("mixitup", filepath);
                     }
                     if (data && data.quotes) {
                         $ctrl.quotes = data.quotes;
