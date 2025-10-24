@@ -1,13 +1,16 @@
 "use strict";
+
 const { EventEmitter } = require("events");
-const { wait } = require("../utils");
-const logger = require("../logwrapper");
-const frontendCommunicator = require("./frontend-communicator");
+
 const { SettingsManager } = require("./settings-manager");
 const { TwitchApi } = require("../streaming-platforms/twitch/api");
-const twitchChat = require("../chat/twitch-chat");
-const TwitchEventSubClient = require("../streaming-platforms/twitch/api/eventsub/eventsub-client");
+const { TwitchEventSubClient } = require("../streaming-platforms/twitch/api/eventsub/eventsub-client");
+const effectHelpers = require("../effects/effect-helpers");
 const integrationManager = require("../integrations/integration-manager");
+const twitchChat = require("../chat/twitch-chat");
+const frontendCommunicator = require("./frontend-communicator");
+const logger = require("../logwrapper");
+const { wait } = require("../utils");
 
 const { ConnectionState } = require("../../shared/connection-constants");
 
@@ -45,9 +48,13 @@ function emitServiceConnectionUpdateEvents(serviceId, connectionState) {
     manager.emit("service-connection-update", eventData);
     frontendCommunicator.send("service-connection-update", eventData);
 
-    if (serviceId === "chat" && connectionState === ConnectionState.Connected) {
-        const { EventManager } = require("../events/event-manager");
-        EventManager.triggerEvent("firebot", "chat-connected");
+    if (serviceId === "chat") {
+        effectHelpers.setChatConnection(connectionState === ConnectionState.Connected);
+
+        if (connectionState === ConnectionState.Connected) {
+            const { EventManager } = require("../events/event-manager");
+            EventManager.triggerEvent("firebot", "chat-connected");
+        }
     }
 }
 

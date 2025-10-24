@@ -892,4 +892,6 @@ class TwitchEventSubClient {
     }
 }
 
-export = new TwitchEventSubClient();
+const client = new TwitchEventSubClient();
+
+export { client as TwitchEventSubClient };

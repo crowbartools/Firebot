@@ -1,16 +1,21 @@
-import { EffectType } from "../../types/effects";
+import type { EffectType } from "../../types/effects";
 
 import { AccountAccess } from "../common/account-access";
 import integrationManager from "../integrations/integration-manager";
-import twitchChat from "../chat/twitch-chat";
 import logger from "../logwrapper";
 
 type ValidationMode = "execution" | "display";
 
+let isChatConnected = false;
+
+export function setChatConnection(isConnected: boolean): void {
+    isChatConnected = isConnected;
+}
+
 const serviceValidators = {
     twitch: (validateFor: ValidationMode) => {
         if (validateFor === "execution") {
-            return twitchChat.chatIsConnected;
+            return isChatConnected;
         }
         return !!AccountAccess.getAccounts().streamer.loggedIn;
     },
