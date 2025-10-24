@@ -9,12 +9,12 @@ import type {
 } from "../../types/import";
 import type { Quote } from "../../types/quotes";
 
+import { QuoteManager } from "../quotes/quote-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
 
 import { StreamlabsChatbotImporter } from "./third-party/streamlabs-chatbot-importer";
 import { MixItUpImporter } from "./third-party/mix-it-up-importer";
-import { QuoteManager } from "../quotes/quote-manager";
 
 class ImportManager {
     private _registeredImporters: Record<string, ThirdPartyImporter> = {};
