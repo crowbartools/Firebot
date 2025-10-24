@@ -20,20 +20,20 @@ export class BTTVEmoteProvider extends ThirdPartyEmoteProvider<BTTVEmotesRespons
     }
 
     private emoteMapper(response: BTTVEmotesResponse): ThirdPartyEmote[] {
-        return response.map(e => ({
+        return response?.map(e => ({
             url: `https://cdn.betterttv.net/emote/${e.id}/1x`,
             code: e.code,
             animated: e.imageType && e.imageType.toLowerCase() === "gif",
             origin: this.providerName
-        }));
+        })) ?? [];
     }
 
     globalEmotesMapper = this.emoteMapper;
 
     channelEmotesMapper(response: BTTVChannelEmotesResponse): ThirdPartyEmote[] {
         return [
-            ...this.emoteMapper(response.channelEmotes),
-            ...this.emoteMapper(response.sharedEmotes)
+            ...this.emoteMapper(response?.channelEmotes),
+            ...this.emoteMapper(response?.sharedEmotes)
         ];
     }
 }

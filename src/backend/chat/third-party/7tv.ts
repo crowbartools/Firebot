@@ -29,21 +29,21 @@ export class SevenTVEmoteProvider extends ThirdPartyEmoteProvider<SevenTVEmotesR
     }
 
     private globalEmoteMapper(response: SevenTVEmotesResponse): ThirdPartyEmote[] {
-        return response.emotes.map(e => ({
+        return response?.emotes?.map(e => ({
             url: `https:${e.data.host.url}/4x.webp`,
             code: e.name,
             animated: e.data.animated ?? false,
             origin: this.providerName
-        }));
+        })) ?? [];
     }
 
     private channelEmoteMapper(response: SevenTVChannelEmotesResponse): ThirdPartyEmote[] {
-        return response.emote_set.emotes.map(e => ({
+        return response?.emote_set?.emotes?.map(e => ({
             url: `https:${e.data.host.url}/4x.webp`,
             code: e.name,
             animated: e.data.animated ?? false,
             origin: this.providerName
-        }));
+        })) ?? [];
     }
 
     globalEmotesMapper = this.globalEmoteMapper;
