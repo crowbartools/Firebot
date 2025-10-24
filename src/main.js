@@ -61,10 +61,13 @@ if (process.platform === "linux") {
 }
 
 // attempt to get logged in profile
-// if not found, stop app start up as app will be restarted
 const { ProfileManager } = require("./backend/common/profile-manager");
-const loggedInProfile = ProfileManager.getLoggedInProfile();
+const loggedInProfile = ProfileManager.getLoggedInProfile(false);
+
+// We should have a value here. If we don't, something went wrong.
 if (loggedInProfile == null) {
+    logger.error("Unexpected error while loading logged in profile. Exiting.");
+    app.quit();
     return;
 }
 

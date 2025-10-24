@@ -4,7 +4,7 @@ import fs from "fs";
 import path from "path";
 import sanitizeFileName from "sanitize-filename";
 
-import { FirebotAccount } from "../../types/accounts";
+import type { FirebotAccount } from "../../types/accounts";
 
 import { SettingsManager } from "./settings-manager";
 import * as dataAccess from "./data-access";
@@ -65,13 +65,18 @@ class ProfileManager {
         }, 100);
     }
 
-    logInProfile(profileId: string): void {
-        logger.info(`Logging in to profile "${profileId}". Restarting now.`);
+    logInProfile(profileId: string, restart = true): void {
+        logger.info(`Logging in to profile "${profileId}".${restart ? " Restarting now." : ""}`);
         SettingsManager.saveSetting("LoggedInProfile", profileId);
-        this.restartApp();
+
+        if (restart === true) {
+            this.restartApp();
+        } else {
+            this.loggedInUser = SettingsManager.getSetting("LoggedInProfile");
+        }
     }
 
-    createNewProfile(profileId: string = undefined): void {
+    createNewProfile(profileId: string = undefined, restart = true): void {
         const globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
         let activeProfiles = [];
 
@@ -82,11 +87,11 @@ class ProfileManager {
         }
 
         // Get our active profiles
-        try {
-            // This means we have "Active" profiles that are being used.
-            activeProfiles = SettingsManager.getSetting("ActiveProfiles");
-        } catch {
-        // This means either all profiles have been deleted, or this is our first launch.
+        // This means we have "Active" profiles that are being used.
+        activeProfiles = SettingsManager.getSetting("ActiveProfiles");
+
+        if (!activeProfiles?.length) {
+            // This means either all profiles have been deleted, or this is our first launch.
             logger.info("No active profiles found while creating a new profile.");
         }
 
@@ -105,34 +110,37 @@ class ProfileManager {
         logger.info(`New profile created: ${profileId}. Restarting.`);
 
         // Log the new profile in and restart app.
-        this.logInProfile(profileId);
+        this.logInProfile(profileId, restart);
     }
 
-    getLoggedInProfile(): string {
+    getLoggedInProfile(restartIfNotLoggedIn = true): string {
     // We have a cached logged in user, return it.
         if (this.loggedInUser != null) {
             return this.loggedInUser;
         }
 
         // Otherwise, let's get it from the global settings file.
-        try {
-            // We have a value in global settings! Set it to our cache, then return.
-            this.loggedInUser = SettingsManager.getSetting("LoggedInProfile");
-            if (this.loggedInUser != null) {
-                logger.info("Setting logged in user cache.");
-                return this.loggedInUser;
-            }
-        } catch {
-            // We don't have a value in our global settings. So, lets try some other things.
-            try {
-                const activeProfiles = SettingsManager.getSetting("ActiveProfiles");
+        this.loggedInUser = SettingsManager.getSetting("LoggedInProfile");
 
-                logger.info("No logged in profile in global settings file. Attempting to set one and restart the app.");
-                this.logInProfile(activeProfiles[0]);
-            } catch {
+        // We have a value in global settings! Set it to our cache, then return.
+        if (this.loggedInUser != null) {
+            logger.info("Setting logged in user cache.");
+            return this.loggedInUser;
+        }
+
+        // We don't have a value in our global settings. So, let's try some other things.
+        logger.info("No logged in profile in global settings file. Attempting to set one and restart the app.");
+
+        const activeProfiles = SettingsManager.getSetting("ActiveProfiles");
+        if (activeProfiles[0] != null) {
+            this.logInProfile(activeProfiles[0], restartIfNotLoggedIn);
+        } else {
             // We don't have any profiles at all. Let's make one.
-                this.createNewProfile();
-            }
+            this.createNewProfile(null, restartIfNotLoggedIn);
+        }
+
+        if (restartIfNotLoggedIn !== true) {
+            return this.loggedInUser;
         }
     }
 
@@ -222,7 +230,6 @@ class ProfileManager {
         const joinedPath = this.getPathInProfileRelativeToUserData(filePath);
         return dataAccess.deletePathInUserData(joinedPath);
     }
-
 
     getNewProfileName = (): string => this.profileToRename;
     hasProfileRename = (): boolean => this.profileToRename != null;
