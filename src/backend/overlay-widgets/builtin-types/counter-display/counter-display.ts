@@ -1,19 +1,6 @@
-import { OverlayWidgetType, IOverlayWidgetEventUtils, WidgetOverlayEvent, OverlayWidgetConfig } from "../../../../types/overlay-widgets";
-import { FontOptions } from "../../../../types/parameters";
+import type { OverlayWidgetType, IOverlayWidgetEventUtils, WidgetOverlayEvent } from "../../../../types/overlay-widgets";
+import type { Settings, State } from "./counter-display-types";
 import { CounterManager } from "../../../counters/counter-manager";
-
-type Settings = {
-    counterId: string;
-    counterFontOptions?: FontOptions;
-    showCounterName?: boolean;
-    nameFontOptions?: FontOptions;
-    textAlignment: "left" | "center" | "right";
-};
-
-type State = {
-    counterName?: string;
-    counterValue?: number;
-};
 
 const getStateForCounter = (counterId?: string): State => {
     if (counterId) {
@@ -31,8 +18,6 @@ const getStateForCounter = (counterId?: string): State => {
         counterValue: undefined
     };
 };
-
-export type CounterDisplayWidgetConfig = OverlayWidgetConfig<Settings, State>;
 
 export const counterDisplay: OverlayWidgetType<Settings, State> = {
     id: "firebot:counter-display",
@@ -92,7 +77,7 @@ export const counterDisplay: OverlayWidgetType<Settings, State> = {
             description: "Alignment of the counter text within the widget area.",
             type: "radio-cards",
             options: [
-                { value: "left", label: "Left", iconClass: "fa-align-left"},
+                { value: "left", label: "Left", iconClass: "fa-align-left" },
                 { value: "center", label: "Center", iconClass: "fa-align-center" },
                 { value: "right", label: "Right", iconClass: "fa-align-right" }
             ],

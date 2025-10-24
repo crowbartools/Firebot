@@ -2,10 +2,10 @@ import fsp from "fs/promises";
 import path from "path";
 import sanitizeFileName from "sanitize-filename";
 
-import { Counter } from "../../types/counters";
-import { EffectList } from "../../types/effects";
-import { Trigger } from "../../types/triggers";
-import { CounterDisplayWidgetConfig } from "../overlay-widgets/builtin-types/counter-display/counter-display";
+import type { Counter } from "../../types/counters";
+import type { EffectList } from "../../types/effects";
+import type { Trigger } from "../../types/triggers";
+import type { CounterDisplayWidgetConfig } from "../overlay-widgets/builtin-types/counter-display/counter-display-types";
 
 import { AccountAccess } from "../common/account-access";
 import { ProfileManager } from "../common/profile-manager";
