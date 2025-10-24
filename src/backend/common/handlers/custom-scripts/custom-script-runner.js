@@ -2,10 +2,10 @@
 const { shell } = require("electron");
 const { v4: uuid } = require("uuid");
 
-import { SettingsManager } from "../../settings-manager";
+const { SettingsManager } = require("../../settings-manager");
 const { ProfileManager } = require("../../profile-manager");
 const effectRunner = require("../../effect-runner.js");
-import frontendCommunicator from "../../frontend-communicator";
+const frontendCommunicator = require("../../frontend-communicator");
 const logger = require("../../../logwrapper");
 const { wait, simpleClone } = require("../../../utils");
 const { getScriptPath, buildRunRequest, mapParameters } = require("./custom-script-helpers");

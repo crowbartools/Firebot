@@ -1,18 +1,14 @@
-"use strict";
+import type { Event } from "electron";
+import { mainWindow } from "../window-management";
+import { openUrl } from "./open-url";
+import { restartApp } from "../app-helpers";
+import * as fileOpenHelpers from "../../file-open-helpers";
+import logger from "../../../logwrapper";
 
-const fileOpenHelpers = require("../../file-open-helpers");
-const { openUrl } = require("./open-url");
-
-/**
- * @param {Electron.Event} event
- * @param {string[]} argv
- */
-exports.secondInstance = (event, argv) => {
+export function secondInstance(event: Event, argv: string[]) {
     // Someone tried to run a second instance, we should focus our window.
-    const logger = require("../../../logwrapper");
     try {
         logger.debug("Second instance detected, focusing main window.");
-        const { mainWindow } = require("../window-management");
         if (mainWindow) {
             if (!mainWindow.isVisible()) {
                 mainWindow.show();
@@ -25,13 +21,12 @@ exports.secondInstance = (event, argv) => {
 
             fileOpenHelpers.checkForFirebotSetupPathInArgs(argv);
 
-            openUrl(event, argv.pop());
+            void openUrl(event, argv.pop());
         }
     } catch (error) {
         logger.debug("Error focusing", error);
         // something has gone terribly wrong with this instance,
         // attempt restart
-        const { restartApp } = require("../app-helpers");
         restartApp();
     }
 };

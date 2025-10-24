@@ -1,8 +1,6 @@
-"use strict";
+import { app } from "electron";
 
-exports.restartApp = () => {
-    const { app } = require("electron");
-
+export function restartApp() {
     setTimeout(() => {
         app.relaunch({ args: process.argv.slice(1).concat(["--relaunch"]) });
         app.exit(0);

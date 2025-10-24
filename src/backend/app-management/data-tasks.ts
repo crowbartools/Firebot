@@ -1,23 +1,19 @@
-"use strict";
-
-const logger = require("../logwrapper");
-const dataAccess = require("../common/data-access");
+import { SettingsManager } from "../common/settings-manager";
+import * as dataAccess from "../common/data-access";
+import logger from "../logwrapper";
 
 /**
  * Ensures a dir at the given path exists. Creates one if it doesn't
- * @param {string} path - The dirs relative path
+ * @param path - The dirs relative path
  */
-async function ensureDirExists(path) {
+async function ensureDirExists(path: string) {
     if (!await dataAccess.userDataPathExists(path)) {
         logger.info(`Can't find "${path}", creating...`);
         await dataAccess.makeDirInUserData(path);
     }
 }
 
-/**
- * @returns {Promise<void>}
- */
-async function ensureRequiredFoldersExist() {
+export async function ensureRequiredFoldersExist(): Promise<void> {
     logger.info("Ensuring required data folders exist...");
 
     //create the root "firebot-data" folder
@@ -32,32 +28,33 @@ async function ensureRequiredFoldersExist() {
     }
 
     // Setup required folders for each profile
-    const globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
-    let activeProfiles = [];
+    let activeProfiles: string[] = [];
 
     // Check to see if globalSettings file has active profiles listed, otherwise create it.
     // ActiveProfiles is a list of profiles that have not been deleted through the app.
     // This could happen if someone manually deletes a profile.
-    try {
-        activeProfiles = globalSettingsDb.getData("/profiles/activeProfiles");
-    } catch {
-        globalSettingsDb.push("/profiles/activeProfiles", ["Main Profile"]);
+    activeProfiles = SettingsManager.getSetting("ActiveProfiles");
+
+    if (!activeProfiles?.length) {
         activeProfiles = ["Main Profile"];
+        SettingsManager.saveSetting("ActiveProfiles", activeProfiles);
     }
 
     // Check to see if we have a "loggedInProfile", if not select one.
     // If we DO have a loggedInProfile, check and make sure that profile is still in our active profile list, if not select the first in the active list.
     // All of this is backup, just in case. It makes sure that we at least have some profile logged in no matter what happens.
-    try {
-        if (activeProfiles.indexOf(globalSettingsDb.getData("/profiles/loggedInProfile")) === -1) {
-            globalSettingsDb.push("/profiles/loggedInProfile", activeProfiles[0]);
+    const loggedInProfile = SettingsManager.getSetting("LoggedInProfile");
+
+    if (loggedInProfile) {
+        if (activeProfiles.indexOf(loggedInProfile) === -1) {
             logger.info("Last logged in profile is no longer on the active profile list. Changing it to an active one.");
+            SettingsManager.saveSetting("LoggedInProfile", activeProfiles[0]);
         } else {
             logger.debug("Last logged in profile is still active!");
         }
-    } catch {
-        globalSettingsDb.push("/profiles/loggedInProfile", activeProfiles[0]);
+    } else {
         logger.info("Last logged in profile info is missing or this is a new install. Adding it in now.");
+        SettingsManager.saveSetting("LoggedInProfile", activeProfiles[0]);
     }
 
     for (const profileId of activeProfiles) {
@@ -85,5 +82,3 @@ async function ensureRequiredFoldersExist() {
 
     logger.info("Finished verifying required folders exist.");
 }
-
-exports.ensureRequiredFoldersExist = ensureRequiredFoldersExist;

@@ -1,6 +1,6 @@
-import { Event } from "electron";
-import { checkForFirebotSetupInPath } from "../../file-open-helpers";
+import type { Event } from "electron";
 import logger from "../../../logwrapper";
+import { checkForFirebotSetupInPath } from "../../file-open-helpers";
 
 export function openFile(event: Event, path: string) {
     if (event.defaultPrevented) {

@@ -17,6 +17,14 @@ const { BackupManager } = require("../../backup-manager");
 const EventEmitter = require("events");
 
 /**
+ * Firebot's main window
+ * Keeps a global reference of the window object, if you don't, the window will
+ * be closed automatically when the JavaScript object is garbage collected.
+ *@type {Electron.BrowserWindow}
+ */
+let mainWindow = null;
+
+/**
  * @type {import("tiny-typed-emitter").TypedEmitter<{
 *    "main-window-closed": () => void;
 *  }>}
@@ -34,6 +42,56 @@ setupTitlebar();
  *@type {Electron.BrowserWindow}
  */
 let variableInspectorWindow = null;
+
+async function createVariableInspectorWindow() {
+
+    if (variableInspectorWindow != null && !variableInspectorWindow.isDestroyed()) {
+        if (variableInspectorWindow.isMinimized()) {
+            variableInspectorWindow.restore();
+        }
+        variableInspectorWindow.focus();
+        return;
+    }
+
+    const variableInspectorWindowState = windowStateKeeper({
+        defaultWidth: 720,
+        defaultHeight: 1280,
+        file: "variable-inspector-window-state.json"
+    });
+
+    variableInspectorWindow = new BrowserWindow({
+        frame: true,
+        alwaysOnTop: true,
+        backgroundColor: "#2F3137",
+        title: "Custom Variable Inspector",
+        parent: mainWindow,
+        width: variableInspectorWindowState.width,
+        height: variableInspectorWindowState.height,
+        x: variableInspectorWindowState.x,
+        y: variableInspectorWindowState.y,
+        webPreferences: {
+            preload: path.join(__dirname, "../../../gui/variable-inspector/preload.js")
+        },
+        icon: path.join(__dirname, "../../../gui/images/logo_transparent_2.png")
+    });
+    variableInspectorWindow.setMenu(null);
+
+    variableInspectorWindowState.manage(variableInspectorWindow);
+
+    variableInspectorWindow.on("close", () => {
+        variableInspectorWindow = null;
+    });
+
+    await variableInspectorWindow.loadURL(
+        url.format({
+            pathname: path.join(__dirname, "../../../gui/variable-inspector/index.html"),
+            protocol: "file:",
+            slashes: true
+        }));
+
+    const customVariableManager = require("../../common/custom-variable-manager");
+    variableInspectorWindow.webContents.send("all-variables", customVariableManager.getInitialInspectorVariables());
+}
 
 
 /**
@@ -72,7 +130,7 @@ function createStreamPreviewWindow() {
         alwaysOnTop: true,
         backgroundColor: "#1E2023",
         title: "Stream Preview",
-        parent: exports.mainWindow,
+        parent: mainWindow,
         width: streamPreviewWindowState.width,
         height: streamPreviewWindowState.height,
         x: streamPreviewWindowState.x,
@@ -397,14 +455,6 @@ async function createAppMenu() {
 }
 
 /**
- * Firebot's main window
- * Keeps a global reference of the window object, if you don't, the window will
- * be closed automatically when the JavaScript object is garbage collected.
- *@type {Electron.BrowserWindow}
- */
-exports.mainWindow = null;
-
-/**
  * The splashscreen window.
  *@type {Electron.BrowserWindow}
  */
@@ -423,7 +473,7 @@ async function createMainWindow() {
     }
 
     // Create the browser window.
-    const mainWindow = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         x: mainWindowState.x,
         y: mainWindowState.y,
         width: mainWindowState.width,
@@ -473,7 +523,6 @@ async function createMainWindow() {
     });
 
     //set a global reference, lots of backend files depend on this being available globally
-    exports.mainWindow = mainWindow;
     global.renderWindow = mainWindow;
 
     await createAppMenu();
@@ -619,56 +668,6 @@ function updateSplashScreenStatus(newStatus) {
     splashscreenWindow.webContents.send("update-splash-screen-status", newStatus);
 }
 
-async function createVariableInspectorWindow() {
-
-    if (variableInspectorWindow != null && !variableInspectorWindow.isDestroyed()) {
-        if (variableInspectorWindow.isMinimized()) {
-            variableInspectorWindow.restore();
-        }
-        variableInspectorWindow.focus();
-        return;
-    }
-
-    const variableInspectorWindowState = windowStateKeeper({
-        defaultWidth: 720,
-        defaultHeight: 1280,
-        file: "variable-inspector-window-state.json"
-    });
-
-    variableInspectorWindow = new BrowserWindow({
-        frame: true,
-        alwaysOnTop: true,
-        backgroundColor: "#2F3137",
-        title: "Custom Variable Inspector",
-        parent: exports.mainWindow,
-        width: variableInspectorWindowState.width,
-        height: variableInspectorWindowState.height,
-        x: variableInspectorWindowState.x,
-        y: variableInspectorWindowState.y,
-        webPreferences: {
-            preload: path.join(__dirname, "../../../gui/variable-inspector/preload.js")
-        },
-        icon: path.join(__dirname, "../../../gui/images/logo_transparent_2.png")
-    });
-    variableInspectorWindow.setMenu(null);
-
-    variableInspectorWindowState.manage(variableInspectorWindow);
-
-    variableInspectorWindow.on("close", () => {
-        variableInspectorWindow = null;
-    });
-
-    await variableInspectorWindow.loadURL(
-        url.format({
-            pathname: path.join(__dirname, "../../../gui/variable-inspector/index.html"),
-            protocol: "file:",
-            slashes: true
-        }));
-
-    const customVariableManager = require("../../common/custom-variable-manager");
-    variableInspectorWindow.webContents.send("all-variables", customVariableManager.getInitialInspectorVariables());
-}
-
 function sendVariableCreateToInspector(key, value, ttl) {
     if (variableInspectorWindow == null || variableInspectorWindow.isDestroyed()) {
         return;
@@ -724,3 +723,4 @@ exports.sendVariableDeleteToInspector = sendVariableDeleteToInspector;
 exports.createStreamPreviewWindow = createStreamPreviewWindow;
 exports.createMainWindow = createMainWindow;
 exports.createSplashScreen = createSplashScreen;
+exports.mainWindow = mainWindow;

@@ -1,17 +1,13 @@
-'use strict';
+import path from "path";
+import { type BrowserWindow, Menu, Tray, app, nativeImage } from "electron";
 
-const path = require("path");
+import { SettingsManager } from "../../common/settings-manager";
+import frontendCommunicator from "../../common/frontend-communicator.js";
 
-const electron = require("electron");
-const { Menu, Tray, app, nativeImage } = electron;
-
-const frontendCommunicator = require('../../common/frontend-communicator.js');
-const { SettingsManager } = require("../../common/settings-manager");
-
-let mainTray;
+let mainTray: Tray;
 let minimizedToTray = false;
 
-const createNativeImage = () => {
+function createNativeImage() {
     const iconPath =
         process.platform === "darwin"
             ? path.join(__dirname, "../../../gui/images/macTrayIcon.png")
@@ -19,15 +15,15 @@ const createNativeImage = () => {
     return nativeImage.createFromPath(iconPath);
 };
 
-module.exports = function createTray(mainWindow) {
+module.exports = function createTray(mainWindow: BrowserWindow) {
     if (mainTray != null) {
         return;
     }
 
     const trayMenu = Menu.buildFromTemplate([
         {
-            label: 'Show',
-            type: 'normal',
+            label: "Show",
+            type: "normal",
             click: () => {
                 if (minimizedToTray) {
                     mainWindow.show();
@@ -38,21 +34,21 @@ module.exports = function createTray(mainWindow) {
             }
         },
         {
-            type: 'separator'
+            type: "separator"
         },
         {
-            label: 'Exit',
-            type: 'normal',
+            label: "Exit",
+            type: "normal",
             click: () => {
                 app.quit();
             }
         }
     ]);
     mainTray = new Tray(createNativeImage());
-    mainTray.setToolTip('Firebot');
+    mainTray.setToolTip("Firebot");
     mainTray.setContextMenu(trayMenu);
 
-    mainTray.on('double-click', () => {
+    mainTray.on("double-click", () => {
         if (minimizedToTray) {
             mainWindow.show();
             minimizedToTray = false;
@@ -61,14 +57,14 @@ module.exports = function createTray(mainWindow) {
         }
     });
 
-    mainWindow.on('minimize', () => {
+    mainWindow.on("minimize", () => {
         if (SettingsManager.getSetting("MinimizeToTray") && minimizedToTray !== true) {
             mainWindow.hide();
             minimizedToTray = true;
         }
     });
 
-    mainWindow.on('restore', () => {
+    mainWindow.on("restore", () => {
         if (minimizedToTray) {
             if (!mainWindow.isVisible()) {
                 mainWindow.show();
@@ -77,7 +73,7 @@ module.exports = function createTray(mainWindow) {
         }
 
     });
-    mainWindow.on('show', () => {
+    mainWindow.on("show", () => {
         if (minimizedToTray) {
             if (mainWindow.isMinimized()) {
                 mainWindow.restore();
@@ -85,7 +81,7 @@ module.exports = function createTray(mainWindow) {
             minimizedToTray = false;
         }
     });
-    mainWindow.on('focus', () => {
+    mainWindow.on("focus", () => {
         if (minimizedToTray) {
             if (mainWindow.isMinimized()) {
                 mainWindow.restore();
@@ -97,11 +93,14 @@ module.exports = function createTray(mainWindow) {
         }
     });
 
-    frontendCommunicator.on('settings-updated-renderer', (evt) => {
+    frontendCommunicator.on("settings-updated-renderer", (evt: {
+        path: string;
+        data: unknown;
+    }) => {
         if (
-            evt.path === '/settings/minimizeToTray' &&
-            evt.data !== true &&
-            minimizedToTray === true
+            evt.path === "/settings/minimizeToTray"
+            && evt.data !== true
+            && minimizedToTray === true
         ) {
             mainWindow.show();
             minimizedToTray = false;

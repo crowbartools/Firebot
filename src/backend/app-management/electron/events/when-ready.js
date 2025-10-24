@@ -1,7 +1,7 @@
 "use strict";
 
-const { ipcMain } = require("electron");
 const { checkForFirebotSetupPathInArgs } = require("../../file-open-helpers");
+const frontendCommunicator = require("../../../common/frontend-communicator");
 
 exports.whenReady = async () => {
     const logger = require("../../../logwrapper");
@@ -287,7 +287,7 @@ exports.whenReady = async () => {
     await windowManagement.createMainWindow();
 
     // Receive log messages from frontend
-    ipcMain.on("logging", (_, data) => {
+    frontendCommunicator.on("logging", (data) => {
         logger.log(data.level, data.message, data.meta);
     });
 };

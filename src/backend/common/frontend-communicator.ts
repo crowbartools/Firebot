@@ -1,8 +1,8 @@
 import { ipcMain } from "electron";
 import { v4 as uuid } from "uuid";
 
-import { Awaitable } from "../../types/util-types";
-import { FrontendCommunicatorModule } from "../../types/script-modules";
+import type { FrontendCommunicatorModule } from "../../types/script-modules";
+import type { Awaitable } from "../../types/util-types";
 
 class FrontendCommunicator implements FrontendCommunicatorModule {
     private _listeners: Record<string, {
@@ -19,7 +19,7 @@ class FrontendCommunicator implements FrontendCommunicatorModule {
                     (listener.callback(data) as Promise<unknown>)
                         .then((returnValue: unknown) => {
                             this.send(`${eventName}:reply`, returnValue);
-                        });
+                        }, () => {});
                 } else {
                     const returnValue = listener.callback(data);
                     event.returnValue = returnValue;
@@ -39,7 +39,7 @@ class FrontendCommunicator implements FrontendCommunicatorModule {
         return new Promise((resolve) => {
             if (globalThis.renderWindow != null) {
                 ipcMain.once(`${type}:reply`, (_, eventData) => {
-                    resolve(eventData);
+                    resolve(eventData as ReturnPayload);
                 });
                 globalThis.renderWindow.webContents.send(type, data);
             }

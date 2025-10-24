@@ -1,10 +1,9 @@
-"use strict";
+import type { Event } from "electron";
+import { TwitchApi } from "../../../streaming-platforms/twitch/api";
+import frontendCommunicator from "../../../common/frontend-communicator";
+import logger from "../../../logwrapper";
 
-exports.openUrl = async (event, url) => {
-    const logger = require("../../../logwrapper");
-    const frontendCommunicator = require("../../../common/frontend-communicator");
-    const { TwitchApi } = require("../../../streaming-platforms/twitch/api");
-
+export async function openUrl(_: Event, url: string) {
     url = url.toLowerCase();
     logger.debug(`Received Firebot URL request: ${url}`);
 

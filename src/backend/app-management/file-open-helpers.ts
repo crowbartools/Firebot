@@ -1,15 +1,14 @@
-"use strict";
+import frontendCommunicator from "../common/frontend-communicator";
+import logger from "../logwrapper";
 
-const logger = require("../logwrapper");
-const frontendCommunicator = require("../common/frontend-communicator");
-
-let pendingSetupFilePath;
+let pendingSetupFilePath: string;
 let windowReady = false;
 
 function sendSetupPathToFrontend(path) {
     frontendCommunicator.send("setup-opened", path);
 }
-exports.setWindowReady = (ready) => {
+
+export function setWindowReady(ready: boolean) {
     windowReady = ready;
     if (windowReady && pendingSetupFilePath) {
         sendSetupPathToFrontend(pendingSetupFilePath);
@@ -17,11 +16,7 @@ exports.setWindowReady = (ready) => {
     }
 };
 
-/**
- *
- * @param {string} filePath
- */
-exports.checkForFirebotSetupInPath = (filePath) => {
+export function checkForFirebotSetupInPath(filePath: string) {
     if (filePath.endsWith(".firebotsetup")) {
         logger.info("Firebot setup file opened!", filePath);
         if (windowReady) {
@@ -34,14 +29,11 @@ exports.checkForFirebotSetupInPath = (filePath) => {
     return false;
 };
 
-/**
- * @param {string[]} args
- */
-exports.checkForFirebotSetupPathInArgs = (args) => {
+export function checkForFirebotSetupPathInArgs(args: string[]) {
     if (args == null) {
         return;
     }
     for (const arg of args) {
-        exports.checkForFirebotSetupInPath(arg);
+        checkForFirebotSetupInPath(arg);
     }
 };
