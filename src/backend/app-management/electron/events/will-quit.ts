@@ -1,4 +1,5 @@
 import { app, type Event } from "electron";
+import logger from "../../../logwrapper";
 
 async function cleanup() {
     const { handleProfileDeletion, handleProfileRename } = await import("../../../app-management/profile-tasks");
@@ -13,7 +14,6 @@ async function cleanup() {
 
 export async function willQuit(event: Event) {
     const { AppCloseListenerManager } = await import("../../app-close-listener-manager");
-    const logger = await import("../../../logwrapper");
 
     logger.debug("Will quit event triggered");
 

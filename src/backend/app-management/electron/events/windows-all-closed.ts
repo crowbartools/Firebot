@@ -1,3 +1,5 @@
+import logger from "../../../logwrapper";
+
 export async function windowsAllClosed() {
     const { app } = await import("electron");
     const { BackupManager } = await import("../../../backup-manager");
@@ -7,7 +9,6 @@ export async function windowsAllClosed() {
     const customScriptRunner = await import("../../../common/handlers/custom-scripts/custom-script-runner");
     const customVariableManager = await import("../../../common/custom-variable-manager");
     const viewerOnlineStatusManager = (await import("../../../viewers/viewer-online-status-manager")).default;
-    const logger = await import("../../../logwrapper");
 
     logger.debug("All windows closed triggered");
 
