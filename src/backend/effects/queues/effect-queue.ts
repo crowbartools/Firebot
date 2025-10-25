@@ -1,35 +1,17 @@
 import { TypedEmitter } from "tiny-typed-emitter";
 
-import { EffectQueueConfig } from "../../../types/effects";
-import { EffectList } from "../../../types/effects";
+import type {
+    EffectQueueConfig,
+    QueueItem,
+    QueueState,
+    RunEffectsContext
+} from "../../../types/effects";
 
 import { EventManager } from "../../events/event-manager";
 import effectRunner from "../../common/effect-runner";
 import logger from "../../logwrapper";
 import { abortEffectList } from "../../common/effect-abort-helpers";
 import { simpleClone, wait } from "../../utils";
-
-export type QueueStatus = "running" | "paused" | "idle" | "canceled";
-
-export type RunEffectsContext = {
-    effects?: EffectList;
-    [key: string]: unknown;
-};
-
-type QueueItem = {
-    runEffectsContext: RunEffectsContext;
-    duration?: number;
-    priority?: "none" | "high";
-};
-
-export type QueueState = {
-    status: QueueStatus;
-    queuedItems: QueueItem[];
-    activeItems: QueueItem[];
-    interval: number;
-    mode: "auto" | "interval" | "custom" | "manual";
-    runEffectsImmediatelyWhenPaused?: boolean;
-};
 
 type Events = {
     "queue-state-updated": (newState: QueueState, changedState: Partial<QueueState>) => void;

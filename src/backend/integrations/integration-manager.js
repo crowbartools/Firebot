@@ -3,8 +3,8 @@ const EventEmitter = require("events");
 const { shell } = require('electron');
 
 const { ProfileManager } = require("../common/profile-manager");
-const authManager = require("../auth/auth-manager");
 const { SettingsManager } = require('../common/settings-manager');
+const authManager = require("../auth/auth-manager");
 const frontendCommunicator = require('../common/frontend-communicator');
 const logger = require("../logwrapper");
 const { setValuesForFrontEnd, buildSaveDataFromSettingValues } = require("../common/firebot-setting-helpers");

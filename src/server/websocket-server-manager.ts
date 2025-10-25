@@ -2,12 +2,12 @@ import { EventEmitter } from "events";
 import http from "http";
 import WebSocket from "ws";
 
-import { OverlayConnectedData, Message, ResponseMessage, EventMessage, InvokePluginMessage, CustomWebSocketHandler } from "../types/websocket";
-import { EffectInstance } from "../types/effects";
+import type { OverlayConnectedData, Message, ResponseMessage, EventMessage, InvokePluginMessage, CustomWebSocketHandler } from "../types/websocket";
+import type { EffectType } from "../types/effects";
 
 import { WebSocketClient } from "./websocket-client";
+import { EffectManager } from "../backend/effects/effect-manager";
 import { EventManager } from "../backend/events/event-manager";
-import effectManager from "../backend/effects/effectManager";
 import frontendCommunicator from "../backend/common/frontend-communicator";
 import logger from "../backend/logwrapper";
 
@@ -144,14 +144,14 @@ class WebSocketServerManager extends EventEmitter {
             });
         });
 
-        effectManager.on("effectRegistered", (effect: EffectInstance) => {
+        EffectManager.on("effectRegistered", (effect: EffectType) => {
             if (effect.overlayExtension) {
                 // tell the overlay to refresh because a new effect with an overlay extension has been registered
                 this.refreshAllOverlays();
             }
         });
 
-        effectManager.on("effectUnregistered", ({ hasOverlayEffect }) => {
+        EffectManager.on("effectUnregistered", ({ hasOverlayEffect }) => {
             if (hasOverlayEffect) {
                 // tell the overlay to refresh because a effect with an overlay extension has been removed
                 this.refreshAllOverlays();

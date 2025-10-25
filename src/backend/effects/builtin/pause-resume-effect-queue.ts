@@ -1,4 +1,4 @@
-import { EffectType, EffectQueueConfig } from "../../../types/effects";
+import type { EffectType, EffectQueueConfig } from "../../../types/effects";
 import { EffectQueueConfigManager } from "../queues/effect-queue-config-manager";
 import logger from "../../logwrapper";
 
@@ -58,7 +58,7 @@ const effect: EffectType<{
             />
         </eos-container>
     `,
-    optionsController: ($scope, effectQueuesService: any) => {
+    optionsController: ($scope, effectQueuesService) => {
         $scope.effectQueues = effectQueuesService.getEffectQueues();
         $scope.effectQueueName = null;
 

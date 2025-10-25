@@ -1,10 +1,10 @@
+import { Notification, app } from "electron";
 import { TypedEmitter } from "tiny-typed-emitter";
 import ClientOAuth2 from "client-oauth2";
 
-import { AuthDetails, AuthProvider, AuthProviderDefinition } from "../../types/auth";
+import type { AuthDetails, AuthProvider, AuthProviderDefinition } from "../../types/auth";
 
 import { SettingsManager } from "../common/settings-manager";
-import { Notification, app } from "electron";
 import windowManagement from "../app-management/electron/window-management";
 import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";

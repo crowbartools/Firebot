@@ -8,12 +8,12 @@ import {
 
 import { Awaitable } from "../../../../types/util-types";
 
-import logger from "../../../logwrapper";
-import effectManager from "../../../effects/effectManager";
+import { EffectManager } from "../../../effects/effect-manager";
 import { EventManager } from "../../../events/event-manager";
 import { FilterManager } from "../../../events/filters/filter-manager";
 import { ReplaceVariableManager } from "../../../variables/replace-variable-manager";
 import frontendCommunicator from "../../../common/frontend-communicator";
+import logger from "../../../logwrapper";
 
 import { initRemote } from "./obs-remote";
 import { setupFrontendListeners } from "./communicator";
@@ -141,25 +141,25 @@ class ObsIntegration
 
         setupFrontendListeners(frontendCommunicator);
 
-        effectManager.registerEffect(ChangeSceneEffectType);
-        effectManager.registerEffect(ChangeSceneCollectionEffectType);
-        effectManager.registerEffect(CreateRecordChapter);
-        effectManager.registerEffect(ToggleSourceVisibilityEffectType);
-        effectManager.registerEffect(ToggleSourceFilterEffectType);
-        effectManager.registerEffect(ToggleSourceMutedEffectType);
-        effectManager.registerEffect(TransformSourceEffectType);
-        effectManager.registerEffect(StartStreamEffectType);
-        effectManager.registerEffect(StopStreamEffectType);
-        effectManager.registerEffect(StartVirtualCamEffectType);
-        effectManager.registerEffect(StopVirtualCamEffectType);
-        effectManager.registerEffect(SaveReplayBufferEffectType);
-        effectManager.registerEffect(SetOBSSourceTextEffectType);
-        effectManager.registerEffect(SetOBSBrowserSourceUrlEffectType);
-        effectManager.registerEffect(SetOBSImageSourceFileEffectType);
-        effectManager.registerEffect(SetOBSMediaSourceFileEffectType);
-        effectManager.registerEffect(SetOBSColorSourceColorEffectType);
-        effectManager.registerEffect(SendRawOBSWebSocketRequestEffectType);
-        effectManager.registerEffect(TakeOBSSourceScreenshotEffectType);
+        EffectManager.registerEffect(ChangeSceneEffectType);
+        EffectManager.registerEffect(ChangeSceneCollectionEffectType);
+        EffectManager.registerEffect(CreateRecordChapter);
+        EffectManager.registerEffect(ToggleSourceVisibilityEffectType);
+        EffectManager.registerEffect(ToggleSourceFilterEffectType);
+        EffectManager.registerEffect(ToggleSourceMutedEffectType);
+        EffectManager.registerEffect(TransformSourceEffectType);
+        EffectManager.registerEffect(StartStreamEffectType);
+        EffectManager.registerEffect(StopStreamEffectType);
+        EffectManager.registerEffect(StartVirtualCamEffectType);
+        EffectManager.registerEffect(StopVirtualCamEffectType);
+        EffectManager.registerEffect(SaveReplayBufferEffectType);
+        EffectManager.registerEffect(SetOBSSourceTextEffectType);
+        EffectManager.registerEffect(SetOBSBrowserSourceUrlEffectType);
+        EffectManager.registerEffect(SetOBSImageSourceFileEffectType);
+        EffectManager.registerEffect(SetOBSMediaSourceFileEffectType);
+        EffectManager.registerEffect(SetOBSColorSourceColorEffectType);
+        EffectManager.registerEffect(SendRawOBSWebSocketRequestEffectType);
+        EffectManager.registerEffect(TakeOBSSourceScreenshotEffectType);
 
         EventManager.registerEventSource(OBSEventSource);
 

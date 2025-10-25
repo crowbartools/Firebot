@@ -1,18 +1,17 @@
 "use strict";
-
-const electron = require("electron");
-const { BrowserWindow, BrowserView, Menu, shell, dialog, nativeImage } = electron;
+const { BrowserWindow, BrowserView, Menu, shell, dialog, nativeImage } = require("electron");
 const path = require("path");
 const url = require("url");
-const windowStateKeeper = require("electron-window-state");
-const fileOpenHelpers = require("../file-open-helpers");
-const createTray = require('./tray-creation.js');
-const logger = require("../../logwrapper");
 const { setupTitlebar, attachTitlebarToWindow } = require("custom-electron-titlebar/main");
+const windowStateKeeper = require("electron-window-state");
+
+const { BackupManager } = require("../../backup-manager");
+const { SettingsManager } = require("../../common/settings-manager");
+const createTray = require('./tray-creation.js');
+const fileOpenHelpers = require("../file-open-helpers");
 const screenHelpers = require("./screen-helpers");
 const frontendCommunicator = require("../../common/frontend-communicator");
-const { SettingsManager } = require("../../common/settings-manager");
-const { BackupManager } = require("../../backup-manager");
+const logger = require("../../logwrapper");
 
 const EventEmitter = require("events");
 

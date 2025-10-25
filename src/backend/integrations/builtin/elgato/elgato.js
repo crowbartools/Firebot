@@ -2,10 +2,12 @@
 
 const EventEmitter = require("events");
 const { ElgatoKeyLightController, ElgatoLightStripController } = require("@zunderscore/elgato-light-control");
-const effectManager = require("../../../effects/effectManager");
+const tinycolor = require("tinycolor2");
+
+const { EffectManager } = require("../../../effects/effect-manager");
 const frontendCommunicator = require("../../../common/frontend-communicator");
 const logger = require("../../../logwrapper");
-const tinycolor = require("tinycolor2");
+
 const integrationDefinition = {
     id: "elgato",
     name: "Elgato",
@@ -24,8 +26,8 @@ class ElgatoIntegration extends EventEmitter {
     }
 
     init() {
-        effectManager.registerEffect(require('./effects/update-key-lights'));
-        effectManager.registerEffect(require('./effects/update-light-strips'));
+        EffectManager.registerEffect(require('./effects/update-key-lights'));
+        EffectManager.registerEffect(require('./effects/update-light-strips'));
 
         this.keyLightController = new ElgatoKeyLightController();
         this.lightStripController = new ElgatoLightStripController();

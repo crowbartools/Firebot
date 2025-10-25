@@ -1,6 +1,6 @@
 "use strict";
 
-const effectManager = require("./effectManager");
+const { EffectManager } = require("./effect-manager");
 
 exports.loadEffects = () => {
     [
@@ -80,7 +80,7 @@ exports.loadEffects = () => {
         'overlay-widgets/send-message-to-custom-widget'
     ].forEach((filename) => {
         const definition = require(`./builtin/${filename}`);
-        effectManager.registerEffect(definition);
+        EffectManager.registerEffect(definition);
     });
 
     // Twitch effects
@@ -108,6 +108,6 @@ exports.loadEffects = () => {
         'update-vip-role'
     ].forEach((filename) => {
         const definition = require(`../streaming-platforms/twitch/effects/${filename}`);
-        effectManager.registerEffect(definition);
+        EffectManager.registerEffect(definition);
     });
 };

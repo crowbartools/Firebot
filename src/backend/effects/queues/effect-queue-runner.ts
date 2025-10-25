@@ -1,8 +1,14 @@
 import { TypedEmitter } from "tiny-typed-emitter";
-import { EffectQueueConfig } from "../../../types/effects";
-import { EffectQueue, QueueState, RunEffectsContext } from "./effect-queue";
+
+import type {
+    EffectQueueConfig,
+    QueueState,
+    RunEffectsContext
+} from "../../../types/effects";
+
+import { EffectQueue } from "./effect-queue";
+import { EffectManager } from "../effect-manager";
 import logger from "../../logwrapper";
-import effectManager from "../effectManager";
 import { simpleClone } from "../../utils";
 
 type Events = {
@@ -68,7 +74,7 @@ class EffectQueueRunner extends TypedEmitter<Events> {
         const queue = this._getQueue(queueConfig);
 
         for (const effect of runEffectsContext.effects.list) {
-            const effectType = effectManager.getEffectById(effect.type);
+            const effectType = EffectManager.getEffectById(effect.type);
             if (effectType) {
                 effect["__definition"] = effectType.definition;
             }

@@ -7,7 +7,7 @@ import path from 'path';
 
 import { Awaitable } from "../types/util-types";
 import { SettingsManager } from "../backend/common/settings-manager";
-import effectManager from "../backend/effects/effectManager";
+import { EffectManager } from "../backend/effects/effect-manager";
 import { ResourceTokenManager } from "../backend/resource-token-manager";
 import websocketServerManager from "./websocket-server-manager";
 import { CustomWebSocketHandler } from "../types/websocket";
@@ -114,7 +114,7 @@ class HttpServerManager extends EventEmitter {
         // Set up route to serve overlay
         app.use("/overlay/", express.static(path.join(cwd, './resources/overlay/')));
         app.get("/overlay/", (req, res) => {
-            const effectDefs = effectManager.getEffectOverlayExtensions();
+            const effectDefs = EffectManager.getEffectOverlayExtensions();
 
             const widgetExtensions = overlayWidgetManager.getOverlayExtensions();
 

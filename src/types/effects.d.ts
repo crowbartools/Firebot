@@ -76,6 +76,7 @@ export type EffectDefinition<EffectModel = unknown> = {
 export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
     definition: EffectDefinition<EffectModel>;
     optionsTemplate: string;
+    optionsTemplateUrl?: string;
     optionsController?: ($scope: EffectScope<EffectModel>, ...args: any[]) => void;
     optionsValidator?: (effect: EffectModel, $scope: EffectScope<EffectModel>) => string[];
     getDefaultLabel?: (effect: EffectModel, ...args: any[]) => Awaitable<string | undefined>;
@@ -110,14 +111,38 @@ export type PresetEffectList = {
     sortTags: string[];
 };
 
+type QueueMode = "auto" | "interval" | "custom" | "manual";
+
 export type EffectQueueConfig = {
     id: string;
     name: string;
-    mode: "auto" | "interval" | "custom" | "manual";
+    mode: QueueMode;
     interval?: number;
     sortTags: string[];
     active: boolean;
     runEffectsImmediatelyWhenPaused: boolean;
     length: number;
     queue: any[];
+};
+
+export type QueueStatus = "running" | "paused" | "idle" | "canceled";
+
+export type RunEffectsContext = {
+    effects?: EffectList;
+    [key: string]: unknown;
+};
+
+type QueueItem = {
+    runEffectsContext: RunEffectsContext;
+    duration?: number;
+    priority?: "none" | "high";
+};
+
+export type QueueState = {
+    status: QueueStatus;
+    queuedItems: QueueItem[];
+    activeItems: QueueItem[];
+    interval: number;
+    mode: QueueMode;
+    runEffectsImmediatelyWhenPaused?: boolean;
 };

@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import { EffectInstance } from "../../../../types/effects";
 import { PresetEffectListManager } from "../../../../backend/effects/preset-lists/preset-effect-list-manager";
-import effectsManager from "../../../../backend/effects/effectManager";
+import { EffectManager } from "../../../../backend/effects/effect-manager";
 import effectRunner from "../../../../backend/common/effect-runner";
 import { Trigger } from "../../../../types/triggers";
 
 export function getEffects(req: Request, res: Response): void {
-    let effectDefs = effectsManager.getEffectDefinitions();
+    let effectDefs = EffectManager.getEffectDefinitions();
 
     if (req.query.trigger) {
         effectDefs = effectDefs.filter(effect => effect.triggers == null || effect.triggers[req.query.trigger as string]);
@@ -17,7 +17,7 @@ export function getEffects(req: Request, res: Response): void {
 
 export function getEffect(req: Request, res: Response): void {
     const effectId = req.params.effectId;
-    const effect = effectsManager.getEffectById(effectId);
+    const effect = EffectManager.getEffectById(effectId);
     if (effect == null) {
         res.status(404).send({
             status: "error",

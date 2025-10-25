@@ -145,7 +145,7 @@ function buildModules(scriptManifest) {
         twitchChat: twitchChat,
         twitchApi: TwitchApi,
         httpServer: require("../../../../server/http-server-manager"),
-        effectManager: require("../../../effects/effectManager"),
+        effectManager: require("../../../effects/effect-manager").EffectManager,
         effectRunner: require("../../effect-runner"),
         conditionManager: require("../../../effects/builtin/conditional-effects/conditions/condition-manager"),
         restrictionManager: require("../../../restrictions/restriction-manager").RestrictionsManager,

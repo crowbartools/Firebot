@@ -1,11 +1,11 @@
 "use strict";
 
-const effectManager = require("../../../../effects/effectManager");
+const { EffectManager } = require("../../../../effects/effect-manager");
 
 exports.registerEffects = () => {
     const rollCredits = require("./roll-credits");
     const spinWheel = require("./spin-wheel");
 
-    effectManager.registerEffect(rollCredits);
-    effectManager.registerEffect(spinWheel);
+    EffectManager.registerEffect(rollCredits);
+    EffectManager.registerEffect(spinWheel);
 };

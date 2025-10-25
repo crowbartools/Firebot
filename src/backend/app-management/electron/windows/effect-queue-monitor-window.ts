@@ -4,10 +4,10 @@ import { SecretsManager } from "../../../secrets-manager";
 import path from "path";
 import url from "url";
 
-import frontendCommunicator from "../../../common/frontend-communicator";
+import type { QueueState } from "../../../../types/effects";
 import { EffectQueueConfigManager } from "../../../effects/queues/effect-queue-config-manager";
 import effectQueueRunner from "../../../effects/queues/effect-queue-runner";
-import type { QueueState } from "../../../effects/queues/effect-queue";
+import frontendCommunicator from "../../../common/frontend-communicator";
 
 let effectQueueMonitorWindow: BrowserWindow = null;
 

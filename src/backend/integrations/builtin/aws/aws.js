@@ -1,7 +1,7 @@
 "use strict";
 const EventEmitter = require("events");
 
-const effectManager = require("../../../effects/effectManager");
+const { EffectManager } = require("../../../effects/effect-manager");
 
 const integrationDefinition = {
     id: "aws",
@@ -55,7 +55,7 @@ class AwsIntegration extends EventEmitter {
         super();
     }
     init() {
-        effectManager.registerEffect(require('./text-to-speech-polly-effect'));
+        EffectManager.registerEffect(require('./text-to-speech-polly-effect'));
     }
 }
 

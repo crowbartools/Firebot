@@ -9,7 +9,7 @@ const nodeApi = require('node-hue-api'),
 const appName = 'Firebot';
 const deviceName = 'Firebot-Hue';
 
-const effectManager = require("../../../effects/effectManager");
+const { EffectManager } = require("../../../effects/effect-manager");
 const frontendCommunicator = require("../../../common/frontend-communicator");
 
 const integrationDefinition = {
@@ -41,8 +41,8 @@ class HueIntegration extends EventEmitter {
     }
     init(linked, integrationData) {
 
-        effectManager.registerEffect(require("./effects/hue-scenes"));
-        effectManager.registerEffect(require("./effects/control-light"));
+        EffectManager.registerEffect(require("./effects/hue-scenes"));
+        EffectManager.registerEffect(require("./effects/control-light"));
 
         if (linked) {
             if (integrationData && integrationData.settings && integrationData.settings.user) {
