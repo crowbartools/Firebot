@@ -24,6 +24,6 @@ class AppCloseListenerManager {
     }
 }
 
-const appCloseListenerManager = new AppCloseListenerManager();
+const manager = new AppCloseListenerManager();
 
-export = appCloseListenerManager;
+export { manager as AppCloseListenerManager };

@@ -30,8 +30,8 @@ if (Object.hasOwn(argv, "fbuser-data-directory") && argv["fbuser-data-directory"
     userDataPath = argv["fbuser-data-directory"] as string;
     tmpDirectoryPath = path.join(userDataPath, "./tmp");
 } else {
-    const rootUserDataPath = `${appDataPath + path.sep}Firebot`;
-    userDataPath = `${rootUserDataPath + path.sep}v5`;
+    const rootUserDataPath = path.join(appDataPath, "Firebot");
+    userDataPath = path.join(rootUserDataPath, "v5");
     tmpDirectoryPath = path.join(rootUserDataPath, "tmp");
 }
 

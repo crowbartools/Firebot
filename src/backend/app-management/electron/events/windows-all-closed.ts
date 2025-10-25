@@ -1,14 +1,14 @@
-import { app } from "electron";
-import { BackupManager } from "../../../backup-manager";
-import { HotkeyManager } from "../../../hotkeys/hotkey-manager";
-import { ScheduledTaskManager } from "../../../timers/scheduled-task-manager";
-import { SettingsManager } from "../../../common/settings-manager";
-import customScriptRunner from "../../../common/handlers/custom-scripts/custom-script-runner";
-import customVariableManager from "../../../common/custom-variable-manager";
-import viewerOnlineStatusManager from "../../../viewers/viewer-online-status-manager";
-import logger from "../../../logwrapper";
-
 export async function windowsAllClosed() {
+    const { app } = await import("electron");
+    const { BackupManager } = await import("../../../backup-manager");
+    const { HotkeyManager } = await import("../../../hotkeys/hotkey-manager");
+    const { ScheduledTaskManager } = await import("../../../timers/scheduled-task-manager");
+    const { SettingsManager } = await import("../../../common/settings-manager");
+    const customScriptRunner = await import("../../../common/handlers/custom-scripts/custom-script-runner");
+    const customVariableManager = await import("../../../common/custom-variable-manager");
+    const viewerOnlineStatusManager = (await import("../../../viewers/viewer-online-status-manager")).default;
+    const logger = await import("../../../logwrapper");
+
     logger.debug("All windows closed triggered");
 
     // Stop all scheduled tasks

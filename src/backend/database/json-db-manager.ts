@@ -1,8 +1,9 @@
-import { type JsonDB } from "node-json-db";
+import type { JsonDB } from "node-json-db";
 import { TypedEmitter, type ListenerSignature } from "tiny-typed-emitter";
 import { v4 as uuid } from "uuid";
+
+import { AppCloseListenerManager } from "../app-management/app-close-listener-manager";
 import { ProfileManager } from "../common/profile-manager";
-import appCloseListenerManager from "../app-management/app-close-listener-manager";
 import logger from "../logwrapper";
 
 interface Item {
@@ -39,7 +40,7 @@ abstract class JsonDbManager<T extends Item, E extends ListenerSignature<E> = De
         this.items = {};
         this.db = ProfileManager.getJsonDbInProfile(path);
 
-        appCloseListenerManager.registerListener(() => {
+        AppCloseListenerManager.registerListener(() => {
             if (this.batchedSaveTimeout) {
                 clearTimeout(this.batchedSaveTimeout);
                 this.batchedSaveTimeout = null;

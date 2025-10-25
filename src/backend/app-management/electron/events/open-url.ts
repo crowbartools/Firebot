@@ -1,9 +1,10 @@
 import type { Event } from "electron";
-import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 import frontendCommunicator from "../../../common/frontend-communicator";
 import logger from "../../../logwrapper";
 
 export async function openUrl(_: Event, url: string) {
+    const { TwitchApi } = await import("../../../streaming-platforms/twitch/api");
+
     url = url.toLowerCase();
     logger.debug(`Received Firebot URL request: ${url}`);
 

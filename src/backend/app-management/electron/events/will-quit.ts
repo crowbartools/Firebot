@@ -1,19 +1,19 @@
-import { Event, app } from "electron";
-import appCloseListenerManager from "../../app-close-listener-manager";
-import { EventManager } from "../../../events/event-manager";
-import { handleProfileDeletion, handleProfileRename } from "../../../app-management/profile-tasks";
-import logger from "../../../logwrapper";
+import { app, type Event } from "electron";
 
 async function cleanup() {
+    const { handleProfileDeletion, handleProfileRename } = await import("../../../app-management/profile-tasks");
     handleProfileRename();
     handleProfileDeletion();
 
+    const { EventManager } = await import("../../../events/event-manager");
     await EventManager.triggerEvent("firebot", "before-firebot-closed", {
         username: "Firebot"
     });
 }
 
 export async function willQuit(event: Event) {
+    const { AppCloseListenerManager } = await import("../../app-close-listener-manager");
+    const logger = await import("../../../logwrapper");
 
     logger.debug("Will quit event triggered");
 
@@ -22,7 +22,7 @@ export async function willQuit(event: Event) {
     logger.debug("Running app close listeners...");
 
     try {
-        await appCloseListenerManager.runListeners();
+        await AppCloseListenerManager.runListeners();
     } catch {}
 
     logger.debug("App close listeners complete.");

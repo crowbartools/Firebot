@@ -16,7 +16,6 @@ class ProfileManager {
     profileToRename: string = null;
 
     constructor() {
-
         frontendCommunicator.on("profiles:get-active-profiles",
             () => SettingsManager.getSetting("ActiveProfiles")
         );
@@ -107,9 +106,9 @@ class ProfileManager {
         // Push our new profile to settings.
         globalSettingsDb.push("/profiles/activeProfiles", activeProfiles);
         globalSettingsDb.push("/profiles/loggedInProfile", profileId);
-        logger.info(`New profile created: ${profileId}. Restarting.`);
+        logger.info(`New profile created: ${profileId}.${restart ? " Restarting." : ""}`);
 
-        // Log the new profile in and restart app.
+        // Log the new profile in and (optionally) restart app.
         this.logInProfile(profileId, restart);
     }
 
@@ -129,7 +128,7 @@ class ProfileManager {
         }
 
         // We don't have a value in our global settings. So, let's try some other things.
-        logger.info("No logged in profile in global settings file. Attempting to set one and restart the app.");
+        logger.info(`No logged in profile in global settings file. Attempting to set one${restartIfNotLoggedIn ? " and restart the app" : ""}.`);
 
         const activeProfiles = SettingsManager.getSetting("ActiveProfiles");
         if (activeProfiles[0] != null) {

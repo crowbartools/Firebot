@@ -1,14 +1,16 @@
 import type { Event } from "electron";
-import { mainWindow } from "../window-management";
-import { openUrl } from "./open-url";
-import { restartApp } from "../app-helpers";
-import * as fileOpenHelpers from "../../file-open-helpers";
 import logger from "../../../logwrapper";
 
-export function secondInstance(event: Event, argv: string[]) {
+export async function secondInstance(event: Event, argv: string[]) {
+    const { openUrl } = await import("./open-url");
+    const { restartApp } = await import("../app-helpers");
+    const { checkForFirebotSetupPathInArgs } = await import("../../file-open-helpers");
+
     // Someone tried to run a second instance, we should focus our window.
     try {
         logger.debug("Second instance detected, focusing main window.");
+
+        const { mainWindow } = await import("../window-management");
         if (mainWindow) {
             if (!mainWindow.isVisible()) {
                 mainWindow.show();
@@ -18,8 +20,7 @@ export function secondInstance(event: Event, argv: string[]) {
             }
             mainWindow.focus();
 
-
-            fileOpenHelpers.checkForFirebotSetupPathInArgs(argv);
+            checkForFirebotSetupPathInArgs(argv);
 
             void openUrl(event, argv.pop());
         }
