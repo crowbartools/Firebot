@@ -3,7 +3,7 @@ import { TypedEmitter } from "tiny-typed-emitter";
 import { EventDefinition, EventSource } from "../../types/events";
 
 import { AccountAccess } from "../common/account-access";
-import eventsAccess from "./events-access";
+import { EventsAccess } from "./events-access";
 import eventsRouter from "./events-router";
 import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
@@ -67,7 +67,7 @@ class EventManager extends TypedEmitter<{
                 meta.username = AccountAccess.getAccounts().streamer.username;
             }
 
-            const eventSettings = eventsAccess.getAllActiveEvents().find(e => e.id === eventSettingsId);
+            const eventSettings = EventsAccess.getAllActiveEvents().find(e => e.id === eventSettingsId);
             if (eventSettings == null) {
                 return;
             }

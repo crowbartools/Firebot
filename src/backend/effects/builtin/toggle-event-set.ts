@@ -1,18 +1,18 @@
-"use strict";
+import type { EffectType } from "../../../types/effects";
+import { EventsAccess } from "../../events/events-access";
 
-const eventAccess = require("../../events/events-access");
-const { EffectCategory } = require('../../../shared/effect-constants');
-
-const chat = {
+const effect: EffectType<{
+    selectedEventGroupId: string;
+    toggleType: "disable" | "enable";
+}> = {
     definition: {
         id: "firebot:toggle-event-set",
         name: "Toggle Event Set",
         description: "Toggle an event sets active status",
         icon: "fad fa-toggle-off",
-        categories: [EffectCategory.COMMON],
+        categories: ["common"],
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container>
             <p>This effect let's you automatically toggle the active status of Event Sets (which you can create in the Events tab).</p>
@@ -31,7 +31,6 @@ const chat = {
         </eos-container>
     `,
     optionsController: ($scope, eventsService) => {
-
         const eventGroups = eventsService.getEventGroups();
 
         $scope.eventSetOptions = {};
@@ -56,7 +55,7 @@ const chat = {
         }
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.selectedEventGroupId == null) {
             errors.push("Please select an event set.");
         }
@@ -67,13 +66,10 @@ const chat = {
         const action = effect.toggleType === "enable" ? "Activate" : "Deactivate";
         return `${action} ${eventGroup?.name ?? "Unknown Event Set"}`;
     },
-    onTriggerEvent: async (event) => {
-        const { effect } = event;
-
-        eventAccess.updateEventGroupActiveStatus(effect.selectedEventGroupId, effect.toggleType === "enable");
-
+    onTriggerEvent: ({ effect }) => {
+        EventsAccess.updateEventGroupActiveStatus(effect.selectedEventGroupId, effect.toggleType === "enable");
         return true;
     }
 };
 
-module.exports = chat;
+export = effect;

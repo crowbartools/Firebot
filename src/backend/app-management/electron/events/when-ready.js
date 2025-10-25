@@ -123,8 +123,8 @@ exports.whenReady = async () => {
     await FontManager.loadInstalledFonts();
 
     windowManagement.updateSplashScreenStatus("Loading events...");
-    const eventsAccess = require("../../../events/events-access");
-    eventsAccess.loadEventsAndGroups();
+    const { EventsAccess } = require("../../../events/events-access");
+    EventsAccess.loadEventsAndGroups();
 
     windowManagement.updateSplashScreenStatus("Loading team roles...");
     const teamRolesManager = require("../../../roles/team-roles-manager");

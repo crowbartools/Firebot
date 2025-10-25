@@ -3,7 +3,7 @@
 const NodeCache = require("node-cache");
 const { EffectTrigger } = require("../../shared/effect-constants");
 const { FilterManager } = require("./filters/filter-manager");
-const eventsAccess = require("./events-access");
+const { EventsAccess } = require("./events-access");
 
 // This cache holds all users who have fired events and what events they fired.
 // Deletes entries after 12 hours. Checks every 10 minutes.
@@ -77,7 +77,7 @@ async function onEventTriggered(event, source, meta, isManual = false, isRetrigg
         meta = {};
     }
 
-    const eventSettings = eventsAccess.getAllActiveEvents().filter(
+    const eventSettings = EventsAccess.getAllActiveEvents().filter(
         es => es.sourceId === source.id && es.eventId === event.id
     );
 

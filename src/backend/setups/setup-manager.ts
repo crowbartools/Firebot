@@ -5,6 +5,7 @@ import type { Currency } from "../../types/currency";
 
 import { CounterManager } from "../counters/counter-manager";
 import { EffectQueueConfigManager } from "../effects/queues/effect-queue-config-manager";
+import { EventsAccess } from "../events/events-access";
 import { HotkeyManager } from "../hotkeys/hotkey-manager";
 import { PresetEffectListManager } from "../effects/preset-lists/preset-effect-list-manager";
 import { QuickActionManager } from "../quick-actions/quick-action-manager";
@@ -13,7 +14,6 @@ import { TimerManager } from "../timers/timer-manager";
 import commandManager from "../chat/commands/command-manager";
 import currencyAccess from "../currency/currency-access";
 import customRolesManager from "../roles/custom-roles-manager";
-import eventsAccess from "../events/events-access";
 import overlayWidgetConfigManager from "../overlay-widgets/overlay-widget-config-manager";
 import rankManager from "../ranks/rank-manager";
 import variableMacroManager from "../variables/macro-manager";
@@ -193,16 +193,16 @@ class SetupManager {
         // events
         const events = setup.components.events || [];
         for (const event of events) {
-            eventsAccess.saveNewEventToMainEvents(event);
+            EventsAccess.saveNewEventToMainEvents(event);
         }
-        eventsAccess.triggerUiRefresh();
+        EventsAccess.triggerUiRefresh();
 
         // events sets
         const eventGroups = setup.components.eventGroups || [];
         for (const eventGroup of eventGroups) {
-            eventsAccess.saveGroupFromImport(eventGroup);
+            EventsAccess.saveGroupFromImport(eventGroup);
         }
-        eventsAccess.triggerUiRefresh();
+        EventsAccess.triggerUiRefresh();
 
         // hotkeys
         for (const hotkey of setup.components.hotkeys || []) {
@@ -291,10 +291,10 @@ class SetupManager {
                             EffectQueueConfigManager.deleteItem(id);
                             break;
                         case "events":
-                            eventsAccess.removeEventFromMainEvents(id);
+                            EventsAccess.removeEventFromMainEvents(id);
                             break;
                         case "eventGroups":
-                            eventsAccess.deleteGroup(id);
+                            EventsAccess.deleteGroup(id);
                             break;
                         case "hotkeys":
                             HotkeyManager.deleteHotkey(id);
@@ -334,9 +334,9 @@ class SetupManager {
                 } else if (componentType === "effectQueues") {
                     EffectQueueConfigManager.triggerUiRefresh();
                 } else if (componentType === "events") {
-                    eventsAccess.triggerUiRefresh();
+                    EventsAccess.triggerUiRefresh();
                 } else if (componentType === "eventGroups") {
-                    eventsAccess.triggerUiRefresh();
+                    EventsAccess.triggerUiRefresh();
                 } else if (componentType === "presetEffectLists") {
                     PresetEffectListManager.triggerUiRefresh();
                 } else if (componentType === "timers") {

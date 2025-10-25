@@ -77,4 +77,5 @@ export type EventSettings = {
 export type EventGroup = {
     id: string;
     events: EventSettings[];
+    active?: boolean;
 };

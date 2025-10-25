@@ -1,21 +1,22 @@
-"use strict";
+import type { EffectType } from "../../../types/effects";
+import { EventsAccess } from "../../events/events-access";
 
-const eventAccess = require("../../events/events-access");
-const { EffectCategory } = require('../../../shared/effect-constants');
-
-const chat = {
+const effect: EffectType<{
+    selectedEventId: string;
+    selectedGroupName: string;
+    toggleType: "disable" | "enable" | "toggle";
+}> = {
     definition: {
         id: "firebot:toggle-event",
         name: "Toggle Event",
         description: "Toggle an event's active status",
         icon: "fad fa-toggle-off",
-        categories: [EffectCategory.COMMON],
+        categories: ["common"],
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container>
-            <p>This effect let's you automatically toggle the active status of an Event (which you can create in the Events tab).</p>
+            <p>This effect lets you automatically toggle the active status of an Event (which you can create in the Events tab).</p>
         </eos-container>
 
         <eos-container header="Event Group" pad-top="true">
@@ -31,7 +32,6 @@ const chat = {
         </eos-container>
     `,
     optionsController: ($scope, eventsService) => {
-
         const mainEvents = eventsService.getMainEvents();
         const groups = eventsService.getAllEventGroups();
 
@@ -43,7 +43,7 @@ const chat = {
             $scope.eventOptions["General Events"][mainEvent.id] = mainEvent.name;
         }
 
-        for (const [groupId, group] of Object.entries(groups)) {
+        for (const [groupId, group] of Object.entries(groups) as [string, any]) {
             $scope.eventOptions[group.name] = {};
 
             for (const groupEvent of groups[groupId].events) {
@@ -69,7 +69,7 @@ const chat = {
         }
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.selectedEventId == null) {
             errors.push("Please select an event.");
         }
@@ -81,15 +81,14 @@ const chat = {
             : effect.toggleType === "enable" ? "Activate" : "Deactivate";
         return `${action} ${event?.name ?? "Unknown Event"}`;
     },
-    onTriggerEvent: async (event) => {
-        const { effect } = event;
-        const selectedEvent = eventAccess.getEvent(effect.selectedEventId);
+    onTriggerEvent: ({ effect }) => {
+        const selectedEvent = EventsAccess.getEvent(effect.selectedEventId);
         const isActive = effect.toggleType === "toggle" ? !selectedEvent.active : effect.toggleType === "enable";
 
-        eventAccess.updateEventActiveStatus(effect.selectedEventId, isActive);
+        EventsAccess.updateEventActiveStatus(effect.selectedEventId, isActive);
 
         return true;
     }
 };
 
-module.exports = chat;
+export = effect;
