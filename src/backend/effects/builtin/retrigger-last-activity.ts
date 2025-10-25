@@ -1,5 +1,5 @@
-import { EffectType } from "../../../types/effects";
-import { retriggerLastActivity } from "../../events/activity-feed-manager";
+import type { EffectType } from "../../../types/effects";
+import { ActivityFeedManager } from "../../events/activity-feed-manager";
 
 const effect: EffectType = {
     definition: {
@@ -17,7 +17,7 @@ const effect: EffectType = {
         </eos-container>
     `,
     onTriggerEvent: () => {
-        retriggerLastActivity();
+        ActivityFeedManager.retriggerLastActivity();
     }
 };
 

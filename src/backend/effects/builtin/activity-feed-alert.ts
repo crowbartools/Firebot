@@ -1,5 +1,5 @@
-import { EffectType } from "../../../types/effects";
-import { handleTriggeredEvent } from "../../events/activity-feed-manager";
+import type { EffectType } from "../../../types/effects";
+import { ActivityFeedManager } from "../../events/activity-feed-manager";
 
 const effect: EffectType<{
     message: string;
@@ -46,7 +46,7 @@ const effect: EffectType<{
         return errors;
     },
     onTriggerEvent: ({ effect }) => {
-        handleTriggeredEvent(
+        ActivityFeedManager.handleTriggeredEvent(
             {
                 id: "firebot",
                 name: "Firebot"

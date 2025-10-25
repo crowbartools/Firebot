@@ -47,20 +47,14 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function($q, backendCommunicator, settingsService) {
+            controller: function(backendCommunicator, settingsService) {
                 const $ctrl = this;
 
                 $ctrl.events = [];
 
                 $ctrl.allowedEvents = settingsService.getSetting("AllowedActivityEvents");
 
-                $q.when(backendCommunicator
-                    .fireEventAsync("get-activity-feed-supported-events"))
-                    .then((supportedEvents) => {
-                        if (supportedEvents != null) {
-                            $ctrl.events = supportedEvents;
-                        }
-                    });
+                $ctrl.events = backendCommunicator.fireEventSync("activity-feed:get-activity-feed-supported-events") ?? [];
 
                 $ctrl.toggleEventChecked = function(event) {
                     const eventKey = `${event.sourceId}:${event.eventId}`;

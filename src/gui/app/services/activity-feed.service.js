@@ -14,7 +14,7 @@
             service.allActivities = [];
             service.activities = [];
 
-            backendCommunicator.on("event-activity", (activity) => {
+            backendCommunicator.on("activity-feed:event-activity", (activity) => {
 
                 activity.message = $sce.trustAsHtml(sanitize(marked(activity.message)));
 
@@ -84,12 +84,12 @@
                 return service.activities.filter(a => !a.acknowledged).length;
             };
 
-            backendCommunicator.on("acknowledge-all-activity", () => {
+            backendCommunicator.on("activity-feed:acknowledge-all-activity", () => {
                 service.markAllAcknowledged();
             });
 
             service.retriggerEvent = (activityId) => {
-                backendCommunicator.send("retrigger-event", activityId);
+                backendCommunicator.send("activity-feed:retrigger-event", activityId);
                 ngToast.create({
                     className: 'success',
                     content: "Successfully retriggered event!",

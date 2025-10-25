@@ -1,4 +1,4 @@
-import EventEmitter from "events";
+import { TypedEmitter } from "tiny-typed-emitter";
 
 import { EventDefinition, EventSource } from "../../types/events";
 
@@ -17,7 +17,17 @@ type RegisteredEventSource = Omit<EventSource, "events"> & {
     events: RegisteredEventDefinition[];
 };
 
-class EventManager extends EventEmitter {
+class EventManager extends TypedEmitter<{
+    "eventSourceRegistered": (source: RegisteredEventSource) => void;
+    "eventSourceUnregistered": (id: string) => void;
+    "event-triggered": (event: {
+        event: EventDefinition;
+        source: EventSource;
+        meta: Record<string, unknown>;
+        isManual: boolean;
+        isRetrigger: boolean;
+    }) => void;
+}> {
     private _registeredEventSources: RegisteredEventSource[] = [];
 
     constructor() {

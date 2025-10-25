@@ -1,15 +1,13 @@
-"use strict";
+import type { EffectType } from '../../../types/effects';
+import frontendCommunicator from "../../common/frontend-communicator";
 
-const { EffectCategory } = require('../../../shared/effect-constants');
-const frontendCommunicator = require("../../common/frontend-communicator");
-
-const model = {
+const effect: EffectType = {
     definition: {
         id: "firebot:mark-all-activity-acknowledged",
         name: "Mark All Activity As Acknowledged",
         description: "Marks all Activity as acknowledged on the Chat page",
         icon: "fad fa-comment-dots",
-        categories: [EffectCategory.COMMON],
+        categories: ["common"],
         dependencies: []
     },
     optionsTemplate: `
@@ -17,13 +15,10 @@ const model = {
             <p>When this effect is ran, all activity in the Activity Feed on the Chat page will be marked as acknowledged. Useful on a hotkey or hooked up to a Stream Deck to quickly acknowledge all current activity.</p>
         </eos-container>
     `,
-    optionsController: () => {},
-    onTriggerEvent: async () => {
-
-        frontendCommunicator.fireEventAsync("acknowledge-all-activity");
-
+    onTriggerEvent: () => {
+        frontendCommunicator.send("activity-feed:acknowledge-all-activity");
         return true;
     }
 };
 
-module.exports = model;
+export = effect;
