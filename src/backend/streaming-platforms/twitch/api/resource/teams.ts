@@ -71,6 +71,12 @@ export class TwitchTeamsApi extends ApiResourceBase {
 
     async getStreamerTeams(): Promise<HelixTeam[]> {
         const streamer = this.accounts.streamer;
+
+        if (!streamer?.loggedIn) {
+            this.logger.warn("Cannot get streamer's teams. Streamer is not currently logged in,");
+            return [];
+        }
+
         const streamerTeams = await this.getTeams(streamer.userId);
 
         if (streamerTeams != null) {
