@@ -77,6 +77,6 @@ app.on("open-file", openFile);
 app.on("window-all-closed", windowsAllClosed);
 app.on("will-quit", willQuit);
 app.whenReady().then(whenReady).catch((error) => {
-    logger.debug("Error on when ready step", error);
+    logger.error("Error on when ready step", error);
 });
 app.on("open-url", openUrl);
