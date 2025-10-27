@@ -1,5 +1,5 @@
 "use strict";
-const { app } = require("electron");
+const { app, dialog } = require("electron");
 const os = require("os");
 const path = require("path");
 
@@ -78,5 +78,7 @@ app.on("window-all-closed", windowsAllClosed);
 app.on("will-quit", willQuit);
 app.whenReady().then(whenReady).catch((error) => {
     logger.error("Error on when ready step", error);
+    dialog.showErrorBox("Error starting Firebot", "An unexpected error occurred while trying to start Firebot. Please try again. If the issue persists, please check the log file or post an issue in our Discord server.");
+    app.quit();
 });
 app.on("open-url", openUrl);
