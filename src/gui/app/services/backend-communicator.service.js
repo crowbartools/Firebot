@@ -11,7 +11,7 @@
         .module("firebotApp")
         .factory("backendCommunicator", function($q) {
 
-            const { v4: uuid } = require("uuid");
+            const { randomUUID } = require("crypto");
 
             const service = {};
 
@@ -44,7 +44,7 @@
                     throw new Error("Can't register an event without a callback.");
                 }
 
-                const id = uuid(),
+                const id = randomUUID(),
                     event = {
                         id: id,
                         callback: callback,

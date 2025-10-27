@@ -1,4 +1,4 @@
-import { v4 as uuid } from "uuid";
+import { randomUUID } from "crypto";
 import logger from "./logwrapper";
 
 interface ResourceToken {
@@ -39,7 +39,7 @@ class ResourceTokenManager {
             tokenLength = length;
         }
 
-        const token = uuid();
+        const token = randomUUID();
         this.tokens[token] = { path: path, length: tokenLength * 1000 };
         return token;
     }

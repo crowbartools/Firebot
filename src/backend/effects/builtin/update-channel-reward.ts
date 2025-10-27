@@ -1,8 +1,8 @@
-import { validate } from "uuid";
 import { SavedChannelReward } from "../../../types/channel-rewards";
 import { EffectType } from "../../../types/effects";
 import channelRewardsManager from "../../channel-rewards/channel-reward-manager";
 import logger from "../../logwrapper";
+import { isValidUUID } from "../../utils";
 
 type StringUpdatable = { update: boolean, newValue: string };
 type StatusUpdatable = { update: boolean, newValue: 'toggle' | boolean };
@@ -383,16 +383,16 @@ const effect: EffectType<EffectMeta> = {
                 return;
             }
 
-            let rewardId;
+            let rewardId: string;
             switch (effect.rewardSelectMode) {
                 case "dropdown":
                     rewardId = effect.channelRewardId;
                     break;
                 case "associated":
-                    rewardId = trigger.metadata.eventData?.rewardId ?? trigger.metadata.rewardId;
+                    rewardId = (trigger.metadata.eventData?.rewardId ?? trigger.metadata.rewardId) as string;
                     break;
                 case "custom":
-                    rewardId = validate(effect.customId)
+                    rewardId = isValidUUID(effect.customId)
                         ? effect.customId
                         : channelRewardsManager.getChannelRewardIdByName(effect.customId);
                     break;

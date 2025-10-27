@@ -39,6 +39,10 @@ export {
 } from "./get-random-int";
 
 export {
+    isValidUUID
+} from "./is-valid-uuid";
+
+export {
     maskPII,
     MaskPIIOptions
 } from "./mask-pii";

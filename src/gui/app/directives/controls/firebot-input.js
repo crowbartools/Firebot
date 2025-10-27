@@ -1,7 +1,7 @@
 "use strict";
 
 (function () {
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     angular.module("firebotApp").component("firebotInput", {
         bindings: {
@@ -109,8 +109,8 @@
         controller: function ($timeout) {
             const $ctrl = this;
 
-            $ctrl.inputGroupId = uuid();
-            $ctrl.inputId = uuid();
+            $ctrl.inputGroupId = randomUUID();
+            $ctrl.inputId = randomUUID();
 
             $ctrl.allowNewLines = false;
 

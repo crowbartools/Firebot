@@ -1,7 +1,7 @@
 "use strict";
 
 (function() {
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
     angular.module("firebotApp")
         .component("addOrEditSubcommandModal", {
             template: `
@@ -64,7 +64,7 @@
 
                 $ctrl.arg = {
                     active: true,
-                    id: uuid(),
+                    id: randomUUID(),
                     type: "Custom",
                     arg: "",
                     regex: false

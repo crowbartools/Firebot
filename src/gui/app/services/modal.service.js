@@ -1,7 +1,7 @@
 "use strict";
 (function() {
 
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     const MODAL_SHIFT_AMOUNT = 125;
 
@@ -100,7 +100,7 @@
                 let dismissCallback = showModalContext.dismissCallback;
                 const windowClass = showModalContext.windowClass ? showModalContext.windowClass : "";
 
-                const modalId = `modal-${uuid()}`;
+                const modalId = `modal-${randomUUID()}`;
                 resolveObj.modalId = () => {
                     return modalId;
                 };

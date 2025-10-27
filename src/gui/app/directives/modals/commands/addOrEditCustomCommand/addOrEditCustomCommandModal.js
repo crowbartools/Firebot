@@ -3,7 +3,7 @@
 // Modal for adding or editing a command
 
 (function () {
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     angular.module("firebotApp").component("addOrEditCustomCommandModal", {
         templateUrl:
@@ -24,7 +24,7 @@
                 cooldownMessage: "This command is still on cooldown for: {timeLeft}",
                 cooldown: {},
                 effects: {
-                    id: uuid(),
+                    id: randomUUID(),
                     list: []
                 },
                 restrictionData: {

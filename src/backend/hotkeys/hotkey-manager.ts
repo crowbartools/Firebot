@@ -1,6 +1,6 @@
 import { globalShortcut } from "electron";
 import { JsonDB } from "node-json-db";
-import { v4 as uuid } from "uuid";
+import { randomUUID } from "crypto";
 
 import { FirebotHotkey } from "../../types/hotkeys";
 import { Trigger } from "../../types/triggers";
@@ -67,7 +67,7 @@ class HotkeyManager {
     }
 
     addHotkey(hotkey: FirebotHotkey): void {
-        hotkey.id ??= uuid();
+        hotkey.id ??= randomUUID();
 
         this.hotkeys.push(hotkey);
         this.registerHotkey(hotkey.code);

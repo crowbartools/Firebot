@@ -4,7 +4,7 @@
 
 (function() {
 
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     angular.module("firebotApp").component("addOrEditEventModal", {
         template:
@@ -173,7 +173,7 @@
                 }
 
                 if ($ctrl.isNewEvent) {
-                    $ctrl.event.id = uuid();
+                    $ctrl.event.id = randomUUID();
                 }
 
                 $ctrl.close({

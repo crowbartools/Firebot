@@ -2,7 +2,7 @@
 
 (function() {
 
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     // This provides methods for playing sounds
 
@@ -13,7 +13,7 @@
 
             service.getVideoDuration = function (path) {
                 return new Promise((resolve) => {
-                    const id = `video-${uuid()}`;
+                    const id = `video-${randomUUID()}`;
                     const videoElement = `<video id="${id}" preload="metadata" style="display: none;"></video>`;
                     $(document.documentElement).append(videoElement);
                     const video = document.getElementById(id);

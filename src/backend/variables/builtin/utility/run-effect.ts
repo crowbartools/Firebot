@@ -1,4 +1,4 @@
-import { v4 as uuid } from "uuid";
+import { randomUUID } from "crypto";
 import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 import effectRunner from "../../../common/effect-runner";
@@ -26,7 +26,7 @@ const model : ReplaceVariable = {
             await effectRunner.processEffects({
                 trigger,
                 effects: {
-                    id: uuid(),
+                    id: randomUUID(),
                     list: effectJsonModels
                         .map((json) => {
                             if (typeof json !== 'string' && !(json instanceof String)) {

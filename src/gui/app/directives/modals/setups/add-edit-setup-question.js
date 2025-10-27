@@ -1,7 +1,7 @@
 "use strict";
 
 (function() {
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
     angular.module("firebotApp")
         .component("addOrEditSetupQuestion", {
             template: `
@@ -84,7 +84,7 @@
                 };
 
                 $ctrl.question = {
-                    id: uuid(),
+                    id: randomUUID(),
                     question: undefined,
                     helpText: undefined,
                     defaultAnswer: undefined,

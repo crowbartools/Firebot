@@ -1,6 +1,6 @@
 import type { JsonDB } from "node-json-db";
 import { TypedEmitter, type ListenerSignature } from "tiny-typed-emitter";
-import { v4 as uuid } from "uuid";
+import { randomUUID } from "crypto";
 
 import { AppCloseListenerManager } from "../app-management/app-close-listener-manager";
 import { ProfileManager } from "../common/profile-manager";
@@ -96,7 +96,7 @@ abstract class JsonDbManager<T extends Item, E extends ListenerSignature<E> = De
         }
 
         if (item.id == null) {
-            item.id = uuid();
+            item.id = randomUUID();
             isCreating = true;
         }
 

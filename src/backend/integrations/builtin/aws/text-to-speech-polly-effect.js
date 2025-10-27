@@ -4,7 +4,7 @@ const { getPathInTmpDir } = require("../../../common/data-access");
 const { SettingsManager } = require("../../../common/settings-manager");
 const { ResourceTokenManager } = require("../../../resource-token-manager");
 const webServer = require("../../../../server/http-server-manager");
-const { v4: uuid } = require("uuid");
+const { randomUUID } = require("crypto");
 const fs = require('fs');
 const fsp = require('fs/promises');
 const path = require("path");
@@ -571,7 +571,7 @@ const playSound = {
                 await fsp.mkdir(POLLY_TMP_DIR, { recursive: true });
             }
 
-            mp3Path = path.join(POLLY_TMP_DIR, `${uuid()}.mp3`);
+            mp3Path = path.join(POLLY_TMP_DIR, `${randomUUID()}.mp3`);
 
             const destination = fs.createWriteStream(mp3Path);
             const stream = synthSpeedResponse.AudioStream.pipe(destination, { end: true });

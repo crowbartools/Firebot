@@ -1,7 +1,7 @@
 "use strict";
 
 (function() {
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     angular.module("firebotApp").component("searchbar", {
         bindings: {
@@ -25,7 +25,7 @@
             const $ctrl = this;
             $ctrl.$onInit = function() {
                 if ($ctrl.searchId == null || $ctrl.searchId === "") {
-                    $ctrl.searchId = uuid();
+                    $ctrl.searchId = randomUUID();
                 }
             };
         }

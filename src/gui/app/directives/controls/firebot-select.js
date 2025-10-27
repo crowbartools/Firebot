@@ -2,7 +2,7 @@
 
 (function () {
 
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     const firebotSelectComponent = {
         bindings: {
@@ -48,7 +48,7 @@
 
             const ctrl = this;
 
-            ctrl.id = uuid();
+            ctrl.id = randomUUID();
 
             ctrl.objectMode = false;
 

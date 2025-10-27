@@ -2,7 +2,7 @@
 
 (function() {
 
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     /** @typedef {import("../../../../../types/overlay-widgets").OverlayWidgetType} OverlayWidgetType */
     /** @typedef {import("../../../../../types/overlay-widgets").OverlayWidgetConfig} OverlayWidgetConfig */
@@ -214,7 +214,7 @@
                  * @type {OverlayWidgetConfig}
                  */
                 $ctrl.widget = {
-                    id: uuid(),
+                    id: randomUUID(),
                     name: null,
                     type: null,
                     active: true,

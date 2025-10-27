@@ -1,6 +1,6 @@
 'use strict';
 
-const { v4: uuid } = require("uuid");
+const { randomUUID } = require("crypto");
 
 const { EffectTrigger } = require("../../shared/effect-constants");
 const { AccountAccess } = require('./account-access');
@@ -143,7 +143,7 @@ function runEffects(runEffectsContext) {
     return new Promise(async (resolve) => {
         runEffectsContext = structuredClone(runEffectsContext);
 
-        runEffectsContext.executionId = uuid();
+        runEffectsContext.executionId = randomUUID();
 
         const trigger = runEffectsContext.trigger,
             effects = runEffectsContext.effects.list;
@@ -198,7 +198,7 @@ function runEffects(runEffectsContext) {
             }));
 
             try {
-                const effectExecutionId = uuid();
+                const effectExecutionId = randomUUID();
                 const effectAbortController = new AbortController();
 
                 addEffectAbortController("effect", effect.id, {

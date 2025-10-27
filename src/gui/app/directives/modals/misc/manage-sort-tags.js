@@ -1,7 +1,7 @@
 "use strict";
 
 (function() {
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     angular.module("firebotApp")
         .component("manageSortTagsModal", {
@@ -74,7 +74,7 @@
                                 tag.name = name;
                             } else {
                                 $ctrl.tags.push({
-                                    id: uuid(),
+                                    id: randomUUID(),
                                     name: name
                                 });
                             }

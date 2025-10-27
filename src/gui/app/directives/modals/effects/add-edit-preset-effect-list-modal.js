@@ -1,7 +1,7 @@
 "use strict";
 
 (function() {
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     angular.module("firebotApp").component("addOrEditPresetEffectListModal", {
         template: `
@@ -74,7 +74,7 @@
             $ctrl.isNewPresetList = true;
 
             $ctrl.presetList = {
-                id: uuid(),
+                id: randomUUID(),
                 name: "",
                 effects: null,
                 args: [],

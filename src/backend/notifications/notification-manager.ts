@@ -1,5 +1,5 @@
 import { JsonDB } from "node-json-db";
-import { v4 as uuid } from "uuid";
+import { randomUUID } from "crypto";
 
 import { ProfileManager } from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
@@ -107,7 +107,7 @@ class NotificationManager {
     addNotification(notification: NotificationBase, permanentlySave = false): Notification {
         const newNotification: Notification = {
             ...notification,
-            id: uuid(),
+            id: randomUUID(),
             timestamp: new Date(),
             read: false,
             saved: permanentlySave ?? false,

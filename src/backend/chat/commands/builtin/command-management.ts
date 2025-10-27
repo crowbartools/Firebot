@@ -1,4 +1,4 @@
-import { v4 as uuid } from "uuid";
+import { randomUUID } from "crypto";
 
 import { SystemCommand } from "../../../../types/commands";
 import { EffectInstance } from "../../../../types/effects";
@@ -308,10 +308,10 @@ export const CommandManagementSystemCommand: SystemCommand = {
                         global: 0
                     },
                     effects: {
-                        id: uuid(),
+                        id: randomUUID(),
                         list: [
                             {
-                                id: uuid(),
+                                id: randomUUID(),
                                 type: "firebot:chat",
                                 message: remainingData
                             }
@@ -382,7 +382,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                         global: 0
                     },
                     effects: {
-                        id: uuid(),
+                        id: randomUUID(),
                         list: effectsData.effects
                     }
                 };
@@ -444,7 +444,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                     chatEffect.message = remainingData;
                 } else {
                     const chatEffect = {
-                        id: uuid(),
+                        id: randomUUID(),
                         type: "firebot:chat",
                         message: remainingData
                     };
@@ -617,7 +617,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                 }
 
                 restrictions.push({
-                    id: uuid(),
+                    id: randomUUID(),
                     type: "firebot:permissions",
                     mode: "roles",
                     roleIds: roleIds

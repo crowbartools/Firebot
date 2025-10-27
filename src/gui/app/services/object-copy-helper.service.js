@@ -2,7 +2,7 @@
 
 (function() {
 
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     angular
         .module("firebotApp")
@@ -37,7 +37,7 @@
                 return JSON.parse(angular.toJson(copiedEffects))
                     .filter(e => !effectDefs || effectDefs.find(ed => ed.id === e.type))
                     .map((e) => {
-                        e.id = uuid();
+                        e.id = randomUUID();
                         return e;
                     });
             };
@@ -52,7 +52,7 @@
                     const value = copiedObject[key];
 
                     if (key === "id") {
-                        copiedObject[key] = uuid();
+                        copiedObject[key] = randomUUID();
                     } else if (value && typeof value === "object") {
                         copiedObject[key] = service.copyAndReplaceIds(value);
                     }

@@ -13,11 +13,11 @@
             modalInstance: "<"
         },
         controller: function(utilityService, currencyService, viewerRolesService, logger) {
-            const { v4: uuid } = require("uuid");
+            const { randomUUID } = require("crypto");
             const $ctrl = this;
 
             $ctrl.currency = {
-                id: uuid(),
+                id: randomUUID(),
                 name: "Points",
                 active: true,
                 payout: 5,

@@ -12,7 +12,7 @@ const path = require("path");
 const frontendCommunicator = require('../../common/frontend-communicator');
 const { wait } = require("../../utils");
 const { parseYoutubeId } = require("../../../shared/youtube-url-parser");
-const { v4: uuid } = require("uuid");
+const { randomUUID } = require("crypto");
 const { resolveTwitchClipVideoUrl } = require("../../common/handlers/twitch-clip-url-resolver");
 
 /**
@@ -522,7 +522,7 @@ const playVideo = {
                 data.videoStarttime = youtubeData.startTime;
             }
 
-            resourceToken = uuid();
+            resourceToken = randomUUID();
 
         } else if (effect.videoType === "Local Video" || effect.videoType === "Random From Folder") {
             const result = await frontendCommunicator.fireEventAsync("getVideoDuration", data.filepath);

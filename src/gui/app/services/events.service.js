@@ -2,7 +2,7 @@
 
 (function() {
     //This handles events
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     angular.module("firebotApp").factory("eventsService", function(backendCommunicator, objectCopyHelper) {
         const service = {};
@@ -72,7 +72,7 @@
         };
 
         service.createGroup = function(name) {
-            const newId = uuid();
+            const newId = randomUUID();
             const newGroup = {
                 id: newId,
                 name: name,

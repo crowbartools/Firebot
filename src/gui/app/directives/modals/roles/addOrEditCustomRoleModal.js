@@ -2,7 +2,7 @@
 
 (function() {
 
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     angular.module("firebotApp").component("addOrEditCustomRoleModal", {
         template: `
@@ -158,7 +158,7 @@
                 }
 
                 if ($ctrl.isNewRole) {
-                    $ctrl.role.id = uuid();
+                    $ctrl.role.id = randomUUID();
                 }
 
                 $ctrl.close({

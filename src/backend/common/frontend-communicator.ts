@@ -1,5 +1,5 @@
 import { ipcMain } from "electron";
-import { v4 as uuid } from "uuid";
+import { randomUUID } from "crypto";
 
 import type { FrontendCommunicatorModule } from "../../types/script-modules";
 import type { Awaitable } from "../../types/util-types";
@@ -58,7 +58,7 @@ class FrontendCommunicator implements FrontendCommunicatorModule {
         callback: (...args: ExpectedArgs) => ReturnPayload,
         async = false
     ): string {
-        const id = uuid(),
+        const id = randomUUID(),
             event = {
                 id: id,
                 callback: callback,

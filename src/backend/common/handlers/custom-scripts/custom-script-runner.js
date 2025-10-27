@@ -1,6 +1,6 @@
 "use strict";
 const { shell } = require("electron");
-const { v4: uuid } = require("uuid");
+const { randomUUID } = require("crypto");
 
 const { SettingsManager } = require("../../settings-manager");
 const { ProfileManager } = require("../../profile-manager");
@@ -122,12 +122,12 @@ async function executeScript(scriptData, trigger, isStartupScript = false) {
         effectsObj = effects;
     } else if (effectsIsArray) {
         effectsObj = {
-            id: uuid(),
+            id: randomUUID(),
             list: effects
                 .filter(e => e.type != null && e.type !== "")
                 .map((e) => {
                     if (e.id == null) {
-                        e.id = uuid();
+                        e.id = randomUUID();
                     }
                     return e;
                 })

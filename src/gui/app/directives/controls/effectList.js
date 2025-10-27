@@ -1,7 +1,7 @@
 "use strict";
 (function () {
 
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     angular
         .module('firebotApp')
@@ -240,7 +240,7 @@
                         ctrl.effectsData.list = [];
                     }
                     if (ctrl.effectsData.id == null) {
-                        ctrl.effectsData.id = uuid();
+                        ctrl.effectsData.id = randomUUID();
                     }
 
                     ctrl.effectsData.list.forEach((e) => {
@@ -534,7 +534,7 @@
                         }
 
                         ctrl.effectsData.list = [{
-                            id: uuid(),
+                            id: randomUUID(),
                             type: "firebot:run-effect-list",
                             active: true,
                             listType: "preset",
@@ -776,7 +776,7 @@
 
                 ctrl.duplicateEffectAtIndex = function (index) {
                     const effect = JSON.parse(angular.toJson(ctrl.effectsData.list[index]));
-                    effect.id = uuid();
+                    effect.id = randomUUID();
                     ctrl.effectsData.list.splice(index + 1, 0, effect);
                     ctrl.effectsUpdate();
                 };
@@ -851,7 +851,7 @@
                             const { selectedEffectDef } = resp;
 
                             const newEffect = {
-                                id: uuid(),
+                                id: randomUUID(),
                                 type: selectedEffectDef.id,
                                 active: true
                             };

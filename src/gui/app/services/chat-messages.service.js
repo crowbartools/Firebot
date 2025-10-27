@@ -2,7 +2,7 @@
 (function() {
     const moment = require('moment');
 
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     angular
         .module('firebotApp')
@@ -134,7 +134,7 @@
             // Chat Alert Message
             service.chatAlertMessage = function(message, icon = "fad fa-exclamation-circle") {
                 const alertItem = {
-                    id: uuid(),
+                    id: randomUUID(),
                     type: "alert",
                     message: message,
                     icon: icon
@@ -308,7 +308,7 @@
 
             backendCommunicator.on("twitch:chat:rewardredemption", (redemption) => {
                 const redemptionItem = {
-                    id: uuid(),
+                    id: randomUUID(),
                     type: "redemption",
                     data: redemption
                 };
@@ -345,7 +345,7 @@
                 service.clearUserList();
             });
 
-            backendCommunicator.on("twitch:chat:automod-update", ({messageId, newStatus, resolverName }) => {
+            backendCommunicator.on("twitch:chat:automod-update", ({ messageId, newStatus, resolverName }) => {
 
                 const messageItem = service.chatQueue.find(i => i.type === "message" &&
                     (i.data.id === messageId || i.data.autoModHeldMessageId === messageId)
@@ -359,7 +359,7 @@
                 messageItem.data.autoModResolvedBy = resolverName;
             });
 
-            backendCommunicator.on("twitch:chat:automod-update-error", ({messageId, likelyExpired}) => {
+            backendCommunicator.on("twitch:chat:automod-update-error", ({ messageId, likelyExpired }) => {
                 const messageItem = service.chatQueue.find(i => i.type === "message" &&
                     (i.data.id === messageId || i.data.autoModHeldMessageId === messageId)
                 );
@@ -459,7 +459,7 @@
 
                 // Push new message to queue.
                 const messageItem = {
-                    id: uuid(),
+                    id: randomUUID(),
                     type: "message",
                     data: chatMessage
                 };
