@@ -663,6 +663,7 @@ const playVideo = {
 
                 // Generate UUID to use as id
 
+                // eslint-disable-next-line no-undef
                 const elementId = uuid();
                 const videoPlayerId = `${elementId}-video`;
 
@@ -697,7 +698,7 @@ const playVideo = {
                         </video>
                     `;
 
-
+                    // eslint-disable-next-line no-undef
                     const wrapperId = uuid();
                     const wrappedHtml = getPositionWrappedHTML(wrapperId, positionData, videoElement); // eslint-disable-line no-undef
 
@@ -758,12 +759,12 @@ const playVideo = {
                         }
                     };
                 } else {
-
+                    // eslint-disable-next-line no-undef
                     const ytPlayerId = `yt-${uuid()}`;
 
                     const youtubeElement = `<div id="${ytPlayerId}" style="display:none;${sizeStyles}"></div>`;
 
-
+                    // eslint-disable-next-line no-undef
                     const wrapperId = uuid();
                     const wrappedHtml = getPositionWrappedHTML(wrapperId, positionData, youtubeElement); // eslint-disable-line no-undef
 

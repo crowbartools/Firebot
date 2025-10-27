@@ -1,6 +1,7 @@
 import fs from "fs";
 import fsp from "fs/promises";
 import path from "path";
+import { randomUUID } from "crypto";
 import { EffectType } from "../../../types/effects";
 import logger from "../../logwrapper";
 
@@ -202,7 +203,7 @@ const fileWriter: EffectType<{
         let text = effect.text || "";
         let escapedNewline = "␚";
         while (text.includes(escapedNewline)) {
-            escapedNewline = `␚${uuid()}␚`;
+            escapedNewline = `␚${randomUUID()}␚`;
         }
         text = text.replace(/\\\\n/g, escapedNewline);
         text = effect.writeMode === "suffix" ? text.replace(/\\n/g, "\n") : text.replace(/\\n/g, "\n").trim();
