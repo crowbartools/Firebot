@@ -2,7 +2,7 @@ import { EffectType, EffectList } from "../../../types/effects";
 import { KeyValuePair } from "../../../types/util-types";
 
 import { AccountAccess } from "../../common/account-access";
-import customVariableManager from "../../common/custom-variable-manager";
+import { CustomVariableManager } from "../../common/custom-variable-manager";
 import effectRunner from "../../common/effect-runner";
 import twitchAuth from "../../streaming-platforms/twitch/auth/twitch-auth";
 import logger from "../../logwrapper";
@@ -309,7 +309,7 @@ const effect: EffectType<{
              * Deprecated
              */
             if (effect.options.putResponseInVariable) {
-                customVariableManager.addCustomVariable(
+                CustomVariableManager.addCustomVariable(
                     effect.options.variableName,
                     responseData,
                     effect.options.variableTtl || 0,

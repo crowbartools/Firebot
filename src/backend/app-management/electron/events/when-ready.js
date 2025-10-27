@@ -191,8 +191,8 @@ exports.whenReady = async () => {
     windowManagement.updateSplashScreenStatus("Loading custom variables...");
     const { SettingsManager } = require("../../../common/settings-manager");
     if (SettingsManager.getSetting("PersistCustomVariables")) {
-        const customVariableManager = require("../../../common/custom-variable-manager");
-        customVariableManager.loadVariablesFromFile();
+        const { CustomVariableManager } = require("../../../common/custom-variable-manager");
+        CustomVariableManager.loadVariablesFromFile();
     }
 
     windowManagement.updateSplashScreenStatus("Loading sort tags...");

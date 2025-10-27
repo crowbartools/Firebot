@@ -1,18 +1,20 @@
-"use strict";
+import type { EffectType } from "../../../types/effects";
+import { CustomVariableManager } from "../../common/custom-variable-manager";
 
-const customVariableManager = require("../../common/custom-variable-manager");
-const { EffectCategory } = require('../../../shared/effect-constants');
-
-const fileWriter = {
+const effect: EffectType<{
+    name: string;
+    variableData: string;
+    ttl: number;
+    propertyPath: string;
+}> = {
     definition: {
         id: "firebot:customvariable",
         name: "Custom Variable",
         description: "Save data to a custom variable that you can then use elsewhere.",
         icon: "fad fa-value-absolute",
-        categories: [EffectCategory.SCRIPTING],
+        categories: ["scripting"],
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container header="Variable Name">
             <p class="muted">You'll use this name to reference this elsewhere via $customVariable[name].</p>
@@ -89,7 +91,7 @@ const fileWriter = {
         $scope.initialEditorLabel = $scope.effect?.variableData?.startsWith("{") || $scope.effect?.variableData?.startsWith("[") ? "JSON" : "Basic";
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.name == null || effect.name === "") {
             errors.push("Please provide a variable name.");
         }
@@ -98,13 +100,10 @@ const fileWriter = {
     getDefaultLabel: (effect) => {
         return effect.name;
     },
-    onTriggerEvent: async (event) => {
-        const { effect } = event;
-
-        customVariableManager.addCustomVariable(effect.name, effect.variableData, effect.ttl, effect.propertyPath);
-
+    onTriggerEvent: ({ effect }) => {
+        CustomVariableManager.addCustomVariable(effect.name, effect.variableData, effect.ttl, effect.propertyPath);
         return true;
     }
 };
 
-module.exports = fileWriter;
+export = effect;

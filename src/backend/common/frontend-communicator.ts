@@ -35,6 +35,13 @@ class FrontendCommunicator implements FrontendCommunicatorModule {
         }
     }
 
+    sendToVariableInspector(eventName: string, data?: unknown): void {
+        if (globalThis.variableInspectorWindow?.isDestroyed() === false
+            && globalThis.variableInspectorWindow?.webContents?.isDestroyed() === false) {
+            globalThis.variableInspectorWindow.webContents.send(eventName, data);
+        }
+    }
+
     fireEventAsync<ReturnPayload = void>(type: string, data?: unknown): Promise<ReturnPayload> {
         return new Promise((resolve) => {
             if (globalThis.renderWindow != null) {

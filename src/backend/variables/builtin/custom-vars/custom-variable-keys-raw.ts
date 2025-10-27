@@ -1,5 +1,5 @@
 import type { ReplaceVariable, Trigger } from "../../../../types/variables";
-import customVariableManager from "../../../common/custom-variable-manager";
+import { CustomVariableManager } from "../../../common/custom-variable-manager";
 
 function isObject(data: unknown) {
     return typeof data === 'object' && !(data instanceof String);
@@ -24,7 +24,7 @@ const model : ReplaceVariable = {
         name: string,
         propertyPath: string
     ) : Array<unknown> => {
-        const data = customVariableManager.getCustomVariable(name, propertyPath);
+        const data = CustomVariableManager.getCustomVariable(name, propertyPath);
         if (data == null || !isObject(data)) {
             return [];
         }

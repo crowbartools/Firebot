@@ -1,14 +1,14 @@
 "use strict";
 
 const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
+const { CustomVariableManager } = require("../../common/custom-variable-manager");
 const { SettingsManager } = require("../../common/settings-manager");
+const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/http-server-manager");
 const logger = require("../../logwrapper");
 const { wait } = require("../../utils");
-const customVariableManager = require("../../common/custom-variable-manager");
 const { resolveTwitchClipVideoUrl } = require("../../common/handlers/twitch-clip-url-resolver");
-const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 const discord = require("../../integrations/builtin/discord/discord-message-sender");
 const discordEmbedBuilder = require("../../integrations/builtin/discord/discord-embed-builder");
 
@@ -259,7 +259,7 @@ const clip = {
             }
 
             if (effect.options.putClipUrlInVariable) {
-                customVariableManager.addCustomVariable(
+                CustomVariableManager.addCustomVariable(
                     effect.options.variableName,
                     clip.url,
                     effect.options.variableTtl || 0,

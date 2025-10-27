@@ -1,5 +1,5 @@
 import type { ReplaceVariable, Trigger } from "../../../../types/variables";
-import customVariableManager from "../../../common/custom-variable-manager";
+import { CustomVariableManager } from "../../../common/custom-variable-manager";
 
 const model : ReplaceVariable = {
     definition: {
@@ -29,11 +29,8 @@ const model : ReplaceVariable = {
         propertyPath: string,
         defaultData: unknown
     ) : unknown => {
-        const data = customVariableManager.getCustomVariable(name, propertyPath, defaultData);
-        if (data == null) {
-            return null;
-        }
-        return data;
+        const data = CustomVariableManager.getCustomVariable(name, propertyPath, defaultData);
+        return data ?? null;
     }
 };
 

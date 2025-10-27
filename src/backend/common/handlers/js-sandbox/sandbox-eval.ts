@@ -2,8 +2,8 @@ import { join } from 'node:path';
 import { BrowserWindow, MessageChannelMain, session } from 'electron';
 
 import type { Trigger } from '../../../../types/triggers';
+import { CustomVariableManager } from '../../custom-variable-manager';
 import { ReplaceVariableManager } from '../../../variables/replace-variable-manager';
-import { getCustomVariable } from '../../custom-variable-manager';
 import logger from '../../../logwrapper';
 
 const preloadPath = join(__dirname, 'sandbox-preload.js');
@@ -16,7 +16,7 @@ handlers.set('getCustomVariable', (_trigger, name) => {
     if (name == null || typeof name !== 'string') {
         throw new Error('variable name must be a string');
     }
-    return getCustomVariable(name);
+    return CustomVariableManager.getCustomVariable(name);
 });
 
 handlers.set('evaluateVariableExpression', (trigger, expressionString) => {
@@ -66,24 +66,24 @@ export const evalSandboxedJs = async (code: string, args: unknown[], trigger: Tr
 
             try {
                 sandbox.window.webContents.removeAllListeners();
-            } catch (err) {}
+            } catch { }
             try {
                 sandbox.window.removeAllListeners();
                 sandbox.window.destroy();
-            } catch (err) {}
+            } catch { }
             sandbox.window = null;
 
             try {
                 sandbox.tunnel.close();
                 sandbox.tunnel.removeAllListeners();
-            } catch (err) {}
+            } catch { }
             sandbox.tunnel = null;
             portToSandbox = null;
 
             try {
                 portToBackend.close();
                 portToBackend.removeAllListeners();
-            } catch (err) {}
+            } catch { }
             portToBackend = null;
         };
 
@@ -135,7 +135,7 @@ export const evalSandboxedJs = async (code: string, args: unknown[], trigger: Tr
                         }
                         sandbox.tunnel.postMessage({ ...base, status: "ok", result });
                     } catch (err) {
-                        sandbox.tunnel.postMessage({ ...base, status: "error", result: err.message });
+                        sandbox.tunnel.postMessage({ ...base, status: "error", result: (err as Error).message });
                     }
                 } else {
                     sandbox.tunnel.postMessage({ ...base, status: "error", result: "unknown method" });
@@ -244,6 +244,6 @@ export const evalSandboxedJs = async (code: string, args: unknown[], trigger: Tr
         });
 
         // load the sandbox html
-        sandbox.window.loadFile(htmlPath);
+        void sandbox.window.loadFile(htmlPath);
     });
 };

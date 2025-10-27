@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 
 import type { RestrictionType } from "../../../types/restrictions";
-import customVariableManager from "../../common/custom-variable-manager";
+import { CustomVariableManager } from "../../common/custom-variable-manager";
 
 const model: RestrictionType<{
     name: string;
@@ -39,7 +39,7 @@ const model: RestrictionType<{
     predicate: (_, restrictionData) => {
         return new Promise((resolve, reject) => {
             let passed = false;
-            const cachedVariable = customVariableManager.getCustomVariable(restrictionData.name);
+            const cachedVariable = CustomVariableManager.getCustomVariable(restrictionData.name);
 
             let value = restrictionData.value;
             try {

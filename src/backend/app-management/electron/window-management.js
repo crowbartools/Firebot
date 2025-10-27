@@ -43,7 +43,6 @@ setupTitlebar();
 let variableInspectorWindow = null;
 
 async function createVariableInspectorWindow() {
-
     if (variableInspectorWindow != null && !variableInspectorWindow.isDestroyed()) {
         if (variableInspectorWindow.isMinimized()) {
             variableInspectorWindow.restore();
@@ -81,6 +80,8 @@ async function createVariableInspectorWindow() {
         variableInspectorWindow = null;
     });
 
+    global.variableInspectorWindow = variableInspectorWindow;
+
     await variableInspectorWindow.loadURL(
         url.format({
             pathname: path.join(__dirname, "../../../gui/variable-inspector/index.html"),
@@ -88,8 +89,10 @@ async function createVariableInspectorWindow() {
             slashes: true
         }));
 
-    const customVariableManager = require("../../common/custom-variable-manager");
-    variableInspectorWindow.webContents.send("all-variables", customVariableManager.getInitialInspectorVariables());
+    await variableInspectorWindow.on("close", () => {
+        variableInspectorWindow.destroy();
+        global.variableInspectorWindow = null;
+    });
 }
 
 
@@ -544,8 +547,6 @@ async function createMainWindow() {
 
     // wait for the main window's content to load, then show it
     mainWindow.webContents.on("did-finish-load", async () => {
-
-
         createTray(mainWindow);
 
         mainWindow.show();
@@ -603,6 +604,7 @@ async function createMainWindow() {
         if (variableInspectorWindow?.isDestroyed() === false) {
             logger.debug("Closing variable inspector window");
             variableInspectorWindow.destroy();
+            global.variableInspectorWindow = null;
         }
 
         const effectQueueMonitorWindow = getEffectQueueMonitorWindow();
@@ -667,39 +669,6 @@ function updateSplashScreenStatus(newStatus) {
     splashscreenWindow.webContents.send("update-splash-screen-status", newStatus);
 }
 
-function sendVariableCreateToInspector(key, value, ttl) {
-    if (variableInspectorWindow == null || variableInspectorWindow.isDestroyed()) {
-        return;
-    }
-
-    variableInspectorWindow.webContents.send("variable-set", {
-        key,
-        value,
-        ttl
-    });
-}
-
-function sendVariableExpireToInspector(key, value) {
-    if (variableInspectorWindow == null || variableInspectorWindow.isDestroyed()) {
-        return;
-    }
-
-    variableInspectorWindow.webContents.send("variable-expire", {
-        key,
-        value
-    });
-}
-
-function sendVariableDeleteToInspector(key) {
-    if (variableInspectorWindow == null || variableInspectorWindow.isDestroyed()) {
-        return;
-    }
-
-    variableInspectorWindow.webContents.send("variable-deleted", {
-        key
-    });
-}
-
 SettingsManager.on("settings:setting-updated:OverlayInstances", createAppMenu);
 
 frontendCommunicator.on("getAllDisplays", () => {
@@ -716,9 +685,6 @@ frontendCommunicator.on("takeScreenshot", (displayId) => {
 
 exports.updateSplashScreenStatus = updateSplashScreenStatus;
 exports.createVariableInspectorWindow = createVariableInspectorWindow;
-exports.sendVariableCreateToInspector = sendVariableCreateToInspector;
-exports.sendVariableExpireToInspector = sendVariableExpireToInspector;
-exports.sendVariableDeleteToInspector = sendVariableDeleteToInspector;
 exports.createStreamPreviewWindow = createStreamPreviewWindow;
 exports.createMainWindow = createMainWindow;
 exports.createSplashScreen = createSplashScreen;

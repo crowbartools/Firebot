@@ -11,7 +11,7 @@ import type {
 import type { Awaitable } from "../../types/util-types";
 import { SettingsManager } from "../common/settings-manager";
 import macroManager from "./macro-manager";
-import { getCustomVariable } from "../common/custom-variable-manager";
+import { CustomVariableManager } from "../common/custom-variable-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
 import { getEventIdFromTriggerData } from "../utils";
@@ -390,7 +390,7 @@ const manager = new ReplaceVariableManager();
 // custom variable shorthand
 manager.registerLookupHandler("$", name => ({
     evaluator: (_, ...path: string[]) => {
-        let result = getCustomVariable(name) as Record<string, unknown>;
+        let result = CustomVariableManager.getCustomVariable(name);
         for (const item of path) {
             if (result == null) {
                 return null;
