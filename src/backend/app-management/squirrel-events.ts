@@ -1,33 +1,31 @@
-"use strict";
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 
-const electron = require("electron");
-const { app } = electron;
+import { app } from "electron";
+import { ProgId, Regedit, ShellOption } from "electron-regedit";
+import path from "path";
+import fs from "fs";
+import cp from "child_process";
 
-const path = require("path");
-const fs = require("fs");
-const dataAccess = require("../common/data-access.js");
+import * as dataAccess from "../common/data-access";
 
-exports.handleSquirrelEvents = () => {
+export function handleSquirrelEvents() {
     if (process.platform === "win32") {
-
-        const { ProgId, Regedit, ShellOption } = require('electron-regedit');
-
         new ProgId({
-            description: 'Firebot',
+            description: "Firebot",
             appName: "firebot",
             friendlyAppName: "Firebot",
             squirrel: "Firebot v5.exe",
-            icon: './resources/firebot-setup-file-icon.ico',
-            extensions: ['firebotsetup'],
+            icon: "./resources/firebot-setup-file-icon.ico",
+            extensions: ["firebotsetup"],
             shell: [
                 new ShellOption({ verb: ShellOption.OPEN, selected: true })
             ]
         });
 
-        let cp;
-        let updateDotExe;
-        let target;
-        let child;
+        let updateDotExe: string;
+        let target: string;
+        let child: cp.ChildProcess;
         switch (process.argv[1]) {
             case "--squirrel-updated":
             case "--squirrel-install":
@@ -39,7 +37,6 @@ exports.handleSquirrelEvents = () => {
                 Regedit.installAll().finally(() => {
                 // Install shortcuts
                     if (process.argv[1] === "--squirrel-install") {
-                        cp = require("child_process");
                         updateDotExe = path.resolve(path.dirname(process.execPath), "..", "update.exe");
                         target = path.basename(process.execPath);
                         child = cp.spawn(updateDotExe, ["--createShortcut", target], {
@@ -61,7 +58,6 @@ exports.handleSquirrelEvents = () => {
 
                 Regedit.uninstallAll().finally(() => {
                 // Remove shortcuts
-                    cp = require("child_process");
                     updateDotExe = path.resolve(
                         path.dirname(process.execPath),
                         "..",
