@@ -85,11 +85,14 @@ const effect: EffectType<{
             effect.message = `/me ${effect.message}`;
         }
 
+        // We default to sending as the bot unless the user specifies otherwise
+        const sendAsBot = (effect.chatter == null || effect.chatter.toLowerCase() === "bot");
+
         if (effect.whisper) {
             const user = await TwitchApi.users.getUserByName(effect.whisper);
-            await TwitchApi.whispers.sendWhisper(user.id, effect.message, effect.chatter.toLowerCase() === "bot");
+            await TwitchApi.whispers.sendWhisper(user.id, effect.message, sendAsBot);
         } else {
-            await TwitchApi.chat.sendChatMessage(effect.message, effect.sendAsReply ? messageId : null, effect.chatter.toLowerCase() === "bot");
+            await TwitchApi.chat.sendChatMessage(effect.message, effect.sendAsReply ? messageId : null, sendAsBot);
         }
 
         return true;
