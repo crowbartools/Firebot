@@ -3,11 +3,11 @@ import { ChatClient } from "@twurple/chat";
 
 import { AccountAccess } from "../common/account-access";
 import { ActiveUserHandler } from "./active-user-handler";
+import { FirebotDeviceAuthProvider } from "../auth/firebot-device-auth-provider";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 import chatHelpers from "./chat-helpers";
 import chatRolesManager from "../roles/chat-roles-manager";
 import chatterPoll from "../streaming-platforms/twitch/chatter-poll";
-import firebotDeviceAuthProvider from "../auth/firebot-device-auth-provider";
 import twitchChatListeners from "./chat-listeners/twitch-chat-listeners";
 import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
@@ -61,8 +61,8 @@ class TwitchChat extends EventEmitter {
             return;
         }
 
-        const streamerAuthProvider = firebotDeviceAuthProvider.streamerProvider;
-        if (streamerAuthProvider == null && firebotDeviceAuthProvider.botProvider == null) {
+        const streamerAuthProvider = FirebotDeviceAuthProvider.streamerProvider;
+        if (streamerAuthProvider == null && FirebotDeviceAuthProvider.botProvider == null) {
             return;
         }
 
@@ -148,7 +148,7 @@ class TwitchChat extends EventEmitter {
                 if (bot.loggedIn) {
 
                     this._botChatClient = new ChatClient({
-                        authProvider: firebotDeviceAuthProvider.botProvider,
+                        authProvider: FirebotDeviceAuthProvider.botProvider,
                         requestMembershipEvents: true
                     });
 

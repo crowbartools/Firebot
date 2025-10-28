@@ -200,4 +200,4 @@ authManager.on("auth-success", async (authData) => {
     }
 });
 
-export = twitchAuthProviders;
+export { twitchAuthProviders as TwitchAuthProviders };

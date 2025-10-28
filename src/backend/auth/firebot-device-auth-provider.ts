@@ -5,7 +5,7 @@ import { AuthDetails, AuthProviderDefinition } from "../../types/auth";
 import { AccountAccess } from "../common/account-access";
 import { DeviceAuthProvider } from "../streaming-platforms/twitch/auth/twitch-device-auth-provider";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
-import twitchAuth from "../streaming-platforms/twitch/auth/twitch-auth";
+import { TwitchAuthProviders } from "../streaming-platforms/twitch/auth/twitch-auth";
 import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
 
@@ -43,13 +43,13 @@ class FirebotDeviceAuthProvider {
         if (AccountAccess.getAccounts().streamer.loggedIn) {
             const streamerAcccount = AccountAccess.getAccounts().streamer;
 
-            const scopes = Array.isArray(twitchAuth.streamerAccountProvider.scopes)
-                ? twitchAuth.streamerAccountProvider.scopes
-                : twitchAuth.streamerAccountProvider.scopes.split(" ");
+            const scopes = Array.isArray(TwitchAuthProviders.streamerAccountProvider.scopes)
+                ? TwitchAuthProviders.streamerAccountProvider.scopes
+                : TwitchAuthProviders.streamerAccountProvider.scopes.split(" ");
 
             this.streamerProvider = new DeviceAuthProvider({
                 userId: streamerAcccount.userId,
-                clientId: twitchAuth.twitchClientId,
+                clientId: TwitchAuthProviders.twitchClientId,
                 accessToken: {
                     accessToken: streamerAcccount.auth.access_token,
                     refreshToken: streamerAcccount.auth.refresh_token,
@@ -73,13 +73,13 @@ class FirebotDeviceAuthProvider {
         if (AccountAccess.getAccounts().bot.loggedIn) {
             const botAcccount = AccountAccess.getAccounts().bot;
 
-            const scopes: string[] = Array.isArray(twitchAuth.botAccountProvider.scopes)
-                ? twitchAuth.botAccountProvider.scopes
-                : twitchAuth.botAccountProvider.scopes.split(" ");
+            const scopes: string[] = Array.isArray(TwitchAuthProviders.botAccountProvider.scopes)
+                ? TwitchAuthProviders.botAccountProvider.scopes
+                : TwitchAuthProviders.botAccountProvider.scopes.split(" ");
 
             this.botProvider = new DeviceAuthProvider({
                 userId: botAcccount.userId,
-                clientId: twitchAuth.twitchClientId,
+                clientId: TwitchAuthProviders.twitchClientId,
                 accessToken: {
                     accessToken: botAcccount.auth.access_token,
                     refreshToken: botAcccount.auth.refresh_token,
@@ -129,11 +129,11 @@ class FirebotDeviceAuthProvider {
 
         switch (request.accountType) {
             case "streamer":
-                definition = twitchAuth.streamerAccountProvider;
+                definition = TwitchAuthProviders.streamerAccountProvider;
                 break;
 
             case "bot":
-                definition = twitchAuth.botAccountProvider;
+                definition = TwitchAuthProviders.botAccountProvider;
                 break;
 
             default:
@@ -189,4 +189,4 @@ frontendCommunicator.on("validate-twitch-accounts", () => {
     firebotDeviceAuthProvider.validateTwitchAccounts();
 });
 
-export = firebotDeviceAuthProvider;
+export { firebotDeviceAuthProvider as FirebotDeviceAuthProvider };

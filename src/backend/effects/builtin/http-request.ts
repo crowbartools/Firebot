@@ -3,8 +3,8 @@ import { KeyValuePair } from "../../../types/util-types";
 
 import { AccountAccess } from "../../common/account-access";
 import { CustomVariableManager } from "../../common/custom-variable-manager";
+import { TwitchAuthProviders } from "../../streaming-platforms/twitch/auth/twitch-auth";
 import effectRunner from "../../common/effect-runner";
-import twitchAuth from "../../streaming-platforms/twitch/auth/twitch-auth";
 import logger from "../../logwrapper";
 
 type ErrorWithResponseData = Error & {
@@ -250,7 +250,7 @@ const effect: EffectType<{
             headers = {
                 ...headers,
                 "Authorization": `Bearer ${accessToken}`,
-                "Client-ID": twitchAuth.twitchClientId
+                "Client-ID": TwitchAuthProviders.twitchClientId
             };
         }
 
