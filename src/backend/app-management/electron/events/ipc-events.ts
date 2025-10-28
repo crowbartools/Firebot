@@ -2,7 +2,7 @@ import { app } from "electron";
 import os from "os";
 import frontendCommunicator from "../../../common/frontend-communicator";
 
-export = () => {
+export function setupIpcEvents() {
     frontendCommunicator.on("preload.getAppDetails", () => ({
         version: app.getVersion(),
         locale: app.getLocale(),

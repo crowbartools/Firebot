@@ -5,7 +5,7 @@ import logger from "../../../logwrapper";
 export async function whenReady() {
 
     logger.debug("...Applying IPC events");
-    const setupIpcEvents = (await import("./ipc-events")).default;
+    const { setupIpcEvents } = await import("./ipc-events");
     setupIpcEvents();
 
     logger.debug("...Checking for setup file");
