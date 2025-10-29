@@ -1,17 +1,18 @@
-"use strict";
+import type { EffectType } from "../../../types/effects";
+import { TwitchApi } from "../../streaming-platforms/twitch/api";
+import logger from '../../logwrapper';
 
-const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
-const logger = require('../../logwrapper');
-const { TwitchApi } = require("../../streaming-platforms/twitch/api");
-
-const model = {
+const effect: EffectType<{
+    action: "Mod" | "Unmod";
+    username: string;
+}> = {
     definition: {
         id: "firebot:modmod",
         name: "Mod",
         description: "Mod or unmod a user",
         icon: "fad fa-crown",
-        categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
-        dependencies: [EffectDependency.CHAT]
+        categories: ["common", "Moderation", "twitch"],
+        dependencies: ["chat"]
     },
     optionsTemplate: `
     <eos-container header="Action" pad-top="true">
@@ -36,9 +37,8 @@ const model = {
         </div>
     </eos-container>
     `,
-    optionsController: () => {},
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.action == null) {
             errors.push("Please choose an action.");
         }
@@ -47,34 +47,34 @@ const model = {
         }
         return errors;
     },
-    onTriggerEvent: async (event) => {
-        if (event.effect.action === "Mod") {
-            const user = await TwitchApi.users.getUserByName(event.effect.username);
+    onTriggerEvent: async ({ effect }) => {
+        if (effect.action === "Mod") {
+            const user = await TwitchApi.users.getUserByName(effect.username);
 
             if (user != null) {
                 const result = await TwitchApi.moderation.addChannelModerator(user.id);
 
                 if (result === true) {
-                    logger.debug(`${event.effect.username} was modded via the Mod effect.`);
+                    logger.debug(`${effect.username} was modded via the Mod effect.`);
                 } else {
-                    logger.error(`${event.effect.username} was unable to be modded via the Mod effect.`);
+                    logger.error(`${effect.username} was unable to be modded via the Mod effect.`);
                 }
             } else {
-                logger.warn(`User ${event.effect.username} does not exist and could not be modded via the Mod effect`);
+                logger.warn(`User ${effect.username} does not exist and could not be modded via the Mod effect`);
             }
-        } else if (event.effect.action === "Unmod") {
-            const user = await TwitchApi.users.getUserByName(event.effect.username);
+        } else if (effect.action === "Unmod") {
+            const user = await TwitchApi.users.getUserByName(effect.username);
 
             if (user != null) {
                 const result = await TwitchApi.moderation.removeChannelModerator(user.id);
 
                 if (result === true) {
-                    logger.debug(`${event.effect.username} was unmodded via the Mod effect.`);
+                    logger.debug(`${effect.username} was unmodded via the Mod effect.`);
                 } else {
-                    logger.error(`${event.effect.username} was unable to be unmodded via the Mod effect.`);
+                    logger.error(`${effect.username} was unable to be unmodded via the Mod effect.`);
                 }
             } else {
-                logger.warn(`User ${event.effect.username} does not exist and could not be unmodded via the Mod effect`);
+                logger.warn(`User ${effect.username} does not exist and could not be unmodded via the Mod effect`);
             }
         }
 
@@ -82,4 +82,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export = effect;

@@ -1,17 +1,17 @@
-"use strict";
+import type { EffectType } from "../../../types/effects";
+import { TwitchApi } from "../../streaming-platforms/twitch/api";
+import logger from '../../logwrapper';
 
-const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
-const logger = require('../../logwrapper');
-const { TwitchApi } = require("../../streaming-platforms/twitch/api");
-
-const model = {
+const effect: EffectType<{
+    username: string;
+}> = {
     definition: {
         id: "firebot:modpurge",
         name: "Purge",
         description: "Purge a users chat messages from chat.",
         icon: "fad fa-comment-slash",
-        categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
-        dependencies: [EffectDependency.CHAT]
+        categories: ["common", "Moderation", "twitch"],
+        dependencies: ["chat"]
     },
     optionsTemplate: `
     <eos-container header="Target" pad-top="true">
@@ -21,28 +21,27 @@ const model = {
         </div>
     </eos-container>
     `,
-    optionsController: () => {},
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.username == null && effect.username !== "") {
             errors.push("Please enter a username.");
         }
         return errors;
     },
-    onTriggerEvent: async (event) => {
-        const user = await TwitchApi.users.getUserByName(event.effect.username);
+    onTriggerEvent: async ({ effect }) => {
+        const user = await TwitchApi.users.getUserByName(effect.username);
 
         if (user != null) {
             const result = await TwitchApi.moderation.timeoutUser(user.id, 1, "Chat messages purged via Firebot");
 
             if (result === true) {
-                logger.debug(`${event.effect.username} was purged via the Purge effect.`);
+                logger.debug(`${effect.username} was purged via the Purge effect.`);
             } else {
-                logger.error(`${event.effect.username} was unable to be purged via the Purge effect.`);
+                logger.error(`${effect.username} was unable to be purged via the Purge effect.`);
                 return false;
             }
         } else {
-            logger.warn(`User ${event.effect.username} does not exist and could not be purged via the Purge effect.`);
+            logger.warn(`User ${effect.username} does not exist and could not be purged via the Purge effect.`);
             return false;
         }
 
@@ -50,4 +49,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export = effect;

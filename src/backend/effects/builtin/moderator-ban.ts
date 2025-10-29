@@ -1,16 +1,17 @@
-"use strict";
+import type { EffectType } from "../../../types/effects";
+import { TwitchApi } from "../../streaming-platforms/twitch/api";
+import logger from '../../logwrapper';
 
-const { EffectCategory } = require('../../../shared/effect-constants');
-const logger = require('../../logwrapper');
-const { TwitchApi } = require("../../streaming-platforms/twitch/api");
-
-const model = {
+const effect: EffectType<{
+    action: "Ban" | "Unban";
+    username: string;
+}> = {
     definition: {
         id: "firebot:modban",
         name: "Ban",
         description: "Ban or unban a user.",
         icon: "fad fa-ban",
-        categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
+        categories: ["common", "Moderation", "twitch"],
         dependencies: []
     },
     optionsTemplate: `
@@ -36,9 +37,8 @@ const model = {
             </div>
         </eos-container>
     `,
-    optionsController: () => {},
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.action == null) {
             errors.push("Please choose a ban action.");
         }
@@ -47,38 +47,38 @@ const model = {
         }
         return errors;
     },
-    onTriggerEvent: async (event) => {
-        if (event.effect.action === "Ban") {
-            const user = await TwitchApi.users.getUserByName(event.effect.username);
+    onTriggerEvent: async ({ effect }) => {
+        if (effect.action === "Ban") {
+            const user = await TwitchApi.users.getUserByName(effect.username);
 
             if (user != null) {
                 const result = await TwitchApi.moderation.banUser(user.id, "Banned by Firebot");
 
                 if (result === true) {
-                    logger.debug(`${event.effect.username} was banned via the Ban effect.`);
+                    logger.debug(`${effect.username} was banned via the Ban effect.`);
                 } else {
-                    logger.error(`${event.effect.username} was unable to be banned via the Ban effect.`);
+                    logger.error(`${effect.username} was unable to be banned via the Ban effect.`);
                     return false;
                 }
             } else {
-                logger.error(`User ${event.effect.username} does not exist and could not be banned via the Ban effect`);
+                logger.error(`User ${effect.username} does not exist and could not be banned via the Ban effect`);
                 return false;
             }
         }
-        if (event.effect.action === "Unban") {
-            const user = await TwitchApi.users.getUserByName(event.effect.username);
+        if (effect.action === "Unban") {
+            const user = await TwitchApi.users.getUserByName(effect.username);
 
             if (user != null) {
                 const result = await TwitchApi.moderation.unbanUser(user.id);
 
                 if (result === true) {
-                    logger.debug(`${event.effect.username} was unbanned via the Ban effect.`);
+                    logger.debug(`${effect.username} was unbanned via the Ban effect.`);
                 } else {
-                    logger.error(`${event.effect.username} was unable to be unbanned via the Ban effect.`);
+                    logger.error(`${effect.username} was unable to be unbanned via the Ban effect.`);
                     return false;
                 }
             } else {
-                logger.warn(`User ${event.effect.username} does not exist and could not be unbanned via the Ban effect`);
+                logger.warn(`User ${effect.username} does not exist and could not be unbanned via the Ban effect`);
                 return false;
             }
         }
@@ -86,4 +86,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export = effect;
