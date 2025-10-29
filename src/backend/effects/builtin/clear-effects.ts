@@ -1,35 +1,27 @@
-"use strict";
+import { SettingsManager } from "../../common/settings-manager";
+import effectQueueRunner from "../../effects/queues/effect-queue-runner";
+import webServer from "../../../server/http-server-manager";
+import frontendCommunicator from "../../common/frontend-communicator";
+import { abortAllEffectLists } from "../../common/effect-abort-helpers";
+import { EffectType } from "../../../types/effects";
 
-const webServer = require("../../../server/http-server-manager");
-const frontendCommunicator = require("../../common/frontend-communicator");
-const effectQueueRunner = require("../../effects/queues/effect-queue-runner").default;
-const { EffectCategory } = require('../../../shared/effect-constants');
-const { SettingsManager } = require("../../common/settings-manager");
-const { abortAllEffectLists } = require("../../common/effect-abort-helpers");
-
-/**
- * The Delay effect
- */
-const delay = {
-    /**
-   * The definition of the Effect
-   */
+const effect: EffectType<{
+    overlay: boolean;
+    overlayInstance: string;
+    sounds: boolean;
+    queues: boolean;
+    queueId: string;
+    abortActiveQueueEffectLists: boolean;
+    activeEffectLists: boolean;
+}> = {
     definition: {
         id: "firebot:clear-effects",
         name: "Clear Effects",
         description: "Remove overlay effects, stop sounds, or clear effect queues",
         icon: "fad fa-minus-circle",
-        categories: [EffectCategory.COMMON, EffectCategory.OVERLAY],
+        categories: ["common", "overlay"],
         dependencies: []
     },
-    /**
-   * Global settings that will be available in the Settings tab
-   */
-    globalSettings: {},
-    /**
-   * The HTML template for the Options view (ie options when effect is added to something such as a button.
-   * You can alternatively supply a url to a html file via optionTemplateUrl
-   */
     optionsTemplate: `
         <eos-container>
             <p>This effect clears currently running effects. Useful, for example, if you are entering a cutscene. You can also use it to purge effect queues.</p>
@@ -84,9 +76,6 @@ const delay = {
             />
         </eos-container>
     `,
-    /**
-   * The controller for the front end Options
-   */
     optionsController: ($scope, effectQueuesService, settingsService) => {
         $scope.settings = settingsService;
         $scope.effectQueues = effectQueuesService.getEffectQueues() || [];
@@ -138,17 +127,7 @@ const delay = {
             return "None";
         };
     },
-    /**
-   * When the effect is saved
-   */
-    optionsValidator: () => {
-        const errors = [];
-        return errors;
-    },
-    /**
-   * When the effect is triggered by something
-   */
-    onTriggerEvent: async (event) => {
+    onTriggerEvent: (event) => {
         const effect = event.effect;
 
         if (effect.queues) {
@@ -187,4 +166,4 @@ const delay = {
     }
 };
 
-module.exports = delay;
+export = effect;
