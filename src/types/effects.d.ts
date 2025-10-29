@@ -99,6 +99,7 @@ export interface EffectInstance {
 export interface EffectList {
     id: string;
     list: EffectInstance[];
+    queue?: string;
 }
 
 export type PresetEffectList = {

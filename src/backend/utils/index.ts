@@ -1,5 +1,6 @@
 export {
     chunkArray,
+    containsAll,
     findIndexIgnoreCase,
     flattenArray,
     getRandomItem,

@@ -21,6 +21,16 @@ export const chunkArray = <E>(array: E[], maxSize: number): E[][] => {
 };
 
 /**
+ * Checks if the first array includes all the elements in the second array
+ * @param arr1 The first array
+ * @param arr2 The second array
+ * @returns `true` if the first array includes every element of the second array, or `false` otherwise
+ */
+export const containsAll = <T>(arr1: T[], arr2: T[]): boolean => {
+    return arr2.every(i => arr1.includes(i));
+};
+
+/**
  * Finds the index of a given item in an array, case-insensitive
  * @param array Array to search
  * @param item Item to search for
