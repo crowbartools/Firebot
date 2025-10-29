@@ -1,17 +1,25 @@
-"use strict";
+import type { EffectType } from "../../../types/effects";
+import connectionManager from "../../common/connection-manager";
+import integrationManager from "../../integrations/integration-manager";
 
-const { EffectCategory } = require('../../../shared/effect-constants');
+interface Service {
+    id: string;
+    action: boolean | "toggle";
+}
 
-const toggleConnection = {
+const effect: EffectType<{
+    mode: "all" | "custom";
+    allAction: boolean | "toggle";
+    services: Service[];
+}> = {
     definition: {
         id: "firebot:toggleconnection",
         name: "Toggle Connection",
         description: "Toggle connection to Twitch and any linked Integrations",
         icon: "fad fa-plug",
-        categories: [EffectCategory.ADVANCED],
+        categories: ["advanced"],
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container header="Mode">
             <div style="padding-left: 10px;">
@@ -74,7 +82,7 @@ const toggleConnection = {
 
         $scope.serviceIsSelected = serviceId => $scope.effect.services.some(s => s.id === serviceId);
 
-        $scope.toggleServiceSelected = (serviceId) => {
+        $scope.toggleServiceSelected = (serviceId: string) => {
             if ($scope.serviceIsSelected(serviceId)) {
                 $scope.effect.services = $scope.effect.services.filter(
                     s => s.id !== serviceId
@@ -88,8 +96,8 @@ const toggleConnection = {
         };
 
         $scope.setConnectionAction = (
-            serviceId,
-            action
+            serviceId: string,
+            action: boolean | "toggle"
         ) => {
             const service = $scope.effect.services.find(
                 s => s.id === serviceId
@@ -119,7 +127,7 @@ const toggleConnection = {
 
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.mode == null) {
             errors.push("Please select a mode.");
         } else if (effect.mode === "custom" && (effect.services == null || effect.services.length < 1)) {
@@ -129,8 +137,9 @@ const toggleConnection = {
         return errors;
     },
     getDefaultLabel: (effect) => {
-        const action = effect.allAction === "toggle" ? "Toggle"
-            : effect.allAction === "true" ? "Connect" : "Disconnect";
+        const action = effect.allAction === "toggle"
+            ? "Toggle"
+            : effect.allAction === true ? "Connect" : "Disconnect";
         if (effect.mode === "all") {
             return `${action} all connections`;
         }
@@ -138,10 +147,7 @@ const toggleConnection = {
         return `Update ${effect.services.length} connection${effect.services.length === 1 ? "" : "s"}`;
     },
     onTriggerEvent: async ({ effect }) => {
-        const connectionManager = require("../../common/connection-manager");
-        const integrationManager = require("../../integrations/integration-manager");
-
-        let services;
+        let services: Service[];
         // here for backwards compat, just toggle twitch
         if (effect.mode == null) {
             services = [
@@ -175,4 +181,4 @@ const toggleConnection = {
     }
 };
 
-module.exports = toggleConnection;
+export = effect;
