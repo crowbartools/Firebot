@@ -5,21 +5,21 @@ import commandRunner from "../../../../backend/chat/commands/command-runner";
 
 function getCommandTriggerAndArgs(req: Request): {
     trigger: Trigger;
-    args: string[];
+    args: string;
 } {
     const body = (req.body ?? {}) as {
-        args?: string[];
+        args?: string;
         username?: string;
         metadata?: Record<string, unknown> & { username: string };
     };
     const query = req.query ?? {};
-    let args: string[],
+    let args: string,
         username: string,
         metadata: Record<string, unknown> & { username: string };
 
     // GET
     if (req.method === "GET") {
-        args = query.args as string[];
+        args = query.args as string;
         username = query.username as string;
 
     // POST

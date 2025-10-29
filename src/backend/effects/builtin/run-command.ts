@@ -1,36 +1,32 @@
-"use strict";
+import type { EffectType } from "../../../types/effects";
+import type { CommandDefinition, SystemCommandDefinition } from "../../../types/commands";
 
-const { EffectCategory } = require('../../../shared/effect-constants');
-const commandManager = require("../../chat/commands/command-manager");
-const chatHelpers = require("../../chat/chat-helpers");
-const chatCommandHandler = require("../../chat/commands/chat-command-handler");
-const commandRunner = require("../../chat/commands/command-runner");
-const logger = require("../../logwrapper");
-const { simpleClone } = require('../../utils');
+import commandManager from "../../chat/commands/command-manager";
+import chatHelpers from "../../chat/chat-helpers";
+import chatCommandHandler from "../../chat/commands/chat-command-handler";
+import commandRunner from "../../chat/commands/command-runner";
+import logger from "../../logwrapper";
+import { simpleClone } from '../../utils';
 
-/**
- * The Delay effect
- */
-const model = {
-    /**
-   * The definition of the Effect
-   */
+const effect: EffectType<{
+    commandType: "system" | "custom";
+    commandId: string;
+    systemCommandId: string;
+    username: string;
+    args: string;
+    enforceRestrictions: boolean;
+    sendRestrictionFailureMessage: boolean;
+    /** @deprecated */
+    customCommandId: string;
+}> = {
     definition: {
         id: "firebot:runcommand",
         name: "Run Command",
         description: "Runs effects saved for the selected custom command.",
         icon: "fad fa-exclamation-square",
-        categories: [EffectCategory.ADVANCED],
+        categories: ["advanced"],
         dependencies: []
     },
-    /**
-   * Global settings that will be available in the Settings tab
-   */
-    globalSettings: {},
-    /**
-   * The HTML template for the Options view (ie options when effect is added to something such as a button.
-   * You can alternatively supply a url to a html file via optionTemplateUrl
-   */
     optionsTemplate: `
     <eos-container header="Command Type" pad-top="true">
         <dropdown-select options="{ system: 'System', custom: 'Custom'}" selected="effect.commandType"></dropdown-select>
@@ -80,11 +76,7 @@ const model = {
             </div>
         </eos-container>
     `,
-    /**
-   * The controller for the front end Options
-   */
     optionsController: ($scope, commandsService) => {
-
         // if commandType is null we must assume "custom" to maintain backwards compat
         if ($scope.effect.commandType == null) {
             $scope.effect.commandType = "custom";
@@ -93,11 +85,8 @@ const model = {
         $scope.systemCommands = commandsService.getSystemCommands();
         $scope.customCommands = commandsService.getCustomCommands();
     },
-    /**
-   * When the effect is saved
-   */
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.commandType === "custom" && (effect.commandId == null || effect.commandId === "")) {
             errors.push("Please select a custom command to run.");
         }
@@ -107,13 +96,13 @@ const model = {
         return errors;
     },
     getDefaultLabel: (effect, commandsService) => {
-        let command;
+        let command: CommandDefinition;
         if (effect.commandType === "system") {
-            command = commandsService.getSystemCommands()
+            command = (commandsService.getSystemCommands() as SystemCommandDefinition[])
                 .find(cmd => cmd.id === effect.systemCommandId);
         }
         if (effect.commandType === "custom") {
-            command = commandsService.getCustomCommands()
+            command = (commandsService.getCustomCommands() as CommandDefinition[])
                 .find(cmd => cmd.id === effect.commandId);
         }
         return command?.trigger ?? "Unknown Command";
@@ -178,4 +167,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export = effect;

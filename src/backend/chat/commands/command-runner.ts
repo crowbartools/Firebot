@@ -195,7 +195,7 @@ class CommandRunner {
         }
     }
 
-    private runCommandFromEffect(command: CommandDefinition, trigger: Trigger, args: string[]): void {
+    private runCommandFromEffect(command: CommandDefinition, trigger: Trigger, args: string): void {
         const message = `${command.trigger} ${args}`;
         const firebotChatMessage = chatHelpers.buildBasicFirebotChatMessage(message, trigger.metadata.username);
 
@@ -205,12 +205,12 @@ class CommandRunner {
         }
     }
 
-    runSystemCommandFromEffect(id: string, trigger: Trigger, args: string[]): void {
+    runSystemCommandFromEffect(id: string, trigger: Trigger, args: string): void {
         const command = commandManager.getSystemCommandById(id).definition;
         this.runCommandFromEffect(command, trigger, args);
     }
 
-    runCustomCommandFromEffect(id: string, trigger: Trigger, args: string[]): void {
+    runCustomCommandFromEffect(id: string, trigger: Trigger, args: string): void {
         const command = commandManager.getCustomCommandById(id);
         this.runCommandFromEffect(command, trigger, args);
     }
