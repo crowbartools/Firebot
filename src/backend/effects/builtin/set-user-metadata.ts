@@ -1,17 +1,20 @@
-"use strict";
+import type { EffectType } from "../../../types/effects";
+import viewerMetadataManager from "../../viewers/viewer-metadata-manager";
 
-const { EffectCategory } = require('../../../shared/effect-constants');
-
-const effect = {
+const effect: EffectType<{
+    username: string;
+    key: string;
+    propertyPath: string;
+    data: string;
+}> = {
     definition: {
         id: "firebot:set-user-metadata",
         name: "Set User Metadata",
         description: "Save metadata associated to a given user",
         icon: "fad fa-user-cog",
-        categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
+        categories: ["advanced", "scripting"],
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container header="Username">
             <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="effect.username" placeholder="Enter username" replace-variables menu-position="below" />
@@ -73,7 +76,7 @@ const effect = {
         $scope.initialEditorLabel = $scope.effect?.data?.startsWith("{") || $scope.effect?.data?.startsWith("[") ? "JSON" : "Basic";
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.username == null || effect.username === "") {
             errors.push("Please provide a username.");
         }
@@ -85,11 +88,8 @@ const effect = {
     getDefaultLabel: (effect) => {
         return `${effect.username} - ${effect.key}`;
     },
-    onTriggerEvent: async (event) => {
-        const { effect } = event;
+    onTriggerEvent: async ({ effect }) => {
         const { username, key, data, propertyPath } = effect;
-
-        const viewerMetadataManager = require("../../viewers/viewer-metadata-manager");
 
         await viewerMetadataManager.updateViewerMetadata(username, key, data, propertyPath);
 
@@ -97,4 +97,4 @@ const effect = {
     }
 };
 
-module.exports = effect;
+export = effect;
