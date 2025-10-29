@@ -47,7 +47,7 @@ export type BooleanParameter = BaseParameter & {
 export type NumberParameter = BaseParameter & {
     type: "number";
     placeholder?: string;
-    default: number;
+    default?: number;
     validation?: {
         min?: number;
         max?: number;

@@ -160,7 +160,7 @@ function buildModules(scriptManifest) {
         customRolesManager: require("../../../roles/custom-roles-manager"),
         firebotRolesManager: require("../../../roles/firebot-roles-manager"),
         timerManager: require("../../../timers/timer-manager").TimerManager,
-        gameManager: require("../../../games/game-manager"),
+        gameManager: require("../../../games/game-manager").GameManager,
 
         overlayWidgetsManager: require("../../../overlay-widgets/overlay-widgets-manager"),
         overlayWidgetConfigManager: require("../../../overlay-widgets/overlay-widget-config-manager"),

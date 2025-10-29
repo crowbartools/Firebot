@@ -2,6 +2,7 @@ export {
     chunkArray,
     findIndexIgnoreCase,
     flattenArray,
+    getRandomItem,
     shuffleArray
 } from "./arrays";
 

@@ -29,6 +29,7 @@ export type SubCommand = {
     fallback?: boolean;
     restrictionData?: RestrictionData;
     cooldown?: Cooldown | undefined;
+    hideCooldowns?: boolean;
     inheritBaseCommandCooldown?: boolean;
     effects?: EffectList;
     hidden?: boolean;

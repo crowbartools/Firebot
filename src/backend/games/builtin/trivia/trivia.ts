@@ -1,9 +1,7 @@
-"use strict";
-const triviaCommand = require("./trivia-command");
-/**
- * @type {import('../../game-manager').FirebotGame}
- */
-module.exports = {
+import { FirebotGame } from "../../../../types/games";
+import triviaCommand from "./trivia-command";
+
+const game: FirebotGame = {
     id: "firebot-trivia",
     name: "Trivia",
     subtitle: "Knowledge is power",
@@ -337,3 +335,5 @@ module.exports = {
         triviaCommand.purgeCaches();
     }
 };
+
+export = game;

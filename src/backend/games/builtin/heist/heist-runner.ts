@@ -1,41 +1,38 @@
-"use strict";
-const moment = require("moment");
-const gameManager = require("../../game-manager");
-const commandManager = require("../../../chat/commands/command-manager");
-const currencyManager = require("../../../currency/currency-manager");
-const { TwitchApi } = require("../../../streaming-platforms/twitch/api");
-const { commafy, getRandomInt, wait } = require("../../../utils");
+import moment from "moment";
 
-/**
- * @typedef HeistUser
- * @property {string} username - The user's name
- * @property {string} userDisplayName - The user's display name
- * @property {number} wager - The amount the user wagered
- * @property {number} successPercentage - The users win percentage
- * @property {number} winnings - The winnings the user will receive should they win
- *
- */
+import { GameManager } from "../../game-manager";
+import { TwitchApi } from "../../../streaming-platforms/twitch/api";
+import commandManager from "../../../chat/commands/command-manager";
+import currencyManager from "../../../currency/currency-manager";
+import { commafy, getRandomInt, wait } from "../../../utils";
 
-/**@type {HeistUser[]} */
-let usersInHeist = [];
+interface HeistUser {
+    username: string;
+    userDisplayName: string;
+    wager: number;
+    successPercentage: number;
+    winnings: number;
+}
 
-exports.cooldownExpireTime = null;
-let cooldownTimeoutId = null;
+let usersInHeist: HeistUser[] = [];
 
-let startDelayTimeoutId = null;
-exports.lobbyOpen = false;
+let cooldownTimeoutId: NodeJS.Timeout = null;
+let startDelayTimeoutId: NodeJS.Timeout = null;
 
-function triggerCooldown() {
-    const heistSettings = gameManager.getGameSettings("firebot-heist");
-    const sendAsBot = !heistSettings.settings.chatSettings.chatter
-        || heistSettings.settings.chatSettings.chatter.toLowerCase() === "bot";
+let cooldownExpireTime: moment.Moment;
+let lobbyOpen = false;
 
-    const cooldownMins = heistSettings.settings.generalSettings.cooldown || 1;
+function triggerCooldown(): void {
+    const heistSettings = GameManager.getGameSettings("firebot-heist");
+    const chatter = heistSettings.settings.chatSettings.chatter as string;
+    const sendAsBot = !chatter || chatter.toLowerCase() === "bot";
+
+    const cooldownMins = heistSettings.settings.generalSettings.cooldown as number || 1;
     const expireTime = moment().add(cooldownMins, 'minutes');
-    exports.cooldownExpireTime = expireTime;
+    cooldownExpireTime = expireTime;
 
     const trigger = commandManager.getSystemCommandTrigger("firebot:heist");
-    const cooldownOverMessage = heistSettings.settings.generalMessages.cooldownOver
+    const cooldownOverMessage = (heistSettings.settings.generalMessages.cooldownOver as string)
         .replaceAll("{command}", trigger ? trigger : '!heist');
 
     if (cooldownOverMessage) {
@@ -46,11 +43,11 @@ function triggerCooldown() {
 }
 
 async function runHeist() {
-    const heistSettings = gameManager.getGameSettings("firebot-heist");
-    const sendAsBot = !heistSettings.settings.chatSettings.chatter
-        || heistSettings.settings.chatSettings.chatter.toLowerCase() === "bot";
+    const heistSettings = GameManager.getGameSettings("firebot-heist");
+    const chatter = heistSettings.settings.chatSettings.chatter as string;
+    const sendAsBot = !chatter || chatter.toLowerCase() === "bot";
 
-    const startMessage = heistSettings.settings.generalMessages.startMessage;
+    const startMessage = heistSettings.settings.generalMessages.startMessage as string;
 
     if (startMessage) {
         await TwitchApi.chat.sendChatMessage(startMessage, null, sendAsBot);
@@ -59,35 +56,35 @@ async function runHeist() {
     // wait a few secs for suspense
     await wait(7 * 1000);
 
-    const survivers = [];
+    const survivors: HeistUser[] = [];
 
     for (const user of usersInHeist) {
         const successful = getRandomInt(1, 100) <= user.successPercentage;
         if (successful) {
-            survivers.push(user);
+            survivors.push(user);
         }
     }
 
-    const percentSurvived = (survivers.length / usersInHeist.length) * 100;
+    const percentSurvived = (survivors.length / usersInHeist.length) * 100;
 
-    let messages;
+    let messages: string[];
     if (percentSurvived >= 100) {
         if (usersInHeist.length > 1) {
-            messages = heistSettings.settings.groupOutcomeMessages.hundredPercent;
+            messages = heistSettings.settings.groupOutcomeMessages.hundredPercent as string[];
         } else {
-            messages = heistSettings.settings.soloOutcomeMessages.soloSuccess;
+            messages = heistSettings.settings.soloOutcomeMessages.soloSuccess as string[];
         }
     } else if (percentSurvived >= 75 && percentSurvived <= 99) {
-        messages = heistSettings.settings.groupOutcomeMessages.top25Percent;
+        messages = heistSettings.settings.groupOutcomeMessages.top25Percent as string[];
     } else if (percentSurvived >= 25 && percentSurvived <= 74) {
-        messages = heistSettings.settings.groupOutcomeMessages.mid50Percent;
+        messages = heistSettings.settings.groupOutcomeMessages.mid50Percent as string[];
     } else if (percentSurvived >= 1 && percentSurvived <= 24) {
-        messages = heistSettings.settings.groupOutcomeMessages.bottom25Percent;
+        messages = heistSettings.settings.groupOutcomeMessages.bottom25Percent as string[];
     } else {
         if (usersInHeist.length > 1) {
-            messages = heistSettings.settings.groupOutcomeMessages.zeroPercent;
+            messages = heistSettings.settings.groupOutcomeMessages.zeroPercent as string[];
         } else {
-            messages = heistSettings.settings.soloOutcomeMessages.soloFail;
+            messages = heistSettings.settings.soloOutcomeMessages.soloFail as string[];
         }
     }
 
@@ -106,21 +103,21 @@ async function runHeist() {
             .replaceAll("{user}", usersInHeist[0].userDisplayName);
     }
 
-    const currencyId = heistSettings.settings.currencySettings.currencyId;
-    for (const user of survivers) {
+    const currencyId = heistSettings.settings.currencySettings.currencyId as string;
+    for (const user of survivors) {
         await currencyManager.adjustCurrencyForViewer(user.username, currencyId, user.winnings);
     }
 
-    let winningsString;
+    let winningsString: string;
     if (percentSurvived > 0) {
-        winningsString = survivers
+        winningsString = survivors
             .map(s => `${s.userDisplayName} (${commafy(s.winnings)})`)
             .join(", ");
     } else {
         winningsString = "None";
     }
 
-    const winningsMessage = heistSettings.settings.generalMessages.heistWinnings
+    const winningsMessage = (heistSettings.settings.generalMessages.heistWinnings as string)
         .replaceAll("{winnings}", winningsString);
 
     try {
@@ -140,33 +137,33 @@ async function runHeist() {
 }
 
 
-exports.triggerLobbyStart = (startDelayMins) => {
-    if (exports.lobbyOpen) {
+function triggerLobbyStart(startDelayMins: number) {
+    if (lobbyOpen) {
         return;
     }
-    exports.lobbyOpen = true;
+    lobbyOpen = true;
 
     if (startDelayTimeoutId != null) {
         clearTimeout(startDelayTimeoutId);
     }
 
     startDelayTimeoutId = setTimeout(async () => {
-        exports.lobbyOpen = false;
+        lobbyOpen = false;
         startDelayTimeoutId = null;
 
-        const heistSettings = gameManager.getGameSettings("firebot-heist");
-        const minTeamSize = heistSettings.settings.generalSettings.minimumUsers;
+        const heistSettings = GameManager.getGameSettings("firebot-heist");
+        const minTeamSize = heistSettings.settings.generalSettings.minimumUsers as number;
         if (usersInHeist.length < minTeamSize - 1) { // user is added to usersInHeist after triggerLobbyStart is called in heist-command
 
             // give currency back to users who joined
-            const currencyId = heistSettings.settings.currencySettings.currencyId;
+            const currencyId = heistSettings.settings.currencySettings.currencyId as string;
             for (const user of usersInHeist) {
                 await currencyManager.adjustCurrencyForViewer(user.username, currencyId, user.wager);
             }
 
-            const sendAsBot = !heistSettings.settings.chatSettings.chatter
-                || heistSettings.settings.chatSettings.chatter.toLowerCase() === "bot";
-            let teamTooSmallMessage = heistSettings.settings.generalMessages.teamTooSmall;
+            const chatter = heistSettings.settings.chatSettings.chatter as string;
+            const sendAsBot = !chatter || chatter.toLowerCase() === "bot";
+            let teamTooSmallMessage = heistSettings.settings.generalMessages.teamTooSmall as string;
             if (usersInHeist.length > 0 && teamTooSmallMessage) {
                 teamTooSmallMessage = teamTooSmallMessage
                     .replaceAll("{user}", usersInHeist[0].userDisplayName);
@@ -180,15 +177,11 @@ exports.triggerLobbyStart = (startDelayMins) => {
 
         triggerCooldown();
 
-        runHeist();
+        void runHeist();
     }, startDelayMins * 60000);
 };
 
-/**
- *
- * @param {HeistUser} user
- */
-exports.addUser = (user) => {
+function addUser(user: HeistUser) {
     if (user == null) {
         return;
     }
@@ -198,21 +191,30 @@ exports.addUser = (user) => {
     usersInHeist.push(user);
 };
 
-exports.userOnTeam = (username) => {
+function userOnTeam(username: string) {
     return usersInHeist.some(e => e.username === username);
 };
 
-exports.clearCooldowns = () => {
+function clearCooldowns(): void {
     if (cooldownTimeoutId != null) {
         clearTimeout(cooldownTimeoutId);
         cooldownTimeoutId = null;
     }
-    exports.cooldownExpireTime = null;
+    cooldownExpireTime = null;
 
     if (startDelayTimeoutId != null) {
         clearTimeout(startDelayTimeoutId);
         startDelayTimeoutId = null;
     }
-    exports.lobbyOpen = false;
+    lobbyOpen = false;
     usersInHeist = [];
+};
+
+export default {
+    cooldownExpireTime,
+    lobbyOpen,
+    triggerLobbyStart,
+    addUser,
+    userOnTeam,
+    clearCooldowns
 };

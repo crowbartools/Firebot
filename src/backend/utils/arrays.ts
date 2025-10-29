@@ -1,3 +1,5 @@
+import { getRandomInt } from "./get-random-int";
+
 /**
  * This will turn an array into an array of "chunked" arrays given a max chunk size
  *
@@ -45,6 +47,17 @@ export const flattenArray = <T = unknown>(array: T[][]): T[] => {
     return array.reduce((flat, next) => flat.concat(next), []);
 };
 
+/**
+ * Returns a random item from the specified array
+ * @param array Array of items
+ */
+export const getRandomItem = <T = unknown>(array: T[]): T => {
+    if (array == null || !array.length) {
+        return null;
+    }
+    const randomIndex = getRandomInt(0, array.length - 1);
+    return array[randomIndex];
+};
 
 /**
  * Shuffles an array

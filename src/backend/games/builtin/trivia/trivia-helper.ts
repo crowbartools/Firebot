@@ -1,25 +1,44 @@
-"use strict";
+import logger from "../../../logwrapper";
+import { getRandomItem, shuffleArray } from "../../../utils";
 
-const logger = require("../../../logwrapper");
-const { getRandomInt, shuffleArray } = require("../../../utils");
+interface RawTriviaResponse {
+    response_code: number;
+    results: Array<{
+        type: string;
+        difficulty: string;
+        category: string;
+        question: string;
+        correct_answer: string;
+        incorrect_answers: string[];
+    }>;
+}
 
-const getRandomItem = (array) => {
-    if (array == null || !array.length) {
-        return null;
-    }
-    const randomIndex = getRandomInt(0, array.length - 1);
-    return array[randomIndex];
-};
+interface TriviaResponse {
+    responseCode: number;
+    results: Array<{
+        type: string;
+        difficulty: string;
+        category: string;
+        question: string;
+        correct_answer: string;
+        incorrect_answers: string[];
+    }>;
+}
 
-const fetchQuestion = async (randomCategory, randomDifficulty, randomType, sessionToken) => {
+async function fetchQuestion(
+    randomCategory: number,
+    randomDifficulty: string,
+    randomType: string,
+    sessionToken: string
+): Promise<TriviaResponse> {
     const url = `https://opentdb.com/api.php?encode=url3986&amount=1&category=${randomCategory}&difficulty=${randomDifficulty}&type=${randomType}${sessionToken ? `&token=${sessionToken}` : ''}`;
-    try {
 
+    try {
         const response = await fetch(url);
         if (response.ok) {
-            const data = await response.json();
+            const data = await response.json() as RawTriviaResponse;
             const responseCode = data.response_code;
-            const results = (data.results || []).map((q) => {
+            const results = (data.results ?? []).map((q) => {
                 q.category = decodeURIComponent(q.category);
                 q.question = decodeURIComponent(q.question);
                 // eslint-disable-next-line camelcase
@@ -36,18 +55,21 @@ const fetchQuestion = async (randomCategory, randomDifficulty, randomType, sessi
 
         throw new Error(`Request failed with status ${response.status}`);
     } catch (error) {
-        logger.error("Unable to fetch question from Trivia API:", error.message);
+        logger.error("Unable to fetch question from Trivia API:", (error as Error).message);
     }
     return null;
 };
 
-let sessionToken = null;
-async function getSessionToken(forceNew = false) {
+let sessionToken: string = null;
+async function getSessionToken(forceNew = false): Promise<string> {
     if (sessionToken == null || forceNew) {
         try {
             const tokenResponse = await fetch("https://opentdb.com/api_token.php?command=request");
             if (tokenResponse.ok) {
-                const data = await tokenResponse.json();
+                const data = await tokenResponse.json() as {
+                    response_code: number;
+                    token: string;
+                };
                 if (data?.response_code === 0) {
                     sessionToken = data.token;
                 }
@@ -55,13 +77,17 @@ async function getSessionToken(forceNew = false) {
                 throw new Error(`Request failed with status ${tokenResponse.status}`);
             }
         } catch (error) {
-            logger.error("Unable to get session token for trivia:", error.message);
+            logger.error("Unable to get session token for trivia:", (error as Error).message);
         }
     }
     return sessionToken;
 }
 
-exports.getQuestion = async (categories, difficulties, types) => {
+async function getQuestion(
+    categories: number[],
+    difficulties: string[],
+    types: string[]
+) {
     const randomCategory = getRandomItem(categories);
     const randomDifficulty = getRandomItem(difficulties);
     const randomType = getRandomItem(types);
@@ -79,8 +105,8 @@ exports.getQuestion = async (categories, difficulties, types) => {
 
         if (questionResponse && questionResponse.responseCode === 0 && !!questionResponse.results.length) {
             const questionData = questionResponse.results[0];
-            let answers;
-            let correctIndex;
+            let answers: string[];
+            let correctIndex: number;
             if (questionData.type === "boolean") {
                 answers = ["True", "False"];
                 // using 1 based index since this is how users will answer
@@ -103,3 +129,5 @@ exports.getQuestion = async (categories, difficulties, types) => {
     }
     return null;
 };
+
+export default { getQuestion };

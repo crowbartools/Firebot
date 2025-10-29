@@ -180,8 +180,8 @@ export async function whenReady() {
     CounterManager.loadItems();
 
     windowManagement.updateSplashScreenStatus("Loading games...");
-    const gamesManager = await import("../../../games/game-manager");
-    gamesManager.loadGameSettings();
+    const { GameManager } = await import("../../../games/game-manager");
+    GameManager.loadGameSettings();
 
     const builtinGameLoader = await import("../../../games/builtin-game-loader");
     builtinGameLoader.loadGames();
