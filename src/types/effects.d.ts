@@ -39,7 +39,7 @@ export type EffectDependencies = {
     integrations?: Record<string, boolean>;
 };
 
-export type OverlayExtension = {
+export type OverlayExtension<OverlayData = unknown> = {
     dependencies?: {
         globalStyles?: string;
         css?: string[];
@@ -87,7 +87,7 @@ export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
         outputs: Record<string, unknown>;
         abortSignal: AbortSignal;
     }) => Awaitable<void | boolean | EffectTriggerResponse>;
-    overlayExtension?: OverlayExtension;
+    overlayExtension?: OverlayExtension<OverlayData>;
 };
 
 export interface EffectInstance {

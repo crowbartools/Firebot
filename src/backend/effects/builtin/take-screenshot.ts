@@ -1,15 +1,44 @@
-"use strict";
+import type { EffectType } from "../../../types/effects";
+import type { CustomEmbed } from "../../../types/discord";
 
-const { EffectCategory } = require('../../../shared/effect-constants');
-const {sendEmbedToDiscord} = require("../../common/screenshot-helpers");
+import { takeScreenshot } from "../../app-management/electron/screen-helpers";
+import {
+    sendEmbedToDiscord,
+    saveScreenshotToFile,
+    saveScreenshotToFolder,
+    sendScreenshotToDiscord,
+    sendScreenshotToOverlay,
+    type ScreenshotEffectData
+} from "../../common/screenshot-helpers";
 
-const clip = {
+const effect: EffectType<{
+    displayId: number;
+    saveLocally: boolean;
+    overwriteExisting: boolean;
+    postInDiscord: boolean;
+    showInOverlay: boolean;
+    folderPath: string;
+    file: string;
+    discordChannelId: string;
+    embedType: unknown;
+    embedColor: string;
+    fileNamePattern: string;
+    message: string;
+    customEmbed: CustomEmbed;
+    width: number;
+    height: number;
+    position: string;
+    overlayInstance: string;
+    duration: number;
+}, ScreenshotEffectData & {
+    screenshotDataUrl: string;
+}> = {
     definition: {
         id: "firebot:screenshot",
         name: "Take Screenshot",
         description: "Takes a screenshot of the selected screen.",
         icon: "fad fa-camera",
-        categories: [EffectCategory.FUN],
+        categories: ["fun"],
         dependencies: [],
         outputs: [
             {
@@ -19,7 +48,6 @@ const clip = {
             }
         ]
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container header="Display">
             <dropdown-select options="displayOptions" selected="effect.displayId"></dropdown-select>
@@ -34,8 +62,8 @@ const clip = {
         </eos-container>
     `,
     optionsController: ($scope, backendCommunicator) => {
-        const displays = backendCommunicator.fireEventSync("getAllDisplays");
-        const primaryDisplay = backendCommunicator.fireEventSync("getPrimaryDisplay");
+        const displays = backendCommunicator.fireEventSync("getAllDisplays") as Electron.Display[];
+        const primaryDisplay = backendCommunicator.fireEventSync("getPrimaryDisplay") as Electron.Display;
 
         $scope.displayOptions = displays.reduce((acc, display, i) => {
             const isPrimary = display.id === primaryDisplay.id;
@@ -49,7 +77,7 @@ const clip = {
         }
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         const rgbRegexp = /^#?[0-9a-f]{6}$/ig;
         if (!(effect.saveLocally || effect.overwriteExisting || effect.postInDiscord || effect.showInOverlay)) {
             errors.push("You need to select an output option!");
@@ -68,23 +96,18 @@ const clip = {
         }
         return errors;
     },
-    onTriggerEvent: async (event) => {
-        const screenHelpers = require("../../app-management/electron/screen-helpers");
-        const screenshotHelpers = require("../../common/screenshot-helpers");
-
-        const { effect } = event;
-
-        const screenshotDataUrl = await screenHelpers.takeScreenshot(effect.displayId);
+    onTriggerEvent: async ({ effect }) => {
+        const screenshotDataUrl = await takeScreenshot(effect.displayId);
 
         if (screenshotDataUrl != null) {
 
             const base64ImageData = screenshotDataUrl.split(';base64,').pop();
             if (effect.saveLocally) {
-                await screenshotHelpers.saveScreenshotToFolder(base64ImageData, effect.folderPath, effect.fileNamePattern);
+                await saveScreenshotToFolder(base64ImageData, effect.folderPath, effect.fileNamePattern);
             }
 
             if (effect.overwriteExisting) {
-                await screenshotHelpers.saveScreenshotToFile(base64ImageData, effect.file);
+                await saveScreenshotToFile(base64ImageData, effect.file);
             }
 
             if (effect.postInDiscord) {
@@ -95,13 +118,13 @@ const clip = {
                         break;
                     case "stream":
                     case undefined:
-                        await screenshotHelpers.sendScreenshotToDiscord(base64ImageData, effect.message, effect.discordChannelId, effect.embedColor);
+                        await sendScreenshotToDiscord(base64ImageData, effect.message, effect.discordChannelId, effect.embedColor);
                         break;
                 }
             }
 
             if (effect.showInOverlay) {
-                screenshotHelpers.sendScreenshotToOverlay(screenshotDataUrl, effect);
+                sendScreenshotToOverlay(screenshotDataUrl, effect);
             }
         }
 
@@ -158,13 +181,13 @@ const clip = {
                     inbetweenRepeat: inbetweenRepeat,
                     exitAnimation: exitAnimation,
                     exitDuration: exitDuration,
-                    totalDuration: parseFloat(duration) * 1000
+                    totalDuration: parseFloat(duration.toString()) * 1000
                 };
 
-                showElement(imageElement, positionData, animationData); // eslint-disable-line no-undef
+                showElement(imageElement, positionData, animationData);
             }
         }
     }
 };
 
-module.exports = clip;
+export = effect;
