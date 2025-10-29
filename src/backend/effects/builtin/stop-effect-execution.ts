@@ -1,21 +1,27 @@
-"use strict";
+import effectQueueRunner from "../queues/effect-queue-runner";
+import { abortEffectList, abortEffect, abortAllEffectLists } from "../../common/effect-abort-helpers";
+import { EffectType } from "../../../types/effects";
 
-const { EffectCategory } = require('../../../shared/effect-constants');
-
-const { abortEffectList, abortEffect, abortAllEffectLists } = require("../../common/effect-abort-helpers");
-
-const effectQueueRunner = require("../queues/effect-queue-runner").default;
-
-const model = {
+const model: EffectType<{
+    target:
+        | "currentList"
+        | "specificList"
+        | "queueActiveEffectLists"
+        | "allActiveEffectLists"
+        | "specificEffect";
+    listId: string;
+    effectId: string;
+    queueId: string;
+    bubbleStop: boolean;
+}> = {
     definition: {
         id: "firebot:stop-effect-execution",
         name: "Stop Effect Execution",
         description: "Stop the execution of the current effect list.",
         icon: "fad fa-stop-circle",
-        categories: [EffectCategory.SCRIPTING],
+        categories: ["scripting"],
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container header="Target">
             <firebot-radios
@@ -84,7 +90,7 @@ const model = {
         }
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
 
         if (effect.target === "specificList" && !effect.listId) {
             errors.push("Please provide an effect list ID");
@@ -117,7 +123,7 @@ const model = {
                 return "All active effect lists";
         }
     },
-    onTriggerEvent: async (event) => {
+    onTriggerEvent: (event) => {
         const { effect } = event;
 
         if (effect.target == null || effect.target === "currentList") {
@@ -148,4 +154,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export = model;
