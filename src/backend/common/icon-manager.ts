@@ -37,6 +37,8 @@ type FontAwesomeIconDefinitions = {
     [iconName: string]: FontAwesomeIconDefinition;
 };
 
+const ICON_DEFINITION_URL = "https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@master/metadata/icons.json";
+
 class IconManager {
     icons: FontAwesomeIcon[] = [];
 
@@ -45,7 +47,7 @@ class IconManager {
     }
 
     async loadFontAwesomeIcons(): Promise<void> {
-        const fontAwesomeIcons = await (await fetch("https://raw.githubusercontent.com/FortAwesome/Font-Awesome/master/metadata/icons.json")).json() as FontAwesomeIconDefinitions;
+        const fontAwesomeIcons = await (await fetch(ICON_DEFINITION_URL)).json() as FontAwesomeIconDefinitions;
 
         for (const iconName in fontAwesomeIcons) {
             if (fontAwesomeIcons[iconName].private) {
