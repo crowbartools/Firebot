@@ -49,7 +49,7 @@ interface NotificationCache {
     knownExternalIds: string[];
 }
 
-const EXTERNAL_NOTIFICATION_SOURCE_URL = "https://raw.githubusercontent.com/crowbartools/Firebot/metadata/notifications/notifications.json";
+const EXTERNAL_NOTIFICATION_SOURCE_URL = "https://api.crowbar.tools/v1/notifications/v5";
 
 class NotificationManager {
     private _externalCheckInterval: NodeJS.Timeout;
