@@ -211,7 +211,7 @@ class OverlayWidgetEventUtils implements IOverlayWidgetEventUtils {
 
     getFontOptionsStyles(fontOptions?: FontOptions): Record<string, string | number | undefined> {
         return {
-            "font-family": fontOptions?.family || 'Inter, sans-serif',
+            "font-family": (fontOptions?.family ? `'${fontOptions.family}'` : 'Inter, sans-serif'),
             "font-size": (fontOptions?.size ? `${fontOptions.size}px` : undefined),
             "font-weight": fontOptions?.weight?.toString() || undefined,
             "font-style": fontOptions?.italic ? 'italic' : 'normal',
@@ -224,5 +224,3 @@ function handleOverlayEvent(event: WidgetOverlayEvent) {
     // @ts-ignore
     widgetEvents.emit(`overlay-widget:${event.data.widgetType.id}`, event, new OverlayWidgetEventUtils(event));
 }
-
-
