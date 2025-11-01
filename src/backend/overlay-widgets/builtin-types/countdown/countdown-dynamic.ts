@@ -3,6 +3,7 @@ import { OverlayWidgetType, OverlayWidgetConfig, IOverlayWidgetEventUtils } from
 import { WidgetOverlayEvent } from "../../../../types/overlay-widgets";
 import { Duration } from "luxon";
 import frontendCommunicator from "../../../common/frontend-communicator";
+import logger from "../../../logwrapper";
 
 export type Settings = {
     fontOptions: FontOptions;
@@ -84,7 +85,7 @@ export const dynamicCountdown: OverlayWidgetType<Settings, State> = {
             id: "toggle",
             label: "Start/Pause",
             icon: "fa-play-circle",
-            click: async (config) => {
+            click: (config) => {
                 if ((config.state?.remainingSeconds ?? 0) > 0) {
                     return {
                         newState: {
@@ -101,7 +102,7 @@ export const dynamicCountdown: OverlayWidgetType<Settings, State> = {
             label: "Add Time",
             icon: "fa-plus-circle",
             click: async (config) => {
-                const seconds = await frontendCommunicator.fireEventAsync("openGetInputModal", {
+                const seconds = await frontendCommunicator.fireEventAsync<number>("openGetInputModal", {
                     config: {
                         model: config.state?.remainingSeconds ?? 0,
                         inputType: "number",
@@ -120,7 +121,7 @@ export const dynamicCountdown: OverlayWidgetType<Settings, State> = {
                     return;
                 }
 
-                console.log("Adding seconds:", seconds, typeof seconds);
+                logger.debug(`Adding ${seconds} seconds to timer "${config.name}"`);
 
                 const newRemaining = Math.max(0, (config.state?.remainingSeconds ?? 0) + Number(seconds));
 

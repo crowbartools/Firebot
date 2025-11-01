@@ -179,8 +179,8 @@ export const FirebotEventSource: EventSource = {
             description: "When a dynamic countdown reaches zero.",
             cached: false,
             manualMetadata: {
-                countdownWidgetId: "testCountdownId",
-                countdownWidgetName: "Test Countdown"
+                dynamicCountdownWidgetId: "testCountdownId",
+                dynamicCountdownWidgetName: "Test Countdown"
             }
         }
     ]
