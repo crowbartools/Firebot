@@ -5,7 +5,7 @@ import { secondInstance } from "./events/second-instance";
 import { openUrl } from "./events/open-url";
 import { openFile } from "./events/open-file";
 
-module.exports = {
+export {
     whenReady,
     windowsAllClosed,
     willQuit,
