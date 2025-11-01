@@ -180,8 +180,8 @@
              * @returns {void}
              */
             service.showAddOrEditOverlayWidgetModal = (overlayWidgetConfig, closeCb) => {
-                const dismiss = () => {
-                    backendCommunicator.fireEvent("overlay-widgets:stop-live-preview");
+                const dismiss = (widgetConfig) => {
+                    backendCommunicator.fireEvent("overlay-widgets:stop-live-preview", widgetConfig);
                     if (closeCb) {
                         closeCb();
                     }
@@ -195,7 +195,7 @@
                         widget: () => overlayWidgetConfig
                     },
                     closeCallback: closeCb,
-                    dismissCallback: dismiss
+                    dismissCallback: () => dismiss(overlayWidgetConfig)
                 });
             };
 
