@@ -19,7 +19,7 @@ const model : ReplaceVariable = {
                 description: "Gets the color for associated user (Ie who triggered command, pressed button, etc)."
             }
         ],
-        categories: ["common", "trigger based", "user based"],
+        categories: ["common", "user based"],
         possibleDataOutput: ["text"]
     },
     evaluator: async (trigger, username: string) => {

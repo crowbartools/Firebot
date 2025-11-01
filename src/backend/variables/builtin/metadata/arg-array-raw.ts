@@ -10,7 +10,7 @@ const model : ReplaceVariable = {
         handle: "rawArgArray",
         description: "(Deprecated: use $argArray) Returns the raw array of command arguments",
         triggers: triggers,
-        categories: ["advanced"],
+        categories: ["trigger based", "advanced"],
         possibleDataOutput: ["array"],
         hidden: true
     },

@@ -9,7 +9,7 @@ const model : ReplaceVariable = {
         handle: "raidViewerCount",
         description: "Get the number of viewers brought or sent over by a raid",
         triggers: triggers,
-        categories: ["common", "trigger based"],
+        categories: ["trigger based", "common", "trigger based"],
         possibleDataOutput: ["number"]
     },
     evaluator: (trigger) => {

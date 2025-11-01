@@ -9,7 +9,7 @@ const model: ReplaceVariable = {
         handle: "whisperRecipient",
         description: "The account type (either 'streamer' or 'bot') that received the whisper.",
         triggers: triggers,
-        categories: ["common"],
+        categories: ["trigger based", "common"],
         possibleDataOutput: ["text"]
     },
     evaluator: (trigger) => {

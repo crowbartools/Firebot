@@ -12,7 +12,7 @@ const model: ReplaceVariable = {
     definition: {
         handle: "channelGoalType",
         description: "The type of channel goal that triggered the event.",
-        categories: ["text"],
+        categories: ["trigger based", "text"],
         possibleDataOutput: ["text"],
         triggers: triggers
     },

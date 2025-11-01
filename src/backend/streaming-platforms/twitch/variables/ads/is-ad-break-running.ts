@@ -5,7 +5,7 @@ const model : ReplaceVariable = {
     definition: {
         handle: "isAdBreakRunning",
         description: "Whether or not an ad break is currently running",
-        categories: ["common", "trigger based"],
+        categories: ["common"],
         possibleDataOutput: ["bool"]
     },
     evaluator: () => {

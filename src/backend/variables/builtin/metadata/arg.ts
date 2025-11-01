@@ -30,7 +30,7 @@ const model : ReplaceVariable = {
             ],
             ["manual"]: true
         },
-        categories: ["common"],
+        categories: ["trigger based", "common"],
         possibleDataOutput: ["number", "text"]
     },
     evaluator: (

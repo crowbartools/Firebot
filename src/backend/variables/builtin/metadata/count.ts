@@ -15,7 +15,7 @@ const model : ReplaceVariable = {
         usage: "count",
         description: "Displays the number of times the given command has been run.",
         triggers: triggers,
-        categories: ["common"],
+        categories: ["trigger based", "common"],
         possibleDataOutput: ["number"]
     },
     evaluator: (trigger: Trigger) => {

@@ -9,7 +9,7 @@ const model : ReplaceVariable = {
         handle: "whisperMessage",
         description: "The message included with the whisper.",
         triggers: triggers,
-        categories: ["common"],
+        categories: ["trigger based", "common"],
         possibleDataOutput: ["text"]
     },
     evaluator: (trigger) => {

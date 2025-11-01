@@ -9,7 +9,7 @@ const model : ReplaceVariable = {
         handle: "expiredCustomVariableData",
         description: "Data from the expired custom variable.",
         triggers: triggers,
-        categories: ["common"],
+        categories: ["trigger based", "common"],
         possibleDataOutput: ["text"]
     },
     evaluator: (trigger: Trigger) : unknown => {

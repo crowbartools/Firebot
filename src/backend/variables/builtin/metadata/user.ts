@@ -13,7 +13,7 @@ const model : ReplaceVariable = {
         handle: "user",
         description: "The associated user (if there is one) for the given trigger",
         triggers: triggers,
-        categories: ["common", "user based"],
+        categories: ["trigger based", "common", "user based"],
         possibleDataOutput: ["text"]
     },
     evaluator: (trigger: Trigger) => {

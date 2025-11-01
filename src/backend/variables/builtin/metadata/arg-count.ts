@@ -13,7 +13,7 @@ const model : ReplaceVariable = {
         handle: "argCount",
         description: "Returns the number of command args.",
         triggers: triggers,
-        categories: ["numbers"],
+        categories: ["trigger based", "numbers"],
         possibleDataOutput: ["number"]
     },
     evaluator: (trigger: Trigger) : number => {

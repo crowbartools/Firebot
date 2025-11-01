@@ -9,7 +9,7 @@ const model : ReplaceVariable = {
         handle: "raidTargetUserDisplayName",
         description: "Gets the formatted display name for the raid target",
         triggers: triggers,
-        categories: ["user based"],
+        categories: ["trigger based", "user based"],
         possibleDataOutput: ["text"]
     },
     evaluator: (trigger) => {

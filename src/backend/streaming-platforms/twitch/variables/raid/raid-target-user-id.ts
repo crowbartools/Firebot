@@ -9,7 +9,7 @@ const model : ReplaceVariable = {
         handle: "raidTargetUserId",
         description: "Gets the user ID for the raid target.",
         triggers: triggers,
-        categories: ["user based"],
+        categories: ["trigger based", "user based"],
         possibleDataOutput: ["text"]
     },
     evaluator: (trigger) => {

@@ -7,7 +7,7 @@ const model : ReplaceVariable = {
     definition: {
         handle: "secondsUntilNextAdBreak",
         description: "The number of seconds until the next schduled ad break",
-        categories: ["common", "trigger based"],
+        categories: ["common"],
         possibleDataOutput: ["number"]
     },
     evaluator: async (trigger) => {

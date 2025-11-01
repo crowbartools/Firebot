@@ -9,7 +9,7 @@ const model : ReplaceVariable = {
         handle: "eventData",
         description: "An object containing all the metadata included with the event.",
         triggers: triggers,
-        categories: ["advanced"],
+        categories: ["trigger based", "advanced"],
         possibleDataOutput: ["object"]
     },
     evaluator: (trigger) => {

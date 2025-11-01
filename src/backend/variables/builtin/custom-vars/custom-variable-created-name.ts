@@ -9,7 +9,7 @@ const model : ReplaceVariable = {
         handle: "createdCustomVariableName",
         description: "Name of the created custom variable.",
         triggers: triggers,
-        categories: ["common"],
+        categories: ["trigger based", "common"],
         possibleDataOutput: ["text"]
     },
     evaluator: (trigger: Trigger) : unknown => {

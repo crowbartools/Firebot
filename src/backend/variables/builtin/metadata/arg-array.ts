@@ -13,7 +13,7 @@ const model : ReplaceVariable = {
         handle: "argArray",
         description: "Returns an array of command arguments",
         triggers: triggers,
-        categories: ["advanced"],
+        categories: ["trigger based", "advanced"],
         possibleDataOutput: ["array"]
     },
     evaluator: (trigger: Trigger) : string[] => {

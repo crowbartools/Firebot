@@ -6,7 +6,7 @@ const UserIsTimedOutVariable: ReplaceVariable = {
         handle: "userIsTimedOut",
         usage: "userIsTimedOut[username]",
         description: "Returns `true` if the specified user is currently timed out, otherwise returns `false`.",
-        categories: ["common", "trigger based", "user based"],
+        categories: ["common", "user based"],
         possibleDataOutput: ["text", "bool"]
     },
     evaluator: async (trigger, username: string) => {
