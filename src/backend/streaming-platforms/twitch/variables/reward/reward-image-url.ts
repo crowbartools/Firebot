@@ -1,23 +1,12 @@
-import type { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
+import type { ReplaceVariable } from "../../../../../types/variables";
 import { AccountAccess } from "../../../../common/account-access";
 import { TwitchApi } from "../../api";
 import channelRewardManager from "../../../../channel-rewards/channel-reward-manager";
 
-const triggers: TriggersObject = {};
-triggers["event"] = [
-    "twitch:channel-reward-redemption",
-    "twitch:channel-reward-redemption-fulfilled",
-    "twitch:channel-reward-redemption-canceled"
-];
-triggers["channel_reward"] = true;
-triggers["preset"] = true;
-triggers["manual"] = true;
-
-const model: ReplaceVariable = {
+const model : ReplaceVariable = {
     definition: {
         handle: "rewardImageUrl",
         description: "The image url of the award",
-        triggers: triggers,
         examples: [
             {
                 usage: "rewardDescription[rewardName]",
