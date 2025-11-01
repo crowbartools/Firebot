@@ -54,9 +54,13 @@
 
                 $ctrl.$onInit = () => {
                     $ctrl.systemFontsLoading = true;
+
+                    const installedFontNames = fontManager.getInstalledFonts().map(f => f.name);
+
                     fontManager.getSystemFonts().then((systemFonts) => {
                         $ctrl.fontNames = [...new Set([
                             ...$ctrl.fontNames,
+                            ...installedFontNames,
                             ...systemFonts
                         ])].filter(f => !!f).sort((a, b) => a.localeCompare(b));
                         $ctrl.systemFontsLoading = false;
