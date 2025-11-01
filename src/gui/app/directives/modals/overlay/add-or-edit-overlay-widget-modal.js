@@ -208,6 +208,8 @@
                     }
 
                     $ctrl.selectedType = foundType;
+
+                    $ctrl.widget.settings = {};
                 };
 
                 /**
