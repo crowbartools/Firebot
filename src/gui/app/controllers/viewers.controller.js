@@ -5,7 +5,40 @@
     angular
         .module("firebotApp")
         .controller("viewersController", function($route, $scope, viewersService, currencyService,
-            utilityService, settingsService) {
+            utilityService, settingsService, viewerRolesService) {
+
+            $scope.viewerRoles = {
+                twitch: [
+                    ...viewerRolesService.getTwitchRoles(),
+                    ...viewerRolesService.getTeamRoles()
+                ],
+                firebot: viewerRolesService.getFirebotRoles(),
+                custom: viewerRolesService.getCustomRoles()
+            };
+
+            $scope.viewers = viewersService.viewers;
+
+            $scope.clearRoleFilter = () => {
+                $scope.viewers = viewersService.viewers;
+            };
+
+            $scope.filterViewers = (role, roleType) => {
+                $scope.clearRoleFilter();
+
+                switch (roleType) {
+                    case "twitch":
+                        $scope.viewers = $scope.viewers.filter(v => v.twitchRoles.includes(role.id));
+                        return;
+                    case "firebot":
+                        //TODO
+                        return;
+                    case "custom":
+                        $scope.viewers = $scope.viewers.filter(v => role.viewers.some(rv => rv.id == v._id));
+                        return;
+                    default:
+                        $scope.clearRoleFilter();
+                }
+            };
 
             $scope.viewerTablePageSize = settingsService.getSetting("ViewerListPageSize");
 

@@ -6,14 +6,56 @@
         <i class="fas fa-cloud-download-alt mr-2"></i> Import Viewers
     </button>
     <div class="flex justify-between" style="margin-left: auto;">
+        <div class="btn-group mr-2" uib-dropdown>
+            <button
+                id="single-button"
+                type="button"
+                class="btn btn-primary"
+                uib-dropdown-toggle
+            >
+                <i class="far fa-filter mr-2"></i>
+            </button>
+            <ul
+                class="dropdown-menu dropdown-menu-right"
+                uib-dropdown-menu
+                role="menu"
+                aria-labelledby="single-button"
+                style="min-height: fit-content;max-height: 50vh;overflow-y: auto;"
+            >
+                <li role="menuitem" ng-click="clearRoleFilter()">
+                    <a href>Clear filter</a>
+                </li>
+                <li class="divider"></li>
+                <li class="dropdown-header">
+                    Twitch Roles
+                </li>
+                <li ng-repeat="role in viewerRoles.twitch" ng-click="filterViewers(role, 'twitch')">
+                    <a href>{{role.name}}</a>
+                </li>
+                <li class="divider"></li>
+                <li class="dropdown-header">
+                    Firebot Roles
+                </li>
+                <li ng-repeat="role in viewerRoles.firebot" ng-click="filterViewers(role, 'firebot')">
+                    <a href>{{role.name}}</a>
+                </li>
+                <li class="divider" ng-if="viewerRoles.custom.length"></li>
+                <li class="dropdown-header">
+                    Custom Roles
+                </li>
+                <li ng-if="viewerRoles.custom.length" ng-repeat="role in viewerRoles.custom" ng-click="filterViewers(role, 'custom')">
+                    <a href>{{role.name}}</a>
+                </li>
+            </ul>
+        </div>
         <searchbar placeholder-text="Search Firebot viewers..." query="viewerSearch" style="flex-basis: 250px"></searchbar>
-        <button ng-click="showViewerSearchModal();" class="btn btn-default" style="margin-left: 15px;"><i class="far fa-search"></i> Search Twitch</button>
+        <button ng-click="showViewerSearchModal();" class="btn btn-default ml-2"><i class="far fa-search"></i> Search Twitch</button>
     </div>
 </div>
 
 <div class="p-6">
     <sortable-table
-        table-data-set="vs.viewers"
+        table-data-set="viewers"
         headers="headers"
         query="viewerSearch"
         clickable="true"
