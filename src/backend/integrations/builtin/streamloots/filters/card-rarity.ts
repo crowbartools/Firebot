@@ -31,4 +31,4 @@ const filter = createPresetFilter({
     }
 });
 
-module.exports = filter;
+export = filter;

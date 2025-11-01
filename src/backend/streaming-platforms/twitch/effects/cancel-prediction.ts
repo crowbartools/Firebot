@@ -35,4 +35,4 @@ const model: EffectType = {
     }
 };
 
-module.exports = model;
+export = model;

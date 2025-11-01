@@ -15,7 +15,7 @@ function createNativeImage() {
     return nativeImage.createFromPath(iconPath);
 };
 
-module.exports = function createTray(mainWindow: BrowserWindow) {
+export function createTray(mainWindow: BrowserWindow) {
     if (mainTray != null) {
         return;
     }

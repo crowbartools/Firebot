@@ -11,4 +11,4 @@ const filter = createTextFilter({
     caseInsensitive: true
 });
 
-module.exports = filter;
+export = filter;

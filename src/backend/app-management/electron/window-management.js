@@ -7,7 +7,7 @@ const windowStateKeeper = require("electron-window-state");
 
 const { BackupManager } = require("../../backup-manager");
 const { SettingsManager } = require("../../common/settings-manager");
-const createTray = require('./tray-creation.js');
+const { createTray } = require('./tray-creation.js');
 const fileOpenHelpers = require("../file-open-helpers");
 const screenHelpers = require("./screen-helpers");
 const frontendCommunicator = require("../../common/frontend-communicator");

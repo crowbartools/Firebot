@@ -61,7 +61,7 @@ async function getAllHueLights() {
 
 /**
  * @param {string} lightId
- * @param {import("./effects/control-light").HueControlLightEffectData} controlOptions
+ * @param {import("./hue-types").HueControlLightEffectData} controlOptions
  * @returns {Promise<boolean>}
  */
 async function controlHueLight(lightId, controlOptions) {

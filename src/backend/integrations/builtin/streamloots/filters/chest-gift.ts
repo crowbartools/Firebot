@@ -43,4 +43,4 @@ const filter: EventFilter = {
     }
 };
 
-module.exports = filter;
+export = filter;
