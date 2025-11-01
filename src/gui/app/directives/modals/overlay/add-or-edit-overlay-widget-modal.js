@@ -251,12 +251,13 @@
                 $ctrl.$onInit = () => {
                     if ($ctrl.resolve.widget != null) {
                         $ctrl.isNewWidget = false;
-                        $ctrl.widget = JSON.parse(angular.toJson($ctrl.resolve.widget));
 
-                        const foundType = overlayWidgetsService.getOverlayWidgetType($ctrl.widget.type);
+                        const foundType = overlayWidgetsService.getOverlayWidgetType($ctrl.resolve.widget.type);
                         if (foundType != null) {
                             $ctrl.onTypeSelected(foundType);
                         }
+
+                        $ctrl.widget = JSON.parse(angular.toJson($ctrl.resolve.widget));
 
                         // Reset overlay instance to default (or null) if the saved instance doesn't exist anymore
                         if ($ctrl.widget.overlayInstance != null) {
