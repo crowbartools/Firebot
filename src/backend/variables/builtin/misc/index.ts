@@ -3,8 +3,6 @@ import chatUserCount from "./chat-user-count";
 import color from './color';
 import date from './date';
 import discordTimestamp from './discord-timestamp';
-import joinDate from './join-date';
-import lastSeen from './last-seen';
 import profilePageByteBinToken from './profile-page-bytebin-token';
 import quote from './quote';
 import quoteAsObject from './quote-as-object';
@@ -18,7 +16,6 @@ import topViewTime from './top-view-time';
 import topViewTimeRaw from './top-view-time-raw';
 import unixTimestamp from './unix-timestamp';
 import uptime from './uptime';
-import viewTime from './view-time';
 
 export default [
     activeChatUserCount,
@@ -26,8 +23,6 @@ export default [
     color,
     date,
     discordTimestamp,
-    joinDate,
-    lastSeen,
     profilePageByteBinToken,
     quote,
     quoteAsObject,
@@ -40,6 +35,5 @@ export default [
     topViewTime,
     topViewTimeRaw,
     unixTimestamp,
-    uptime,
-    viewTime
+    uptime
 ];
