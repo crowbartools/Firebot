@@ -25,19 +25,22 @@
                 <li class="dropdown-header">
                     Twitch Roles
                 </li>
-                <li ng-repeat="role in viewerRoles.twitch" ng-click="selectRole(role, 'twitch')">
-                    <a href><i ng-show="selectedRoles[role.id]" class="fal fa-check"></i> {{role.name}}</a>
+                <li ng-repeat="role in roleFilter.viewerRoles.twitch" ng-click="selectRole(role, 'twitch')">
+                    <a href><i ng-show="roleFilter.selectedRoles[role.id]" class="fal fa-check"></i> {{role.name}}</a>
                 </li>
-                <li class="divider" ng-if="viewerRoles.custom.length"></li>
                 <li class="dropdown-header">
                     Custom Roles
                 </li>
-                <li ng-if="viewerRoles.custom.length" ng-repeat="role in viewerRoles.custom" ng-click="selectRole(role, 'custom')">
-                    <a href><i ng-show="selectedRoles[role.id]" class="fal fa-check"></i> {{role.name}}</a>
+                <li ng-if="roleFilter.viewerRoles.custom.length" ng-repeat="role in roleFilter.viewerRoles.custom" ng-click="selectRole(role, 'custom')">
+                    <a href><i ng-show="roleFilter.selectedRoles[role.id]" class="fal fa-check"></i> {{role.name}}</a>
                 </li>
                 <li class="divider"></li>
                 <li role="menuitem" ng-click="filterViewers()">
-                    <a href>Apply filters</a>
+                    <a href>Apply Filters</a>
+                </li>
+                <li class="divider" ng-if="roleFilter.showClearButton"></li>
+                <li role="menuitem" ng-if="roleFilter.showClearButton" ng-click="clearAllFilters()">
+                    <a href>Clear All Filters</a>
                 </li>
             </ul>
         </div>

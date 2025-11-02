@@ -5,43 +5,49 @@
     angular
         .module("firebotApp")
         .controller("viewersController", function($route, $scope, viewersService, currencyService,
-            utilityService, settingsService, viewerRolesService, logger) {
+            utilityService, settingsService, viewerRolesService) {
 
-            $scope.viewerRoles = {
-                twitch: [
-                    ...viewerRolesService.getTwitchRoles(),
-                    ...viewerRolesService.getTeamRoles()
-                ],
-                firebot: viewerRolesService.getFirebotRoles(),
-                custom: viewerRolesService.getCustomRoles()
-            };
-
+            $scope.vs = viewersService;
             $scope.viewers = viewersService.viewers;
 
-            $scope.clearRoleFilter = () => {
+            $scope.roleFilter = {
+                viewerRoles: {
+                    twitch: [
+                        ...viewerRolesService.getTwitchRoles(),
+                        ...viewerRolesService.getTeamRoles()
+                    ],
+                    firebot: viewerRolesService.getFirebotRoles(),
+                    custom: viewerRolesService.getCustomRoles()
+                },
+                selectedRoles: {},
+                showClearButton: false
+            }
+
+            $scope.clearAllFilters = () => {
                 $scope.viewers = viewersService.viewers;
             };
 
-            $scope.selectedRoles = [];
-
-            $scope.logger = logger;
-
             $scope.selectRole = (role, type) => {
-                if ($scope.selectedRoles[role.id]) {
-                    delete $scope.selectedRoles[role.id];
+                if ($scope.roleFilter.selectedRoles[role.id]) {
+                    delete $scope.roleFilter.selectedRoles[role.id];
+                    
+                    if (Object.keys($scope.roleFilter.selectedRoles).length) {
+                        $scope.roleFilter.showClearButton = true;
+                    }
+
                     return;
                 }
 
-                $scope.selectedRoles[role.id] = {
+                $scope.roleFilter.selectedRoles[role.id] = {
                     role: role,
                     type: type
                 };
             };
 
             $scope.filterViewers = () => {
-                $scope.clearRoleFilter();
+                $scope.clearAllFilters();
 
-                for (const [roleId, role] of Object.entries(($scope.selectedRoles))) {
+                for (const [roleId, role] of Object.entries(($scope.roleFilter.selectedRoles))) {
                     if (role.type === "twitch") {
                         $scope.viewers = $scope.viewers.filter(v => v.twitchRoles.includes(roleId));
                     }
@@ -92,8 +98,6 @@
                         $scope.showUserDetailsModal(user.id);
                     });
             };
-
-            $scope.vs = viewersService;
 
             // Update table rows when first visiting the page.
             if (viewersService.isViewerDbOn()) {
