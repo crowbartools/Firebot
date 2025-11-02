@@ -14,7 +14,7 @@
                         quote: () => quote
                     },
                     closeCallback: (data) => {
-                        const {action, quote} = data;
+                        const { action, quote } = data;
                         switch (action) {
                             case "add":
                                 quotesService.addQuote(quote);
@@ -37,6 +37,10 @@
                     component: "importQuotesModal",
                     size: "lg"
                 });
+            };
+
+            $scope.exportQuotesToFile = () => {
+                quotesService.exportQuotesToFile();
             };
 
             $scope.quoteRowClicked = (quote) => {

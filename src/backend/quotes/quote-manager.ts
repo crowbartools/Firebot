@@ -1,5 +1,6 @@
 import Datastore from "@seald-io/nedb";
 import { TypedEmitter } from "tiny-typed-emitter";
+import fsp from "fs/promises";
 
 import type { Quote, QuoteAutoid } from "../../types/quotes";
 
@@ -27,7 +28,6 @@ class QuoteManager {
     }>();
 
     constructor() {
-
         frontendCommunicator.on("add-quote", (quote: Quote) => {
             void this.addQuote(quote);
         });
@@ -52,6 +52,10 @@ class QuoteManager {
         frontendCommunicator.on("recalc-quote-ids", () => {
             void this.recalculateQuoteIds();
         });
+
+        frontendCommunicator.onAsync("quotes:export-quotes-to-file",
+            async (filepath: string) => await this.exportQuotesToFile(filepath)
+        );
     }
 
     private regExpEscape(input: string) {
@@ -371,6 +375,39 @@ class QuoteManager {
         await this.db.compactDatafileAsync();
 
         frontendCommunicator.send("quotes-update");
+    }
+
+    async exportQuotesToFile(filepath: string): Promise<boolean> {
+        try {
+            const fileLines: string[] = [];
+            const quotes = await this.db.findAsync({
+                $where: function () {
+                    return (this as Quote | QuoteAutoid)._id !== "__autoid__";
+                }
+            }) as Quote[];
+
+            const headers = [
+                "ID",
+                "Text",
+                "Originator",
+                "Creator",
+                "Category",
+                "Created"
+            ];
+
+            fileLines.push(headers.join(","));
+
+            for (const quote of quotes) {
+                fileLines.push(`${quote._id},"${quote.text.replaceAll(`"`, `""`)}",${quote.originator},${quote.creator},${quote.game},${quote.createdAt}`);
+            }
+
+            await fsp.writeFile(filepath, fileLines.join("\n"), { encoding: "utf8" });
+            return true;
+        } catch (error) {
+            logger.error("Error exporting quotes to file", error);
+        }
+
+        return false;
     }
 }
 

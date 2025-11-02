@@ -3,7 +3,7 @@
 
     angular
         .module("firebotApp")
-        .factory("quotesService", function(backendCommunicator, $q) {
+        .factory("quotesService", function(backendCommunicator, $q, ngToast) {
             const service = {};
 
             service.quotes = [];
@@ -36,6 +36,37 @@
                 if (index > -1) {
                     service.quotes.splice(index, 1);
                     backendCommunicator.fireEvent("delete-quote", quoteId);
+                }
+            };
+
+            service.exportQuotesToFile = async () => {
+                const dialogResponse = await backendCommunicator.fireEventAsync("show-save-dialog", {
+                    options: {
+                        buttonLabel: "Save",
+                        title: "Export Quotes",
+                        filters: [
+                            { name: "CSV File", extensions: ['csv'] }
+                        ],
+                        properties: ["showOverwriteConfirmation", "createDirectory"]
+                    }
+                });
+
+                if (!dialogResponse.canceled) {
+                    const success = await backendCommunicator.fireEventAsync("quotes:export-quotes-to-file",
+                        dialogResponse.filePath
+                    );
+
+                    if (success) {
+                        ngToast.create({
+                            className: 'success',
+                            content: 'Quotes exported!'
+                        });
+                    } else {
+                        ngToast.create({
+                            className: 'error',
+                            content: 'Failed to export quotes'
+                        });
+                    }
                 }
             };
 
