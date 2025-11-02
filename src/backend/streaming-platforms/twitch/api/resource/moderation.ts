@@ -1,5 +1,6 @@
 import {
     type HelixBanUserRequest,
+    type HelixBan,
     type HelixModerator,
     type UserIdResolvable,
     extractUserId
@@ -154,6 +155,24 @@ export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
         }
 
         return false;
+    }
+
+    /**
+     * Gets all banned users from a streamer's channel.
+     *
+     * @returns {HelixBan[]}
+     */
+    async getBannedUsers(): Promise<HelixBan[]> {
+        const streamerId = this.accounts.streamer.userId;
+
+        try {
+            const response = await this.streamerClient.moderation.getBannedUsersPaginated(streamerId).getAll();
+
+            return response;
+        } catch (error) {
+            this.logger.error(`Error getting list of banned users for channel: ${(error as Error).message}`);
+            return null;
+        }
     }
 
     /**

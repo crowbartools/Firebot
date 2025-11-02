@@ -48,6 +48,10 @@
                                 </div>
                             </form>
                         </div>
+                        <label class="control-fb control--checkbox" style="font-size: 13px;"> Are banned
+                            <input type="checkbox" ng-model="$ctrl.options.banned.enabled">
+                            <div class="control__indicator"></div>
+                        </label>
                         <p class="muted">Note: Viewers must meet all of the selected criteria above to be purged (exclusive filter).</p>
                     </div>
                 </div>
@@ -76,6 +80,9 @@
                     chatMessagesSent: {
                         enabled: false,
                         value: 0
+                    },
+                    banned: {
+                        enabled: false
                     }
                 };
 

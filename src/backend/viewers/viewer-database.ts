@@ -1,7 +1,7 @@
 import { TypedEmitter } from "tiny-typed-emitter";
 import Datastore from "@seald-io/nedb";
 import { DateTime } from "luxon";
-import type { HelixUser } from "@twurple/api";
+import type { HelixUser, HelixBan } from "@twurple/api";
 
 import type { BasicViewer, FirebotViewer } from "../../types/viewers";
 import type { Rank, RankLadder } from "../../types/ranks";
@@ -46,6 +46,9 @@ interface ViewerPurgeOptions {
         enabled: boolean;
         value?: number;
     };
+    banned: {
+        enabled: boolean;
+    }
 }
 
 interface UserDetails {
@@ -429,7 +432,7 @@ class ViewerDatabase extends TypedEmitter<{
         }
     }
 
-    private getPurgeWherePredicate(options: ViewerPurgeOptions): () => boolean {
+    private getPurgeWherePredicate(options: ViewerPurgeOptions, bannedUsers: HelixBan[]): () => boolean {
         return function () {
             const viewer = this as FirebotViewer;
 
@@ -443,10 +446,16 @@ class ViewerDatabase extends TypedEmitter<{
             }
             const viewTimeHours = viewer.minutesInChannel / 60;
 
-            if ((options.daysSinceActive.enabled || options.viewTimeHours.enabled || options.chatMessagesSent.enabled) &&
+            if ((
+                options.daysSinceActive.enabled || 
+                options.viewTimeHours.enabled || 
+                options.chatMessagesSent.enabled || 
+                options.banned.enabled
+            ) &&
             (!options.daysSinceActive.enabled || daysInactive > options.daysSinceActive.value) &&
             (!options.viewTimeHours.enabled || viewTimeHours < options.viewTimeHours.value) &&
-            (!options.chatMessagesSent.enabled || viewer.chatMessages < options.chatMessagesSent.value)) {
+            (!options.chatMessagesSent.enabled || viewer.chatMessages < options.chatMessagesSent.value) &&
+            (!options.banned.enabled || bannedUsers.some(u => u.userId === viewer._id))) {
                 return true;
             }
             return false;
@@ -455,7 +464,8 @@ class ViewerDatabase extends TypedEmitter<{
 
     async getPurgeViewers(options: ViewerPurgeOptions): Promise<FirebotViewer[]> {
         try {
-            return await this._db.findAsync({ $where: this.getPurgeWherePredicate(options) });
+            const bannedUsers = (await TwitchApi.moderation.getBannedUsers()).filter(u => u.expiryDate === null);
+            return await this._db.findAsync({ $where: this.getPurgeWherePredicate(options, bannedUsers) });
         } catch {
             return [];
         }
@@ -465,8 +475,9 @@ class ViewerDatabase extends TypedEmitter<{
         await BackupManager.startBackup(false);
 
         try {
+            const bannedUsers = (await TwitchApi.moderation.getBannedUsers()).filter(u => u.expiryDate === null);
             const numRemoved = await this._db
-                .removeAsync({ $where: this.getPurgeWherePredicate(options) }, { multi: true });
+                .removeAsync({ $where: this.getPurgeWherePredicate(options, bannedUsers) }, { multi: true });
 
             return numRemoved;
         } catch {
