@@ -89,13 +89,13 @@
                 $ctrl.getPurgePreview = () => {
                     $rootScope.showSpinner = true;
                     $q.when(backendCommunicator.fireEventAsync("get-purge-preview", $ctrl.options))
-                        .then((users) => {
+                        .then((viewers) => {
                             $rootScope.showSpinner = false;
                             utilityService.showModal({
                                 component: "previewPurgeModal",
                                 backdrop: true,
                                 resolveObj: {
-                                    viewers: () => users
+                                    viewers: () => viewers
                                 }
                             });
                         });
@@ -117,7 +117,7 @@
                                         $rootScope.showSpinner = false;
                                         ngToast.create({
                                             className: 'success',
-                                            content: `Successfully purged ${purgedCount} users.`
+                                            content: `Successfully purged ${purgedCount} viewers.`
                                         });
                                         $ctrl.close();
                                     });

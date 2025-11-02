@@ -10,9 +10,7 @@
             $scope.viewerTablePageSize = settingsService.getSetting("ViewerListPageSize");
 
             $scope.showUserDetailsModal = (userId) => {
-                const closeFunc = () => {
-                    viewersService.updateViewers();
-                };
+                const closeFunc = () => {};
                 utilityService.showModal({
                     component: "viewerDetailsModal",
                     backdrop: true,
@@ -30,6 +28,15 @@
                     closeCallback: () => {
                         $route.reload();
                     }
+                });
+            };
+
+            $scope.showPurgeViewersModal = () => {
+                utilityService.showModal({
+                    component: "purgeViewersModal",
+                    size: 'sm',
+                    backdrop: false,
+                    keyboard: true
                 });
             };
 

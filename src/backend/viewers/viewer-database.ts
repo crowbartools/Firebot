@@ -48,7 +48,7 @@ interface ViewerPurgeOptions {
     };
     banned: {
         enabled: boolean;
-    }
+    };
 }
 
 interface UserDetails {
@@ -101,7 +101,7 @@ class ViewerDatabase extends TypedEmitter<{
             return await this.purgeViewers(options);
         });
 
-        frontendCommunicator.onAsync("get-all-viewers", async () => {
+        frontendCommunicator.onAsync("viewer-database:get-all-viewers", async () => {
             if (this.isViewerDBOn() !== true) {
                 return [];
             }
@@ -242,6 +242,8 @@ class ViewerDatabase extends TypedEmitter<{
                 userDisplayName: displayName
             });
 
+            frontendCommunicator.send("viewer-database:viewer-created", newViewer as FirebotViewer);
+
             return newViewer;
         } catch (error) {
             logger.error("ViewerDB: Error adding viewer", error);
@@ -345,9 +347,11 @@ class ViewerDatabase extends TypedEmitter<{
 
             const { affectedDocuments } = await this._db.updateAsync({ _id: userId, disableAutoStatAccrual: { $ne: true } }, { $inc: updateDoc }, { returnUpdatedDocs: true });
 
-            if (affectedDocuments != null) {
+            if (affectedDocuments) {
                 const updateObj = {};
                 updateObj[fieldName] = commafy(affectedDocuments[fieldName] as number);
+
+                frontendCommunicator.send("viewer-database:viewer-updated", affectedDocuments as FirebotViewer);
             }
         } catch (error) {
             logger.error("incrementDbField error", error);
@@ -387,7 +391,11 @@ class ViewerDatabase extends TypedEmitter<{
         updateDoc[field] = newValue;
 
         try {
-            await this._db.updateAsync({ _id: id }, { $set: updateDoc });
+            const { affectedDocuments } = await this._db.updateAsync({ _id: id }, { $set: updateDoc }, { returnUpdatedDocs: true });
+
+            if (affectedDocuments) {
+                frontendCommunicator.send("viewer-database:viewer-updated", affectedDocuments as FirebotViewer);
+            }
         } catch (error) {
             logger.error("Error adding currency to viewer.", error);
         }
@@ -399,7 +407,12 @@ class ViewerDatabase extends TypedEmitter<{
         }
 
         try {
-            await this._db.updateAsync({ _id: viewer._id }, viewer);
+            const { affectedDocuments } = await this._db.updateAsync({ _id: viewer._id }, viewer, { returnUpdatedDocs: true });
+
+            if (affectedDocuments) {
+                frontendCommunicator.send("viewer-database:viewer-updated", affectedDocuments as FirebotViewer);
+            }
+
             return true;
         } catch (error) {
             logger.warn("Failed to update viewer in DB", error);
@@ -412,7 +425,11 @@ class ViewerDatabase extends TypedEmitter<{
         updateObject[field] = value;
 
         try {
-            await this._db.updateAsync({ _id: userId }, { $set: updateObject }, { returnUpdatedDocs: true });
+            const { affectedDocuments } = await this._db.updateAsync({ _id: userId }, { $set: updateObject }, { returnUpdatedDocs: true });
+
+            if (affectedDocuments) {
+                frontendCommunicator.send("viewer-database:viewer-updated", affectedDocuments as FirebotViewer);
+            }
         } catch (error) {
             logger.error("Error updating viewer.", error);
         }
@@ -425,6 +442,9 @@ class ViewerDatabase extends TypedEmitter<{
 
         try {
             await this._db.removeAsync({ _id: userId }, { });
+
+            frontendCommunicator.send("viewer-database:viewer-deleted", userId);
+
             return true;
         } catch (error) {
             logger.warn("Failed to remove viewer from DB", error);
@@ -447,9 +467,9 @@ class ViewerDatabase extends TypedEmitter<{
             const viewTimeHours = viewer.minutesInChannel / 60;
 
             if ((
-                options.daysSinceActive.enabled || 
-                options.viewTimeHours.enabled || 
-                options.chatMessagesSent.enabled || 
+                options.daysSinceActive.enabled ||
+                options.viewTimeHours.enabled ||
+                options.chatMessagesSent.enabled ||
                 options.banned.enabled
             ) &&
             (!options.daysSinceActive.enabled || daysInactive > options.daysSinceActive.value) &&
@@ -478,6 +498,8 @@ class ViewerDatabase extends TypedEmitter<{
             const bannedUsers = (await TwitchApi.moderation.getBannedUsers()).filter(u => u.expiryDate === null);
             const numRemoved = await this._db
                 .removeAsync({ $where: this.getPurgeWherePredicate(options, bannedUsers) }, { multi: true });
+
+            frontendCommunicator.send("viewer-database:viewers-updated");
 
             return numRemoved;
         } catch {
