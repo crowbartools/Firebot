@@ -1,6 +1,6 @@
 import type { ReplaceVariable } from "../../../../types/variables";
 import viewerDatabase from "../../../viewers/viewer-database";
-import moment from "moment";
+import { DateTime } from "luxon";
 
 const model : ReplaceVariable = {
     definition: {
@@ -10,11 +10,11 @@ const model : ReplaceVariable = {
         examples: [
             {
                 usage: "joinDate",
-                description: "Returns the join date for the current viewer"
+                description: "Returns the join date for the current viewer."
             },
             {
                 usage: "joinDate[username]",
-                description: "Returns the join date for the specified viewer"
+                description: "Returns the join date for the specified viewer."
             }
         ],
         categories: ["user based"],
@@ -26,9 +26,10 @@ const model : ReplaceVariable = {
         }
         const viewer = await viewerDatabase.getViewerByUsername(username);
         if (!viewer) {
-            return null;
+            return "Unknown User";
         }
-        return moment(viewer.joinDate).format("YYYY-MM-DD");
+
+        return DateTime.fromMillis(viewer.joinDate).toUTC().toFormat("yyyy-MM-dd");
     }
 };
 
