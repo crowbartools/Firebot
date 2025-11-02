@@ -5,7 +5,7 @@
     angular
         .module("firebotApp")
         .controller("viewersController", function($route, $scope, viewersService, currencyService,
-            utilityService, settingsService, viewerRolesService) {
+            utilityService, settingsService, viewerRolesService, logger) {
 
             $scope.viewerRoles = {
                 twitch: [
@@ -22,18 +22,33 @@
                 $scope.viewers = viewersService.viewers;
             };
 
-            $scope.filterViewers = (role, roleType) => {
+            $scope.selectedRoles = [];
+
+            $scope.logger = logger;
+
+            $scope.selectRole = (role, type) => {
+                if ($scope.selectedRoles[role.id]) {
+                    delete $scope.selectedRoles[role.id];
+                    return;
+                }
+
+                $scope.selectedRoles[role.id] = {
+                    role: role,
+                    type: type
+                };
+            };
+
+            $scope.filterViewers = () => {
                 $scope.clearRoleFilter();
 
-                switch (roleType) {
-                    case "twitch":
-                        $scope.viewers = $scope.viewers.filter(v => v.twitchRoles.includes(role.id));
-                        return;
-                    case "custom":
-                        $scope.viewers = $scope.viewers.filter(v => role.viewers.some(rv => rv.id == v._id));
-                        return;
-                    default:
-                        $scope.clearRoleFilter();
+                for (const [roleId, role] of Object.entries(($scope.selectedRoles))) {
+                    if (role.type === "twitch") {
+                        $scope.viewers = $scope.viewers.filter(v => v.twitchRoles.includes(roleId));
+                    }
+
+                    if (role.type === "custom") {
+                        $scope.viewers = $scope.viewers.filter(v => role.role.viewers.some(rv => rv.id == v._id));
+                    }
                 }
             };
 

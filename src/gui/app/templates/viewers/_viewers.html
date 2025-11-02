@@ -6,7 +6,7 @@
         <i class="fas fa-cloud-download-alt mr-2"></i> Import Viewers
     </button>
     <div class="flex justify-between" style="margin-left: auto;">
-        <div class="btn-group mr-2" uib-dropdown>
+        <div class="btn-group mr-2" uib-dropdown auto-close="outsideClick">
             <button
                 id="single-button"
                 type="button"
@@ -22,22 +22,22 @@
                 aria-labelledby="single-button"
                 style="min-height: fit-content;max-height: 50vh;overflow-y: auto;"
             >
-                <li role="menuitem" ng-click="clearRoleFilter()">
-                    <a href>Clear filter</a>
-                </li>
-                <li class="divider"></li>
                 <li class="dropdown-header">
                     Twitch Roles
                 </li>
-                <li ng-repeat="role in viewerRoles.twitch" ng-click="filterViewers(role, 'twitch')">
-                    <a href>{{role.name}}</a>
+                <li ng-repeat="role in viewerRoles.twitch" ng-click="selectRole(role, 'twitch')">
+                    <a href><i ng-show="selectedRoles[role.id]" class="fal fa-check"></i> {{role.name}}</a>
                 </li>
                 <li class="divider" ng-if="viewerRoles.custom.length"></li>
                 <li class="dropdown-header">
                     Custom Roles
                 </li>
-                <li ng-if="viewerRoles.custom.length" ng-repeat="role in viewerRoles.custom" ng-click="filterViewers(role, 'custom')">
-                    <a href>{{role.name}}</a>
+                <li ng-if="viewerRoles.custom.length" ng-repeat="role in viewerRoles.custom" ng-click="selectRole(role, 'custom')">
+                    <a href><i ng-show="selectedRoles[role.id]" class="fal fa-check"></i> {{role.name}}</a>
+                </li>
+                <li class="divider"></li>
+                <li role="menuitem" ng-click="filterViewers()">
+                    <a href>Apply filters</a>
                 </li>
             </ul>
         </div>
