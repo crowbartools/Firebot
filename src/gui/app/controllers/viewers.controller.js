@@ -29,9 +29,6 @@
                     case "twitch":
                         $scope.viewers = $scope.viewers.filter(v => v.twitchRoles.includes(role.id));
                         return;
-                    case "firebot":
-                        //TODO
-                        return;
                     case "custom":
                         $scope.viewers = $scope.viewers.filter(v => role.viewers.some(rv => rv.id == v._id));
                         return;

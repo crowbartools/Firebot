@@ -32,13 +32,6 @@
                 <li ng-repeat="role in viewerRoles.twitch" ng-click="filterViewers(role, 'twitch')">
                     <a href>{{role.name}}</a>
                 </li>
-                <li class="divider"></li>
-                <li class="dropdown-header">
-                    Firebot Roles
-                </li>
-                <li ng-repeat="role in viewerRoles.firebot" ng-click="filterViewers(role, 'firebot')">
-                    <a href>{{role.name}}</a>
-                </li>
                 <li class="divider" ng-if="viewerRoles.custom.length"></li>
                 <li class="dropdown-header">
                     Custom Roles
