@@ -3,6 +3,7 @@ import chatUserCount from "./chat-user-count";
 import color from './color';
 import date from './date';
 import discordTimestamp from './discord-timestamp';
+import joinDate from './join-date';
 import profilePageByteBinToken from './profile-page-bytebin-token';
 import quote from './quote';
 import quoteAsObject from './quote-as-object';
@@ -24,6 +25,7 @@ export default [
     color,
     date,
     discordTimestamp,
+    joinDate,
     profilePageByteBinToken,
     quote,
     quoteAsObject,
