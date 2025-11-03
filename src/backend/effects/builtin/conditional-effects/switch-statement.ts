@@ -23,6 +23,7 @@ type Scope = ng.IScope & {
     openFirst: boolean;
     sortableOptions: unknown;
     addCase(): void;
+    duplicateCase(index: number): void;
     deleteCase(index: number): void;
     effectListUpdated(effects: unknown, index: number | "default"): void;
     getAutomaticLabel(switchCase: SwitchCase): string;
@@ -71,7 +72,10 @@ const model: EffectType<EffectModel> = {
                             update="effectListUpdated(effects, $index)" modalId="{{modalId}}" ng-hide="switchCase.fallthrough"></effect-list>
 
                         <div style="margin-top: 10px">
-                            <button class="btn btn-danger" ng-click="deleteCase($index)">
+                            <button class="btn btn-default" ng-click="duplicateCase($index)" title="Duplicate Case">
+                                <i class="far fa-clone"></i>
+                            </button>
+                            <button class="btn btn-danger" ng-click="deleteCase($index)" title="Delete Case">
                                 <i class="far fa-trash"></i>
                             </button>
                         </div>
@@ -94,7 +98,7 @@ const model: EffectType<EffectModel> = {
                 tooltip="Whether or not you want any effect outputs to be made available to the parent effect list." />
         </setting-container>
     `,
-    optionsController: ($scope: Scope, utilityService: any) => {
+    optionsController: ($scope: Scope, utilityService, objectCopyHelper) => {
         $scope.sortableOptions = {
             handle: ".dragHandle",
             stop: () => { }
@@ -120,6 +124,18 @@ const model: EffectType<EffectModel> = {
             }
 
             return `${switchCase.min}-${switchCase.max}`;
+        };
+
+        $scope.duplicateCase = (index: number) => {
+            const newCase = objectCopyHelper.copyAndReplaceIds($scope.effect.cases[index]) as SwitchCase;
+            const currentLabel = newCase.label?.length
+                ? newCase.label
+                : $scope.getAutomaticLabel(newCase);
+            newCase.label = currentLabel?.length
+                ? `${currentLabel} Copy`
+                : "Copy";
+
+            $scope.effect.cases.splice(index + 1, 0, newCase);
         };
 
         $scope.deleteCase = (index: number) => {

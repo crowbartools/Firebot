@@ -32,7 +32,8 @@ const model = {
                         modalId="{{modalId}}"></effect-list>
 
                     <div style="margin-top: 10px">
-                        <button class="btn btn-danger" ng-click="deleteClauseAtIndex($index)"><i class="far fa-trash"></i></button>
+                        <button class="btn btn-default" ng-click="duplicateClauseAtIndex($index)" title="Duplicate Condition"><i class="far fa-clone"></i></button>
+                        <button class="btn btn-danger" ng-click="deleteClauseAtIndex($index)" title="Delete Condition"><i class="far fa-trash"></i></button>
                     </div>
                 </condition-section>
             </div>
@@ -64,7 +65,7 @@ const model = {
             />
         </eos-container>
     `,
-    optionsController: ($scope, utilityService) => {
+    optionsController: ($scope, utilityService, objectCopyHelper) => {
 
         $scope.sortableOptions = {
             handle: ".dragHandle",
@@ -85,6 +86,15 @@ const model = {
                 conditionData: null,
                 effectData: null
             });
+        };
+
+        $scope.duplicateClauseAtIndex = ($index) => {
+            const newCondition = objectCopyHelper.copyAndReplaceIds($scope.effect.ifs[$index]);
+            newCondition.label = newCondition.label?.length
+                ? `${newCondition.label} Copy`
+                : "Copy";
+
+            $scope.effect.ifs.splice($index + 1, 0, newCondition);
         };
 
         $scope.deleteClauseAtIndex = ($index) => {
