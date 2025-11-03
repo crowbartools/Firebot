@@ -6,8 +6,13 @@
         .module("firebotApp")
         .controller("viewersController", function($route, $scope, viewersService, currencyService,
             utilityService, settingsService) {
-
+            $scope.isViewerDBOn = settingsService.getSetting("ViewerDB");
             $scope.viewerTablePageSize = settingsService.getSetting("ViewerListPageSize");
+
+            $scope.turnOnDatabase = () => {
+                settingsService.saveSetting("ViewerDB", true);
+                $scope.isViewerDBOn = true;
+            };
 
             $scope.showUserDetailsModal = (userId) => {
                 const closeFunc = () => {};

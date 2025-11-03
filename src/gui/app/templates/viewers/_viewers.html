@@ -1,4 +1,4 @@
-<div class="p-6 mx-0 flex justify-between">
+<div class="p-6 mx-0 flex justify-between" ng-if="isViewerDBOn">
     <button ng-click="vs.updateViewers()" class="btn btn-primary">
         <i class="far fa-sync mr-2"></i> Refresh
     </button>
@@ -14,7 +14,7 @@
     </div>
 </div>
 
-<div class="p-6">
+<div class="p-6" ng-if="isViewerDBOn">
     <sortable-table
         table-data-set="vs.viewers"
         headers="headers"
@@ -27,4 +27,11 @@
         page-size="viewerTablePageSize"
     >
     </sortable-table>
+</div>
+
+<div ng-if="!isViewerDBOn" class="flex flex-col justify-center items-center" style="height: 100%">
+    <p class="muted">The viewer database is turned off.</p>
+    <button ng-click="turnOnDatabase()" class="btn btn-primary">
+        Turn on viewer database
+    </button>
 </div>
