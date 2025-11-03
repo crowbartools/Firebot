@@ -147,6 +147,24 @@
                         />
                     </firebot-setting>
 
+                    <firebot-setting
+                        name="Default Moderation User"
+                        description="Sets which user account will perform moderation actions. This includes bans/timeouts, deleting/clearing chat messages, setting chat modes/Shield Mode, and Twitch shoutouts."
+                    >
+                        <firebot-select
+                            options="{ streamer: 'Streamer', bot: 'Bot' }"
+                            ng-init="defaultModerationUser = settings.getSetting('DefaultModerationUser')"
+                            selected="defaultModerationUser"
+                            on-update="settings.saveSetting('DefaultModerationUser', option)"
+                            right-justify="true"
+                            aria-label="Sets which user account will perform moderation actions"
+                        />
+
+                        <setting-description-addon>
+                            <strong>NOTE: If no bot account is logged in, actions will default to the streamer account.</strong>
+                        </setting-description-addon>
+                    </firebot-setting>
+
                     <div style="margin-top: 20px">
                         <p class="muted">Looking for a setting that used to be located here? Try checking in the Tools app menu!</p>
                     </div>

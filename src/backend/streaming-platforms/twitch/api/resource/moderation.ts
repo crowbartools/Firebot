@@ -147,7 +147,7 @@ export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
                 reason: reason
             };
 
-            const response = await this.streamerClient.moderation.banUser(streamerId, timeoutRequest);
+            const response = await this.moderationClient.moderation.banUser(streamerId, timeoutRequest);
 
             return !!response;
         } catch (error) {
@@ -214,7 +214,7 @@ export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
                 reason: reason
             };
 
-            await this.streamerClient.moderation.banUser(streamerId, banRequest);
+            await this.moderationClient.moderation.banUser(streamerId, banRequest);
 
             return true;
         } catch (error) {
@@ -234,7 +234,7 @@ export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
         const streamerId = this.accounts.streamer.userId;
 
         try {
-            await this.streamerClient.moderation.unbanUser(streamerId, userId);
+            await this.moderationClient.moderation.unbanUser(streamerId, userId);
 
             return true;
         } catch (error) {

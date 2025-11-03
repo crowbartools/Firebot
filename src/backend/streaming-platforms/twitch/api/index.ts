@@ -29,6 +29,7 @@ import { TwitchWhispersApi } from "./resource/whispers";
 
 import { UserContextApiClient } from "./user-context-api-client";
 import { AccountAccess } from "../../../common/account-access";
+import { SettingsManager } from "../../../common/settings-manager";
 import frontendCommunicator from "../../../common/frontend-communicator";
 import logger from "../../../logwrapper";
 
@@ -159,6 +160,13 @@ class TwitchApi {
 
     get botClient(): ApiClient {
         return this._botClient;
+    }
+
+    get moderationClient(): ApiClient {
+        const modUser = SettingsManager.getSetting("DefaultModerationUser");
+        return modUser === "bot" && this.accounts.bot.loggedIn === true && this._botClient
+            ? this.botClient
+            : this.streamerClient;
     }
 
     get accounts() {

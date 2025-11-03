@@ -202,7 +202,7 @@ export class TwitchChatApi extends ApiResourceBase {
         const streamerId = this.accounts.streamer.userId;
 
         try {
-            await this.streamerClient.chat.shoutoutUser(streamerId, targetUserId);
+            await this.moderationClient.chat.shoutoutUser(streamerId, targetUserId);
         } catch (error) {
             this.logger.error("Error sending shoutout", (error as Error).message);
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -222,7 +222,7 @@ export class TwitchChatApi extends ApiResourceBase {
         const streamerUserId: string = this.accounts.streamer.userId;
 
         try {
-            await this.streamerClient.moderation.deleteChatMessages(streamerUserId, messageId);
+            await this.moderationClient.moderation.deleteChatMessages(streamerUserId, messageId);
 
             return true;
         } catch (error) {
@@ -241,7 +241,7 @@ export class TwitchChatApi extends ApiResourceBase {
         const streamerUserId: string = this.accounts.streamer.userId;
 
         try {
-            await this.streamerClient.moderation.deleteChatMessages(streamerUserId);
+            await this.moderationClient.moderation.deleteChatMessages(streamerUserId);
 
             return true;
         } catch (error) {
@@ -265,7 +265,7 @@ export class TwitchChatApi extends ApiResourceBase {
                 emoteOnlyModeEnabled: enable
             };
 
-            await this.streamerClient.chat.updateSettings(streamerUserId, chatSettings);
+            await this.moderationClient.chat.updateSettings(streamerUserId, chatSettings);
 
             return true;
         } catch (error) {
@@ -291,7 +291,7 @@ export class TwitchChatApi extends ApiResourceBase {
                 followerOnlyModeDelay: duration
             };
 
-            await this.streamerClient.chat.updateSettings(streamerUserId, chatSettings);
+            await this.moderationClient.chat.updateSettings(streamerUserId, chatSettings);
 
             return true;
         } catch (error) {
@@ -315,7 +315,7 @@ export class TwitchChatApi extends ApiResourceBase {
                 subscriberOnlyModeEnabled: enable
             };
 
-            await this.streamerClient.chat.updateSettings(streamerUserId, chatSettings);
+            await this.moderationClient.chat.updateSettings(streamerUserId, chatSettings);
 
             return true;
         } catch (error) {
@@ -341,7 +341,7 @@ export class TwitchChatApi extends ApiResourceBase {
                 slowModeDelay: enable === true ? duration : null
             };
 
-            await this.streamerClient.chat.updateSettings(streamerUserId, chatSettings);
+            await this.moderationClient.chat.updateSettings(streamerUserId, chatSettings);
 
             return true;
         } catch (error) {
@@ -365,7 +365,7 @@ export class TwitchChatApi extends ApiResourceBase {
                 uniqueChatModeEnabled: enable
             };
 
-            await this.streamerClient.chat.updateSettings(streamerUserId, chatSettings);
+            await this.moderationClient.chat.updateSettings(streamerUserId, chatSettings);
 
             return true;
         } catch (error) {

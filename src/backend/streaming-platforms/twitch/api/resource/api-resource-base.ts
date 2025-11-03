@@ -19,6 +19,10 @@ export abstract class ApiResourceBase<T extends ListenerSignature<T> = unknown> 
         return this._apiBase.botClient;
     }
 
+    protected get moderationClient(): ApiClient {
+        return this._apiBase.moderationClient;
+    }
+
     protected get logger() {
         return this._apiBase.logger;
     }

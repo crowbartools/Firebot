@@ -48,7 +48,7 @@ const model: EffectType<{
     onTriggerEvent: async ({ effect }) => {
         const activate = effect.action === "Enable Shield Mode";
         const streamerUserId: string = AccountAccess.getAccounts().streamer.userId;
-        await TwitchApi.streamerClient.moderation.updateShieldModeStatus(streamerUserId, activate);
+        await TwitchApi.moderationClient.moderation.updateShieldModeStatus(streamerUserId, activate);
     }
 };
 

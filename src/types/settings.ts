@@ -55,6 +55,7 @@ export type FirebotSettingsTypes = {
     };
     DebugMode: boolean;
     DefaultEffectLabelsEnabled: boolean;
+    DefaultModerationUser: "streamer" | "bot";
     DefaultToAdvancedCommandMode: boolean;
     DefaultTtsVoiceId: string;
     DeleteProfile: string;
@@ -182,6 +183,7 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     },
     DebugMode: false,
     DefaultEffectLabelsEnabled: true,
+    DefaultModerationUser: "streamer",
     DefaultToAdvancedCommandMode: false,
     DefaultTtsVoiceId: undefined,
     DeleteProfile: undefined,
