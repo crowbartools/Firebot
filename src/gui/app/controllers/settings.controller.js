@@ -14,12 +14,6 @@
                     template: "<general-settings />"
                 },
                 {
-                    name: "Setups",
-                    description: "Share your best creations with others. Or import others!",
-                    icon: "fa-box-full",
-                    template: "<setups-settings />"
-                },
-                {
                     name: "Triggers",
                     description: "Tweak the behaviors of various triggers (commands, events, etc)",
                     icon: "fa-bolt",

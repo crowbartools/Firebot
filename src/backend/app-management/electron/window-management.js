@@ -204,13 +204,45 @@ async function createAppMenu() {
             label: 'File',
             submenu: [
                 {
-                    label: 'Import Firebot Setup...',
-                    click: () => {
-                        frontendCommunicator.send("open-modal", {
-                            component: "importSetupModal"
-                        });
-                    },
-                    icon: await createIconImage("../../../gui/images/icons/mdi/import.png")
+                    label: "Firebot Setups",
+                    toolTip: "Create, import, or remove custom components via Firebot Setups",
+                    sublabel: "Create, import, or remove custom components via Firebot Setups",
+                    icon: await createIconImage("../../../gui/images/icons/mdi/file-document-multiple-outline.png"),
+                    submenu: [
+                        {
+                            label: 'Create Firebot Setup...',
+                            toolTip: "Create a new Firebot Setup (a collection of commands, events, currencies, etc) and share it with others!",
+                            sublabel: "Create a new Firebot Setup (a collection of commands, events, currencies, etc) and share it with others!",
+                            click: () => {
+                                frontendCommunicator.send("open-modal", {
+                                    component: "createSetupModal"
+                                });
+                            },
+                            icon: await createIconImage("../../../gui/images/icons/mdi/export.png")
+                        },
+                        {
+                            label: 'Import Firebot Setup...',
+                            toolTip: "Import a Firebot Setup (.firebotsetup file) made by someone else!",
+                            sublabel: "Import a Firebot Setup (.firebotsetup file) made by someone else!",
+                            click: () => {
+                                frontendCommunicator.send("open-modal", {
+                                    component: "importSetupModal"
+                                });
+                            },
+                            icon: await createIconImage("../../../gui/images/icons/mdi/import.png")
+                        },
+                        {
+                            label: 'Remove Firebot Setup...',
+                            toolTip: "Select a Setup file to have Firebot find and remove all matching components (commands, events, etc) currently saved for you.",
+                            sublabel: "Select a Setup file to have Firebot find and remove all matching components (commands, events, etc) currently saved for you.",
+                            click: () => {
+                                frontendCommunicator.send("open-modal", {
+                                    component: "removeSetupModal"
+                                });
+                            },
+                            icon: await createIconImage("../../../gui/images/icons/mdi/file-remove-outline.png")
+                        }
+                    ]
                 },
                 {
                     type: 'separator'
