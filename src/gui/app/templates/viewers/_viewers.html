@@ -2,15 +2,33 @@
     <button ng-click="vs.updateViewers()" class="btn btn-primary">
         <i class="far fa-sync mr-2"></i> Refresh
     </button>
-    <button ng-click="showImportViewersModal()" class="btn btn-primary ml-2">
-        <i class="fas fa-cloud-download-alt mr-2"></i> Import Viewers
-    </button>
-    <button ng-click="showPurgeViewersModal()" class="btn btn-danger ml-2">
-        <i class="fas fa-trash-alt mr-2"></i> Purge Viewers
-    </button>
     <div class="flex justify-between" style="margin-left: auto;">
-        <searchbar placeholder-text="Search Firebot viewers..." query="viewerSearch" style="flex-basis: 250px"></searchbar>
-        <button ng-click="showViewerSearchModal();" class="btn btn-default ml-2"><i class="far fa-search"></i> Search Twitch</button>
+        <button ng-click="showViewerSearchModal();" class="btn btn-default"><i class="far fa-search"></i> Search Twitch</button>
+        <searchbar placeholder-text="Search Firebot viewers..." class="ml-2" query="viewerSearch" style="flex-basis: 250px"></searchbar>
+        <div uib-dropdown class="ml-5 flex items-center">
+            <a
+                uib-dropdown-toggle
+                class="clickable"
+                style="color: white; font-size: 25px; line-height: 1"
+                aria-label="Activity feed options"
+            >
+                <i class="far fa-ellipsis-v"></i>
+            </a>
+            <ul class="dropdown-menu right-justified-dropdown" uib-dropdown-menu>
+                <li ng-click="showImportViewersModal()">
+                    <a>
+                        <i class="fas fa-cloud-download-alt mr-4" aria-label="Import Viewers"></i>
+                        Import Viewers
+                    </a>
+                </li>
+                <li ng-click="showPurgeViewersModal()">
+                    <a style="color: #fb7373;">
+                        <i class="far fa-trash-alt mr-6" aria-label="Purge Viewers"></i>
+                        Purge Viewers
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 
