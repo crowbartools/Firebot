@@ -8,6 +8,7 @@ import type { OverlayWidgetConfig } from "./overlay-widgets";
 import type { QuickActionDefinition } from "./quick-actions";
 import type { RankLadder } from "./ranks";
 import type { CustomRole, LegacyCustomRole } from "./roles";
+import type { FirebotGlobalValue } from "./settings";
 import type { ScheduledTask, Timer } from "./timers";
 import type { VariableMacro } from "./variable-macros";
 
@@ -16,9 +17,15 @@ export type SetupImportQuestion = {
     answer: string;
 };
 
+type FirebotSetupGlobalValue = FirebotGlobalValue & {
+    id: string;
+};
+
 export type FirebotSetup = {
     name: string;
     description: string;
+    author: string;
+    version: number;
     importQuestions: SetupImportQuestion[];
     requireCurrency: boolean;
     components: {
@@ -37,5 +44,6 @@ export type FirebotSetup = {
         viewerRankLadders: RankLadder[];
         quickActions: QuickActionDefinition[];
         overlayWidgetConfigs: OverlayWidgetConfig[];
+        globalValues: FirebotSetupGlobalValue[];
     };
 };

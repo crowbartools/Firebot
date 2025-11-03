@@ -10,6 +10,7 @@ import { HotkeyManager } from "../hotkeys/hotkey-manager";
 import { PresetEffectListManager } from "../effects/preset-lists/preset-effect-list-manager";
 import { QuickActionManager } from "../quick-actions/quick-action-manager";
 import { ScheduledTaskManager } from "../timers/scheduled-task-manager";
+import { SettingsManager } from "../common/settings-manager";
 import { TimerManager } from "../timers/timer-manager";
 import commandManager from "../chat/commands/command-manager";
 import currencyAccess from "../currency/currency-access";
@@ -270,6 +271,22 @@ class SetupManager {
             overlayWidgetConfigManager.triggerUiRefresh();
         }
 
+        const componentGlobalValues = setup.components.globalValues ?? [];
+        if (componentGlobalValues.length > 0) {
+            let globalValues = SettingsManager.getSetting("GlobalValues");
+
+            // Remove any existing ones that are in the setup
+            globalValues = globalValues.filter(v =>
+                !componentGlobalValues.some(cv => cv.name === v.name)
+            );
+
+            for (const value of componentGlobalValues) {
+                globalValues.push(value);
+            }
+
+            SettingsManager.saveSetting("GlobalValues", globalValues);
+        }
+
         return true;
     }
 
@@ -355,6 +372,19 @@ class SetupManager {
                     overlayWidgetConfigManager.triggerUiRefresh();
                 }
             });
+
+        // Process GlobalValues separately
+        if (components.globalValues?.length) {
+            const componentGlobalValues = components.globalValues;
+            let globalValues = SettingsManager.getSetting("GlobalValues");
+
+            globalValues = globalValues.filter(v =>
+                !componentGlobalValues.some(cv => cv.name === v.name)
+            );
+
+            SettingsManager.saveSetting("GlobalValues", globalValues);
+        }
+
         return true;
     }
 }

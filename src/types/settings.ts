@@ -11,6 +11,12 @@ export type FirebotAudioDevice = {
     deviceId: string;
 };
 
+export type FirebotGlobalValue = {
+    name: string;
+    secret?: boolean;
+    value: string;
+};
+
 export type FirebotSettingsTypes = {
     ActiveChatUserListTimeout: number;
     ActiveProfiles: string[];
@@ -62,7 +68,7 @@ export type FirebotSettingsTypes = {
     EventSettings: object; // Pretty sure this is no longer used
     FirstTimeUse: boolean;
     ForceOverlayEffectsToContinueOnRefresh: boolean;
-    GlobalValues: Array<{ name: string, secret?: boolean, value: string }>;
+    GlobalValues: Array<FirebotGlobalValue>;
     IgnoreSubsequentSubEventsAfterCommunitySub: boolean;
     JustUpdated: boolean;
     LastBackupDate: Date;

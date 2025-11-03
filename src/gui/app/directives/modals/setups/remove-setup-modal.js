@@ -1,5 +1,7 @@
 "use strict";
 
+/** @import { FirebotSetup } from "../../../../../types/setups" */
+
 (function() {
     angular.module("firebotApp")
         .component("removeSetupModal", {
@@ -55,7 +57,8 @@
             },
             controller: function(ngToast, commandsService, countersService, currencyService,
                 effectQueuesService, eventsService, hotkeyService, presetEffectListsService,
-                timerService, scheduledTaskService, viewerRolesService, quickActionsService, variableMacroService, viewerRanksService, backendCommunicator) {
+                timerService, scheduledTaskService, viewerRolesService, quickActionsService,
+                variableMacroService, viewerRanksService, settingsService, backendCommunicator) {
                 const $ctrl = this;
 
                 $ctrl.setupFilePath = null;
@@ -76,9 +79,11 @@
                     variableMacros: "Variable Macro",
                     viewerRoles: "Viewer Role",
                     viewerRankLadders: "Viewer Rank Ladder",
-                    quickActions: "Quick Action"
+                    quickActions: "Quick Action",
+                    globalValues: "Global Value"
                 };
 
+                /** @type { FirebotSetup["components"] } */
                 $ctrl.componentsToRemove = {
                     commands: [],
                     counters: [],
@@ -93,7 +98,8 @@
                     variableMacros: [],
                     viewerRoles: [],
                     viewerRankLadders: [],
-                    quickActions: []
+                    quickActions: [],
+                    globalValues: []
                 };
 
                 $ctrl.hasComponentsToRemove = false;
@@ -113,7 +119,10 @@
                     ...variableMacroService.macros.map(i => i.id),
                     ...viewerRolesService.getCustomRoles().map(i => i.id),
                     ...viewerRanksService.rankLadders.map(i => i.id),
-                    ...quickActionsService.quickActions.map(i => i.id)
+                    ...quickActionsService.quickActions.map(i => i.id),
+                    ...settingsService.getSetting("GlobalValues", true).map(v =>
+                        `GlobalValue:${v.name}`
+                    )
                 ].forEach((id) => {
                     $ctrl.currentIds[id] = true;
                 });

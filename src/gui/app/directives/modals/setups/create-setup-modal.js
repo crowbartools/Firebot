@@ -1,5 +1,7 @@
 "use strict";
 
+/** @import { FirebotSetup } from "../../../../../types/setups" */
+
 (function() {
     const sanitizeFileName = require("sanitize-filename");
     angular.module("firebotApp")
@@ -82,7 +84,7 @@
             controller: function(commandsService, countersService, currencyService,
                 effectQueuesService, eventsService, hotkeyService, presetEffectListsService,
                 timerService, scheduledTaskService, viewerRolesService, quickActionsService, variableMacroService, viewerRanksService, accountAccess, utilityService,
-                ngToast, backendCommunicator, sortTagsService, $q, overlayWidgetsService) {
+                ngToast, backendCommunicator, sortTagsService, overlayWidgetsService, settingsService) {
 
                 const $ctrl = this;
 
@@ -176,6 +178,15 @@
                         all: quickActionsService.quickActions.filter(qa => qa.type === "custom"),
                         nameField: "name",
                         key: "quickActions"
+                    },
+                    {
+                        label: "Global Values",
+                        all: settingsService.getSetting("GlobalValues", true).map(v => ({
+                            id: `GlobalValue:${v.name}`,
+                            ...v
+                        })),
+                        nameField: "name",
+                        key: "globalValues"
                     }
                 ];
 
@@ -193,6 +204,7 @@
                     });
                 };
 
+                /** @type { FirebotSetup } */
                 $ctrl.setup = {
                     name: "",
                     description: "",
@@ -214,7 +226,8 @@
                         viewerRoles: [],
                         viewerRankLadders: [],
                         quickActions: [],
-                        overlayWidgetConfigs: []
+                        overlayWidgetConfigs: [],
+                        globalValues: []
                     },
                     requireCurrency: false,
                     importQuestions: []
