@@ -161,15 +161,6 @@
           ng-disabled="!chatFeedIsEnabled()"
         />
       </div>
-      <div class="settings-btn-wrapper">
-        <button
-          class="settings-btn"
-          ng-click="showChatSettingsModal()"
-          aria-label="Chat Settings"
-        >
-          <i class="fas fa-cog"></i>
-        </button>
-      </div>
     </div>
   </div>
 
@@ -301,5 +292,15 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="dashboard-settings-button-container">
+    <firebot-button
+      type="primary"
+      icon="fas fa-cog"
+      ng-click="showChatSettingsModal()"
+      title="Dashboard Settings"
+      aria-label="Dashboard Settings"
+    />
   </div>
 </div>

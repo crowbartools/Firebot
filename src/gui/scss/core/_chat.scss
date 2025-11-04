@@ -924,3 +924,14 @@
     font-size: 18px;
     font-weight: bold;
 }
+
+.dashboard-settings-button-container {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+}
+
+.dashboard-settings-button-container .btn {
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.33);
+    font-size: 18px;
+}

@@ -116,8 +116,7 @@
             $scope.showChatSettingsModal = () => {
                 utilityService.showModal({
                     component: "chatSettingsModal",
-                    size: "md",
-                    backdrop: true,
+                    size: "lg",
                     dismissCallback: getUpdatedChatSettings,
                     closeCallback: getUpdatedChatSettings
                 });
