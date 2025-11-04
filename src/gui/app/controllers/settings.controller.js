@@ -14,6 +14,12 @@
                     template: "<general-settings />"
                 },
                 {
+                    name: "Dashboard",
+                    description: "Settings related to Dashboard components like chat, Quick Actions, and more",
+                    icon: "fa-signal-stream",
+                    template: "<dashboard-settings />"
+                },
+                {
                     name: "Triggers",
                     description: "Tweak the behaviors of various triggers (commands, events, etc)",
                     icon: "fa-bolt",

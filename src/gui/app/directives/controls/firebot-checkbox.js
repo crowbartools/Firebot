@@ -33,7 +33,8 @@
                 disabled: "<?",
                 onChange: "&?",
                 ngClick: "&?",
-                allowIndeterminate: "<?"
+                allowIndeterminate: "<?",
+                externalLink: "@?"
             },
             template: `
             <label class="control-fb control--checkbox" style="{{$ctrl.style}}"> {{$ctrl.label}} <tooltip ng-if="$ctrl.tooltip" text="$ctrl.tooltip" placement="{{$ctrl.tooltipPlacement || ''}}"></tooltip>
@@ -45,6 +46,7 @@
                     ui-indeterminate="$ctrl.allowIndeterminate && $ctrl.model == null"
                 >
                 <div class="control__indicator"></div>
+                <a ng-if="$ctrl.externalLink" href="{{$ctrl.externalLink}}" target="_blank"><i class="fas fa-external-link"></i></a>
             </label>
             `,
             controller: function() {

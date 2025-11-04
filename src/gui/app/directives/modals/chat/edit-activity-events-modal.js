@@ -4,7 +4,7 @@
     angular.module("firebotApp")
         .component("editActivityEventsModal", {
             template: `
-            <div class="modal-header" style="text-align: center">
+            <div class="modal-header sticky-header" style="text-align: center">
                 <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
                 <h4 class="modal-title">Edit Activity Events</h4>
             </div>

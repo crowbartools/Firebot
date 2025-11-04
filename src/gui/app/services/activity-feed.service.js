@@ -100,7 +100,7 @@
             service.showEditActivityFeedEventsModal = () => {
                 modalService.showModal({
                     component: "editActivityEventsModal",
-                    size: "sm",
+                    size: "md",
                     closeCallback: () => {
                         const allowedEvents = settingsService.getSetting("AllowedActivityEvents");
                         service.activities = service.allActivities

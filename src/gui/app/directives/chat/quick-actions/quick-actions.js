@@ -45,17 +45,6 @@
                     >
                         <i class="fas fa-plus"></i>
                     </button>
-
-                    <button
-                        class="quick-action-btn p-0 mt-4"
-                        uib-tooltip="Quick Action Settings"
-                        append-tooltip-to-body="true"
-                        tooltip-placement="right"
-                        ng-click="$ctrl.openQuickActionSettingsModal()"
-                        aria-label="Quick Action Settings"
-                    >
-                        <i class="fas fa-cog"></i>
-                    </button>
                 </div>
             `,
             controller: function($scope, utilityService, backendCommunicator, settingsService, quickActionsService, logger) {
@@ -138,20 +127,6 @@
                     ];
 
                     return options;
-                };
-
-                $ctrl.openQuickActionSettingsModal = () => {
-                    utilityService.showModal({
-                        component: "quickActionSettingsModal",
-                        size: "sm",
-                        resolveObj: {
-                            quickActions: () => quickActionsService.quickActions,
-                            settings: () => $ctrl.settings
-                        },
-                        dismissCallback: () => {
-                            settingsService.saveSetting("QuickActions", $ctrl.settings);
-                        }
-                    });
                 };
             }
         });
