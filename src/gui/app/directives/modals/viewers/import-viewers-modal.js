@@ -166,7 +166,8 @@
 
                 $ctrl.importViewers = async () => {
                     const data = {
-                        viewers: $ctrl.filteredViewers,
+                        appId: "streamlabs-chatbot",
+                        data: $ctrl.filteredViewers,
                         settings: $ctrl.settings
                     };
 
