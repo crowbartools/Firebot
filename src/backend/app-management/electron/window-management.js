@@ -480,6 +480,15 @@ async function createAppMenu() {
                         frontendCommunicator.send("open-about-modal");
                     },
                     icon: await createIconImage("../../../gui/images/icons/mdi/information-outline.png")
+                },
+                {
+                    label: 'Release Notes...',
+                    click: () => {
+                        frontendCommunicator.send("open-modal", {
+                            component: "updateModal"
+                        });
+                    },
+                    icon: await createIconImage("../../../gui/images/icons/mdi/list-box-outline.png")
                 }
             ]
         }
