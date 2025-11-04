@@ -50,29 +50,10 @@
                         />
                     </firebot-setting>
 
-                    <firebot-setting
-                        name="Purge Viewer Data"
-                        description="Sometimes you may want to periodically purge viewer data to clear out inactive viewers."
-                    >
-                        <firebot-button
-                            text="View Purge Options"
-                            ng-click="showPurgeViewersModal()"
-                        />
-                    </firebot-setting>
-
                 </div>
           `,
-            controller: function($scope, settingsService, utilityService) {
+            controller: function($scope, settingsService) {
                 $scope.settings = settingsService;
-
-                $scope.showPurgeViewersModal = () => {
-                    utilityService.showModal({
-                        component: "purgeViewersModal",
-                        size: 'sm',
-                        backdrop: false,
-                        keyboard: true
-                    });
-                };
             }
         });
 }());
