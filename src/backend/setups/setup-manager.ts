@@ -207,7 +207,7 @@ class SetupManager {
 
         // hotkeys
         for (const hotkey of setup.components.hotkeys || []) {
-            HotkeyManager.addHotkey(hotkey);
+            HotkeyManager.saveItem(hotkey);
         }
 
         // preset effect lists
@@ -314,7 +314,7 @@ class SetupManager {
                             EventsAccess.deleteGroup(id);
                             break;
                         case "hotkeys":
-                            HotkeyManager.deleteHotkey(id);
+                            HotkeyManager.deleteItem(id);
                             break;
                         case "presetEffectLists":
                             PresetEffectListManager.deleteItem(id);

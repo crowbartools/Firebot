@@ -127,7 +127,7 @@
                     },
                     {
                         label: "Hotkeys",
-                        all: hotkeyService.getHotkeys(),
+                        all: hotkeyService.hotkeys,
                         nameField: "name",
                         key: "hotkeys"
                     },

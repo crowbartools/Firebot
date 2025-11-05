@@ -112,7 +112,7 @@
                     ...effectQueuesService.getEffectQueues().map(i => i.id),
                     ...eventsService.getAllEvents().map(i => i.id),
                     ...eventsService.getAllEventGroups().map(i => i.id),
-                    ...hotkeyService.getHotkeys().map(i => i.id),
+                    ...hotkeyService.hotkeys.map(i => i.id),
                     ...presetEffectListsService.getPresetEffectLists().map(i => i.id),
                     ...timerService.getTimers().map(i => i.id),
                     ...scheduledTaskService.getScheduledTasks().map(i => i.id),

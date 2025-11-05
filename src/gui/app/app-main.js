@@ -111,10 +111,6 @@
     ]);
 
     app.run(function initializeApplication(
-        logger,
-        quickActionsService,
-        chatMessagesService,
-        activityFeedService,
         viewerRolesService,
         viewerRanksService,
         connectionService,
@@ -128,6 +124,7 @@
         ttsService,
         settingsService,
         countersService,
+        hotkeyService,
         gamesService,
         presetEffectListsService,
         startupScriptsService,
@@ -137,8 +134,6 @@
         channelRewardsService,
         sortTagsService,
         iconsService,
-        videoService,
-        replaceVariableService,
         variableMacroService,
         uiExtensionsService,
         webhooksService,
@@ -168,6 +163,8 @@
         chatModerationService.loadChatModerationData();
 
         countersService.loadCounters();
+
+        hotkeyService.loadHotkeys();
 
         gamesService.loadGames();
 

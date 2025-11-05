@@ -211,7 +211,7 @@ export async function whenReady() {
 
     windowManagement.updateSplashScreenStatus("Loading hotkeys...");
     const { HotkeyManager } = await import("../../../hotkeys/hotkey-manager");
-    HotkeyManager.loadHotkeys();
+    HotkeyManager.loadItems();
 
     windowManagement.updateSplashScreenStatus("Starting currency timer...");
     const currencyManager = (await import("../../../currency/currency-manager")).default;

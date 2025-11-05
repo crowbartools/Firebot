@@ -2,7 +2,10 @@ import type { EffectList } from "./effects";
 
 export type FirebotHotkey = {
     id: string;
-    code: Electron.Accelerator;
+    name: string;
     active: boolean;
+    code: Electron.Accelerator;
+    warning: string;
     effects: EffectList;
+    sortTags: string[];
 };
