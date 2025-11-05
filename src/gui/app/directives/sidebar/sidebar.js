@@ -35,12 +35,12 @@
                             <nav-link page="Overlay Widgets" name="Overlay Widgets" icon="fa-layer-plus"></nav-link>
                             <nav-link page="Effect Queues" name="{{ 'SIDEBAR.OTHER.EFFECT_QUEUES' | translate }}" icon="fa-stream"></nav-link>
                             <nav-link page="Variable Macros" name="Variable Macros" icon="fa-brackets"></nav-link>
-                            <nav-link page="Games" name="Games" icon="fa-dice"></nav-link>
-                            <nav-link page="Moderation" name="Moderation" icon="fa-gavel"></nav-link>
-                            <nav-link page="Currency" name="{{'SIDEBAR.MANAGEMENT.CURRENCY' | translate }}" icon="fa-money-bill" ng-if="$ctrl.isViewerDBOn()"></nav-link>
                             <nav-link page="Quotes" name="{{'SIDEBAR.MANAGEMENT.QUOTES' | translate }}" icon="fa-quote-right"></nav-link>
-                            <nav-link page="Viewers" name="{{'SIDEBAR.MANAGEMENT.VIEWERS' | translate }}" icon="fa-users"></nav-link>
+                            <nav-link page="Games" name="Games" icon="fa-dice"></nav-link>
+                            <nav-link page="Currency" name="{{'SIDEBAR.MANAGEMENT.CURRENCY' | translate }}" icon="fa-money-bill" ng-if="$ctrl.isViewerDBOn()"></nav-link>
                             <nav-link page="Roles And Ranks" name="{{'SIDEBAR.MANAGEMENT.VIEWER_ROLES' | translate }}" icon="fa-user-tag"></nav-link>
+                            <nav-link page="Viewers" name="{{'SIDEBAR.MANAGEMENT.VIEWERS' | translate }}" icon="fa-users"></nav-link>
+                            <nav-link page="Moderation" name="Moderation" icon="fa-gavel"></nav-link>
                             <nav-link page="Settings" name="{{'SIDEBAR.MANAGEMENT.SETTINGS' | translate }}" icon="fa-cog"></nav-link>
                         </ul>
                     </nav>
