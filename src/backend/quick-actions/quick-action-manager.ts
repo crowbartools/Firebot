@@ -52,6 +52,7 @@ class QuickActionManager extends JsonDbManager<QuickActionDefinition> {
 
     loadItems(): void {
         super.loadItems();
+        this.cleanUpSettings();
     }
 
     getAllItems(): QuickActionDefinition[] {
@@ -59,6 +60,43 @@ class QuickActionManager extends JsonDbManager<QuickActionDefinition> {
             ...this.getSystemQuickActionDefinitions(),
             ...Object.values(this.items)
         ];
+    }
+
+    cleanUpSettings(): void {
+        const settings = SettingsManager.getSetting("QuickActions");
+        const allItems = this.getAllItems();
+
+        // Remove stale items
+        const settingsKeys = Object.keys(settings);
+        for (const action of settingsKeys) {
+            if (!allItems.some(i => i.id === action)) {
+                delete settings[action];
+            }
+        }
+
+        // Renumber
+        const totalSettings = Object.keys(settings).length;
+        const sortedSettings = Object.keys(settings)
+            .map(key => ({
+                id: key,
+                position: settings[key].position
+            }))
+            .sort((a, b) => a.position - b.position);
+        for (let i = 0; i < totalSettings; i++) {
+            settings[sortedSettings[i].id].position = i;
+        }
+
+        // Add missing items
+        for (const item of allItems) {
+            if (!settings[item.id]) {
+                settings[item.id] = {
+                    enabled: true,
+                    position: Object.keys(settings).length
+                };
+            }
+        }
+
+        SettingsManager.saveSetting("QuickActions", settings);
     }
 
     saveQuickAction(quickAction: QuickActionDefinition, notify = true): QuickActionDefinition {
