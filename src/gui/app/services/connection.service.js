@@ -20,10 +20,10 @@
                 service.accounts = accounts;
                 service.loadProfiles();
             });
-            service.getAccounts = () => {
+            service.loadAccounts = () => {
                 service.accounts = backendCommunicator.fireEventSync("accounts:get-accounts");
             };
-            service.getAccounts();
+            service.loadAccounts();
 
             const defaultPhotoUrl = "../images/placeholders/nologin.png";
 

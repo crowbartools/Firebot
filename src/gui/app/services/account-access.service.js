@@ -19,10 +19,10 @@
                 }
             };
 
-            service.getAccounts = () => {
+            service.loadAccounts = () => {
                 service.accounts = backendCommunicator.fireEventSync("accounts:get-accounts");
             };
-            service.getAccounts();
+            service.loadAccounts();
 
             service.logoutAccount = (accountType) => {
                 backendCommunicator.fireEvent("accounts:logout-account", accountType);
