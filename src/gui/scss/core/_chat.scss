@@ -943,5 +943,12 @@
 
 .dashboard-settings-button-container .btn {
     box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.33);
-    font-size: 18px;
+    font-size: 24px;
+    height: 48px;
+    width: 48px;
+    padding: 0;
+}
+
+.dashboard-settings-button-container i {
+    margin: 0 !important;
 }
