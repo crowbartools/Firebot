@@ -93,6 +93,7 @@
                             $rootScope.showSpinner = false;
                             utilityService.showModal({
                                 component: "previewPurgeModal",
+                                size: "lg",
                                 backdrop: true,
                                 resolveObj: {
                                     viewers: () => viewers
