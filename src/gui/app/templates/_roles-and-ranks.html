@@ -50,14 +50,16 @@
         </div>
         
         <h3 class="mt-12" style="text-transform: uppercase;font-weight: 200;font-size: 19px;">Twitch Roles</h3>
-        <p class="muted">These roles are predefined by Twitch and cannot be edited.</p>
+        <p class="muted">These roles are predefined by Twitch and cannot be renamed or deleted.</p>
         <div class="new-tile-grid" style="width: 100%">
             <div ng-repeat="role in viewerRolesService.getTwitchRoles() track by $index" class="new-tile gray centered">
+                <div class="view-btn" ng-click="showViewTwitchRoleModal(role)"></div>
                 <div class="content row">
                     <div class="detail-wrapper nomargin">
                         <div class="detail" style="font-size: 1.6em;">
                             {{role.name}}
                         </div>
+                        <div class="detail-description mt-2"><i class="fal fa-user"></i> {{viewerRolesService.getViewersForTwitchRole(role.id).length}}</div>
                     </div>
                 </div>
             </div>

@@ -7,7 +7,7 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
 
     angular
         .module("firebotApp")
-        .factory("viewerRolesService", function(backendCommunicator, utilityService) {
+        .factory("viewerRolesService", function(backendCommunicator, utilityService, accountAccess) {
             const service = {};
 
             let customRoles = {};
@@ -110,6 +110,37 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
             };
 
             const twitchRoles = twitchRoleConstants.getTwitchRoles();
+            service.getViewersForTwitchRole = (id) => {
+                switch (id) {
+                    case "broadcaster":
+                        return [accountAccess.accounts.streamer];
+                    case "mod":
+                        return backendCommunicator.fireEventSync("get-moderators");
+                    case "vip":
+                        return backendCommunicator.fireEventSync("get-vips");
+                    case "sub":
+                        return backendCommunicator.fireEventSync("get-subscribers");
+                    case "tier1":
+                        return backendCommunicator.fireEventSync("get-subscribers").filter(s => s.subTier === "tier1");
+                    case "tier2":
+                        return backendCommunicator.fireEventSync("get-subscribers").filter(s => s.subTier === "tier2");
+                    case "tier3":
+                        return backendCommunicator.fireEventSync("get-subscribers").filter(s => s.subTier === "tier3");
+                    case "viewerlistbot":
+                        return backendCommunicator.fireEventSync("get-known-bots");
+                    default:
+                        return [];
+                }
+            };
+
+            service.updateModRoleForUser = (username, shouldBeMod) => {
+                backendCommunicator.fireEvent("update-user-mod-status", { username, shouldBeMod });
+            };
+
+            service.updateVipRoleForUser = (username, shouldBeVip) => {
+                backendCommunicator.fireEvent("update-user-vip-status", { username, shouldBeVip });
+            };
+
             service.getTwitchRoles = function() {
                 return twitchRoles;
             };

@@ -299,13 +299,6 @@
                 service.hideMessageInChatFeed(data.messageId);
             });
 
-            service.changeModStatus = (username, shouldBeMod) => {
-                backendCommunicator.send("update-user-mod-status", {
-                    username,
-                    shouldBeMod
-                });
-            };
-
             backendCommunicator.on("twitch:chat:rewardredemption", (redemption) => {
                 const redemptionItem = {
                     id: randomUUID(),

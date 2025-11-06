@@ -144,6 +144,9 @@ export async function whenReady() {
     windowManagement.updateSplashScreenStatus("Loading channel VIPs...");
     await chatRolesManager.loadVips();
 
+    windowManagement.updateSplashScreenStatus("Loading channel subscribers...");
+    await chatRolesManager.loadSubscribers();
+
     windowManagement.updateSplashScreenStatus("Loading effect queues...");
     const { EffectQueueConfigManager } = await import("../../../effects/queues/effect-queue-config-manager");
     EffectQueueConfigManager.loadItems();

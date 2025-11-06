@@ -121,6 +121,7 @@ class TwitchChat extends EventEmitter {
             // While connected, we can just react to changes via chat messages/EventSub events
             await chatRolesManager.loadVips();
             await chatRolesManager.loadModerators();
+            await chatRolesManager.loadSubscribers();
         } catch (error) {
             logger.error("Chat connect error", error);
             this.disconnect();

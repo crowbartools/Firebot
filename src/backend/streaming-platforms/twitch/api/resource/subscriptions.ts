@@ -1,9 +1,22 @@
 import { ApiResourceBase } from './api-resource-base';
 import type { TwitchApi } from "../";
+import { HelixSubscription } from '@twurple/api/lib';
 
 export class TwitchSubscriptionsApi extends ApiResourceBase {
     constructor(apiBase: typeof TwitchApi) {
         super(apiBase);
+    }
+
+    /**
+     * Retrieves the subscription info for all users who are currently subscribed to the streamer
+     *
+     * @returns {HelixSubscription[]}
+     */
+    async getSubscriptions(): Promise<HelixSubscription[]> {
+        const streamerId = this.accounts.streamer.userId;
+        const subscriberInfo = await this.streamerClient.subscriptions.getSubscriptionsPaginated(streamerId).getAll();
+
+        return subscriberInfo;
     }
 
     /**

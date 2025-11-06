@@ -420,7 +420,7 @@
                             },
                             (mod) => {
                                 const newMod = !mod;
-                                viewersService.updateModStatus($ctrl.viewerDetails.twitchData.username, newMod);
+                                viewersService.updateModRoleForUser($ctrl.viewerDetails.twitchData.username, newMod);
                                 if (newMod) {
                                     $ctrl.roles.push(modRole);
                                 } else {

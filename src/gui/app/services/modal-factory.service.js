@@ -133,6 +133,7 @@
                     resolveObj: {
                         model: () => options.model,
                         label: () => options.label,
+                        description: () => options.description,
                         saveText: () => options.saveText,
                         validationFn: () => options.validationFn,
                         validationText: () => options.validationText

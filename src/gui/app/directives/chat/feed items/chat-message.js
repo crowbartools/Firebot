@@ -446,7 +446,7 @@
                                 });
                             break;
                         case "mod":
-                            chatMessagesService.changeModStatus(username, true);
+                            viewerRoleService.updateModRoleForUser(username, true);
                             break;
                         case "unmod":
                             utilityService
@@ -458,15 +458,15 @@
                                 })
                                 .then((confirmed) => {
                                     if (confirmed) {
-                                        chatMessagesService.changeModStatus(username, false);
+                                        viewerRoleService.updateModRoleForUser(username, false);
                                     }
                                 });
                             break;
                         case "add as vip":
-                            backendCommunicator.fireEvent("update-user-vip-status", { username: username, shouldBeVip: true });
+                            viewerRoleService.updateVipRoleForUser(username, true);
                             break;
                         case "remove vip":
-                            backendCommunicator.fireEvent("update-user-vip-status", { username: username, shouldBeVip: false });
+                            viewerRoleService.updateVipRoleForUser(username, false);
                             break;
                         case "whisper":
                             updateChatField(`/w @${username} `);

@@ -51,10 +51,6 @@
                 backendCommunicator.fireEvent("update-user-banned-status", { username, shouldBeBanned });
             };
 
-            service.updateModStatus = (username, shouldBeMod) => {
-                backendCommunicator.fireEvent("update-user-mod-status", { username, shouldBeMod });
-            };
-
             backendCommunicator.on("viewer-database:viewer-created", (viewer) => {
                 createOrUpdateViewer(viewer);
             });
