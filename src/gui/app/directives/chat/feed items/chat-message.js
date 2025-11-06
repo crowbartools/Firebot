@@ -246,7 +246,14 @@
                     <div ng-if="$ctrl.message.isAnnouncement || $ctrl.message.isFirstChat || $ctrl.message.isReturningChatter || $ctrl.message.isRaider || $ctrl.message.isSuspiciousUser || $ctrl.message.customBannerText || $ctrl.message.customBannerIcon" style="margin-bottom:5px">
                 </div>
             `,
-            controller: function(chatMessagesService, utilityService, connectionService, pronounsService, backendCommunicator) {
+            controller: function(
+                chatMessagesService,
+                viewerRoleService,
+                utilityService,
+                connectionService,
+                pronounsService,
+                backendCommunicator
+            ) {
 
                 const $ctrl = this;
 
