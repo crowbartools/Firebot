@@ -8,14 +8,14 @@ const effect: EffectType<{
     definition: {
         id: "firebot:activity-feed-alert",
         name: "Activity Feed Alert",
-        description: "Display an alert in Firebot's activity feed",
+        description: "Display an alert in Firebot's Activity Feed",
         icon: "fad fa-comment-exclamation",
         categories: ["fun"],
         dependencies: []
     },
     optionsTemplate: `
     <eos-container>
-        <p>Use this effect to send yourself alerts in Firebot's activity feed.</p>
+        <p>Use this effect to send yourself alerts in Firebot's Activity Feed.</p>
     </eos-container>
     <eos-container header="Message" pad-top="true">
         <firebot-input
