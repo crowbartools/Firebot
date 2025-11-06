@@ -798,20 +798,36 @@ class ViewerDatabase extends TypedEmitter<{
 
         const userRoles = await chatRolesManager.getUsersChatRoles(twitchUser.id);
 
-        if (firebotUserData && firebotUserData.profilePicUrl !== twitchUser.profilePictureUrl) {
-            this.emit("updated-viewer-avatar", { userId: twitchUser.id, url: twitchUser.profilePictureUrl });
+        if (firebotUserData) {
+            let userUpdated = false;
 
-            firebotUserData.profilePicUrl = twitchUser.profilePictureUrl;
-            await this.updateViewer(firebotUserData);
+            if (firebotUserData.username !== twitchUser.name
+                || firebotUserData.displayName !== twitchUser.displayName
+            ) {
+                firebotUserData.username = twitchUser.name;
+                firebotUserData.displayName = twitchUser.displayName;
+                userUpdated = true;
+            }
 
-            frontendCommunicator.send("twitch:chat:user-updated", {
-                id: firebotUserData._id,
-                username: firebotUserData.username,
-                displayName: firebotUserData.displayName,
-                roles: userRoles,
-                profilePicUrl: firebotUserData.profilePicUrl,
-                active: this._activeViewers.includes(firebotUserData._id)
-            });
+            if (firebotUserData.profilePicUrl !== twitchUser.profilePictureUrl) {
+                this.emit("updated-viewer-avatar", { userId: twitchUser.id, url: twitchUser.profilePictureUrl });
+
+                firebotUserData.profilePicUrl = twitchUser.profilePictureUrl;
+                userUpdated = true;
+            }
+
+            if (userUpdated) {
+                await this.updateViewer(firebotUserData);
+
+                frontendCommunicator.send("twitch:chat:user-updated", {
+                    id: firebotUserData._id,
+                    username: firebotUserData.username,
+                    displayName: firebotUserData.displayName,
+                    roles: userRoles,
+                    profilePicUrl: firebotUserData.profilePicUrl,
+                    active: this._activeViewers.includes(firebotUserData._id)
+                });
+            }
         }
 
         const streamerData = AccountAccess.getAccounts().streamer;
