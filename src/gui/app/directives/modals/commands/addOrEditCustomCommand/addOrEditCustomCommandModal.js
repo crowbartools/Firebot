@@ -102,7 +102,7 @@
                         utilityService.showConfirmationModal({
                             title: "Default Mode",
                             question: `Do you want to always use Advanced Mode for new Commands?`,
-                            tip: "Note: You can change this in Settings > Commands at any time",
+                            tip: "Note: You can change this in Settings > Triggers at any time",
                             confirmLabel: "Yes",
                             confirmBtnType: "btn-default",
                             cancelLabel: "Not right now",

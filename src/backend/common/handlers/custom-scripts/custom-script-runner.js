@@ -76,7 +76,7 @@ async function executeScript(scriptData, trigger, isStartupScript = false) {
     if (manifest.startupOnly && !isStartupScript) {
         frontendCommunicator.send(
             "error",
-            `Could not run startup-only script "${manifest.name}" as it was executed outside of Firebot startup (Settings > Advanced > Startup Scripts)`
+            `Could not run startup-only script "${manifest.name}" as it was executed outside of Firebot startup (Settings > Scripts > Startup Scripts)`
         );
         return;
     }
