@@ -1,5 +1,5 @@
 /* eslint-disable angular/no-run-logic */
-/* eslint-disable angular/di-unused */
+
 
 "use strict";
 (function() {
@@ -734,6 +734,25 @@
     app.filter('commify', function() {
         return function(input) {
             return input ? input.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "";
+        };
+    });
+
+    app.filter('reverseChat', function() {
+        return (items, reverse) => {
+            return reverse === true
+                ? items.toSorted((a, b) => {
+                    // Keep chat message and associated redemption in their current order
+                    if (a.type === "message"
+                        && b.type === "redemption"
+                        && a.rewardMatched
+                        && a.data.customRewardId === b.data.reward.id
+                    ) {
+                        return 1;
+                    }
+
+                    return -1;
+                })
+                : items;
         };
     });
 

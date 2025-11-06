@@ -171,6 +171,17 @@
                     </firebot-setting>
 
                     <firebot-setting
+                        name="Reverse Chat Order"
+                        description="When this is enabled, new chat messages will be shown at the top of the chat feed instead of the bottom."
+                    >
+                        <toggle-button
+                            toggle-model="settings.getSetting('ChatReverseOrder')"
+                            on-toggle="settings.saveSetting('ChatReverseOrder', !settings.getSetting('ChatReverseOrder'))"
+                            font-size="40"
+                        />
+                    </firebot-setting>
+
+                    <firebot-setting
                         name="Use Custom Chat Font Family"
                         description="Use a custom font family in the chat feed."
                     >

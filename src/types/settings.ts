@@ -45,6 +45,7 @@ export type FirebotSettingsTypes = {
     ChatHideDeletedMessages: boolean;
     ChatHideWhispers: boolean;
     ChatPronouns: boolean;
+    ChatReverseOrder: boolean;
     ChatShowBttvEmotes: boolean;
     ChatShowFfzEmotes: boolean;
     ChatShowSevenTvEmotes: boolean;
@@ -173,6 +174,7 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     ChatHideDeletedMessages: false,
     ChatHideWhispers: false,
     ChatPronouns: true,
+    ChatReverseOrder: false,
     ChatShowBttvEmotes: true,
     ChatShowFfzEmotes: true,
     ChatShowSevenTvEmotes: true,
