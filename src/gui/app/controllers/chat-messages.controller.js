@@ -25,11 +25,6 @@
             // from the end of the array instead of the front
             $scope.messageDisplayLimit = chatMessagesService.chatMessageDisplayLimit * -1;
 
-            const updateLabelVisibility = (settings) => {
-                const $parent = $('#dashboardActivityFeed').parent();
-                $scope.hideEventLabel = () => ((parseInt(settings.dashboardActivityFeed.replace("%", "") / 100 * $parent.width())) < 180 ? true : false);
-            };
-
             function getThreadMessages(threadOrReplyMessageId) {
                 return chatMessagesService.chatQueue.filter((chatItem) => {
                     return chatItem.type === "message" && (chatItem.data.id === threadOrReplyMessageId || chatItem.data.replyParentMessageId === threadOrReplyMessageId || chatItem.data.threadParentMessageId === threadOrReplyMessageId);
@@ -65,8 +60,6 @@
                 }
 
                 $scope.layout = settings;
-
-                updateLabelVisibility(settings);
             };
 
             function getUpdatedChatSettings() {

@@ -690,6 +690,8 @@
 
     .activity {
         padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -786,8 +788,16 @@
     justify-content: center;
 }
 
+.activity-message {
+    flex-grow: 9999;
+    overflow: hidden;
+}
+
 .activity-message > p:first-child {
     margin: 0 !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 40px;
 }
 
 .chat-window-column {
