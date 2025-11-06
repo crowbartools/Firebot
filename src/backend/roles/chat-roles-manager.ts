@@ -149,8 +149,9 @@ class ChatRolesManager extends TypedEmitter<Events> {
     }
 
     async loadSubscribers(): Promise<void> {
-        if (AccountAccess.getAccounts().streamer.broadcasterType === "") {
-            this._subscribers = [];
+        const streamer = AccountAccess.getAccounts().streamer;
+        if (!streamer || !streamer.loggedIn || streamer.broadcasterType === "") {
+            return;
         }
 
         this._subscribers = (await TwitchApi.subscriptions.getSubscriptions())
