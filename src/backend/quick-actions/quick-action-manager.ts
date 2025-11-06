@@ -52,7 +52,7 @@ class QuickActionManager extends JsonDbManager<QuickActionDefinition> {
 
     loadItems(): void {
         super.loadItems();
-        this.cleanUpSettings();
+        this.rebuildSettings();
     }
 
     getAllItems(): QuickActionDefinition[] {
@@ -62,7 +62,7 @@ class QuickActionManager extends JsonDbManager<QuickActionDefinition> {
         ];
     }
 
-    cleanUpSettings(): void {
+    rebuildSettings(): void {
         const settings = SettingsManager.getSetting("QuickActions");
         const allItems = this.getAllItems();
 
@@ -104,22 +104,20 @@ class QuickActionManager extends JsonDbManager<QuickActionDefinition> {
         if (!savedQuickAction) {
             return;
         }
-        const quickActionSettings = SettingsManager.getSetting("QuickActions");
-        if (!Object.keys(quickActionSettings).includes(quickAction.id)) {
-            quickActionSettings[quickAction.id] = { enabled: true, position: Object.keys(quickActionSettings).length };
-            SettingsManager.saveSetting("QuickActions", quickActionSettings);
-        }
+
+        this.rebuildSettings();
+
         if (notify) {
             this.triggerUiRefresh();
         }
+
         return savedQuickAction;
     }
 
     deleteQuickAction(customQuickActionId: string): void {
         if (super.deleteItem(customQuickActionId)) {
-            const quickActionSettings = SettingsManager.getSetting("QuickActions");
-            delete quickActionSettings[customQuickActionId];
-            SettingsManager.saveSetting("QuickActions", quickActionSettings);
+            this.rebuildSettings();
+            this.triggerUiRefresh();
         }
     }
 
@@ -169,7 +167,7 @@ class QuickActionManager extends JsonDbManager<QuickActionDefinition> {
     }
 
     triggerUiRefresh(): void {
-        frontendCommunicator.send("all-quick-actions", this.getAllItems());
+        frontendCommunicator.send("quick-actions:all-quick-actions-updated", this.getAllItems());
     }
 }
 

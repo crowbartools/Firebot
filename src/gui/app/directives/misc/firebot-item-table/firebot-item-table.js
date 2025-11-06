@@ -16,6 +16,7 @@
                 contextMenuOptions: "&",
                 noDataMessage: "@",
                 noneFoundMessage: "@",
+                hideSearch: "<?",
                 searchPlaceholder: "@",
                 searchField: "@?",
                 testButton: "<?",

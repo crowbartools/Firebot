@@ -20,6 +20,7 @@
                 class="mr-4"
             />
             <searchbar
+                ng-hide="$ctrl.hideSearch === true"
                 placeholder-text="{{$ctrl.searchPlaceholder}}"
                 query="searchQuery"
                 class="fit-header-search"

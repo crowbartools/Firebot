@@ -44,7 +44,7 @@
                     >
                         <firebot-button
                             text="Edit Quick Actions"
-                            ng-click="openQuickActionSettingsModal()"
+                            ng-click="quickActionsService.openQuickActionSettingsModal()"
                         />
                     </firebot-setting>
 
@@ -320,7 +320,6 @@
                 soundService,
                 chatMessagesService,
                 activityFeedService,
-                utilityService,
                 quickActionsService
             ) {
                 $scope.settings = settingsService;
@@ -400,20 +399,6 @@
                 };
 
                 $scope.quickActionSettings = settingsService.getSetting("QuickActions");
-
-                $scope.openQuickActionSettingsModal = () => {
-                    utilityService.showModal({
-                        component: "quickActionSettingsModal",
-                        size: "sm",
-                        resolveObj: {
-                            quickActions: () => quickActionsService.quickActions,
-                            settings: () => $scope.quickActionSettings
-                        },
-                        dismissCallback: () => {
-                            settingsService.saveSetting("QuickActions", $scope.quickActionSettings);
-                        }
-                    });
-                };
             }
         });
 }());

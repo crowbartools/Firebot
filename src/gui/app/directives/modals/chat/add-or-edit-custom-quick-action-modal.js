@@ -6,7 +6,7 @@
             template: `
                 <div class="modal-header" style="text-align: center">
                     <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
-                    <h4 class="modal-title">Edit Quick Action</h4>
+                    <h4 class="modal-title">{{$ctrl.isNewQuickAction ? "Add" : "Edit"}} Quick Action</h4>
                 </div>
                 <div class="modal-body py-8 px-14">
                     <div class="mb-6">
