@@ -62,11 +62,11 @@
                                     <div class="input-group-btn">
                                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter <span class="caret"></span></button>
                                         <ul class="dropdown-menu dropdown-menu-right">
-                                            <li><a href="#" ng-click="searchFilter = 'Solid'">Solid</a></li>
-                                            <li><a href="#" ng-click="searchFilter = 'Regular'">Regular</a></li>
-                                            <li><a href="#" ng-click="searchFilter = 'Light'">Light</a></li>
-                                            <li><a href="#" ng-click="searchFilter = 'Duotone'">Duotone</a></li>
-                                            <li><a href="#" ng-click="searchFilter = 'Brands'">Brands</a></li>
+                                            <li><a ng-click="searchFilter = 'Solid'">Solid</a></li>
+                                            <li><a ng-click="searchFilter = 'Regular'">Regular</a></li>
+                                            <li><a ng-click="searchFilter = 'Light'">Light</a></li>
+                                            <li><a ng-click="searchFilter = 'Duotone'">Duotone</a></li>
+                                            <li><a ng-click="searchFilter = 'Brands'">Brands</a></li>
                                         </ul>
                                     </div>
                                 </div>
