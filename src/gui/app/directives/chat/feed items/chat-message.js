@@ -248,7 +248,7 @@
             `,
             controller: function(
                 chatMessagesService,
-                viewerRoleService,
+                viewerRolesService,
                 utilityService,
                 connectionService,
                 pronounsService,
@@ -453,7 +453,7 @@
                                 });
                             break;
                         case "mod":
-                            viewerRoleService.updateModRoleForUser(username, true);
+                            viewerRolesService.updateModRoleForUser(username, true);
                             break;
                         case "unmod":
                             utilityService
@@ -465,15 +465,15 @@
                                 })
                                 .then((confirmed) => {
                                     if (confirmed) {
-                                        viewerRoleService.updateModRoleForUser(username, false);
+                                        viewerRolesService.updateModRoleForUser(username, false);
                                     }
                                 });
                             break;
                         case "add as vip":
-                            viewerRoleService.updateVipRoleForUser(username, true);
+                            viewerRolesService.updateVipRoleForUser(username, true);
                             break;
                         case "remove vip":
-                            viewerRoleService.updateVipRoleForUser(username, false);
+                            viewerRolesService.updateVipRoleForUser(username, false);
                             break;
                         case "whisper":
                             updateChatField(`/w @${username} `);
