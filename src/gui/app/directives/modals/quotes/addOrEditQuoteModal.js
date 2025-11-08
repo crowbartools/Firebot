@@ -75,7 +75,7 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function(accountAccess) {
+            controller: function(accountAccess, utilityService) {
                 const $ctrl = this;
 
                 $ctrl.isNewQuote = true;
@@ -111,12 +111,23 @@
                         return;
                     }
 
-                    $ctrl.close({
-                        $value: {
-                            quote: $ctrl.quote,
-                            action: "delete"
-                        }
-                    });
+                    utilityService
+                        .showConfirmationModal({
+                            title: "Delete Quote",
+                            question: "Are you sure want to delete this quote?",
+                            confirmLabel: "Delete",
+                            confirmBtnType: "btn-danger"
+                        })
+                        .then((confirmed) => {
+                            if (confirmed) {
+                                $ctrl.close({
+                                    $value: {
+                                        quote: $ctrl.quote,
+                                        action: "delete"
+                                    }
+                                });
+                            }
+                        });
                 };
 
                 $ctrl.textError = false;
