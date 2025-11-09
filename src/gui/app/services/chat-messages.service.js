@@ -300,12 +300,6 @@
             });
 
             backendCommunicator.on("twitch:chat:rewardredemption", (redemption) => {
-                const redemptionItem = {
-                    id: randomUUID(),
-                    type: "redemption",
-                    data: redemption
-                };
-
                 if (service.chatQueue && service.chatQueue.length > 0) {
                     const lastQueueItem = service.chatQueue[service.chatQueue.length - 1];
                     if (!lastQueueItem.rewardMatched &&
@@ -314,12 +308,16 @@
                             lastQueueItem.data.customRewardId === redemption.reward.id &&
                             lastQueueItem.data.userId === redemption.user.id) {
                         lastQueueItem.rewardMatched = true;
-                        service.chatQueue.splice(-1, 0, redemptionItem);
+                        lastQueueItem.data.reward = redemption.reward;
                         return;
                     }
                 }
 
-                service.chatQueue.push(redemptionItem);
+                service.chatQueue.push({
+                    id: randomUUID(),
+                    type: "redemption",
+                    data: redemption
+                });
             });
 
             backendCommunicator.on("twitch:chat:user-joined", (user) => {
