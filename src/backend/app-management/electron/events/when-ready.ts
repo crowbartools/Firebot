@@ -209,6 +209,9 @@ export async function whenReady() {
     const { ImportManager } = await import("../../../import/import-manager");
     ImportManager.registerDefaultImporters();
 
+    const { ViewerExportManager } = await import("../../../viewers/viewer-export-manager");
+    ViewerExportManager.setupListeners();
+
     const { setupCommonListeners } = await import("../../../common/common-listeners");
     setupCommonListeners();
 

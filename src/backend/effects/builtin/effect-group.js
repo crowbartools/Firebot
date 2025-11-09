@@ -25,7 +25,7 @@ const effectGroup = {
                 ng-model="effect.presetListId"
                 placeholder="Select or search for a preset effect list..."
                 items="presetEffectLists"
-                on-select="presetListSelected(item)"
+                on-select="selectPresetList(item)"
             />
 
             <div style="margin-top: 15px">
@@ -80,8 +80,20 @@ const effectGroup = {
 
         $scope.presetEffectLists = presetEffectListsService.getPresetEffectLists();
 
-        $scope.presetListSelected = (presetList) => {
+        const updatePresetListArgs = (presetList) => {
+            const effectArgNames = Object.keys($scope.effect.presetListArgs);
+            if (effectArgNames.length) {
+                effectArgNames.forEach(argName => {
+                    if (!presetList.args.some(arg => arg.name === argName)) {
+                        delete $scope.effect.presetListArgs[argName];
+                    }
+                });
+            }
+        };
+
+        $scope.selectPresetList = (presetList) => {
             $scope.selectedPresetList = presetList;
+            updatePresetListArgs(presetList);
         };
 
         $scope.editSelectedPresetList = () => {
@@ -91,7 +103,7 @@ const effectGroup = {
             presetEffectListsService.showAddEditPresetEffectListModal($scope.selectedPresetList)
                 .then((presetList) => {
                     if (presetList) {
-                        $scope.selectedPresetList = presetList;
+                        $scope.selectPresetList(presetList);
                     }
                 });
         };
@@ -119,10 +131,9 @@ const effectGroup = {
                 $scope.effect.presetListId = null;
                 $scope.effect.presetListArgs = {};
             } else {
-                $scope.selectedPresetList = presetList;
+                $scope.selectPresetList(presetList);
             }
         }
-
     },
     optionsValidator: (effect) => {
         const errors = [];

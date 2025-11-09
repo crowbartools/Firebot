@@ -1,7 +1,7 @@
 import type { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
 
 const triggers: TriggersObject = {};
-triggers["event"] = ["twitch:sub", "twitch:prime-sub-upgraded"];
+triggers["event"] = ["twitch:sub", "twitch:prime-sub-upgraded", "twitch:gift-sub-upgraded"];
 triggers["manual"] = true;
 
 const model : ReplaceVariable = {
