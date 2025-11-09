@@ -6,6 +6,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+
     .close {
         order: 2;
         margin: 0;
@@ -20,8 +23,6 @@
 .modal-header.sticky-header, .sticky-element {
     position: sticky;
     background-color: $light-background-color;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
     z-index: 999;
     top: 22px;
     &.is-stuck {
@@ -33,14 +34,14 @@
 
 .modal-footer {
     border-top: none;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
 
     &.sticky-footer {
         position: sticky;
         bottom: 0;
         z-index: 999;
         background-color: $light-background-color;
-        border-bottom-left-radius: 8px;
-        border-bottom-right-radius: 8px;
         &.is-stuck {
             border-top: 1px solid #24262A;
             margin-top: 10px;
@@ -159,9 +160,6 @@
         font-size: 12px !important;
         line-height: 1.5 !important;
     }
-    &:hover {
-        // transform: scale(1.02) translateZ(0);
-    }
 
 }
 
@@ -217,7 +215,6 @@
     }
     &:hover {
         background-color: $default-btn-hover-bg;
-        // border-color: $default-btn-hover-border;
         color: $default-btn-text-color;
     }
 }
@@ -225,7 +222,6 @@
 .btn-default.active.focus, .btn-default.active:focus, .btn-default.active:hover, .btn-default:active.focus, .btn-default:active:focus, .btn-default:active:hover, .open>.dropdown-toggle.btn-default.focus, .open>.dropdown-toggle.btn-default:focus, .open>.dropdown-toggle.btn-default:hover {
     color: $default-btn-text-color;
     background-color: $default-btn-hover-bg;
-    // border-color: $default-btn-hover-border;
 }
 
 .btn.active.focus, .btn.active:focus, .btn.focus, .btn:active.focus, .btn:active:focus, .btn:focus {

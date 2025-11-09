@@ -1,87 +1,30 @@
+.edit-effect-header {
+    background: $light-background-color;
+}
+
 .select-effect-header {
     background: $effect-dialog-bg;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
 }
 
 .select-effect-footer {
-    align-items: center;
-    background: $effect-dialog-bg;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-    border-top: 2px solid $light-background-border;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    background: $effect-dialog-bg;
+    border-top: 2px solid $light-background-border;
     padding: 20px;
 }
 
 .select-effect-search {
+    display: flex;
     align-items: center;
     background: $effect-dialog-bg;
     border-bottom: 2px solid $light-background-border;
     border-top: 2px solid $light-background-border;
-    display: flex;
-    height: 55px;
-    padding: 0 13px;
+    padding: 5px 13px;
 }
 
-.effect-categories {
-    background: $effect-category-bg;
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    height: 100%;
-    width: 150px;
-    &.dark {
-        background: $variable-category-bg;
-        padding-top: 5px;
-        width: 140px;
-    }
-}
-
-.effect-category-header {
-    font-weight: 700;
-    padding-left: 2.5px;
-    padding: 15px 0 5px 15.5px;
-    font-size: 13px;
-}
-
-.effect-category-wrapper {
-    text-transform: capitalize;
-    font-weight: 300;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin: 0 5px;
-    padding: 0 10px;
-    border-radius: 8px;
-
-    .category-bar {
-        height: 100%;
-        width: 2.5px;
-        display: inline-block;
-        margin-right: 15px;
-    }
-
-    .category-text {
-        padding: 7px 0;
-    }
-
-    &:hover {
-        background: $effect-category-hover-bg;
-        text-decoration: none;
-    }
-
-    &.selected {
-        font-weight: 400;
-        background: $effect-category-selected-bg;
-        &.category-bar {
-            background: $highlight-color;
-        }
-    }
-}
-
-.effect-def-wrapper {
+.select-effect-def {
     border-radius: 8px;
     background: $effect-def-bg;
     display: flex;
@@ -95,7 +38,7 @@
         background: $effect-def-hover-bg;
         cursor: pointer;
     }
-    .effect-icon-wrapper {
+    .select-effect-icon-wrapper {
         width: 40px;
         flex-shrink: 0;
         display: flex;
@@ -103,7 +46,7 @@
         margin-right: 4px;
         font-size: 18px;
     }
-    .effect-selected-wrapper {
+    .select-effect-selected {
         width: 60px;
         flex-shrink: 0;
         color: $effect-def-selected-check;
@@ -115,30 +58,47 @@
     }
     &.selected {
         border: solid 2px $effect-def-selected-border;
-        .effect-selected-wrapper {
+        .select-effect-selected {
             opacity: 1;
         }
     }
 }
 
+.select-effect-categories, .variable-categories {
+    background: $effect-category-bg;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    height: 100%;
+    width: 150px;
+    padding: 5px;
 
-.change-effect-button {
-    height: 25px;
-    width: 60px;
-    padding: 0;
-    display: inline-block;
-    margin-bottom: 0;
-    font-size: 10px;
-    font-weight: 400;
-    line-height: 1.42857143;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    touch-action: manipulation;
-    cursor: pointer;
-    user-select: none;
-    background-image: none;
-    border: 1px solid transparent;
+    &.dark {
+        background: $variable-category-bg;
+        width: 140px;
+    }
+}
+
+.select-effect-category-header, .variable-category-header {
+    font-weight: 700;
+    padding: 15px 0 5px 15px;
+    font-size: 13px;
+}
+
+.select-effect-category, .variable-category {
+    text-transform: capitalize;
+    font-weight: 300;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 7px 10px;
     border-radius: 8px;
-    background: $default-btn-bg-color;
+    &:hover {
+        background: $effect-category-hover-bg;
+        text-decoration: none;
+    }
+    &.selected {
+        font-weight: 400;
+        background: $effect-category-selected-bg;
+    }
 }
