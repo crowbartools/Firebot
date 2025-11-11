@@ -1,16 +1,72 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 "use strict";
 
-const { SettingsManager } = require("../../common/settings-manager");
-const { ResourceTokenManager } = require("../../resource-token-manager");
-const webServer = require("../../../server/http-server-manager");
-const { EffectCategory } = require('../../../shared/effect-constants');
-const logger = require("../../logwrapper");
-const fs = require('fs/promises');
-const path = require("path");
-const { parseYoutubeId } = require("../../../shared/youtube-url-parser");
-const { resolveTwitchClipVideoUrl } = require("../../common/handlers/twitch-clip-url-resolver");
-const { playSound } = require("../../common/handlers/sound-handler");
-const { wait } = require("../../utils");
+import { EffectType } from "../../../types/effects";
+import { SettingsManager } from "../../common/settings-manager";
+import { ResourceTokenManager } from "../../resource-token-manager";
+import webServer from "../../../server/http-server-manager";
+import logger from "../../logwrapper";
+import fs from 'fs/promises';
+import path from "path";
+import { parseYoutubeId } from "../../../shared/youtube-url-parser";
+import { resolveTwitchClipVideoUrl } from "../../common/handlers/twitch-clip-url-resolver";
+import { playSound } from "../../common/handlers/sound-handler";
+import { wait } from "../../utils";
+import { ReplaceVariableManager } from "../../variables/replace-variable-manager";
+
+interface OverlayAlertEffect {
+    mediaType: "image" | "video" | "none";
+    imageSourceType: "local" | "url" | "folderRandom";
+    videoSourceType: "local" | "youtube" | "twitchClip" | "folderRandom";
+    imageFile?: string;
+    imageUrl?: string;
+    imageFolder?: string;
+    videoFile?: string;
+    videoFolder?: string;
+    youtubeId?: string;
+    twitchClipUrl?: string;
+    mediaScale?: number;
+    muteVideo?: boolean;
+    videoVolume?: number;
+    text?: string;
+    font?: {
+        family: string;
+        size: number;
+        color: string;
+        weight: number;
+        italic: boolean;
+    };
+    accentColor?: string;
+    accentBold?: boolean;
+    accentItalic?: boolean;
+    accentUnderline?: boolean;
+    autoAccentVariables?: boolean;
+    playSound?: boolean;
+    soundType?: "filePath" | "url" | "folderRandom";
+    soundFile?: string;
+    soundUrl?: string;
+    soundFolder?: string;
+    soundVolume?: number;
+    audioOutputDeviceId?: string;
+    duration?: number;
+    position?: {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+    };
+    enterAnimation?: string;
+    enterDuration?: number;
+    exitAnimation?: string;
+    exitDuration?: number;
+    inbetweenAnimation?: string;
+    inbetweenDelay?: number;
+    inbetweenDuration?: number;
+    inbetweenRepeat?: number;
+    overlayInstance?: string;
+}
 
 const overlayAlertStyles = `
     .firebot-overlay-alert-container {
@@ -41,14 +97,15 @@ const overlayAlertStyles = `
     }
 `;
 
-const overlayAlert = {
+const effect: EffectType<OverlayAlertEffect> = {
     definition: {
         id: "firebot:overlayalert",
         name: "Overlay Alert",
         description: "Shows a customizable alert with media and text in the overlay.",
         icon: "fad fa-bell",
-        categories: [EffectCategory.COMMON, EffectCategory.OVERLAY],
-        dependencies: []
+        categories: ["common", "overlay"],
+        dependencies: [],
+        keysExemptFromAutoVariableReplacement: ["text"]
     },
     optionsTemplate: `
         <eos-container header="Preview">
@@ -317,7 +374,7 @@ const overlayAlert = {
         }
 
         if ($scope.effect.soundType == null) {
-            $scope.effect.soundType = "local";
+            $scope.effect.soundType = "filePath";
         }
 
         if ($scope.effect.soundVolume == null) {
@@ -328,11 +385,11 @@ const overlayAlert = {
             $scope.effect.mediaScale = 100;
         }
 
-        $scope.showOverlayInfoModal = function (overlayInstance) {
+        $scope.showOverlayInfoModal = function (overlayInstance: string) {
             utilityService.showOverlayInfoModal(overlayInstance);
         };
 
-        $scope.encodeFilePath = (filepath) => {
+        $scope.encodeFilePath = (filepath: string) => {
             return filepath?.replaceAll("%", "%25").replaceAll("#", "%23");
         };
 
@@ -361,7 +418,7 @@ const overlayAlert = {
         };
 
         // Process text with accent tags for preview
-        function processAccentTags(text, autoAccent) {
+        function processAccentTags(text: string, autoAccent: boolean) {
             if (!text) {
                 return "";
             }
@@ -408,12 +465,13 @@ const overlayAlert = {
                 return "";
             }
             const processedText = processAccentTags($scope.effect.text, $scope.effect.autoAccentVariables);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return $sce.trustAsHtml(processedText);
         };
 
         // Get preview text style
         $scope.getPreviewTextStyle = function () {
-            const font = $scope.effect.font || {};
+            const font = $scope.effect.font ?? {} as typeof $scope.effect.font;
             return {
                 fontFamily: font.family || 'Open Sans',
                 fontSize: `${font.size || 24}px`,
@@ -424,7 +482,7 @@ const overlayAlert = {
         };
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
 
         if (effect.mediaType === "image") {
             if (effect.imageSourceType === "local" && !effect.imageFile) {
@@ -451,7 +509,7 @@ const overlayAlert = {
         }
 
         if (effect.playSound) {
-            if (effect.soundType === "local" && !effect.soundFile) {
+            if (effect.soundType === "filePath" && !effect.soundFile) {
                 errors.push("Please select a sound file.");
             } else if (effect.soundType === "url" && !effect.soundUrl) {
                 errors.push("Please enter a sound URL.");
@@ -465,7 +523,26 @@ const overlayAlert = {
     onTriggerEvent: async (event) => {
         const effect = event.effect;
 
-        const data = {
+        if (effect?.text?.length) {
+            if (effect.autoAccentVariables) {
+                // Match $variable with optional arguments, including nested variables
+                // This regex handles: $var, $var[arg], $var[$nested[arg], arg2], etc.
+                // eslint-disable-next-line no-useless-escape
+                effect.text = effect.text.replace(/\$[a-zA-Z0-9_]+(?:\[(?:[^\[\]]|\[(?:[^\[\]]|\[[^\[\]]*\])*\])*\])?/g, (match) => {
+                    return `<accent>${match}</accent>`;
+                });
+            }
+
+            effect.text = await ReplaceVariableManager.populateStringWithTriggerData(
+                effect.text,
+                {
+                    ...event.trigger,
+                    effectOutputs: event.outputs
+                }
+            );
+        }
+
+        const data: Record<string, any> = {
             mediaType: effect.mediaType,
             text: effect.text,
             font: effect.font,
@@ -553,10 +630,19 @@ const overlayAlert = {
                 data.youtubeId = parseYoutubeId(effect.youtubeId);
                 data.videoVolume = effect.muteVideo ? 0 : (effect.videoVolume || 5);
             } else if (effect.videoSourceType === "twitchClip") {
+                const { TwitchApi } = await import("../../streaming-platforms/twitch/api");
+
+                const clip = await TwitchApi.clips.getClipFromClipUrl(effect.twitchClipUrl);
+
+                if (clip == null) {
+                    logger.error("Unable to find clip");
+                    return true;
+                }
+
                 try {
-                    const clipUrl = await resolveTwitchClipVideoUrl(effect.twitchClipUrl);
-                    if (clipUrl) {
-                        data.mediaUrl = clipUrl;
+                    const { url } = await resolveTwitchClipVideoUrl(clip);
+                    if (url) {
+                        data.mediaUrl = url;
                         data.videoVolume = effect.muteVideo ? 0 : (effect.videoVolume || 5);
                     } else {
                         logger.warn("Failed to resolve Twitch clip URL");
@@ -573,7 +659,7 @@ const overlayAlert = {
 
         // Handle sound effect
         if (effect.playSound) {
-            playSound({
+            void playSound({
                 soundType: effect.soundType,
                 filePath: effect.soundFile,
                 url: effect.soundUrl,
@@ -598,10 +684,9 @@ const overlayAlert = {
         event: {
             name: "overlayalert",
             onOverlayEvent: (event) => {
-                const data = event;
+                const data: Record<string, any> = event;
 
-                // Process accent tags
-                function processAccentTags(text, autoAccent, accentColor, accentBold, accentItalic, accentUnderline) {
+                function processAccentTags(text: string, accentColor: string, accentBold: boolean, accentItalic: boolean, accentUnderline: boolean) {
                     if (!text) {
                         return "";
                     }
@@ -610,16 +695,6 @@ const overlayAlert = {
 
                     // Convert newlines to <br /> tags
                     processedText = processedText.replace(/\n/g, '<br />');
-
-                    // Auto-accent variables if enabled
-                    if (autoAccent) {
-                        // Match $variable with optional arguments, including nested variables
-                        // This regex handles: $var, $var[arg], $var[$nested[arg], arg2], etc.
-                        // eslint-disable-next-line no-useless-escape
-                        processedText = processedText.replace(/\$[a-zA-Z0-9_]+(?:\[(?:[^\[\]]|\[(?:[^\[\]]|\[[^\[\]]*\])*\])*\])?/g, (match) => {
-                            return `<accent>${match}</accent>`;
-                        });
-                    }
 
                     // Apply accent styling
                     const accentStyle = [];
@@ -655,7 +730,6 @@ const overlayAlert = {
                 // Process text with accent tags
                 const processedText = processAccentTags(
                     data.text,
-                    data.autoAccentVariables,
                     data.accentColor,
                     data.accentBold,
                     data.accentItalic,
@@ -728,7 +802,7 @@ const overlayAlert = {
                     </div>
                 `;
 
-                const uniqueId = showElement(alertElement, { // eslint-disable-line no-undef
+                const uniqueId = showElement(alertElement, {
                     position: "Custom",
                     customCoords: {
                         top: containerY,
@@ -749,9 +823,10 @@ const overlayAlert = {
                 // Handle YouTube player if needed
                 if (data.mediaType === 'video' && data.youtubeId) {
                     const volume = data.videoVolume != null ? data.videoVolume * 10 : 50;
-                    // eslint-disable-next-line no-undef
+
+                    // @ts-ignore
                     if (typeof YT !== 'undefined' && YT.Player) {
-                        // eslint-disable-next-line no-undef
+                        // @ts-ignore
                         new YT.Player(`youtube-player-${data.youtubeId}`, {
                             videoId: data.youtubeId,
                             playerVars: {
@@ -773,6 +848,7 @@ const overlayAlert = {
                 // Set video volume for local/clip videos
                 if (data.mediaType === 'video' && !data.youtubeId) {
                     setTimeout(() => {
+                        // @ts-ignore
                         const videoEl = $(`#${uniqueId} video`)[0];
                         if (videoEl && data.videoVolume != null) {
                             videoEl.volume = data.videoVolume / 10;
@@ -784,4 +860,4 @@ const overlayAlert = {
     }
 };
 
-module.exports = overlayAlert;
+export = effect;
