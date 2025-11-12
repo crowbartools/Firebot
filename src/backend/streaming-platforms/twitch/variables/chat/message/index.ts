@@ -6,7 +6,6 @@ import chatMessageTextOnly from './chat-message-text-only';
 import chatMessage from './chat-message';
 import chatColor from './chat-user-color';
 
-import isSharedChatMessage from './is-shared-chat-message';
 import isWhisper from './is-whisper';
 
 import whisperMessage from './whisper-message';
@@ -21,7 +20,6 @@ export default [
     chatMessage,
 
     chatColor,
-    isSharedChatMessage,
     isWhisper,
     whisperMessage,
     whisperRecipient
