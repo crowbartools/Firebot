@@ -23,6 +23,7 @@ import { ThirdPartyEmote, ThirdPartyEmoteProvider } from "./third-party/third-pa
 import { BTTVEmoteProvider } from "./third-party/bttv";
 import { FFZEmoteProvider } from "./third-party/ffz";
 import { SevenTVEmoteProvider } from "./third-party/7tv";
+import sharedChatCache from "../streaming-platforms/twitch/shared-chat-cache";
 
 interface ExtensionBadge {
     id: string;
@@ -476,6 +477,7 @@ class FirebotChatHelpers {
 
     async buildFirebotChatMessage(msg: ChatMessage, msgText: string, whisper = false, action = false) {
         const sharedChatRoomId = msg.tags.get("source-room-id");
+        const sharedChatRoom = sharedChatCache.participants[sharedChatRoomId];
         const isSharedChatMessage = sharedChatRoomId != null && sharedChatRoomId !== AccountAccess.getAccounts().streamer.userId;
         const firebotChatMessage: FirebotChatMessage = {
             id: msg.tags.get("id"),
@@ -514,7 +516,9 @@ class FirebotChatHelpers {
             viewerRanks: {},
             viewerCustomRoles: [],
             isSharedChatMessage,
-            sharedChatRoomId: isSharedChatMessage ? sharedChatRoomId : null
+            sharedChatRoomId,
+            sharedChatRoomUsername: sharedChatRoom?.broadcasterName,
+            sharedChatRoomDisplayName: sharedChatRoom?.broadcasterDisplayName
         };
 
         const profilePicUrl = await this.getUserProfilePicUrl(firebotChatMessage.userId);

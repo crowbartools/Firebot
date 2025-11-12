@@ -11,6 +11,7 @@ import chatterPoll from "../streaming-platforms/twitch/chatter-poll";
 import twitchChatListeners from "./chat-listeners/twitch-chat-listeners";
 import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
+import sharedChatCache from "../streaming-platforms/twitch/shared-chat-cache";
 
 class TwitchChat extends EventEmitter {
     private _streamerChatClient: ChatClient;
@@ -121,6 +122,7 @@ class TwitchChat extends EventEmitter {
             // While connected, we can just react to changes via chat messages/EventSub events
             await chatRolesManager.loadVips();
             await chatRolesManager.loadModerators();
+            await sharedChatCache.loadSessionFromTwitch();
 
             if (!chatRolesManager.getSubscribers().length) {
                 await chatRolesManager.loadSubscribers();

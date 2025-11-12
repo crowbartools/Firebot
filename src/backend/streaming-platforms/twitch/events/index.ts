@@ -1317,6 +1317,24 @@ export const TwitchEventSource: EventSource = {
             }
         },
         {
+            id: "shared-chat-started",
+            name: "Shared Chat Session Started",
+            description: "When a shared chat session is started with another channel.",
+            cached: false
+        },
+        {
+            id: "shared-chat-updated",
+            name: "Shared Chat Session Updated",
+            description: "When the participants in a shared chat session are updated.",
+            cached: false
+        },
+        {
+            id: "shared-chat-ended",
+            name: "Shared Chat Session Ended",
+            description: "When a shared chat session is ended.",
+            cached: false
+        },
+        {
             id: "shoutout-sent",
             name: "Shoutout Sent",
             description: "When you or a moderator sends a Twitch shoutout to another channel.",
