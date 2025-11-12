@@ -1,25 +1,40 @@
-"use strict";
+import type {
+    EffectType,
+    OverlayDimensions,
+    OverlayEnterExitAnimations,
+    OverlayInstance,
+    OverlayPosition,
+    OverlayRotation
+} from '../../../types/effects';
+import { SettingsManager } from "../../common/settings-manager";
+import { TwitchApi } from "../../streaming-platforms/twitch/api";
+import mediaProcessor from "../../common/handlers/mediaProcessor";
+import webServer from "../../../server/http-server-manager";
+import frontendCommunicator from "../../common/frontend-communicator";
+import logger from "../../logwrapper";
+import { getRandomImage } from "../../common/handlers/reddit-processor";
 
-const redditProcessor = require("../../common/handlers/redditProcessor");
-const mediaProcessor = require("../../common/handlers/mediaProcessor");
-const { SettingsManager } = require("../../common/settings-manager");
-const logger = require("../../logwrapper");
-const webServer = require("../../../server/http-server-manager");
-const { EffectCategory } = require('../../../shared/effect-constants');
-const frontendCommunicator = require("../../common/frontend-communicator");
-const { TwitchApi } = require("../../streaming-platforms/twitch/api");
-
-const model = {
+const model: EffectType<{
+    reddit: string;
+    show: string;
+    chatter: string;
+    length: number;
+}
+& OverlayDimensions
+& OverlayPosition
+& OverlayRotation
+& OverlayEnterExitAnimations
+& OverlayInstance
+> = {
     definition: {
         id: "firebot:randomReddit",
         name: "Random Reddit Image",
         description: "Pulls a random image from a selected subreddit.",
         icon: "fab fa-reddit-alien",
-        categories: [EffectCategory.FUN, EffectCategory.CHAT_BASED, EffectCategory.OVERLAY],
+        categories: ["fun", "chat based", "overlay"],
         dependencies: [],
         hidden: true
     },
-    globalSettings: {},
     optionsTemplate: `
     <eos-container header="Subreddit Name">
         <div class="input-group">
@@ -94,7 +109,7 @@ const model = {
 
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.reddit == null) {
             errors.push("Please enter a subreddit.");
         }
@@ -107,7 +122,7 @@ const model = {
     onTriggerEvent: async (event) => {
         const chatter = event.effect.chatter;
         const subName = event.effect.reddit;
-        const imageUrl = await redditProcessor.getRandomImage(subName);
+        const imageUrl = await getRandomImage(subName);
 
         try {
             logger.debug(`Random Reddit: ${imageUrl}`);
@@ -117,7 +132,9 @@ const model = {
 
             if (event.effect.show === "overlay" || event.effect.show === "both") {
                 // Send image to overlay.
-                const position = event.effect.position !== "Random" ? event.effect.position : mediaProcessor.getRandomPresetLocation();
+                const position = event.effect.position !== "Random"
+                    ? event.effect.position
+                    : mediaProcessor.randomLocation();
 
                 const data = {
                     url: imageUrl,
@@ -140,7 +157,7 @@ const model = {
                                 .getSetting("OverlayInstances")
                                 .includes(event.effect.overlayInstance)
                         ) {
-                            data.overlayInstance = event.effect.overlayInstance;
+                            data["overlayInstance"] = event.effect.overlayInstance;
                         }
                     }
                 }
@@ -159,4 +176,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export = model;

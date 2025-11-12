@@ -1,9 +1,22 @@
-"use strict";
+import frontendCommunicator from "../frontend-communicator";
+import logger from "../../logwrapper";
 
-const logger = require("../../logwrapper");
-const frontendCommunicator = require("../frontend-communicator");
+interface RedditPost {
+    data: {
+        over_18: boolean;
+        preview: {
+            images: Array<{
+                source: {
+                    url: string;
+                };
+            }>;
+        };
+        ups: number;
+        downs: number;
+    };
+}
 
-function postPicker(posts) {
+function postPicker(posts: RedditPost[]): string | false {
     while (posts.length) {
         const randomNum = Math.floor(Math.random() * posts.length);
         const item = posts[randomNum]['data'];
@@ -26,20 +39,19 @@ function postPicker(posts) {
     return false;
 }
 
-async function getSubredditData(subName) {
+async function getSubredditData(subName: string): Promise<RedditPost[]> {
     const normalizedSubName = subName.replace("/r/", '').replace("r/", '');
     const url = `https://www.reddit.com/r/${normalizedSubName}/hot.json?count=15&raw_json=1`;
 
     try {
         const response = await fetch(url);
-        return (await response.json()).data.children;
+        return (await response.json() as { data: { children: RedditPost[] } }).data.children;
     } catch (error) {
         logger.warn(`Error getting subreddit ${subName}`, error);
     }
 }
 
-// Pulls a random image from a subreddit.
-async function randomImageFromSubReddit(subreddit) {
+async function randomImageFromSubReddit(subreddit: string): Promise<string> {
     const subData = await getSubredditData(subreddit);
 
     if (subData == null) {
@@ -65,5 +77,4 @@ async function randomImageFromSubReddit(subreddit) {
     return imageUrl;
 }
 
-// Export Functions
-exports.getRandomImage = randomImageFromSubReddit;
+export { randomImageFromSubReddit as getRandomImage };

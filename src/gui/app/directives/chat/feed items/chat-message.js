@@ -67,6 +67,10 @@
                     <div ng-if="$ctrl.message.isReply && !$ctrl.hideReplyBanner" class="chat-message-banner mini-banner muted truncate" ng-click="$ctrl.replyBannerClicked()">
                         <i class="fad fa-comment-alt-dots"></i> Replying to @{{$ctrl.message.replyParentMessageSenderDisplayName}}: {{$ctrl.message.replyParentMessageText}}</span>
                     </div>
+                    <div ng-if="$ctrl.message.reward" class="reward-redemption" ng-class="{ isHighlight: $ctrl.message.reward.id === 'highlight-message' }">
+                        <img ng-src="{{$ctrl.message.reward.imageUrl}}" />
+                        <b>{{$ctrl.message.userDisplayName}}{{($ctrl.message.userDisplayName.toLowerCase() !== $ctrl.message.username.toLowerCase() ? " (" + $ctrl.message.username + ")" : "")}}</b> <span>redeemed</span> <b>{{$ctrl.message.reward.name}}</b>
+                    </div>
                     <div class="chat-message"
                         ng-class="{
                             isAction: $ctrl.message.action,
@@ -248,7 +252,7 @@
             `,
             controller: function(
                 chatMessagesService,
-                viewerRoleService,
+                viewerRolesService,
                 utilityService,
                 connectionService,
                 pronounsService,
@@ -453,7 +457,7 @@
                                 });
                             break;
                         case "mod":
-                            viewerRoleService.updateModRoleForUser(username, true);
+                            viewerRolesService.updateModRoleForUser(username, true);
                             break;
                         case "unmod":
                             utilityService
@@ -465,15 +469,15 @@
                                 })
                                 .then((confirmed) => {
                                     if (confirmed) {
-                                        viewerRoleService.updateModRoleForUser(username, false);
+                                        viewerRolesService.updateModRoleForUser(username, false);
                                     }
                                 });
                             break;
                         case "add as vip":
-                            viewerRoleService.updateVipRoleForUser(username, true);
+                            viewerRolesService.updateVipRoleForUser(username, true);
                             break;
                         case "remove vip":
-                            viewerRoleService.updateVipRoleForUser(username, false);
+                            viewerRolesService.updateVipRoleForUser(username, false);
                             break;
                         case "whisper":
                             updateChatField(`/w @${username} `);

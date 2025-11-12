@@ -15,7 +15,7 @@ interface KnownBot {
 }
 
 interface Subscriber {
-    id?: string;
+    id: string;
     username: string;
     displayName?: string;
     subTier: string;
@@ -149,11 +149,6 @@ class ChatRolesManager extends TypedEmitter<Events> {
     }
 
     async loadSubscribers(): Promise<void> {
-        const streamer = AccountAccess.getAccounts().streamer;
-        if (!streamer || !streamer.loggedIn || streamer.broadcasterType === "") {
-            return;
-        }
-
         this._subscribers = (await TwitchApi.subscriptions.getSubscriptions())
             .map(m => ({
                 id: m.userId,
@@ -161,6 +156,10 @@ class ChatRolesManager extends TypedEmitter<Events> {
                 displayName: m.userDisplayName,
                 subTier: this.getRoleForSubTier(m.tier)
             }));
+    }
+
+    getSubscribers(): Subscriber[] {
+        return this._subscribers;
     }
 
     private getRoleForSubTier(tier: string): string {

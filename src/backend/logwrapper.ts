@@ -29,9 +29,7 @@ function formatMetadata(meta: object) {
 
     if (splat?.length) {
         // Pad so we have a space after the message
-        return splat.length === 1
-            ? ` ${JSON.stringify(splat[0])}`
-            : ` ${JSON.stringify(splat)}`;
+        return ` ${splat.map(s => JSON.stringify(s, Object.getOwnPropertyNames(s))).join("; ")}`;
     }
 
     return '';
@@ -57,13 +55,15 @@ class FrontendTransport extends Transport {
     }
 }
 
-const logFormat = format.combine(
-    format.timestamp({ format: DATE_FORMAT }),
-    format.printf(
+function getLogFormat(addMetadataToMessage = true) {
+    return format.combine(
+        format.timestamp({ format: DATE_FORMAT }),
+        format.printf(
         // eslint-disable-next-line @typescript-eslint/no-base-to-string, @typescript-eslint/restrict-template-expressions
-        info => `[${info.timestamp}] [${info.level.toUpperCase()}] ${info.message}${formatMetadata(info)}`
-    )
-);
+            info => `[${info.timestamp}] [${info.level.toUpperCase()}] ${info.message}${addMetadataToMessage === true ? formatMetadata(info) : ""}`
+        )
+    );
+}
 
 const logger = createLogger({
     level: "silly",
@@ -71,20 +71,20 @@ const logger = createLogger({
     transports: [
         new FrontendTransport({
             format: format.combine(
-                logFormat,
+                getLogFormat(false),
                 format.colorize({ all: true })
             ),
             level: "silly"
         }),
         new transports.Console({
             format: format.combine(
-                logFormat,
+                getLogFormat(),
                 format.colorize({ all: true })
             ),
             level: "silly"
         }),
         new transports.DailyRotateFile({
-            format: logFormat,
+            format: getLogFormat(),
             level: fileLogLevel,
             dirname: LOG_FOLDER,
             filename: "%DATE%.log",

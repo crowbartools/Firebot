@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
+import escape from "escape-html";
+
 import type { EventSource } from "../../../../types/events";
 
 import * as ad from "./ad";
@@ -596,7 +598,7 @@ export const TwitchEventSource: EventSource = {
                     }** was banned by **${eventData.moderator}**.`;
 
                     if (eventData.modReason) {
-                        message = `${message} Reason: **${eventData.modReason}**`;
+                        message = `${message} Reason: **${escape(eventData.modReason)}**`;
                     }
                     return message;
                 }
@@ -645,7 +647,7 @@ export const TwitchEventSource: EventSource = {
                     }** was timed out for **${eventData.timeoutDuration} sec(s)** by ${eventData.moderator}.`;
 
                     if (eventData.modReason) {
-                        message = `${message} Reason: **${eventData.modReason}**`;
+                        message = `${message} Reason: **${escape(eventData.modReason)}**`;
                     }
                     return message;
                 }
@@ -674,7 +676,7 @@ export const TwitchEventSource: EventSource = {
                     return `**${eventData.userDisplayName}${
                         showUserIdName ? ` (${eventData.username})` : ""
                     }** redeemed **${eventData.rewardName}**${
-                        eventData.messageText && !!eventData.messageText.length ? `: *${eventData.messageText}*` : ""
+                        eventData.messageText && !!eventData.messageText.length ? `: *${escape(eventData.messageText)}*` : ""
                     }`;
                 }
             }
@@ -702,7 +704,7 @@ export const TwitchEventSource: EventSource = {
                     return `**${eventData.userDisplayName}${
                         showUserIdName ? ` (${eventData.username})` : ""
                     }**'s redemption of **${eventData.rewardName}** was approved. ${
-                        eventData.messageText && !!eventData.messageText.length ? `*${eventData.messageText}*` : ""
+                        eventData.messageText && !!eventData.messageText.length ? `*${escape(eventData.messageText)}*` : ""
                     }`;
                 }
             }
@@ -730,7 +732,7 @@ export const TwitchEventSource: EventSource = {
                     return `**${eventData.userDisplayName}${
                         showUserIdName ? ` (${eventData.username})` : ""
                     }**'s redemption of **${eventData.rewardName}** was rejected. ${
-                        eventData.messageText && !!eventData.messageText.length ? `*${eventData.messageText}*` : ""
+                        eventData.messageText && !!eventData.messageText.length ? `*${escape(eventData.messageText)}*` : ""
                     }`;
                 }
             }
@@ -883,7 +885,7 @@ export const TwitchEventSource: EventSource = {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
                     return `**${eventData.userDisplayName}${
                         showUserIdName ? ` (${eventData.username})` : ""
-                    }** sent your **${eventData.sentTo}** account the following whisper: ${eventData.message}`;
+                    }** sent your **${eventData.sentTo}** account the following whisper: ${escape(eventData.message)}`;
                 }
             }
         },

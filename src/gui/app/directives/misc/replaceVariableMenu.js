@@ -236,42 +236,42 @@
                     const menu = angular.element(`
                         <div class="variable-menu" ng-show="showMenu" ng-class="[menuPosition, { 'has-magic-vars': hasMagicVariables }]">
                             <div style="padding:10px;border-bottom: 1px solid #48474a;">
-                                <div style="position: relative;">
+                                <div class="relative">
                                     <input id="variable-search" type="text" class="form-control" placeholder="Search variables..." ng-model="variableSearchText" ng-change="searchUpdated()" style="padding-left: 27px;">
                                     <span class="searchbar-icon"><i class="far fa-search"></i></span>
                                 </div>
                             </div>
 
-                            <div style="display: flex; flex-direction: row;">
-                                <div class="effect-categories dark">
+                            <div class="flex">
+                                <div class="variable-categories dark">
                                     <div
-                                        class="effect-category-wrapper dark"
+                                        class="variable-category"
                                         ng-class="{'selected': activeCategory === 'macros'}"
                                         ng-click="setActiveCategory('macros');"
                                     >
-                                        <div class="category-text"><i class="fas fa-layer-group"></i> Macros</div>
+                                        <div><i class="fas fa-layer-group"></i> Macros</div>
                                     </div>
                                     <div
-                                        class="effect-category-wrapper dark"
+                                        class="variable-category"
                                         ng-class="{'selected': activeCategory === 'global-values'}"
                                         ng-click="setActiveCategory('global-values');"
                                     >
-                                        <div class="category-text"><i class="fas fa-globe"></i> Global Values</div>
+                                        <div><i class="fas fa-globe"></i> Global Values</div>
                                     </div>
                                     <div
-                                        class="effect-category-wrapper dark"
+                                        class="variable-category"
                                         ng-class="{'selected': activeCategory === 'magic'}"
                                         ng-click="setActiveCategory('magic');"
                                         ng-show="hasMagicVariables"
                                     >
-                                        <div class="category-text"><i class="far fa-magic"></i> Magic</div>
+                                        <div><i class="far fa-magic"></i> Magic</div>
                                     </div>
-                                    <div class="effect-category-header muted" style="padding-top:5px;">Categories</div>
-                                    <div class="effect-category-wrapper dark" ng-class="{'selected': activeCategory == null}" ng-click="setActiveCategory(null);">
-                                        <div class="category-text">All</div>
+                                    <div class="variable-category-header muted pt-2">Categories</div>
+                                    <div class="variable-category" ng-class="{'selected': activeCategory == null}" ng-click="setActiveCategory(null);">
+                                        <div>All</div>
                                     </div>
-                                    <div class="effect-category-wrapper dark" ng-repeat="category in categories" ng-class="{'selected': activeCategory === category}" ng-click="setActiveCategory(category);">
-                                        <div class="category-text">{{category}}
+                                    <div class="variable-category" ng-repeat="category in categories" ng-class="{'selected': activeCategory === category}" ng-click="setActiveCategory(category);">
+                                        <div>{{category}}
                                             <tooltip
                                                 style="margin-left: 5px"
                                                 ng-if="category === 'integrations' || category === 'obs'"
@@ -343,7 +343,7 @@
                                             >What are these?</a>
                                         </div>
                                         <div ng-if="magicVariables.customVariables.length > 0">
-                                            <div class="effect-category-header" style="padding-top: 0; padding-left: 0;">Custom Variables</div>
+                                            <div class="variable-category-header" style="padding-top: 0; padding-left: 0;">Custom Variables</div>
                                             <div ng-repeat="variable in magicVariables.customVariables | variableSearch:variableSearchText track by variable.name" style="margin-bottom: 8px;">
                                                 <div style="font-weight: 900;">{{variable.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="insertText(variable.handle)"></i></div>
                                                 <div ng-show="variable.examples && variable.examples.length > 0" style="font-size: 13px;padding-left: 5px; margin-top:3px;">
@@ -358,7 +358,7 @@
                                         </div>
 
                                         <div ng-if="magicVariables.effectOutputs.length > 0">
-                                            <div class="effect-category-header" style="padding-left: 0;">Effect Outputs</div>
+                                            <div class="variable-category-header" style="padding-left: 0;">Effect Outputs</div>
                                             <div ng-repeat="variable in magicVariables.effectOutputs | variableSearch:variableSearchText track by variable.name" style="margin-bottom: 8px;">
                                                 <div style="font-weight: 900;">{{variable.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="insertText(variable.handle)"></i></div>
                                                 <div ng-show="variable.description" class="muted">{{variable.description}}</div>
@@ -375,7 +375,7 @@
                                         </div>
 
                                         <div ng-if="magicVariables.presetListArgs.length > 0">
-                                            <div class="effect-category-header" style="padding-left: 0;">Preset List Args</div>
+                                            <div class="variable-category-header pl-0">Preset List Args</div>
                                             <div ng-repeat="variable in magicVariables.presetListArgs | variableSearch:variableSearchText track by variable.name" style="margin-bottom: 8px;">
                                                 <div style="font-weight: 900;">{{variable.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="insertText(variable.handle)"></i></div>
                                             </div>

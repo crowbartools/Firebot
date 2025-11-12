@@ -68,21 +68,12 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
         // send to the frontend
         if (firebotChatMessage.isHighlighted) {
             firebotChatMessage.customRewardId = HIGHLIGHT_MESSAGE_REWARD_ID;
-            frontendCommunicator.send("twitch:chat:rewardredemption", {
+            firebotChatMessage.reward = {
                 id: HIGHLIGHT_MESSAGE_REWARD_ID,
-                messageText: firebotChatMessage.rawText,
-                user: {
-                    id: firebotChatMessage.userId,
-                    username: firebotChatMessage.username,
-                    displayName: firebotChatMessage.userDisplayName
-                },
-                reward: {
-                    id: HIGHLIGHT_MESSAGE_REWARD_ID,
-                    name: "Highlight Message",
-                    cost: 0,
-                    imageUrl: "https://static-cdn.jtvnw.net/automatic-reward-images/highlight-4.png"
-                }
-            });
+                name: "Highlight Message",
+                cost: 0,
+                imageUrl: "https://static-cdn.jtvnw.net/automatic-reward-images/highlight-4.png"
+            };
         }
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
         exports.events.emit("chat-message", firebotChatMessage);

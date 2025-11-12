@@ -51,6 +51,43 @@ export type OverlayExtension<OverlayData = unknown> = {
     };
 };
 
+export type OverlayDimensions = {
+    width: number;
+    height: number;
+};
+
+export type OverlayPosition = {
+    position: string;
+    customCoords?: {
+        top: number;
+        bottom: number;
+        left: number;
+        right: number;
+    };
+};
+
+export type OverlayRotation = {
+    rotation: number;
+    rotType: "deg" | "rad" | "turn";
+};
+
+export type OverlayEnterExitAnimations = {
+    enterAnimation: string;
+    enterDuration: number;
+
+    inbetweenAnimation: string;
+    inbetweenDuration: number;
+    inbetweenDelay: number;
+    inbetweenRepeat: number;
+
+    exitAnimation: string;
+    exitDuration: number;
+};
+
+export type OverlayInstance = {
+    overlayInstance: string;
+};
+
 export type EffectDefinition<EffectModel = unknown> = {
     id: string;
     name: string;

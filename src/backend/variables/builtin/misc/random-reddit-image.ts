@@ -1,6 +1,5 @@
 import type { ReplaceVariable } from "../../../../types/variables";
-
-import randomRedditImage from "../../../common/handlers/redditProcessor";
+import { getRandomImage } from "../../../common/handlers/reddit-processor";
 
 const model : ReplaceVariable = {
     definition: {
@@ -9,9 +8,9 @@ const model : ReplaceVariable = {
         description: "Get a random image from a subreddit. (We do our best to check for bad images, but content warning none the less.)",
         possibleDataOutput: ["text"]
     },
-    evaluator: async (_, subreddit) => {
+    evaluator: async (_, subreddit: string) => {
         if (subreddit != null) {
-            return await randomRedditImage.getRandomImage(subreddit);
+            return await getRandomImage(subreddit);
         }
 
         return "";

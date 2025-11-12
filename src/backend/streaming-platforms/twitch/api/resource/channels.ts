@@ -4,7 +4,8 @@ import {
     HelixChannel,
     HelixChannelUpdate,
     HelixUser,
-    HelixUserRelation
+    HelixUserRelation,
+    HelixChannelFollower
 } from "@twurple/api";
 import { ApiResourceBase } from './api-resource-base';
 import type { TwitchApi } from "../";
@@ -212,5 +213,59 @@ export class TwitchChannelsApi extends ApiResourceBase {
         }
 
         return vips;
+    }
+
+    /**
+     * Gets an optionally specified amount of followers of the streamer's channel.
+     * 
+     * @param amount The amount of followers that need to be retrieved. When omitted, retrieves all followers.
+     */
+    async getFollowers(amount?: number): Promise<HelixChannelFollower[]> {
+        const followers: HelixChannelFollower[] = [];
+        const streamerId = this.accounts.streamer?.userId;
+
+        try {
+            if (streamerId == null) {
+                this.logger.warn("Unable to get channel follower list. Streamer is not logged in.");
+                return followers;
+            }
+
+            if (amount == null) {
+                followers.push(...await this.streamerClient.channels.getChannelFollowersPaginated(streamerId).getAll());
+            } else if (amount > 0 && amount <= 100) {
+                followers.push(...(await this.streamerClient.channels.getChannelFollowers(streamerId, null, { limit: amount })).data);
+            } else {
+                const loopCount = Math.ceil(amount / 100);
+                let cursor = "";
+
+                for (let i = 1; i < loopCount; i++) {
+                    const response = await this.streamerClient.channels.getChannelFollowers(
+                        streamerId, 
+                        null, 
+                        { 
+                            limit: 100, 
+                            after: cursor 
+                        }
+                    );
+                    
+                    followers.push(...response.data);
+                    cursor = response.cursor;
+                }
+
+                const remainder = amount % 100;
+                followers.push(...(await this.streamerClient.channels.getChannelFollowers(
+                    streamerId, 
+                    null, 
+                    { 
+                        limit: remainder, 
+                        after: cursor 
+                    }
+                )).data);
+            }
+        } catch (error) {
+            this.logger.error(`Error getting followers: ${(error as Error).message}`);
+        }
+
+        return followers;
     }
 }

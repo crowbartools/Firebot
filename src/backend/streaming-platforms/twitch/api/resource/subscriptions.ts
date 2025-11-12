@@ -13,10 +13,21 @@ export class TwitchSubscriptionsApi extends ApiResourceBase {
      * @returns {HelixSubscription[]}
      */
     async getSubscriptions(): Promise<HelixSubscription[]> {
-        const streamerId = this.accounts.streamer.userId;
-        const subscriberInfo = await this.streamerClient.subscriptions.getSubscriptionsPaginated(streamerId).getAll();
+        const subscriptions: HelixSubscription[] = [];
 
-        return subscriberInfo;
+        try {
+            const streamerId = this.accounts.streamer.userId;
+            if (streamerId == null) {
+                this.logger.warn("Unable to get channel subscriptions. Streamer is not logged in.");
+                return subscriptions;
+            }
+
+            subscriptions.push(...await this.streamerClient.subscriptions.getSubscriptionsPaginated(streamerId).getAll());
+        } catch (error) {
+            this.logger.error(`Error getting subscriptions: ${(error as Error).message}`);
+        }
+
+        return subscriptions;
     }
 
     /**
