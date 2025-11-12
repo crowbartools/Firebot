@@ -188,7 +188,7 @@
                 };
                 modalService.showModal({
                     component: "addOrEditOverlayWidgetModal",
-                    size: "md",
+                    size: "mdlg",
                     backdrop: false,
                     keyboard: false,
                     resolveObj: {
