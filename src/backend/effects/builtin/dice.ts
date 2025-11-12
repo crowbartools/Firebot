@@ -1,16 +1,14 @@
-"use strict";
+import { EffectType } from '../../../types/effects';
+import { type DiceEffectModel, handleDiceEffect } from "../../common/handlers/dice-processor";
 
-const {handleDiceEffect} = require("../../common/handlers/diceProcessor");
-const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
-
-const model = {
+const model: EffectType<DiceEffectModel> = {
     definition: {
         id: "firebot:dice",
         name: "Roll Dice",
         description: "Specify an amount of dice to roll in chat.",
         icon: "fad fa-dice",
-        categories: [EffectCategory.FUN, EffectCategory.CHAT_BASED],
-        dependencies: [EffectDependency.CHAT]
+        categories: ["fun", "chat based"],
+        dependencies: ["chat"]
     },
     optionsTemplate: `
         <eos-container header="Roll">
@@ -49,7 +47,7 @@ const model = {
     optionsController: ($scope) => {
         $scope.displayModeOptions = {
             sum: { text: "Just the sum", description: "Ex: 'ebiggz rolled a 7 on 2d6.'" },
-            individual: { text: "Include each roll", description: "Ex: 'ebiggz rolled a 7 (4, 3) on 2d6.'"}
+            individual: { text: "Include each roll", description: "Ex: 'ebiggz rolled a 7 (4, 3) on 2d6.'" }
         };
 
         $scope.effect.resultType = $scope.effect.resultType
@@ -57,7 +55,7 @@ const model = {
             : "sum";
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (!effect.dice) {
             errors.push("Please input the number of dice you'd like to roll.");
         }
@@ -69,4 +67,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export = model;

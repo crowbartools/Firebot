@@ -1,12 +1,17 @@
-"use strict";
+import Roll from "roll";
+import { TwitchApi } from "../../streaming-platforms/twitch/api";
+import { Trigger } from "../../../types/triggers";
 
-const Roll = require("roll");
-const { TwitchApi } = require("../../streaming-platforms/twitch/api");
+export interface DiceEffectModel {
+    dice: string;
+    chatter: string;
+    whisper: string;
+    resultType: string;
+}
 
 const diceRoller = new Roll();
 
-function processDice(diceConfig, showEach) {
-
+function processDice(diceConfig: string, showEach: boolean): string | number {
     diceConfig = diceConfig?.replace(/ /g, "");
 
     if (!diceRoller.validate(diceConfig)) {
@@ -22,16 +27,12 @@ function processDice(diceConfig, showEach) {
     return `${result} (${rolled.join(", ")})`;
 }
 
-async function handleDiceEffect(effect, trigger) {
-
+async function handleDiceEffect(effect: DiceEffectModel, trigger: Trigger) {
     const { dice, chatter, whisper, resultType } = effect;
 
     const showEach = resultType === "individual";
-
     const output = processDice(dice, showEach);
-
     const username = trigger.metadata.username;
-
     const message = output != null ?
         `Dice Roll: ${username} rolled a ${output} on ${dice}.` :
         `Unable to roll "${dice}" as it's not in the correct format.`;
@@ -44,5 +45,4 @@ async function handleDiceEffect(effect, trigger) {
     }
 }
 
-exports.handleDiceEffect = handleDiceEffect;
-exports.processDice = processDice;
+export { handleDiceEffect, processDice };
