@@ -1,15 +1,17 @@
 import { randomUUID } from "crypto";
 
-import { SystemCommand } from "../../../../types/commands";
-import { EffectInstance } from "../../../../types/effects";
-import { getData } from "../../../cloud-sync";
-import frontendCommunicator from "../../../common/frontend-communicator";
+import type { SystemCommand } from "../../../../types/commands";
+import type { EffectInstance } from "../../../../types/effects";
+import type { Restriction } from "../../../../types/restrictions";
+
+import { CommandManager } from "../command-manager";
 import { SettingsManager } from "../../../common/settings-manager";
+import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 import customRolesManager from "../../../roles/custom-roles-manager";
 import teamRolesManager from "../../../roles/team-roles-manager";
+import frontendCommunicator from "../../../common/frontend-communicator";
 import { capitalize } from "../../../utils";
-import commandManager from "../command-manager";
-import { TwitchApi } from "../../../streaming-platforms/twitch/api";
+import { getData } from "../../../cloud-sync";
 
 interface TriggerWithArgs {
     trigger: string;
@@ -227,7 +229,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
         ]
     },
     onTriggerEvent: async (event) => {
-        const activeCustomCommands = commandManager
+        const activeCustomCommands = CommandManager
             .getAllCustomCommands()
             .filter(c => c.active);
 
@@ -277,7 +279,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                     return;
                 }
 
-                if (commandManager.triggerIsTaken(trigger) === true) {
+                if (CommandManager.triggerIsTaken(trigger) === true) {
                     await TwitchApi.chat.sendChatMessage(
                         `The trigger '${trigger}' is already in use, please try again.`,
                         null,
@@ -319,7 +321,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                     }
                 };
 
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender);
+                CommandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
                 await TwitchApi.chat.sendChatMessage(
                     `Added command '${trigger}'!`,
@@ -340,7 +342,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                     return;
                 }
 
-                if (commandManager.triggerIsTaken(trigger) === true) {
+                if (CommandManager.triggerIsTaken(trigger) === true) {
                     await TwitchApi.chat.sendChatMessage(
                         `The trigger '${trigger}' is already in use, please try again.`,
                         null,
@@ -387,7 +389,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                     }
                 };
 
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender);
+                CommandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
                 await TwitchApi.chat.sendChatMessage(
                     `Imported command '${trigger}'!`,
@@ -451,7 +453,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                     command.effects.list.push(chatEffect);
                 }
 
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender);
+                CommandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
                 await TwitchApi.chat.sendChatMessage(
                     `Updated '${trigger}' with response: ${remainingData}`,
@@ -491,7 +493,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
 
                 command.count = newCount;
 
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender);
+                CommandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
                 await TwitchApi.chat.sendChatMessage(
                     `Updated usage count for '${trigger}' to: ${newCount}`,
@@ -524,7 +526,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
 
                 command.description = remainingData;
 
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender);
+                CommandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
                 await TwitchApi.chat.sendChatMessage(
                     `Updated description for '${trigger}' to: ${remainingData}`,
@@ -572,7 +574,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                     global: globalCooldown
                 };
 
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender);
+                CommandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
                 await TwitchApi.chat.sendChatMessage(
                     `Updated '${trigger}' with cooldowns: ${userCooldown}s (user), ${globalCooldown}s (global)`,
@@ -603,7 +605,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                     return;
                 }
 
-                const restrictions = [];
+                const restrictions: Restriction[] = [];
                 const roleIds = await mapPermArgToRoleIds(remainingData);
 
 
@@ -625,7 +627,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
 
                 command.restrictionData = { restrictions: restrictions };
 
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender);
+                CommandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
                 await TwitchApi.chat.sendChatMessage(`Updated '${trigger}' restrictions to: ${remainingData}`, null, true);
 
@@ -643,7 +645,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                     return;
                 }
 
-                commandManager.removeCustomCommandByTrigger(trigger);
+                CommandManager.removeCustomCommandByTrigger(trigger);
 
                 await TwitchApi.chat.sendChatMessage(`Successfully removed command '${trigger}'.`, null, true);
                 break;
@@ -651,7 +653,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
 
             case "disable":
             case "enable": {
-                const command = commandManager.getAllCustomCommands().find(c => c.trigger === trigger);
+                const command = CommandManager.getAllCustomCommands().find(c => c.trigger === trigger);
 
                 if (command == null) {
                     await TwitchApi.chat.sendChatMessage(
@@ -673,7 +675,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
 
                 command.active = newActiveStatus;
 
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender);
+                CommandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
                 frontendCommunicator.send("custom-commands-updated");
 
@@ -695,7 +697,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                     return;
                 }
 
-                const command = commandManager.getAllCustomCommands().find(c => c.trigger === trigger);
+                const command = CommandManager.getAllCustomCommands().find(c => c.trigger === trigger);
 
                 if (command == null) {
                     await TwitchApi.chat.sendChatMessage(
@@ -723,7 +725,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                 }
 
                 command.aliases.push(alias);
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender);
+                CommandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
                 await TwitchApi.chat.sendChatMessage(
                     `Added alias '${alias}' to custom command '${trigger}'!`,
@@ -746,7 +748,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                     return;
                 }
 
-                const command = commandManager.getAllCustomCommands().find(c => c.trigger === trigger);
+                const command = CommandManager.getAllCustomCommands().find(c => c.trigger === trigger);
 
                 if (command == null) {
                     await TwitchApi.chat.sendChatMessage(
@@ -774,7 +776,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                 }
 
                 command.aliases.splice(aliasIndex, 1);
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender);
+                CommandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
                 await TwitchApi.chat.sendChatMessage(
                     `Removed alias '${alias}' from custom command '${trigger}'!`,

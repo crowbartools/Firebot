@@ -3,8 +3,8 @@ import moment from "moment";
 import type { ReplaceVariable } from "../../../../types/variables";
 import type { Quote } from "../../../../types/quotes";
 
+import { CommandManager } from "../../../chat/commands/command-manager";
 import { QuoteManager } from "../../../quotes/quote-manager";
-import commandManager from "../../../chat/commands/command-manager";
 import logger from "../../../logwrapper";
 
 const model : ReplaceVariable = {
@@ -21,7 +21,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: ["text"]
     },
     evaluator: async (_, quoteId: number) => {
-        const quoteCommand = commandManager.getSystemCommandById("firebot:quotesmanagement");
+        const quoteCommand = CommandManager.getSystemCommandById("firebot:quotesmanagement");
         const quoteDateFormat = quoteCommand.definition.options.quoteDateFormat.value as string;
         let quote: Quote;
         quoteId = parseInt(`${quoteId}`);

@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { Trigger } from "../../../../types/triggers";
-import commandManager from "../../../../backend/chat/commands/command-manager";
+import type { Request, Response } from "express";
+import type { Trigger } from "../../../../types/triggers";
+import { CommandManager } from "../../../../backend/chat/commands/command-manager";
 import commandRunner from "../../../../backend/chat/commands/command-runner";
 
 function getCommandTriggerAndArgs(req: Request): {
@@ -42,7 +42,7 @@ function getCommandTriggerAndArgs(req: Request): {
 }
 
 export function getSystemCommands(req: Request, res: Response): void {
-    const sysCommands = commandManager.getAllSystemCommandDefinitions();
+    const sysCommands = CommandManager.getAllSystemCommandDefinitions();
 
     if (sysCommands == null) {
         res.status(500).send({
@@ -72,7 +72,7 @@ export function getSystemCommand(req: Request, res: Response): void {
         });
     }
 
-    const sysCommand = commandManager.getSystemCommandById(sysCommandId);
+    const sysCommand = CommandManager.getSystemCommandById(sysCommandId);
 
     if (sysCommand == null) {
         res.status(404).send({
@@ -94,7 +94,7 @@ export function runSystemCommand(req: Request, res: Response): void {
         });
     }
 
-    const sysCommand = commandManager.getSystemCommandById(sysCommandId);
+    const sysCommand = CommandManager.getSystemCommandById(sysCommandId);
 
     if (sysCommand == null) {
         res.status(404).send({
@@ -121,7 +121,7 @@ export function runSystemCommand(req: Request, res: Response): void {
 };
 
 export function getCustomCommands(req: Request, res: Response): void {
-    const customCommands = commandManager.getAllCustomCommands();
+    const customCommands = CommandManager.getAllCustomCommands();
 
     if (customCommands == null) {
         res.status(500).send({
@@ -151,7 +151,7 @@ export function getCustomCommand(req: Request, res: Response): void {
         });
     }
 
-    const customCommand = commandManager.getCustomCommandById(customCommandId);
+    const customCommand = CommandManager.getCustomCommandById(customCommandId);
 
     if (customCommand == null) {
         res.status(404).send({
@@ -173,7 +173,7 @@ export function runCustomCommand(req: Request, res: Response): void {
         });
     }
 
-    const customCommand = commandManager.getCustomCommandById(customCommandId);
+    const customCommand = CommandManager.getCustomCommandById(customCommandId);
 
     if (customCommand == null) {
         res.status(404).send({

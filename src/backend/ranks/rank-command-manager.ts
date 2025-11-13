@@ -1,7 +1,7 @@
 import type { SystemCommand } from "../../types/commands";
 import type { RankLadder } from "../../types/ranks";
+import { CommandManager } from "../chat/commands/command-manager";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
-import commandManager from "../chat/commands/command-manager";
 import rankManager from "./rank-manager";
 import viewerDatabase from "../viewers/viewer-database";
 import logger from "../logwrapper";
@@ -403,16 +403,16 @@ class RankCommandManager {
 
         switch (action) {
             case "update":
-                commandManager.unregisterSystemCommand(`firebot:rank-ladder:${rankLadder.id}`);
-                commandManager.registerSystemCommand(
+                CommandManager.unregisterSystemCommand(`firebot:rank-ladder:${rankLadder.id}`);
+                CommandManager.registerSystemCommand(
                     this.createRankCommandDefinition(rankLadder)
                 );
                 break;
             case "delete":
-                commandManager.unregisterSystemCommand(`firebot:rank-ladder:${rankLadder.id}`);
+                CommandManager.unregisterSystemCommand(`firebot:rank-ladder:${rankLadder.id}`);
                 break;
             case "create":
-                commandManager.registerSystemCommand(
+                CommandManager.registerSystemCommand(
                     this.createRankCommandDefinition(rankLadder)
                 );
                 break;

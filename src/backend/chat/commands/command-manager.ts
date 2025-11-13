@@ -41,6 +41,54 @@ class CommandManager extends TypedEmitter<Events> {
     constructor() {
         super();
 
+        frontendCommunicator.on("get-all-system-commands", () => {
+            logger.info("got 'get all cmds' request");
+            return this.getSystemCommands();
+        });
+
+        frontendCommunicator.on("get-all-system-command-definitions", () => {
+            logger.info("got 'get all cmd defs' request");
+            return this.getAllSystemCommandDefinitions();
+        });
+
+        frontendCommunicator.on("get-system-command", (commandId: string) => {
+            logger.info("got 'get cmd' request", commandId);
+            return this.getSystemCommandById(commandId);
+        });
+
+        frontendCommunicator.on("save-system-command-override", (sysCommand: SystemCommandDefinition) => {
+            logger.info("got 'save sys cmd' request");
+            this.saveSystemCommandOverride(sysCommand);
+        });
+
+        frontendCommunicator.on("remove-system-command-override", (id: string) => {
+            logger.info("got 'remove sys cmd' request");
+            this.removeSystemCommandOverride(id);
+        });
+
+        frontendCommunicator.on("get-all-custom-commands", () => {
+            return this.getAllCustomCommands();
+        });
+
+        frontendCommunicator.on("save-custom-command", (commandData: { command: CommandDefinition, user: string }) => {
+            this.saveCustomCommand(commandData.command, commandData.user);
+        });
+
+        frontendCommunicator.on("save-all-custom-commands", (commands: CommandDefinition[]) => {
+            this.saveAllCustomCommands(commands);
+        });
+
+        frontendCommunicator.on("delete-custom-command", (id: string) => {
+            this.deleteCustomCommand(id);
+        });
+
+        frontendCommunicator.on("get-all-commands", () => {
+            return {
+                customCommands: this.getAllCustomCommands(),
+                systemCommands: this.getAllSystemCommandDefinitions()
+            };
+        });
+
         this.refreshCommandCache();
     }
 
@@ -153,13 +201,13 @@ class CommandManager extends TypedEmitter<Events> {
      */
     getAllSystemCommandDefinitions(): SystemCommandDefinition[] {
         const cmdDefs = this._registeredSysCommands.map((c) => {
-            const override = this._commandCache.systemCommandOverrides[c.definition.id];
+            const override = deepClone(this._commandCache.systemCommandOverrides[c.definition.id]);
             if (override != null) {
                 if (c.definition.options) {
                     const options = structuredClone(c.definition.options);
                     if (override.options) {
                         for (const key of Object.keys(options)) {
-                            if (override.options[key]?.value) {
+                            if (override.options[key]?.value != null) {
                                 options[key].value = override.options[key].value as unknown;
                             }
                         }
@@ -487,52 +535,4 @@ class CommandManager extends TypedEmitter<Events> {
  */
 const manager = new CommandManager();
 
-frontendCommunicator.on("get-all-system-commands", () => {
-    logger.info("got 'get all cmds' request");
-    return manager.getSystemCommands();
-});
-
-frontendCommunicator.on("get-all-system-command-definitions", () => {
-    logger.info("got 'get all cmd defs' request");
-    return manager.getAllSystemCommandDefinitions();
-});
-
-frontendCommunicator.on("get-system-command", (commandId: string) => {
-    logger.info("got 'get cmd' request", commandId);
-    return manager.getSystemCommandById(commandId);
-});
-
-frontendCommunicator.on("save-system-command-override", (sysCommand: SystemCommandDefinition) => {
-    logger.info("got 'save sys cmd' request");
-    manager.saveSystemCommandOverride(sysCommand);
-});
-
-frontendCommunicator.on("remove-system-command-override", (id: string) => {
-    logger.info("got 'remove sys cmd' request");
-    manager.removeSystemCommandOverride(id);
-});
-
-frontendCommunicator.on("get-all-custom-commands", () => {
-    return manager.getAllCustomCommands();
-});
-
-frontendCommunicator.on("save-custom-command", (commandData: { command: CommandDefinition, user: string }) => {
-    manager.saveCustomCommand(commandData.command, commandData.user);
-});
-
-frontendCommunicator.on("save-all-custom-commands", (commands: CommandDefinition[]) => {
-    manager.saveAllCustomCommands(commands);
-});
-
-frontendCommunicator.on("delete-custom-command", (id: string) => {
-    manager.deleteCustomCommand(id);
-});
-
-frontendCommunicator.on("get-all-commands", () => {
-    return {
-        customCommands: manager.getAllCustomCommands(),
-        systemCommands: manager.getAllSystemCommandDefinitions()
-    };
-});
-
-export = manager;
+export { manager as CommandManager };

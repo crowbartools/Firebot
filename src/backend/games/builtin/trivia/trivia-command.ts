@@ -5,9 +5,9 @@ import type { SystemCommand } from "../../../../types/commands";
 import type { FirebotChatMessage } from "../../../../types/chat";
 import type { RoleNumberParameterValue } from "../../../../types/parameters";
 
+import { CommandManager } from "../../../chat/commands/command-manager";
 import { GameManager } from "../../game-manager";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
-import commandManager from "../../../chat/commands/command-manager";
 import currencyAccess from "../../../currency/currency-access";
 import currencyManager from "../../../currency/currency-manager";
 import customRolesManager from "../../../roles/custom-roles-manager";
@@ -291,13 +291,13 @@ const triviaCommand: SystemCommand = {
 };
 
 function registerTriviaCommand(): void {
-    if (!commandManager.hasSystemCommand(TRIVIA_COMMAND_ID)) {
-        commandManager.registerSystemCommand(triviaCommand);
+    if (!CommandManager.hasSystemCommand(TRIVIA_COMMAND_ID)) {
+        CommandManager.registerSystemCommand(triviaCommand);
     }
 }
 
 function unregisterTriviaCommand(): void {
-    commandManager.unregisterSystemCommand(TRIVIA_COMMAND_ID);
+    CommandManager.unregisterSystemCommand(TRIVIA_COMMAND_ID);
 }
 
 function purgeCaches(): void {

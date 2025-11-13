@@ -1,9 +1,9 @@
-import { SystemCommand } from "../../types/commands";
-import { Currency } from "../../types/currency";
+import type { SystemCommand } from "../../types/commands";
+import type { Currency } from "../../types/currency";
+import { CommandManager } from "../chat/commands/command-manager";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 import currencyAccess from "./currency-access";
 import currencyManager from "./currency-manager";
-import commandManager from "../chat/commands/command-manager";
 import logger from "../logwrapper";
 import { commafy } from "../utils";
 
@@ -502,18 +502,18 @@ class CurrencyCommandManager {
         // Decide what we want to do based on the action that was passed to us.
         switch (action) {
             case "update":
-                commandManager.unregisterSystemCommand(`firebot:currency:${currency.id}`);
-                commandManager.registerSystemCommand(
+                CommandManager.unregisterSystemCommand(`firebot:currency:${currency.id}`);
+                CommandManager.registerSystemCommand(
                     this.createCurrencyCommandDefinition(currency)
                 );
                 break;
             case "delete":
                 // Delete the system command for this currency.
-                commandManager.unregisterSystemCommand(`firebot:currency:${currency.id}`);
+                CommandManager.unregisterSystemCommand(`firebot:currency:${currency.id}`);
                 break;
             case "create":
                 // Build a new system command def and register it.
-                commandManager.registerSystemCommand(
+                CommandManager.registerSystemCommand(
                     this.createCurrencyCommandDefinition(currency)
                 );
                 break;

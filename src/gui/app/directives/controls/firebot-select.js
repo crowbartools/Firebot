@@ -1,5 +1,8 @@
 "use strict";
 
+/**
+ * @deprecated Please use firebot-dropdown for all new usages going forward.
+ */
 (function () {
 
     const { randomUUID } = require("crypto");
@@ -13,10 +16,11 @@
             isDisabled: '<',
             rightJustify: "<?",
             ariaLabel: "@?",
-            valueMode: "@?"
+            valueMode: "@?",
+            style: "@?"
         },
         template: `
-        <div class="btn-group" uib-dropdown>
+        <div class="btn-group" uib-dropdown style="{{$ctrl.style || ''}}">
             <button id="{{$ctrl.id}}" aria-label="{{($ctrl.ariaLabel || 'Selected') + ': ' + $ctrl.getSelectedOption()}}" type="button" class="btn btn-default" uib-dropdown-toggle ng-disabled="$ctrl.isDisabled">
             {{$ctrl.getSelectedOption()}} <span class="caret" aria-hidden="true"></span>
             </button>

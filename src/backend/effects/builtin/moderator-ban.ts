@@ -5,6 +5,7 @@ import logger from '../../logwrapper';
 const effect: EffectType<{
     action: "Ban" | "Unban";
     username: string;
+    reason: string;
 }> = {
     definition: {
         id: "firebot:modban",
@@ -30,11 +31,20 @@ const effect: EffectType<{
                 </ul>
             </div>
         </eos-container>
+
         <eos-container header="Target" pad-top="true" ng-show="effect.action != null">
             <div class="input-group">
                 <span class="input-group-addon" id="username-type">Username</span>
                 <input ng-model="effect.username" type="text" class="form-control" id="list-username-setting" aria-describedby="list-username-type" replace-variables>
             </div>
+        </eos-container>
+
+        <eos-container header="Reason" pad-top="true" ng-show="effect.action === 'Ban'">
+            <firebot-input
+                input-title="Reason"
+                placeholder-text="Banned by Firebot"
+                model="effect.reason"
+            />
         </eos-container>
     `,
     optionsValidator: (effect) => {
@@ -52,7 +62,8 @@ const effect: EffectType<{
             const user = await TwitchApi.users.getUserByName(effect.username);
 
             if (user != null) {
-                const result = await TwitchApi.moderation.banUser(user.id, "Banned by Firebot");
+                const reason = effect.reason?.length ? effect.reason : "Banned by Firebot";
+                const result = await TwitchApi.moderation.banUser(user.id, reason);
 
                 if (result === true) {
                     logger.debug(`${effect.username} was banned via the Ban effect.`);
