@@ -5,7 +5,7 @@ import type { RoleNumberParameterValue, RolePercentageParameterValue } from "../
 
 import { GameManager } from "../../game-manager";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
-import commandManager from "../../../chat/commands/command-manager";
+import { CommandManager } from "../../../chat/commands/command-manager";
 import currencyAccess from "../../../currency/currency-access";
 import currencyManager from "../../../currency/currency-manager";
 import customRolesManager from "../../../roles/custom-roles-manager";
@@ -245,13 +245,13 @@ const heistCommand: SystemCommand = {
 };
 
 export function registerHeistCommand(): void {
-    if (!commandManager.hasSystemCommand(HEIST_COMMAND_ID)) {
-        commandManager.registerSystemCommand(heistCommand);
+    if (!CommandManager.hasSystemCommand(HEIST_COMMAND_ID)) {
+        CommandManager.registerSystemCommand(heistCommand);
     }
 }
 
 export function unregisterHeistCommand(): void {
-    commandManager.unregisterSystemCommand(HEIST_COMMAND_ID);
+    CommandManager.unregisterSystemCommand(HEIST_COMMAND_ID);
 }
 
 export function clearCooldown(): void {

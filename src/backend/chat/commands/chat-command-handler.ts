@@ -3,10 +3,10 @@ import { FirebotChatMessage } from "../../../types/chat";
 import { Trigger } from "../../../types/triggers";
 
 import { AccountAccess } from "../../common/account-access";
+import { CommandManager } from "./command-manager";
 import { RestrictionsManager } from "../../restrictions/restriction-manager";
 import { SettingsManager } from "../../common/settings-manager";
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
-import commandManager from "./command-manager";
 import commandCooldownManager from "./command-cooldown-manager";
 import commandRunner from "./command-runner";
 import frontendCommunicator from "../../common/frontend-communicator";
@@ -50,7 +50,7 @@ class CommandHandler {
             return null;
         }
 
-        const allCommands = commandManager.getAllActiveCommands();
+        const allCommands = CommandManager.getAllActiveCommands();
 
         for (const command of allCommands) {
 
@@ -83,7 +83,7 @@ class CommandHandler {
     private updateCommandCount(command: CommandDefinition): void {
         command.count = (command.count ?? 0) + 1;
 
-        commandManager.saveCustomCommand(command);
+        CommandManager.saveCustomCommand(command);
 
         frontendCommunicator.send("command-count-update", {
             commandId: command.id,

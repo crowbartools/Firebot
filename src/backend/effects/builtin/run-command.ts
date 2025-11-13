@@ -1,7 +1,7 @@
 import type { EffectType } from "../../../types/effects";
 import type { CommandDefinition, SystemCommandDefinition } from "../../../types/commands";
 
-import commandManager from "../../chat/commands/command-manager";
+import { CommandManager } from "../../chat/commands/command-manager";
 import chatHelpers from "../../chat/chat-helpers";
 import chatCommandHandler from "../../chat/commands/chat-command-handler";
 import commandRunner from "../../chat/commands/command-runner";
@@ -126,8 +126,8 @@ const effect: EffectType<{
             : effect.commandId || effect.customCommandId;
 
         const commandToRun = effect.commandType === "system"
-            ? commandManager.getSystemCommandById(commandId).definition
-            : commandManager.getCustomCommandById(commandId);
+            ? CommandManager.getSystemCommandById(commandId).definition
+            : CommandManager.getCustomCommandById(commandId);
 
         if (!commandToRun) {
             logger.error(`Command ID ${commandId} not found`);

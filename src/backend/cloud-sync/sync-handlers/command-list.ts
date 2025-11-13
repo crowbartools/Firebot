@@ -1,7 +1,7 @@
-import commandManager from "../../chat/commands/command-manager";
+import { CommandManager } from "../../chat/commands/command-manager";
 
 export function getCommandListForSync() {
-    const allCommands = commandManager.getAllActiveCommands();
+    const allCommands = CommandManager.getAllActiveCommands();
     const commandData = {
         'allowedCmds': []
     };
