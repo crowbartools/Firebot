@@ -53,7 +53,6 @@ class ViewerExportManager {
             const headers = [
                 "ID",
                 "Username",
-                "Twitch Roles",
                 "Last Seen",
                 "Join Date",
                 "Minutes in Channel",
@@ -66,7 +65,6 @@ class ViewerExportManager {
                 const viewerData = [
                     viewer._id,
                     viewer.displayName || viewer.username,
-                    viewer.twitchRoles.join("|"),
                     DateTime.fromMillis(viewer.joinDate).toUTC().toFormat("yyyy-MM-dd"),
                     DateTime.fromMillis(viewer.lastSeen).toUTC().toFormat("yyyy-MM-dd"),
                     viewer.minutesInChannel,
