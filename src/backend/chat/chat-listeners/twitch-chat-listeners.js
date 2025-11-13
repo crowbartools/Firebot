@@ -7,7 +7,7 @@ const { AccountAccess } = require("../../common/account-access");
 const { ActiveUserHandler } = require("../active-user-handler");
 const { ChatModerationManager } = require("../moderation/chat-moderation-manager");
 const { TwitchEventHandlers } = require("../../streaming-platforms/twitch/events");
-const chatRolesManager = require("../../roles/chat-roles-manager");
+const twitchRolesManager = require("../../roles/twitch-roles-manager");
 const raidMessageChecker = require(".././moderation/raid-message-checker");
 const viewerDatabase = require("../../viewers/viewer-database");
 const logger = require("../../logwrapper");
@@ -56,13 +56,13 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
         await ChatModerationManager.moderateMessage(firebotChatMessage);
 
         if (firebotChatMessage.isVip === true) {
-            chatRolesManager.addVipToVipList({
+            twitchRolesManager.addVipToVipList({
                 id: msg.userInfo.userId,
                 username: msg.userInfo.userName,
                 displayName: msg.userInfo.displayName
             });
         } else {
-            chatRolesManager.removeVipFromVipList(msg.userInfo.userId);
+            twitchRolesManager.removeVipFromVipList(msg.userInfo.userId);
         }
 
         // send to the frontend
@@ -134,13 +134,13 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText, false, true);
 
         if (firebotChatMessage.isVip === true) {
-            chatRolesManager.addVipToVipList({
+            twitchRolesManager.addVipToVipList({
                 id: msg.userInfo.userId,
                 username: msg.userInfo.userName,
                 displayName: msg.userInfo.displayName
             });
         } else {
-            chatRolesManager.removeVipFromVipList(msg.userInfo.userId);
+            twitchRolesManager.removeVipFromVipList(msg.userInfo.userId);
         }
 
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);

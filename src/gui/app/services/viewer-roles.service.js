@@ -115,19 +115,19 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
                     case "broadcaster":
                         return [accountAccess.accounts.streamer];
                     case "mod":
-                        return backendCommunicator.fireEventSync("get-moderators");
+                        return backendCommunicator.fireEventSync("twitch-roles:get-moderators");
                     case "vip":
-                        return backendCommunicator.fireEventSync("get-vips");
+                        return backendCommunicator.fireEventSync("twitch-roles:get-vips");
                     case "sub":
-                        return backendCommunicator.fireEventSync("get-subscribers");
+                        return backendCommunicator.fireEventSync("twitch-roles:get-subscribers");
                     case "tier1":
-                        return backendCommunicator.fireEventSync("get-subscribers").filter(s => s.subTier === "tier1");
+                        return backendCommunicator.fireEventSync("twitch-roles:get-subscribers").filter(s => s.subTier === "tier1");
                     case "tier2":
-                        return backendCommunicator.fireEventSync("get-subscribers").filter(s => s.subTier === "tier2");
+                        return backendCommunicator.fireEventSync("twitch-roles:get-subscribers").filter(s => s.subTier === "tier2");
                     case "tier3":
-                        return backendCommunicator.fireEventSync("get-subscribers").filter(s => s.subTier === "tier3");
+                        return backendCommunicator.fireEventSync("twitch-roles:get-subscribers").filter(s => s.subTier === "tier3");
                     case "viewerlistbot":
-                        return backendCommunicator.fireEventSync("get-known-bots");
+                        return backendCommunicator.fireEventSync("chat-roles:get-known-bots");
                     default:
                         return [];
                 }

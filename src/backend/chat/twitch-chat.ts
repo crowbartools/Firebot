@@ -7,6 +7,7 @@ import { FirebotDeviceAuthProvider } from "../auth/firebot-device-auth-provider"
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 import chatHelpers from "./chat-helpers";
 import chatRolesManager from "../roles/chat-roles-manager";
+import twitchRolesManager from "../roles/twitch-roles-manager";
 import chatterPoll from "../streaming-platforms/twitch/chatter-poll";
 import twitchChatListeners from "./chat-listeners/twitch-chat-listeners";
 import frontendCommunicator from "../common/frontend-communicator";
@@ -120,13 +121,15 @@ class TwitchChat extends EventEmitter {
 
             // Refresh these once we connect to Twitch
             // While connected, we can just react to changes via chat messages/EventSub events
-            await chatRolesManager.loadVips();
-            await chatRolesManager.loadModerators();
-            await sharedChatCache.loadSessionFromTwitch();
+            await twitchRolesManager.loadVips();
+            await twitchRolesManager.loadModerators();
 
-            if (!chatRolesManager.getSubscribers().length) {
-                await chatRolesManager.loadSubscribers();
+            if (!twitchRolesManager.getSubscribers().length) {
+                await twitchRolesManager.loadSubscribers();
             }
+
+            // Load the current Shared Chat session
+            await sharedChatCache.loadSessionFromTwitch();
         } catch (error) {
             logger.error("Chat connect error", error);
             this.disconnect();

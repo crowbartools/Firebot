@@ -1,6 +1,5 @@
 import { TypedEmitter } from "tiny-typed-emitter";
-
-import type { BasicViewer } from "../../types/viewers";
+import twitchRolesManager from "./twitch-roles-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import { AccountAccess } from "../common/account-access";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
@@ -14,41 +13,15 @@ interface KnownBot {
     channels: number;
 }
 
-interface Subscriber {
-    id: string;
-    username: string;
-    displayName?: string;
-    subTier: string;
-}
-
 interface KnownBotServiceResponse {
     bots: Array<[string, number, number]>;
 }
 
-type Events = {
-    "viewer-role-updated": (userId: string, roleId: string, action: "added" | "removed") => void;
-};
-
-class ChatRolesManager extends TypedEmitter<Events> {
+class ChatRolesManager {
     private _knownBots: KnownBot[] = [];
-    private _vips: BasicViewer[] = [];
-    private _moderators: BasicViewer[] = [];
-    private _subscribers: Subscriber[] = [];
-
-    constructor() {
-        super();
-    }
 
     setupListeners(): void {
-        TwitchApi.moderation.on("vip:added", user => this.addVipToVipList(user));
-        TwitchApi.moderation.on("vip:removed", userId => this.removeVipFromVipList(userId));
-        TwitchApi.moderation.on("moderator:added", user => this.addModeratorToModeratorsList(user));
-        TwitchApi.moderation.on("moderator:removed", userId => this.removeModeratorFromModeratorsList(userId));
-
-        frontendCommunicator.on("get-moderators", () => this._moderators);
-        frontendCommunicator.on("get-vips", () => this._vips);
-        frontendCommunicator.on("get-subscribers", () => this._subscribers);
-        frontendCommunicator.on("get-known-bots", () => this._knownBots);
+        frontendCommunicator.on("chat-roles:get-known-bots", () => this._knownBots);
     }
 
     async cacheViewerListBots(): Promise<void> {
@@ -99,86 +72,6 @@ class ChatRolesManager extends TypedEmitter<Events> {
         return false;
     }
 
-    async loadVips(): Promise<void> {
-        this._vips = (await TwitchApi.channels.getVips()).map(u => ({
-            id: u.id,
-            username: u.name,
-            displayName: u.displayName
-        }));
-    }
-
-    getVips(): BasicViewer[] {
-        return this._vips;
-    }
-
-    addVipToVipList(viewer: BasicViewer): void {
-        if (!this._vips.some(v => v.id === viewer.id)) {
-            this._vips.push(viewer);
-            this.emit("viewer-role-updated", viewer.id, "vip", "added");
-        }
-    }
-
-    removeVipFromVipList(userId: string): void {
-        this._vips = this._vips.filter(v => v.id !== userId);
-        this.emit("viewer-role-updated", userId, "vip", "removed");
-    }
-
-    async loadModerators(): Promise<void> {
-        this._moderators = (await TwitchApi.moderation.getModerators())
-            .map(m => ({
-                id: m.userId,
-                username: m.userName,
-                displayName: m.userDisplayName
-            }));
-    }
-
-    getModerators(): BasicViewer[] {
-        return this._moderators;
-    }
-
-    addModeratorToModeratorsList(viewer: BasicViewer): void {
-        if (!this._moderators.some(v => v.id === viewer.id)) {
-            this._moderators.push(viewer);
-            this.emit("viewer-role-updated", viewer.id, "mod", "added");
-        }
-    }
-
-    removeModeratorFromModeratorsList(userId: string): void {
-        this._moderators = this._moderators.filter(v => v.id !== userId);
-        this.emit("viewer-role-updated", userId, "mod", "removed");
-    }
-
-    async loadSubscribers(): Promise<void> {
-        this._subscribers = (await TwitchApi.subscriptions.getSubscriptions())
-            .map(m => ({
-                id: m.userId,
-                username: m.userName,
-                displayName: m.userDisplayName,
-                subTier: this.getRoleForSubTier(m.tier)
-            }));
-    }
-
-    getSubscribers(): Subscriber[] {
-        return this._subscribers;
-    }
-
-    private getRoleForSubTier(tier: string): string {
-        let role = "";
-        switch (tier) {
-            case "1000":
-                role = "tier1";
-                break;
-            case "2000":
-                role = "tier2";
-                break;
-            case "3000":
-                role = "tier3";
-                break;
-        }
-
-        return role;
-    }
-
     async getUsersChatRoles(userId: string): Promise<string[]> {
         if (!userId?.length) {
             return [];
@@ -196,16 +89,19 @@ class ChatRolesManager extends TypedEmitter<Events> {
                 roles.push("broadcaster");
             }
 
-            if (this._subscribers.some(m => m.id === userId)) {
+            const subscribers = twitchRolesManager.getSubscribers();
+            if (subscribers.some(m => m.id === userId)) {
                 roles.push("sub");
-                roles.push(this._subscribers.find(m => m.id === userId).subTier);
+                roles.push(subscribers.find(m => m.id === userId).subTier);
             }
 
-            if (this._vips.some(v => v.id === userId)) {
+            const vips = twitchRolesManager.getVips();
+            if (vips.some(v => v.id === userId)) {
                 roles.push("vip");
             }
 
-            if (this._moderators.some(m => m.id === userId)) {
+            const moderators = twitchRolesManager.getModerators();
+            if (moderators.some(m => m.id === userId)) {
                 roles.push("mod");
             }
 
