@@ -4,9 +4,9 @@ import NodeCache from "node-cache";
 import type { SystemCommand } from "../../../../types/commands";
 import type { RolePercentageParameterValue } from "../../../../types/parameters";
 
+import { CommandManager } from "../../../chat/commands/command-manager";
 import { GameManager } from "../../game-manager";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
-import commandManager from "../../../chat/commands/command-manager";
 import currencyAccess from "../../../currency/currency-access";
 import currencyManager from "../../../currency/currency-manager";
 import customRolesManager from "../../../roles/custom-roles-manager";
@@ -243,13 +243,13 @@ const spinCommand: SystemCommand = {
 };
 
 function registerSpinCommand(): void {
-    if (!commandManager.hasSystemCommand(SPIN_COMMAND_ID)) {
-        commandManager.registerSystemCommand(spinCommand);
+    if (!CommandManager.hasSystemCommand(SPIN_COMMAND_ID)) {
+        CommandManager.registerSystemCommand(spinCommand);
     }
 }
 
 function unregisterSpinCommand(): void {
-    commandManager.unregisterSystemCommand(SPIN_COMMAND_ID);
+    CommandManager.unregisterSystemCommand(SPIN_COMMAND_ID);
 }
 
 function purgeCaches(): void {

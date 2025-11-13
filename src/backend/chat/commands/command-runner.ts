@@ -3,9 +3,9 @@ import { CommandDefinition, UserCommand } from "../../../types/commands";
 import { Trigger } from "../../../types/triggers";
 
 import { AccountAccess } from "../../common/account-access";
+import { CommandManager } from "./command-manager";
 import effectRunner from "../../common/effect-runner";
 import chatHelpers from "../chat-helpers";
-import commandManager from "./command-manager";
 import twitchStreamInfoManager from "../../streaming-platforms/twitch/stream-info-manager";
 import frontendCommunicator from "../../common/frontend-communicator";
 import logger from "../../logwrapper";
@@ -159,7 +159,7 @@ class CommandRunner {
         if (command.type === "system") {
             logger.info("Executing system command");
             //get system command from manager
-            const cmdDef = commandManager.getSystemCommandById(command.id);
+            const cmdDef = CommandManager.getSystemCommandById(command.id);
 
             const commandOptions = {};
             if (command.options != null) {
@@ -186,7 +186,7 @@ class CommandRunner {
     }
 
     triggerCustomCommand(id: string, isManual = true): void {
-        const command = commandManager.getCustomCommandById(id);
+        const command = CommandManager.getCustomCommandById(id);
         if (command != null) {
             logger.debug("firing command manually", command);
             const commandSender = AccountAccess.getAccounts().streamer.username,
@@ -206,12 +206,12 @@ class CommandRunner {
     }
 
     runSystemCommandFromEffect(id: string, trigger: Trigger, args: string): void {
-        const command = commandManager.getSystemCommandById(id).definition;
+        const command = CommandManager.getSystemCommandById(id).definition;
         this.runCommandFromEffect(command, trigger, args);
     }
 
     runCustomCommandFromEffect(id: string, trigger: Trigger, args: string): void {
-        const command = commandManager.getCustomCommandById(id);
+        const command = CommandManager.getCustomCommandById(id);
         this.runCommandFromEffect(command, trigger, args);
     }
 }

@@ -1,4 +1,4 @@
-import commandManager from "./command-manager";
+import { CommandManager } from "./command-manager";
 import currencyCommandManager from '../../currency/currency-command-manager';
 import rankCommandManager from "../../ranks/rank-command-manager";
 
@@ -16,15 +16,15 @@ import { UptimeSystemCommand } from "./builtin/uptime";
  * Loads all in-box system commands, along with any currency commands
  */
 export function loadSystemCommands() {
-    commandManager.registerSystemCommand(CommandListSystemCommand);
-    commandManager.registerSystemCommand(CommandManagementSystemCommand);
-    commandManager.registerSystemCommand(CustomRoleManagementSystemCommand);
-    commandManager.registerSystemCommand(FollowAgeSystemCommand);
-    commandManager.registerSystemCommand(MarkerSystemCommand);
-    commandManager.registerSystemCommand(QuotesManagementSystemCommand);
-    commandManager.registerSystemCommand(SpamRaidProtectionSystemCommand);
-    commandManager.registerSystemCommand(SteamSystemCommand);
-    commandManager.registerSystemCommand(UptimeSystemCommand);
+    CommandManager.registerSystemCommand(CommandListSystemCommand);
+    CommandManager.registerSystemCommand(CommandManagementSystemCommand);
+    CommandManager.registerSystemCommand(CustomRoleManagementSystemCommand);
+    CommandManager.registerSystemCommand(FollowAgeSystemCommand);
+    CommandManager.registerSystemCommand(MarkerSystemCommand);
+    CommandManager.registerSystemCommand(QuotesManagementSystemCommand);
+    CommandManager.registerSystemCommand(SpamRaidProtectionSystemCommand);
+    CommandManager.registerSystemCommand(SteamSystemCommand);
+    CommandManager.registerSystemCommand(UptimeSystemCommand);
 
     currencyCommandManager.createAllCurrencyCommands();
 

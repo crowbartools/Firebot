@@ -3,9 +3,9 @@ import NodeCache from "node-cache";
 
 import type { SystemCommand } from "../../../../types/commands";
 
+import { CommandManager } from "../../../chat/commands/command-manager";
 import { GameManager } from "../../game-manager";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
-import commandManager from "../../../chat/commands/command-manager";
 import currencyAccess from "../../../currency/currency-access";
 import currencyManager from "../../../currency/currency-manager";
 import { humanizeTime } from "../../../utils";
@@ -308,13 +308,13 @@ const bidCommand: SystemCommand = {
 };
 
 function registerBidCommand(): void {
-    if (!commandManager.hasSystemCommand(BID_COMMAND_ID)) {
-        commandManager.registerSystemCommand(bidCommand);
+    if (!CommandManager.hasSystemCommand(BID_COMMAND_ID)) {
+        CommandManager.registerSystemCommand(bidCommand);
     }
 }
 
 function unregisterBidCommand(): void {
-    commandManager.unregisterSystemCommand(BID_COMMAND_ID);
+    CommandManager.unregisterSystemCommand(BID_COMMAND_ID);
 }
 
 export default {

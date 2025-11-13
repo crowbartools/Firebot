@@ -1,8 +1,8 @@
 import moment from "moment";
 
+import { CommandManager } from "../../../chat/commands/command-manager";
 import { GameManager } from "../../game-manager";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
-import commandManager from "../../../chat/commands/command-manager";
 import currencyManager from "../../../currency/currency-manager";
 import { commafy, getRandomInt, wait } from "../../../utils";
 
@@ -31,7 +31,7 @@ function triggerCooldown(): void {
     const expireTime = moment().add(cooldownMins, 'minutes');
     cooldownExpireTime = expireTime;
 
-    const trigger = commandManager.getSystemCommandTrigger("firebot:heist");
+    const trigger = CommandManager.getSystemCommandTrigger("firebot:heist");
     const cooldownOverMessage = (heistSettings.settings.generalMessages.cooldownOver as string)
         .replaceAll("{command}", trigger ? trigger : '!heist');
 

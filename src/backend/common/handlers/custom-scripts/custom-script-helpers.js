@@ -149,7 +149,7 @@ function buildModules(scriptManifest) {
         effectRunner: require("../../effect-runner"),
         conditionManager: require("../../../effects/builtin/conditional-effects/conditions/condition-manager"),
         restrictionManager: require("../../../restrictions/restriction-manager").RestrictionsManager,
-        commandManager: require("../../../chat/commands/command-manager"),
+        commandManager: require("../../../chat/commands/command-manager").CommandManager,
         eventManager: require("../../../events/event-manager").EventManager,
         eventFilterManager: require("../../../events/filters/filter-manager").FilterManager,
         eventFilterFactory: require("../../../events/filters/filter-factory"),
