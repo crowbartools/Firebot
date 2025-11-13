@@ -42,6 +42,7 @@ exports.loadEffects = () => {
         'pause-resume-effect-queue',
         'play-sound',
         'play-video', // No migration needed.
+        'overlay-alert',
         'random-effect',
         'random-reddit-image',
         'remove-user-metadata',

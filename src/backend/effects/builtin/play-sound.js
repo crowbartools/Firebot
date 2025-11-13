@@ -1,16 +1,9 @@
 "use strict";
 
-const { SettingsManager } = require("../../common/settings-manager");
-const { ResourceTokenManager } = require("../../resource-token-manager");
-const webServer = require("../../../server/http-server-manager");
-const fs = require('fs/promises');
-const logger = require("../../logwrapper");
-const path = require("path");
-const frontendCommunicator = require("../../common/frontend-communicator");
 const { EffectCategory } = require('../../../shared/effect-constants');
-const { wait, convertByteArrayJsonToByteArray } = require("../../utils");
+const { playSound } = require("../../common/handlers/sound-handler");
 
-const playSound = {
+const model = {
     definition: {
         id: "firebot:playsound",
         name: "Play Sound",
@@ -123,106 +116,18 @@ const playSound = {
             effect.soundType = "local";
         }
 
-        if (effect.soundType === "rawData") {
-            effect.soundType = "url";
-            try {
-                // Attempt to convert back to binary
-                effect.rawData = convertByteArrayJsonToByteArray(effect.rawData);
-            } finally {
-                const buffer = Buffer.from(effect.rawData);
-                effect.url = `data:${effect.mimeType};base64,${buffer.toString("base64")}`;
-            }
-        }
-
-        const data = {
-            filepath: effect.filepath,
+        return await playSound({
+            soundType: effect.soundType,
+            filePath: effect.filePath,
             url: effect.url,
-            isUrl: effect.soundType === "url",
+            rawData: effect.rawData,
+            mimeType: effect.mimeType,
+            folder: effect.folder,
             volume: effect.volume,
-            overlayInstance: effect.overlayInstance
-        };
-
-        // Get random sound
-        if (effect.soundType === "folderRandom") {
-            let files = [];
-            try {
-                files = await fs.readdir(effect.folder);
-            } catch (err) {
-                logger.warn("Unable to read sound folder", err);
-            }
-
-            const filteredFiles = files.filter(i => (/\.(mp3|ogg|oga|wav|flac)$/i).test(i));
-            if (filteredFiles.length === 0) {
-                logger.error('No sounds were found in the select sound folder.');
-                return true;
-            }
-
-            const chosenFile = filteredFiles[Math.floor(Math.random() * filteredFiles.length)];
-            data.filepath = path.join(effect.folder, chosenFile);
-        }
-
-        // Set output device.
-        let selectedOutputDevice = effect.audioOutputDevice;
-        if (selectedOutputDevice == null || selectedOutputDevice.label === "App Default") {
-            selectedOutputDevice = SettingsManager.getSetting("AudioOutputDevice");
-        }
-        data.audioOutputDevice = selectedOutputDevice;
-
-        // Generate token if going to overlay, otherwise send to gui.
-        if (selectedOutputDevice.deviceId === "overlay") {
-            if (effect.soundType !== "url") {
-                const resourceToken = ResourceTokenManager.storeResourcePath(
-                    data.filepath,
-                    30
-                );
-                data.resourceToken = resourceToken;
-            }
-
-            // send event to the overlay
-            webServer.sendToOverlay("sound", data);
-        } else {
-            data.filepath = data.filepath?.replaceAll("%", "%25").replaceAll("#", "%23");
-            // Send data back to media.js in the gui.
-            frontendCommunicator.send("playsound", data);
-        }
-
-        if (effect.waitForSound) {
-            try {
-                const duration = await frontendCommunicator.fireEventAsync("getSoundDuration", {
-                    path: data.isUrl ? data.url : data.filepath
-                });
-
-                if (selectedOutputDevice.deviceId === "overlay"
-                    && SettingsManager.getSetting("ForceOverlayEffectsToContinueOnRefresh") === true) {
-                    let currentDuration = 0;
-                    let returnNow = false;
-                    const overlayInstance = effect.overlayInstance ?? "Default";
-
-                    webServer.on("overlay-connected", (instance) => {
-                        if (instance === overlayInstance) {
-                            returnNow = true;
-                        }
-                    });
-
-                    while (currentDuration < duration) {
-                        if (returnNow) {
-                            return true;
-                        }
-                        currentDuration += 1;
-
-                        await wait(1000);
-                    }
-                } else {
-                    const durationInMils = (Math.round(duration) || 0) * 1000;
-                    await wait(durationInMils);
-                }
-
-                return true;
-            } catch (error) {
-                return true;
-            }
-        }
-        return true;
+            overlayInstance: effect.overlayInstance,
+            audioOutputDeviceId: effect.audioOutputDevice?.deviceId,
+            waitForSound: effect.waitForSound
+        });
     },
     /**
    * Code to run in the overlay
@@ -277,4 +182,4 @@ const playSound = {
     }
 };
 
-module.exports = playSound;
+module.exports = model;
