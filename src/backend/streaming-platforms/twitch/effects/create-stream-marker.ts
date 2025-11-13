@@ -12,7 +12,19 @@ const model: EffectType<{
         categories: ["common", "twitch"],
         dependencies: {
             twitch: true
-        }
+        },
+        outputs: [
+            {
+                label: "Stream Marker ID",
+                description: "ID of the new stream marker",
+                defaultName: "streamMarkerId"
+            },
+            {
+                label: "Stream Marker Position",
+                description: "Time (in seconds) of the new stream marker",
+                defaultName: "streamMarkerPosition"
+            }
+        ]
     },
     optionsTemplate: `
         <eos-container header="Create Stream Marker">
@@ -30,7 +42,15 @@ const model: EffectType<{
     },
     optionsController: () => {},
     onTriggerEvent: async ({ effect }) => {
-        await TwitchApi.streams.createStreamMarker(effect.description);
+        const marker = await TwitchApi.streams.createStreamMarker(effect.description);
+
+        return {
+            success: !!marker,
+            outputs: marker ? {
+                streamMarkerId: marker.id,
+                streamMarkerPosition: marker.positionInSeconds
+            } : null
+        };
     }
 };
 
