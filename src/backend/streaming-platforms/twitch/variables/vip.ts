@@ -1,5 +1,5 @@
 import type { ReplaceVariable } from "../../../../types/variables";
-import roleManager from "../../../roles/chat-roles-manager";
+import twitchRolesManager from "../../../roles/twitch-roles-manager";
 
 const model : ReplaceVariable = {
     definition: {
@@ -11,7 +11,7 @@ const model : ReplaceVariable = {
     },
     evaluator: () => {
         try {
-            const vips = roleManager.getVips();
+            const vips = twitchRolesManager.getVips();
             return vips.map(v => ({
                 userId: v.id,
                 userName: v.username,

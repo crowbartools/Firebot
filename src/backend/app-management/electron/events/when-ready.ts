@@ -138,14 +138,17 @@ export async function whenReady() {
     windowManagement.updateSplashScreenStatus("Loading known bot list...");
     await chatRolesManager.cacheViewerListBots();
 
+    const twitchRolesManager = (await import("../../../roles/twitch-roles-manager")).default;
+    twitchRolesManager.setupListeners();
+
     windowManagement.updateSplashScreenStatus("Loading channel moderators...");
-    await chatRolesManager.loadModerators();
+    await twitchRolesManager.loadModerators();
 
     windowManagement.updateSplashScreenStatus("Loading channel VIPs...");
-    await chatRolesManager.loadVips();
+    await twitchRolesManager.loadVips();
 
     windowManagement.updateSplashScreenStatus("Loading channel subscribers...");
-    await chatRolesManager.loadSubscribers();
+    await twitchRolesManager.loadSubscribers();
 
     windowManagement.updateSplashScreenStatus("Loading effect queues...");
     const { EffectQueueConfigManager } = await import("../../../effects/queues/effect-queue-config-manager");
