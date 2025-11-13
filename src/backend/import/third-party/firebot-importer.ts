@@ -3,6 +3,8 @@ import fsp from "fs/promises";
 import type { ThirdPartyImporter } from "../../../types/import";
 import type { Quote } from "../../../types/quotes";
 
+import { QuoteManager } from "../../quotes/quote-manager";
+
 import logger from "../../logwrapper";
 
 type ImportedFirebotViewer = {
@@ -43,6 +45,8 @@ export const FirebotImporter: ThirdPartyImporter = {
                 };
             }
 
+            const existingQuotes = await QuoteManager.getAllQuotes();
+
             const quotes: Quote[] = [];
             fileLines.forEach((line) => {
                 // First we need the text of the quote, because the text can contain commas.
@@ -52,7 +56,9 @@ export const FirebotImporter: ThirdPartyImporter = {
                 const metadata = splittedQuote.pop().split(",");
                 const text = splittedQuote.join("");
 
-                logger.debug(id);
+                if (existingQuotes.some(q => q.text.split('"').join("") === text)) {
+                    return;
+                }
 
                 // We're getting the comma off first, then get the rest.
                 // Game comes last, since a game/category can contain commas.
