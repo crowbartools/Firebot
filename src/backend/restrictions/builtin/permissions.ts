@@ -230,10 +230,7 @@ const model: RestrictionType<{
                     ...userCustomRoles
                 ].filter(r => r != null);
 
-                // convert any mixer roles to twitch roles
-                const expectedRoleIds = (restrictionData.roleIds || [])
-                    .map(r => twitchRolesManager.mapMixerRoleIdToTwitchRoleId(r) as string);
-
+                const expectedRoleIds = restrictionData.roleIds || [];
                 const hasARole = allRoles.some(r => expectedRoleIds.includes(r.id));
 
                 const expectedRanks = (restrictionData.ranks || [])
