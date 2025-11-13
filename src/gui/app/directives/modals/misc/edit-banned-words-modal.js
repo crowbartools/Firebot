@@ -24,7 +24,7 @@
                     </div>
                     <div>
                         <button class="btn btn-primary" type="button" id="add-options" ng-click="$ctrl.addRegex()" style="margin-left: 5px;">
-                            <span class="dropdown-text"><i class="fas fa-plus-circle"></i> Add regex</span>
+                            <span class="dropdown-text"><i class="fas fa-plus-circle"></i> Add regex</span> <tooltip text="'Regular expressions follow JavaScript format.'" />
                         </button>
                     </div>
 
@@ -161,6 +161,7 @@
                             label: "Add Regex",
                             saveText: "Add",
                             inputPlaceholder: "Enter regex",
+                            descriptionText: `Regular expressions follow <a href="https://developer.mozilla.org/docs/Web/JavaScript/Guide/Regular_expressions">JavaScript format</a>.`,
                             validationFn: (value) => {
                                 return new Promise((resolve) => {
                                     if (value == null || value.trim().length < 1) {
