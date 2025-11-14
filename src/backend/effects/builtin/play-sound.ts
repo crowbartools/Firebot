@@ -1,18 +1,34 @@
-"use strict";
+import type { EffectType } from "../../../types/effects";
+import type { FirebotAudioDevice } from "../../../types/settings";
 
-const { EffectCategory } = require('../../../shared/effect-constants');
-const { playSound } = require("../../common/handlers/sound-handler");
+import { type SoundType, playSound } from "../../common/handlers/sound-handler";
 
-const model = {
+const model: EffectType<{
+    soundType: SoundType;
+    volume: number;
+    filepath: string;
+    folder: string;
+    url: string;
+    mimeType: string;
+    rawData: string;
+    overlayInstance: string;
+    audioOutputDevice: FirebotAudioDevice;
+    waitForSound: boolean;
+}, {
+    isUrl: boolean;
+    url: string;
+    filepath: string;
+    resourceToken: string;
+    volume: number;
+}> = {
     definition: {
         id: "firebot:playsound",
         name: "Play Sound",
         description: "Plays a sound effect",
         icon: "fad fa-waveform",
-        categories: [EffectCategory.COMMON],
+        categories: ["common"],
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
     <eos-container header="Type">
         <firebot-select
@@ -81,12 +97,12 @@ const model = {
             $scope.effect.volume = 5;
         }
 
-        $scope.encodeFilePath = (/** @type {string} */ filepath) => {
+        $scope.encodeFilePath = (filepath: string) => {
             return filepath?.replaceAll("%", "%25").replaceAll("#", "%23");
         };
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
 
         if (effect.soundType === "local" || effect.soundType == null) {
             if (effect.filepath == null || effect.filepath.length < 1) {
@@ -147,8 +163,8 @@ const model = {
                 }:7472/resource/${token}`;
 
                 // Generate UUID to use as class name.
-                // eslint-disable-next-line no-undef
-                const elementId = uuid();
+
+                const elementId = uuid() as string;
 
                 const filepath = data.isUrl ? data.url : data.filepath.toLowerCase();
                 let mediaType;
@@ -167,19 +183,20 @@ const model = {
                 const audioElement = `<audio id="${elementId}" src="${data.isUrl ? data.url : resourcePath}" type="${mediaType}"></audio>`;
 
                 // Throw audio element on page.
-                $("#wrapper").append(audioElement);
+                document.getElementById("wrapper").append(audioElement);
 
-                const audio = document.getElementById(elementId);
+                const audio = document.getElementById(elementId) as HTMLAudioElement;
+                // @ts-ignore
                 audio.volume = parseFloat(data.volume) / 10;
 
                 audio.oncanplay = () => audio.play();
 
                 audio.onended = () => {
-                    $(`#${elementId}`).remove();
+                    document.getElementById(elementId).remove();
                 };
             }
         }
     }
 };
 
-module.exports = model;
+export = model;

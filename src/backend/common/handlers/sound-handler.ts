@@ -7,7 +7,7 @@ import { ResourceTokenManager } from "../../resource-token-manager";
 import webServer from "../../../server/http-server-manager";
 import frontendCommunicator from "../frontend-communicator";
 
-type SoundType = "url" | "rawData" | "folderRandom" | "filePath";
+export type SoundType = "url" | "rawData" | "folderRandom" | "local";
 
 export async function playSound(soundData: {
     soundType: SoundType;
