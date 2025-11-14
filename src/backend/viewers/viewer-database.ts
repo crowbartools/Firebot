@@ -196,7 +196,11 @@ class ViewerDatabase extends TypedEmitter<{
         displayName: string,
         profilePicUrl?: string,
         twitchRoles?: string[],
-        isOnline = false
+        isOnline = false,
+        lastSeen?: number,
+        joinDate?: number,
+        minutesInChannel?: number,
+        chatMessages?: number,
     ): Promise<FirebotViewer> {
         if (this.isViewerDBOn() !== true) {
             return;
@@ -216,10 +220,10 @@ class ViewerDatabase extends TypedEmitter<{
             twitchRoles: twitchRoles || [],
             online: isOnline,
             onlineAt: Date.now(),
-            lastSeen: Date.now(),
-            joinDate: Date.now(),
-            minutesInChannel: 0,
-            chatMessages: 0,
+            lastSeen: lastSeen || Date.now(),
+            joinDate: joinDate || Date.now(),
+            minutesInChannel: minutesInChannel || 0,
+            chatMessages: chatMessages || 0,
             disableAutoStatAccrual: disableAutoStatAccrual,
             disableActiveUserList: false,
             disableViewerList: false,

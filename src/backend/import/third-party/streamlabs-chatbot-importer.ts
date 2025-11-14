@@ -14,14 +14,14 @@ import logger from "../../logwrapper";
 
 interface Settings {
     viewers: {
-        includeViewHours: boolean;
-        includeZeroHoursViewers: boolean;
+        includeViewTime: boolean;
+        includeZeroViewTimeViewers: boolean;
     };
 }
 
 type StreamlabsViewer = {
     id: number;
-    name: string;
+    username: string;
     rank: string;
     currency: string;
     viewHours: number;
@@ -79,7 +79,7 @@ function mapViewers(data: string[][]): StreamlabsViewer[] {
 
         return {
             id: i,
-            name: v[0],
+            username: v[0],
             rank: v[1],
             currency: v[2],
             viewHours: Number(v[3])
@@ -110,7 +110,7 @@ async function addViewersFromTwitch(viewers: StreamlabsViewer[]): Promise<Firebo
 
     for (const group of nameGroups) {
         try {
-            const names = group.map(v => v.name);
+            const names = group.map(v => v.username);
             const response = await TwitchApi.users.getUsersByNames(names);
 
             if (response) {
@@ -123,7 +123,7 @@ async function addViewersFromTwitch(viewers: StreamlabsViewer[]): Promise<Firebo
             if (err._statusCode === 400) {
                 for (const viewer of group) {
                     try {
-                        const response = await TwitchApi.users.getUserByName(viewer.name);
+                        const response = await TwitchApi.users.getUserByName(viewer.username);
 
                         if (response) {
                             twitchViewers.push(response);
@@ -167,8 +167,8 @@ async function importViewers(data: { viewers: StreamlabsViewer[], settings: Sett
     let viewersToUpdate: FirebotViewer[] = [];
 
     for (const v of viewers) {
-        v.name = String(v.name);
-        const viewer = await viewerDatabase.getViewerByUsername(v.name);
+        v.username = String(v.username);
+        const viewer = await viewerDatabase.getViewerByUsername(v.username);
 
         if (viewer == null) {
             newViewers.push(v);
@@ -189,9 +189,9 @@ async function importViewers(data: { viewers: StreamlabsViewer[], settings: Sett
 
     for (const viewer of viewersToUpdate) {
         const viewerToUpdate = viewer;
-        const importedViewer = viewers.find(v => v.name.toLowerCase() === viewer.username.toLowerCase());
+        const importedViewer = viewers.find(v => v.username.toLowerCase() === viewer.username.toLowerCase());
 
-        if (settings.includeViewHours) {
+        if (settings.includeViewTime) {
             viewerToUpdate.minutesInChannel += importedViewer.viewHours * 60;
         }
 
@@ -210,8 +210,8 @@ export const StreamlabsChatbotImporter: ThirdPartyImporter<Settings> = {
     ],
     defaultSettings: {
         viewers: {
-            includeViewHours: true,
-            includeZeroHoursViewers: true
+            includeViewTime: true,
+            includeZeroViewTimeViewers: true
         }
     },
     loadQuotes: async (filepath) => {
