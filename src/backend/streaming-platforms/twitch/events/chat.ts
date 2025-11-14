@@ -8,7 +8,7 @@ export function triggerChatCleared(username: string, userId: string): void {
 }
 
 export function triggerSharedChatEnabled() {
-    void EventManager.triggerEvent("twitch", "shared-chat-enabled", {});
+    void EventManager.triggerEvent("twitch", "shared-chat-started", {});
 }
 
 export function triggerSharedChatUpdated() {
