@@ -118,7 +118,7 @@ const model = {
 
         return await playSound({
             soundType: effect.soundType,
-            filePath: effect.filePath,
+            filePath: effect.filepath,
             url: effect.url,
             rawData: effect.rawData,
             mimeType: effect.mimeType,

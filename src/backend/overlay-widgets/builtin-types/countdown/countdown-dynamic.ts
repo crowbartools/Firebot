@@ -4,11 +4,13 @@ import { WidgetOverlayEvent } from "../../../../types/overlay-widgets";
 import { Duration } from "luxon";
 import frontendCommunicator from "../../../common/frontend-communicator";
 import logger from "../../../logwrapper";
+import type { EffectList } from "../../../../types/effects";
 
 export type Settings = {
     fontOptions: FontOptions;
     alignment: "left" | "center" | "right";
     runWhenInactive?: boolean;
+    onCompleteEffects?: EffectList;
 };
 
 export type State = {
@@ -64,8 +66,15 @@ export const dynamicCountdown: OverlayWidgetType<Settings, State> = {
             description: "Whether the countdown should continue running when the widget is not active (visible).",
             type: "boolean",
             default: false
+        },
+        {
+            name: "onCompleteEffects",
+            title: "On Complete Effects",
+            description: "Effects to run when the countdown reaches zero.",
+            type: "effectlist"
         }
     ],
+    nonEditableSettings: ["onCompleteEffects"],
     initialState: {
         remainingSeconds: 0,
         mode: "paused"

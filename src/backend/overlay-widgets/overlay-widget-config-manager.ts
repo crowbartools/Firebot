@@ -5,7 +5,7 @@ import { simpleClone } from "../utils";
 
 type ExtraEvents = {
     "widget-config-updated": (item: OverlayWidgetConfig, previous: OverlayWidgetConfig) => void;
-    "widget-state-updated": (item: OverlayWidgetConfig) => void;
+    "widget-state-updated": (item: OverlayWidgetConfig, previousState: OverlayWidgetConfig["state"], persisted: boolean) => void;
     "widget-config-active-changed": (item: OverlayWidgetConfig) => void;
     "widget-config-removed": (item: OverlayWidgetConfig) => void;
 };
@@ -59,7 +59,7 @@ class OverlayWidgetConfigManager extends JsonDbManager<OverlayWidgetConfig, Extr
         this.emit("widget-state-updated", {
             ...config,
             state
-        });
+        }, config.state, persist);
         if (persist) {
             config.state = state;
             this.saveItem(config, false, true);

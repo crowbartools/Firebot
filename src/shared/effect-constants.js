@@ -35,6 +35,7 @@ const EffectTrigger = Object.freeze({
     CHANNEL_REWARD: "channel_reward",
     MANUAL: "manual",
     QUICK_ACTION: "quick_action",
+    OVERLAY_WIDGET: "overlay_widget",
     ALL: "all"
 });
 
