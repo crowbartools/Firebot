@@ -44,7 +44,7 @@ interface OverlayAlertEffect {
     accentUnderline?: boolean;
     autoAccentVariables?: boolean;
     playSound?: boolean;
-    soundType?: "filePath" | "url" | "folderRandom";
+    soundType?: "local" | "url" | "folderRandom";
     soundFile?: string;
     soundUrl?: string;
     soundFolder?: string;
@@ -402,7 +402,7 @@ const effect: EffectType<OverlayAlertEffect> = {
         }
 
         if ($scope.effect.soundType == null) {
-            $scope.effect.soundType = "filePath";
+            $scope.effect.soundType = "local";
         }
 
         if ($scope.effect.soundVolume == null) {
@@ -540,7 +540,7 @@ const effect: EffectType<OverlayAlertEffect> = {
         }
 
         if (effect.playSound) {
-            if (effect.soundType === "filePath" && !effect.soundFile) {
+            if (effect.soundType === "local" && !effect.soundFile) {
                 errors.push("Please select a sound file.");
             } else if (effect.soundType === "url" && !effect.soundUrl) {
                 errors.push("Please enter a sound URL.");
@@ -857,7 +857,7 @@ const effect: EffectType<OverlayAlertEffect> = {
                 if (data.mediaType === "video") {
                     setTimeout(() => {
                         // @ts-ignore
-                        const videoEl = $(`#${uniqueId} video`)[0];
+                        const videoEl = $(`#${uniqueId} video`)[0] as HTMLVideoElement;
                         if (videoEl && data.videoVolume != null) {
                             videoEl.volume = data.videoVolume / 10;
                         }
