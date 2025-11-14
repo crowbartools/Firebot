@@ -19,14 +19,13 @@ export type Animation = {
     duration?: number;
 };
 
-type WidgetEvent<Settings, State> = {
-    id: string;
-    settings: Settings;
-    state: State;
+type WidgetEvent<Settings, State> = OverlayWidgetConfig<Settings, State> & {
     previewMode: boolean;
+    previousState?: State;
+    persisted?: boolean;
 };
 
-type WidgetEventResult<State> = {
+export type WidgetEventResult<State> = {
     newState?: State | null;
     /**
      * If true, the new state will be persisted to file.
@@ -35,7 +34,7 @@ type WidgetEventResult<State> = {
     persistState?: boolean;
 };
 
-export type WidgetEventHandler<Settings, State> = (event: WidgetEvent<Settings, State>) => Awaitable<WidgetEventResult<State> | undefined>;
+export type WidgetEventHandler<Settings, State, Return = WidgetEventResult<State>> = (event: WidgetEvent<Settings, State>) => Awaitable<Return | undefined>;
 
 export type WidgetUIAction<
     Settings extends Record<string, unknown> = Record<string, unknown>,
@@ -89,6 +88,12 @@ export type OverlayWidgetType<
      * Settings allow the user to customize the widget instance (e.g., font to use, colors, etc.)
      */
     settingsSchema?: FirebotParameterArray<Settings>;
+
+    /**
+     * Array of setting keys that cannot be edited in the Update Overlay Widget Settings effect.
+     */
+    nonEditableSettings?: (keyof Settings)[];
+
     /**
      * Initial state for the widget instance (e.g., current count for a counter widget)
      */
@@ -125,6 +130,10 @@ export type OverlayWidgetType<
      * Called when the widget settings are updated. You can modify state here.
      */
     onSettingsUpdate?: WidgetEventHandler<Settings, State>;
+    /**
+     * Called when the widget state is updated. You can't modify state here (would cause infinite loop).
+     */
+    onStateUpdate?: WidgetEventHandler<Settings, State, void>;
     /**
      * Called before the widget is removed from the overlay. You can modify state here.
      */

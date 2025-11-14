@@ -107,7 +107,7 @@ const model: EffectType<{
                     <div ng-if="typeHasSettings">
                         <hr class="mt-0" />
 
-                        <div ng-repeat="setting in selectedType.settingsSchema">
+                        <div ng-repeat="setting in settingsSchema">
                             <firebot-checkbox
                                 label="Edit {{setting.title || setting.name}}"
                                 ng-init="editSetting[setting.name] = (effect.settings[setting.name] != null && effect.settings[setting.name] !== '')"
@@ -167,6 +167,7 @@ const model: EffectType<{
         }
 
         $scope.selectedType = null;
+        $scope.settingsSchema = [];
         $scope.selectedConfig = null;
         $scope.typeHasSettings = false;
 
@@ -174,12 +175,16 @@ const model: EffectType<{
             $scope.selectedConfig = overlayWidgetsService.getOverlayWidgetConfig(id);
             if ($scope.selectedConfig == null) {
                 $scope.selectedType = null;
+                $scope.settingsSchema = [];
                 $scope.typeHasSettings = false;
                 return;
             }
             $scope.selectedType = overlayWidgetsService
                 .getOverlayWidgetType($scope.selectedConfig.type);
-            $scope.typeHasSettings = !!$scope.selectedType?.settingsSchema?.length;
+            $scope.settingsSchema = ($scope.selectedType?.settingsSchema || []).filter((s) => {
+                return !($scope.selectedType?.nonEditableSettings?.includes(s.name) ?? false);
+            });
+            $scope.typeHasSettings = !!$scope.settingsSchema?.length;
         }
 
         $scope.topLevelPropToggled = (prop: string, prevValue: boolean) => {

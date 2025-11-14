@@ -1,6 +1,8 @@
 import overlayWidgetConfigManager from "../../overlay-widget-config-manager";
 import { DynamicCountdownWidgetConfig, State as CountdownState } from "./countdown-dynamic";
 import { EventManager } from "../../../events/event-manager";
+import effectRunner from "../../../common/effect-runner";
+import { Trigger } from "../../../../types/triggers";
 import logger from "../../../logwrapper";
 
 class CountdownManager {
@@ -72,7 +74,33 @@ class CountdownManager {
                 dynamicCountdownWidgetId: config.id,
                 dynamicCountdownWidgetName: config.name
             });
+
+            this.triggerCompleteEffects(config);
         }
+    }
+
+    private triggerCompleteEffects(config: DynamicCountdownWidgetConfig) {
+        const effectList = config.settings?.onCompleteEffects;
+
+        if (effectList == null || effectList.list == null) {
+            return;
+        }
+
+        const processEffectsRequest = {
+            trigger: {
+                type: "overlay_widget",
+                metadata: {
+                    username: "Firebot",
+                    dynamicCountdownWidgetId: config.id,
+                    dynamicCountdownWidgetName: config.name
+                }
+            } as Trigger,
+            effects: effectList
+        };
+
+        effectRunner.processEffects(processEffectsRequest).catch((reason) => {
+            logger.error(`Error when running effects: ${reason}`);
+        });
     }
 }
 

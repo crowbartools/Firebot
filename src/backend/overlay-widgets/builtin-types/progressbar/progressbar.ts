@@ -1,5 +1,9 @@
+import { EffectList } from "../../../../types/effects";
 import { OverlayWidgetType, IOverlayWidgetEventUtils, WidgetOverlayEvent } from "../../../../types/overlay-widgets";
 import { FontOptions } from "../../../../types/parameters";
+import effectRunner from "../../../common/effect-runner";
+import { Trigger } from "../../../../types/triggers";
+import logger from "../../../logwrapper";
 
 type Settings = {
     title?: string;
@@ -8,6 +12,7 @@ type Settings = {
     trackColor: string;
     minValue: number;
     maxValue: number;
+    onCompleteEffects?: EffectList;
 };
 
 type State = {
@@ -79,9 +84,17 @@ export const progressbar: OverlayWidgetType<Settings, State> = {
             default: 100,
             validation: {
                 required: true
-            }
+            },
+            showBottomHr: true
+        },
+        {
+            name: "onCompleteEffects",
+            title: "On Complete Effects",
+            description: "Effects to run when the progress bar reaches its maximum value.",
+            type: "effectlist"
         }
     ],
+    nonEditableSettings: ["onCompleteEffects"],
     initialAspectRatio: { width: 16, height: 2 },
     initialState: {
         currentValue: 0
@@ -89,6 +102,36 @@ export const progressbar: OverlayWidgetType<Settings, State> = {
     supportsLivePreview: true,
     livePreviewState: {
         currentValue: 50
+    },
+    onStateUpdate(config) {
+        // Only act if currentValue has changed
+        if (config.state?.currentValue === config.previousState?.currentValue) {
+            return;
+        }
+
+        // Check if we've reached or exceeded maxValue and previous value was below maxValue
+        if (config.state?.currentValue != null &&
+            config.settings?.maxValue != null &&
+            config.state.currentValue >= config.settings.maxValue &&
+            (config.previousState?.currentValue ?? 0) < config.settings.maxValue) {
+            const effectList = config.settings?.onCompleteEffects;
+
+            const processEffectsRequest = {
+                trigger: {
+                    type: "overlay_widget",
+                    metadata: {
+                        username: "Firebot",
+                        progressBarWidgetId: config.id,
+                        progressBarWidgetName: config.name
+                    }
+                } as Trigger,
+                effects: effectList
+            };
+
+            effectRunner.processEffects(processEffectsRequest).catch((reason) => {
+                logger.error(`Error when running effects: ${reason}`);
+            });
+        }
     },
     overlayExtension: {
         eventHandler: (event: WidgetOverlayEvent<Settings, State>, utils: IOverlayWidgetEventUtils) => {
