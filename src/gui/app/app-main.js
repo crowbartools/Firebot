@@ -1,3 +1,4 @@
+/* eslint-disable angular/di-unused */
 /* eslint-disable angular/no-run-logic */
 
 
@@ -111,6 +112,10 @@
     ]);
 
     app.run(function initializeApplication(
+        logger,
+        quickActionsService,
+        chatMessagesService,
+        activityFeedService,
         viewerRolesService,
         viewerRanksService,
         connectionService,
@@ -134,6 +139,8 @@
         channelRewardsService,
         sortTagsService,
         iconsService,
+        videoService,
+        replaceVariableService,
         variableMacroService,
         uiExtensionsService,
         webhooksService,
