@@ -156,7 +156,7 @@
                                     {{$ctrl.message.timestampDisplay}}
                                 </span>
                             </div>
-                            <div class="chatContent">
+                            <div class="chatContent" ng-class="{ gigantify: $ctrl.message.isGigantified }">
                                 <span ng-repeat="part in $ctrl.message.parts" class="chat-content-wrap">
 
                                     <span ng-if="part.type === 'text'" style="{{$ctrl.chatSizeStyle}}{{$ctrl.fontFamilyStyle}}" ng-class="{ highlightText: part.flagged }">{{part.text}}</span>
