@@ -93,6 +93,7 @@ export type EffectDefinition<EffectModel = unknown> = {
     name: string;
     description: string;
     icon: string;
+    color?: string;
     categories: EffectCategory[];
     hidden?: boolean | Func<boolean>;
     triggers?: TriggerType[] | TriggersObject;
@@ -130,6 +131,11 @@ export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
 export interface EffectInstance {
     id: string;
     type: string;
+    effectLabel?: string;
+    active?: boolean;
+    percentWeight?: number | null;
+    abortTimeout?: number | null;
+    outputNames?: Record<string, string>;
     [x: string]: unknown;
 }
 

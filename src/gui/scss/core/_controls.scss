@@ -802,6 +802,144 @@ table.fb-table-alt {
     }
 }
 
+.effect-list-new {
+    background: $effect-list-bg-color;
+    border-radius: 8px;
+    .effect-list-header {
+        margin-bottom: 15px;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        padding-left: 15px;
+        padding-right: 10px;
+        height: 50px;
+        font-weight: 100;
+        border-bottom: 1px solid $light-background-color;
+    }
+    .effect-item {
+        display: flex;
+        align-items: center;
+        padding: 8px 10px;
+        border-radius: 6px;
+        margin-bottom: 6px;
+        background-color: rgb(47 47 50);
+        transition: all 0.15s ease;
+
+        &.kb-dragging {
+            box-shadow: 0 0 0 1px rgba(70, 161, 240, 0.8), 0 6px 14px rgba(0, 0, 0, 0.6);
+            transform: translateY(-2px);
+            background-color: rgb(55 55 60);
+            scale: 1.02;
+        }
+
+        &.disabled {
+            opacity: 0.65;
+        }
+
+        &:focus-visible {
+            outline: lighten($primary-button-bg, 25%);
+            outline-width: 2px;
+            outline-style: solid;
+        }
+
+        .effect-drag-handle {
+            width: 10px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888888;
+            cursor: grab;
+            flex-shrink: 0;
+            margin-right: 10px;
+        }
+
+        .effect-name {
+            font-weight: 600;
+        }
+
+        .effect-icon {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            background-color: var(--effect-icon-bg-color, rgb(70 70 77));
+            color: var(--effect-icon-color, #f7f7f7);
+            margin-right: 10px;
+            flex-shrink: 0;
+            i {
+                font-size: 16px;
+            }
+        }
+
+        .effect-edit-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 7px;
+            border-radius: 6px;
+            background-color: rgb(70 70 77);
+            border: none;
+            i {
+                font-size: 12px;
+                color: #cdcdcd;
+            }
+            &:hover {
+                background-color: rgb(90 90 97);
+                i {
+                    color: white;
+                }
+            }
+        }
+    }
+
+    .effect-list-add-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 12px;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px dashed rgba(255, 255, 255, 0.15);
+        color: #e5e5e5;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        &:focus-visible {
+            outline: 2px solid lighten($primary-button-bg, 25%);
+            outline-offset: 2px;
+        }
+
+        &__icon-wrapper {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.06);
+            i {
+                font-size: 11px;
+            }
+        }
+
+        &__label {
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+    }
+}
+
 .test-effects-btn {
     color: $primary-button-bg;
     font-size: 18px;
