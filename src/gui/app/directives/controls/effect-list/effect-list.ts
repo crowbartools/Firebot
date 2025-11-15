@@ -53,7 +53,6 @@ type ControllerExtras = {
     };
     getEffectNameById: (id: string) => string;
     getEffectIconById: (id: string) => string;
-    getEffectColorById: (id: string) => string | undefined;
     getEffectIconStyle: (id: string) => { [key: string]: string };
     editLabelForEffectAtIndex: (index: number) => void;
     editTimeoutForEffectAtIndex: (index: number) => void;
@@ -309,30 +308,50 @@ type ContextMenuItemScope = {
                     return "";
                 }
 
-                return effectTypes.find(e => e.definition.id === id)?.definition?.icon?.replace("fad", "fas") ?? `fas fa-exclamation-triangle`;
-            };
-
-            $ctrl.getEffectColorById = (id: string) => {
-                if (!effectTypes || effectTypes.length < 1) {
-                    return undefined;
-                }
-
-                return effectTypes.find(e => e.definition.id === id)?.definition?.color;
+                return (
+                    effectTypes.find(e => e.definition.id === id)?.definition?.icon?.replace("fad", "fas") ??
+                    `fas fa-exclamation-triangle`
+                );
             };
 
             $ctrl.getEffectIconStyle = (id: string) => {
-                const color = $ctrl.getEffectColorById(id);
+                const categories = effectTypes.find(e => e.definition.id === id)?.definition?.categories ?? [];
+
+                let color: string | undefined = undefined;
+                if (categories.includes("Moderation")) {
+                    color = "#ef4444";
+                } else if (categories.includes("chat based")) {
+                    color = "#60A5FA";
+                } else if (categories.includes("twitch")) {
+                    color = "#ab73ff";
+                } else if (categories.includes("overlay")) {
+                    color = "#F472B6";
+                } else if (categories.includes("scripting")) {
+                    color = "#FACC15";
+                } else if (categories.includes("fun")) {
+                    color = "#4ADE80";
+                } else if (categories.includes("integrations")) {
+                    color = "#00ffd8";
+                } else if (categories.includes("advanced")) {
+                    color = undefined;
+                }
+
                 if (!color) {
                     return {};
                 }
 
-                // Use the provided color for the icon itself, and derive
-                // a slightly darker background shade using a simple overlay.
+                // Convert hex color to rgba with 0.1 alpha for background
+                const hexToRgba = (hex: string) => {
+                    const r = parseInt(hex.slice(1, 3), 16);
+                    const g = parseInt(hex.slice(3, 5), 16);
+                    const b = parseInt(hex.slice(5, 7), 16);
+                    return `rgba(${r}, ${g}, ${b}, 0.1)`;
+                };
+
                 return {
                     "--effect-icon-color": color,
-                    "--effect-icon-bg-color": `color-mix(in srgb, ${color} 20%, black 80%)`
+                    "--effect-icon-bg-color": hexToRgba(color)
                 };
-                // return {};
             };
             //#endregion
 
@@ -403,7 +422,10 @@ type ContextMenuItemScope = {
                 return /^([a-z][a-z\d._-]+)([\s\S]*)$/i.test(str);
             }
 
-            function checkEffectListForMagicVariables(effects: Array<EffectInstance & { name?: string }>, ignoreEffectId: string) {
+            function checkEffectListForMagicVariables(
+                effects: Array<EffectInstance & { name?: string }>,
+                ignoreEffectId: string
+            ) {
                 const magicVariables = {
                     customVariables: [],
                     effectOutputs: []
@@ -414,34 +436,41 @@ type ContextMenuItemScope = {
                 }
 
                 for (const effect of effects) {
-                    if (effect == null || typeof (effect) !== "object" || effect.id === ignoreEffectId) {
+                    if (effect == null || typeof effect !== "object" || effect.id === ignoreEffectId) {
                         continue;
                     }
 
                     if (effect.type === "firebot:customvariable" || effect.name?.length) {
                         const canBeShorthand = stringCanBeShorthand(effect.name);
-                        magicVariables.customVariables = mergeArraysWithoutDuplicates(magicVariables.customVariables, [{
-                            name: effect.name,
-                            handle: canBeShorthand ? `$$${effect.name}` : `$customVariable[${effect.name}]`,
-                            effectLabel: effect.effectLabel,
-                            examples: [
-                                ...(canBeShorthand ? [
-                                    {
-                                        handle: `$$${effect.name}["path", "to", "property"]`,
-                                        description: `Access a property of "${effect.name}"`
-                                    },
-                                    {
-                                        handle: `$customVariable[${effect.name}]`,
-                                        description: `Long hand version of "${effect.name}"`
-                                    }
-                                ]
-                                    : []),
+                        magicVariables.customVariables = mergeArraysWithoutDuplicates(
+                            magicVariables.customVariables,
+                            [
                                 {
-                                    handle: `$customVariable[${effect.name}, "path.to.property"]`,
-                                    description: `Access a property of "${effect.name}" using long hand`
+                                    name: effect.name,
+                                    handle: canBeShorthand ? `$$${effect.name}` : `$customVariable[${effect.name}]`,
+                                    effectLabel: effect.effectLabel,
+                                    examples: [
+                                        ...(canBeShorthand
+                                            ? [
+                                                {
+                                                    handle: `$$${effect.name}["path", "to", "property"]`,
+                                                    description: `Access a property of "${effect.name}"`
+                                                },
+                                                {
+                                                    handle: `$customVariable[${effect.name}]`,
+                                                    description: `Long hand version of "${effect.name}"`
+                                                }
+                                            ]
+                                            : []),
+                                        {
+                                            handle: `$customVariable[${effect.name}, "path.to.property"]`,
+                                            description: `Access a property of "${effect.name}" using long hand`
+                                        }
+                                    ]
                                 }
-                            ]
-                        }], "name");
+                            ],
+                            "name"
+                        );
                         continue;
                     }
 
@@ -457,18 +486,21 @@ type ContextMenuItemScope = {
                                 handle: canBeShorthand ? `$&${name}` : `$effectOutput[${name}]`,
                                 label: output.label,
                                 description: output.description,
-                                effectLabel: `${effectType.definition.name}${effect.effectLabel ? ` (${effect.effectLabel})` : ""}`,
+                                effectLabel: `${effectType.definition.name}${
+                                    effect.effectLabel ? ` (${effect.effectLabel})` : ""
+                                }`,
                                 examples: [
-                                    ...(canBeShorthand ? [
-                                        {
-                                            handle: `$&${name}["path", "to", "property"]`,
-                                            description: `Access a property of "${name}"`
-                                        },
-                                        {
-                                            handle: `$effectOutput[${name}]`,
-                                            description: `Long hand version of "${name}"`
-                                        }
-                                    ]
+                                    ...(canBeShorthand
+                                        ? [
+                                            {
+                                                handle: `$&${name}["path", "to", "property"]`,
+                                                description: `Access a property of "${name}"`
+                                            },
+                                            {
+                                                handle: `$effectOutput[${name}]`,
+                                                description: `Long hand version of "${name}"`
+                                            }
+                                        ]
                                         : []),
                                     {
                                         handle: `$effectOutput[${name}, "path.to.property"]`,
@@ -478,14 +510,26 @@ type ContextMenuItemScope = {
                             };
                         });
 
-                        magicVariables.effectOutputs = mergeArraysWithoutDuplicates(magicVariables.effectOutputs, outputs, "name");
+                        magicVariables.effectOutputs = mergeArraysWithoutDuplicates(
+                            magicVariables.effectOutputs,
+                            outputs,
+                            "name"
+                        );
                     }
 
                     for (const value of Object.values(effect)) {
                         if (Array.isArray(value)) {
                             const result = checkEffectListForMagicVariables(value as EffectInstance[], ignoreEffectId);
-                            magicVariables.customVariables = mergeArraysWithoutDuplicates(magicVariables.customVariables, result.customVariables, "name");
-                            magicVariables.effectOutputs = mergeArraysWithoutDuplicates(magicVariables.effectOutputs, result.effectOutputs, "name");
+                            magicVariables.customVariables = mergeArraysWithoutDuplicates(
+                                magicVariables.customVariables,
+                                result.customVariables,
+                                "name"
+                            );
+                            magicVariables.effectOutputs = mergeArraysWithoutDuplicates(
+                                magicVariables.effectOutputs,
+                                result.effectOutputs,
+                                "name"
+                            );
                         }
                     }
                 }
@@ -493,30 +537,40 @@ type ContextMenuItemScope = {
                 return magicVariables;
             }
 
-
             function determineMagicVariables(ignoreEffectId: string | null) {
                 const magicVariables = {
                     customVariables: [],
                     effectOutputs: [],
-                    presetListArgs: $ctrl.triggerMeta?.presetListArgs?.map((a) => {
-                        const canBeShorthand = stringCanBeShorthand(a.name);
-                        return {
-                            name: a.name,
-                            handle: canBeShorthand ? `$#${a.name}` : `$presetListArg[${a.name}]`,
-                            examples: canBeShorthand ? [
-                                {
-                                    handle: `$presetListArg[${a.name}]`,
-                                    description: "Long hand version of the preset list argument"
-                                }
-                            ] : undefined
-                        };
-                    }) || []
+                    presetListArgs:
+                        $ctrl.triggerMeta?.presetListArgs?.map((a) => {
+                            const canBeShorthand = stringCanBeShorthand(a.name);
+                            return {
+                                name: a.name,
+                                handle: canBeShorthand ? `$#${a.name}` : `$presetListArg[${a.name}]`,
+                                examples: canBeShorthand
+                                    ? [
+                                        {
+                                            handle: `$presetListArg[${a.name}]`,
+                                            description: "Long hand version of the preset list argument"
+                                        }
+                                    ]
+                                    : undefined
+                            };
+                        }) || []
                 };
 
                 const effectsToCheck = $ctrl.triggerMeta?.rootEffects?.list || $ctrl.effectsData.list;
                 const effectsResult = checkEffectListForMagicVariables(effectsToCheck, ignoreEffectId);
-                magicVariables.customVariables = mergeArraysWithoutDuplicates(magicVariables.customVariables, effectsResult.customVariables, "name");
-                magicVariables.effectOutputs = mergeArraysWithoutDuplicates(magicVariables.effectOutputs, effectsResult.effectOutputs, "name");
+                magicVariables.customVariables = mergeArraysWithoutDuplicates(
+                    magicVariables.customVariables,
+                    effectsResult.customVariables,
+                    "name"
+                );
+                magicVariables.effectOutputs = mergeArraysWithoutDuplicates(
+                    magicVariables.effectOutputs,
+                    effectsResult.effectOutputs,
+                    "name"
+                );
 
                 return magicVariables;
             }
@@ -550,7 +604,10 @@ type ContextMenuItemScope = {
                             await objectCopyHelper.getCopiedEffects($ctrl.trigger, $ctrl.triggerMeta)
                         );
                     } else {
-                        $ctrl.effectsData.list = await objectCopyHelper.getCopiedEffects($ctrl.trigger, $ctrl.triggerMeta);
+                        $ctrl.effectsData.list = await objectCopyHelper.getCopiedEffects(
+                            $ctrl.trigger,
+                            $ctrl.triggerMeta
+                        );
                     }
                     $ctrl.effectsUpdate();
                 }
@@ -576,8 +633,13 @@ type ContextMenuItemScope = {
             };
 
             $ctrl.moveEffectAtIndex = function (fromIndex: number, toIndex: number) {
-                if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0 ||
-                    fromIndex >= $ctrl.effectsData.list.length || toIndex >= $ctrl.effectsData.list.length) {
+                if (
+                    fromIndex === toIndex ||
+                    fromIndex < 0 ||
+                    toIndex < 0 ||
+                    fromIndex >= $ctrl.effectsData.list.length ||
+                    toIndex >= $ctrl.effectsData.list.length
+                ) {
                     return;
                 }
 
@@ -587,7 +649,7 @@ type ContextMenuItemScope = {
                 $ctrl.effectsUpdate();
 
                 setTimeout(() => {
-                    const newElement = document.querySelectorAll('.effect-item')[toIndex] as HTMLElement;
+                    const newElement = document.querySelectorAll(".effect-item")[toIndex] as HTMLElement;
                     newElement?.focus();
                 }, 0);
             };
@@ -620,12 +682,16 @@ type ContextMenuItemScope = {
                         setTimeout(() => {
                             let focusIndex = index;
                             if ($ctrl.keyboardDragEffectId != null) {
-                                const restoredIndex = $ctrl.effectsData.list.findIndex(e => e.id === $ctrl.keyboardDragEffectId);
+                                const restoredIndex = $ctrl.effectsData.list.findIndex(
+                                    e => e.id === $ctrl.keyboardDragEffectId
+                                );
                                 if (restoredIndex >= 0) {
                                     focusIndex = restoredIndex;
                                 }
                             }
-                            const originalElement = document.querySelectorAll('.effect-item')[focusIndex] as HTMLElement;
+                            const originalElement = document.querySelectorAll(".effect-item")[
+                                focusIndex
+                            ] as HTMLElement;
                             originalElement?.focus();
 
                             $ctrl.keyboardDragIndex = null;
@@ -684,7 +750,7 @@ type ContextMenuItemScope = {
                         }
                         $ctrl.effectsUpdate();
                     },
-                    { ...($ctrl.triggerMeta as any ?? {}), magicVariables },
+                    { ...(($ctrl.triggerMeta as any) ?? {}), magicVariables },
                     isNew
                 );
             };
@@ -738,7 +804,8 @@ type ContextMenuItemScope = {
                         } else {
                             effect.effectLabel = newLabel;
                         }
-                    });
+                    }
+                );
             };
 
             $ctrl.editTimeoutForEffectAtIndex = function (index: number) {
@@ -748,7 +815,8 @@ type ContextMenuItemScope = {
                     {
                         model: timeout,
                         label: "Set Effect Timeout",
-                        descriptionText: "Enter the number of seconds to wait before Firebot automatically aborts this effect.",
+                        descriptionText:
+                            "Enter the number of seconds to wait before Firebot automatically aborts this effect.",
                         saveText: "Save Timeout",
                         inputType: "number",
                         inputPlaceholder: "Enter seconds",
@@ -767,7 +835,8 @@ type ContextMenuItemScope = {
                     },
                     (newTimeout) => {
                         effect.abortTimeout = newTimeout;
-                    });
+                    }
+                );
             };
             //#endregion
 
