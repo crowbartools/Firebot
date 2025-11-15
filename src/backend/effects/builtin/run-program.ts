@@ -1,17 +1,17 @@
-"use strict";
+import process from "process";
+import path from "path";
+import { ChildProcess, spawn } from "child_process";
 
-const logger = require("../../logwrapper");
-const { EffectCategory } = require("../../../shared/effect-constants");
-const process = require("process");
-const spawn = require("child_process").spawn;
-const path = require("path");
+import type { EffectType } from "../../../types/effects";
 
-const splitArgumentsText = (argsString) => {
+import logger from "../../logwrapper";
+
+const splitArgumentsText = (argsString: string) => {
     const re = /^"[^"]*"$/; // Check if argument is surrounded with double-quotes
     const re2 = /^([^"]|[^"].*?[^"])$/; // Check if argument is NOT surrounded with double-quotes
 
-    const arr = [];
-    let argPart = null;
+    const arr: string[] = [];
+    let argPart: string = null;
 
     if (argsString) {
         argsString.split(" ").forEach(function (arg) {
@@ -31,13 +31,19 @@ const splitArgumentsText = (argsString) => {
     return arr;
 };
 
-const model = {
+const effect: EffectType<{
+    programPath: string;
+    programArgs: string;
+    waitForFinish: boolean;
+    hideWindow: boolean;
+    runDetached: boolean;
+}> = {
     definition: {
         id: "firebot:run-program",
         name: "Run Program",
         description: "Run a program or executable",
         icon: "fad fa-terminal",
-        categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
+        categories: ["advanced", "scripting"],
         dependencies: [],
         outputs: [
             {
@@ -47,7 +53,6 @@ const model = {
             }
         ]
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container header="Program File Path">
             <file-chooser model="effect.programPath" options="fileChooserOptions"></file-chooser>
@@ -109,7 +114,7 @@ const model = {
         };
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.programPath == null) {
             errors.push("Please select a program executable");
         }
@@ -118,10 +123,8 @@ const model = {
     getDefaultLabel: (effect) => {
         return effect.programPath ?? "No Program Selected";
     },
-    onTriggerEvent: (event) => {
+    onTriggerEvent: async ({ effect }) => {
         return new Promise((resolve) => {
-            const { effect } = event;
-
             let { programPath } = effect;
             const { programArgs, waitForFinish, hideWindow, runDetached } = effect;
 
@@ -131,7 +134,7 @@ const model = {
 
             const useShell = programPath.toLowerCase().endsWith(".bat") || programPath.toLowerCase().endsWith(".cmd");
 
-            const options = {
+            const options: Record<string, unknown> = {
                 cwd: path.dirname(programPath),
                 windowsHide: hideWindow,
                 shell: useShell
@@ -142,7 +145,7 @@ const model = {
                 options.stdio = "ignore";
             }
 
-            let args = [];
+            let args: string[] = [];
             const argString = programArgs;
             if (argString != null && argString.length > 0) {
                 args = splitArgumentsText(argString);
@@ -153,15 +156,13 @@ const model = {
                 programPath = `"${programPath}"`;
             }
 
-            let child;
+            let child: ChildProcess;
             try {
                 child = spawn(programPath, args, options);
             } catch (err) {
                 try {
                     child.kill();
-                } catch (ignore) {
-                    // ignore
-                }
+                } catch { }
                 logger.warn("Failed to spawn program:", err, programPath, args, options);
                 return resolve();
             }
@@ -202,4 +203,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export = effect;
