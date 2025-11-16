@@ -1,4 +1,4 @@
-import process from "process";
+import nodeProcess from "process";
 import path from "path";
 import { ChildProcess, spawn } from "child_process";
 
@@ -151,7 +151,7 @@ const effect: EffectType<{
                 args = splitArgumentsText(argString);
             }
 
-            if (useShell && process.platform === "win32" && programPath.indexOf(" ") !== -1) {
+            if (useShell && nodeProcess.platform === "win32" && programPath.indexOf(" ") !== -1) {
                 // When using shell, we must properly escape the command
                 programPath = `"${programPath}"`;
             }
