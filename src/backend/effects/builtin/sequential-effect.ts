@@ -35,6 +35,7 @@ const effect: EffectType<{
             trigger-meta="triggerMeta"
             update="effectListUpdated(effects)"
             header="Effects"
+            mode="single-sequential"
             modalId="{{modalId}}"></effect-list>
     </eos-container>
     `,

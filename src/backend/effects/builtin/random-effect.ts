@@ -45,7 +45,7 @@ const effect: EffectType<{
                 update="effectListUpdated(effects)"
                 header="Effects"
                 modalId="{{modalId}}"
-                hide-numbers="true"
+                mode="single-random"
                 weighted="effect.weighted"
             ></effect-list>
         </eos-container>

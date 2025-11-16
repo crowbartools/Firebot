@@ -37,7 +37,7 @@ type EffectListBindings = {
     update: (args: { effects: EffectList }) => void;
     modalId: string;
     header: string;
-    mode?: "sequential" | "random";
+    mode?: "all-sequential" | "single-sequential" | "single-random";
     weighted: boolean;
 };
 
@@ -132,6 +132,25 @@ type ContextMenuItemScope = {
                 <queue-panel effects-data="$ctrl.effectsData" on-update="$ctrl.effectsUpdate()"></queue-panel>
 
                 <div class="mx-6 pb-6">
+
+                    <div ng-if="$ctrl.mode" class="mb-4 rounded muted">
+                        <div class="flex items-center">
+                            <i
+                                class="fas mr-3"
+                                ng-class="{
+                                    'fa-random': $ctrl.mode === 'single-random',
+                                    'fa-repeat-1': $ctrl.mode === 'single-sequential',
+                                    'fa-sort-numeric-down': $ctrl.mode === 'all-sequential'
+                                }"
+                                style="font-size: 15px;"
+                            ></i>
+                            <span style="font-size: 12px;">
+                                <span ng-if="$ctrl.mode === 'all-sequential'">Runs every effect in order from top to bottom.</span>
+                                <span ng-if="$ctrl.mode === 'single-sequential'">Runs the next effect in the list each time this triggers.</span>
+                                <span ng-if="$ctrl.mode === 'single-random'">Runs a single random effect each time this triggers.</span>
+                            </span>
+                        </div>
+                    </div>
 
                     <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.effectsData.list">
                         <div
@@ -497,7 +516,7 @@ type ContextMenuItemScope = {
 
             $ctrl.$onInit = $ctrl.$onChanges = function () {
                 if (!$ctrl.mode) {
-                    $ctrl.mode = "sequential";
+                    $ctrl.mode = "all-sequential";
                 }
                 $q.when(effectHelperService.getAllEffectTypes()).then((types) => {
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
