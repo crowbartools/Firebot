@@ -789,21 +789,6 @@ table.fb-table-alt {
     cursor: default !important;
 }
 
-// .effect-list {
-//     background: $effect-list-bg-color;
-//     border-radius: 8px;
-//     .effect-list-header {
-//         margin-bottom: 15px;
-//         border-top-left-radius: 8px;
-//         border-top-right-radius: 8px;
-//         padding-left: 15px;
-//         padding-right: 10px;
-//         height: 50px;
-//         font-weight: 100;
-//         border-bottom: 1px solid $light-background-color;
-//     }
-// }
-
 .effect-list {
     background: $effect-list-bg-color;
     border-radius: 8px;
@@ -821,7 +806,6 @@ table.fb-table-alt {
         align-items: center;
         padding: 8px 10px;
         border-radius: 6px;
-        // margin-bottom: 6px;
         background-color: rgb(47 47 50);
         transition: all 0.15s ease;
 
