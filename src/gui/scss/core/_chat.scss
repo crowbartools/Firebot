@@ -248,6 +248,13 @@
     }
 }
 
+.gigantify {
+    display: block !important;
+    & .chatEmoticon {
+        height: 8rem !important;
+    }
+}
+
 .chat-username {
     display: flex;
     font-weight: bold;
