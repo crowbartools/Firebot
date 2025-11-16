@@ -13,8 +13,16 @@ import type {
     EffectDefinition,
     TriggerType,
     ModalFactory,
-    ObjectCopyHelper
+    ObjectCopyHelper,
+    BackendCommunicator,
+    PresetEffectListsService
 } from "../../../../../types";
+
+type EffectListWithQueue = EffectList & {
+    queue?: string | null;
+    queuePriority?: "high" | "none";
+    queueDuration?: number;
+};
 
 type EffectListBindings = {
     trigger?: TriggerType;
@@ -34,7 +42,7 @@ type EffectListBindings = {
 };
 
 type ControllerExtras = {
-    effectsData: EffectList;
+    effectsData: EffectListWithQueue;
     effectsUpdate: () => void;
     keyboardDragIndex: number | null;
     keyboardDragEffectId: string | null;
@@ -49,6 +57,7 @@ type ControllerExtras = {
     effectContextMenuOptions: Array<unknown>;
     sortableOptions: {
         handle: string;
+        'ui-floating': boolean;
         stop: () => void;
     };
     getEffectNameById: (id: string) => string;
@@ -75,7 +84,7 @@ type ContextMenuItemScope = {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { randomUUID } = require("crypto");
 
-    const effectListNew: FirebotComponent<EffectListBindings, ControllerExtras> = {
+    const effectList: FirebotComponent<EffectListBindings, ControllerExtras> = {
         bindings: {
             trigger: "@?",
             triggerMeta: "<",
@@ -87,13 +96,35 @@ type ContextMenuItemScope = {
             weighted: "<"
         },
         template: `
-            <div class="effect-list-new">
+            <div class="effect-list">
                 <div class="flex-row-center jspacebetween effect-list-header">
                     <div class="flex items-center">
-                        <h3 class="m-0" style="display:inline;font-weight: 600;">Effects</h3>
+                        <h3 class="m-0" style="display:inline;font-weight: 600;font-size: 20px;">Manage Effects</h3>
                         <span class="ml-1" style="font-size: 11px;"><tooltip text="$ctrl.header" ng-if="$ctrl.header"></tooltip></span>
                     </div>
+
+                    <div class="flex items-center">
+                        <div class="test-effects-btn clickable" uib-tooltip="Test Effects" aria-label="Test effects" ng-click="$ctrl.testEffects()" role="button">
+                            <i class="far fa-play-circle"></i>
+                        </div>
+
+                        <div>
+                            <a
+                                href role="button"
+                                aria-label="Open effects menu"
+                                class="effects-actions-btn"
+                                context-menu="$ctrl.allEffectsMenuOptions"
+                                context-menu-on="click"
+                                uib-tooltip="Open effects menu"
+                                tooltip-append-to-body="true"
+                            >
+                                <i class="fal fa-ellipsis-v"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
+
+                <queue-panel effects-data="$ctrl.effectsData" on-update="$ctrl.effectsUpdate()"></queue-panel>
 
                 <div class="mx-6 pb-6">
 
@@ -106,7 +137,7 @@ type ContextMenuItemScope = {
 
                             <div
                                 class="effect-item"
-                                ng-class="{'disabled': !effect.active, 'kb-dragging': $ctrl.keyboardDragIndex === $index}"
+                                ng-class="{'disabled': !effect.active, 'kb-dragging': $ctrl.keyboardDragIndex === $index, 'has-bottom-panel': $ctrl.showBottomPanel(effect)}"
                                 tabindex="0"
                                 ng-keydown="$ctrl.handleEffectKeydown($event, $index)"
                             >
@@ -117,22 +148,24 @@ type ContextMenuItemScope = {
                                     <i ng-class="$ctrl.getEffectIconById(effect.type)"></i>
                                 </div>
                                 <div class="pr-4 flex flex-col justify-center" style="text-overflow: ellipsis;overflow: hidden;flex-grow: 1;">
-                                    <div class="effect-name truncate">{{$ctrl.getEffectNameById(effect.type)}}</div>
+                                    <div class="effect-name truncate">
+                                        {{$ctrl.getEffectNameById(effect.type)}}
+                                    </div>
                                     <div ng-if="$ctrl.getEffectLabel(effect)" class="muted truncate" style="font-size: 12px;">{{$ctrl.getEffectLabel(effect)}}</div>
                                 </div>
                                 <span class="flex-row-center" style="flex-shrink: 0;">
-                                    <!-- <span
+                                    <button
                                         ng-if="effect.abortTimeout && effect.abortTimeout > 0"
                                         uib-tooltip="Abort Timeout"
                                         tooltip-append-to-body="true"
-                                        class="muted mr-5 flex items-center justify-center"
+                                        class="effect-timeout-btn mr-5"
+                                        aria-label="Effect Abort Timeout: {{effect.abortTimeout}} seconds"
+                                        role="button"
+                                        ng-click="$ctrl.editTimeoutForEffectAtIndex($index)"
                                     >
-                                        <i class="fas fa-stopwatch"></i>
+                                        <i class="fas fa-stopwatch" aria-hidden="true"></i>
                                         <div class="ml-1">{{effect.abortTimeout}}s</div>
-                                    </span>
-                                    <span class="dragHandle flex items-center justify-center" style="height: 38px; width: 15px;" ng-class="{'hiddenHandle': !hovering}" ng-click="$event.stopPropagation()">
-                                        <i class="fal fa-bars"></i>
-                                    </span> -->
+                                    </button>
                                     <button
                                         class="effect-edit-btn"
                                         ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger, false)"
@@ -163,7 +196,20 @@ type ContextMenuItemScope = {
                                 </span>
                             </div>
 
-
+                            <div ng-if="!!$ctrl.getEffectNameById(effect.type) && $ctrl.showBottomPanel(effect)" class="effect-weight-panel">
+                                <div class="volume-slider-wrapper small-slider" style="flex-grow: 1">
+                                    <i class="fas fa-balance-scale-left mr-5" uib-tooltip="Weight"></i>
+                                    <rzslider rz-slider-model="effect.percentWeight" rz-slider-options="{floor: 0.0001, ceil: 1.0, step: 0.0001, precision: 4, hideLimitLabels: true, hidePointerLabels: true, showSelectionBar: true}"></rzslider>
+                                </div>
+                                <div class="ml-5 mr-5" style="width: 1px;height: 70%;background: rgb(255 255 255 / 25%);border-radius: 2px;flex-grow: 0; flex-shrink: 0;"></div>
+                                <div>
+                                    <span uib-tooltip="Calculated Chance">
+                                        <i class="fas fa-dice mr-2"></i>
+                                        <span style="font-family: monospace; width: 60px; display: inline-block; text-align: end;">{{$ctrl.getPercentChanceForEffect(effect)}}%</span>
+                                    </span>
+                                    <i class="fas fa-edit ml-2 muted" uib-tooltip="Set target percentage" tooltip-append-to-body="true" ng-click="$ctrl.openSetTargetChancePercentageModal(effect)"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -196,7 +242,9 @@ type ContextMenuItemScope = {
             modalService: ModalService,
             modalFactory: ModalFactory,
             ngToast: NgToast,
-            objectCopyHelper: ObjectCopyHelper
+            objectCopyHelper: ObjectCopyHelper,
+            backendCommunicator: BackendCommunicator,
+            presetEffectListsService: PresetEffectListsService
         ) {
             const $ctrl = this;
 
@@ -214,6 +262,7 @@ type ContextMenuItemScope = {
 
             $ctrl.sortableOptions = {
                 handle: ".dragHandle",
+                'ui-floating': false,
                 stop: () => {
                     $ctrl.effectsUpdate();
                 }
@@ -369,6 +418,70 @@ type ContextMenuItemScope = {
                     }
                 });
             }
+
+            const getSumOfAllWeights = () => {
+                ensureDefaultWeights();
+                const sumOfAllWeights = $ctrl
+                    .effectsData.list
+                    .filter(e => e.active)
+                    .reduce((acc, e) => acc + (e.percentWeight ?? 0.5), 0);
+                return sumOfAllWeights;
+            };
+
+            $ctrl.getPercentChanceForEffect = (effect: EffectInstance) => {
+                const sumOfAllWeights = getSumOfAllWeights();
+                const percentChance = (effect.percentWeight / sumOfAllWeights) * 100;
+                return percentChance.toFixed(2);
+            };
+
+            $ctrl.openSetTargetChancePercentageModal = (effect: EffectInstance) => {
+                modalFactory.openGetInputModal(
+                    {
+                        model: parseFloat($ctrl.getPercentChanceForEffect(effect) || "0.5"),
+                        label: "Set Target Percentage",
+                        descriptionText: "Enter the target chance percentage for this effect. The weights of this and other effects will be adjusted as needed to reach the percentage.",
+                        inputType: "number",
+                        saveText: "Save",
+                        inputPlaceholder: "Enter percentage",
+                        validationFn: (value) => {
+                            return new Promise((resolve) => {
+                                if (value == null || isNaN(value) || value < 0.0001 || value >= 100.0) {
+                                    resolve(false);
+                                }
+                                resolve(true);
+                            });
+                        },
+                        validationText: "Please enter a valid percentage greater than 0 and less than 100"
+                    },
+                    (newPercentage) => {
+                        const sumOfAllWeights = getSumOfAllWeights();
+                        const currentThisWeight = effect.percentWeight ?? 0.5;
+                        const sumOfOtherWeights = sumOfAllWeights - currentThisWeight;
+
+                        const newThisWeight = (newPercentage / 100) * sumOfAllWeights;
+                        effect.percentWeight = newThisWeight;
+
+                        const newSumOfOtherWeights = sumOfAllWeights - newThisWeight;
+
+                        const otherEffects = $ctrl.effectsData.list.filter(e => e.active && e.id !== effect.id);
+                        let imperfect = false;
+                        for (const otherEffect of otherEffects) {
+                            let newWeight = (otherEffect.percentWeight ?? 0.5) * (newSumOfOtherWeights / sumOfOtherWeights);
+                            if (newWeight < 0.0001) {
+                                imperfect = true;
+                                newWeight = 0.0001;
+                            }
+                            otherEffect.percentWeight = newWeight;
+                        }
+
+                        ngToast.create({
+                            className: imperfect ? "warning" : "success",
+                            content: imperfect ? "Couldn't perfectly match target percent as some weights hit the minimum value." : "The weights were adjusted to fit the target percentage."
+                        });
+
+                        $ctrl.effectsUpdate();
+                    });
+            };
             //#endregion
 
             $ctrl.effectsUpdate = function () {
@@ -406,6 +519,10 @@ type ContextMenuItemScope = {
 
                     $scope.$broadcast("rzSliderForceRender");
                 });
+            };
+
+            $ctrl.testEffects = function () {
+                backendCommunicator.send('runEffectsManually', { effects: $ctrl.effectsData });
             };
 
             //#region Magic Variables
@@ -750,6 +867,7 @@ type ContextMenuItemScope = {
                         }
                         $ctrl.effectsUpdate();
                     },
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     { ...(($ctrl.triggerMeta as any) ?? {}), magicVariables },
                     isNew
                 );
@@ -840,6 +958,20 @@ type ContextMenuItemScope = {
             };
             //#endregion
 
+            function getSharedEffects(code: string) {
+                return $http.get(`https://api.crowbar.tools/v1/data-bin/${code}`)
+                    .then((resp) => {
+                        if (resp.status === 200) {
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+                            return JSON.parse(unescape(JSON.stringify(resp.data)));
+                        }
+                        return null;
+                    }, () => {
+                        return null;
+                    });
+            }
+
+            //#region Context Menus
             $ctrl.effectContextMenuOptions = [
                 {
                     html: `<a href ><i class="far fa-edit mr-4"></i> Edit Effect</a>`,
@@ -965,9 +1097,143 @@ type ContextMenuItemScope = {
                     ]
                 }
             ];
+
+            $ctrl.allEffectsMenuOptions = [
+                {
+                    html: `<a href role="menuitem"><span class="iconify mr-4" data-icon="mdi:content-copy"></span> Copy all effects</a>`,
+                    click: () => {
+                        $ctrl.copyEffects();
+                    },
+                    enabled: function () {
+                        return $ctrl.effectsData.list.length > 0;
+                    }
+                },
+                {
+                    html: `<a href role="menuitem"><span class="iconify mr-4" data-icon="mdi:content-paste"></span> Paste effects</a>`,
+                    click: function () {
+                        $ctrl.pasteEffects(true);
+                    },
+                    enabled: function () {
+                        return $ctrl.hasCopiedEffects();
+                    }
+                },
+                {
+                    html: `<a href role="menuitem" style="color: #fb7373;"><i class="far fa-trash-alt mr-4"></i>  Delete all effects</a>`,
+                    click: function () {
+                        $ctrl.removeAllEffects();
+                    },
+                    enabled: function () {
+                        return $ctrl.effectsData.list.length > 0;
+                    }
+                },
+                {
+                    text: "Advanced...",
+                    hasTopDivider: true,
+                    children: [
+                        {
+                            html: `<a href role="menuitem"><i class="fal fa-magic mr-4"></i> Convert to Preset Effect List</a>`,
+                            click: function () {
+                                $q.when(presetEffectListsService.showAddEditPresetEffectListModal({
+                                    effects: {
+                                        list: $ctrl.effectsData.list
+                                    } as EffectList
+                                })).then((savedPresetEffectsList) => {
+                                    if (!savedPresetEffectsList) {
+                                        return;
+                                    }
+
+                                    $ctrl.effectsData.list = [{
+                                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+                                        id: randomUUID(),
+                                        type: "firebot:run-effect-list",
+                                        active: true,
+                                        listType: "preset",
+                                        presetListId: savedPresetEffectsList.id,
+                                        presetListArgs: {}
+                                    }];
+                                });
+                            },
+                            enabled: function () {
+                                return $ctrl.effectsData.list.length > 0;
+                            }
+                        },
+                        {
+                            html: `<a href role="menuitem"><i class="fal fa-fingerprint mr-4"></i> Copy Effect List ID</a>`,
+                            click: function () {
+                                $rootScope.copyTextToClipboard($ctrl.effectsData.id);
+                                ngToast.create({
+                                    className: "success",
+                                    content: `Copied ${$ctrl.effectsData.id} to clipboard.`
+                                });
+                            }
+                        }
+                    ]
+                },
+                {
+                    html: `<a href role="menuitem"><i class="far fa-share-alt mr-4"></i> Share effects</a>`,
+                    click: async function () {
+                        const shareCode = await backendCommunicator.fireEventAsync<string>("getEffectsShareCode", $ctrl.effectsData.list);
+                        if (shareCode == null) {
+                            ngToast.create("Unable to share effects.");
+                        } else {
+                            modalService.showModal({
+                                component: "copyShareCodeModal",
+                                size: 'sm',
+                                resolveObj: {
+                                    shareCode: () => shareCode,
+                                    title: () => "Effects Share Code",
+                                    message: () => "Share the below code so others can import these effects."
+                                }
+                            });
+                        }
+                    },
+                    enabled: function () {
+                        return $ctrl.effectsData.list.length > 0;
+                    },
+                    hasTopDivider: true
+                },
+                {
+                    html: `<a href ><i class="far fa-cloud-download-alt mr-4"></i> Import shared effect</a>`,
+                    click: function () {
+                        modalFactory.openGetInputModal(
+                            {
+                                model: "",
+                                label: "Enter Effects Share Code",
+                                saveText: "Add",
+                                inputPlaceholder: "Enter code",
+                                validationFn: (shareCode) => {
+                                    return new Promise(async (resolve) => {
+                                        if (shareCode == null || shareCode.trim().length < 1) {
+                                            resolve(false);
+                                        }
+
+                                        const effectsData = await getSharedEffects(shareCode);
+
+                                        if (effectsData == null || effectsData.effects == null) {
+                                            resolve(false);
+                                        } else {
+                                            resolve(true);
+                                        }
+                                    });
+                                },
+                                validationText: "Not a valid effects share code."
+
+                            },
+                            async (shareCode) => {
+                                const effectsData = await getSharedEffects(shareCode);
+                                if (effectsData.effects != null) {
+                                    $ctrl.effectsData.list = $ctrl.effectsData.list.concat(effectsData.effects);
+                                    ensureDefaultWeights();
+                                }
+                            });
+                    }
+                }
+            ];
+            //#endregion
         }
     };
 
+
     // @ts-ignore
-    angular.module("firebotApp").component("effectListNew", effectListNew);
+    angular.module("firebotApp").component("effectList", effectList);
 })();

@@ -58,7 +58,8 @@
             service.showAddEditHotkeyModal = (hotkey) => {
                 utilityService.showModal({
                     component: "AddOrEditHotkeyModal",
-                    size: "md",
+                    size: "mdlg",
+                    keyboard: false,
                     resolveObj: {
                         hotkey: () => hotkey
                     },
@@ -142,7 +143,7 @@
                         }
                         return key;
                 }
-            }
+            };
 
             const getDisplayNameFromKeyCode = (keyCode) => {
                 if (keyCode.startsWith("num")) {
@@ -170,7 +171,7 @@
                     default:
                         return keyCode;
                 }
-            }
+            };
 
             const keyCodeIsModifier = (keyCode) => {
                 switch (keyCode) {
@@ -182,11 +183,11 @@
                     default:
                         return false;
                 }
-            }
+            };
 
             const getAcceleratorCodeFromKeys = (keys) => {
                 return keys.map(k => k.code).join("+");
-            }
+            };
 
             let cachedKeys = [];
             let releasedKeyCodes = [];

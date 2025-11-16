@@ -8,15 +8,15 @@
     padding: 15px 15px;
     margin-bottom: 5px;
     &.selectable:hover {
-      background: #4e515a;
+        background: #4e515a;
     }
 }
 
 .list-add-btn-wrapper {
-    margin:  5px 0 10px 0px;
+    margin: 5px 0 10px 0px;
 
     .list-add-btn {
-        background: #24262A;
+        background: #24262a;
         width: auto;
         display: inline-flex;
         flex-direction: row;
@@ -30,7 +30,8 @@
         justify-content: space-between;
         cursor: pointer;
         border: none;
-        &:hover, &:focus {
+        &:hover,
+        &:focus {
             opacity: 0.8;
         }
     }
@@ -51,7 +52,7 @@
     }
     .arrow-line {
         width: 2px;
-        background: #24262A;
+        background: #24262a;
         height: 10px;
     }
     .arrow-tip {
@@ -59,7 +60,7 @@
         height: 0;
         border-left: 6px solid transparent;
         border-right: 6px solid transparent;
-        border-top: 10px solid #24262A;
+        border-top: 10px solid #24262a;
     }
 }
 
@@ -241,7 +242,7 @@
 .fb-select {
     height: 42px;
     color: white;
-    background: #24262A;
+    background: #24262a;
     border-radius: 8px;
     border: none;
     width: 100%;
@@ -294,7 +295,7 @@
         padding: 1px;
         padding-left: 15px;
         margin-bottom: 0;
-        display:flex;
+        display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
@@ -601,7 +602,7 @@ table.fb-table-alt {
             position: relative;
         }
         &.ellipsis:before {
-            content: '&nbsp;';
+            content: "&nbsp;";
             visibility: hidden;
         }
         &.ellipsis span {
@@ -787,31 +788,31 @@ table.fb-table-alt {
 .menunoclick:hover {
     cursor: default !important;
 }
+
+// .effect-list {
+//     background: $effect-list-bg-color;
+//     border-radius: 8px;
+//     .effect-list-header {
+//         margin-bottom: 15px;
+//         border-top-left-radius: 8px;
+//         border-top-right-radius: 8px;
+//         padding-left: 15px;
+//         padding-right: 10px;
+//         height: 50px;
+//         font-weight: 100;
+//         border-bottom: 1px solid $light-background-color;
+//     }
+// }
+
 .effect-list {
     background: $effect-list-bg-color;
     border-radius: 8px;
     .effect-list-header {
-        margin-bottom: 15px;
         border-top-left-radius: 8px;
         border-top-right-radius: 8px;
         padding-left: 15px;
-        padding-right: 10px;
-        height: 50px;
-        font-weight: 100;
-        border-bottom: 1px solid $light-background-color;
-    }
-}
-
-.effect-list-new {
-    background: $effect-list-bg-color;
-    border-radius: 8px;
-    .effect-list-header {
-        margin-bottom: 15px;
-        border-top-left-radius: 8px;
-        border-top-right-radius: 8px;
-        padding-left: 15px;
-        padding-right: 10px;
-        height: 50px;
+        padding-right: 15px;
+        height: 60px;
         font-weight: 100;
         border-bottom: 1px solid $light-background-color;
     }
@@ -820,9 +821,14 @@ table.fb-table-alt {
         align-items: center;
         padding: 8px 10px;
         border-radius: 6px;
-        margin-bottom: 6px;
+        // margin-bottom: 6px;
         background-color: rgb(47 47 50);
         transition: all 0.15s ease;
+
+        &.has-bottom-panel {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
 
         &.kb-dragging {
             box-shadow: 0 0 0 1px rgba(70, 161, 240, 0.8), 0 6px 14px rgba(0, 0, 0, 0.6);
@@ -892,6 +898,30 @@ table.fb-table-alt {
                 }
             }
         }
+
+        .effect-timeout-btn {
+            display: inline-flex;
+            background: rgb(70, 70, 77);
+            color: #cdcdcd;
+            font-size: 12px;
+            padding: 4px 7px;
+            height: 26px;
+            border-radius: 6px;
+            gap: 4px;
+            justify-content: center;
+            align-items: center;
+            border: none;
+        }
+    }
+
+    .effect-weight-panel {
+        height: 40px;
+        background: rgb(63 63 66);
+        border-bottom-right-radius: 6px;
+        border-bottom-left-radius: 6px;
+        padding: 0 15px;
+        display: flex;
+        align-items: center;
     }
 
     .effect-list-add-btn {
@@ -908,6 +938,7 @@ table.fb-table-alt {
         font-size: 13px;
         font-weight: 500;
         cursor: pointer;
+        height: 54px;
         transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
 
         &:hover {
@@ -937,6 +968,334 @@ table.fb-table-alt {
             text-transform: uppercase;
             letter-spacing: 0.08em;
         }
+    }
+}
+
+.effect-list-queue-panel {
+    margin-bottom: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #2f3136;
+
+    .queue-panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0px 16px;
+        height: 40px;
+        cursor: pointer;
+        user-select: none;
+        transition: background 0.2s ease;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        &:focus-visible {
+            outline: 2px solid lighten($primary-button-bg, 25%);
+            outline-offset: -2px;
+        }
+
+        .queue-panel-header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+
+            i {
+                font-size: 14px;
+                opacity: 0.8;
+            }
+
+            tooltip {
+                margin-left: -2px;
+            }
+        }
+
+        .queue-panel-header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            .queue-preview {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-right: 8px;
+
+                .queue-preview-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 4px 10px;
+                    background: rgba(0, 0, 0, 0.2);
+                    border-radius: 4px;
+                    font-size: 11px;
+                    color: rgba(255, 255, 255, 0.75);
+
+                    i {
+                        font-size: 10px;
+                        opacity: 0.6;
+                    }
+                }
+            }
+
+            .queue-panel-chevron {
+                font-size: 11px;
+                color: rgba(255, 255, 255, 0.5);
+                transition: transform 0.3s ease;
+            }
+        }
+    }
+
+    .queue-panel-content {
+        max-height: 0;
+        transition: max-height 0.3s ease;
+        padding: 0 16px;
+    }
+
+    &.expanded {
+        .queue-panel-header .queue-panel-chevron {
+            transform: rotate(180deg);
+        }
+
+        .queue-panel-content {
+            max-height: 500px;
+        }
+    }
+
+    &.expanded.animation-complete {
+        overflow: visible;
+    }
+
+    .queue-panel-control {
+        padding: 14px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .queue-control-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.75);
+
+            i {
+                font-size: 12px;
+                opacity: 0.7;
+            }
+
+            tooltip {
+                margin-left: -2px;
+            }
+        }
+
+        .queue-control-input {
+            position: relative;
+
+            .queue-duration-btn {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                padding: 10px 14px;
+                background: rgba(0, 0, 0, 0.25);
+                border: none;
+                border-radius: 6px;
+                color: #e5e5e5;
+                font-size: 13px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.15s ease;
+
+                .queue-duration-value {
+                    flex: 1;
+                    font-weight: 600;
+                    font-size: 14px;
+                    color: white;
+                    text-align: left;
+                }
+
+                i.fa-edit {
+                    font-size: 12px;
+                    opacity: 0.5;
+                    transition: opacity 0.15s ease;
+                }
+
+                &:hover {
+                    background: rgba(0, 0, 0, 0.35);
+                    border-color: rgba(255, 255, 255, 0.18);
+                    i.fa-edit {
+                        opacity: 0.8;
+                    }
+                }
+
+                &:focus-visible {
+                    outline: 2px solid lighten($primary-button-bg, 25%);
+                    outline-offset: 2px;
+                }
+
+                i.fa-chevron-down {
+                    font-size: 10px;
+                    opacity: 0.6;
+                    transition: transform 0.2s ease;
+                }
+            }
+        }
+    }
+}
+
+.firebot-dropdown-input {
+    position: relative;
+
+    .firebot-dropdown-btn {
+        height: 40px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 14px;
+        background-color: $form-control-bg;
+        color: $form-control-text;
+        border: none;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.15s ease;
+
+        &:hover {
+            background-color: adjust-color($form-control-bg, $red: -10, $green: -10, $blue: -10);
+        }
+
+        &.dark {
+            background-color: rgba(0, 0, 0, 0.25);
+
+            &:hover {
+                background: rgba(0, 0, 0, 0.35);
+            }
+        }
+
+        &:focus-visible {
+            outline: 2px solid lighten($primary-button-bg, 25%);
+            outline-offset: 2px;
+        }
+
+        i.fa-chevron-down {
+            font-size: 10px;
+            opacity: 0.6;
+            transition: transform 0.2s ease;
+        }
+    }
+
+    .firebot-dropdown-label {
+        flex: 1;
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+// Dropdown menu styles
+.firebot-dropdown-menu {
+    width: 100%;
+    margin-top: 4px;
+    padding: 6px;
+    background: rgb(35, 35, 38);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+
+    li {
+        list-style: none;
+
+        .firebot-dropdown-menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 9px 12px;
+            border-radius: 6px;
+            color: #e5e5e5;
+            font-size: 13px;
+            text-decoration: none;
+            transition: background 0.12s ease;
+            cursor: pointer;
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.08);
+            }
+
+            .firebot-dropdown-menu-label {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex: 1;
+
+                i {
+                    width: 16px;
+                    font-size: 13px;
+                    opacity: 0.7;
+                }
+
+                span {
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+
+            .firebot-dropdown-check-icon {
+                font-size: 12px;
+                color: #4ade80;
+                margin-left: 8px;
+            }
+
+            &.info {
+                &:hover {
+                    background: rgba(70, 161, 240, 0.15);
+                    color: lighten($primary-button-bg, 20%);
+                }
+            }
+
+            &.danger {
+                &:hover {
+                    background: rgba(239, 68, 68, 0.15);
+                    color: #fca5a5;
+                }
+            }
+        }
+
+        .firebot-dropdown-menu-empty {
+            padding: 12px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 12px;
+            font-style: italic;
+        }
+    }
+
+    .firebot-dropdown-menu-divider {
+        height: 1px;
+        margin: 6px 0;
+        background: rgba(255, 255, 255, 0.1);
+    }
+}
+
+// When dropdown is open
+.dropdown-toggle.open {
+    .firebot-dropdown-btn i.fa-chevron-down {
+        transform: rotate(180deg);
     }
 }
 
@@ -1059,7 +1418,6 @@ table.fb-table-alt {
             padding: 2px 8px 1px 7px;
         }
     }
-
 }
 .sort-tag-add {
     border: none;

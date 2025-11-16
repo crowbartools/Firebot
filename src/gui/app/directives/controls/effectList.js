@@ -5,7 +5,7 @@
 
     angular
         .module('firebotApp')
-        .component("effectList", {
+        .component("effectListOld", {
             bindings: {
                 trigger: "@",
                 triggerMeta: "<",
