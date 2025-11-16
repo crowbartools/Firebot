@@ -27,13 +27,15 @@
                         $ctrl.toggleModel = !$ctrl.toggleModel;
                     }
                     $timeout(() => {
-                        $ctrl.onToggle();
+                        $ctrl.onToggle({
+                            newValue: !$ctrl.toggleModel
+                        });
                     }, 1);
                 };
 
                 $ctrl.getCustomStyles = () => {
                     if ($ctrl.fontSize) {
-                        return { "font-size": `${$ctrl.fontSize}px`};
+                        return { "font-size": `${$ctrl.fontSize}px` };
                     }
                     return {};
                 };

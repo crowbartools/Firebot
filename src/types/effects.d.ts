@@ -96,6 +96,7 @@ export type EffectDefinition<EffectModel = unknown> = {
     name: string;
     description: string;
     icon: string;
+    color?: string;
     categories: EffectCategory[];
     hidden?: boolean | Func<boolean>;
     triggers?: TriggerType[] | TriggersObject;
@@ -116,11 +117,11 @@ export type EffectDefinition<EffectModel = unknown> = {
 export type EffectInstance<EffectModel = unknown> = {
     id: string;
     type: string;
-    effectLabel?: string;
+    effectLabel?: string | null;
     active?: boolean;
-    abortTimeout?: number;
-    percentWeight?: number;
-    outputNames?: Record<string, unknown>;
+    abortTimeout?: number | null;
+    percentWeight?: number | null;
+    outputNames?: Record<string, string>;
 } & {
     [K in keyof EffectModel]: EffectModel[K];
 } & {

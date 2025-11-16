@@ -144,5 +144,38 @@ $primary-button-hover-bg: #1f849e;
 $link-button-color: #12d0ff;
 $link-button-hover-color: #11add4;
 
+/* effect-list */
+$effect-item-bg: #2f2f32;
+$effect-item-hover-bg: #373738;
+$effect-item-drag-bg: #37373c;
+$effect-item-drag-shadow: 0 0 0 1px rgba(70, 161, 240, 0.8), 0 6px 14px rgba(0, 0, 0, 0.6);
+$effect-drag-handle-color: #888888;
+$effect-icon-bg: #46464d;
+$effect-icon-color: #f7f7f7;
+$effect-button-bg: #46464d;
+$effect-button-hover-bg: #5a5a61;
+$effect-button-icon-color: #cdcdcd;
+$effect-button-icon-hover-color: #ffffff;
+$effect-weight-panel-bg: #3f3f42;
+$effect-add-btn-bg: rgba(255, 255, 255, 0.04);
+$effect-add-btn-border: rgba(255, 255, 255, 0.15);
+$effect-add-btn-hover-bg: rgba(255, 255, 255, 0.08);
+$effect-add-btn-hover-border: rgba(255, 255, 255, 0.25);
+$effect-add-btn-icon-bg: rgba(255, 255, 255, 0.06);
+$effect-add-btn-text-color: #e5e5e5;
+$queue-panel-border: #2f3136;
+$queue-panel-hover-bg: rgba(255, 255, 255, 0.03);
+$queue-panel-text-color: rgba(255, 255, 255, 0.9);
+$queue-panel-icon-opacity: 0.8;
+$queue-panel-preview-bg: rgba(0, 0, 0, 0.2);
+$queue-panel-preview-text: rgba(255, 255, 255, 0.75);
+$queue-panel-chevron-color: rgba(255, 255, 255, 0.5);
+$queue-control-border: rgba(255, 255, 255, 0.06);
+$queue-control-label-color: rgba(255, 255, 255, 0.75);
+$queue-duration-btn-bg: rgba(0, 0, 0, 0.25);
+$queue-duration-btn-hover-bg: rgba(0, 0, 0, 0.35);
+$queue-duration-btn-text: #e5e5e5;
+$queue-duration-value-color: #ffffff;
+
 // Import Core Styles
 @import './core/$importer';

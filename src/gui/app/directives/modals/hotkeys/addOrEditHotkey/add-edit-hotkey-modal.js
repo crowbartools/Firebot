@@ -35,10 +35,10 @@
                     </eos-collapsable-panel>
 
                     <div style="margin-top:20px;">
-                        <effect-list 
-                            header="What should this hotkey do?" 
-                            effects="$ctrl.hotkey.effects" 
-                            trigger="hotkey" 
+                        <effect-list
+                            header="What should this hotkey do?"
+                            effects="$ctrl.hotkey.effects"
+                            trigger="hotkey"
                             trigger-meta="{ rootEffects: $ctrl.hotkey.effects }"
                             update="$ctrl.effectListUpdated(effects)"
                         ></effect-list>
@@ -85,7 +85,9 @@
             };
 
             $ctrl.save = () => {
-                if (!hotkeyValid()) return;
+                if (!hotkeyValid()) {
+                    return;
+                }
 
                 const successful = hotkeyService.saveHotkey($ctrl.hotkey);
                 if (successful) {
@@ -135,7 +137,7 @@
                 }
 
                 return true;
-            }
+            };
         }
     });
 }());
