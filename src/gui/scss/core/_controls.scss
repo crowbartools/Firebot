@@ -908,6 +908,85 @@ table.fb-table-alt {
         align-items: center;
     }
 
+    .effect-list-container {
+        position: relative;
+
+        &.show-connectors {
+            .effect-list-item {
+                position: relative;
+                margin-bottom: 7.5px;
+
+                &:not(.is-first)::before {
+                    content: "";
+                    position: absolute;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    top: -7.5px;
+                    width: 3px;
+                    height: 7.5px;
+                    background: rgba(255, 255, 255, 0.15);
+                }
+
+                // Hide connectors when dragging
+                &.ui-sortable-helper::before,
+                &.ui-sortable-helper::after {
+                    display: none;
+                }
+            }
+
+            // Hide connectors on the item being keyboard-dragged
+            .effect-item.kb-dragging {
+                &::before,
+                &::after {
+                    display: none;
+                }
+            }
+        }
+
+        &.show-dividers {
+            .effect-list-item {
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    .effect-list-item {
+        margin-bottom: 7.5px;
+    }
+
+    .effect-divider {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.1);
+        margin: 8px 8px;
+        position: relative;
+        transition: opacity 0.15s ease;
+
+        &.is-dragging {
+            opacity: 0;
+        }
+    }
+
+    // Hide dividers during mouse drag
+    .effect-list-container.ui-sortable-dragging .effect-divider {
+        opacity: 0;
+    }
+
+    .effect-list-add-btn-wrapper {
+        position: relative;
+        margin-top: 7.5px;
+
+        &.show-connector::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: -7.5px;
+            width: 3px;
+            height: 7.5px;
+            background: rgba(255, 255, 255, 0.15);
+        }
+    }
+
     .effect-list-add-btn {
         width: 100%;
         display: flex;

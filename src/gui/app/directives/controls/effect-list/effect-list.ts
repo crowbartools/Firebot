@@ -152,19 +152,20 @@ type ContextMenuItemScope = {
                         </div>
                     </div>
 
-                    <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.effectsData.list">
-                        <div
-                            ng-repeat="effect in $ctrl.effectsData.list track by $index"
-                            context-menu="$ctrl.effectContextMenuOptions"
-                            style="margin-bottom: 7.5px;"
-                        >
-
+                    <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.effectsData.list" class="effect-list-container" ng-class="{'show-connectors': $ctrl.mode === 'all-sequential', 'show-dividers': $ctrl.mode === 'single-random' || $ctrl.mode === 'single-sequential'}">
+                        <div ng-repeat="effect in $ctrl.effectsData.list track by $index">
                             <div
-                                class="effect-item"
-                                ng-class="{'disabled': !effect.active, 'kb-dragging': $ctrl.keyboardDragIndex === $index, 'has-bottom-panel': $ctrl.showBottomPanel(effect)}"
-                                tabindex="0"
-                                ng-keydown="$ctrl.handleEffectKeydown($event, $index)"
+                                context-menu="$ctrl.effectContextMenuOptions"
+                                class="effect-list-item"
+                                ng-class="{'is-first': $index === 0, 'is-last': $index === $ctrl.effectsData.list.length - 1}"
                             >
+
+                                <div
+                                    class="effect-item"
+                                    ng-class="{'disabled': !effect.active, 'kb-dragging': $ctrl.keyboardDragIndex === $index, 'has-bottom-panel': $ctrl.showBottomPanel(effect)}"
+                                    tabindex="0"
+                                    ng-keydown="$ctrl.handleEffectKeydown($event, $index)"
+                                >
                                 <div class="effect-drag-handle dragHandle">
                                     <i class="fas fa-grip-vertical"></i>
                                 </div>
@@ -234,10 +235,15 @@ type ContextMenuItemScope = {
                                     <i class="fas fa-edit ml-2 muted" uib-tooltip="Set target percentage" tooltip-append-to-body="true" ng-click="$ctrl.openSetTargetChancePercentageModal(effect)"></i>
                                 </div>
                             </div>
+                            </div>
+
+                            <div ng-if="($ctrl.mode === 'single-random' || $ctrl.mode === 'single-sequential') && !$last" class="effect-divider" ng-class="{'is-dragging': $ctrl.keyboardDragIndex != null}"></div>
                         </div>
                     </div>
 
-                    <div class="mt-4">
+                    <div ng-if="($ctrl.mode === 'single-random' || $ctrl.mode === 'single-sequential') && $ctrl.effectsData.list.length > 0" class="effect-divider"></div>
+
+                    <div class="effect-list-add-btn-wrapper" ng-class="{'show-connector': $ctrl.mode === 'all-sequential' && $ctrl.effectsData.list.length > 0}">
                         <button
                             type="button"
                             class="effect-list-add-btn"
