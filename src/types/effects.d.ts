@@ -26,6 +26,9 @@ export type EffectTriggerResponse = {
         stop: boolean;
         bubbleStop: boolean;
     };
+    outputs?: {
+        [x as string]: unknown;
+    };
 };
 
 export type EffectOutput = {
@@ -111,6 +114,20 @@ export type EffectDefinition<EffectModel = unknown> = {
     keysExemptFromAutoVariableReplacement?: Array<keyof EffectModel>;
 };
 
+export type EffectInstance<EffectModel = unknown> = {
+    id: string;
+    type: string;
+    effectLabel?: string | null;
+    active?: boolean;
+    abortTimeout?: number | null;
+    percentWeight?: number | null;
+    outputNames?: Record<string, string>;
+} & {
+    [K in keyof EffectModel]: EffectModel[K];
+} & {
+    [x: string]: unknown;
+};
+
 export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
     definition: EffectDefinition<EffectModel>;
     optionsTemplate: string;
@@ -119,7 +136,7 @@ export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
     optionsValidator?: (effect: EffectModel, $scope: EffectScope<EffectModel>) => string[];
     getDefaultLabel?: (effect: EffectModel, ...args: any[]) => Awaitable<string | undefined>;
     onTriggerEvent: (event: {
-        effect: EffectModel;
+        effect: EffectInstance<EffectModel>;
         trigger: Trigger;
         sendDataToOverlay: (data: OverlayData, overlayInstance?: string) => void;
         outputs: Record<string, unknown>;
@@ -127,17 +144,6 @@ export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
     }) => Awaitable<void | boolean | EffectTriggerResponse>;
     overlayExtension?: OverlayExtension<OverlayData>;
 };
-
-export interface EffectInstance {
-    id: string;
-    type: string;
-    effectLabel?: string;
-    active?: boolean;
-    percentWeight?: number | null;
-    abortTimeout?: number | null;
-    outputNames?: Record<string, string>;
-    [x: string]: unknown;
-}
 
 export interface EffectList {
     id: string;

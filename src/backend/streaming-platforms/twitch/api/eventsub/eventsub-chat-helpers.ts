@@ -54,8 +54,8 @@ interface ChatBadge {
 interface HelixEmoteBase {
     id: string;
     name: string;
-    getStaticImageUrl(): string;
-    getAnimatedImageUrl(): string;
+    getStaticImageUrl(scale?: HelixEmoteScale): string;
+    getAnimatedImageUrl(scale?: HelixEmoteScale): string;
 }
 
 class TwitchEventSubChatHelpers {
@@ -222,8 +222,8 @@ class TwitchEventSubChatHelpers {
 
     private _mapCachedEmotesForFrontend(emoteList: HelixEmoteBase[]) {
         return emoteList.map(e => ({
-            url: e.getStaticImageUrl(),
-            animatedUrl: e.getAnimatedImageUrl(),
+            url: e.getStaticImageUrl("3.0"),
+            animatedUrl: e.getAnimatedImageUrl("3.0"),
             origin: "Twitch",
             code: e.name
         }));
@@ -233,7 +233,7 @@ class TwitchEventSubChatHelpers {
         part: EventSubChatMessageEmotePart,
         format: HelixEmoteFormat = "static",
         themeMode: HelixEmoteThemeMode = "dark",
-        scale: HelixEmoteScale = "1.0"
+        scale: HelixEmoteScale = "3.0"
     ): string {
         return `https://static-cdn.jtvnw.net/emoticons/v2/${part.emote.id}/${format}/${themeMode}/${scale}`;
     }
@@ -536,7 +536,9 @@ class TwitchEventSubChatHelpers {
     }
 
     private async buildBaseChatMessage(
-        event: EventSubChannelChatMessageEvent | EventSubChannelChatNotificationEvent
+        event:
+            | EventSubChannelChatMessageEvent
+            | EventSubChannelChatNotificationEvent
     ): Promise<FirebotChatMessage> {
         const { streamer, bot } = AccountAccess.getAccounts();
 
