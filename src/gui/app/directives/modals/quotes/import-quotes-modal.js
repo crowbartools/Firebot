@@ -11,7 +11,7 @@
                 <div class="modal-body pb-0">
                     <div ng-hide="$ctrl.quotes">
                         <h4>Import from</h5>
-                        <p class="muted mb-12">Currently only quotes from Streamlabs Chatbot (desktop bot) and Mix It Up can be imported.</p>
+                        <p class="muted mb-12">Currently only quotes from Streamlabs Chatbot (desktop bot), Mix It Up and Firebot can be imported.</p>
 
                         <h4>Choose file</h4>
                         <p class="muted mb-2">To get the export file in Streamlabs Chatbot, go to Connections -> Cloud -> Create Split Excel and find the file called Quotes.xlsx.</p>
@@ -19,7 +19,7 @@
                         <file-chooser
                             model="$ctrl.importFilePath"
                             on-update="$ctrl.onFileSelected(filepath)"
-                            options="{filters: [ {name: 'Microsoft Excel', extensions: '.xlsx'}, {name: 'Text File', extensions: '.txt'} ]}"
+                            options="{filters: [ {name: 'Microsoft Excel', extensions: '.xlsx'}, {name: 'Text File', extensions: '.txt'}, {name: 'CSV File', extensions: '.csv'} ]}"
                             hide-manual-edit="true"
                         >
                         </file-chooser>
@@ -72,6 +72,18 @@
                         cellTemplate: `{{data.text}}`
                     },
                     {
+                        name: "AUTHOR",
+                        icon: "fa-user",
+                        dataField: "originator",
+                        headerStyles: {
+                            'padding': '0px 15px'
+                        },
+                        cellStyles: {
+                            'padding': '0px 15px'
+                        },
+                        cellTemplate: `{{data.originator}}`
+                    },
+                    {
                         name: "DATE",
                         icon: "fa-calendar",
                         dataField: "date",
@@ -105,6 +117,8 @@
                         data = await importService.loadQuotes("streamlabs-chatbot", filepath);
                     } else if (fileType === "txt") {
                         data = await importService.loadQuotes("mixitup", filepath);
+                    } else if (fileType === "csv") {
+                        data = await importService.loadQuotes("firebot", filepath);
                     }
                     if (data && data.quotes) {
                         $ctrl.quotes = data.quotes;

@@ -15,6 +15,7 @@ import logger from "../logwrapper";
 
 import { StreamlabsChatbotImporter } from "./third-party/streamlabs-chatbot-importer";
 import { MixItUpImporter } from "./third-party/mix-it-up-importer";
+import { FirebotImporter } from "./third-party/firebot-importer";
 
 class ImportManager {
     private _registeredImporters: Record<string, ThirdPartyImporter> = {};
@@ -40,6 +41,7 @@ class ImportManager {
     registerDefaultImporters(): void {
         this.registerImporter(StreamlabsChatbotImporter);
         this.registerImporter(MixItUpImporter);
+        this.registerImporter(FirebotImporter);
     }
 
     registerImporter(importer: ThirdPartyImporter): void {
