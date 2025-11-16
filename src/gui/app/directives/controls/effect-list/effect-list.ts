@@ -113,6 +113,7 @@ type ContextMenuItemScope = {
                                 href role="button"
                                 aria-label="Open effects menu"
                                 class="effects-actions-btn"
+                                style="justify-content: flex-start;"
                                 context-menu="$ctrl.allEffectsMenuOptions"
                                 context-menu-on="click"
                                 uib-tooltip="Open effects menu"
