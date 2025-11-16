@@ -41,7 +41,7 @@ type EffectListBindings = {
     weighted: boolean;
 };
 
-type ControllerExtras = {
+type Controller = {
     effectsData: EffectListWithQueue;
     effectsUpdate: () => void;
     keyboardDragIndex: number | null;
@@ -54,7 +54,6 @@ type ControllerExtras = {
     removeEffectAtIndex: (index: number) => void;
     removeAllEffects: () => void;
     openEditEffectModal: (effect: EffectInstance, index: number | null, trigger: TriggerType, isNew: boolean) => void;
-    effectContextMenuOptions: Array<unknown>;
     sortableOptions: {
         handle: string;
         'ui-floating': boolean;
@@ -73,6 +72,11 @@ type ControllerExtras = {
     copyEffects: () => void;
     moveEffectAtIndex: (fromIndex: number, toIndex: number) => void;
     handleEffectKeydown: (event: KeyboardEvent, index: number) => void;
+    getPercentChanceForEffect: (effect: EffectInstance) => string;
+    openSetTargetChancePercentageModal: (effect: EffectInstance) => void;
+    testEffects: () => void;
+    allEffectsMenuOptions: Array<unknown>;
+    effectContextMenuOptions: Array<unknown>;
 };
 
 type ContextMenuItemScope = {
@@ -84,7 +88,7 @@ type ContextMenuItemScope = {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { randomUUID } = require("crypto");
 
-    const effectList: FirebotComponent<EffectListBindings, ControllerExtras> = {
+    const effectList: FirebotComponent<EffectListBindings, Controller> = {
         bindings: {
             trigger: "@?",
             triggerMeta: "<",
@@ -959,12 +963,11 @@ type ContextMenuItemScope = {
             };
             //#endregion
 
-            function getSharedEffects(code: string) {
-                return $http.get(`https://api.crowbar.tools/v1/data-bin/${code}`)
+            function getSharedEffects(code: string): angular.IPromise<{ effects: EffectInstance[] } | null> {
+                return $http.get<{ effects: EffectInstance[] }>(`https://api.crowbar.tools/v1/data-bin/${code}`)
                     .then((resp) => {
                         if (resp.status === 200) {
-                            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-                            return JSON.parse(unescape(JSON.stringify(resp.data)));
+                            return JSON.parse(unescape(JSON.stringify(resp.data))) as { effects: EffectInstance[] };
                         }
                         return null;
                     }, () => {
