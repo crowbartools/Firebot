@@ -806,7 +806,7 @@ table.fb-table-alt {
         align-items: center;
         padding: 8px 10px;
         border-radius: 6px;
-        background-color: rgb(47 47 50);
+        background-color: $effect-item-bg;
         transition: all 0.15s ease;
 
         &.has-bottom-panel {
@@ -815,9 +815,9 @@ table.fb-table-alt {
         }
 
         &.kb-dragging {
-            box-shadow: 0 0 0 1px rgba(70, 161, 240, 0.8), 0 6px 14px rgba(0, 0, 0, 0.6);
+            box-shadow: $effect-item-drag-shadow;
             transform: translateY(-2px);
-            background-color: rgb(55 55 60);
+            background-color: $effect-item-drag-bg;
             scale: 1.02;
         }
 
@@ -837,7 +837,7 @@ table.fb-table-alt {
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #888888;
+            color: $effect-drag-handle-color;
             cursor: move;
             flex-shrink: 0;
             margin-right: 10px;
@@ -854,8 +854,8 @@ table.fb-table-alt {
             align-items: center;
             justify-content: center;
             border-radius: 6px;
-            background-color: var(--effect-icon-bg-color, rgb(70 70 77));
-            color: var(--effect-icon-color, #f7f7f7);
+            background-color: var(--effect-icon-bg-color, $effect-icon-bg);
+            color: var(--effect-icon-color, $effect-icon-color);
             margin-right: 10px;
             flex-shrink: 0;
             i {
@@ -869,24 +869,24 @@ table.fb-table-alt {
             justify-content: center;
             padding: 7px;
             border-radius: 6px;
-            background-color: rgb(70 70 77);
+            background-color: $effect-button-bg;
             border: none;
             i {
                 font-size: 12px;
-                color: #cdcdcd;
+                color: $effect-button-icon-color;
             }
             &:hover {
-                background-color: rgb(90 90 97);
+                background-color: $effect-button-hover-bg;
                 i {
-                    color: white;
+                    color: $effect-button-icon-hover-color;
                 }
             }
         }
 
         .effect-timeout-btn {
             display: inline-flex;
-            background: rgb(70, 70, 77);
-            color: #cdcdcd;
+            background: $effect-button-bg;
+            color: $effect-button-icon-color;
             font-size: 12px;
             padding: 4px 7px;
             height: 26px;
@@ -900,7 +900,7 @@ table.fb-table-alt {
 
     .effect-weight-panel {
         height: 40px;
-        background: rgb(63 63 66);
+        background: $effect-weight-panel-bg;
         border-bottom-right-radius: 6px;
         border-bottom-left-radius: 6px;
         padding: 0 15px;
@@ -916,9 +916,9 @@ table.fb-table-alt {
         gap: 8px;
         padding: 10px 12px;
         border-radius: 6px;
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px dashed rgba(255, 255, 255, 0.15);
-        color: #e5e5e5;
+        background: $effect-add-btn-bg;
+        border: 1px dashed $effect-add-btn-border;
+        color: $effect-add-btn-text-color;
         font-size: 13px;
         font-weight: 500;
         cursor: pointer;
@@ -926,8 +926,8 @@ table.fb-table-alt {
         transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
 
         &:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.25);
+            background: $effect-add-btn-hover-bg;
+            border-color: $effect-add-btn-hover-border;
         }
 
         &:focus-visible {
@@ -942,7 +942,7 @@ table.fb-table-alt {
             width: 22px;
             height: 22px;
             border-radius: 999px;
-            background: rgba(255, 255, 255, 0.06);
+            background: $effect-add-btn-icon-bg;
             i {
                 font-size: 11px;
             }
@@ -959,7 +959,7 @@ table.fb-table-alt {
     margin-bottom: 15px;
     overflow: hidden;
     transition: all 0.3s ease;
-    border-bottom: 1px solid #2f3136;
+    border-bottom: 1px solid $queue-panel-border;
 
     .queue-panel-header {
         display: flex;
@@ -972,7 +972,7 @@ table.fb-table-alt {
         transition: background 0.2s ease;
 
         &:hover {
-            background: rgba(255, 255, 255, 0.03);
+            background: $queue-panel-hover-bg;
         }
 
         &:focus-visible {
@@ -986,11 +986,11 @@ table.fb-table-alt {
             gap: 8px;
             font-size: 13px;
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.9);
+            color: $queue-panel-text-color;
 
             i {
                 font-size: 14px;
-                opacity: 0.8;
+                opacity: $queue-panel-icon-opacity;
             }
 
             tooltip {
@@ -1014,10 +1014,10 @@ table.fb-table-alt {
                     align-items: center;
                     gap: 6px;
                     padding: 4px 10px;
-                    background: rgba(0, 0, 0, 0.2);
+                    background: $queue-panel-preview-bg;
                     border-radius: 4px;
                     font-size: 11px;
-                    color: rgba(255, 255, 255, 0.75);
+                    color: $queue-panel-preview-text;
 
                     i {
                         font-size: 10px;
@@ -1028,7 +1028,7 @@ table.fb-table-alt {
 
             .queue-panel-chevron {
                 font-size: 11px;
-                color: rgba(255, 255, 255, 0.5);
+                color: $queue-panel-chevron-color;
                 transition: transform 0.3s ease;
             }
         }
@@ -1056,7 +1056,7 @@ table.fb-table-alt {
 
     .queue-panel-control {
         padding: 14px 0;
-        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        border-top: 1px solid $queue-control-border;
 
         display: flex;
         justify-content: space-between;
@@ -1070,7 +1070,7 @@ table.fb-table-alt {
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            color: rgba(255, 255, 255, 0.75);
+            color: $queue-control-label-color;
 
             i {
                 font-size: 12px;
@@ -1092,10 +1092,10 @@ table.fb-table-alt {
                 justify-content: space-between;
                 gap: 10px;
                 padding: 10px 14px;
-                background: rgba(0, 0, 0, 0.25);
+                background: $queue-duration-btn-bg;
                 border: none;
                 border-radius: 6px;
-                color: #e5e5e5;
+                color: $queue-duration-btn-text;
                 font-size: 13px;
                 font-weight: 500;
                 cursor: pointer;
@@ -1105,7 +1105,7 @@ table.fb-table-alt {
                     flex: 1;
                     font-weight: 600;
                     font-size: 14px;
-                    color: white;
+                    color: $queue-duration-value-color;
                     text-align: left;
                 }
 
@@ -1116,7 +1116,7 @@ table.fb-table-alt {
                 }
 
                 &:hover {
-                    background: rgba(0, 0, 0, 0.35);
+                    background: $queue-duration-btn-hover-bg;
                     border-color: rgba(255, 255, 255, 0.18);
                     i.fa-edit {
                         opacity: 0.8;
