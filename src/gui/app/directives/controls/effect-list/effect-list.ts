@@ -173,8 +173,11 @@ type ContextMenuItemScope = {
                                     <i ng-class="$ctrl.getEffectIconById(effect.type)"></i>
                                 </div>
                                 <div class="pr-4 flex flex-col justify-center" style="text-overflow: ellipsis;overflow: hidden;flex-grow: 1;">
-                                    <div class="effect-name truncate">
-                                        {{$ctrl.getEffectNameById(effect.type)}}
+                                    <div class="flex items-center">
+                                        <div class="effect-name truncate">
+                                            {{$ctrl.getEffectNameById(effect.type)}}
+                                        </div>
+                                        <span ng-if="!effect.active" class="effect-disabled-label">Disabled</span>
                                     </div>
                                     <div ng-if="$ctrl.getEffectLabel(effect)" class="muted truncate" style="font-size: 12px;">{{$ctrl.getEffectLabel(effect)}}</div>
                                 </div>
