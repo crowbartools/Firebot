@@ -13,6 +13,8 @@
     background: $effect-dialog-bg;
     border-top: 2px solid $light-background-border;
     padding: 20px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
 }
 
 .select-effect-search {

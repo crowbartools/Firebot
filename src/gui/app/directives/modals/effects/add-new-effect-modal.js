@@ -46,7 +46,7 @@ const { EffectCategory } = require("../../shared/effect-constants");
                     </div>
                 </div>
             </div>
-            <div class="select-effect-footer">
+            <div class="sticky-bottom-element select-effect-footer">
                 <div>
                     <div style="font-size: 12px;font-weight: 600;" class="muted">SELECTED EFFECT:</div>
                     <div style="font-size: 20px;font-weight: 100;">{{$ctrl.selectedEffectDef ? $ctrl.selectedEffectDef.name : "None"}}</div>
@@ -56,6 +56,7 @@ const { EffectCategory } = require("../../shared/effect-constants");
                     <button type="button" class="btn btn-primary" ng-click="$ctrl.save()" ng-disabled="$ctrl.selectedEffectDef == null">Select</button>
                 </div>
             </div>
+            <scroll-sentinel element-class="select-effect-footer"></scroll-sentinel>
             `,
         bindings: {
             resolve: "<",
