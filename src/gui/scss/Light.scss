@@ -122,29 +122,28 @@ $sys-cmd-expanded-shadow: 3px 3px 5px -2px #dedede;
 
 $integration-row-bg: $light-background-color;
 
+/* controls */
+$primary-button-bg: #16809c;
+$primary-button-hover-bg: #1f849e;
+$link-button-color: #12d0ff;
+$link-button-hover-color: #11add4;
+
 /* Settings Page */
 $settings-sidebar-bg: #ffffff;
 $settings-category-selected-bg: #ededed;
 $settings-category-hover-bg: #ebeaea;
 
 /* effect & variable choosers */
-$effect-category-bg: #dcdcdc;
+$effect-category-bg: $light-background-color;
 $effect-category-hover-bg: #f4f4f4;
 $effect-category-selected-bg: #f8f8f8;
-$effect-def-bg: #edebe8;
+$effect-def-bg: #ffffff;
 $effect-def-hover-bg: #c6c4c0;
 $effect-def-selected-border: #89857e;
 $effect-def-selected-check: #10a010;
-$effect-dialog-bg: $light-background-color;
 $variable-category-bg: #d5d4d1;
 $variable-magic-tooltip-fg: #31708f;
 $variable-menu-bg: #e9e8e8;
-
-/* controls */
-$primary-button-bg: #16809c;
-$primary-button-hover-bg: #1f849e;
-$link-button-color: #12d0ff;
-$link-button-hover-color: #11add4;
 
 /* effect-list */
 $effect-item-bg: #ffffff;

@@ -60,8 +60,7 @@ type Controller = {
         stop: () => void;
     };
     getEffectNameById: (id: string) => string;
-    getEffectIconById: (id: string) => string;
-    getEffectIconStyle: (id: string) => { [key: string]: string };
+    getEffectDefinitionById: (id: string) => EffectDefinition | undefined;
     isCommentEffect: (effect: EffectInstance) => boolean;
     isNoOpEffect: (effect: EffectInstance) => boolean;
     editLabelForEffectAtIndex: (index: number) => void;
@@ -168,12 +167,10 @@ type ContextMenuItemScope = {
                                     tabindex="0"
                                     ng-keydown="$ctrl.handleEffectKeydown($event, $index)"
                                 >
-                                <div class="effect-drag-handle dragHandle">
+                                                                <div class="effect-drag-handle dragHandle">
                                     <i class="fas fa-grip-vertical"></i>
                                 </div>
-                                <div class="effect-icon" ng-style="$ctrl.getEffectIconStyle(effect.type)">
-                                    <i ng-class="$ctrl.getEffectIconById(effect.type)"></i>
-                                </div>
+                                <effect-icon effect-id="effect.type" effect-definition="$ctrl.getEffectDefinitionById(effect.type)"></effect-icon>
                                 <div class="pr-4 flex flex-col justify-center" style="text-overflow: ellipsis;overflow: hidden;flex-grow: 1;">
                                     <div class="flex items-center">
                                         <div class="effect-name truncate">
@@ -393,58 +390,12 @@ type ContextMenuItemScope = {
                 return effectTypes.find(e => e.definition.id === id)?.definition?.name ?? `Unknown Effect: ${id}`;
             };
 
-            $ctrl.getEffectIconById = (id: string) => {
+            $ctrl.getEffectDefinitionById = (id: string) => {
                 if (!effectTypes || effectTypes.length < 1) {
-                    return "";
+                    return undefined;
                 }
 
-                return (
-                    effectTypes.find(e => e.definition.id === id)?.definition?.icon?.replace("fad", "fas") ??
-                    `fas fa-exclamation-triangle`
-                );
-            };
-
-            $ctrl.getEffectIconStyle = (id: string) => {
-                const effectDef = effectTypes.find(e => e.definition.id === id)?.definition;
-                const categories = effectDef?.categories ?? [];
-
-                let color: string | undefined = undefined;
-                if (id === "firebot:comment") {
-                    color = "#f4d03f";
-                } else if (categories.includes("Moderation")) {
-                    color = "#ef4444";
-                } else if (categories.includes("chat based")) {
-                    color = "#60A5FA";
-                } else if (categories.includes("twitch")) {
-                    color = "#ab73ff";
-                } else if (categories.includes("overlay")) {
-                    color = "#F472B6";
-                } else if (categories.includes("scripting")) {
-                    color = "#FACC15";
-                } else if (categories.includes("fun")) {
-                    color = "#4ADE80";
-                } else if (categories.includes("integrations")) {
-                    color = "#00ffd8";
-                } else if (categories.includes("advanced")) {
-                    color = undefined;
-                }
-
-                if (!color) {
-                    return {};
-                }
-
-                // Convert hex color to rgba with 0.1 alpha for background
-                const hexToRgba = (hex: string) => {
-                    const r = parseInt(hex.slice(1, 3), 16);
-                    const g = parseInt(hex.slice(3, 5), 16);
-                    const b = parseInt(hex.slice(5, 7), 16);
-                    return `rgba(${r}, ${g}, ${b}, 0.1)`;
-                };
-
-                return {
-                    "--effect-icon-color": color,
-                    "--effect-icon-bg-color": hexToRgba(color)
-                };
+                return effectTypes.find(e => e.definition.id === id)?.definition;
             };
 
             $ctrl.isCommentEffect = (effect: EffectInstance) => {

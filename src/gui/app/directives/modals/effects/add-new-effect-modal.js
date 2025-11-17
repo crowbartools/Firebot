@@ -30,11 +30,9 @@ const { EffectCategory } = require("../../shared/effect-constants");
                             </div>
                         </div>
                     </div>
-                    <div style="width: 100%;height: 100%;overflow-y: scroll;padding: 15px 15px 0;">
+                    <div class="select-effect-list-container">
                         <div class="select-effect-def" ng-repeat="effect in $ctrl.effectDefs | effectCategoryFilter:$ctrl.activeCategory | filter:$ctrl.effectSearch track by effect.id" ng-click="$ctrl.selectedEffectDef = effect" ng-class="{'selected': $ctrl.selectedEffectDef === effect}">
-                            <div class="select-effect-icon-wrapper">
-                                <i ng-class="effect.icon"></i>
-                            </div>
+                            <effect-icon effect-id="effect.id" effect-definition="effect"></effect-icon>
                             <div style="width: 100%;">
                                 <div>{{effect.name}}</div>
                                 <div class="muted" style="font-size: 13px;">{{effect.description}}</div>
