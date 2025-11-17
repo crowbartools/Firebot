@@ -62,6 +62,8 @@ type Controller = {
     getEffectNameById: (id: string) => string;
     getEffectIconById: (id: string) => string;
     getEffectIconStyle: (id: string) => { [key: string]: string };
+    isCommentEffect: (effect: EffectInstance) => boolean;
+    isNoOpEffect: (effect: EffectInstance) => boolean;
     editLabelForEffectAtIndex: (index: number) => void;
     editTimeoutForEffectAtIndex: (index: number) => void;
     duplicateEffectAtIndex: (index: number) => void;
@@ -162,7 +164,7 @@ type ContextMenuItemScope = {
 
                                 <div
                                     class="effect-item"
-                                    ng-class="{'disabled': !effect.active, 'kb-dragging': $ctrl.keyboardDragIndex === $index, 'has-bottom-panel': $ctrl.showBottomPanel(effect)}"
+                                    ng-class="{'disabled': !effect.active, 'kb-dragging': $ctrl.keyboardDragIndex === $index, 'has-bottom-panel': $ctrl.showBottomPanel(effect), 'comment': $ctrl.isCommentEffect(effect)}"
                                     tabindex="0"
                                     ng-keydown="$ctrl.handleEffectKeydown($event, $index)"
                                 >
@@ -224,20 +226,26 @@ type ContextMenuItemScope = {
                                 </span>
                             </div>
 
-                            <div ng-if="!!$ctrl.getEffectNameById(effect.type) && $ctrl.showBottomPanel(effect)" class="effect-weight-panel">
-                                <div class="volume-slider-wrapper small-slider" style="flex-grow: 1">
-                                    <i class="fas fa-balance-scale-left mr-5" uib-tooltip="Weight"></i>
-                                    <rzslider rz-slider-model="effect.percentWeight" rz-slider-options="{floor: 0.0001, ceil: 1.0, step: 0.0001, precision: 4, hideLimitLabels: true, hidePointerLabels: true, showSelectionBar: true}"></rzslider>
+                            <div ng-if="!!$ctrl.getEffectNameById(effect.type) && $ctrl.showBottomPanel(effect)" class="effect-bottom-panel" ng-class="{'comment': $ctrl.isCommentEffect(effect)}">
+                                <!-- Weighted Effect Panel -->
+                                <div ng-if="!$ctrl.isCommentEffect(effect)" class="flex items-center" style="width: 100%;">
+                                    <div class="volume-slider-wrapper small-slider" style="flex-grow: 1">
+                                        <i class="fas fa-balance-scale-left mr-5" uib-tooltip="Weight"></i>
+                                        <rzslider rz-slider-model="effect.percentWeight" rz-slider-options="{floor: 0.0001, ceil: 1.0, step: 0.0001, precision: 4, hideLimitLabels: true, hidePointerLabels: true, showSelectionBar: true}"></rzslider>
+                                    </div>
+                                    <div class="ml-5 mr-5" style="width: 1px;height: 70%;background: rgb(255 255 255 / 25%);border-radius: 2px;flex-grow: 0; flex-shrink: 0;"></div>
+                                    <div>
+                                        <span uib-tooltip="Calculated Chance">
+                                            <i class="fas fa-dice mr-2"></i>
+                                            <span style="font-family: monospace; width: 60px; display: inline-block; text-align: end;">{{$ctrl.getPercentChanceForEffect(effect)}}%</span>
+                                        </span>
+                                        <i class="fas fa-edit ml-2 muted" uib-tooltip="Set target percentage" tooltip-append-to-body="true" ng-click="$ctrl.openSetTargetChancePercentageModal(effect)"></i>
+                                    </div>
                                 </div>
-                                <div class="ml-5 mr-5" style="width: 1px;height: 70%;background: rgb(255 255 255 / 25%);border-radius: 2px;flex-grow: 0; flex-shrink: 0;"></div>
-                                <div>
-                                    <span uib-tooltip="Calculated Chance">
-                                        <i class="fas fa-dice mr-2"></i>
-                                        <span style="font-family: monospace; width: 60px; display: inline-block; text-align: end;">{{$ctrl.getPercentChanceForEffect(effect)}}%</span>
-                                    </span>
-                                    <i class="fas fa-edit ml-2 muted" uib-tooltip="Set target percentage" tooltip-append-to-body="true" ng-click="$ctrl.openSetTargetChancePercentageModal(effect)"></i>
+                                <!-- Comment Effect Panel -->
+                                <div ng-if="effect.effectComment">
+                                    {{effect.effectComment || 'No comment provided'}}
                                 </div>
-                            </div>
                             </div>
 
                             <div ng-if="($ctrl.mode === 'single-random' || $ctrl.mode === 'single-sequential') && !$last" class="effect-divider" ng-class="{'is-dragging': $ctrl.keyboardDragIndex != null}"></div>
@@ -397,10 +405,13 @@ type ContextMenuItemScope = {
             };
 
             $ctrl.getEffectIconStyle = (id: string) => {
-                const categories = effectTypes.find(e => e.definition.id === id)?.definition?.categories ?? [];
+                const effectDef = effectTypes.find(e => e.definition.id === id)?.definition;
+                const categories = effectDef?.categories ?? [];
 
                 let color: string | undefined = undefined;
-                if (categories.includes("Moderation")) {
+                if (id === "firebot:comment") {
+                    color = "#f4d03f";
+                } else if (categories.includes("Moderation")) {
                     color = "#ef4444";
                 } else if (categories.includes("chat based")) {
                     color = "#60A5FA";
@@ -435,11 +446,21 @@ type ContextMenuItemScope = {
                     "--effect-icon-bg-color": hexToRgba(color)
                 };
             };
+
+            $ctrl.isCommentEffect = (effect: EffectInstance) => {
+                return effect.type === "firebot:comment";
+            };
             //#endregion
 
             //#region Weighted Effects
+
+            $ctrl.isNoOpEffect = (effect: EffectInstance) => {
+                const effectType = effectTypes.find(e => e.definition.id === effect.type);
+                return effectType?.definition?.isNoOp === true;
+            };
+
             $ctrl.showBottomPanel = (effect: EffectInstance) => {
-                return $ctrl.weighted && effect?.active;
+                return ($ctrl.weighted && effect?.active) || $ctrl.isCommentEffect(effect);
             };
 
             function ensureDefaultWeights(reset = false) {
@@ -456,7 +477,7 @@ type ContextMenuItemScope = {
                 ensureDefaultWeights();
                 const sumOfAllWeights = $ctrl
                     .effectsData.list
-                    .filter(e => e.active)
+                    .filter(e => e.active && !$ctrl.isNoOpEffect(e))
                     .reduce((acc, e) => acc + (e.percentWeight ?? 0.5), 0);
                 return sumOfAllWeights;
             };

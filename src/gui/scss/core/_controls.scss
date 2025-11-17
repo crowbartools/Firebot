@@ -840,6 +840,10 @@ table.fb-table-alt {
             outline-style: solid;
         }
 
+        &.comment {
+            background-color: $effect-comment-bg;
+        }
+
         .effect-drag-handle {
             width: 10px;
             height: 30px;
@@ -921,14 +925,20 @@ table.fb-table-alt {
         }
     }
 
-    .effect-weight-panel {
+    .effect-bottom-panel {
         height: 40px;
-        background: $effect-weight-panel-bg;
+        background: $effect-bottom-panel-bg;
         border-bottom-right-radius: 6px;
         border-bottom-left-radius: 6px;
         padding: 0 15px;
         display: flex;
         align-items: center;
+
+        &.comment {
+            height: auto;
+            background: $effect-comment-bg;
+            padding: 0px 15px 8px;
+        }
     }
 
     .effect-list-container {

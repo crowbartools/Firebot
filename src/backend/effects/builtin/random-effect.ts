@@ -1,6 +1,7 @@
 import type { EffectList, EffectType } from "../../../types/effects";
 
 import effectRunner from "../../common/effect-runner";
+import { EffectManager } from "../effect-manager";
 import logger from "../../logwrapper";
 import { getRandomInt, shuffleArray, containsAll } from "../../utils";
 
@@ -77,7 +78,13 @@ const effect: EffectType<{
             return true;
         }
 
-        const enabledEffectList = effectList.list.filter(e => (e.active == null || !!e.active));
+        const enabledEffectList = effectList.list.filter(e => {
+            if (e.active != null && !e.active) {
+                return false;
+            }
+            const effectType = EffectManager.getEffectById(e.type);
+            return effectType?.definition?.isNoOp !== true;
+        });
         if (!enabledEffectList.length) {
             return true;
         }

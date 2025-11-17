@@ -96,7 +96,6 @@ export type EffectDefinition<EffectModel = unknown> = {
     name: string;
     description: string;
     icon: string;
-    color?: string;
     categories: EffectCategory[];
     hidden?: boolean | Func<boolean>;
     triggers?: TriggerType[] | TriggersObject;
@@ -112,12 +111,18 @@ export type EffectDefinition<EffectModel = unknown> = {
          * This is useful when you want to run variable replacement manually, or not at all.
          */
     keysExemptFromAutoVariableReplacement?: Array<keyof EffectModel>;
+    /**
+     * If true, this effect does nothing when triggered (ex Comment effect)
+     * No-op effects are ignored by the random and sequential effects
+     */
+    isNoOp?: boolean;
 };
 
 export type EffectInstance<EffectModel = unknown> = {
     id: string;
     type: string;
     effectLabel?: string | null;
+    effectComment?: string | null;
     active?: boolean;
     abortTimeout?: number | null;
     percentWeight?: number | null;

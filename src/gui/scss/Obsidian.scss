@@ -156,7 +156,7 @@ $effect-button-bg: #46464d;
 $effect-button-hover-bg: #5a5a61;
 $effect-button-icon-color: #cdcdcd;
 $effect-button-icon-hover-color: #ffffff;
-$effect-weight-panel-bg: #3f3f42;
+$effect-bottom-panel-bg: #3f3f42;
 $effect-add-btn-bg: rgba(255, 255, 255, 0.04);
 $effect-add-btn-border: rgba(255, 255, 255, 0.15);
 $effect-add-btn-hover-bg: rgba(255, 255, 255, 0.08);
@@ -176,6 +176,7 @@ $queue-duration-btn-bg: rgba(0, 0, 0, 0.25);
 $queue-duration-btn-hover-bg: rgba(0, 0, 0, 0.35);
 $queue-duration-btn-text: #e5e5e5;
 $queue-duration-value-color: #ffffff;
+$effect-comment-bg: #302E25;
 
 // Import Core Styles
 @import './core/$importer';
