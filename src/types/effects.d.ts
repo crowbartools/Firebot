@@ -153,7 +153,9 @@ export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
 export interface EffectList {
     id: string;
     list: EffectInstance[];
-    queue?: string;
+    queue?: string | null;
+    queuePriority?: "high" | "none";
+    queueDuration?: number;
 }
 
 export type PresetEffectList = {

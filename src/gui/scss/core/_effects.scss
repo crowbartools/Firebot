@@ -40,13 +40,6 @@
             border-bottom-right-radius: 0;
         }
 
-        &.kb-dragging {
-            box-shadow: $effect-item-drag-shadow;
-            transform: translateY(-2px);
-            background-color: $effect-item-drag-bg;
-            scale: 1.02;
-        }
-
         &.disabled {
             background-color: color-mix(in srgb, $effect-item-bg 80%, black);
             outline: $effect-item-bg;
@@ -58,12 +51,6 @@
             .effect-drag-handle {
                 opacity: 0.5 !important;
             }
-        }
-
-        &:focus-visible {
-            outline: lighten($primary-button-bg, 25%);
-            outline-width: 2px;
-            outline-style: solid;
         }
 
         &.comment {
@@ -154,6 +141,23 @@
     .effect-list-container {
         position: relative;
 
+        .effect-list-item {
+            border-radius: 6px;
+            transition: all 0.15s ease;
+
+            &:focus-visible {
+                outline: lighten($primary-button-bg, 25%);
+                outline-width: 2px;
+                outline-style: solid;
+            }
+            &.kb-dragging {
+                box-shadow: $effect-item-drag-shadow;
+                transform: translateY(-2px);
+                background-color: $effect-item-drag-bg;
+                scale: 1.02;
+            }
+        }
+
         &.show-connectors {
             .effect-list-item {
                 position: relative;
@@ -178,7 +182,7 @@
             }
 
             // Hide connectors on the item being keyboard-dragged
-            .effect-item.kb-dragging {
+            .effect-list-item.kb-dragging {
                 &::before,
                 &::after {
                     display: none;

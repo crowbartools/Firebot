@@ -18,13 +18,7 @@ import type {
     PresetEffectListsService
 } from "../../../../../types";
 
-type EffectListWithQueue = EffectList & {
-    queue?: string | null;
-    queuePriority?: "high" | "none";
-    queueDuration?: number;
-};
-
-type EffectListBindings = {
+type Bindings = {
     trigger?: TriggerType;
     triggerMeta: {
         rootEffects?: EffectList;
@@ -42,7 +36,7 @@ type EffectListBindings = {
 };
 
 type Controller = {
-    effectsData: EffectListWithQueue;
+    effectsData: EffectList;
     effectsUpdate: () => void;
     keyboardDragIndex: number | null;
     keyboardDragEffectId: string | null;
@@ -89,7 +83,7 @@ type ContextMenuItemScope = {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { randomUUID } = require("crypto");
 
-    const effectList: FirebotComponent<EffectListBindings, Controller> = {
+    const effectList: FirebotComponent<Bindings, Controller> = {
         bindings: {
             trigger: "@?",
             triggerMeta: "<",
@@ -158,94 +152,95 @@ type ContextMenuItemScope = {
                             <div
                                 context-menu="$ctrl.effectContextMenuOptions"
                                 class="effect-list-item"
-                                ng-class="{'is-first': $index === 0, 'is-last': $index === $ctrl.effectsData.list.length - 1}"
+                                ng-class="{'is-first': $index === 0, 'is-last': $index === $ctrl.effectsData.list.length - 1, 'kb-dragging': $ctrl.keyboardDragIndex === $index }"
+                                tabindex="0"
+                                ng-keydown="$ctrl.handleEffectKeydown($event, $index)"
                             >
 
                                 <div
                                     class="effect-item"
-                                    ng-class="{'disabled': !effect.active, 'kb-dragging': $ctrl.keyboardDragIndex === $index, 'has-bottom-panel': $ctrl.showBottomPanel(effect), 'comment': $ctrl.isCommentEffect(effect)}"
-                                    tabindex="0"
-                                    ng-keydown="$ctrl.handleEffectKeydown($event, $index)"
+                                    ng-class="{'disabled': !effect.active, 'has-bottom-panel': $ctrl.showBottomPanel(effect), 'comment': $ctrl.isCommentEffect(effect)}"
                                 >
-                                                                <div class="effect-drag-handle dragHandle">
-                                    <i class="fas fa-grip-vertical"></i>
-                                </div>
-                                <effect-icon effect-id="effect.type" effect-definition="$ctrl.getEffectDefinitionById(effect.type)"></effect-icon>
-                                <div class="pr-4 flex flex-col justify-center" style="text-overflow: ellipsis;overflow: hidden;flex-grow: 1;">
-                                    <div class="flex items-center">
-                                        <div class="effect-name truncate">
-                                            {{$ctrl.getEffectNameById(effect.type)}}
+                                    <div class="effect-drag-handle dragHandle">
+                                        <i class="fas fa-grip-vertical"></i>
+                                    </div>
+                                    <effect-icon effect-id="effect.type" effect-definition="$ctrl.getEffectDefinitionById(effect.type)"></effect-icon>
+                                    <div class="pr-4 flex flex-col justify-center" style="text-overflow: ellipsis;overflow: hidden;flex-grow: 1;">
+                                        <div class="flex items-center">
+                                            <div class="effect-name truncate">
+                                                {{$ctrl.getEffectNameById(effect.type)}}
+                                            </div>
+                                            <span ng-if="!effect.active" class="effect-disabled-label">Disabled</span>
                                         </div>
-                                        <span ng-if="!effect.active" class="effect-disabled-label">Disabled</span>
+                                        <div ng-if="$ctrl.getEffectLabel(effect)" class="muted truncate" style="font-size: 12px;">{{$ctrl.getEffectLabel(effect)}}</div>
                                     </div>
-                                    <div ng-if="$ctrl.getEffectLabel(effect)" class="muted truncate" style="font-size: 12px;">{{$ctrl.getEffectLabel(effect)}}</div>
-                                </div>
-                                <span class="flex-row-center" style="flex-shrink: 0;">
-                                    <button
-                                        ng-if="effect.abortTimeout && effect.abortTimeout > 0"
-                                        uib-tooltip="Abort Timeout"
-                                        tooltip-append-to-body="true"
-                                        class="effect-timeout-btn mr-5"
-                                        aria-label="Effect Abort Timeout: {{effect.abortTimeout}} seconds"
-                                        role="button"
-                                        ng-click="$ctrl.editTimeoutForEffectAtIndex($index)"
-                                    >
-                                        <i class="fas fa-stopwatch" aria-hidden="true"></i>
-                                        <div class="ml-1">{{effect.abortTimeout}}s</div>
-                                    </button>
-                                    <button
-                                        class="effect-edit-btn"
-                                        ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger, false)"
-                                        aria-label="Edit Effect"
-                                        uib-tooltip="Edit Effect"
-                                        tooltip-append-to-body="true"
-                                    >
-                                        <i class="fas fa-pen"></i>
-                                    </button>
-                                    <div
-                                        class="flex items-center justify-center"
-                                        style="font-size: 20px;height: 38px;width: 35px;text-align: center;"
-                                    >
-                                        <a
-                                            href
-                                            class="effects-actions-btn"
-                                            aria-label="Open effect menu"
-                                            uib-tooltip="Open effect menu"
+                                    <span class="flex-row-center" style="flex-shrink: 0;">
+                                        <button
+                                            ng-if="effect.abortTimeout && effect.abortTimeout > 0"
+                                            uib-tooltip="Abort Timeout"
                                             tooltip-append-to-body="true"
+                                            class="effect-timeout-btn mr-5"
+                                            aria-label="Effect Abort Timeout: {{effect.abortTimeout}} seconds"
                                             role="button"
-                                            context-menu="$ctrl.effectContextMenuOptions"
-                                            context-menu-on="click"
-                                            context-menu-orientation="top"
+                                            ng-click="$ctrl.editTimeoutForEffectAtIndex($index)"
                                         >
-                                            <i class="fal fa-ellipsis-v"></i>
-                                        </a>
-                                    </div>
-                                </span>
-                            </div>
+                                            <i class="fas fa-stopwatch" aria-hidden="true"></i>
+                                            <div class="ml-1">{{effect.abortTimeout}}s</div>
+                                        </button>
+                                        <button
+                                            class="effect-edit-btn"
+                                            ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger, false)"
+                                            aria-label="Edit Effect"
+                                            uib-tooltip="Edit Effect"
+                                            tooltip-append-to-body="true"
+                                        >
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+                                        <div
+                                            class="flex items-center justify-center"
+                                            style="font-size: 20px;height: 38px;width: 35px;text-align: center;"
+                                        >
+                                            <a
+                                                href
+                                                class="effects-actions-btn"
+                                                aria-label="Open effect menu"
+                                                uib-tooltip="Open effect menu"
+                                                tooltip-append-to-body="true"
+                                                role="button"
+                                                context-menu="$ctrl.effectContextMenuOptions"
+                                                context-menu-on="click"
+                                                context-menu-orientation="top"
+                                            >
+                                                <i class="fal fa-ellipsis-v"></i>
+                                            </a>
+                                        </div>
+                                    </span>
+                                </div>
 
-                            <div ng-if="!!$ctrl.getEffectNameById(effect.type) && $ctrl.showBottomPanel(effect)" class="effect-bottom-panel" ng-class="{'comment': $ctrl.isCommentEffect(effect)}">
-                                <!-- Weighted Effect Panel -->
-                                <div ng-if="!$ctrl.isCommentEffect(effect)" class="flex items-center" style="width: 100%;">
-                                    <div class="volume-slider-wrapper small-slider" style="flex-grow: 1">
-                                        <i class="fas fa-balance-scale-left mr-5" uib-tooltip="Weight"></i>
-                                        <rzslider rz-slider-model="effect.percentWeight" rz-slider-options="{floor: 0.0001, ceil: 1.0, step: 0.0001, precision: 4, hideLimitLabels: true, hidePointerLabels: true, showSelectionBar: true}"></rzslider>
+                                <div ng-if="!!$ctrl.getEffectNameById(effect.type) && $ctrl.showBottomPanel(effect)" class="effect-bottom-panel" ng-class="{'comment': $ctrl.isCommentEffect(effect)}">
+                                    <!-- Weighted Effect Panel -->
+                                    <div ng-if="!$ctrl.isCommentEffect(effect)" class="flex items-center" style="width: 100%;">
+                                        <div class="volume-slider-wrapper small-slider" style="flex-grow: 1">
+                                            <i class="fas fa-balance-scale-left mr-5" uib-tooltip="Weight"></i>
+                                            <rzslider rz-slider-model="effect.percentWeight" rz-slider-options="{floor: 0.0001, ceil: 1.0, step: 0.0001, precision: 4, hideLimitLabels: true, hidePointerLabels: true, showSelectionBar: true}"></rzslider>
+                                        </div>
+                                        <div class="ml-5 mr-5" style="width: 1px;height: 70%;background: rgb(255 255 255 / 25%);border-radius: 2px;flex-grow: 0; flex-shrink: 0;"></div>
+                                        <div>
+                                            <span uib-tooltip="Calculated Chance">
+                                                <i class="fas fa-dice mr-2"></i>
+                                                <span style="font-family: monospace; width: 60px; display: inline-block; text-align: end;">{{$ctrl.getPercentChanceForEffect(effect)}}%</span>
+                                            </span>
+                                            <i class="fas fa-edit ml-2 muted" uib-tooltip="Set target percentage" tooltip-append-to-body="true" ng-click="$ctrl.openSetTargetChancePercentageModal(effect)"></i>
+                                        </div>
                                     </div>
-                                    <div class="ml-5 mr-5" style="width: 1px;height: 70%;background: rgb(255 255 255 / 25%);border-radius: 2px;flex-grow: 0; flex-shrink: 0;"></div>
-                                    <div>
-                                        <span uib-tooltip="Calculated Chance">
-                                            <i class="fas fa-dice mr-2"></i>
-                                            <span style="font-family: monospace; width: 60px; display: inline-block; text-align: end;">{{$ctrl.getPercentChanceForEffect(effect)}}%</span>
-                                        </span>
-                                        <i class="fas fa-edit ml-2 muted" uib-tooltip="Set target percentage" tooltip-append-to-body="true" ng-click="$ctrl.openSetTargetChancePercentageModal(effect)"></i>
+                                    <!-- Comment Effect Panel -->
+                                    <div ng-if="effect.effectComment">
+                                        {{effect.effectComment || 'No comment provided'}}
                                     </div>
                                 </div>
-                                <!-- Comment Effect Panel -->
-                                <div ng-if="effect.effectComment">
-                                    {{effect.effectComment || 'No comment provided'}}
-                                </div>
-                            </div>
 
-                            <div ng-if="($ctrl.mode === 'single-random' || $ctrl.mode === 'single-sequential') && !$last" class="effect-divider" ng-class="{'is-dragging': $ctrl.keyboardDragIndex != null}"></div>
+                                <div ng-if="($ctrl.mode === 'single-random' || $ctrl.mode === 'single-sequential') && !$last" class="effect-divider" ng-class="{'is-dragging': $ctrl.keyboardDragIndex != null}"></div>
+                            </div>
                         </div>
                     </div>
 
@@ -771,7 +766,7 @@ type ContextMenuItemScope = {
                 $ctrl.effectsUpdate();
 
                 setTimeout(() => {
-                    const newElement = document.querySelectorAll(".effect-item")[toIndex] as HTMLElement;
+                    const newElement = document.querySelectorAll(".effect-list-item")[toIndex] as HTMLElement;
                     newElement?.focus();
                 }, 0);
             };
@@ -811,7 +806,7 @@ type ContextMenuItemScope = {
                                     focusIndex = restoredIndex;
                                 }
                             }
-                            const originalElement = document.querySelectorAll(".effect-item")[
+                            const originalElement = document.querySelectorAll(".effect-list-item")[
                                 focusIndex
                             ] as HTMLElement;
                             originalElement?.focus();
