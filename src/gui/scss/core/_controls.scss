@@ -397,37 +397,135 @@ input:checked + .slider:before {
 /* end slider */
 
 .hotkey-capture {
-    display: inline-flex;
+    display: flex;
     align-items: center;
+
     .hotkey-display {
-        border: 2px solid #5cb85c;
+        border: 2px solid #68696c;
+        border-radius: 8px;
         height: 40px;
         display: flex;
         align-items: center;
-        min-width: 200px;
-        padding: 0 20px;
-        border-bottom-left-radius: 8px;
-        border-top-left-radius: 8px;
-        border-right: none;
-        cursor: pointer;
-        user-select: none;
-        font-weight: 900;
+        justify-content: space-between;
+        min-width: 280px;
+        padding: 0 8px 0 20px;
+        gap: 12px;
+        transition: all 0.2s ease;
+        outline: none;
+        position: relative;
+        flex-grow: 1;
+
+        .hotkey-content {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            user-select: none;
+            font-weight: 900;
+            min-width: 0;
+
+            .hotkey-value {
+                letter-spacing: 0.5px;
+            }
+        }
+
+        .hotkey-chip-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 8px;
+            border: none;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            outline: none;
+            flex-shrink: 0;
+
+            &.idle {
+                background-color: #68696c;
+                color: white;
+
+                &:hover {
+                    background-color: #7a7b7e;
+                }
+
+                &:focus {
+                    box-shadow: 0 0 0 3px rgba(104, 105, 108, 0.4);
+                }
+            }
+
+            &.recording {
+                background-color: #c9302c;
+                color: white;
+                animation: pulse-chip 1.5s ease-in-out infinite;
+
+                &:hover {
+                    background-color: #d9534f;
+                    transform: scale(1.05);
+                }
+
+                &:active {
+                    transform: scale(0.98);
+                }
+
+                &:focus {
+                    box-shadow: 0 0 0 3px rgba(201, 48, 44, 0.4);
+                }
+            }
+
+            i {
+                font-size: 10px;
+            }
+
+            span {
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
+            }
+        }
+
         &.grayscale {
             border: 2px solid #68696c;
         }
     }
-    button {
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-        &.btn-default:focus {
-            color: white !important;
-            background-color: #68696c !important;
-        }
-    }
+
     &.capturing {
         .hotkey-display {
             border-color: #c9302c;
+            background-color: rgba(201, 48, 44, 0.05);
+            animation: pulse-border 1.5s ease-in-out infinite;
+
+            &:hover {
+                background-color: rgba(201, 48, 44, 0.1);
+                border-color: #d9534f;
+            }
+
+            &:focus-within {
+                box-shadow: 0 0 0 3px rgba(201, 48, 44, 0.25);
+            }
         }
+    }
+}
+
+@keyframes pulse-border {
+    0%,
+    100% {
+        border-color: #c9302c;
+    }
+    50% {
+        border-color: #d9534f;
+    }
+}
+
+@keyframes pulse-chip {
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(201, 48, 44, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 4px rgba(201, 48, 44, 0.2);
     }
 }
 
