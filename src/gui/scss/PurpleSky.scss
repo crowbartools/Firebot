@@ -105,14 +105,21 @@ $dropdown-menu-divider-color: #5c4a76;
 
 $muted-text-color: #e6e1f1;
 
-$alert-info-text-color: #faf7ff;
-$alert-info-bg: mix($accent, #1b1327, 35%);
+$alert-info-text-color: $accent-100;
+$alert-info-bg: rgba($accent, 0.12);
+$alert-info-border: $accent-300;
 
-$alert-warning-text-color: #8a6d3b;
-$alert-warning-bg: #ffee73;
+$alert-warning-text-color: #f4d47a;
+$alert-warning-bg: rgba(255, 238, 115, 0.08);
+$alert-warning-border: #d4b85e;
 
-$alert-danger-text-color: #fff8f8;
-$alert-danger-bg: #a64a74;
+$alert-danger-text-color: #f3a3c3;
+$alert-danger-bg: rgba(166, 74, 116, 0.2);
+$alert-danger-border: #d17aa5;
+
+$alert-success-text-color: #a3f3a3;
+$alert-success-bg: rgba(144, 238, 144, 0.1);
+$alert-success-border: #7acc7a;
 
 // Tabs & tables
 $fb-tab-wrapper-bg: #342b43;

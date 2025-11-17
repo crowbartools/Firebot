@@ -91,14 +91,21 @@ $dropdown-menu-divider-color: #5a617b;
 
 $muted-text-color: #e4e4e4;
 
-$alert-info-text-color: #f9fdff;
-$alert-info-bg: #3f7d9c;
+$alert-info-text-color: #8ec9e6;
+$alert-info-bg: rgba(63, 125, 156, 0.15);
+$alert-info-border: #5a97b8;
 
-$alert-warning-text-color: #8a6d3b;
-$alert-warning-bg: #ffee73;
+$alert-warning-text-color: #f4d47a;
+$alert-warning-bg: rgba(255, 238, 115, 0.1);
+$alert-warning-border: #d4b85e;
 
-$alert-danger-text-color: #f9fdff;
-$alert-danger-bg: #ce6c6c;
+$alert-danger-text-color: #f19090;
+$alert-danger-bg: rgba(206, 108, 108, 0.15);
+$alert-danger-border: #ce6c6c;
+
+$alert-success-text-color: #90ee90;
+$alert-success-bg: rgba(144, 238, 144, 0.1);
+$alert-success-border: #7acc7a;
 
 $fb-tab-wrapper-bg: #3e4356;
 $fb-tab-wrapper-border-color: #2b3145;

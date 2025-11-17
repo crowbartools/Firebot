@@ -558,24 +558,59 @@ label {
 
 .alert {
     border-radius: 8px;
+    border-width: 1px;
+    border-style: solid;
 }
 
 .alert-info {
     color: $alert-info-text-color;
     background-color: $alert-info-bg;
-    border-color: transparent;
+    border-color: $alert-info-border;
 }
 
 .alert-warning {
     color: $alert-warning-text-color;
     background-color: $alert-warning-bg;
-    border-color: transparent;
+    border-color: $alert-warning-border;
 }
 
 .alert-danger {
     color: $alert-danger-text-color;
     background-color: $alert-danger-bg;
-    border-color: transparent;
+    border-color: $alert-danger-border;
+}
+
+.alert-success {
+    color: $alert-success-text-color;
+    background-color: $alert-success-bg;
+    border-color: $alert-success-border;
+}
+
+// Toast notifications need solid backgrounds for visibility
+.ng-toast__message {
+    .alert-info {
+        color: $alert-info-text-color !important;
+        background-color: darken($alert-info-border, 25%) !important;
+        border-color: $alert-info-border !important;
+    }
+
+    .alert-warning {
+        color: $alert-warning-text-color !important;
+        background-color: darken($alert-warning-border, 25%) !important;
+        border-color: $alert-warning-border !important;
+    }
+
+    .alert-danger {
+        color: $alert-danger-text-color !important;
+        background-color: darken($alert-danger-border, 25%) !important;
+        border-color: $alert-danger-border !important;
+    }
+
+    .alert-success {
+        color: $alert-success-text-color !important;
+        background-color: darken($alert-success-border, 25%) !important;
+        border-color: $alert-success-border !important;
+    }
 }
 
 .fb-tabbed-page {
