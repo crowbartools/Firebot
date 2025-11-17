@@ -88,7 +88,7 @@
         "cronstrue": "^3.3.0",
         "custom-electron-titlebar": "^4.1.0",
         "deepmerge": "^4.2.2",
-        "dompurify": "^2.2.2",
+        "dompurify": "^3.3.0",
         "ejs": "^3.1.10",
         "electron-oauth2": "^3.0.0",
         "electron-regedit": "^2.0.0",
