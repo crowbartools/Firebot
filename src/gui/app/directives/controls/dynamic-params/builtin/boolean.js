@@ -40,7 +40,7 @@
 
             function setTitleAndDescription() {
                 $ctrl.title = parseMarkdown($ctrl.schema.title);
-                $ctrl.description = parseMarkdown($ctrl.schema.description);
+                $ctrl.description = $ctrl.schema.description;
             }
 
             $ctrl.$onInit = function() {
