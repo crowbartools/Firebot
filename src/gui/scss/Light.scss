@@ -91,21 +91,21 @@ $dropdown-menu-divider-color: #e5e5e5;
 
 $muted-text-color: inherit;
 
-$alert-info-text-color: #1a5871;
-$alert-info-bg: #e6f4f9;
-$alert-info-border: #5a97b8;
+$alert-info-text-color: oklch(48.8% 0.243 264.376);
+$alert-info-bg: oklch(97% 0.014 254.604);
+$alert-info-border: oklch(97% 0.014 254.604);
 
-$alert-warning-text-color: #7d6a2e;
-$alert-warning-bg: #fffbeb;
-$alert-warning-border: #d4b85e;
+$alert-warning-text-color: oklch(55.4% 0.135 66.442);
+$alert-warning-bg: oklch(98.7% 0.026 102.212);
+$alert-warning-border: oklch(98.7% 0.026 102.212);
 
-$alert-danger-text-color: #8b3a3a;
-$alert-danger-bg: #fef2f2;
-$alert-danger-border: #ce6c6c;
+$alert-danger-text-color: oklch(50.5% 0.213 27.518);
+$alert-danger-bg: oklch(97.1% 0.013 17.38);
+$alert-danger-border: oklch(97.1% 0.013 17.38);
 
-$alert-success-text-color: #2d6b2d;
-$alert-success-bg: #f0fdf0;
-$alert-success-border: #7acc7a;
+$alert-success-text-color: oklch(52.7% 0.154 150.069);
+$alert-success-bg: oklch(98.2% 0.018 155.826);
+$alert-success-border: oklch(98.2% 0.018 155.826);
 
 $fb-tab-wrapper-bg: #ffffff;
 $fb-tab-wrapper-border-color: #eaecec;

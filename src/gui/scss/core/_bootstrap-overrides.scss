@@ -588,29 +588,12 @@ label {
 
 // Toast notifications need solid backgrounds for visibility
 .ng-toast__message {
-    .alert-info {
-        color: $alert-info-text-color !important;
-        background-color: darken($alert-info-border, 25%) !important;
-        border-color: $alert-info-border !important;
+    background-color: #373c3e;
+    border-radius: 8px;
+    .alert {
+        margin-bottom: 0px;
     }
-
-    .alert-warning {
-        color: $alert-warning-text-color !important;
-        background-color: darken($alert-warning-border, 25%) !important;
-        border-color: $alert-warning-border !important;
-    }
-
-    .alert-danger {
-        color: $alert-danger-text-color !important;
-        background-color: darken($alert-danger-border, 25%) !important;
-        border-color: $alert-danger-border !important;
-    }
-
-    .alert-success {
-        color: $alert-success-text-color !important;
-        background-color: darken($alert-success-border, 25%) !important;
-        border-color: $alert-success-border !important;
-    }
+    margin-bottom: 20px;
 }
 
 .fb-tabbed-page {
