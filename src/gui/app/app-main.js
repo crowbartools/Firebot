@@ -145,7 +145,8 @@
         uiExtensionsService,
         webhooksService,
         overlayWidgetsService,
-        dynamicParameterRegistry
+        dynamicParameterRegistry,
+        platformService
     ) {
         // 'chatMessagesService' and 'videoService' are included so they're instantiated on app start
 
@@ -193,6 +194,8 @@
         webhooksService.loadWebhookConfigs();
 
         overlayWidgetsService.loadOverlayWidgetTypesAndConfigs();
+
+        platformService.loadPlatform();
 
         //start notification check
         $timeout(() => {

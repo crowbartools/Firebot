@@ -31,6 +31,10 @@ exports.setupCommonListeners = () => {
         return getLocalIpAddress();
     });
 
+    frontendCommunicator.onAsync("getPlatform", async () => {
+        return process.platform;
+    });
+
     frontendCommunicator.on("show-twitch-preview", () => {
         const windowManagement = require("../app-management/electron/window-management");
         windowManagement.createStreamPreviewWindow();

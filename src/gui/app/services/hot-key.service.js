@@ -3,7 +3,7 @@
 (function() {
     angular
         .module("firebotApp")
-        .factory("hotkeyService", function($rootScope, logger, backendCommunicator, utilityService) {
+        .factory("hotkeyService", function($rootScope, logger, backendCommunicator, modalService, platformService) {
             const service = {};
 
             service.hotkeys = [];
@@ -56,7 +56,7 @@
             };
 
             service.showAddEditHotkeyModal = (hotkey) => {
-                utilityService.showModal({
+                modalService.showModal({
                     component: "AddOrEditHotkeyModal",
                     size: "mdlg",
                     keyboard: false,
@@ -166,8 +166,14 @@
                 switch (keyCode) {
                     case "CmdOrCtrl":
                         return "Ctrl";
-                    case "Super":
+                    case "Super": {
+                        if (platformService.isMacOs) {
+                            return "Cmd";
+                        } else if (platformService.isLinux) {
+                            return "Super";
+                        }
                         return "Windows";
+                    }
                     default:
                         return keyCode;
                 }

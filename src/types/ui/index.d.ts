@@ -1,4 +1,5 @@
 export * from "./angular";
+export * from "./platform-service";
 export * from "./backend-communicator";
 export * from "./effect-helper-service";
 export * from "./settings-service";
