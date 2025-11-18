@@ -6,6 +6,7 @@ type TabsBindings = {
     active: string;
     type?: "underlined" | "pill" | "bar";
     fullWidth?: boolean;
+    pageTabs?: boolean;
 };
 
 type TabsController = {
@@ -32,11 +33,12 @@ type TabController = {
         bindings: {
             active: "=",
             type: "@?",
-            fullWidth: "<?"
+            fullWidth: "<?",
+            pageTabs: "<?"
         },
         transclude: true,
         template: `
-            <div class="firebot-tabset" ng-class="{'full-width': $ctrl.fullWidth}">
+            <div class="firebot-tabset" ng-class="{'full-width': $ctrl.fullWidth, 'page-tabs': $ctrl.pageTabs}">
                 <ul class="firebot-tabs" ng-class="'firebot-tabs--' + $ctrl.type" role="tablist">
                     <li ng-repeat="tab in $ctrl.tabs track by tab.name"
                         role="presentation"

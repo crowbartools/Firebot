@@ -13,6 +13,35 @@
         }
     }
 
+    &.page-tabs {
+        min-width: 500px;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+
+        .firebot-tabs {
+            background-color: $fb-tab-wrapper-bg;
+            border-bottom-color: $light-background-color;
+            margin-bottom: 0;
+            flex-shrink: 0;
+
+            a {
+               margin-bottom: 0px !important;
+            }
+        }
+
+        .firebot-tabs-content {
+            padding: 0;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .firebot-tab-pane {
+            height: 100%;
+        }
+    }
+
     .firebot-tabs-content {
         padding: 0 15px;
     }
