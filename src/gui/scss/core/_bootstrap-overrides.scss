@@ -70,7 +70,7 @@
 }
 
 .modal-content {
-    border-radius: 8px;
+    border-radius: 10px;
     background-color: $light-background-color;
     position: relative;
     border: 1px solid transparent;
@@ -162,7 +162,7 @@
 // Buttons
 
 .btn {
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 9px 12px;
     transform: scale(1) translateZ(0);
     transition-property: transform;
@@ -205,20 +205,21 @@
 }
 
 .btn-primary {
-    background-color: $primary-button-bg;
+    background: linear-gradient(135deg, lighten($primary-button-bg, 8%) 0%, $primary-button-bg 100%);
     border-color: transparent;
     &:hover {
-        background-color: $primary-button-hover-bg;
+        background: linear-gradient(135deg, lighten($primary-button-hover-bg, 8%) 0%, $primary-button-hover-bg 100%);
     }
     &:active,
     &:focus {
-        background-color: $primary-button-bg !important;
+        background: linear-gradient(135deg, lighten($primary-button-bg, 8%) 0%, $primary-button-bg 100%) !important;
     }
 }
 
 .btn-primary[disabled]:hover {
-    background-color: $primary-button-bg;
+    background: linear-gradient(135deg, lighten($primary-button-bg, 8%) 0%, $primary-button-bg 100%);
     opacity: 0.75;
+    transform: none;
 }
 
 .btn-default {
@@ -449,7 +450,7 @@
     box-shadow: none;
     background-color: $form-control-bg;
     color: $form-control-text;
-    border-radius: 8px;
+    border-radius: 10px;
     &:focus {
         box-shadow: none;
         background-color: adjust-color($form-control-bg, $red: -10, $green: -10, $blue: -10);
@@ -494,7 +495,7 @@
 .color-picker-wrapper .input-group .input-group-addon {
     width: 45px;
     border: transparent !important;
-    border-radius: 8px;
+    border-radius: 10px;
     &:first-child {
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;

@@ -17,10 +17,10 @@
 
 .effect-list {
     background: $effect-list-bg-color;
-    border-radius: 8px;
+    border-radius: 10px;
     .effect-list-header {
-        border-top-left-radius: 8px;
-        border-top-right-radius: 8px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
         padding-left: 15px;
         padding-right: 15px;
         height: 60px;
@@ -31,7 +31,7 @@
         display: flex;
         align-items: center;
         padding: 8px 10px;
-        border-radius: 8px;
+        border-radius: 10px;
         background-color: $effect-item-bg;
         transition: all 0.15s ease;
 
@@ -78,7 +78,7 @@
             align-items: center;
             justify-content: center;
             padding: 7px;
-            border-radius: 8px;
+            border-radius: 10px;
             background-color: $effect-button-bg;
             border: none;
             i {
@@ -100,7 +100,7 @@
             font-size: 12px;
             padding: 4px 7px;
             height: 26px;
-            border-radius: 8px;
+            border-radius: 10px;
             gap: 4px;
             justify-content: center;
             align-items: center;
@@ -125,8 +125,8 @@
     .effect-bottom-panel {
         height: 40px;
         background: $effect-bottom-panel-bg;
-        border-bottom-right-radius: 8px;
-        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 10px;
+        border-bottom-left-radius: 10px;
         padding: 0 15px;
         display: flex;
         align-items: center;
@@ -241,7 +241,7 @@
         justify-content: center;
         gap: 8px;
         padding: 10px 12px;
-        border-radius: 8px;
+        border-radius: 10px;
         background: $effect-add-btn-bg;
         border: 1px dashed $effect-add-btn-border;
         color: $effect-add-btn-text-color;
@@ -420,7 +420,7 @@
                 padding: 10px 14px;
                 background: $queue-duration-btn-bg;
                 border: none;
-                border-radius: 8px;
+                border-radius: 10px;
                 color: $queue-duration-btn-text;
                 font-size: 13px;
                 font-weight: 500;
@@ -500,7 +500,7 @@
 }
 
 .select-effect-def {
-    border-radius: 8px;
+    border-radius: 10px;
     background: $effect-def-bg;
     display: flex;
     flex-direction: row;
@@ -540,7 +540,8 @@
     }
 }
 
-.select-effect-categories, .variable-categories {
+.select-effect-categories,
+.variable-categories {
     background: $effect-category-bg;
     display: flex;
     flex-direction: column;
@@ -555,20 +556,22 @@
     }
 }
 
-.select-effect-category-header, .variable-category-header {
+.select-effect-category-header,
+.variable-category-header {
     font-weight: 700;
     padding: 15px 0 5px 15px;
     font-size: 13px;
 }
 
-.select-effect-category, .variable-category {
+.select-effect-category,
+.variable-category {
     text-transform: capitalize;
     font-weight: 300;
     display: flex;
     flex-direction: row;
     align-items: center;
     padding: 7px 10px;
-    border-radius: 8px;
+    border-radius: 10px;
     &:hover {
         background: $effect-category-hover-bg;
         text-decoration: none;
