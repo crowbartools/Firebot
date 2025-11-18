@@ -74,6 +74,7 @@
                 utilityService.showModal({
                     component: "addOrEditCustomCommandModal",
                     breadcrumbName: command ? "Edit Command" : "Add Command",
+                    size: "mdlg",
                     resolveObj: {
                         command: () => command
                     },

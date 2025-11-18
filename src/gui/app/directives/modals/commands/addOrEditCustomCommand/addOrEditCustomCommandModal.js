@@ -122,6 +122,8 @@
             };
 
             $ctrl.$onInit = function () {
+                $ctrl.activeTab = 'general';
+
                 if ($ctrl.resolve.command == null) {
                     $ctrl.isNewCommand = true;
                 } else {
