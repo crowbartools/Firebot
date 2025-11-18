@@ -104,7 +104,7 @@ type TabController = {
             <div class="firebot-tab-pane"
                  role="tabpanel"
                  id="tab-{{$ctrl.name}}"
-                 ng-show="$ctrl.tabsCtrl.isActive($ctrl.name)"
+                 ng-if="$ctrl.tabsCtrl.isActive($ctrl.name)"
                  ng-transclude>
             </div>
         `,

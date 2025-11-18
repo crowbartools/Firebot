@@ -199,14 +199,13 @@
                         <span
                             class="muted ml-2"
                             style="font-size: 11px"
-                            ng-show="data.hidden"
+                            ng-if="data.hidden"
                             uib-tooltip="Hidden from !commands list"
                             tooltip-append-to-body="true"
                         >
                             <i class="fas fa-eye-slash"></i>
                         </span>
-                    `,
-                    cellController: () => {}
+                    `
                 },
                 {
                     name: "COOLDOWNS",
@@ -222,8 +221,7 @@
                         <span uib-tooltip="User cooldown">
                             <i class="far fa-user"></i> {{data.cooldown.user ? data.cooldown.user + "s" : "-" }}
                         </span>
-                    `,
-                    cellController: () => {}
+                    `
                 },
                 {
                     name: "PERMISSIONS",
