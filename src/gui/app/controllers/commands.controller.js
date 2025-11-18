@@ -15,8 +15,6 @@
             // Cache commands on app load.
             commandsService.refreshCommands();
 
-            $scope.activeCmdTab = 0;
-
             $scope.commandsService = commandsService;
             $scope.sts = sortTagsService;
 
