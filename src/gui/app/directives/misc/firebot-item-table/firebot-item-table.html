@@ -81,7 +81,7 @@
                         class="fit-test-button-header"
                     ></th>
                     <th
-                        ng-repeat="header in $ctrl.headers track by $index"
+                        ng-repeat="header in ::$ctrl.headers track by $index"
                         ng-style="header.headerStyles"
                         class="fit-custom-header"
                         ng-click="header.sortable && header.dataField && $ctrl.setOrderField(header.dataField)"
@@ -158,7 +158,7 @@
                         </span>
                     </td>
                     <td
-                        ng-repeat="header in ::$ctrl.headers track by header.name"
+                        ng-repeat="header in ::$ctrl.headers track by $index"
                         ng-style="::header.cellStyles"
                         ng-class="::header.cellClass"
                     >
