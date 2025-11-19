@@ -9,3 +9,4 @@ export * from "./ng-toast";
 export * from "./firebot-root-scope";
 export * from "./object-copy-helper";
 export * from "./preset-effect-lists-service";
+export * from "./effect-queues-service";

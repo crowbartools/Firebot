@@ -994,6 +994,18 @@ table.fb-table-alt {
                 margin-left: 8px;
             }
 
+            .firebot-dropdown-menu-chip {
+                display: inline-block;
+                padding: 2px 8px;
+                margin-left: 8px;
+                font-size: 10px;
+                font-weight: 600;
+                background: rgb(0 0 0 / 20%);
+                border-radius: 7px;
+                color: rgba(255, 255, 255, 0.8);
+                white-space: nowrap;
+            }
+
             &.info {
                 &:hover {
                     background: rgba(70, 161, 240, 0.15);

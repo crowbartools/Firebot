@@ -15,7 +15,8 @@ import type {
     ModalFactory,
     ObjectCopyHelper,
     BackendCommunicator,
-    PresetEffectListsService
+    PresetEffectListsService,
+    EffectListRunMode
 } from "../../../../../types";
 
 type Bindings = {
@@ -31,8 +32,9 @@ type Bindings = {
     update: (args: { effects: EffectList }) => void;
     modalId: string;
     header: string;
-    mode?: "all-sequential" | "single-sequential" | "single-random";
-    weighted: boolean;
+    mode?: EffectListRunMode;
+    weighted?: boolean;
+    dontRepeatUntilAllUsed?: boolean;
 };
 
 type Controller = {
@@ -92,7 +94,8 @@ type ContextMenuItemScope = {
             modalId: "@",
             header: "@",
             mode: "@?",
-            weighted: "<"
+            weighted: "<?",
+            dontRepeatUntilAllUsed: "<?"
         },
         template: `
             <div class="effect-list">
@@ -126,28 +129,10 @@ type ContextMenuItemScope = {
 
                 <queue-panel effects-data="$ctrl.effectsData" on-update="$ctrl.effectsUpdate()"></queue-panel>
 
+                <mode-panel effects-data="$ctrl.effectsData" on-update="$ctrl.effectsUpdate()" disabled="$ctrl.mode != null"></mode-panel>
+
                 <div class="mx-6 pb-6">
-
-                    <div ng-if="$ctrl.mode" class="mb-4 rounded muted">
-                        <div class="flex items-center">
-                            <i
-                                class="fas mr-3"
-                                ng-class="{
-                                    'fa-random': $ctrl.mode === 'single-random',
-                                    'fa-repeat-1': $ctrl.mode === 'single-sequential',
-                                    'fa-sort-numeric-down': $ctrl.mode === 'all-sequential'
-                                }"
-                                style="font-size: 15px;"
-                            ></i>
-                            <span style="font-size: 12px;">
-                                <span ng-if="$ctrl.mode === 'all-sequential'">Runs every effect in order from top to bottom.</span>
-                                <span ng-if="$ctrl.mode === 'single-sequential'">Runs the next effect in the list each time this triggers.</span>
-                                <span ng-if="$ctrl.mode === 'single-random'">Runs a single random effect each time this triggers.</span>
-                            </span>
-                        </div>
-                    </div>
-
-                    <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.effectsData.list" class="effect-list-container" ng-class="{'show-connectors': $ctrl.mode === 'all-sequential', 'show-dividers': $ctrl.mode === 'single-random' || $ctrl.mode === 'single-sequential'}">
+                    <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.effectsData.list" class="effect-list-container" ng-class="{'show-connectors': $ctrl.effectsData.runMode === 'all', 'show-dividers': $ctrl.effectsData.runMode === 'random' || $ctrl.effectsData.runMode === 'sequential'}">
                         <div ng-repeat="effect in $ctrl.effectsData.list track by $index">
                             <div
                                 context-menu="$ctrl.effectContextMenuOptions"
@@ -239,14 +224,14 @@ type ContextMenuItemScope = {
                                     </div>
                                 </div>
 
-                                <div ng-if="($ctrl.mode === 'single-random' || $ctrl.mode === 'single-sequential') && !$last" class="effect-divider" ng-class="{'is-dragging': $ctrl.keyboardDragIndex != null}"></div>
+                                <div ng-if="($ctrl.effectsData.runMode === 'random' || $ctrl.effectsData.runMode === 'sequential') && !$last" class="effect-divider" ng-class="{'is-dragging': $ctrl.keyboardDragIndex != null}"></div>
                             </div>
                         </div>
                     </div>
 
-                    <div ng-if="($ctrl.mode === 'single-random' || $ctrl.mode === 'single-sequential') && $ctrl.effectsData.list.length > 0" class="effect-divider"></div>
+                    <div ng-if="($ctrl.effectsData.runMode === 'random' || $ctrl.effectsData.runMode === 'sequential') && $ctrl.effectsData.list.length > 0" class="effect-divider"></div>
 
-                    <div class="effect-list-add-btn-wrapper" ng-class="{'show-connector': $ctrl.mode === 'all-sequential' && $ctrl.effectsData.list.length > 0}">
+                    <div class="effect-list-add-btn-wrapper" ng-class="{'show-connector': $ctrl.effectsData.runMode === 'all' && $ctrl.effectsData.list.length > 0}">
                         <button
                             type="button"
                             class="effect-list-add-btn"
@@ -286,7 +271,8 @@ type ContextMenuItemScope = {
             $ctrl.effectsData = {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
                 id: randomUUID(),
-                list: []
+                list: [],
+                runMode: "all"
             };
 
             $ctrl.keyboardDragIndex = null;
@@ -406,12 +392,12 @@ type ContextMenuItemScope = {
             };
 
             $ctrl.showBottomPanel = (effect: EffectInstance) => {
-                return ($ctrl.weighted && effect?.active) || $ctrl.isCommentEffect(effect);
+                return ($ctrl.effectsData.weighted && effect?.active) || $ctrl.isCommentEffect(effect);
             };
 
             function ensureDefaultWeights(reset = false) {
                 $ctrl.effectsData.list.forEach((e) => {
-                    if (!$ctrl.weighted) {
+                    if (!$ctrl.effectsData.weighted) {
                         e.percentWeight = null;
                     } else if (e.percentWeight == null || reset) {
                         e.percentWeight = 0.5;
@@ -491,9 +477,6 @@ type ContextMenuItemScope = {
             };
 
             $ctrl.$onInit = $ctrl.$onChanges = function () {
-                if (!$ctrl.mode) {
-                    $ctrl.mode = "all-sequential";
-                }
                 $q.when(effectHelperService.getAllEffectTypes()).then((types) => {
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                     effectTypes = types;
@@ -514,6 +497,25 @@ type ContextMenuItemScope = {
                             e.active = true;
                         }
                     });
+
+                    if ($ctrl.effectsData.runMode == null) {
+                        $ctrl.effectsData.runMode = "all";
+                    }
+
+                    // if mode is being provided externally (ie from Run Random Effect effect), override effectsData.runMode and related settings
+                    if ($ctrl.mode != null) {
+                        $ctrl.effectsData.runMode = $ctrl.mode;
+
+                        if ($ctrl.mode === "random") {
+                            if ($ctrl.weighted != null) {
+                                $ctrl.effectsData.weighted = $ctrl.weighted;
+                            }
+
+                            if ($ctrl.dontRepeatUntilAllUsed != null) {
+                                $ctrl.effectsData.dontRepeatUntilAllUsed = $ctrl.dontRepeatUntilAllUsed;
+                            }
+                        }
+                    }
 
                     $ctrl.effectsUpdate();
 

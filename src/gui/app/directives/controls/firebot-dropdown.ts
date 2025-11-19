@@ -2,13 +2,16 @@
 
 import type { FirebotComponent } from "../../../../types/";
 
-type Option = {
+export type DropdownOption = {
     name: string;
     value: unknown;
     icon?: string;
+    tooltip?: string;
+    chip?: string;
+    chipTooltip?: string;
 };
 
-type Action = {
+export type DropdownAction = {
     label: string;
     icon?: string;
     type?: "danger" | "success" | "info" | "warning";
@@ -16,8 +19,8 @@ type Action = {
 };
 
 type Bindings = {
-    options: Option[];
-    actions: Action[];
+    options: DropdownOption[];
+    actions: DropdownAction[];
     modelValue: unknown;
     placeholder: string;
     onUpdate: () => void;
@@ -36,7 +39,7 @@ type Bindings = {
 
 type Controller = {
     getSelectedOptionName: () => string;
-    selectOption: (option: Option) => void;
+    selectOption: (option: DropdownOption) => void;
 };
 
 (function () {
@@ -97,6 +100,13 @@ type Controller = {
                         <span class="firebot-dropdown-menu-label">
                             <i ng-if="option.icon" class="far" ng-class="option.icon"></i>
                             <span>{{option.name}}</span>
+                            <tooltip ng-if="option.tooltip" text="option.tooltip"></tooltip>
+                            <span
+                                ng-if="option.chip"
+                                class="firebot-dropdown-menu-chip"
+                                uib-tooltip="{{option.chipTooltip}}"
+                                append-tooltip-to-body="true"
+                            >{{option.chip}}</span>
                         </span>
                         <i ng-show="$ctrl.modelValue === option.value" class="fas fa-check firebot-dropdown-check-icon"></i>
                     </a>

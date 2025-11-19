@@ -6,15 +6,17 @@
             "request": "launch",
             "name": "Electron: Main",
             "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
-            "runtimeArgs": [
-                ".",
-                "--remote-debugging-port=9223"
-            ],
+            "runtimeArgs": [".", "--remote-debugging-port=9223"],
             "windows": {
                 "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
             },
             "outputCapture": "std",
-            "preLaunchTask": "grunt-prep"
+            "preLaunchTask": "grunt-prep",
+            "outFiles": ["${workspaceFolder}/build/**/*.js"],
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/**",
+                "!**/node_modules/**"
+            ]
         },
         {
             "name": "Electron: Renderer",

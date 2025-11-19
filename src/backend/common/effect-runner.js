@@ -281,32 +281,40 @@ function runEffects(runEffectsContext) {
     });
 }
 
-async function processEffects(processEffectsRequest) {
-    let username = "";
-    if (processEffectsRequest.participant) {
-        username = processEffectsRequest.participant.username;
+/**
+ *
+ * @param {import("../../types/effects").RunEffectsContext} runEffectsContext
+ * @returns
+ */
+async function processEffects(runEffectsContext) {
+    runEffectsContext = structuredClone(runEffectsContext);
+
+    const { resolveEffectsForExecution } = require("./effect-run-mode-handler");
+
+    // Resolve effects for execution based on run mode (sequential, random, etc)
+    const effectsToRun = resolveEffectsForExecution(runEffectsContext.effects);
+
+    if (effectsToRun == null || effectsToRun.length === 0) {
+        logger.info(`No effects to run for effect list id: ${runEffectsContext.effects.id}. Skipping.`);
+        return;
     }
 
-    // Add some values to our wrapper
-    const runEffectsContext = processEffectsRequest;
-    runEffectsContext["username"] = username;
-
-    runEffectsContext.effects = structuredClone(runEffectsContext.effects);
+    runEffectsContext.effects.list = effectsToRun;
 
     if (runEffectsContext.outputs == null) {
         runEffectsContext.outputs = {};
     }
 
-    const queueId = processEffectsRequest.effects.queue;
+    const queueId = runEffectsContext.effects.queue;
 
     const { EffectQueueConfigManager } = require("../effects/queues/effect-queue-config-manager");
     const effectQueueRunner = require("../effects/queues/effect-queue-runner").default;
 
     const queue = EffectQueueConfigManager.getItem(queueId);
     if (queue != null) {
-        logger.debug(`Sending effects for list ${processEffectsRequest.effects.id} to queue ${queueId}...`);
+        logger.debug(`Sending effects for list ${runEffectsContext.effects.id} to queue ${queueId}...`);
         effectQueueRunner.addEffectsToQueue(queue, runEffectsContext,
-            processEffectsRequest.effects.queueDuration, processEffectsRequest.effects.queuePriority);
+            runEffectsContext.effects.queueDuration, runEffectsContext.effects.queuePriority);
         return;
     }
 
