@@ -11,6 +11,7 @@ import { FirebotAccount } from "../../types/accounts";
 
 import { AccountAccess } from "../common/account-access";
 import { SettingsManager } from "../common/settings-manager";
+import { SharedChatCache } from "../streaming-platforms/twitch/chat/shared-chat-cache";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 import rankManager from "../ranks/rank-manager";
 import roleManager from "../roles/custom-roles-manager";
@@ -476,6 +477,7 @@ class FirebotChatHelpers {
 
     async buildFirebotChatMessage(msg: ChatMessage, msgText: string, whisper = false, action = false) {
         const sharedChatRoomId = msg.tags.get("source-room-id");
+        const sharedChatRoom = SharedChatCache.participants[sharedChatRoomId];
         const isSharedChatMessage = sharedChatRoomId != null && sharedChatRoomId !== AccountAccess.getAccounts().streamer.userId;
         const isGigantified = msg.tags.get("msg-id") === "gigantified-emote-message";
         const firebotChatMessage: FirebotChatMessage = {
@@ -516,7 +518,9 @@ class FirebotChatHelpers {
             viewerRanks: {},
             viewerCustomRoles: [],
             isSharedChatMessage,
-            sharedChatRoomId: isSharedChatMessage ? sharedChatRoomId : null
+            sharedChatRoomId,
+            sharedChatRoomUsername: sharedChatRoom?.broadcasterName,
+            sharedChatRoomDisplayName: sharedChatRoom?.broadcasterDisplayName
         };
 
         const profilePicUrl = await this.getUserProfilePicUrl(firebotChatMessage.userId);

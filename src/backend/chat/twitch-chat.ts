@@ -4,6 +4,7 @@ import { ChatClient } from "@twurple/chat";
 import { AccountAccess } from "../common/account-access";
 import { ActiveUserHandler } from "./active-user-handler";
 import { FirebotDeviceAuthProvider } from "../auth/firebot-device-auth-provider";
+import { SharedChatCache } from "../streaming-platforms/twitch/chat/shared-chat-cache";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 import chatHelpers from "./chat-helpers";
 import chatRolesManager from "../roles/chat-roles-manager";
@@ -126,6 +127,9 @@ class TwitchChat extends EventEmitter {
             if (!twitchRolesManager.getSubscribers().length) {
                 await twitchRolesManager.loadSubscribers();
             }
+
+            // Load the current Shared Chat session
+            await SharedChatCache.loadSessionFromTwitch();
         } catch (error) {
             logger.error("Chat connect error", error);
             this.disconnect();

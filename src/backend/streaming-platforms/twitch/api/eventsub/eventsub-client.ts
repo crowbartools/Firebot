@@ -4,6 +4,7 @@ import { EventSubWsListener } from "@twurple/eventsub-ws";
 import type { SavedChannelReward } from "../../../../../types/channel-rewards";
 
 import { AccountAccess } from "../../../../common/account-access";
+import { SharedChatCache } from "../../chat/shared-chat-cache";
 import { TwitchEventHandlers } from "../../events";
 import { TwitchApi } from "..";
 import channelRewardManager from "../../../../channel-rewards/channel-reward-manager";
@@ -315,6 +316,28 @@ class TwitchEventSubClient {
             }
         });
         this._subscriptions.push(outboundRaidSubscription);
+
+        // Shared Chat Started
+        const sharedChatStartedSubscription = this._eventSubListener.onChannelSharedChatSessionBegin(streamer.userId, (event) => {
+            SharedChatCache.enableSharedChat();
+            SharedChatCache.participants = event.participants;
+            TwitchEventHandlers.chat.triggerSharedChatEnabled();
+        });
+        this._subscriptions.push(sharedChatStartedSubscription);
+
+        // Shared Chat Updated
+        const sharedChatUpdatedSubscription = this._eventSubListener.onChannelSharedChatSessionUpdate(streamer.userId, (event) => {
+            SharedChatCache.participants = event.participants;
+            TwitchEventHandlers.chat.triggerSharedChatUpdated();
+        });
+        this._subscriptions.push(sharedChatUpdatedSubscription);
+
+        // Shared Chat Ended
+        const sharedChatEndedSubscription = this._eventSubListener.onChannelSharedChatSessionEnd(streamer.userId, () => {
+            SharedChatCache.disableSharedChat();
+            TwitchEventHandlers.chat.triggerSharedChatEnded();
+        });
+        this._subscriptions.push(sharedChatEndedSubscription);
 
         // Shoutout sent to another channel
         const shoutoutSentSubscription = this._eventSubListener.onChannelShoutoutCreate(streamer.userId, streamer.userId, (event) => {

@@ -6,6 +6,7 @@ import {
     HelixUpdateChatSettingsParams,
     HelixUserEmote
 } from "@twurple/api";
+import type { SharedChatParticipant } from '../../../../../types';
 import { ApiResourceBase } from "./api-resource-base";
 import type { TwitchApi } from "../";
 import { TwitchSlashCommandHandler } from "../../chat/twitch-slash-command-handler";
@@ -419,6 +420,33 @@ export class TwitchChatApi extends ApiResourceBase {
         } catch (error) {
             this.logger.error(`Error getting all user emotes for ${account}`, (error as Error).message);
             return null;
+        }
+    }
+
+    /**
+     * Gets the participants in the current shared chat session.
+     *
+     * @returns An array of {@link SharedChatParticipant} containing all the participants in the shared chat session, or null if there is no active session
+     */
+    async getSharedChatParticipants(): Promise<SharedChatParticipant[]> {
+        try {
+            const streamerId = this.accounts.streamer.userId;
+            const session = await this.streamerClient.chat.getSharedChatSession(streamerId);
+
+            if (!session) {
+                return null;
+            }
+
+            const twitchUsers = await this.usersApi.getUsersByIds(session.participants.map(participant => participant.broadcasterId));
+
+            return twitchUsers.map(user => ({
+                broadcasterId: user.id,
+                broadcasterName: user.name,
+                broadcasterDisplayName: user.displayName
+            }));
+        } catch (err) {
+            const error = err as Error;
+            this.logger.error(`Failed to get shared chat session`, error.message);
         }
     }
 }
