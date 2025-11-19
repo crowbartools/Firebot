@@ -138,14 +138,17 @@ export async function whenReady() {
     windowManagement.updateSplashScreenStatus("Loading known bot list...");
     await chatRolesManager.cacheViewerListBots();
 
+    const twitchRolesManager = (await import("../../../roles/twitch-roles-manager")).default;
+    twitchRolesManager.setupListeners();
+
     windowManagement.updateSplashScreenStatus("Loading channel moderators...");
-    await chatRolesManager.loadModerators();
+    await twitchRolesManager.loadModerators();
 
     windowManagement.updateSplashScreenStatus("Loading channel VIPs...");
-    await chatRolesManager.loadVips();
+    await twitchRolesManager.loadVips();
 
     windowManagement.updateSplashScreenStatus("Loading channel subscribers...");
-    await chatRolesManager.loadSubscribers();
+    await twitchRolesManager.loadSubscribers();
 
     windowManagement.updateSplashScreenStatus("Loading effect queues...");
     const { EffectQueueConfigManager } = await import("../../../effects/queues/effect-queue-config-manager");
@@ -208,6 +211,9 @@ export async function whenReady() {
 
     const { ImportManager } = await import("../../../import/import-manager");
     ImportManager.registerDefaultImporters();
+
+    const { ViewerExportManager } = await import("../../../viewers/viewer-export-manager");
+    ViewerExportManager.setupListeners();
 
     const { setupCommonListeners } = await import("../../../common/common-listeners");
     setupCommonListeners();

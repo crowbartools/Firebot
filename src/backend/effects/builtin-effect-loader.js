@@ -18,6 +18,7 @@ exports.loadEffects = () => {
         'clips',
         'conditional-effects/conditional-effects',
         'conditional-effects/switch-statement',
+        'comment',
         'control-emulation', // No migration needed.
         'cooldown-command',
         'copy-to-clipboard',
@@ -42,6 +43,7 @@ exports.loadEffects = () => {
         'pause-resume-effect-queue',
         'play-sound',
         'play-video', // No migration needed.
+        'overlay-alert',
         'random-effect',
         'random-reddit-image',
         'remove-user-metadata',

@@ -1,8 +1,8 @@
-import { SystemCommand } from "../../../types/commands";
-import logger from "../../logwrapper";
-import commandManager from "../commands/command-manager";
-import frontendCommunicator from "../../common/frontend-communicator";
+import type { SystemCommand } from "../../../types/commands";
+import { CommandManager } from "../commands/command-manager";
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
+import frontendCommunicator from "../../common/frontend-communicator";
+import logger from "../../logwrapper";
 
 class PermitManager {
     private readonly _permidCommandId: string = "firebot:moderation:url:permit";
@@ -95,13 +95,13 @@ class PermitManager {
     }
 
     registerPermitCommand(): void {
-        if (!commandManager.hasSystemCommand(this._permidCommandId)) {
-            commandManager.registerSystemCommand(this._permitCommand);
+        if (!CommandManager.hasSystemCommand(this._permidCommandId)) {
+            CommandManager.registerSystemCommand(this._permitCommand);
         }
     }
 
     unregisterPermitCommand(): void {
-        commandManager.unregisterSystemCommand(this._permidCommandId);
+        CommandManager.unregisterSystemCommand(this._permidCommandId);
     }
 }
 

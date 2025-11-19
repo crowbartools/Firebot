@@ -1,35 +1,36 @@
 <div ng-if="isViewerDBOn">
     <div class="p-6 mx-0 flex justify-between">
-        <button ng-click="vs.updateViewers()" class="btn btn-primary">
+        <button ng-click="vs.updateViewers()" class="btn btn-primary mr-4">
             <i class="far fa-sync mr-2"></i> Refresh
         </button>
+        <div class="btn-group" uib-dropdown>
+            <button id="tools-dropdown" type="button" class="btn btn-default" uib-dropdown-toggle>
+            Tools <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="tools-dropdown">
+                <li role="menuitem">
+                    <a href ng-click="showImportViewersModal()">
+                        <i class="fas fa-cloud-download-alt mr-4 text-center" style="width: 20px;" aria-label="Import Viewers"></i>
+                        Import Viewers...
+                    </a>
+                </li>
+                <li role="menuitem">
+                    <a href ng-click="showExportViewersModal()">
+                        <i class="fas fa-file-export mr-4 text-center" style="width: 20px;" aria-label="Export Viewers"></i>
+                        Export Viewers...
+                    </a>
+                </li>
+                <li role="menuitem">
+                    <a href style="color: #fb7373;" ng-click="showPurgeViewersModal()">
+                        <i class="far fa-trash-alt mr-4 text-center" style="width: 20px;" aria-label="Purge Viewers"></i>
+                        Purge Viewers...
+                    </a>
+                </li>
+            </ul>
+        </div>
         <div class="flex justify-between" style="margin-left: auto;">
-            <button ng-click="showViewerSearchModal();" class="btn btn-default"><i class="far fa-search"></i> Search Twitch</button>
-            <searchbar placeholder-text="Search Firebot viewers..." class="ml-2" query="viewerSearch" style="flex-basis: 250px"></searchbar>
-            <div uib-dropdown class="ml-5 flex items-center">
-                <a
-                    uib-dropdown-toggle
-                    class="clickable"
-                    style="color: white; font-size: 25px; line-height: 1"
-                    aria-label="Activity feed options"
-                >
-                    <i class="far fa-ellipsis-v"></i>
-                </a>
-                <ul class="dropdown-menu right-justified-dropdown" uib-dropdown-menu>
-                    <li ng-click="showImportViewersModal()">
-                        <a>
-                            <i class="fas fa-cloud-download-alt mr-4 text-center" style="width: 20px;" aria-label="Import Viewers"></i>
-                            Import Viewers...
-                        </a>
-                    </li>
-                    <li ng-click="showPurgeViewersModal()">
-                        <a style="color: #fb7373;">
-                            <i class="far fa-trash-alt mr-4 text-center" style="width: 20px;" aria-label="Purge Viewers"></i>
-                            Purge Viewers...
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            <button ng-click="showViewerSearchModal();" class="btn btn-default mr-4"><i class="far fa-search"></i> Search Twitch</button>
+            <searchbar placeholder-text="Search Firebot viewers..." query="viewerSearch" style="flex-basis: 250px"></searchbar>
         </div>
     </div>
 

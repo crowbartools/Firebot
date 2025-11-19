@@ -248,6 +248,11 @@
     }
 }
 
+.gigantify :last-child>.chatEmoticon {
+    display: block !important;
+    height: 8rem !important;
+}
+
 .chat-username {
     display: flex;
     font-weight: bold;
@@ -937,15 +942,15 @@
 
 .dashboard-settings-button-container {
     position: absolute;
-    bottom: 20px;
-    right: 20px;
+    bottom: 15px;
+    right: 15px;
 }
 
 .dashboard-settings-button-container .btn {
-    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.33);
-    font-size: 24px;
-    height: 48px;
-    width: 48px;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
+    font-size: 18px;
+    height: 35px;
+    width: 35px;
     padding: 0;
 }
 

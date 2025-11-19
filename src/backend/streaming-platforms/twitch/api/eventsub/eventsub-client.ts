@@ -7,7 +7,7 @@ import { AccountAccess } from "../../../../common/account-access";
 import { TwitchEventHandlers } from "../../events";
 import { TwitchApi } from "..";
 import channelRewardManager from "../../../../channel-rewards/channel-reward-manager";
-import chatRolesManager from "../../../../roles/chat-roles-manager";
+import twitchRolesManager from "../../../../roles/twitch-roles-manager";
 import chatHelpers from "../../../../chat/chat-helpers";
 import rewardManager from "../../../../channel-rewards/channel-reward-manager";
 import twitchStreamInfoPoll from "../../stream-info-manager";
@@ -649,24 +649,24 @@ class TwitchEventSubClient {
                     TwitchEventHandlers.chat.triggerChatCleared(event.moderatorName, event.moderatorId);
                     break;
                 case "mod":
-                    chatRolesManager.addModeratorToModeratorsList({
+                    twitchRolesManager.addModeratorToModeratorsList({
                         id: event.userId,
                         username: event.userName,
                         displayName: event.userDisplayName
                     });
                     break;
                 case "unmod":
-                    chatRolesManager.removeModeratorFromModeratorsList(event.userId);
+                    twitchRolesManager.removeModeratorFromModeratorsList(event.userId);
                     break;
                 case "vip":
-                    chatRolesManager.addVipToVipList({
+                    twitchRolesManager.addVipToVipList({
                         id: event.userId,
                         username: event.userName,
                         displayName: event.userDisplayName
                     });
                     break;
                 case "unvip":
-                    chatRolesManager.removeVipFromVipList(event.userId);
+                    twitchRolesManager.removeVipFromVipList(event.userId);
                     break;
 
                 // chat modes

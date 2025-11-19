@@ -141,6 +141,8 @@
                                     name="{{settingSchema.name}}"
                                     schema="settingSchema"
                                     ng-model="$ctrl.widget.settings[settingSchema.name]"
+                                    trigger="overlay_widget"
+                                    modalId="{{modalId}}"
                                 >
                                 </dynamic-parameter>
                             </div>

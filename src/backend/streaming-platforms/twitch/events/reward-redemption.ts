@@ -28,7 +28,7 @@ export function handleRewardRedemption(
             id: rewardId,
             name: rewardTitle,
             cost: rewardCost,
-            imageUrl: rewardImageUrl
+            imageUrl: rewardImageUrl ?? "https://static-cdn.jtvnw.net/custom-reward-images/default-4.png"
         }
     });
 

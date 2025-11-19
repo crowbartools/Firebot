@@ -67,6 +67,10 @@
                     <div ng-if="$ctrl.message.isReply && !$ctrl.hideReplyBanner" class="chat-message-banner mini-banner muted truncate" ng-click="$ctrl.replyBannerClicked()">
                         <i class="fad fa-comment-alt-dots"></i> Replying to @{{$ctrl.message.replyParentMessageSenderDisplayName}}: {{$ctrl.message.replyParentMessageText}}</span>
                     </div>
+                    <div ng-if="$ctrl.message.reward" class="reward-redemption" ng-class="{ isHighlight: $ctrl.message.reward.id === 'highlight-message' }">
+                        <img ng-src="{{$ctrl.message.reward.imageUrl}}" />
+                        <b>{{$ctrl.message.userDisplayName}}{{($ctrl.message.userDisplayName.toLowerCase() !== $ctrl.message.username.toLowerCase() ? " (" + $ctrl.message.username + ")" : "")}}</b> <span>redeemed</span> <b>{{$ctrl.message.reward.name}}</b>
+                    </div>
                     <div class="chat-message"
                         ng-class="{
                             isAction: $ctrl.message.action,
@@ -152,7 +156,7 @@
                                     {{$ctrl.message.timestampDisplay}}
                                 </span>
                             </div>
-                            <div class="chatContent">
+                            <div class="chatContent" ng-class="{ gigantify: $ctrl.message.isGigantified }">
                                 <span ng-repeat="part in $ctrl.message.parts" class="chat-content-wrap">
 
                                     <span ng-if="part.type === 'text'" style="{{$ctrl.chatSizeStyle}}{{$ctrl.fontFamilyStyle}}" ng-class="{ highlightText: part.flagged }">{{part.text}}</span>

@@ -1,4 +1,4 @@
-import { OverlayWidgetConfig, OverlayWidgetType, WidgetEventHandler, WidgetUIAction } from "../../types/overlay-widgets";
+import { OverlayWidgetConfig, OverlayWidgetType, WidgetEventHandler, WidgetEventResult, WidgetUIAction } from "../../types/overlay-widgets";
 import { TypedEmitter } from "tiny-typed-emitter";
 import frontendCommunicator from "../common/frontend-communicator";
 import overlayWidgetConfigManager from "./overlay-widget-config-manager";
@@ -54,15 +54,17 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
             return;
         }
 
-        const handleWidgetEvent = async (handler: WidgetEventHandler<typeof widgetConfig["settings"], typeof widgetConfig["state"]>) => {
+        const handleWidgetEvent = async (handler: WidgetEventHandler<typeof widgetConfig["settings"], typeof widgetConfig["state"], unknown>) => {
             const result = await handler({
-                id: widgetConfig.id,
-                settings: widgetConfig.settings,
-                state: widgetConfig.state ?? {},
+                ...widgetConfig,
                 previewMode
             });
 
-            if (result?.newState) {
+            const isWidgetEventResult = (obj: unknown): obj is WidgetEventResult<typeof widgetConfig["state"]> => {
+                return obj != null && typeof obj === "object" && "newState" in obj;
+            };
+
+            if (isWidgetEventResult(result) && result.newState) {
                 widgetConfig.state = result.newState;
                 if (result.persistState) {
                     overlayWidgetConfigManager.setWidgetStateById(widgetConfig.id, widgetConfig.state);
@@ -89,13 +91,14 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
         });
     }
 
-    private formatForFrontend(overlayWidgetType: OverlayWidgetType): Pick<OverlayWidgetType, "id" | "name" | "icon" | "description" | "settingsSchema" | "userCanConfigure" | "supportsLivePreview" | "initialState" | "initialAspectRatio"> & { uiActions?: Omit<WidgetUIAction, "click">[] } {
+    private formatForFrontend(overlayWidgetType: OverlayWidgetType): Pick<OverlayWidgetType, "id" | "name" | "icon" | "description" | "settingsSchema" | "userCanConfigure" | "supportsLivePreview" | "initialState" | "initialAspectRatio" | "nonEditableSettings"> & { uiActions?: Omit<WidgetUIAction, "click">[] } {
         return {
             id: overlayWidgetType.id,
             name: overlayWidgetType.name,
             description: overlayWidgetType.description,
             icon: overlayWidgetType.icon,
             settingsSchema: overlayWidgetType.settingsSchema,
+            nonEditableSettings: overlayWidgetType.nonEditableSettings,
             userCanConfigure: overlayWidgetType.userCanConfigure,
             supportsLivePreview: overlayWidgetType.supportsLivePreview ?? false,
             initialState: overlayWidgetType.initialState,
@@ -158,8 +161,18 @@ const sendStateDisplayToFrontend = (config: OverlayWidgetConfig) => {
     }
 };
 
-overlayWidgetConfigManager.on("widget-state-updated", (config) => {
+overlayWidgetConfigManager.on("widget-state-updated", (config, previousState, persisted) => {
     sendStateDisplayToFrontend(config);
+
+    const widgetType = manager.getOverlayWidgetType(config.type);
+    if (widgetType?.onStateUpdate) {
+        void widgetType.onStateUpdate({
+            ...config,
+            previewMode: false,
+            previousState,
+            persisted
+        });
+    }
 
     if (livePreviewWidgetConfig && livePreviewWidgetConfig.id === config.id) {
         return;

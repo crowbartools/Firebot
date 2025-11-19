@@ -4,8 +4,15 @@
 
     angular
         .module("firebotApp")
-        .controller("viewersController", function($route, $scope, viewersService, currencyService,
-            utilityService, settingsService) {
+        .controller("viewersController", function(
+            $route, 
+            $scope, 
+            viewersService, 
+            currencyService,
+            utilityService, 
+            settingsService, 
+            ngToast
+        ) {
             $scope.isViewerDBOn = settingsService.getSetting("ViewerDB");
             $scope.viewerTablePageSize = settingsService.getSetting("ViewerListPageSize");
 
@@ -31,6 +38,27 @@
                 utilityService.showModal({
                     component: "importViewersModal",
                     closeCallback: () => {
+                        $route.reload();
+                    }
+                });
+            };
+
+            $scope.showExportViewersModal = () => {
+                utilityService.showModal({
+                    component: "exportViewersModal",
+                    closeCallback: (response) => {
+                        if (response.success) {
+                            ngToast.create({
+                                className: 'success',
+                                content: 'Viewers exported!'
+                            });
+                        } else {
+                            ngToast.create({
+                                className: 'danger',
+                                content: 'Failed to export viewers'
+                            });
+                        }
+
                         $route.reload();
                     }
                 });

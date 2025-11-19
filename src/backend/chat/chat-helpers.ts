@@ -1,4 +1,4 @@
-import { HelixChatBadgeSet, HelixCheermoteList } from "@twurple/api";
+import { HelixChatBadgeSet, HelixCheermoteList, HelixEmoteScale } from "@twurple/api";
 import { ChatMessage, ParsedMessageCheerPart, ParsedMessagePart, findCheermotePositions, parseChatMessage } from "@twurple/chat";
 import { EventSubAutoModMessageHoldV2Event } from "@twurple/eventsub-base";
 
@@ -33,8 +33,8 @@ interface ExtensionBadge {
 interface HelixEmoteBase {
     id: string;
     name: string;
-    getStaticImageUrl(): string;
-    getAnimatedImageUrl(): string;
+    getStaticImageUrl(scale?: HelixEmoteScale): string;
+    getAnimatedImageUrl(scale?: HelixEmoteScale): string;
 }
 
 class FirebotChatHelpers {
@@ -229,8 +229,8 @@ class FirebotChatHelpers {
 
     private _mapCachedEmotesForFrontend(emoteList: HelixEmoteBase[]) {
         return emoteList.map(e => ({
-            url: e.getStaticImageUrl(),
-            animatedUrl: e.getAnimatedImageUrl(),
+            url: e.getStaticImageUrl("3.0"),
+            animatedUrl: e.getAnimatedImageUrl("3.0"),
             origin: "Twitch",
             code: e.name
         }));
@@ -364,8 +364,8 @@ class FirebotChatHelpers {
                     emote = this._twitchEmotes.bot.find(e => e.name === part.name);
                 }
 
-                part.url = emote ? emote.getStaticImageUrl() : `https://static-cdn.jtvnw.net/emoticons/v2/${part.id}/default/dark/1.0`;
-                part.animatedUrl = emote ? emote.getAnimatedImageUrl() : null;
+                part.url = emote ? emote.getStaticImageUrl("3.0") : `https://static-cdn.jtvnw.net/emoticons/v2/${part.id}/default/dark/3.0`;
+                part.animatedUrl = emote ? emote.getAnimatedImageUrl("3.0") : null;
             }
 
             if (part.type === "cheer") {
@@ -432,8 +432,8 @@ class FirebotChatHelpers {
                     .find(e => e.name === word);
                 if (foundEmote) {
                     emoteId = foundEmote.id;
-                    url = foundEmote.getStaticImageUrl();
-                    animatedUrl = foundEmote.getAnimatedImageUrl();
+                    url = foundEmote.getStaticImageUrl("3.0");
+                    animatedUrl = foundEmote.getAnimatedImageUrl("3.0");
                 }
             } catch (err) {
                 //logger.silly(`Failed to find emote id for ${word}`, err);
@@ -477,6 +477,7 @@ class FirebotChatHelpers {
     async buildFirebotChatMessage(msg: ChatMessage, msgText: string, whisper = false, action = false) {
         const sharedChatRoomId = msg.tags.get("source-room-id");
         const isSharedChatMessage = sharedChatRoomId != null && sharedChatRoomId !== AccountAccess.getAccounts().streamer.userId;
+        const isGigantified = msg.tags.get("msg-id") === "gigantified-emote-message";
         const firebotChatMessage: FirebotChatMessage = {
             id: msg.tags.get("id"),
             username: msg.userInfo.userName,
@@ -489,6 +490,7 @@ class FirebotChatHelpers {
             isFirstChat: msg.isFirst ?? false,
             isReturningChatter: msg.isReturningChatter ?? false,
             isReply: msg.tags.has("reply-parent-msg-id"),
+            isGigantified: isGigantified,
             replyParentMessageId: msg.tags.get("reply-parent-msg-id"),
             replyParentMessageText: msg.tags.get("reply-parent-msg-body"),
             replyParentMessageSenderUserId: msg.tags.get("reply-parent-user-id"),

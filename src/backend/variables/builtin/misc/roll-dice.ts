@@ -1,5 +1,5 @@
 import type { ReplaceVariable } from "../../../../types/variables";
-import { processDice } from "../../../common/handlers/diceProcessor";
+import { processDice } from "../../../common/handlers/dice-processor";
 
 const model : ReplaceVariable = {
     definition: {
@@ -23,7 +23,7 @@ const model : ReplaceVariable = {
         categories: ["common", "numbers"],
         possibleDataOutput: ["number", "text"]
     },
-    evaluator: (_, diceConfig, option: string) => {
+    evaluator: (_, diceConfig: string, option: string) => {
         const showEach = option?.toLowerCase() === "show each";
         const output = processDice(diceConfig, showEach);
         return (output == null || output === '') ? 0 : output;

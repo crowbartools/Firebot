@@ -15,6 +15,7 @@ import subVariables from './subs';
 import accountCreationDate from './account-creation-date';
 import followAge from './follow-age';
 import followCount from './follow-count';
+import latestFollower from './latest-follower';
 import predictionWinningOutcomeName from './prediction-winning-outcome-name';
 import twitchChannelUrl from './twitch-channel-url';
 import twitchVodUrl from './twitch-vod-url';
@@ -39,6 +40,7 @@ export default [
     accountCreationDate,
     followAge,
     followCount,
+    latestFollower,
     predictionWinningOutcomeName,
     twitchChannelUrl,
     twitchVodUrl,

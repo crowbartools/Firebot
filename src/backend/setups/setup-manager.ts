@@ -3,6 +3,7 @@ import fsp from "fs/promises";
 import type { FirebotSetup, SetupImportQuestion } from "../../types/setups";
 import type { Currency } from "../../types/currency";
 
+import { CommandManager } from "../chat/commands/command-manager";
 import { CounterManager } from "../counters/counter-manager";
 import { EffectQueueConfigManager } from "../effects/queues/effect-queue-config-manager";
 import { EventsAccess } from "../events/events-access";
@@ -12,7 +13,6 @@ import { QuickActionManager } from "../quick-actions/quick-action-manager";
 import { ScheduledTaskManager } from "../timers/scheduled-task-manager";
 import { SettingsManager } from "../common/settings-manager";
 import { TimerManager } from "../timers/timer-manager";
-import commandManager from "../chat/commands/command-manager";
 import currencyAccess from "../currency/currency-access";
 import customRolesManager from "../roles/custom-roles-manager";
 import overlayWidgetConfigManager from "../overlay-widgets/overlay-widget-config-manager";
@@ -167,9 +167,9 @@ class SetupManager {
         // commands
         const commands = setup.components.commands ?? [];
         for (const command of commands) {
-            commandManager.saveImportedCustomCommand(command);
+            CommandManager.saveImportedCustomCommand(command);
         }
-        commandManager.triggerUiRefresh();
+        CommandManager.triggerUiRefresh();
 
         // counters
         const counters = setup.components.counters ?? [];
@@ -296,7 +296,7 @@ class SetupManager {
                 componentList.forEach(({ id = "" }) => {
                     switch (componentType as keyof FirebotSetup["components"]) {
                         case "commands":
-                            commandManager.deleteCustomCommand(id);
+                            CommandManager.deleteCustomCommand(id);
                             break;
                         case "counters":
                             CounterManager.deleteItem(id);
@@ -345,7 +345,7 @@ class SetupManager {
                     }
                 });
                 if (componentType === "commands") {
-                    commandManager.triggerUiRefresh();
+                    CommandManager.triggerUiRefresh();
                 } else if (componentType === "counters") {
                     CounterManager.triggerUiRefresh();
                 } else if (componentType === "effectQueues") {

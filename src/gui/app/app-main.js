@@ -1,3 +1,4 @@
+/* eslint-disable angular/di-unused */
 /* eslint-disable angular/no-run-logic */
 
 
@@ -111,6 +112,10 @@
     ]);
 
     app.run(function initializeApplication(
+        logger,
+        quickActionsService,
+        chatMessagesService,
+        activityFeedService,
         viewerRolesService,
         viewerRanksService,
         connectionService,
@@ -134,11 +139,14 @@
         channelRewardsService,
         sortTagsService,
         iconsService,
+        videoService,
+        replaceVariableService,
         variableMacroService,
         uiExtensionsService,
         webhooksService,
         overlayWidgetsService,
-        dynamicParameterRegistry
+        dynamicParameterRegistry,
+        platformService
     ) {
         // 'chatMessagesService' and 'videoService' are included so they're instantiated on app start
 
@@ -186,6 +194,8 @@
         webhooksService.loadWebhookConfigs();
 
         overlayWidgetsService.loadOverlayWidgetTypesAndConfigs();
+
+        platformService.loadPlatform();
 
         //start notification check
         $timeout(() => {
@@ -251,7 +261,7 @@
     });
 
     app.controller("MainController", function($scope, $rootScope, $timeout, connectionService, utilityService,
-        settingsService, backupService, sidebarManager, logger, backendCommunicator, fontManager, ngToast) {
+        settingsService, backupService, sidebarManager, logger, backendCommunicator, fontManager, ngToast, watcherCountService) {
         $rootScope.showSpinner = true;
 
         $scope.fontAwesome5KitUrl = `https://kit.fontawesome.com/${secrets.fontAwesome5KitId}.js`;
@@ -740,18 +750,7 @@
     app.filter('reverseChat', function() {
         return (items, reverse) => {
             return reverse === true
-                ? items.toSorted((a, b) => {
-                    // Keep chat message and associated redemption in their current order
-                    if (a.type === "message"
-                        && b.type === "redemption"
-                        && a.rewardMatched
-                        && a.data.customRewardId === b.data.reward.id
-                    ) {
-                        return 1;
-                    }
-
-                    return -1;
-                })
+                ? items.toReversed()
                 : items;
         };
     });

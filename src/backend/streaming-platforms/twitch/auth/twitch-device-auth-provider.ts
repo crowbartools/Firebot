@@ -4,12 +4,24 @@
  *  Once one exists, this can go away. In the meantime, it stays in order to refresh tokens automagically.
  */
 
-import { EventEmitter } from '@d-fischer/typed-event-emitter';
-import { CustomError, extractUserId, type UserIdResolvable } from '@twurple/common';
-import { AccessToken, AccessTokenMaybeWithUserId, AccessTokenWithUserId, TokenFetcher, TokenInfoData } from '@twurple/auth';
-import { accessTokenIsExpired, InvalidTokenError, TokenInfo } from '@twurple/auth';
-import type { AuthProvider } from '@twurple/auth';
-import { callTwitchApi, HttpStatusCodeError } from '@twurple/api-call';
+import { EventEmitter } from "@d-fischer/typed-event-emitter";
+import { callTwitchApi, HttpStatusCodeError } from "@twurple/api-call";
+import {
+    type AuthProvider,
+    accessTokenIsExpired,
+    AccessToken,
+    AccessTokenMaybeWithUserId,
+    AccessTokenWithUserId,
+    InvalidTokenError,
+    TokenFetcher,
+    TokenInfo,
+    TokenInfoData
+} from "@twurple/auth";
+import {
+    type UserIdResolvable,
+    CustomError,
+    extractUserId
+} from "@twurple/common";
 
 interface AccessTokenData {
     access_token: string;

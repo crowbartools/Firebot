@@ -32,10 +32,6 @@ class QuoteManager {
             void this.addQuote(quote);
         });
 
-        frontendCommunicator.on("add-quotes", (quotes: Quote[]) => {
-            void this.addQuotes(quotes);
-        });
-
         frontendCommunicator.on("update-quote", (quote: Quote) => {
             void this.updateQuote(quote, true);
         });
