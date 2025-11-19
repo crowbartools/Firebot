@@ -6,12 +6,11 @@ import {
     HelixUpdateChatSettingsParams,
     HelixUserEmote
 } from "@twurple/api";
+import type { SharedChatParticipant } from '../../../../../types';
 import { ApiResourceBase } from "./api-resource-base";
 import type { TwitchApi } from "../";
 import { TwitchSlashCommandHandler } from "../../chat/twitch-slash-command-handler";
 import frontendCommunicator from '../../../../common/frontend-communicator';
-import { TwitchUsersApi } from "./users";
-import type { SharedChatParticipant } from '../../../../../types/chat';
 
 interface ResultWithError<TResult, TError> {
     success: boolean;
@@ -27,13 +26,11 @@ interface ChatMessageRequest {
 
 export class TwitchChatApi extends ApiResourceBase {
     private _slashCommandHandler: TwitchSlashCommandHandler;
-    private _usersApi: TwitchUsersApi;
 
     constructor(apiBase: typeof TwitchApi) {
         super(apiBase);
 
         this._slashCommandHandler = new TwitchSlashCommandHandler(apiBase);
-        this._usersApi = new TwitchUsersApi(apiBase);
 
         frontendCommunicator.onAsync("send-chat-message", async (sendData: ChatMessageRequest) => {
             const { message, accountType, replyToMessageId } = sendData;
@@ -440,7 +437,7 @@ export class TwitchChatApi extends ApiResourceBase {
                 return null;
             }
 
-            const twitchUsers = await this._usersApi.getUsersByIds(session.participants.map(participant => participant.broadcasterId));
+            const twitchUsers = await this.usersApi.getUsersByIds(session.participants.map(participant => participant.broadcasterId));
 
             return twitchUsers.map(user => ({
                 broadcasterId: user.id,

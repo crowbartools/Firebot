@@ -30,4 +30,8 @@ export abstract class ApiResourceBase<T extends ListenerSignature<T> = unknown> 
     protected get accounts() {
         return this._apiBase.accounts;
     }
+
+    protected get usersApi() {
+        return this._apiBase.users;
+    }
 }

@@ -1,6 +1,6 @@
 import { AccountAccess } from "../../../../../common/account-access";
 import type { ReplaceVariable, Trigger } from "../../../../../../types/variables";
-import sharedChatCache from "../../../shared-chat-cache";
+import { SharedChatCache } from "../../../chat/shared-chat-cache";
 
 const model : ReplaceVariable = {
     definition: {
@@ -28,7 +28,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: ["array"]
     },
     evaluator: (trigger: Trigger, includeStreamer = true, filterType = "raw") => {
-        const participants = Object.values(sharedChatCache.participants);
+        const participants = Object.values(SharedChatCache.participants);
         if (!includeStreamer || includeStreamer === "false") {
             const streamerId = AccountAccess.getAccounts().streamer.userId;
             if (!streamerId) {

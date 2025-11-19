@@ -1,5 +1,5 @@
 import type { ReplaceVariable } from "../../../../../../types/variables";
-import sharedChatCache from "../../../shared-chat-cache";
+import { SharedChatCache } from "../../../chat/shared-chat-cache";
 
 const model : ReplaceVariable = {
     definition: {
@@ -9,7 +9,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: ["bool"]
     },
     evaluator: () => {
-        return sharedChatCache.isActive;
+        return SharedChatCache.isActive;
     }
 };
 

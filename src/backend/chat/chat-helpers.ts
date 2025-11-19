@@ -11,6 +11,7 @@ import { FirebotAccount } from "../../types/accounts";
 
 import { AccountAccess } from "../common/account-access";
 import { SettingsManager } from "../common/settings-manager";
+import { SharedChatCache } from "../streaming-platforms/twitch/chat/shared-chat-cache";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 import rankManager from "../ranks/rank-manager";
 import roleManager from "../roles/custom-roles-manager";
@@ -23,7 +24,6 @@ import { ThirdPartyEmote, ThirdPartyEmoteProvider } from "./third-party/third-pa
 import { BTTVEmoteProvider } from "./third-party/bttv";
 import { FFZEmoteProvider } from "./third-party/ffz";
 import { SevenTVEmoteProvider } from "./third-party/7tv";
-import sharedChatCache from "../streaming-platforms/twitch/shared-chat-cache";
 
 interface ExtensionBadge {
     id: string;
@@ -477,7 +477,7 @@ class FirebotChatHelpers {
 
     async buildFirebotChatMessage(msg: ChatMessage, msgText: string, whisper = false, action = false) {
         const sharedChatRoomId = msg.tags.get("source-room-id");
-        const sharedChatRoom = sharedChatCache.participants[sharedChatRoomId];
+        const sharedChatRoom = SharedChatCache.participants[sharedChatRoomId];
         const isSharedChatMessage = sharedChatRoomId != null && sharedChatRoomId !== AccountAccess.getAccounts().streamer.userId;
         const isGigantified = msg.tags.get("msg-id") === "gigantified-emote-message";
         const firebotChatMessage: FirebotChatMessage = {

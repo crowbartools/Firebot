@@ -1,9 +1,10 @@
-import type { SharedChatParticipant } from '../../../types/chat';
-import { TwitchApi } from "./api";
+import type { SharedChatParticipant } from '../../../../types';
+import { TwitchApi } from "../api";
 
 class SharedChatCache {
     private _isActive = false;
     private _participants: Record<string, SharedChatParticipant> = {};
+
     get isActive(): boolean {
         return this._isActive;
     }
@@ -40,4 +41,6 @@ class SharedChatCache {
     }
 }
 
-export default new SharedChatCache();
+const cache = new SharedChatCache();
+
+export { cache as SharedChatCache };

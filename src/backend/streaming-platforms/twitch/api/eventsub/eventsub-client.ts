@@ -4,6 +4,7 @@ import { EventSubWsListener } from "@twurple/eventsub-ws";
 import type { SavedChannelReward } from "../../../../../types/channel-rewards";
 
 import { AccountAccess } from "../../../../common/account-access";
+import { SharedChatCache } from "../../chat/shared-chat-cache";
 import { TwitchEventHandlers } from "../../events";
 import { TwitchApi } from "..";
 import channelRewardManager from "../../../../channel-rewards/channel-reward-manager";
@@ -15,7 +16,6 @@ import viewerDatabase from "../../../../viewers/viewer-database";
 import frontendCommunicator from "../../../../common/frontend-communicator";
 import logger from "../../../../logwrapper";
 import { getChannelRewardImageUrl, mapEventSubRewardToTwitchData } from "./eventsub-helpers";
-import sharedChatCache from "../../shared-chat-cache";
 
 class TwitchEventSubClient {
     private _eventSubListener: EventSubWsListener;
@@ -319,22 +319,22 @@ class TwitchEventSubClient {
 
         // Shared Chat Started
         const sharedChatStartedSubscription = this._eventSubListener.onChannelSharedChatSessionBegin(streamer.userId, (event) => {
-            sharedChatCache.enableSharedChat();
-            sharedChatCache.participants = event.participants;
+            SharedChatCache.enableSharedChat();
+            SharedChatCache.participants = event.participants;
             TwitchEventHandlers.chat.triggerSharedChatEnabled();
         });
         this._subscriptions.push(sharedChatStartedSubscription);
 
         // Shared Chat Updated
         const sharedChatUpdatedSubscription = this._eventSubListener.onChannelSharedChatSessionUpdate(streamer.userId, (event) => {
-            sharedChatCache.participants = event.participants;
+            SharedChatCache.participants = event.participants;
             TwitchEventHandlers.chat.triggerSharedChatUpdated();
         });
         this._subscriptions.push(sharedChatUpdatedSubscription);
 
         // Shared Chat Ended
         const sharedChatEndedSubscription = this._eventSubListener.onChannelSharedChatSessionEnd(streamer.userId, () => {
-            sharedChatCache.disableSharedChat();
+            SharedChatCache.disableSharedChat();
             TwitchEventHandlers.chat.triggerSharedChatEnded();
         });
         this._subscriptions.push(sharedChatEndedSubscription);
