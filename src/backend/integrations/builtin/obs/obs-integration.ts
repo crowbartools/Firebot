@@ -1,12 +1,12 @@
 import { TypedEmitter } from "tiny-typed-emitter";
-import {
+
+import type {
     Integration,
     IntegrationController,
     IntegrationData,
-    IntegrationEvents
-} from "@crowbartools/firebot-custom-scripts-types";
-
-import { Awaitable } from "../../../../types/util-types";
+    IntegrationEvents,
+    Awaitable
+} from "../../../../types";
 
 import { EffectManager } from "../../../effects/effect-manager";
 import { EventManager } from "../../../events/event-manager";
