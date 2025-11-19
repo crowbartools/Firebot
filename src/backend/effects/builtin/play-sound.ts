@@ -156,7 +156,6 @@ const model: EffectType<{
         event: {
             name: "sound",
             onOverlayEvent: (event) => {
-                console.log("SOUND EVENT RECEIVED IN OVERLAY:", event);
                 const data = event;
                 const token = encodeURIComponent(data.resourceToken);
                 const resourcePath = `http://${
@@ -181,15 +180,8 @@ const model: EffectType<{
                     mediaType = "audio/flac";
                 }
 
-                const audioElement = document.createElement("audio");
-                audioElement.id = elementId;
-                audioElement.src = data.isUrl ? data.url : resourcePath;
-                if (mediaType) {
-                    audioElement.setAttribute("type", mediaType);
-                }
-
-                // Throw audio element on page.
-                document.getElementById("wrapper").append(audioElement);
+                const audioElement = `<audio id="${elementId}" src="${data.isUrl ? data.url : resourcePath}" type="${mediaType}"></audio>`;
+                document.getElementById("wrapper").insertAdjacentHTML("beforeend", audioElement);
 
                 const audio = document.getElementById(elementId) as HTMLAudioElement;
                 // @ts-ignore
