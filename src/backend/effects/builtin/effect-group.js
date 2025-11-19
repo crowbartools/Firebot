@@ -5,6 +5,7 @@ const { EffectCategory, EffectTrigger } = require('../../../shared/effect-consta
 const { PresetEffectListManager } = require("../preset-lists/preset-effect-list-manager");
 const logger = require("../../logwrapper");
 const { simpleClone } = require("../../utils");
+const { SettingsManager } = require("../../common/settings-manager");
 
 const effectGroup = {
     definition: {
@@ -182,7 +183,8 @@ const effectGroup = {
                 }
                 newTrigger.metadata.stackDepth[presetList.id] += 1;
 
-                if (newTrigger.metadata.stackDepth[presetList.id] > 100) {
+                const recursionLimitEnabled = SettingsManager.getSetting("PresetRecursionLimit");
+                if (recursionLimitEnabled && newTrigger.metadata.stackDepth[presetList.id] > 100) {
                     logger.error(`Preset Effect List '${presetList.name}' (ID: ${presetList.id}) has been triggered more than 100 times in the same chain. Stopping execution to prevent infinite loop.`);
                     return resolve(true);
                 }
