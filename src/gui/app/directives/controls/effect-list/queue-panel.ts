@@ -2,142 +2,98 @@
 
 import type {
     FirebotComponent,
-    EffectQueueConfig,
-    ModalFactory
+    EffectQueuesService,
+    ModalFactory,
+    EffectList
 } from "../../../../../types";
+import type { DropdownAction, DropdownOption } from "../firebot-dropdown";
+import type { PreviewItem } from "./effect-config-panel";
 
-type EffectListWithQueue = {
-    queue?: string | null;
-    queuePriority?: "high" | "none";
-    queueDuration?: number;
-};
-
-type EffectQueuesService = {
-    getEffectQueues: () => EffectQueueConfig[];
-    getEffectQueue: (id: string) => EffectQueueConfig | undefined;
-    showAddEditEffectQueueModal: (queueId?: string) => Promise<string>;
-    showDeleteEffectQueueModal: (queueId: string) => Promise<boolean>;
-};
-
-type QueuePanelBindings = {
-    effectsData: EffectListWithQueue;
+type Bindings = {
+    effectsData: EffectList;
     onUpdate: () => void;
 };
 
-type QueueOption = {
-    name: string;
-    value: string;
-    icon: string;
-};
-
-type QueueAction = {
-    label: string;
-    icon: string;
-    type?: "info" | "danger";
-    onSelect: () => void;
-};
-
-type ControllerExtras = {
-    expanded: boolean;
-    animationComplete: boolean;
+type Controller = {
     eqs: EffectQueuesService;
     getSelectedEffectQueueName: () => string;
-    getSelectedQueuePriority: () => string;
     getSelectedQueueModeIsCustom: () => boolean;
     toggleQueueSelection: (queueId: string) => void;
     validQueueSelected: () => boolean;
     showAddEditEffectQueueModal: (queueId?: string) => void;
     showDeleteEffectQueueModal: (queueId: string) => void;
     openEditQueueDurationModal: () => void;
-    toggleExpanded: () => void;
-    getQueueOptions: () => QueueOption[];
-    getQueueActions: () => QueueAction[];
+    getQueueOptions: () => DropdownOption[];
+    getQueueActions: () => DropdownAction[];
     selectedUpdated: () => void;
-    options: QueueOption[];
-    actions: QueueAction[];
+    updatePreviewItems: () => void;
+    options: DropdownOption[];
+    actions: DropdownAction[];
+    previewItems: PreviewItem[];
+    mainValue: PreviewItem;
 };
 
 (function () {
-    const queuePanel: FirebotComponent<QueuePanelBindings, ControllerExtras> = {
+    const queuePanel: FirebotComponent<Bindings, Controller> = {
         bindings: {
             effectsData: "<",
             onUpdate: "&"
         },
         template: `
-            <div class="effect-list-queue-panel" ng-class="{'expanded': $ctrl.expanded, 'animation-complete': $ctrl.animationComplete}">
-                <div class="queue-panel-header" ng-click="$ctrl.toggleExpanded()" role="button" tabindex="0">
-                    <div class="queue-panel-header-left">
-                        <i class="far fa-layer-group"></i>
-                        <span>Queue</span>
-                        <tooltip role="tooltip" aria-label="Effect queues allow you to queue up effects so they don't overlap each other. Particularly useful for events." text="'Effect queues allow you to queue up effects so they don\\'t overlap each other. Particularly useful for events!'"></tooltip>
+            <effect-config-panel
+                icon="fa-stream"
+                label="Queue"
+                tooltip="Effect queues allow you to queue up effects so they don't overlap each other. Particularly useful for events!"
+                main-value="$ctrl.mainValue"
+                preview-items="$ctrl.previewItems"
+                no-bottom-margin="true"
+            >
+                <div style="padding: 14px 0;">
+                    <firebot-dropdown
+                        ng-model="$ctrl.effectsData.queue"
+                        ng-change="$ctrl.selectedUpdated()"
+                        options="$ctrl.options"
+                        actions="$ctrl.actions"
+                        placeholder="Select queue"
+                        empty-message="No queues created"
+                        dark="true"
+                    />
+                </div>
+
+                <div class="config-panel-control" ng-if="$ctrl.validQueueSelected()">
+                    <div class="config-control-label">
+                        <i class="far fa-arrow-up"></i>
+                        <span>Priority</span>
+                        <tooltip role="tooltip" aria-label="If an effect list has priority, it will get added in front of other lists in the queue that do not have priority." text="'If an effect list has priority, it will get added in front of other lists in the queue that do not have priority.'"></tooltip>
                     </div>
-                    <div class="queue-panel-header-right">
-                        <div class="queue-preview" ng-if="!$ctrl.expanded">
-                            <span class="queue-preview-item" uib-tooltip="Queue" append-tooltip-to-body="true">
-                                <i class="far fa-stream"></i>
-                                <span>{{$ctrl.getSelectedEffectQueueName()}}</span>
-                            </span>
-                            <span class="queue-preview-item" uib-tooltip="Priority" append-tooltip-to-body="true" ng-if="$ctrl.validQueueSelected()">
-                                <i class="far fa-arrow-up"></i>
-                                <span>{{$ctrl.getSelectedQueuePriority()}}</span>
-                            </span>
-                            <span class="queue-preview-item" uib-tooltip="Effects Duration" append-tooltip-to-body="true" ng-if="$ctrl.getSelectedQueueModeIsCustom()">
-                                <i class="far fa-clock"></i>
-                                <span>{{$ctrl.effectsData.queueDuration || 0}}s</span>
-                            </span>
-                        </div>
-                        <i class="fas fa-chevron-down queue-panel-chevron"></i>
+                    <div>
+                        <toggle-button
+                            toggle-model="$ctrl.effectsData.queuePriority === 'high'"
+                            on-toggle="$ctrl.updateQueuePriority(newValue)"
+                            font-size="32"
+                        ></toggle-button>
                     </div>
                 </div>
 
-                <div class="queue-panel-content">
-                    <div style="padding: 14px 0;">
-                        <firebot-dropdown
-                            ng-model="$ctrl.effectsData.queue"
-                            ng-change="$ctrl.selectedUpdated()"
-                            options="$ctrl.options"
-                            actions="$ctrl.actions"
-                            placeholder="Select queue"
-                            empty-message="No queues created"
-                            dark="true"
-                        />
+                <div class="config-panel-control" ng-if="$ctrl.getSelectedQueueModeIsCustom()">
+                    <div class="config-control-label">
+                        <i class="far fa-clock"></i>
+                        <span>Effects Duration</span>
+                        <tooltip role="tooltip" aria-label="The total duration in seconds the queue should wait after triggering this effect list before running the next one." text="'The total duration (in secs) the queue should wait after triggering this effect list before running the next one'"></tooltip>
                     </div>
-
-                    <div class="queue-panel-control" ng-if="$ctrl.validQueueSelected()">
-                        <div class="queue-control-label">
-                            <i class="far fa-arrow-up"></i>
-                            <span>Priority</span>
-                            <tooltip role="tooltip" aria-label="If an effect list has priority, it will get added in front of other lists in the queue that do not have priority." text="'If an effect list has priority, it will get added in front of other lists in the queue that do not have priority.'"></tooltip>
-                        </div>
-                        <div>
-                            <toggle-button
-                                toggle-model="$ctrl.effectsData.queuePriority === 'high'"
-                                on-toggle="$ctrl.updateQueuePriority(newValue)"
-                                font-size="32"
-                            ></toggle-button>
-                        </div>
-                    </div>
-
-                    <div class="queue-panel-control" ng-if="$ctrl.getSelectedQueueModeIsCustom()">
-                        <div class="queue-control-label">
-                            <i class="far fa-clock"></i>
-                            <span>Effects Duration</span>
-                            <tooltip role="tooltip" aria-label="The total duration in seconds the queue should wait after triggering this effect list before running the next one." text="'The total duration (in secs) the queue should wait after triggering this effect list before running the next one'"></tooltip>
-                        </div>
-                        <div class="queue-control-input">
-                            <button
-                                class="queue-duration-btn"
-                                ng-click="$ctrl.openEditQueueDurationModal()"
-                                aria-label="Effects duration: {{$ctrl.effectsData.queueDuration || 0}} seconds"
-                                role="button"
-                            >
-                                <span class="queue-duration-value">{{$ctrl.effectsData.queueDuration || 0}}s</span>
-                                <i class="far fa-edit"></i>
-                            </button>
-                        </div>
+                    <div class="config-control-input">
+                        <button
+                            class="config-duration-btn"
+                            ng-click="$ctrl.openEditQueueDurationModal()"
+                            aria-label="Effects duration: {{$ctrl.effectsData.queueDuration || 0}} seconds"
+                            role="button"
+                        >
+                            <span class="config-duration-value">{{$ctrl.effectsData.queueDuration || 0}}s</span>
+                            <i class="far fa-edit"></i>
+                        </button>
                     </div>
                 </div>
-            </div>
+            </effect-config-panel>
         `,
         controller: function (
             effectQueuesService: EffectQueuesService,
@@ -145,14 +101,11 @@ type ControllerExtras = {
         ) {
             const $ctrl = this;
 
-            $ctrl.expanded = false;
-            $ctrl.animationComplete = false;
             $ctrl.eqs = effectQueuesService;
-
-            let animationTimeout: ReturnType<typeof setTimeout> | null = null;
 
             $ctrl.options = [];
             $ctrl.actions = [];
+            $ctrl.previewItems = [];
 
             function buildOptionsAndActions() {
                 $ctrl.options = $ctrl.getQueueOptions();
@@ -161,48 +114,56 @@ type ControllerExtras = {
 
             $ctrl.$onInit = $ctrl.$onChanges = () => {
                 buildOptionsAndActions();
-            };
-
-            $ctrl.$onDestroy = () => {
-                if (animationTimeout) {
-                    clearTimeout(animationTimeout);
-                }
+                $ctrl.updatePreviewItems();
             };
 
             $ctrl.selectedUpdated = () => {
                 buildOptionsAndActions();
+                $ctrl.updatePreviewItems();
                 $ctrl.onUpdate();
             };
 
-            $ctrl.toggleExpanded = () => {
-                $ctrl.expanded = !$ctrl.expanded;
+            $ctrl.updatePreviewItems = () => {
+                const queue = $ctrl.effectsData.queue ? effectQueuesService.getEffectQueue($ctrl.effectsData.queue) : null;
+                const modeInfo = queue ? effectQueuesService.queueModes.find(mode => mode.value === queue.mode) : null;
 
-                // Clear any existing timeout
-                if (animationTimeout) {
-                    clearTimeout(animationTimeout);
-                    animationTimeout = null;
+                $ctrl.mainValue = {
+                    icon: queue ? modeInfo?.iconClass ?? "fa-stream" : 'fa-ban',
+                    label: $ctrl.getSelectedEffectQueueName(),
+                    tooltip: (modeInfo?.description ? `${modeInfo.label} Queue: ${modeInfo.description}` : null) ?? "This effect list will run immediately when triggered."
+                };
+
+                const items: PreviewItem[] = [];
+
+                if ($ctrl.validQueueSelected()) {
+                    if ($ctrl.effectsData.queuePriority) {
+                        items.push({
+                            icon: "fa-arrow-up",
+                            label: "Prioritized",
+                            tooltip: "Has Priority"
+                        });
+                    }
                 }
 
-                if ($ctrl.expanded) {
-                    // When opening, delay the overflow change until after animation (300ms)
-                    $ctrl.animationComplete = false;
-                    animationTimeout = setTimeout(() => {
-                        $ctrl.animationComplete = true;
-                        animationTimeout = null;
-                    }, 300);
-                } else {
-                    // When closing, immediately set animationComplete to false
-                    $ctrl.animationComplete = false;
+                if ($ctrl.getSelectedQueueModeIsCustom()) {
+                    items.push({
+                        icon: "fa-clock",
+                        label: `${$ctrl.effectsData.queueDuration || 0}s`,
+                        tooltip: "Effects Duration"
+                    });
                 }
+
+                $ctrl.previewItems = items;
             };
 
             $ctrl.updateQueuePriority = (isHighPriority: boolean) => {
                 $ctrl.effectsData.queuePriority = isHighPriority ? "high" : "none";
+                $ctrl.updatePreviewItems();
                 $ctrl.onUpdate();
             };
 
             $ctrl.getSelectedEffectQueueName = () => {
-                const unsetDisplay = "Not set";
+                const unsetDisplay = "None";
                 if ($ctrl.effectsData.queue == null) {
                     return unsetDisplay;
                 }
@@ -213,11 +174,6 @@ type ControllerExtras = {
                 }
 
                 return queue.name;
-            };
-
-            $ctrl.getSelectedQueuePriority = () => {
-                const priority = $ctrl.effectsData.queuePriority;
-                return priority === "high" ? "Yes" : "No";
             };
 
             $ctrl.getSelectedQueueModeIsCustom = () => {
@@ -233,27 +189,30 @@ type ControllerExtras = {
                 return queue.mode === "custom";
             };
 
-            $ctrl.getQueueOptions = (): QueueOption[] => {
+            $ctrl.getQueueOptions = (): DropdownOption[] => {
                 const queues = effectQueuesService.getEffectQueues();
-                const queueOptions = queues.map((queue) => {
+                const queueOptions: DropdownOption[] = queues.map((queue) => {
+                    const modeInfo = effectQueuesService.queueModes.find(mode => mode.value === queue.mode);
                     return {
                         name: queue.name,
                         value: queue.id,
-                        icon: "fa-stream"
+                        icon: modeInfo?.iconClass ?? "fa-stream",
+                        chip: modeInfo ? modeInfo.label : undefined,
+                        chipTooltip: modeInfo ? modeInfo.description : undefined
                     };
                 });
                 return [
                     {
-                        name: "Not set",
+                        name: "None",
                         value: null,
-                        icon: "fa-times-circle"
+                        icon: "fa-ban"
                     },
                     ...queueOptions
                 ];
             };
 
             $ctrl.getQueueActions = () => {
-                const actions: QueueAction[] = [
+                const actions: DropdownAction[] = [
                     {
                         label: "Create new queue",
                         icon: "fa-plus-circle",
@@ -299,6 +258,7 @@ type ControllerExtras = {
             $ctrl.showAddEditEffectQueueModal = (queueId?: string) => {
                 void effectQueuesService.showAddEditEffectQueueModal(queueId).then((id) => {
                     $ctrl.effectsData.queue = id;
+                    $ctrl.updatePreviewItems();
                     $ctrl.onUpdate();
                 });
             };
@@ -307,6 +267,7 @@ type ControllerExtras = {
                 void effectQueuesService.showDeleteEffectQueueModal(queueId).then((confirmed) => {
                     if (confirmed) {
                         $ctrl.effectsData.queue = undefined;
+                        $ctrl.updatePreviewItems();
                         $ctrl.onUpdate();
                     }
                 });
@@ -331,6 +292,7 @@ type ControllerExtras = {
                     },
                     (newDuration) => {
                         $ctrl.effectsData.queueDuration = newDuration;
+                        $ctrl.updatePreviewItems();
                         $ctrl.onUpdate();
                     }
                 );
