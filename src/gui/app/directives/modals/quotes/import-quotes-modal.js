@@ -46,7 +46,9 @@
                 </div>
                 <div class="modal-footer pt-0">
                     <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
-                    <button ng-show="$ctrl.quotes" ng-click="$ctrl.importQuotes()" class="btn btn-primary">Import</button>
+                    <button ng-show="$ctrl.quotes" ng-click="$ctrl.importQuotes()" class="btn btn-primary" ng-disabled="$ctrl.importing">
+                        {{$ctrl.importing ? 'Importing...' : 'Import'}}
+                    </button>
                 </div>
             `,
             bindings: {
@@ -54,8 +56,11 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function(backendCommunicator, quotesService, importService) {
+            controller: function(backendCommunicator, importService) {
                 const $ctrl = this;
+
+                $ctrl.importer = "";
+                $ctrl.importing = false;
 
                 $ctrl.headers = [
                     {
@@ -113,13 +118,21 @@
                     //get the file type from the filepath
                     const fileType = filepath.split(".").pop();
                     let data;
-                    if (fileType === "xlsx") {
-                        data = await importService.loadQuotes("streamlabs-chatbot", filepath);
-                    } else if (fileType === "txt") {
-                        data = await importService.loadQuotes("mixitup", filepath);
-                    } else if (fileType === "csv") {
-                        data = await importService.loadQuotes("firebot", filepath);
+
+                    switch (fileType) {
+                        case "xlsx":
+                            $ctrl.importer = "streamlabs-chatbot";
+                            break;
+                        case "txt":
+                            $ctrl.importer = "mixitup";
+                            break;
+                        case "csv":
+                            $ctrl.importer = "firebot";
+                            break;
                     }
+
+                    data = await importService.loadQuotes($ctrl.importer, filepath);
+
                     if (data && data.quotes) {
                         $ctrl.quotes = data.quotes;
                         $ctrl.search = "";
@@ -128,13 +141,20 @@
                     }
                 };
 
-                $ctrl.importQuotes = () => {
-                    quotesService.addQuotes($ctrl.quotes);
-                };
+                $ctrl.importQuotes = async () => {
+                    $ctrl.importing = true;
 
-                backendCommunicator.on("quotes-update", () => {
-                    $ctrl.close();
-                });
+                    const result = await backendCommunicator.fireEventAsync("import:import-quotes", {
+                        appId: $ctrl.importer,
+                        data: $ctrl.quotes,
+                        settings: {}
+                    });
+
+                    if (result.success) {
+                        $ctrl.importing = false;
+                        $ctrl.close();
+                    }
+                };
             }
         });
 }());
