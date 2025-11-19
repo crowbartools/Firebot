@@ -19,10 +19,6 @@
                 backendCommunicator.fireEvent("add-quote", quote);
             };
 
-            service.addQuotes = (quotes) => {
-                backendCommunicator.fireEvent("add-quotes", quotes);
-            };
-
             service.updateQuote = (quote) => {
                 const index = service.quotes.findIndex(q => q._id === quote._id);
                 if (index > -1) {

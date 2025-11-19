@@ -145,7 +145,8 @@
         uiExtensionsService,
         webhooksService,
         overlayWidgetsService,
-        dynamicParameterRegistry
+        dynamicParameterRegistry,
+        platformService
     ) {
         // 'chatMessagesService' and 'videoService' are included so they're instantiated on app start
 
@@ -193,6 +194,8 @@
         webhooksService.loadWebhookConfigs();
 
         overlayWidgetsService.loadOverlayWidgetTypesAndConfigs();
+
+        platformService.loadPlatform();
 
         //start notification check
         $timeout(() => {
@@ -258,7 +261,7 @@
     });
 
     app.controller("MainController", function($scope, $rootScope, $timeout, connectionService, utilityService,
-        settingsService, backupService, sidebarManager, logger, backendCommunicator, fontManager, ngToast) {
+        settingsService, backupService, sidebarManager, logger, backendCommunicator, fontManager, ngToast, watcherCountService) {
         $rootScope.showSpinner = true;
 
         $scope.fontAwesome5KitUrl = `https://kit.fontawesome.com/${secrets.fontAwesome5KitId}.js`;

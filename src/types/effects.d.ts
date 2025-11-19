@@ -26,6 +26,9 @@ export type EffectTriggerResponse = {
         stop: boolean;
         bubbleStop: boolean;
     };
+    outputs?: {
+        [x as string]: unknown;
+    };
 };
 
 export type EffectOutput = {
@@ -108,6 +111,26 @@ export type EffectDefinition<EffectModel = unknown> = {
          * This is useful when you want to run variable replacement manually, or not at all.
          */
     keysExemptFromAutoVariableReplacement?: Array<keyof EffectModel>;
+    /**
+     * If true, this effect does nothing when triggered (ex Comment effect)
+     * No-op effects are ignored by the random and sequential effects
+     */
+    isNoOp?: boolean;
+};
+
+export type EffectInstance<EffectModel = unknown> = {
+    id: string;
+    type: string;
+    effectLabel?: string | null;
+    effectComment?: string | null;
+    active?: boolean;
+    abortTimeout?: number | null;
+    percentWeight?: number | null;
+    outputNames?: Record<string, string>;
+} & {
+    [K in keyof EffectModel]: EffectModel[K];
+} & {
+    [x: string]: unknown;
 };
 
 export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
@@ -118,7 +141,7 @@ export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
     optionsValidator?: (effect: EffectModel, $scope: EffectScope<EffectModel>) => string[];
     getDefaultLabel?: (effect: EffectModel, ...args: any[]) => Awaitable<string | undefined>;
     onTriggerEvent: (event: {
-        effect: EffectModel;
+        effect: EffectInstance<EffectModel>;
         trigger: Trigger;
         sendDataToOverlay: (data: OverlayData, overlayInstance?: string) => void;
         outputs: Record<string, unknown>;
@@ -127,16 +150,12 @@ export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
     overlayExtension?: OverlayExtension<OverlayData>;
 };
 
-export interface EffectInstance {
-    id: string;
-    type: string;
-    [x: string]: unknown;
-}
-
 export interface EffectList {
     id: string;
     list: EffectInstance[];
-    queue?: string;
+    queue?: string | null;
+    queuePriority?: "high" | "none";
+    queueDuration?: number;
 }
 
 export type PresetEffectList = {

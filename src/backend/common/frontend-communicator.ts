@@ -1,8 +1,10 @@
 import { ipcMain } from "electron";
 import { randomUUID } from "crypto";
 
-import type { FrontendCommunicatorModule } from "../../types/script-modules";
-import type { Awaitable } from "../../types/util-types";
+import type {
+    FrontendCommunicatorModule,
+    Awaitable
+} from "../../types";
 
 class FrontendCommunicator implements FrontendCommunicatorModule {
     private _listeners: Record<string, {
@@ -28,7 +30,7 @@ class FrontendCommunicator implements FrontendCommunicatorModule {
         });
     }
 
-    send(eventName: string, data?: unknown): void {
+    send<ExpectedArg = unknown>(eventName: string, data?: ExpectedArg): void {
         if (globalThis.renderWindow?.isDestroyed() === false
             && globalThis.renderWindow?.webContents?.isDestroyed() === false) {
             globalThis.renderWindow.webContents.send(eventName, data);
@@ -42,13 +44,13 @@ class FrontendCommunicator implements FrontendCommunicatorModule {
         }
     }
 
-    fireEventAsync<ReturnPayload = void>(type: string, data?: unknown): Promise<ReturnPayload> {
+    fireEventAsync<ReturnPayload = void, ExpectedArg = unknown>(eventName: string, data?: ExpectedArg): Promise<ReturnPayload> {
         return new Promise((resolve) => {
             if (globalThis.renderWindow != null) {
-                ipcMain.once(`${type}:reply`, (_, eventData) => {
+                ipcMain.once(`${eventName}:reply`, (_, eventData) => {
                     resolve(eventData as ReturnPayload);
                 });
-                globalThis.renderWindow.webContents.send(type, data);
+                globalThis.renderWindow.webContents.send(eventName, data);
             }
         });
     }

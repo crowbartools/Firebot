@@ -9,7 +9,7 @@ const model: EffectType<{
         name: "Ad Break",
         description: "Trigger an ad break",
         icon: "fad fa-ad",
-        categories: ["common", "Moderation", "twitch"],
+        categories: ["common", "twitch"],
         dependencies: {
             twitch: true
         }

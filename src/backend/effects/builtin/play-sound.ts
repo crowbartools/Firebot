@@ -26,7 +26,7 @@ const model: EffectType<{
         name: "Play Sound",
         description: "Plays a sound effect",
         icon: "fad fa-waveform",
-        categories: ["common"],
+        categories: ["common", "fun"],
         dependencies: []
     },
     optionsTemplate: `

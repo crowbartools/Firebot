@@ -1,4 +1,4 @@
-import { ScriptModules } from "@crowbartools/firebot-custom-scripts-types";
+import type { FrontendCommunicatorModule } from "../../../../types";
 import {
     getAllSources,
     getGroupList,
@@ -20,7 +20,7 @@ import {
 } from "./obs-remote";
 
 export function setupFrontendListeners(
-    frontendCommunicator: ScriptModules["frontendCommunicator"]
+    frontendCommunicator: FrontendCommunicatorModule
 ) {
     frontendCommunicator.on<never, string[]>(
         "obs-get-group-list",

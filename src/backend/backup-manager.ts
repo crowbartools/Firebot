@@ -245,7 +245,11 @@ class BackupManager {
 
             if (!isSameDay) {
                 logger.info("Doing once a day backup");
-                await this.startBackup();
+                try {
+                    await this.startBackup();
+                } catch (error) {
+                    logger.error("Error during once a day backup", error);
+                }
             }
         }
     }

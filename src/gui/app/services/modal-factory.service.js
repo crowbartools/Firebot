@@ -6,7 +6,6 @@
         .factory("modalFactory", function(
             $rootScope,
             modalService,
-            dataAccess,
             backendCommunicator,
             logger
         ) {
@@ -146,81 +145,7 @@
 
             service.showOverlayInfoModal = function(instanceName) {
                 const overlayInfoModalContext = {
-                    templateUrl: "overlayInfoModal.html",
-                    controllerFunc: (
-                        $scope,
-                        $rootScope,
-                        $uibModalInstance,
-                        ngToast,
-                        settingsService,
-                        instanceName
-                    ) => {
-
-                        $scope.usingOverlayInstances = settingsService.getSetting("UseOverlayInstances");
-
-                        $scope.broadcastingSoftwares = [
-                            "Local", "Direct Link/2 PC Setup"
-                        ];
-
-                        $scope.selectedBroadcastingSoftware = "Local";
-
-                        $scope.updateSelectedBroadcastingSoftware = (type) => {
-                            $scope.selectedBroadcastingSoftware = type;
-                            $scope.buildOverlayPath();
-                        };
-
-                        $scope.overlayPath = "";
-                        $scope.buildOverlayPath = () => {
-                            let overlayPath = dataAccess.getPathInUserData("overlay.html");
-
-                            const port = settingsService.getSetting("WebServerPort");
-
-                            const params = {};
-                            if ($scope.selectedBroadcastingSoftware === "Direct Link/2 PC Setup") {
-                                overlayPath = `http://localhost:${port}/overlay`;
-
-                            } else {
-                                if (port !== 7472 && !isNaN(port)) {
-                                    params["port"] = settingsService.getSetting("WebServerPort");
-                                }
-                                overlayPath = `file:///${overlayPath.replace(/^\//g, "")}`;
-                            }
-
-
-                            if (instanceName != null && instanceName !== "") {
-                                $scope.showingInstance = true;
-                                params["instance"] = encodeURIComponent(instanceName);
-                            }
-
-                            let paramCount = 0;
-                            Object.entries(params).forEach((p) => {
-                                const key = p[0],
-                                    value = p[1];
-
-                                const prefix = paramCount === 0 ? "?" : "&";
-
-                                overlayPath += `${prefix}${key}=${value}`;
-
-                                paramCount++;
-                            });
-
-                            $scope.overlayPath = overlayPath;
-                        };
-                        $scope.buildOverlayPath();
-
-                        $scope.pathCopied = false;
-                        $scope.copy = function() {
-                            $rootScope.copyTextToClipboard($scope.overlayPath);
-                            ngToast.create({
-                                className: 'success',
-                                content: "Overlay path copied!"
-                            });
-                        };
-
-                        $scope.dismiss = function() {
-                            $uibModalInstance.dismiss("cancel");
-                        };
-                    },
+                    component: "overlayInfoModal",
                     resolveObj: {
                         instanceName: () => {
                             return instanceName;

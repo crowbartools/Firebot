@@ -1,18 +1,18 @@
-"use strict";
+import type { EffectType } from "../../../types/effects";
+import type { Timer } from "../../../types/timers";
+import { TimerManager } from "../../timers/timer-manager";
 
-const { TimerManager } = require("../../timers/timer-manager");
-const { EffectCategory } = require('../../../shared/effect-constants');
-
-const chat = {
+const effect: EffectType<{
+    selectedTimerId: string;
+}> = {
     definition: {
         id: "firebot:reset-timer",
         name: "Reset Timer",
         description: "Force a timer to restart its interval",
         icon: "fad fa-stopwatch",
-        categories: [EffectCategory.COMMON],
+        categories: ["common"],
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container>
             <p>This effect let's you force a timer to restart its interval.</p>
@@ -27,8 +27,7 @@ const chat = {
         </eos-container>
     `,
     optionsController: ($scope, timerService) => {
-
-        const timers = timerService.getTimers();
+        const timers = timerService.getTimers() as Timer[];
 
         $scope.timerOptions = {};
 
@@ -43,20 +42,18 @@ const chat = {
         }
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.selectedTimerId == null) {
             errors.push("Please select a timer.");
         }
         return errors;
     },
     getDefaultLabel: (effect, timerService) => {
-        const timer = timerService.getTimers()
+        const timer = (timerService.getTimers() as Timer[])
             .find(timer => timer.id === effect.selectedTimerId);
         return timer?.name ?? "Unknown Timer";
     },
-    onTriggerEvent: async (event) => {
-        const { effect } = event;
-
+    onTriggerEvent: ({ effect }) => {
         const timer = TimerManager.getItem(effect.selectedTimerId);
 
         if (timer) {
@@ -67,4 +64,4 @@ const chat = {
     }
 };
 
-module.exports = chat;
+export = effect;

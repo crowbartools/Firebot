@@ -30,11 +30,9 @@ const { EffectCategory } = require("../../shared/effect-constants");
                             </div>
                         </div>
                     </div>
-                    <div style="width: 100%;height: 100%;overflow-y: scroll;padding: 15px 15px 0;">
+                    <div class="select-effect-list-container">
                         <div class="select-effect-def" ng-repeat="effect in $ctrl.effectDefs | effectCategoryFilter:$ctrl.activeCategory | filter:$ctrl.effectSearch track by effect.id" ng-click="$ctrl.selectedEffectDef = effect" ng-class="{'selected': $ctrl.selectedEffectDef === effect}">
-                            <div class="select-effect-icon-wrapper">
-                                <i ng-class="effect.icon"></i>
-                            </div>
+                            <effect-icon effect-id="effect.id" effect-definition="effect"></effect-icon>
                             <div style="width: 100%;">
                                 <div>{{effect.name}}</div>
                                 <div class="muted" style="font-size: 13px;">{{effect.description}}</div>
@@ -46,7 +44,7 @@ const { EffectCategory } = require("../../shared/effect-constants");
                     </div>
                 </div>
             </div>
-            <div class="select-effect-footer">
+            <div class="sticky-bottom-element select-effect-footer">
                 <div>
                     <div style="font-size: 12px;font-weight: 600;" class="muted">SELECTED EFFECT:</div>
                     <div style="font-size: 20px;font-weight: 100;">{{$ctrl.selectedEffectDef ? $ctrl.selectedEffectDef.name : "None"}}</div>
@@ -56,6 +54,7 @@ const { EffectCategory } = require("../../shared/effect-constants");
                     <button type="button" class="btn btn-primary" ng-click="$ctrl.save()" ng-disabled="$ctrl.selectedEffectDef == null">Select</button>
                 </div>
             </div>
+            <scroll-sentinel element-class="select-effect-footer"></scroll-sentinel>
             `,
         bindings: {
             resolve: "<",

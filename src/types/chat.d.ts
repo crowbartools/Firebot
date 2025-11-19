@@ -130,6 +130,7 @@ export type FirebotChatMessage = {
         cost: number;
         imageUrl: string;
     };
+    isGigantified?: boolean;
 };
 
 export type FirebotEmote = {

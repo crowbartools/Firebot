@@ -183,6 +183,12 @@ function runEffects(runEffectsContext) {
                 continue;
             }
 
+            const effectDef = EffectManager.getEffectById(effect.type);
+            if (effectDef?.definition?.isNoOp) {
+                logger.info(`${effect.type}(${effect.id}) is a no-op effect, skipping...`);
+                continue;
+            }
+
             // Check this effect for dependencies before running.
             // If any dependencies are not available, we will skip this effect.
             if (!validateEffectCanRun(effect.type, trigger.type)) {

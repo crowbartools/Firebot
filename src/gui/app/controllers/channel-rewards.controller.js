@@ -10,8 +10,6 @@
         ) {
             $scope.channelRewardsService = channelRewardsService;
 
-            $scope.activeChannelRewardTab = 0;
-
             $scope.canUseChannelRewards = () => accountAccess.accounts["streamer"].loggedIn
                 && channelRewardsService.userIsEligible;
 
