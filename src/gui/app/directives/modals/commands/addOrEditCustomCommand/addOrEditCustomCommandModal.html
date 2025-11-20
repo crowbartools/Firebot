@@ -14,7 +14,7 @@
 
     <div ng-if="!$ctrl.command.simple">
         <firebot-tabs active="$ctrl.activeTab" type="underlined" full-width="true">
-            <firebot-tab name="general" label="General" icon="fas fa-cog">
+            <firebot-tab index="0" name="general" label="General" icon="fas fa-cog">
                 <firebot-input
                     input-title="Trigger"
                     title-tooltip="Displayed on the command list webpage"
@@ -136,9 +136,6 @@
                     ></editable-tags>
                 </div>
 
-            </firebot-tab>
-
-            <firebot-tab name="effects" label="Effects & Subcommands" icon="fas fa-magic">
                 <div class="settings-title">
                     <h3>
                         <span ng-hide="$ctrl.command.scanWholeMessage || $ctrl.command.triggerIsRegex">Base </span>Effects
@@ -159,12 +156,36 @@
                     is-array="true"
                 ></effect-list>
 
+            </firebot-tab>
+
+            <firebot-tab index="1" name="access" label="Access Control" icon="fas fa-shield-alt">
+                <h3 class="mb-3">
+                    Restrictions
+                    <span
+                        class="muted pl-1 text-lg"
+                        style="font-family: 'Quicksand'"
+                        >(Permissions, currency costs, and more)</span
+                    >
+                </h3>
+                <restrictions-list
+                    restriction-data="$ctrl.command.restrictionData"
+                    trigger="command"
+                    trigger-meta="$ctrl.triggerMeta"
+                    class="pb-6"
+                >
+                </restrictions-list>
+
+                <h3 class="mb-3 mt-6">Cooldowns</h3>
+                <command-cooldown-settings
+                    command="$ctrl.command"
+                ></command-cooldown-settings>
+            </firebot-tab>
+
+            <firebot-tab index="2" name="subcommands" label="Subcommands" icon="fas fa-sitemap" ng-if="!$ctrl.command.scanWholeMessage && !$ctrl.command.triggerIsRegex">
                 <div
                     class="mt-8"
-                    ng-hide="$ctrl.command.scanWholeMessage || $ctrl.command.triggerIsRegex"
                 >
                     <div class="settings-title">
-                        <h3>Subcommands</h3>
                         <p class="muted">
                             Optionally trigger different effects based on
                             subcommand triggers
@@ -249,36 +270,13 @@
                             aria-label="Add Subcommand"
                             tooltip-append-to-body="true"
                         >
-                            <i class="far fa-plus"></i>
+                            <i class="far fa-plus mr-2"></i> Add Subcommand
                         </div>
                     </div>
                 </div>
             </firebot-tab>
 
-            <firebot-tab name="access" label="Access Control" icon="fas fa-shield-alt">
-                <h3 class="mb-3">
-                    Restrictions
-                    <span
-                        class="muted pl-1 text-lg"
-                        style="font-family: 'Quicksand'"
-                        >(Permissions, currency costs, and more)</span
-                    >
-                </h3>
-                <restrictions-list
-                    restriction-data="$ctrl.command.restrictionData"
-                    trigger="command"
-                    trigger-meta="$ctrl.triggerMeta"
-                    class="pb-6"
-                >
-                </restrictions-list>
-
-                <h3 class="mb-3 mt-6">Cooldowns</h3>
-                <command-cooldown-settings
-                    command="$ctrl.command"
-                ></command-cooldown-settings>
-            </firebot-tab>
-
-            <firebot-tab name="advanced" label="Advanced" icon="fas fa-sliders-h">
+            <firebot-tab index="3" name="advanced" label="Advanced" icon="fas fa-sliders-h">
                 <h3 class="mb-3">Behavior Options</h3>
                 <div class="controls-fb-inline pb-5">
                     <label class="control-fb control--checkbox"

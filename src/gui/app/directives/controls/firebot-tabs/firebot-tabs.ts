@@ -10,9 +10,9 @@ type TabsBindings = {
 };
 
 type TabsController = {
-    tabs: TabController[];
-    registerTab: (tab: TabController) => void;
-    unregisterTab: (tab: TabController) => void;
+    tabs: Array<TabController & TabBindings>;
+    registerTab: (tab: TabController & TabBindings) => void;
+    unregisterTab: (tab: TabController & TabBindings) => void;
     selectTab: (name: string) => void;
     isActive: (name: string) => boolean;
 };
@@ -22,6 +22,7 @@ type TabBindings = {
     label: string;
     icon?: string;
     badge?: number;
+    index?: number;
 };
 
 type TabController = {
@@ -68,11 +69,20 @@ type TabController = {
                 }
             };
 
-            $ctrl.registerTab = (tab: TabController) => {
+            $ctrl.registerTab = (tab: TabController & TabBindings) => {
                 $ctrl.tabs.push(tab);
+
+                // sort tabs by index if provided
+                if ($ctrl.tabs.some(t => t.index != null)) {
+                    $ctrl.tabs = [...$ctrl.tabs].sort((a, b) => {
+                        const indexA = a.index != null ? a.index : Number.MAX_SAFE_INTEGER;
+                        const indexB = b.index != null ? b.index : Number.MAX_SAFE_INTEGER;
+                        return indexA - indexB;
+                    });
+                }
             };
 
-            $ctrl.unregisterTab = (tab: TabController) => {
+            $ctrl.unregisterTab = (tab: TabController & TabBindings) => {
                 const index = $ctrl.tabs.indexOf(tab);
                 if (index > -1) {
                     $ctrl.tabs.splice(index, 1);
@@ -94,7 +104,8 @@ type TabController = {
             name: "@",
             label: "@",
             icon: "@?",
-            badge: "<?"
+            badge: "<?",
+            index: "<?"
         },
         transclude: true,
         require: {
