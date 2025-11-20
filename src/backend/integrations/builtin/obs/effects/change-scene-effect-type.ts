@@ -9,7 +9,7 @@ export const ChangeSceneEffectType: EffectType<{
         name: "Change OBS Scene",
         description: "Change the active OBS Scene",
         icon: "fad fa-tv",
-        categories: ["common"]
+        categories: ["common", "integrations"]
     },
     optionsTemplate: `
     <eos-container header="New Scene">

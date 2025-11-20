@@ -120,7 +120,7 @@ const playSound = {
         name: "Text-To-Speech (Amazon Polly)",
         description: "Have Firebot read out some text using Amazon Polly.",
         icon: "fad fa-microphone-alt",
-        categories: [EffectCategory.FUN, EffectCategory.INTEGRATIONS],
+        categories: ["integrations"],
         dependencies: []
     },
     /**

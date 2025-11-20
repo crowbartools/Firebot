@@ -10,7 +10,6 @@ const model: EffectType = {
         icon: "fad fa-snooze",
         categories: [
             "common",
-            "Moderation",
             "twitch"
         ],
         dependencies: {

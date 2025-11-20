@@ -11,7 +11,7 @@ const model: EffectType<{
         name: "VIP",
         description: "Add or remove the VIP role of a user",
         icon: "far fa-gem",
-        categories: ["common", "Moderation", "twitch"],
+        categories: ["common", "moderation", "twitch"],
         dependencies: ["chat"]
     },
     optionsTemplate: `

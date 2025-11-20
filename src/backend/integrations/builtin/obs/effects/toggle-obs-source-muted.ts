@@ -22,7 +22,7 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
             name: "Toggle OBS Audio Source Muted",
             description: "Toggle an OBS source's muted status",
             icon: "fad fa-volume-mute",
-            categories: ["common"]
+            categories: ["common", "integrations"]
         },
         optionsTemplate: `
     <eos-container ng-show="missingSources.length > 0">

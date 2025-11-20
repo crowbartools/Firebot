@@ -8,7 +8,7 @@ const effect: EffectType = {
         name: "Clear Chat",
         description: "Clear all chat messages.",
         icon: "fad fa-eraser",
-        categories: ["common", "Moderation", "twitch"],
+        categories: ["common", "moderation", "twitch", "chat based"],
         dependencies: ["chat"]
     },
     optionsTemplate: `

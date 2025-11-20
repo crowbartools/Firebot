@@ -7,7 +7,7 @@ export const SaveReplayBufferEffectType: EffectType = {
         name: "Save OBS Replay Buffer",
         description: "Tell OBS to save the replay buffer",
         icon: "fad fa-redo-alt",
-        categories: ["common"]
+        categories: ["common", "integrations"]
     },
     optionsTemplate: `
     <eos-container>

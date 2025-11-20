@@ -14,7 +14,7 @@ const model: EffectType<{
         name: "Set Stream Category",
         description: "Set the stream category/game.",
         icon: "fad fa-gamepad",
-        categories: ["common", "Moderation", "twitch"],
+        categories: ["common", "twitch"],
         dependencies: {
             twitch: true
         }

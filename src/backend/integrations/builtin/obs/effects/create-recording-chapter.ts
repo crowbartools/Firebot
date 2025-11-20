@@ -9,7 +9,7 @@ export const CreateRecordChapter: EffectType<{
         name: "Create OBS Recording Chapter Marker",
         description: "Adds a chapter marker to an OBS",
         icon: "far fa-bookmark",
-        categories: ["common"]
+        categories: ["common", "integrations"]
     },
     optionsTemplate: `
     <eos-container header="Chapter">

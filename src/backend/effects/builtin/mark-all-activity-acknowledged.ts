@@ -7,7 +7,7 @@ const effect: EffectType = {
         name: "Mark All Activity As Acknowledged",
         description: "Marks all Activity as acknowledged on the Chat page",
         icon: "fad fa-comment-dots",
-        categories: ["common"],
+        categories: ["common", "dashboard"],
         dependencies: []
     },
     optionsTemplate: `

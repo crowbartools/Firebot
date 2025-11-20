@@ -10,7 +10,7 @@ const model: EffectType<{
         name: "Enable/Disable Shield Mode",
         description: "Enable or disable Shield Mode on your Twitch channel",
         icon: "fad fa-shield",
-        categories: ["common", "twitch"],
+        categories: ["common", "moderation", "twitch"],
         dependencies: {
             twitch: true
         }

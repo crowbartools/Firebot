@@ -27,7 +27,7 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
             name: "Toggle OBS Filter",
             description: "Toggle filters for OBS sources and scenes",
             icon: "fad fa-stars",
-            categories: ["common"]
+            categories: ["common", "integrations"]
         },
         optionsTemplate: `
     <eos-container ng-show="missingSources.length > 0">

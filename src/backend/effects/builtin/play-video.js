@@ -4,7 +4,6 @@ const { SettingsManager } = require("../../common/settings-manager");
 const { ResourceTokenManager } = require("../../resource-token-manager");
 const webServer = require("../../../server/http-server-manager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
-const { EffectCategory } = require('../../../shared/effect-constants');
 const logger = require("../../logwrapper");
 const { AccountAccess } = require("../../common/account-access");
 const fs = require('fs/promises');
@@ -27,7 +26,7 @@ const playVideo = {
         name: "Play Video",
         description: "Plays a local, Youtube, or Twitch video in the overlay.",
         icon: "fad fa-video",
-        categories: [EffectCategory.COMMON, EffectCategory.OVERLAY, EffectCategory.TWITCH],
+        categories: ["common", "overlay", "fun"],
         dependencies: [],
         outputs: [
             {

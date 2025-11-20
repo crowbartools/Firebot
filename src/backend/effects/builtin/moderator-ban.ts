@@ -12,7 +12,7 @@ const effect: EffectType<{
         name: "Ban",
         description: "Ban or unban a user.",
         icon: "fad fa-ban",
-        categories: ["common", "Moderation", "twitch"],
+        categories: ["common", "moderation", "twitch"],
         dependencies: []
     },
     optionsTemplate: `

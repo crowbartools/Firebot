@@ -42,8 +42,10 @@ type Controller = {
                 let color: string | undefined = undefined;
                 if ($ctrl.effectId === "firebot:comment") {
                     color = "#f4d03f";
-                } else if (categories.includes("Moderation")) {
+                } else if (categories.includes("moderation")) {
                     color = "#ef4444";
+                } else if (categories.includes("dashboard")) {
+                    color = "#ff9900ff";
                 } else if (categories.includes("chat based")) {
                     color = "#60A5FA";
                 } else if (categories.includes("twitch")) {

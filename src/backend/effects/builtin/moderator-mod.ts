@@ -11,7 +11,7 @@ const effect: EffectType<{
         name: "Mod",
         description: "Mod or unmod a user",
         icon: "fad fa-crown",
-        categories: ["common", "Moderation", "twitch"],
+        categories: ["common", "moderation", "twitch"],
         dependencies: ["chat"]
     },
     optionsTemplate: `
