@@ -14,6 +14,7 @@ const EffectCategory = Object.freeze({
     OVERLAY: "overlay",
     FUN: "fun",
     INTEGRATIONS: "integrations",
+    TRIGGER_CONTROL: "trigger control",
     ADVANCED: "advanced",
     SCRIPTING: "scripting"
 });

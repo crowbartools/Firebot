@@ -12,7 +12,7 @@ const effect: EffectType<{
         name: "Update Counter",
         description: "Update a counter's value.",
         icon: "fad fa-tally",
-        categories: ["common", "advanced"],
+        categories: ["common", "advanced", "trigger control"],
         dependencies: []
     },
     optionsTemplate: `

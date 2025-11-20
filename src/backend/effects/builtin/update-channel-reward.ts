@@ -43,7 +43,7 @@ const effect: EffectType<EffectMeta> = {
         name: "Update Channel Reward",
         description: "Update settings for a channel reward",
         icon: "fad fa-gifts",
-        categories: ["advanced", "twitch", "fun"],
+        categories: ["advanced", "twitch", "fun", "trigger control"],
         dependencies: []
     },
     optionsTemplate: `
