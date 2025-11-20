@@ -52,7 +52,7 @@
                     ></effect-list>
                 </div>
                 <p class="muted" style="font-size:11px;margin-top:6px;">
-                    <b>ProTip:</b> If you want to have this timer display a single chat message at a time, try the <b>Run Random Effect</b> or <b>Run Sequential Effect</b>
+                    <b>PROTIP:</b> If you want to have this timer display a single chat message at a time, try setting the effect list's Run Mode to <strong>Sequential</strong> or <strong>Random</strong>
                 </p>
             </div>
 
