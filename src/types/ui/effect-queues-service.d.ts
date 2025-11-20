@@ -1,6 +1,7 @@
 import type { EffectQueueConfig } from "../../types";
 
 export type EffectQueuesService = {
+    effectQueues: EffectQueueConfig[];
     getEffectQueues: () => EffectQueueConfig[];
     getEffectQueue: (id: string) => EffectQueueConfig | undefined;
     showAddEditEffectQueueModal: (queueId?: string) => Promise<string>;

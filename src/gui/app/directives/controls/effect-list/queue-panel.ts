@@ -96,6 +96,7 @@ type Controller = {
             </effect-config-panel>
         `,
         controller: function (
+            $scope: angular.IScope,
             effectQueuesService: EffectQueuesService,
             modalFactory: ModalFactory
         ) {
@@ -111,6 +112,10 @@ type Controller = {
                 $ctrl.options = $ctrl.getQueueOptions();
                 $ctrl.actions = $ctrl.getQueueActions();
             }
+
+            $scope.$watchCollection(() => effectQueuesService.effectQueues, () => {
+                buildOptionsAndActions();
+            });
 
             $ctrl.$onInit = $ctrl.$onChanges = () => {
                 buildOptionsAndActions();
