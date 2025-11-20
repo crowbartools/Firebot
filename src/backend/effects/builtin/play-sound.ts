@@ -190,13 +190,12 @@ const model: EffectType<{
                 // Throw audio element on page.
                 document.getElementById("wrapper").append(audioElement);
 
-                const audio = document.getElementById(elementId) as HTMLAudioElement;
                 // @ts-ignore
-                audio.volume = parseFloat(data.volume) / 10;
+                audioElement.volume = parseFloat(data.volume) / 10;
 
-                audio.oncanplay = () => audio.play();
+                audioElement.oncanplay = () => audioElement.play();
 
-                audio.onended = () => {
+                audioElement.onended = () => {
                     document.getElementById(elementId).remove();
                 };
             }
