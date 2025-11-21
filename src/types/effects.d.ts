@@ -18,7 +18,7 @@ export type EffectCategory =
     | "overlay"
     | "fun"
     | "integrations"
-    | "trigger control"
+    | "firebot control"
     | "advanced"
     | "scripting";
 

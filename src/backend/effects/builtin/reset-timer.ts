@@ -10,7 +10,7 @@ const effect: EffectType<{
         name: "Reset Timer",
         description: "Force a timer to restart its interval",
         icon: "fad fa-stopwatch",
-        categories: ["common", "trigger control"],
+        categories: ["common", "firebot control"],
         dependencies: []
     },
     optionsTemplate: `

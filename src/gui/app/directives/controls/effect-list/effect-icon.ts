@@ -52,7 +52,7 @@ type Controller = {
                     color = "#ab73ff";
                 } else if (categories.includes("overlay")) {
                     color = "#F472B6";
-                } else if (categories.includes("trigger control")) {
+                } else if (categories.includes("firebot control")) {
                     color = "#09ff00ff";
                 } else if (categories.includes("scripting")) {
                     color = "#FACC15";

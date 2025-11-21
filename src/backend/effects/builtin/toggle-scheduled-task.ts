@@ -12,7 +12,7 @@ const effect: EffectType<{
         name: "Toggle Scheduled Effect List",
         description: "Toggle a scheduled effect list's enabled status",
         icon: "fad fa-toggle-off",
-        categories: ["common", "trigger control"],
+        categories: ["common", "firebot control"],
         dependencies: []
     },
     optionsTemplate: `

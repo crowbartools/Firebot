@@ -14,7 +14,7 @@ const effectGroup = {
         description:
             "Run a preset or custom list of effects",
         icon: "fad fa-list",
-        categories: ["advanced", "scripting", "trigger control"],
+        categories: ["advanced", "scripting", "firebot control"],
         dependencies: []
     },
     optionsTemplate: `
