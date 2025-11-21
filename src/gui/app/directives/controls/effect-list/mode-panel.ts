@@ -41,6 +41,7 @@ type Controller = {
                         options="$ctrl.options"
                         placeholder="Select run mode"
                         empty-message="No run modes available"
+                        option-toggling="false"
                         dark="true"
                     />
                 </div>
