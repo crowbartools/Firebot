@@ -592,7 +592,6 @@ async function createMainWindow() {
 
         mainWindow.show();
 
-        // mainWindow.show();
         if (splashscreenWindow) {
             splashscreenWindow.destroy();
         }
@@ -667,7 +666,7 @@ async function createMainWindow() {
 const createSplashScreen = async () => {
     splashscreenWindow = new BrowserWindow({
         width: 375,
-        height: 420,
+        height: 450,
         icon: path.join(__dirname, "../../../gui/images/logo_transparent_2.png"),
         transparent: true,
         backgroundColor: undefined,
