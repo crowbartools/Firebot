@@ -11,7 +11,7 @@ const effect: EffectType<{
         name: "Toggle Event",
         description: "Toggle an event's active status",
         icon: "fad fa-toggle-off",
-        categories: ["common", "trigger control"],
+        categories: ["common", "firebot control"],
         dependencies: []
     },
     optionsTemplate: `

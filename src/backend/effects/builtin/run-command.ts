@@ -24,7 +24,7 @@ const effect: EffectType<{
         name: "Run Command",
         description: "Runs effects saved for the selected custom command.",
         icon: "fad fa-exclamation-square",
-        categories: ["advanced", "trigger control"],
+        categories: ["advanced", "firebot control"],
         dependencies: []
     },
     optionsTemplate: `

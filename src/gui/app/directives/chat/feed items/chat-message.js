@@ -7,6 +7,7 @@
                 message: "=",
                 compactDisplay: "<",
                 hideDeletedMessages: "<",
+                showSharedChatInfo: "<",
                 showAvatar: "<",
                 showTimestamp: "<",
                 showBttvEmotes: "<",
@@ -71,6 +72,14 @@
                         <img ng-src="{{$ctrl.message.reward.imageUrl}}" />
                         <b>{{$ctrl.message.userDisplayName}}{{($ctrl.message.userDisplayName.toLowerCase() !== $ctrl.message.username.toLowerCase() ? " (" + $ctrl.message.username + ")" : "")}}</b> <span>redeemed</span> <b>{{$ctrl.message.reward.name}}</b>
                     </div>
+                    <div
+                        ng-if="$ctrl.message.sharedChatRoomDisplayName && !$ctrl.compactDisplay"
+                        ng-show="$ctrl.showSharedChatInfo"
+                        class="shared-chat-banner"
+                    >
+                        <img ng-if="$ctrl.message.sharedChatRoomProfilePicUrl" ng-src="{{ $ctrl.message.sharedChatRoomProfilePicUrl }}" />
+                        Sent from {{ $ctrl.message.sharedChatRoomDisplayName }}'s channel
+                    </div>
                     <div class="chat-message"
                         ng-class="{
                             isAction: $ctrl.message.action,
@@ -98,6 +107,15 @@
                             <img class="chat-user-avatar" ng-src="{{$ctrl.message.profilePicUrl}}">
                         </div>
                         <div>
+                            <div
+                                ng-if="$ctrl.message.sharedChatRoomProfilePicUrl && $ctrl.compactDisplay"
+                                class="chat-user-avatar-wrapper"
+                                ng-show="$ctrl.showSharedChatInfo"
+                                uib-tooltip="Sent from {{ $ctrl.message.sharedChatRoomDisplayName }}'s channel"
+                                tooltip-append-to-body="true"
+                            >
+                                <img class="shared-chat-user-avatar" ng-src="{{$ctrl.message.sharedChatRoomProfilePicUrl}}">
+                            </div>
 
                             <span ng-if="$ctrl.compactDisplay" ng-show="$ctrl.showTimestamp" class="muted chat-timestamp">
                                 {{$ctrl.message.timestampDisplay}}

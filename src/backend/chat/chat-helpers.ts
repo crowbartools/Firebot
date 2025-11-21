@@ -520,7 +520,8 @@ class FirebotChatHelpers {
             isSharedChatMessage,
             sharedChatRoomId,
             sharedChatRoomUsername: sharedChatRoom?.broadcasterName,
-            sharedChatRoomDisplayName: sharedChatRoom?.broadcasterDisplayName
+            sharedChatRoomDisplayName: sharedChatRoom?.broadcasterDisplayName,
+            sharedChatRoomProfilePicUrl: sharedChatRoom?.profilePictureUrl
         };
 
         const profilePicUrl = await this.getUserProfilePicUrl(firebotChatMessage.userId);

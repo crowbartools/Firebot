@@ -1,5 +1,9 @@
-import { EventSubChannelRewardEvent } from "@twurple/eventsub-base";
-import { CustomReward } from "../resource/channel-rewards";
+import type {
+    EventSubChannelRewardEvent,
+    EventSubChannelSharedChatSessionParticipant
+} from "@twurple/eventsub-base";
+import type { SharedChatParticipant } from "../../../../../types";
+import type { CustomReward } from "../resource/channel-rewards";
 
 export function mapEventSubRewardToTwitchData(event: EventSubChannelRewardEvent): CustomReward {
     const image = {
@@ -44,4 +48,21 @@ export function mapEventSubRewardToTwitchData(event: EventSubChannelRewardEvent)
 
 export function getChannelRewardImageUrl(reward: CustomReward): string {
     return reward.image?.url4x || reward.image?.url2x || reward.image?.url1x || "";
+}
+
+export async function mapSharedChatParticipants(
+    participants: EventSubChannelSharedChatSessionParticipant[]
+): Promise<SharedChatParticipant[]> {
+    return await Promise.all(participants.map(
+        async (p): Promise<SharedChatParticipant> => {
+            const user = await p.getBroadcaster();
+
+            return {
+                broadcasterId: user.id,
+                broadcasterName: user.name,
+                broadcasterDisplayName: user.displayName,
+                profilePictureUrl: user.profilePictureUrl
+            };
+        }
+    ));
 }

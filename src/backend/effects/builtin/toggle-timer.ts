@@ -12,7 +12,7 @@ const effect: EffectType<{
         name: "Toggle Timer",
         description: "Toggle a timer's active status",
         icon: "fad fa-toggle-off",
-        categories: ["common", "trigger control"],
+        categories: ["common", "firebot control"],
         dependencies: []
     },
     optionsTemplate: `

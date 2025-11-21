@@ -118,6 +118,7 @@ export type FirebotChatMessage = {
     sharedChatRoomId?: string;
     sharedChatRoomUsername?: string;
     sharedChatRoomDisplayName?: string;
+    sharedChatRoomProfilePicUrl?: string;
     isHiddenFromChatFeed?: boolean;
     viewerRanks?: Record<string, string>;
     viewerCustomRoles?: string[];
@@ -152,4 +153,5 @@ export type SharedChatParticipant = {
     broadcasterId: string;
     broadcasterName: string;
     broadcasterDisplayName: string;
+    profilePictureUrl: string;
 };
