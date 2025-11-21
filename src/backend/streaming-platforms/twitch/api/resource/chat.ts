@@ -442,7 +442,8 @@ export class TwitchChatApi extends ApiResourceBase {
             return twitchUsers.map(user => ({
                 broadcasterId: user.id,
                 broadcasterName: user.name,
-                broadcasterDisplayName: user.displayName
+                broadcasterDisplayName: user.displayName,
+                profilePictureUrl: user.profilePictureUrl
             }));
         } catch (err) {
             const error = err as Error;

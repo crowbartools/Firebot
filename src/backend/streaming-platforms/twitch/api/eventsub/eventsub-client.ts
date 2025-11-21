@@ -1,7 +1,7 @@
 import { EventSubSubscription } from "@twurple/eventsub-base";
 import { EventSubWsListener } from "@twurple/eventsub-ws";
 
-import type { SavedChannelReward } from "../../../../../types/channel-rewards";
+import type { SavedChannelReward } from "../../../../../types";
 
 import { AccountAccess } from "../../../../common/account-access";
 import { SharedChatCache } from "../../chat/shared-chat-cache";
@@ -15,7 +15,11 @@ import twitchStreamInfoPoll from "../../stream-info-manager";
 import viewerDatabase from "../../../../viewers/viewer-database";
 import frontendCommunicator from "../../../../common/frontend-communicator";
 import logger from "../../../../logwrapper";
-import { getChannelRewardImageUrl, mapEventSubRewardToTwitchData } from "./eventsub-helpers";
+import {
+    getChannelRewardImageUrl,
+    mapEventSubRewardToTwitchData,
+    mapSharedChatParticipants
+} from "./eventsub-helpers";
 
 class TwitchEventSubClient {
     private _eventSubListener: EventSubWsListener;
@@ -318,16 +322,16 @@ class TwitchEventSubClient {
         this._subscriptions.push(outboundRaidSubscription);
 
         // Shared Chat Started
-        const sharedChatStartedSubscription = this._eventSubListener.onChannelSharedChatSessionBegin(streamer.userId, (event) => {
+        const sharedChatStartedSubscription = this._eventSubListener.onChannelSharedChatSessionBegin(streamer.userId, async (event) => {
             SharedChatCache.enableSharedChat();
-            SharedChatCache.participants = event.participants;
+            SharedChatCache.participants = await mapSharedChatParticipants(event.participants);
             TwitchEventHandlers.chat.triggerSharedChatEnabled();
         });
         this._subscriptions.push(sharedChatStartedSubscription);
 
         // Shared Chat Updated
-        const sharedChatUpdatedSubscription = this._eventSubListener.onChannelSharedChatSessionUpdate(streamer.userId, (event) => {
-            SharedChatCache.participants = event.participants;
+        const sharedChatUpdatedSubscription = this._eventSubListener.onChannelSharedChatSessionUpdate(streamer.userId, async (event) => {
+            SharedChatCache.participants = await mapSharedChatParticipants(event.participants);
             TwitchEventHandlers.chat.triggerSharedChatUpdated();
         });
         this._subscriptions.push(sharedChatUpdatedSubscription);

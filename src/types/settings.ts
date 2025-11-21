@@ -49,6 +49,7 @@ export type FirebotSettingsTypes = {
     ChatShowBttvEmotes: boolean;
     ChatShowFfzEmotes: boolean;
     ChatShowSevenTvEmotes: boolean;
+    ChatShowSharedChatInfo: boolean;
     ChatTaggedNotificationSound: { name: string, path?: string | undefined };
     ChatTaggedNotificationVolume: number;
     ChatTimestamps: boolean;
@@ -179,6 +180,7 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     ChatShowBttvEmotes: true,
     ChatShowFfzEmotes: true,
     ChatShowSevenTvEmotes: true,
+    ChatShowSharedChatInfo: true,
     ChatTaggedNotificationSound: { name: "None" },
     ChatTaggedNotificationVolume: 5,
     ChatTimestamps: true,

@@ -287,6 +287,16 @@
     border-radius: 10px;
 }
 
+.shared-chat-banner {
+    font-size: 0.75em;
+    padding: 7px 10px 0;
+    & img {
+        height: 28px;
+        margin-right: 5px;
+        border-radius: 14px;
+    }
+}
+
 .isCompact {
     & .chat-user-avatar-wrapper {
         width: 28px;
@@ -297,6 +307,11 @@
 
     & .chat-user-avatar {
         width: 28px;
+    }
+
+    & .shared-chat-user-avatar {
+        width: 28px;
+        border-radius: 14px;
     }
 }
 

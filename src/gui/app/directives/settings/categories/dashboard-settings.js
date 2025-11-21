@@ -134,6 +134,17 @@
                     </firebot-setting>
 
                     <firebot-setting
+                        name="Show Shared Chat Info"
+                        description="Display info about the channel a chat message was sent in during a shared chat session in the chat feed."
+                    >
+                        <toggle-button
+                            toggle-model="settings.getSetting('ChatShowSharedChatInfo')"
+                            on-toggle="settings.saveSetting('ChatShowSharedChatInfo', !settings.getSetting('ChatShowSharedChatInfo'))"
+                            font-size="40"
+                        />
+                    </firebot-setting>
+
+                    <firebot-setting
                         name="Show Avatars"
                         description="Display the chatter's avatar on messages in the chat feed."
                     >
