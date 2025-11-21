@@ -12,7 +12,7 @@ export const SetOBSSourceTextEffectType: EffectType<{
         name: "Set OBS Source Text",
         description: "Sets the text in an OBS text source",
         icon: "fad fa-font-case",
-        categories: ["common"]
+        categories: ["common", "integrations"]
     },
     optionsTemplate: `
     <eos-container header="OBS Text Source">

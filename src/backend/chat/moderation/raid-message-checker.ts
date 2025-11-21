@@ -1,5 +1,5 @@
 import logger from "../../logwrapper";
-import twitchApi from "../../twitch-api/api";
+import { TwitchApi } from "../../streaming-platforms/twitch/api";
 
 interface RaidMessage {
     rawText: string;
@@ -18,11 +18,11 @@ class RaidMessageChecker {
 
     private async handleRaider(message: RaidMessage): Promise<void> {
         if (this._settings.shouldBan) {
-            await twitchApi.moderation.banUser(message.userId);
+            await TwitchApi.moderation.banUser(message.userId);
         }
 
         if (this._settings.shouldBlock) {
-            await twitchApi.users.blockUser(message.userId);
+            await TwitchApi.users.blockUser(message.userId);
         }
     }
 

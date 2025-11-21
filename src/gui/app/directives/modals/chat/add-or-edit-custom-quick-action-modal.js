@@ -6,7 +6,7 @@
             template: `
                 <div class="modal-header" style="text-align: center">
                     <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
-                    <h4 class="modal-title">Edit Quick Action</h4>
+                    <h4 class="modal-title">{{$ctrl.isNewQuickAction ? "Add" : "Edit"}} Quick Action</h4>
                 </div>
                 <div class="modal-body py-8 px-14">
                     <div class="mb-6">
@@ -154,13 +154,12 @@
                         $ctrl.quickAction.icon = "far fa-magic";
                     }
 
-                    quickActionsService.saveCustomQuickAction($ctrl.quickAction).then((successful) => {
-                        if (successful) {
-                            $ctrl.close();
-                        } else {
-                            ngToast.create("Failed to save custom quick action. Please try again or view logs for details.");
-                        }
-                    });
+                    const successful = quickActionsService.saveCustomQuickAction($ctrl.quickAction);
+                    if (successful) {
+                        $ctrl.close();
+                    } else {
+                        ngToast.create("Failed to save custom quick action. Please try again or view logs for details.");
+                    }
                 };
             }
         });

@@ -1,7 +1,5 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-
-const frontendCommunicator = require("../../../common/frontend-communicator");
+import type { ReplaceVariable } from "../../../../types/variables";
+import frontendCommunicator from "../../../common/frontend-communicator";
 
 const model : ReplaceVariable = {
     definition: {
@@ -18,8 +16,8 @@ const model : ReplaceVariable = {
                 description: "Returns the duration of the audio file from a URL in seconds."
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["number", "text"]
     },
     evaluator: async (trigger, url) => {
         if (url == null) {
@@ -29,7 +27,7 @@ const model : ReplaceVariable = {
             return await frontendCommunicator.fireEventAsync("getSoundDuration", {
                 path: url
             });
-        } catch (err) {
+        } catch {
             return "[ERROR FETCHING DURATION]";
         }
     }

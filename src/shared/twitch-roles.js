@@ -35,28 +35,14 @@ const twitchRoles = [
     }
 ];
 
-function mapMixerRoleIdToTwitchRoleId(mixerRoleId) {
-    switch (mixerRoleId) {
-        case "Subscriber":
-            return "sub";
-        case "Mod":
-        case "ChannelEditor":
-            return "mod";
-        case "Owner":
-            return "broadcaster";
-    }
-    return mixerRoleId;
-}
-
 exports.getTwitchRoles = () => twitchRoles;
 /**
  * @param {string} role
  * @returns {{id: string; name: string}}
  * */
-exports.mapTwitchRole = role => {
+exports.mapTwitchRole = (role) => {
     if (role === "founder") {
         return twitchRoles.find(r => r.id === 'sub');
     }
     return twitchRoles.find(r => r.id === role);
 };
-exports.mapMixerRoleIdToTwitchRoleId = mapMixerRoleIdToTwitchRoleId;

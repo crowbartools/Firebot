@@ -12,17 +12,17 @@ export class FFZEmoteProvider extends ThirdPartyEmoteProvider<FFZEmotesResponse>
     providerName = "FFZ";
 
     globalEmoteUrl = "https://api.betterttv.net/3/cached/frankerfacez/emotes/global";
-    getChannelEmotesUrl(streamerUserId: number): string {
+    getChannelEmotesUrl(streamerUserId: string): string {
         return `https://api.betterttv.net/3/cached/frankerfacez/users/twitch/${streamerUserId}`;
     }
 
     private emoteMapper = (response: FFZEmotesResponse): ThirdPartyEmote[] =>
-        response.map((e) => ({
+        response?.map(e => ({
             url: e.images && e.images["1x"],
             code: e.code,
             animated: e.imageType?.toLowerCase() === "gif",
             origin: this.providerName
-        }));
+        })) ?? [];
 
     globalEmotesMapper = this.emoteMapper;
     channelEmotesMapper = this.emoteMapper;

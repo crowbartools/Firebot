@@ -1,10 +1,10 @@
 "use strict";
 
-(function() {
+(function () {
 
     angular
         .module("firebotApp")
-        .factory("channelRewardsService", function($q,
+        .factory("channelRewardsService", function ($q,
             backendCommunicator, utilityService, objectCopyHelper, ngToast) {
             const service = {};
 
@@ -25,12 +25,9 @@
             }
 
             service.loadChannelRewards = () => {
-                $q.when(backendCommunicator.fireEventAsync("get-channel-rewards"))
-                    .then((channelRewards) => {
-                        if (channelRewards) {
-                            service.channelRewards = channelRewards;
-                        }
-                    });
+                service.channelRewards = backendCommunicator.fireEventSync("get-channel-rewards");
+
+                service.userIsEligible = backendCommunicator.fireEventSync("get-channel-rewards-eligibility");
             };
 
             service.saveChannelReward = (channelReward) => {
@@ -64,7 +61,7 @@
                     resolveObj: {
                         reward: () => reward
                     },
-                    closeCallback: () => {}
+                    closeCallback: () => { }
                 });
             };
 
@@ -160,8 +157,21 @@
                 }));
             };
 
+            backendCommunicator.on("channel-rewards-updated", (channelRewards) => {
+                service.channelRewards = channelRewards;
+            });
+
+            backendCommunicator.on("channel-rewards-eligibility-changed", (eligible) => {
+                service.userIsEligible = eligible;
+            });
+
             backendCommunicator.on("channel-reward-updated", (channelReward) => {
                 updateChannelReward(channelReward);
+            });
+
+            backendCommunicator.on("channel-reward-deleted", (channelRewardId) => {
+                service.channelRewards = service.channelRewards.filter(cr => cr.id !== channelRewardId);
+                delete service.redemptions[channelRewardId];
             });
 
             backendCommunicator.on("channel-reward-redemptions-updated", (redemptions) => {

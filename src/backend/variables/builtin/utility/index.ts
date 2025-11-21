@@ -10,6 +10,7 @@ import fileLineCount from './file-line-count';
 import fileName from './file-name';
 import fileRead from './file-read';
 import filesInDirectory from './files-in-directory';
+import formatDuration from './format-duration';
 import loopCount from './loop-count';
 import loopItem from './loop-item';
 import overlayResourcesPath from './overlay-resources-path';
@@ -31,6 +32,7 @@ export default [
     fileName,
     fileRead,
     filesInDirectory,
+    formatDuration,
     loopCount,
     loopItem,
     overlayResourcesPath,

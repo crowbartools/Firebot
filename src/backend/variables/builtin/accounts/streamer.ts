@@ -1,16 +1,14 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType } from "../../../../shared/variable-constants";
-
-const accountAccess = require("../../../common/account-access");
+import type { ReplaceVariable } from "../../../../types/variables";
+import { AccountAccess } from "../../../common/account-access";
 
 const model : ReplaceVariable = {
     definition: {
         handle: "streamer",
         description: "Outputs the Streamer account username.",
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: ["text"]
     },
     evaluator: () => {
-        return accountAccess.getAccounts().streamer.username;
+        return AccountAccess.getAccounts().streamer.username;
     }
 };
 

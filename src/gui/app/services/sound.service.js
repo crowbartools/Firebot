@@ -94,6 +94,18 @@
                 }
             };
 
+            service.getOutputDevices = async function() {
+                const deviceList = await navigator.mediaDevices.enumerateDevices();
+                return deviceList
+                    .filter(
+                        d => d.kind === "audiooutput"
+                        && d.deviceId !== "default"
+                        && d.deviceId !== "communications"
+                    )
+                    .map((device) => {
+                        return { label: device.label, deviceId: device.deviceId };
+                    });
+            };
 
             service.playSound = function(path, volume, outputDevice, maxSoundLength = null) {
                 if (outputDevice == null) {
@@ -144,7 +156,7 @@
             };
 
             service.getSound = async function(path, volume, outputDevice = settingsService.getSetting("AudioOutputDevice"), usePool = true) {
-                const deviceList = await navigator.mediaDevices.enumerateDevices();
+                const deviceList = await service.getOutputDevices();
 
                 const filteredDevice = deviceList.find(d => d.label === outputDevice.label
                     || d.deviceId === outputDevice.deviceId);

@@ -1,5 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 import currencyAccess from "../../../currency/currency-access";
 import currencyManager from "../../../currency/currency-manager";
@@ -8,21 +7,24 @@ const model : ReplaceVariable = {
     definition: {
         handle: "topCurrencyUser",
         description: "Get the username or amount for a specific position in the top currency",
-        examples: [
+        usage: "topCurrencyUser[currencyName, position, username/amount]",
+        categories: ["user based", "advanced"],
+        possibleDataOutput: ["text", "number"]
+    },
+    getSuggestions: async () => {
+        const currencies = Object.values(currencyAccess.getCurrencies());
+        return currencies.flatMap(c => ([
             {
-                usage: "topCurrencyUser[Points, 1, username]",
-                description: "Get the top Points username"
+                usage: `topCurrencyUser[${c.name}, 1, username]`,
+                description: `Get the top ${c.name} username`
             },
             {
-                usage: "topCurrencyUser[Points, 5, amount]",
-                description: "Get the top Points amount at 5th position"
+                usage: `topCurrencyUser[${c.name}, 5, amount]`,
+                description: `Get the top ${c.name} amount at 5th position`
             }
-        ],
-        usage: "topCurrencyUser[currencyName, position, username/amount]",
-        categories: [VariableCategory.USER, VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
+        ]));
     },
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
     evaluator: async (_, currencyName: string, position: number = 1, usernameOrPosition = "username") => {
 
         if (currencyName == null) {

@@ -61,7 +61,7 @@
                     ></effect-list>
                 </div>
                 <p class="muted" style="font-size:11px;margin-top:6px;">
-                    <b>ProTip:</b> If you want to have this scheduled effect list display a single chat message at a time, try the <b>Run Random Effect</b> or <b>Run Sequential Effect</b>
+                    <strong>PROTIP:</strong> If you want to have this scheduled effect list display a single chat message at a time, try setting the effect list's Run Mode to <strong>Sequential</strong> or <strong>Random</strong>
                 </p>
             </div>
 
@@ -121,7 +121,7 @@
                     if (crontime == null) {
                         return false;
                     }
-                } catch (error) {
+                } catch {
                     return false;
                 }
 
@@ -162,17 +162,16 @@
                     return;
                 }
 
-                scheduledTaskService.saveScheduledTask($ctrl.scheduledTask).then(successful => {
-                    if (successful) {
-                        $ctrl.close({
-                            $value: {
-                                scheduledTask: $ctrl.scheduledTask
-                            }
-                        });
-                    } else {
-                        ngToast.create("Failed to save scheduled effect list. Please try again or view logs for details.");
-                    }
-                });
+                const successful = scheduledTaskService.saveScheduledTask($ctrl.scheduledTask);
+                if (successful) {
+                    $ctrl.close({
+                        $value: {
+                            scheduledTask: $ctrl.scheduledTask
+                        }
+                    });
+                } else {
+                    ngToast.create("Failed to save scheduled effect list. Please try again or view logs for details.");
+                }
             };
         }
     });

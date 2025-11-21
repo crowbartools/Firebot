@@ -1,24 +1,57 @@
 import { DateTime } from "luxon";
 
-import { Timer, TimerIntervalTracker } from "../../types/timers";
-import { TriggerType } from "../common/EffectType";
+import type { Timer, TimerIntervalTracker } from "../../types/timers";
+import type { Trigger } from "../../types/triggers";
+
 import JsonDbManager from "../database/json-db-manager";
-import logger from "../logwrapper";
+import { AccountAccess } from "../common/account-access";
 import connectionManager from "../common/connection-manager";
-import accountAccess from "../common/account-access";
 import effectRunner from "../common/effect-runner";
 import frontendCommunicator from "../common/frontend-communicator";
+import logger from "../logwrapper";
 
 class TimerManager extends JsonDbManager<Timer> {
-    private timerIntervalCache = {};
+    private timerIntervalCache: Record<string, TimerIntervalTracker> = {};
 
     constructor() {
         super("Timer", "timers");
 
-        this.timerIntervalCache = {};
+        frontendCommunicator.on("timers:get-timers",
+            () => this.getAllItems()
+        );
+
+        frontendCommunicator.on("timers:save-timer",
+            (timer: Timer) => this.saveItem(timer)
+        );
+
+        frontendCommunicator.on("timers:save-all-timers",
+            (allTimers: Timer[]) => this.saveAllItems(allTimers)
+        );
+
+        frontendCommunicator.on("timers:delete-timer",
+            (timerId: string) => this.deleteItem(timerId)
+        );
+
+        // restart timers when the Streamer goes offline/online
+        connectionManager.on("streamerOnlineChange", (isOnline: boolean) => {
+            if (isOnline) {
+                logger.debug("Streamer has gone live. Starting live timers.");
+
+                // streamer went live, spool up intervals for only when live timers
+                const timers = this.getAllItems().filter(t => t.active && t.onlyWhenLive);
+
+                this.buildIntervalsForTimers(timers, true);
+            } else {
+                logger.debug("Streamer has gone offline. Stopping live timers.");
+
+                // streamer went offline
+                // cancel intervals with timers set for only when live
+                this.clearIntervals(true);
+            }
+        });
     }
 
-    saveItem(timer: Timer): Timer | null {
+    saveItem(timer: Timer): Timer {
         const savedTimer = super.saveItem(timer);
 
         if (savedTimer != null) {
@@ -74,7 +107,7 @@ class TimerManager extends JsonDbManager<Timer> {
         });
     }
 
-    clearIntervalForTimerId(timerId: string) {
+    clearIntervalForTimerId(timerId: string): void {
         const intervalData = this.timerIntervalCache[timerId];
         if (intervalData == null) {
             return;
@@ -111,7 +144,11 @@ class TimerManager extends JsonDbManager<Timer> {
             interval.chatLinesSinceLastRunCount = 0;
 
             if (interval.waitingForChatLines) {
-                const intervalId = setInterval(this.runTimer.bind(this), timer.interval * 1000, timer);
+                const intervalId = setInterval(
+                    this.runTimer.bind(this) as (t: Timer) => void,
+                    timer.interval * 1000,
+                    timer
+                );
                 interval.intervalId = intervalId;
                 interval.waitingForChatLines = false;
                 logger.debug(`Chat line requirement has been met for timer "${timer.name}". Running effects and restarting interval.`);
@@ -121,17 +158,17 @@ class TimerManager extends JsonDbManager<Timer> {
         if (timer.effects) {
             const effectsRequest = {
                 trigger: {
-                    type: TriggerType.TIMER,
+                    type: "timer",
                     metadata: {
-                        username: accountAccess.getAccounts().streamer.username,
-                        userId: accountAccess.getAccounts().streamer.userId,
-                        userDisplayName: accountAccess.getAccounts().streamer.displayName,
+                        username: AccountAccess.getAccounts().streamer.username,
+                        userId: AccountAccess.getAccounts().streamer.userId,
+                        userDisplayName: AccountAccess.getAccounts().streamer.displayName,
                         timer: timer
                     }
-                },
+                } as Trigger,
                 effects: timer.effects
             };
-            effectRunner.processEffects(effectsRequest);
+            void effectRunner.processEffects(effectsRequest);
         }
     }
 
@@ -144,7 +181,11 @@ class TimerManager extends JsonDbManager<Timer> {
          *
          * the setInterval function returns an id that we use to clear the interval when needed
          */
-        const intervalId = setInterval(this.runTimer.bind(this), timer.interval * 1000, timer);
+        const intervalId = setInterval(
+            this.runTimer.bind(this) as (t: Timer) => void,
+            timer.interval * 1000,
+            timer
+        );
 
         // Create our object that will track the interval and its progress
         const intervalTracker: TimerIntervalTracker = {
@@ -223,34 +264,4 @@ class TimerManager extends JsonDbManager<Timer> {
 
 const timerManager = new TimerManager();
 
-frontendCommunicator.onAsync("getTimers",
-    async () => timerManager.getAllItems());
-
-frontendCommunicator.onAsync("saveTimer",
-    async (timer: Timer) => timerManager.saveItem(timer));
-
-frontendCommunicator.onAsync("saveAllTimers",
-    async (allTimers: Timer[]) => timerManager.saveAllItems(allTimers));
-
-frontendCommunicator.on("deleteTimer",
-    (timerId: string) => timerManager.deleteItem(timerId));
-
-// restart timers when the Streamer goes offline/online
-connectionManager.on("streamerOnlineChange", (isOnline: boolean) => {
-    if (isOnline) {
-        logger.debug("Streamer has gone live.");
-
-        // streamer went live, spool up intervals for only when live timers
-        const timers = timerManager.getAllItems().filter(t => t.active && t.onlyWhenLive);
-
-        timerManager.buildIntervalsForTimers(timers, true);
-    } else {
-        logger.debug("Streamer has gone offline.");
-
-        // streamer went offline
-        // cancel intervals with timers set for only when live
-        timerManager.clearIntervals(true);
-    }
-});
-
-export = timerManager;
+export { timerManager as TimerManager };

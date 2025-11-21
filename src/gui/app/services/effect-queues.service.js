@@ -1,10 +1,10 @@
 "use strict";
 
-(function() {
+(function () {
 
     angular
         .module("firebotApp")
-        .factory("effectQueuesService", function(backendCommunicator, utilityService,
+        .factory("effectQueuesService", function (backendCommunicator, utilityService,
             objectCopyHelper, ngToast) {
             const service = {};
 
@@ -19,27 +19,27 @@
                 }
             };
 
-            service.loadEffectQueues = async () => {
-                const effectQueues = await backendCommunicator.fireEventAsync("getEffectQueues");
+            service.loadEffectQueues = () => {
+                const effectQueues = backendCommunicator.fireEventSync("effect-queues:get-effect-queues");
                 if (effectQueues != null) {
                     service.effectQueues = effectQueues;
                 }
             };
 
-            backendCommunicator.on("all-queues", effectQueues => {
+            backendCommunicator.on("all-queues", (effectQueues) => {
                 if (effectQueues != null) {
                     service.effectQueues = effectQueues;
                 }
             });
 
-            backendCommunicator.on("updateQueueLength", queue => {
+            backendCommunicator.on("updateQueueLength", (queue) => {
                 const index = service.effectQueues.findIndex(eq => eq.id === queue.id);
                 if (service.effectQueues[index] != null) {
                     service.effectQueues[index].length = queue.length;
                 }
             });
 
-            backendCommunicator.on("updateQueueStatus", queue => {
+            backendCommunicator.on("updateQueueStatus", (queue) => {
                 const index = service.effectQueues.findIndex(eq => eq.id === queue.id);
                 if (service.effectQueues[index] != null) {
                     service.effectQueues[index].active = queue.active;
@@ -48,22 +48,28 @@
 
             service.queueModes = [
                 {
-                    id: "custom",
-                    display: "Custom",
-                    description: "Wait the custom amount of time defined for each individual effect list.",
-                    iconClass: "fa-clock"
-                },
-                {
-                    id: "auto",
-                    display: "Sequential",
-                    description: "Runs effect list in the queue sequentially. Priority items will be added before non-priority. Optional delay defaults to 0s.",
+                    value: "auto",
+                    label: "Sequential",
+                    description: "Effect lists run one after another in order. Priority items are placed at the front of the queue.",
                     iconClass: "fa-sort-numeric-down"
                 },
                 {
-                    id: "interval",
-                    display: "Interval",
-                    description: "Runs effect lists on a set interval.",
+                    value: "custom",
+                    label: "Custom Delay",
+                    description: "Each effect list defines how long the queue waits before triggering the next effect list.",
+                    iconClass: "fa-clock"
+                },
+                {
+                    value: "interval",
+                    label: "Interval",
+                    description: "Effect lists run at a fixed time interval.",
                     iconClass: "fa-stopwatch"
+                },
+                {
+                    value: "manual",
+                    label: "Manual",
+                    description: "Effect lists only run when triggered by a Trigger Manual Queue effect.",
+                    iconClass: "fa-step-forward"
                 }
             ];
 
@@ -75,8 +81,8 @@
                 return service.effectQueues.find(eq => eq.id === id);
             };
 
-            service.saveEffectQueue = async (effectQueue) => {
-                const savedEffectQueue = await backendCommunicator.fireEventAsync("saveEffectQueue", effectQueue);
+            service.saveEffectQueue = (effectQueue) => {
+                const savedEffectQueue = backendCommunicator.fireEventSync("effect-queues:save-effect-queue", effectQueue);
 
                 if (savedEffectQueue != null) {
                     updateEffectQueue(savedEffectQueue);
@@ -88,17 +94,17 @@
             };
 
             service.toggleEffectQueue = (queue) => {
-                backendCommunicator.fireEvent("toggleEffectQueue", queue.id);
+                backendCommunicator.fireEvent("effect-queues:toggle-effect-queue", queue.id);
                 queue.active = !queue.active;
             };
 
             service.clearEffectQueue = (queueId) => {
-                backendCommunicator.fireEvent("clearEffectQueue", queueId);
+                backendCommunicator.fireEvent("effect-queues:clear-effect-queue", queueId);
             };
 
             service.saveAllEffectQueues = (effectQueues) => {
                 service.effectQueues = effectQueues;
-                backendCommunicator.fireEvent("saveAllEffectQueues", effectQueues);
+                backendCommunicator.fireEvent("effect-queues:save-all-effect-queues", effectQueues);
             };
 
             service.effectQueueNameExists = (name) => {
@@ -118,25 +124,24 @@
                     copiedEffectQueue.name += " copy";
                 }
 
-                service.saveEffectQueue(copiedEffectQueue).then(successful => {
-                    if (successful) {
-                        ngToast.create({
-                            className: 'success',
-                            content: 'Successfully duplicated an effect queue!'
-                        });
-                    } else {
-                        ngToast.create("Unable to duplicate effect queue.");
-                    }
-                });
+                const successful = service.saveEffectQueue(copiedEffectQueue);
+                if (successful) {
+                    ngToast.create({
+                        className: 'success',
+                        content: 'Successfully duplicated an effect queue!'
+                    });
+                } else {
+                    ngToast.create("Unable to duplicate effect queue.");
+                }
             };
 
             service.deleteEffectQueue = (effectQueueId) => {
                 service.effectQueues = service.effectQueues.filter(eq => eq.id !== effectQueueId);
-                backendCommunicator.fireEvent("deleteEffectQueue", effectQueueId);
+                backendCommunicator.fireEvent("effect-queues:delete-effect-queue", effectQueueId);
             };
 
             service.showAddEditEffectQueueModal = (effectQueueId) => {
-                return new Promise(resolve => {
+                return new Promise((resolve) => {
                     let effectQueue;
 
                     if (effectQueueId != null) {
@@ -145,11 +150,11 @@
 
                     utilityService.showModal({
                         component: "addOrEditEffectQueueModal",
-                        size: "sm",
+                        size: "md",
                         resolveObj: {
                             effectQueue: () => effectQueue
                         },
-                        closeCallback: response => {
+                        closeCallback: (response) => {
                             resolve(response.effectQueue.id);
                         }
                     });
@@ -157,7 +162,7 @@
             };
 
             service.showDeleteEffectQueueModal = (effectQueueId) => {
-                return new Promise(resolve => {
+                return new Promise((resolve) => {
                     if (effectQueueId == null) {
                         resolve(false);
                     }
@@ -174,7 +179,7 @@
                             confirmLabel: "Delete",
                             confirmBtnType: "btn-danger"
                         })
-                        .then(confirmed => {
+                        .then((confirmed) => {
                             if (confirmed) {
                                 service.deleteEffectQueue(effectQueueId);
                             }

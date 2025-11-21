@@ -1,17 +1,16 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
-import logger from "../../../logwrapper";
+import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 import viewerDatabase from "../../../viewers/viewer-database";
-import twitchApi from "../../../twitch-api/api";
+import logger from "../../../logwrapper";
 
 const model : ReplaceVariable = {
     definition: {
         handle: "userDisplayName",
         usage: "userDisplayName",
         description: "Gets the formatted display name of the associated user (if there is one) for the given trigger.",
-        categories: [VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT],
+        categories: ["user based"],
+        possibleDataOutput: ["text"],
         examples: [
             {
                 usage: "userDisplayName[username]",
@@ -25,7 +24,7 @@ const model : ReplaceVariable = {
             if (userDisplayName != null) {
                 return userDisplayName;
             }
-            username = trigger.metadata?.eventData?.username ?? trigger.metadata?.username;
+            username = (trigger.metadata?.eventData?.username ?? trigger.metadata?.username) as string;
             if (username == null) {
                 return "[No username available]";
             }
@@ -36,7 +35,7 @@ const model : ReplaceVariable = {
         }
 
         try {
-            const user = await twitchApi.users.getUserByName(username);
+            const user = await TwitchApi.users.getUserByName(username);
             if (user != null) {
                 return user.displayName;
             }

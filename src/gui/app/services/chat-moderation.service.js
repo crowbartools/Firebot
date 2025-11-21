@@ -1,5 +1,7 @@
 "use strict";
 
+/** @import { ChatModerationSettings, ModerationTerm, ModerationImportRequest } from "../../../types/moderation" */
+
 (function() {
     angular
         .module("firebotApp")
@@ -7,7 +9,7 @@
             const service = {};
 
             service.chatModerationData = {
-                /** @type {import("../../../backend/chat/moderation/chat-moderation-manager").ChatModerationSettings} */
+                /** @type {ChatModerationSettings} */
                 settings: {
                     bannedWordList: {
                         enabled: false,
@@ -32,16 +34,16 @@
                     exemptRoles: []
                 },
 
-                /** @type {import("../../../backend/chat/moderation/chat-moderation-manager").ModerationTerm[]} */
+                /** @type {ModerationTerm[]} */
                 bannedWords: [],
 
-                /** @type {import("../../../backend/chat/moderation/chat-moderation-manager").ModerationTerm[]} */
+                /** @type {ModerationTerm[]} */
                 bannedRegularExpressions: [],
 
-                /** @type {import("../../../backend/chat/moderation/chat-moderation-manager").ModerationTerm[]} */
+                /** @type {ModerationTerm[]} */
                 urlAllowlist: [],
 
-                /** @type {import("../../../backend/chat/moderation/chat-moderation-manager").ModerationTerm[]} */
+                /** @type {ModerationTerm[]} */
                 userAllowlist: []
             };
 
@@ -76,7 +78,7 @@
                 backendCommunicator.send("chat-moderation:remove-all-banned-words");
             };
 
-            /** @param {import("../../../backend/chat/moderation/chat-moderation-manager").BannedWordImportRequest} request */
+            /** @param {ModerationImportRequest} request */
             service.importBannedWords = async (request) => {
                 return await backendCommunicator.fireEventAsync("chat-moderation:import-banned-words", request);
             };
@@ -105,7 +107,7 @@
                 backendCommunicator.fireEvent("chat-moderation:remove-all-allowed-urls");
             };
 
-            /** @param {import("../../../backend/chat/moderation/chat-moderation-manager").BannedWordImportRequest} request */
+            /** @param {ModerationImportRequest} request */
             service.importUrlAllowlist = async (request) => {
                 return await backendCommunicator.fireEventAsync("chat-moderation:import-url-allowlist", request);
             };
@@ -114,7 +116,7 @@
                 backendCommunicator.fireEvent("chat-moderation:add-allowed-user", { id: user.id, username: user.username, displayName: user.displayName });
             };
 
-            service.removeAllowedUserById= (id) => {
+            service.removeAllowedUserById = (id) => {
                 backendCommunicator.fireEvent("chat-moderation:remove-allowed-user", id);
             };
 

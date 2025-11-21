@@ -13,7 +13,7 @@
             </div>
             <div class="modal-body">
                 <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;margin-top: 15px;">
-                    <p ng-if="$ctrl.descriptionText">{{$ctrl.descriptionText}}</p>
+                    <p ng-if="$ctrl.descriptionText" ng-bind-html="$ctrl.descriptionText" />
                     <div style="width: 95%; position: relative;">
                         <div class="form-group" ng-class="{'has-error': $ctrl.hasValidationError}" ng-hide="$ctrl.useTextArea" >
                             <input
@@ -59,7 +59,7 @@
                 dismiss: '&',
                 modalInstance: "<"
             },
-            controller: function($scope, $timeout, utilityService) {
+            controller: function($scope, $timeout) {
                 const $ctrl = this;
 
                 $ctrl.initialModel = null;
@@ -139,7 +139,7 @@
                 $ctrl.save = function() {
                     const validate = $ctrl.validationFn($ctrl.model);
 
-                    Promise.resolve(validate).then(valid => {
+                    Promise.resolve(validate).then((valid) => {
 
                         let successful = false;
 
@@ -160,7 +160,7 @@
                         if (successful) {
                             $ctrl.close({ $value: {
                                 model: $ctrl.model
-                            }});
+                            } });
                         } else {
                             $ctrl.hasValidationError = true;
                         }

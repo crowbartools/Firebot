@@ -1,9 +1,7 @@
 import { SystemCommand } from "../../../../types/commands";
 import logger from "../../../logwrapper";
-import utils from "../../../utility";
-import accountAccess from "../../../common/account-access";
-import twitchApi from "../../../twitch-api/api";
-import chat from "../../twitch-chat";
+import { humanizeTime } from "../../../utils";
+import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 
 /**
  * The `!marker` command
@@ -69,23 +67,22 @@ export const MarkerSystemCommand: SystemCommand<{
 
         const { args } = userCommand;
 
-        const streamer = accountAccess.getAccounts().streamer;
-
         try {
-            const marker = await twitchApi.streamerClient.streams
-                .createStreamMarker(streamer.userId, args.join(" "));
+            const marker = await TwitchApi.streams.createStreamMarker(args.join(" "));
 
             if (marker == null) {
-                await chat.sendChatMessage(commandOptions.unableTemplate);
+                await TwitchApi.chat.sendChatMessage(commandOptions.unableTemplate, null, true);
                 return;
             }
-            await chat.sendChatMessage(
+            await TwitchApi.chat.sendChatMessage(
                 commandOptions.successTemplate
-                    .replace("{timestamp}", utils.formattedSeconds(marker.positionInSeconds, true))
+                    .replaceAll("{timestamp}", humanizeTime(marker.positionInSeconds, "simple")),
+                null,
+                true
             );
         } catch (error) {
-            logger.error(error);
-            await chat.sendChatMessage(commandOptions.errorTemplate);
+            logger.error(`Error running !marker`, error);
+            await TwitchApi.chat.sendChatMessage(commandOptions.errorTemplate, null, true);
         }
     }
 };

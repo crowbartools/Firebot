@@ -1,9 +1,8 @@
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import { ReplaceVariable } from "../../../../types/variables";
-import activeUserHandler from '../../../chat/chat-listeners/active-user-handler';
-import logger from "../../../logwrapper";
+import type { ReplaceVariable } from "../../../../types/variables";
+import { ActiveUserHandler } from '../../../chat/active-user-handler';
 import customRolesManager from '../../../roles/custom-roles-manager';
-import { getRandomInt } from '../../../utility';
+import logger from "../../../logwrapper";
+import { getRandomInt } from '../../../utils';
 
 const model : ReplaceVariable = {
     definition: {
@@ -36,22 +35,23 @@ const model : ReplaceVariable = {
                 description: "Get an object representing a random active chatter. The result will include `username` and `id` properties."
             }
         ],
-        categories: [VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.OBJECT]
+        categories: ["user based"],
+        possibleDataOutput: ["text", "object"]
     },
-    evaluator: async (_trigger, roles?: string | string[], ignoreUsers?: string | string[], ignoreRoles?: string | string[], propName?: string) => {
+    evaluator: (_trigger, roles?: string | string[], ignoreUsers?: string | string[], ignoreRoles?: string | string[], propName?: string) => {
+        const failResult = "[Unable to get random active user]";
         logger.debug("Getting random active viewer...");
 
-        const activeViewerCount = activeUserHandler.getActiveUserCount();
+        const activeViewerCount = ActiveUserHandler.getActiveUserCount();
         if (activeViewerCount === 0) {
             logger.debug("randomActiveViewer: no active viewers are available to select from");
-            return "[Unable to get random active user]";
+            return failResult;
         }
 
         function parseArg(param?: string | string[]): string[] {
             if (param != null) {
                 if (Array.isArray(param)) {
-                    return [...new Set(param)]; // defensive de-duplication
+                    return [...new Set(param.filter(p => p != null))]; // defensive de-duplication
                 } else if (typeof param === "string" && param.toLowerCase() !== "null") {
                     return [param];
                 }
@@ -61,35 +61,36 @@ const model : ReplaceVariable = {
 
         const excludedUserNames = parseArg(ignoreUsers);
         const excludedRoleNames = parseArg(ignoreRoles);
-        // Trim out any roles that were both included and excluded
-        const includedRoleNames = parseArg(roles)
-            .filter(roleName => !excludedRoleNames.includes(roleName));
-
-        const includedRoles = includedRoleNames
-            .map(roleName => customRolesManager.getRoleByName(roleName))
-            .filter(role => role != null);
-        if (includedRoleNames.length > includedRoles.length) {
-            // warn and return early if /all/ included roles are unknown
-            if (includedRoles.length === 0) {
-                logger.warn(`randomActiveViewer filtering solely to unknown role(s): ${includedRoleNames.join(", ")}`);
-                return "[Unable to get random active user]";
-            }
-            // otherwise, warn if any roles are unknown
-            const unknownRoleNames = includedRoleNames
-                .filter(roleName => !includedRoles.some(role => role.name.toLowerCase() === roleName.toLowerCase()));
-            logger.warn(`randomActiveViewer ignoring unknown included role(s): ${unknownRoleNames.join(", ")}`);
-        }
+        const includedRoleNames = parseArg(roles);
 
         const excludedRoles = excludedRoleNames
             .map(roleName => customRolesManager.getRoleByName(roleName))
             .filter(role => role != null);
+        const includedRoles = includedRoleNames
+            .map(roleName => customRolesManager.getRoleByName(roleName))
+            .filter(role => role != null && !excludedRoles.some(er => er.id === role.id));
+
+        if (includedRoleNames.length > includedRoles.length) {
+            const unkOrExcRoleNames = includedRoleNames
+                .filter(roleName => !includedRoles.some(role => role.name.toLowerCase() === roleName?.toLowerCase()))
+                .join(", ");
+
+            // warn and return early if /all/ included roles are unknown or excluded
+            if (includedRoles.length === 0) {
+                logger.warn(`randomActiveViewer filtering solely to unknown or excluded role(s): ${unkOrExcRoleNames}`);
+                return failResult;
+            }
+            // otherwise, warn if any roles are unknown
+            logger.warn(`randomActiveViewer ignoring unknown or also-excluded role(s): ${unkOrExcRoleNames}`);
+        }
+
         if (excludedRoleNames.length > excludedRoles.length) {
             const unknownRoleNames = excludedRoleNames
                 .filter(roleName => !excludedRoles.some(role => role.name.toLowerCase() === roleName.toLowerCase()));
             logger.warn(`randomActiveViewer ignoring unknown excluded role(s): ${unknownRoleNames.join(", ")}`);
         }
 
-        let selectableViewers = activeUserHandler.getAllActiveUsers();
+        let selectableViewers = ActiveUserHandler.getAllActiveUsers();
         if (excludedUserNames.length > 0) {
             selectableViewers = selectableViewers.filter(user => !excludedUserNames.includes(user.username));
         }
@@ -117,7 +118,7 @@ const model : ReplaceVariable = {
 
         logger.warn(`randomActiveViewer failed to get a user; +${activeViewerCount}/-${
             excludedUserNames.length} viewers, +${includedRoles.length}/-${excludedRoles.length} roles`);
-        return "[Unable to get random active user]";
+        return failResult;
     }
 };
 

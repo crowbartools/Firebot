@@ -3,7 +3,7 @@
 (function() {
     angular
         .module("firebotApp")
-        .factory("uiExtensionsService", function(backendCommunicator) {
+        .factory("uiExtensionsService", function(backendCommunicator, $injector, dynamicParameterRegistry) {
             const service = {};
 
             service.extensions = [];
@@ -70,6 +70,11 @@
                 };
             }
 
+            function normalizeTagName(tag) {
+                // remove any non-alpha characters and convert to kebab-case
+                return tag.toLowerCase().replace(/[^a-z]+/g, "").trim().replace(/ /g, "-");
+            }
+
             function installExtension(extension) {
                 const parsedExtension = parseRawExtension(extension);
                 service.extensions = [
@@ -83,6 +88,14 @@
                         // eslint-disable-next-line no-undef
                         ngProviders?.$provide.factory(factory.name, factory.function);
                     });
+
+                    // loop through and instantiate all factories now
+                    // so that any services they provide are available immediately
+                    // rather than waiting for something to inject them
+                    parsedExtension.providers.factories?.forEach((factory) => {
+                        $injector.get(factory.name);
+                    });
+
                     parsedExtension.providers.components?.forEach((component) => {
                         angular.module("firebotApp").component(component.name, {
                             bindings: component.bindings,
@@ -107,6 +120,31 @@
                         angular.module("firebotApp").filter(filter.name, filter.function);
                         // eslint-disable-next-line no-undef
                         ngProviders?.$filterProvider.register(filter.name, filter.function);
+                    });
+
+                    parsedExtension.providers.parameters?.forEach((parametersComponent) => {
+                        const componentName = `custom-param-${normalizeTagName(parametersComponent.parameterConfig.type)}`;
+
+                        const bindings = {
+                            schema: '<',
+                            value: '<',
+                            onInput: '&',
+                            onTouched: '&'
+                        };
+
+                        angular.module("firebotApp").component(componentName, {
+                            bindings,
+                            template: parametersComponent.template,
+                            controller: parametersComponent.controller
+                        });
+                        // eslint-disable-next-line no-undef
+                        ngProviders?.$compileProvider.component(componentName, {
+                            bindings,
+                            template: parametersComponent.template,
+                            controller: parametersComponent.controller
+                        });
+
+                        dynamicParameterRegistry.register(parametersComponent.parameterConfig.type, { tag: componentName, ...parametersComponent.parameterConfig });
                     });
                 }
             }

@@ -1,217 +1,217 @@
 <div class="modal-header sticky-header">
-  <button
-    type="button"
-    class="close"
-    aria-label="Close"
-    ng-click="$ctrl.dismiss()"
-  >
-    <span aria-hidden="true">&times;</span>
-  </button>
-  <h4 class="modal-title">
-    <div class="text-4xl">Edit System Command:</div>
-    <div class="text-4xl font-bold">{{$ctrl.command.name}}</div>
-  </h4>
+    <button
+        type="button"
+        class="close"
+        aria-label="Close"
+        ng-click="$ctrl.dismiss()"
+    >
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h4 class="modal-title">
+        <div class="text-4xl">Edit System Command:</div>
+        <div class="text-4xl font-bold">{{$ctrl.command.name}}</div>
+    </h4>
 </div>
 <div class="modal-body general-button-settings">
-  <setting-container header="Trigger">
-    <div class="input-group pb-5">
-      <span class="input-group-addon" id="basic-addon3">Trigger</span>
-      <input
-        type="text"
-        class="form-control"
-        aria-describedby="basic-addon3"
-        ng-model="$ctrl.command.trigger"
-        placeholder="!something"
-      />
-    </div>
+    <setting-container header="Trigger">
+        <div class="input-group pb-5">
+            <span class="input-group-addon" id="basic-addon3">Trigger</span>
+            <input
+                type="text"
+                class="form-control"
+                aria-describedby="basic-addon3"
+                ng-model="$ctrl.command.trigger"
+                placeholder="!something"
+            />
+        </div>
 
-    <div class="controls-fb-inline">
-      <label class="control-fb control--checkbox"
-        >Auto Delete Trigger
-        <tooltip
-          text="'Have Firebot automatically delete the message that triggers this command to keep chat cleaner.'"
-        ></tooltip>
-        <input
-          type="checkbox"
-          ng-model="$ctrl.command.autoDeleteTrigger"
-          aria-label="..."
-        />
-        <div class="control__indicator"></div>
-      </label>
+        <div class="controls-fb-inline">
+            <label class="control-fb control--checkbox"
+                >Auto Delete Trigger
+                <tooltip
+                    text="'Have Firebot automatically delete the message that triggers this command to keep chat cleaner.'"
+                ></tooltip>
+                <input
+                    type="checkbox"
+                    ng-model="$ctrl.command.autoDeleteTrigger"
+                    aria-label="..."
+                />
+                <div class="control__indicator"></div>
+            </label>
 
-      <label class="control-fb control--checkbox"
-        >Scan Whole Message
-        <tooltip
-          text="'Scan the whole message for the trigger instead just the first word'"
-        ></tooltip>
-        <input
-          type="checkbox"
-          ng-model="$ctrl.command.scanWholeMessage"
-          aria-label="..."
-        />
-        <div class="control__indicator"></div>
-      </label>
-    </div>
+            <label class="control-fb control--checkbox"
+                >Scan Whole Message
+                <tooltip
+                    text="'Scan the whole message for the trigger instead just the first word'"
+                ></tooltip>
+                <input
+                    type="checkbox"
+                    ng-model="$ctrl.command.scanWholeMessage"
+                    aria-label="..."
+                />
+                <div class="control__indicator"></div>
+            </label>
+        </div>
 
-    <firebot-input
-      ng-if="$ctrl.command.baseCommandDescription == null"
-      input-title="Description"  
-      title-tooltip="Displayed on the command list webpage"
-      placeholder-text="Enter description"
-      model="$ctrl.command.description"
-      disable-variables="true"
-      class="pt-6"
+        <firebot-input
+            ng-if="$ctrl.command.baseCommandDescription == null"
+            input-title="Description"
+            title-tooltip="Displayed on the command list webpage"
+            placeholder-text="Enter description"
+            model="$ctrl.command.description"
+            disable-variables="true"
+            class="pt-6"
+        >
+        </firebot-input>
+        <firebot-input
+            ng-if="$ctrl.command.baseCommandDescription != null"
+            input-title="Description"
+            title-tooltip="Displayed on the command list webpage"
+            placeholder-text="Enter description"
+            model="$ctrl.command.baseCommandDescription"
+            disable-variables="true"
+            class="pt-6"
+        >
+        </firebot-input>
+    </setting-container>
+
+    <setting-container
+        header="Cooldowns"
+        pad-top="true"
+        ng-hide="$ctrl.command.hideCooldowns"
     >
-    </firebot-input>
-    <firebot-input
-      ng-if="$ctrl.command.baseCommandDescription != null"
-      input-title="Description"  
-      title-tooltip="Displayed on the command list webpage"
-      placeholder-text="Enter description"
-      model="$ctrl.command.baseCommandDescription"
-      disable-variables="true"
-      class="pt-6"
+        <command-cooldown-settings
+            command="$ctrl.command"
+            message-setting-disabled="true"
+        ></command-cooldown-settings>
+    </setting-container>
+
+    <setting-container
+        header="Restrictions"
+        description="Permissions, currency costs, and more"
+        pad-top="true"
     >
-    </firebot-input>
-  </setting-container>
+        <restrictions-list
+            restriction-data="$ctrl.command.restrictionData"
+            trigger="command"
+            trigger-meta="$ctrl.triggerMeta"
+        >
+        </restrictions-list>
+    </setting-container>
 
-  <setting-container
-    header="Cooldowns"
-    pad-top="true"
-    ng-hide="$ctrl.command.hideCooldowns"
-  >
-      <command-cooldown-settings command="$ctrl.command" message-setting-disabled="true"></command-cooldown-settings>
-  </setting-container>
+    <setting-container header="General" pad-top="true">
+        <div class="controls-fb-inline">
+            <label class="control-fb control--checkbox"
+                >Is Active
+                <input
+                    type="checkbox"
+                    ng-model="$ctrl.command.active"
+                    aria-label="..."
+                    checked
+                />
+                <div class="control__indicator"></div>
+            </label>
+            <label class="control-fb control--checkbox"
+                >Hidden
+                <tooltip
+                    text="'Hide this command from the !commands list'"
+                ></tooltip>
+                <input
+                    type="checkbox"
+                    ng-model="$ctrl.command.hidden"
+                    aria-label="..."
+                />
+                <div class="control__indicator"></div>
+            </label>
+        </div>
+    </setting-container>
 
-  <setting-container
-    header="Restrictions"
-    description="Permissions, currency costs, and more"
-    pad-top="true"
-  >
-    <restrictions-list
-      restriction-data="$ctrl.command.restrictionData"
-      trigger="command"
-      trigger-meta="$ctrl.triggerMeta"
+    <setting-container header="Shared Chat" pad-top="true">
+        <div class="controls-fb-inline">
+            <firebot-radios
+                options="$ctrl.sharedChatRadioOptions"
+                model="$ctrl.command.allowTriggerBySharedChat"
+                inline="true"
+            />
+        </div>
+    </setting-container>
+
+    <setting-container
+        header="Settings"
+        ng-if="$ctrl.command.options != null"
+        pad-top="true"
     >
-    </restrictions-list>
-  </setting-container>
+        <dynamic-parameter
+            ng-repeat="(settingName, settingSchema) in $ctrl.command.options"
+            name="{{settingName}}"
+            schema="settingSchema"
+            ng-model="$ctrl.command.options[settingName].value"
+        >
+        </dynamic-parameter>
+    </setting-container>
 
-  <setting-container header="General" pad-top="true">
-    <div class="controls-fb-inline">
-      <label class="control-fb control--checkbox"
-        >Is Active
-        <input
-          type="checkbox"
-          ng-model="$ctrl.command.active"
-          aria-label="..."
-          checked
-        />
-        <div class="control__indicator"></div>
-      </label>
-      <label class="control-fb control--checkbox"
-        >Hidden
-        <tooltip text="'Hide this command from the !commands list'"></tooltip>
-        <input
-          type="checkbox"
-          ng-model="$ctrl.command.hidden"
-          aria-label="..."
-        />
-        <div class="control__indicator"></div>
-      </label>
-    </div>
-  </setting-container>
+    <setting-container header="Additional Effects" pad-top="true">
+        <div
+            ng-if="$ctrl.command.subCommands != null && $ctrl.command.subCommands.length > 0"
+            style="margin-bottom: 20px; font-weight: 100"
+        >
+            This is only triggered when the user does not provide any arguments.
+        </div>
+        <effect-list
+            header="What should this command do?"
+            effects="$ctrl.command.effects"
+            trigger="command"
+            trigger-meta="{ rootEffects: $ctrl.command.effects }"
+            update="$ctrl.effectListUpdated(effects)"
+            is-array="true"
+        ></effect-list>
+    </setting-container>
 
-  <setting-container header="Shared Chat" pad-top="true">
-    <div class="controls-fb-inline">
-      <firebot-radios
-        options="$ctrl.sharedChatRadioOptions"
-        model="$ctrl.command.allowTriggerBySharedChat"
-        inline="true"
-      />
-    </div>
-  </setting-container>
-
-  <setting-container
-    header="Settings"
-    ng-if="$ctrl.command.options != null"
-    pad-top="true"
-  >
-    <command-option
-      ng-repeat="(optionName, optionMetadata) in $ctrl.command.options"
-      ng-if="optionMetadata.title === 'Output Template'"
-      name="optionName"
-      metadata="optionMetadata"
-    ></command-option>
-    <command-option
-      ng-repeat="(optionName, optionMetadata) in $ctrl.command.options"
-      ng-if="optionMetadata.title !== 'Output Template'"
-      name="optionName"
-      metadata="optionMetadata"
-    ></command-option>
-  </setting-container>
-
-  <setting-container
-    header="Additional Effects"
-    pad-top="true"
-  >
-    <div ng-if="$ctrl.command.subCommands != null && $ctrl.command.subCommands.length > 0" style="margin-bottom: 20px;font-weight: 100;">
-      This is only triggered when the user does not provide any arguments.
-    </div>
-    <effect-list
-      header="What should this command do?"
-      effects="$ctrl.command.effects"
-      trigger="command"
-      trigger-meta="{ rootEffects: $ctrl.command.effects }"
-      update="$ctrl.effectListUpdated(effects)"
-      is-array="true"
-    ></effect-list>
-  </setting-container>
-
-  <setting-container
-    header="Subcommands"
-    ng-if="$ctrl.command.subCommands != null && $ctrl.command.subCommands.length > 0"
-    pad-top="true"
-  >
-    <div class="flex text-lg font-bold pb-4">
-      <div class="muted pl-8" style="flex-basis: 30%;">
-        <i class="fas fa-tag"></i> ARG
-      </div>
-      <div class="muted" style="width: 25%">
-        <i class="fas fa-clock"></i> COOLDOWNS
-      </div>
-      <div class="muted" style="width: 25%">
-        <i class="fas fa-lock-alt"></i> PERMISSIONS
-      </div>
-      <div class="muted" style="width: 25%"></div>
-      <div
-        class="muted pr-8"
-        style="flex-basis: 30px; flex-shrink: 0;"
-      ></div>
-    </div>
-    <subcommand-row
-      ng-repeat="subcommand in $ctrl.command.subCommands track by $index"
-      subcommand="subcommand"
-      cmd-trigger="{{$ctrl.command.trigger}}"
-    ></subcommand-row>
-  </setting-container>
+    <setting-container
+        header="Subcommands"
+        ng-if="$ctrl.command.subCommands != null && $ctrl.command.subCommands.length > 0"
+        pad-top="true"
+    >
+        <div class="flex text-lg font-bold pb-4">
+            <div class="muted pl-8" style="flex-basis: 30%">
+                <i class="fas fa-tag"></i> ARG
+            </div>
+            <div class="muted" style="width: 25%">
+                <i class="fas fa-clock"></i> COOLDOWNS
+            </div>
+            <div class="muted" style="width: 25%">
+                <i class="fas fa-lock-alt"></i> PERMISSIONS
+            </div>
+            <div class="muted" style="width: 25%"></div>
+            <div
+                class="muted pr-8"
+                style="flex-basis: 30px; flex-shrink: 0"
+            ></div>
+        </div>
+        <subcommand-row
+            ng-repeat="subcommand in $ctrl.command.subCommands track by $index"
+            subcommand="subcommand"
+            cmd-trigger="{{$ctrl.command.trigger}}"
+        ></subcommand-row>
+    </setting-container>
 </div>
 
 <div class="modal-footer sticky-footer">
-  <button
-    type="button"
-    class="btn btn-danger pull-left"
-    ng-click="$ctrl.reset()"
-  >
-    Reset To Default
-  </button>
-  <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">
-    Cancel
-  </button>
-  <button
-    type="button"
-    class="btn btn-primary add-new-board-save"
-    ng-click="$ctrl.save()"
-  >
-    Save Changes
-  </button>
+    <button
+        type="button"
+        class="btn btn-danger pull-left"
+        ng-click="$ctrl.reset()"
+    >
+        Reset To Default
+    </button>
+    <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">
+        Cancel
+    </button>
+    <button
+        type="button"
+        class="btn btn-primary add-new-board-save"
+        ng-click="$ctrl.save()"
+    >
+        Save Changes
+    </button>
 </div>

@@ -1,8 +1,9 @@
 "use strict";
 
 const apiProcessor = require("../../common/handlers/apiProcessor");
-const twitchChat = require("../../chat/twitch-chat");
 const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
+const { TwitchApi } = require("../../streaming-platforms/twitch/api");
+
 /**
  * The API effect
  */
@@ -141,7 +142,7 @@ const api = {
     /**
    * When the effect is triggered by something
    */
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.api == null) {
             errors.push("Please select an API from the list.");
@@ -152,19 +153,19 @@ const api = {
         }
         return errors;
     },
-    getDefaultLabel: effect => {
+    getDefaultLabel: (effect) => {
         return effect.api;
     },
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const chatter = event.effect.chatter;
         const apiType = event.effect.api;
 
         const apiResponse = await apiProcessor.getApiResponse(apiType);
 
-        await twitchChat.sendChatMessage(`${apiType}: ${apiResponse}`, null, chatter);
+        await TwitchApi.chat.sendChatMessage(`${apiType}: ${apiResponse}`, null, chatter.toLowerCase() === "bot");
 
         return {
             success: true,

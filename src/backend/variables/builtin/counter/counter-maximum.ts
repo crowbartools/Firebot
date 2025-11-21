@@ -1,6 +1,5 @@
-import { TriggersObject } from "../../../../types/triggers";
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
+import type { TriggersObject } from "../../../../types/triggers";
 
 const triggers: TriggersObject = {
     counter: true
@@ -11,8 +10,8 @@ const model: ReplaceVariable = {
         handle: "counterMaximum",
         description: "The maximum value of the counter, or an empty string if there isn't one",
         triggers: triggers,
-        categories: [VariableCategory.TRIGGER, VariableCategory.NUMBERS],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["trigger based", "numbers"],
+        possibleDataOutput: ["number"]
     },
     evaluator: (trigger) => {
         return trigger.metadata.counter.maximum ?? "";

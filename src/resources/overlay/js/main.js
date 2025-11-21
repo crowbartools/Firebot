@@ -1,4 +1,4 @@
-firebotOverlay = new EventEmitter();
+effectEvents = new EventEmitter();
 
 let params = new URL(location).searchParams;
 
@@ -26,6 +26,13 @@ function loadFonts() {
             document.getElementsByTagName("head")[0].prepend(fontElement);
         });
     });
+}
+
+function normalizeOverlayInstanceName(name) {
+    if(!name || name === "") {
+        return undefined
+    }
+    return name;
 }
 
 // Kickstarter
@@ -66,19 +73,21 @@ function overlaySocketConnect(){
 
 			const meta = data.meta;
 
-			const olInstance = params.get("instance");
+			const olInstance = normalizeOverlayInstanceName(params.get("instance"));
+            const eventInstance = normalizeOverlayInstanceName(message.data.overlayInstance) ??
+                normalizeOverlayInstanceName(meta.overlayInstance);
 
 			console.log(`Received Event: ${event}`);
-			console.log(`Overlay Instance: ${olInstance}, Event Instance: ${message.data.overlayInstance}`);
+			console.log(`Overlay Instance: ${olInstance}, Event Instance: ${eventInstance}`);
 
 			if(!meta.global) {
-                if(olInstance != null && olInstance != "") {
-                    if(meta.overlayInstance != olInstance) {
+                if(olInstance) {
+                    if(eventInstance != olInstance) {
                         console.log("Event is for a different instance. Ignoring.")
                         return;
                     }
                 } else {
-                    if(meta.overlayInstance != null && meta.overlayInstance != "") {
+                    if(eventInstance) {
                         console.log("Event is for a specific instance. Ignoring.")
                         return;
                     }
@@ -88,7 +97,7 @@ function overlaySocketConnect(){
             }
 
 			if(event == "OVERLAY:REFRESH") {
-				console.log(`Refreshing ${meta.overlayInstance || ""} overlay...`);
+				console.log(`Refreshing ${eventInstance + " " ?? ""}overlay...`);
 				location.reload();
 
 				return;
@@ -99,7 +108,13 @@ function overlaySocketConnect(){
                 return;
             }
 
-			firebotOverlay.emit(event, data.meta);
+            if (event == "OVERLAY:WIDGET-EVENT") {
+                handleOverlayEvent(data.meta.event);
+                return;
+            }
+
+            effectEvents.emit(event, data.meta);
+
 		};
 
 		// Connection closed for some reason. Reconnecting Websocket will try to reconnect.

@@ -1,5 +1,5 @@
-import { RankLadder, Rank } from "../../types/ranks";
-import { FirebotViewer } from "../../types/viewers";
+import type { RankLadder, Rank } from "../../types/ranks";
+import type { FirebotViewer } from "../../types/viewers";
 import currencyAccess from "../currency/currency-access";
 
 export class RankLadderHelper {
@@ -74,7 +74,7 @@ export class RankLadderHelper {
         }
         const ranks = this.rankLadder.ranks;
         const viewersValue = this.getTrackByValue(viewer);
-        const rank = ranks.find(rank => viewersValue >= rank.value ?? 0);
+        const rank = ranks.find(rank => viewersValue >= (rank.value ?? 0));
 
         return rank?.id;
     }

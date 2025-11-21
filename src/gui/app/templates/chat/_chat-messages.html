@@ -55,7 +55,7 @@
         style="{{customFontSizeStyle}}"
       >
         <div
-          ng-repeat="chatItem in cms.chatQueue | hideBotMessages | hideWhispers | limitTo:messageDisplayLimit track by chatItem.id"
+          ng-repeat="chatItem in cms.chatQueue | hideBotMessages | hideWhispers | limitTo:messageDisplayLimit | reverseChat:reverseChatOrder track by chatItem.id"
           class="chat-item"
           ng-class="{ alternate: alternateBackgrounds}"
           scroll-glue-anchor
@@ -66,6 +66,7 @@
             compact-display="compactDisplay"
             alternate-backgrounds="alternateBackgrounds"
             hide-deleted-messages="hideDeletedMessages"
+            show-shared-chat-info="showSharedChatInfo"
             show-avatar="showAvatars"
             show-timestamp="showTimestamps"
             show-bttv-emotes="showBttvEmotes"
@@ -83,7 +84,8 @@
           />
           <chat-alert
             ng-if="chatItem.type === 'alert'"
-            message="chatItem.data"
+            alert-message="chatItem.message"
+            alert-icon="chatItem.icon"
           />
         </div>
       </div>
@@ -160,15 +162,6 @@
           ng-disabled="!chatFeedIsEnabled()"
         />
       </div>
-      <div class="settings-btn-wrapper">
-        <button
-          class="settings-btn"
-          ng-click="showChatSettingsModal()"
-          aria-label="Chat Settings"
-        >
-          <i class="fas fa-cog"></i>
-        </button>
-      </div>
     </div>
   </div>
 
@@ -209,7 +202,7 @@
           uib-dropdown-toggle
           class="clickable"
           style="color: white; font-size: 20px; line-height: 1"
-          aria-label="Activity feed options"
+          aria-label="Activity Feed options"
         >
           <i class="far fa-ellipsis-v"></i>
         </a>
@@ -218,12 +211,22 @@
             <a ng-click="afs.toggleMarkAllAcknowledged()"
               ><i
                 class="far fa-check-square mr-4"
-                aria-label="Mark all events as acknowledged"
+                aria-label="Mark all activities as acknowledged"
               ></i>
               Mark all as {{afs.allAcknowledged() ? 'Unacknowledged' :
               'Acknowledged'}}</a
             >
           </li>
+          <li ng-class="{'disabled': afs.activities.length < 1}">
+            <a ng-click="afs.clearAllActivities()"
+              ><i
+                class="far fa-trash-alt mr-4"
+                aria-label="Clear all activities"
+              ></i>
+              Clear all activities</a
+            >
+          </li>
+          <li class="divider"></li>
           <li>
             <a ng-click="afs.showEditActivityFeedEventsModal()"
               ><i class="far fa-toggle-off mr-4" aria-label="Edit events"></i>
@@ -237,7 +240,7 @@
     <div class="activity-list">
       <div
         class="activity alternate-bg"
-        ng-class="activity.acknowledged ? 'muted' : ''"
+        ng-class="activity.acknowledged ? 'acknowledged' : ''"
         ng-repeat="activity in afs.activities track by activity.id"
       >
         <div
@@ -259,9 +262,7 @@
           >
         </div>
         <div
-          style="width: 100%"
           class="activity-message"
-          ng-hide="hideEventLabel()"
           ng-bind-html="activity.message"
         ></div>
         <div
@@ -290,5 +291,16 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="dashboard-settings-button-container">
+    <firebot-button
+      type="default"
+      icon="fas fa-cog"
+      ng-click="showChatSettingsModal()"
+      tooltip="Dashboard Settings"
+      tooltip-placement="left"
+      aria-label="Dashboard Settings"
+    />
   </div>
 </div>

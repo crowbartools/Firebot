@@ -1,20 +1,19 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import { convertToString } from '../../../utility';
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
+import { stringify } from '../../../utils';
 
 const model : ReplaceVariable = {
     definition: {
         handle: "lowercase",
         description: "Makes the entire given text string lowercase.",
         usage: "lowercase[text]",
-        categories: [VariableCategory.TEXT],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["text"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (
         trigger: Trigger,
         text: unknown
     ) : string => {
-        return convertToString(text).toLowerCase();
+        return stringify(text).toLowerCase();
     }
 };
 

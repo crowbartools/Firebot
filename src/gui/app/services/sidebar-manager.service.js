@@ -62,7 +62,8 @@
                     "currency",
                     "quotes",
                     "viewers",
-                    "variable macros"
+                    "variable macros",
+                    "overlay widgets"
                 ].includes(service.currentTab.toLowerCase());
             };
 
@@ -83,7 +84,8 @@
                     "variable macros",
                     "counters",
                     "effect queues",
-                    "settings"
+                    "settings",
+                    "overlay widgets"
                 ].includes(service.currentTab.toLowerCase());
             };
 
@@ -205,11 +207,6 @@
                     controller: "settingsController"
                 })
 
-                .when("/updates", {
-                    templateUrl: "./templates/_updates.html",
-                    controller: "updatesController"
-                })
-
                 .when("/events", {
                     templateUrl: "./templates/live-events/_events.html",
                     controller: "eventsController"
@@ -253,6 +250,11 @@
                 .when("/variable-macros", {
                     templateUrl: "./templates/_variable-macros.html",
                     controller: "variableMacrosController"
+                })
+
+                .when("/overlay-widgets", {
+                    templateUrl: "./templates/_overlay-widgets.html",
+                    controller: "overlayWidgetsController"
                 })
 
                 .when("/extension/:extensionId/:pageId", {

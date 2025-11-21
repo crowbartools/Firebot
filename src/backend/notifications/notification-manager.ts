@@ -1,10 +1,10 @@
 import { JsonDB } from "node-json-db";
-import { v4 as uuid } from "uuid";
+import { randomUUID } from "crypto";
 
-import logger from "../logwrapper";
-import profileManager from "../common/profile-manager";
+import { ProfileManager } from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
-import utils from "../utility";
+import logger from "../logwrapper";
+import { deepClone } from "../utils";
 
 export enum NotificationSource {
     EXTERNAL = "external",
@@ -24,7 +24,7 @@ type ExternalNotification = {
     title: string;
     message: string;
     type: NotificationType;
-}
+};
 
 export type NotificationBase = {
     title: string;
@@ -34,14 +34,14 @@ export type NotificationBase = {
     scriptName?: string;
     externalId?: string;
     metadata?: Record<string, unknown>;
-}
+};
 
 export type Notification = NotificationBase & {
     id: string;
     timestamp: Date;
     saved: boolean;
     read: boolean;
-}
+};
 
 interface NotificationCache {
     dbVersion?: string;
@@ -49,7 +49,7 @@ interface NotificationCache {
     knownExternalIds: string[];
 }
 
-const EXTERNAL_NOTIFICATION_SOURCE_URL = "https://raw.githubusercontent.com/crowbartools/Firebot/metadata/notifications/notifications.json";
+const EXTERNAL_NOTIFICATION_SOURCE_URL = "https://api.crowbar.tools/v1/notifications/v5";
 
 class NotificationManager {
     private _externalCheckInterval: NodeJS.Timeout;
@@ -78,13 +78,13 @@ class NotificationManager {
     }
 
     private getNotificationDb(): JsonDB {
-        return profileManager.getJsonDbInProfile("notifications");
+        return ProfileManager.getJsonDbInProfile("notifications");
     }
 
     private checkNotificationDbVersion(): boolean {
         try {
             return this.getNotificationDb().getData("/dbVersion") === "2";
-        } catch (error) {
+        } catch {
             logger.debug("No notification dbVersion detected.");
             return false;
         }
@@ -101,13 +101,13 @@ class NotificationManager {
             this.getNotificationDb().push("/", this._notificationCache);
         }
 
-        this._notificationCache = this.getNotificationDb().getData("/");
+        this._notificationCache = this.getNotificationDb().getData("/") as NotificationCache;
     }
 
     addNotification(notification: NotificationBase, permanentlySave = false): Notification {
         const newNotification: Notification = {
             ...notification,
-            id: uuid(),
+            id: randomUUID(),
             timestamp: new Date(),
             read: false,
             saved: permanentlySave ?? false,
@@ -128,7 +128,7 @@ class NotificationManager {
     }
 
     getNotifications(): Notification[] {
-        return utils.deepClone(this._notificationCache.notifications);
+        return deepClone(this._notificationCache.notifications);
     }
 
     deleteNotification(id: string): void {
@@ -156,7 +156,7 @@ class NotificationManager {
     }
 
     private getKnownExternalNotifications(): string[] {
-        const externalNotificationIds: string[] = this.getNotificationDb().getData("/knownExternalIds");
+        const externalNotificationIds = this.getNotificationDb().getData("/knownExternalIds") as string[];
         return externalNotificationIds ? externalNotificationIds : [];
     }
 
@@ -171,7 +171,7 @@ class NotificationManager {
 
             const knownExtNotis = this.getKnownExternalNotifications();
 
-            const newKnownExtNotis = [];
+            const newKnownExtNotis: string[] = [];
 
             externalNotifications.forEach((n) => {
                 newKnownExtNotis.push(n.id);
@@ -189,14 +189,15 @@ class NotificationManager {
 
             this.setKnownExternalNotifications(newKnownExtNotis);
 
-        } catch (error) {
+        } catch (err) {
+            const error = err as Error;
             logger.error("Error loading external notifications", error.message);
         }
     }
 
     startExternalNotificationCheck(): void {
         if (this._externalCheckInterval == null) {
-            this.loadExternalNotifications();
+            void this.loadExternalNotifications();
 
             this._externalCheckInterval = setInterval(
                 () => this.loadExternalNotifications(), 5 * 60 * 1000);
@@ -211,6 +212,6 @@ class NotificationManager {
     }
 }
 
-const notificationManager = new NotificationManager();
+const manager = new NotificationManager();
 
-export default notificationManager;
+export { manager as NotificationManager };

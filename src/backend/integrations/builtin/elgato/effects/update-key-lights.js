@@ -1,6 +1,5 @@
 "use strict";
 
-const { EffectCategory } = require("../../../../../shared/effect-constants");
 const { integration } = require("../elgato");
 
 const effect = {
@@ -9,7 +8,7 @@ const effect = {
         name: "Update Elgato Key Lights",
         description: "Turn Elgato Key Lights on or off, and change the temperature and brightness.",
         icon: "fad fa-lamp fa-align-center",
-        categories: [EffectCategory.INTEGRATIONS],
+        categories: ["integrations"],
         dependencies: []
     },
     globalSettings: {},
@@ -79,7 +78,7 @@ const effect = {
         }
 
         $q.when(backendCommunicator.fireEventAsync("getKeyLights"))
-            .then(keyLights => {
+            .then((keyLights) => {
                 if (keyLights?.length > 0) {
                     $scope.keyLights = keyLights;
 

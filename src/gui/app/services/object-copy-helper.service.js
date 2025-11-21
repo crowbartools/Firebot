@@ -2,7 +2,7 @@
 
 (function() {
 
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     angular
         .module("firebotApp")
@@ -36,8 +36,8 @@
 
                 return JSON.parse(angular.toJson(copiedEffects))
                     .filter(e => !effectDefs || effectDefs.find(ed => ed.id === e.type))
-                    .map(e => {
-                        e.id = uuid();
+                    .map((e) => {
+                        e.id = randomUUID();
                         return e;
                     });
             };
@@ -52,7 +52,7 @@
                     const value = copiedObject[key];
 
                     if (key === "id") {
-                        copiedObject[key] = uuid();
+                        copiedObject[key] = randomUUID();
                     } else if (value && typeof value === "object") {
                         copiedObject[key] = service.copyAndReplaceIds(value);
                     }
@@ -67,7 +67,7 @@
                 return copied;
             };
 
-            service.hasObjectCopied = (key) => copiedObjectsCache[key] != null;
+            service.hasObjectCopied = key => copiedObjectsCache[key] != null;
 
             service.getCopiedObject = (key) => {
                 const object = copiedObjectsCache[key];
@@ -76,6 +76,12 @@
                 }
 
                 return service.copyAndReplaceIds(object);
+            };
+
+            service.cloneEffect = (effect) => {
+                const clonedEffect = JSON.parse(angular.toJson(effect));
+                clonedEffect.id = randomUUID();
+                return clonedEffect;
             };
 
             return service;

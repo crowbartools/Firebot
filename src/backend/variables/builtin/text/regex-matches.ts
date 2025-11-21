@@ -1,10 +1,9 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
         handle: "regexMatches",
-        description: "Filter a string with a regular expression and return an array of all matches",
+        description: "Filter a string with a [regular expression](https://developer.mozilla.org/docs/Web/JavaScript/Guide/Regular_expressions) and return an array of all matches",
         usage: "regexMatches[string, expression]",
         examples: [
             {
@@ -12,8 +11,8 @@ const model : ReplaceVariable = {
                 description: "Add flags to the regex evaluation."
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (
         trigger: Trigger,
@@ -33,7 +32,7 @@ const model : ReplaceVariable = {
             }
             return [...matches];
 
-        } catch (err) {
+        } catch {
             return [];
         }
     }

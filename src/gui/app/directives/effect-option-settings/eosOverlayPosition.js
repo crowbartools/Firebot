@@ -15,7 +15,7 @@
             <eos-container header="Overlay Display Location" pad-top="$ctrl.padTop">
                 <div class="controls-fb-inline">
                     <label class="control-fb control--radio">Preset
-                        <input type="radio" ng-model="$ctrl.presetOrCustom" ng-change="$ctrl.togglePresetCustom()" value="preset"/> 
+                        <input type="radio" ng-model="$ctrl.presetOrCustom" ng-change="$ctrl.togglePresetCustom()" value="preset"/>
                         <div class="control__indicator"></div>
                     </label>
                     <label class="control-fb control--radio">Custom
@@ -53,6 +53,17 @@
                             </div>
                         </div>
                     </form>
+                </div>
+                <div style="margin-top: 15px;">
+                    <div class="input-group">
+                        <span class="input-group-addon">z-index <tooltip text="'Controls which items appear in front when things overlap. Items with a higher number are shown on top of items with a lower number.'"></tooltip></span>
+                        <input
+                            type="text"
+                            class="form-control"
+                            placeholder="Optional"
+                            replace-variables="number"
+                            ng-model="$ctrl.effect.zIndex">
+                    </div>
                 </div>
             </eos-container>
        `,
@@ -152,7 +163,7 @@
                         }
                     }
                     ctrl.presetOrCustom =
-          ctrl.effect.position === "Custom" ? "custom" : "preset";
+                        ctrl.effect.position === "Custom" ? "custom" : "preset";
                 };
             }
         });

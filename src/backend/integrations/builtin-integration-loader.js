@@ -14,7 +14,7 @@ exports.loadIntegrations = () => {
         'tipeeestream/tipeeestream',
         'extralife/extralife',
         'obs/obs-integration'
-    ].forEach(filename => {
+    ].forEach((filename) => {
         const definition = require(`./builtin/${filename}.js`);
         integrationManager.registerIntegration(definition);
     });

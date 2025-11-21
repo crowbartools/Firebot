@@ -15,25 +15,25 @@ export class BTTVEmoteProvider extends ThirdPartyEmoteProvider<BTTVEmotesRespons
     providerName = "BTTV";
 
     globalEmoteUrl = "https://api.betterttv.net/3/cached/emotes/global";
-    getChannelEmotesUrl(streamerUserId: number): string {
+    getChannelEmotesUrl(streamerUserId: string): string {
         return `https://api.betterttv.net/3/cached/users/twitch/${streamerUserId}`;
     }
 
     private emoteMapper(response: BTTVEmotesResponse): ThirdPartyEmote[] {
-        return response.map(e => ({
+        return response?.map(e => ({
             url: `https://cdn.betterttv.net/emote/${e.id}/1x`,
             code: e.code,
             animated: e.imageType && e.imageType.toLowerCase() === "gif",
             origin: this.providerName
-        }));
+        })) ?? [];
     }
 
     globalEmotesMapper = this.emoteMapper;
 
     channelEmotesMapper(response: BTTVChannelEmotesResponse): ThirdPartyEmote[] {
         return [
-            ...this.emoteMapper(response.channelEmotes),
-            ...this.emoteMapper(response.sharedEmotes)
+            ...this.emoteMapper(response?.channelEmotes),
+            ...this.emoteMapper(response?.sharedEmotes)
         ];
     }
 }

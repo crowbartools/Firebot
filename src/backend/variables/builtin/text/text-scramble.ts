@@ -1,20 +1,19 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import { convertToString } from '../../../utility';
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
+import { stringify } from '../../../utils';
 
 const model : ReplaceVariable = {
     definition: {
         handle: "scrambleText",
         usage: "scrambleText[text]",
         description: "Scrambles the input text",
-        categories: [VariableCategory.TEXT],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["text"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (
         trigger: Trigger,
         subject: unknown
     ) : string => {
-        const text = convertToString(subject).split('');
+        const text = stringify(subject).split('');
 
         let result = '';
         while (text.length) {

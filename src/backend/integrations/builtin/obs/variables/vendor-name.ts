@@ -1,13 +1,11 @@
-import { TriggerType } from "../../../../common/EffectType";
-import { ReplaceVariable } from "../../../../../types/variables";
+import { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
 import {
     OBS_EVENT_SOURCE_ID,
     OBS_VENDOR_EVENT_EVENT_ID
 } from "../constants";
-import { VariableCategory } from "../../../../../shared/variable-constants";
 
-const triggers = {};
-triggers[TriggerType.EVENT] = [
+const triggers: TriggersObject = {};
+triggers["event"] = [
     `${OBS_EVENT_SOURCE_ID}:${OBS_VENDOR_EVENT_EVENT_ID}`
 ];
 
@@ -17,10 +15,10 @@ export const VendorNameVariable: ReplaceVariable = {
         description:
       "The name of the vendor that triggered the OBS vendor event.",
         possibleDataOutput: ["text"],
-        categories: [VariableCategory.ADVANCED, VariableCategory.INTEGRATION, VariableCategory.OBS],
+        categories: ["advanced", "integrations", "obs"],
         triggers: triggers
     },
-    evaluator: async (trigger) => {
+    evaluator: (trigger) => {
         const vendorName = trigger.metadata?.eventData?.vendorName;
         return vendorName ?? "Unknown";
     }

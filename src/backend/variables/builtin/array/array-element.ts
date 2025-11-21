@@ -1,5 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
@@ -32,8 +31,8 @@ const model : ReplaceVariable = {
                 description: 'Returns the element at the last index'
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
+        categories: ["advanced"],
+        possibleDataOutput: ["text", "number"]
     },
 
     evaluator: (

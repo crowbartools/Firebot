@@ -1,6 +1,5 @@
 // Deprecated
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 import arrayLength from './array-length';
 
@@ -9,8 +8,8 @@ const model : ReplaceVariable = {
         handle: "rawArrayLength",
         description: "(Deprecated: use $arrayLength) Returns the length of the input array.",
         usage: "rawArrayLength[array]",
-        categories: [VariableCategory.ADVANCED, VariableCategory.NUMBERS],
-        possibleDataOutput: [OutputDataType.NUMBER],
+        categories: ["advanced", "numbers"],
+        possibleDataOutput: ["number"],
         hidden: true
     },
     evaluator: arrayLength.evaluator

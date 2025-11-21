@@ -1,5 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 import userMetadata from './user-metadata';
 
@@ -19,8 +18,8 @@ const model : ReplaceVariable = {
             }
         ],
 
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT],
+        categories: ["advanced"],
+        possibleDataOutput: ["number", "text"],
         hidden: true
     },
     evaluator: userMetadata.evaluator

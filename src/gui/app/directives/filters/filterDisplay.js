@@ -1,5 +1,5 @@
 "use strict";
-(function() {
+(function () {
     angular.module("firebotApp")
         .component("filterDisplay", {
             bindings: {
@@ -11,23 +11,24 @@
                     <b class="condition-side" style="margin-right:5px">{{$ctrl.getFilterName()}}</b> {{$ctrl.filter.comparisonType}} <b class="condition-side" style="margin-left:5px">{{$ctrl.filterValueDisplay}}</b>
                 </span>
             `,
-            controller: function($injector, $q) {
+            controller: function ($injector, $q) {
                 const $ctrl = this;
 
-                $ctrl.getFilterName = function() {
+                $ctrl.getFilterName = function () {
                     return $ctrl.filterType ? $ctrl.filterType.name : "Unknown";
                 };
 
                 $ctrl.filterValueDisplay = "[Not Set]";
 
                 function getFilterValueDisplay() {
-                    return $q(async resolve => {
+                    return $q(async (resolve) => {
                         if ($ctrl.filter == null || $ctrl.filter.value == null) {
                             resolve("[Not Set]");
                         } else {
                             const value = await $injector.invoke($ctrl.filterType.getSelectedValueDisplay, {}, {
                                 filterSettings: $ctrl.filter,
-                                filterType: $ctrl.filterType
+                                filterType: $ctrl.filterType,
+                                presetValues: await $injector.invoke($ctrl.filterType.getPresetValues, {}, {})
                             });
                             resolve(value);
                         }
@@ -36,15 +37,15 @@
 
                 }
 
-                $ctrl.$onInit = function() {
-                    getFilterValueDisplay().then(value => {
+                $ctrl.$onInit = function () {
+                    getFilterValueDisplay().then((value) => {
                         $ctrl.filterValueDisplay = value;
                     });
                 };
 
-                $ctrl.$onChanges = function() {
+                $ctrl.$onChanges = function () {
 
-                    getFilterValueDisplay().then(value => {
+                    getFilterValueDisplay().then((value) => {
                         $ctrl.filterValueDisplay = value;
                     });
                 };

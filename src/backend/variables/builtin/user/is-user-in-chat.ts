@@ -1,14 +1,13 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import twitchApi from "../../../twitch-api/api";
+import type { ReplaceVariable } from "../../../../types/variables";
+import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 
 const model : ReplaceVariable = {
     definition: {
         handle: "isUserInChat",
         usage: "isUserInChat[username]",
         description: "Outputs `true` if a user is currently connected to Twitch chat, `false` if not",
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.BOOLEAN]
+        categories: ["advanced"],
+        possibleDataOutput: ["bool"]
     },
     evaluator: async (_, username: string) => {
         if (!username?.length) {
@@ -16,7 +15,7 @@ const model : ReplaceVariable = {
         }
 
         username = username.toLowerCase();
-        const chatters = await twitchApi.chat.getAllChatters();
+        const chatters = await TwitchApi.chat.getAllChatters();
 
         return chatters?.some(c => c.userName === username || c.userDisplayName.toLowerCase() === username) ?? false;
     }

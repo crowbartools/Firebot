@@ -20,12 +20,13 @@
                     </div>
 
                     <div ng-if="$ctrl.metadata">
-                        <command-option
+                        <dynamic-parameter
                             ng-repeat="data in $ctrl.metadata"
-                            name="data.title"
-                            metadata="data"
-                            on-update="$ctrl.isAnon(value)"
-                        ></command-option>
+                            name="{{data.key}}"
+                            schema="data"
+                            ng-model="$ctrl.eventData.metadata[data.key]"
+                            ng-change="$ctrl.checkForAnon(data.key)"
+                        ></dynamic-parameter>
                     </div>
 
                 </div>
@@ -56,13 +57,13 @@
                 $ctrl.changeUsername = (key, usernameType, isAnon) => {
                     const username = $ctrl.metadata.find(md => md.key === key);
 
-                    if (username && isAnon) {
-                        username.value = `An Anonymous ${usernameType}`;
+                    if (isAnon) {
+                        $ctrl.eventData.metadata[key] = `An Anonymous ${usernameType}`;
                     } else {
                         const originalUsername = $ctrl.manualMetadata[key];
 
                         if (originalUsername) {
-                            username.value = originalUsername;
+                            $ctrl.eventData.metadata[key] = originalUsername;
                         }
                     }
 
@@ -70,7 +71,14 @@
                     $ctrl.metadata[index] = username;
                 };
 
-                $ctrl.isAnon = (isAnon) => {
+                $ctrl.checkForAnon = (key) => {
+                    const isAnonKey = key === 'isAnonymous';
+                    if (!isAnonKey) {
+                        return;
+                    }
+
+                    const isAnon = $ctrl.eventData.metadata[key];
+
                     if ($ctrl.eventData.eventId === 'subs-gifted' || $ctrl.eventData.eventId === 'community-subs-gifted') {
                         $ctrl.changeUsername('gifterUsername', 'Gifter', isAnon);
                         return;
@@ -86,7 +94,7 @@
                     return capitalized.join(" ");
                 };
 
-                $ctrl.eventChanged = async (event) => {
+                $ctrl.eventChanged = (event) => {
                     $ctrl.eventData.eventId = event.eventId;
                     $ctrl.eventData.sourceId = event.sourceId;
                     $ctrl.eventData.metadata = {};
@@ -96,9 +104,12 @@
                         event.eventId
                     );
 
-                    const eventSource = await backendCommunicator.fireEventAsync("getEventSource", event);
+                    const eventSource = backendCommunicator.fireEventSync("events:get-event-source", event);
                     if (eventSource.manualMetadata) {
                         $ctrl.manualMetadata = eventSource.manualMetadata;
+                        $ctrl.eventData.metadata = {
+                            ...eventSource.manualMetadata
+                        };
                         $ctrl.metadata = Object.keys(eventSource.manualMetadata).map((mmd) => {
                             const meta = eventSource.manualMetadata[mmd];
                             const dataType = meta == null ? "string" : meta.type || typeof meta;
@@ -133,7 +144,7 @@
                     $ctrl.metadata.forEach((md) => {
                         const previousValue = previousProperties[md.key];
                         if (previousValue != null) {
-                            md.value = previousValue;
+                            $ctrl.eventData.metadata[md.key] = previousValue;
                         }
                     });
                 };
@@ -146,17 +157,13 @@
                         return;
                     }
 
-                    if ($ctrl.metadata.length > 0) {
-                        $ctrl.metadata.forEach(md => $ctrl.eventData.metadata[md.key] = md.value);
-                    }
-
                     simulatedEventsCache.setSimulatedEventProperties(
                         $ctrl.eventData.sourceId,
                         $ctrl.eventData.eventId,
                         $ctrl.eventData.metadata
                     );
 
-                    backendCommunicator.fireEventSync("simulateEvent", $ctrl.eventData);
+                    backendCommunicator.fireEventSync("events:simulate-event", $ctrl.eventData);
                     ngToast.create({
                         className: 'success',
                         content: "Event simulated!"

@@ -76,14 +76,14 @@ class SteamCacheManager {
         }
     }
 
-    async getSteamGameDetails(requestedGame: string, defaultCurrency?: string) {
+    async getSteamGameDetails(requestedGame: string, countryCode?: string) {
         const appId = await this.getAppIdFromSteamCache(requestedGame);
         if (appId == null) {
             logger.debug('Could not retrieve app id for Steam search.');
             return null;
         }
 
-        const foundGame = await this.getSteamAppDetails(appId, defaultCurrency);
+        const foundGame = await this.getSteamAppDetails(appId, countryCode);
         if (foundGame == null) {
             logger.error("Unable to get game from Steam API.");
             return null;
@@ -137,11 +137,11 @@ class SteamCacheManager {
         return search[0]?.item?.appid;
     }
 
-    private async getSteamAppDetails(appId: number, defaultCurrency?: string): Promise<Partial<SteamAppDetails>> {
+    private async getSteamAppDetails(appId: number, countryCode?: string): Promise<Partial<SteamAppDetails>> {
         let url = `https://store.steampowered.com/api/appdetails?appids=${appId}`;
 
-        if (defaultCurrency != null && defaultCurrency !== "") {
-            url = `${url}&currency=${defaultCurrency}`;
+        if (countryCode != null && countryCode !== "") {
+            url = `${url}&cc=${countryCode}`;
         }
 
         try {

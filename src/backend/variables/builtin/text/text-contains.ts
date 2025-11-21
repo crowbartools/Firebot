@@ -1,21 +1,20 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import { convertToString } from '../../../utility';
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
+import { stringify } from '../../../utils';
 
 const model : ReplaceVariable = {
     definition: {
         handle: "textContains",
         usage: "textContains[text, search]",
         description: "Returns true if text contains search, otherwise returns false",
-        categories: [VariableCategory.TEXT],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["text"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (
         trigger: Trigger,
         subject: unknown = "",
         search: unknown = ""
     ) : boolean => {
-        return convertToString(subject).includes(convertToString(search));
+        return stringify(subject).includes(stringify(search));
     }
 };
 

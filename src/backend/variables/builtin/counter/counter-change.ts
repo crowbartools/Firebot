@@ -1,6 +1,5 @@
-import { TriggersObject } from "../../../../types/triggers";
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
+import type { TriggersObject } from "../../../../types/triggers";
 
 const triggers: TriggersObject = {
     counter: true
@@ -11,8 +10,8 @@ const model: ReplaceVariable = {
         handle: "counterChange",
         description: "How much the counter has increased/decreased",
         triggers: triggers,
-        categories: [VariableCategory.TRIGGER, VariableCategory.NUMBERS],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["trigger based", "numbers"],
+        possibleDataOutput: ["number"]
     },
     evaluator: (trigger) => {
         return trigger.metadata.counter.value - trigger.metadata.counter.previousValue;

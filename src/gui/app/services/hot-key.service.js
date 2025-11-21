@@ -1,12 +1,79 @@
 "use strict";
 
 (function() {
-    // This provides methods for handling hotkeys
-
     angular
         .module("firebotApp")
-        .factory("hotkeyService", function($rootScope, logger, backendCommunicator) {
+        .factory("hotkeyService", function($rootScope, logger, backendCommunicator, modalService, platformService) {
             const service = {};
+
+            service.hotkeys = [];
+
+            const updateHotkey = (hotkey) => {
+                const index = service.hotkeys.findIndex(hk => hk.id === hotkey.id);
+                if (index > -1) {
+                    service.hotkeys[index] = hotkey;
+                } else {
+                    service.hotkeys.push(hotkey);
+                }
+            };
+
+            service.loadHotkeys = () => {
+                service.hotkeys = backendCommunicator.fireEventSync("hotkeys:get-hotkeys");
+            };
+
+            service.deleteHotkey = (hotkeyId) => {
+                service.hotkeys = service.hotkeys.filter(hk => hk.id !== hotkeyId);
+                backendCommunicator.fireEvent("hotkeys:delete-hotkey", hotkeyId);
+            };
+
+            service.saveHotkey = (hotkey) => {
+                if (hotkey == null) {
+                    return;
+                }
+
+                const savedHotkey = backendCommunicator.fireEventSync("hotkeys:save-hotkey", hotkey);
+                if (savedHotkey) {
+                    updateHotkey(savedHotkey);
+                    return true;
+                }
+
+                return false;
+            };
+
+            service.saveAllHotkeys = (hotkeys) => {
+                if (hotkeys) {
+                    service.hotkeys = hotkeys;
+                }
+
+                backendCommunicator.fireEvent("hotkeys:save-all-hotkeys", service.hotkeys);
+            };
+
+            service.toggleHotkeyActiveState = (hotkey) => {
+                if (hotkey) {
+                    hotkey.active = !hotkey.active;
+                    service.saveHotkey(hotkey);
+                }
+            };
+
+            service.showAddEditHotkeyModal = (hotkey) => {
+                modalService.showModal({
+                    component: "AddOrEditHotkeyModal",
+                    size: "mdlg",
+                    keyboard: false,
+                    resolveObj: {
+                        hotkey: () => hotkey
+                    },
+                    closeCallback: (response) => {
+                        if (response && response.hotkey) {
+                            backendCommunicator.send("hotkeys:resume-hotkeys");
+                        }
+                    }
+                });
+            };
+
+            backendCommunicator.on("all-hotkeys-updated", (hotkeys) => {
+                service.hotkeys = hotkeys;
+            });
 
             /**
              * Hotkey Capturing
@@ -17,7 +84,7 @@
             const prohibitedKeys = ["CapsLock", "NumLock", "ScrollLock", "Pause"];
 
             // this maps keys to codes accepted in Electron's Accelerator strings, used for global shortcuts
-            function mapKeyToAcceleratorCode(key, location) {
+            const mapKeyToAcceleratorCode = (key, location) => {
                 if (location === 3) {
                     switch (key) {
                         case "0":
@@ -76,9 +143,9 @@
                         }
                         return key;
                 }
-            }
+            };
 
-            function getDisplayNameFromKeyCode(keyCode) {
+            const getDisplayNameFromKeyCode = (keyCode) => {
                 if (keyCode.startsWith("num")) {
                     switch (keyCode) {
                         case "numadd":
@@ -99,14 +166,20 @@
                 switch (keyCode) {
                     case "CmdOrCtrl":
                         return "Ctrl";
-                    case "Super":
+                    case "Super": {
+                        if (platformService.isMacOs) {
+                            return "Cmd";
+                        } else if (platformService.isLinux) {
+                            return "Super";
+                        }
                         return "Windows";
+                    }
                     default:
                         return keyCode;
                 }
-            }
+            };
 
-            function keyCodeIsModifier(keyCode) {
+            const keyCodeIsModifier = (keyCode) => {
                 switch (keyCode) {
                     case "CmdOrCtrl":
                     case "Super":
@@ -116,17 +189,17 @@
                     default:
                         return false;
                 }
-            }
+            };
 
-            function getAcceleratorCodeFromKeys(keys) {
+            const getAcceleratorCodeFromKeys = (keys) => {
                 return keys.map(k => k.code).join("+");
-            }
+            };
 
             let cachedKeys = [];
             let releasedKeyCodes = [];
             let stopCallback;
 
-            const keyDownListener = function(event) {
+            const keyDownListener = (event) => {
                 if (!service.isCapturingHotkey) {
                     return;
                 }
@@ -175,7 +248,7 @@
                 }
             };
 
-            const keyUpListener = function(event) {
+            const keyUpListener = (event) => {
                 if (!service.isCapturingHotkey) {
                     return;
                 }
@@ -183,7 +256,7 @@
                 releasedKeyCodes.push(event.key);
             };
 
-            const clickListener = function(event) {
+            const clickListener = (event) => {
                 if (service.isCapturingHotkey) {
                     event.stopPropagation();
                     event.stopImmediatePropagation();
@@ -192,7 +265,7 @@
                 service.stopHotkeyCapture();
             };
 
-            service.startHotkeyCapture = function(callback) {
+            service.startHotkeyCapture = (callback) => {
                 if (service.isCapturingHotkey) {
                     throw new Error(
                         "Attempted to start a hotkey capture when capturing is already in progress."
@@ -208,7 +281,7 @@
                 window.addEventListener("click", clickListener, true);
             };
 
-            service.stopHotkeyCapture = function() {
+            service.stopHotkeyCapture = () => {
                 if (service.isCapturingHotkey) {
                     logger.info("Stopping hotkey recording");
                     window.removeEventListener("keydown", keyDownListener, true);
@@ -223,11 +296,11 @@
                 window.removeEventListener("click", clickListener, true);
             };
 
-            service.getCurrentlyPressedHotkey = function() {
+            service.getCurrentlyPressedHotkey = () => {
                 return JSON.parse(JSON.stringify(cachedKeys));
             };
 
-            service.getDisplayFromAcceleratorCode = function(code) {
+            service.getDisplayFromAcceleratorCode = (code) => {
                 if (code == null) {
                     return "";
                 }
@@ -239,43 +312,11 @@
                 return keys.join(" + ");
             };
 
-            let userHotkeys = [];
-
-            service.loadHotkeys = function() {
-                userHotkeys = backendCommunicator.fireEventSync("hotkeys:get-hotkeys");
-            };
-
-            service.addHotkey = function(hotkey) {
-                backendCommunicator.send("hotkeys:add-hotkey", hotkey);
-            };
-
-            service.updateHotkey = function(hotkey) {
-                backendCommunicator.send("hotkeys:update-hotkey", hotkey);
-            };
-
-            service.deleteHotkey = function(hotkey) {
-                backendCommunicator.send("hotkeys:delete-hotkey", hotkey.id);
-            };
-
-            service.hotkeyCodeExists = function(hotkeyId, hotkeyCode) {
-                return userHotkeys.some(
+            service.hotkeyCodeExists = (hotkeyId, hotkeyCode) => {
+                return service.hotkeys.some(
                     k => k.code === hotkeyCode && k.id !== hotkeyId
                 );
             };
-
-            service.getHotkeys = function() {
-                return userHotkeys;
-            };
-
-            service.loadHotkeys();
-
-            backendCommunicator.on("import-hotkeys-update", () => {
-                service.loadHotkeys();
-            });
-
-            backendCommunicator.on("hotkeys:hotkeys-updated", (hotkeys) => {
-                userHotkeys = hotkeys;
-            });
 
             return service;
         });

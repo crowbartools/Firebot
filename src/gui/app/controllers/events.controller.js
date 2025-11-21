@@ -9,7 +9,7 @@
 
             $scope.es = eventsService;
 
-            const sources = backendCommunicator.fireEventSync("getAllEventSources");
+            const sources = backendCommunicator.fireEventSync("events:get-all-event-sources");
 
             function friendlyEventTypeName(sourceId, eventId) {
                 const source = sources.find(s => s.id === sourceId);
@@ -328,7 +328,7 @@
 
                 const currentGroupId = eventsService.getSelectedTab();
                 const availableGroups = [
-                    { id: 'mainevents', name: "Main Events"},
+                    { id: 'mainevents', name: "Main Events" },
                     ...eventsService.getEventGroups().map(g => ({ id: g.id, name: g.name }))
                 ].filter(g => g.id !== currentGroupId);
 
@@ -364,7 +364,7 @@
                         }
                     },
                     {
-                        text: "Move to...",
+                        text: "Transfer to...",
                         children: availableGroups.map((g) => {
                             return {
                                 html: `<a href>${g.name}</a>`,
@@ -445,7 +445,7 @@
             $scope.fireEventManually = function(eventId) {
                 const event = $scope.getSelectedEvents().find(e => e.id === eventId);
                 if (event != null) {
-                    ipcRenderer.send("triggerManualEvent", {
+                    backendCommunicator.send("events:trigger-manual-event", {
                         eventId: event.eventId,
                         sourceId: event.sourceId,
                         eventSettingsId: event.id

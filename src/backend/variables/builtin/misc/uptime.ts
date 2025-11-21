@@ -1,16 +1,14 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType } from "../../../../shared/variable-constants";
-
-const util = require("../../../utility");
+import type { ReplaceVariable } from "../../../../types/variables";
+import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 
 const model : ReplaceVariable = {
     definition: {
         handle: "uptime",
         description: "The current stream uptime",
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: ["text"]
     },
     evaluator: async () => {
-        return await util.getUptime();
+        return await TwitchApi.streams.getStreamUptime();
     }
 };
 

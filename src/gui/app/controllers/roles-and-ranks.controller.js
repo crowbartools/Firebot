@@ -1,21 +1,13 @@
 "use strict";
 (function() {
-    // This handles the Groups tab
-
     angular
         .module("firebotApp")
         .controller("rolesAndRanksController", function($scope, utilityService, viewerRolesService, viewerRanksService) {
 
             $scope.activeTab = 0;
-
-            /**
-             * Roles
-             */
-
             $scope.viewerRolesService = viewerRolesService;
 
-            $scope.showAddOrEditCustomRoleModal = function(role) {
-
+            $scope.showAddOrEditCustomRoleModal = (role) => {
                 utilityService.showModal({
                     component: "addOrEditCustomRoleModal",
                     breadcrumbName: "Add/Edit Custom Role",
@@ -34,6 +26,17 @@
                                 viewerRolesService.deleteCustomRole(role.id);
                                 break;
                         }
+                    }
+                });
+            };
+
+            $scope.showViewTwitchRoleModal = (role) => {
+                utilityService.showModal({
+                    component: "viewTwitchRoleModal",
+                    breadcrumbName: "View Twitch Role",
+                    size: "sm",
+                    resolveObj: {
+                        role: () => role
                     }
                 });
             };

@@ -60,13 +60,11 @@ function attemptToAcquireDirectUrl(clipId: string): Promise<string | null> {
         window.on('unresponsive', () => sandbox.resolve);
         window.on('closed', sandbox.resolve);
 
-        window.on('ready-to-show', () => {
-            // Give window 2s to resolve url
-            sandbox.timeout = setTimeout(sandbox.resolve, 2000);
-        });
-
         window.loadURL(`https://clips.twitch.tv/embed?clip=${clipId}&parent=firebot&muted=true&autoplay=false`)
             .then(() => {
+                // Give window 5s to resolve url
+                sandbox.timeout = setTimeout(sandbox.resolve, 5000);
+
                 window.webContents.executeJavaScript(`
                 new Promise(async (resolve) => {
                     const findVideoElement = async () => {

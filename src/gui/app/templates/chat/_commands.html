@@ -1,103 +1,89 @@
-<div class="fb-tabbed-page">
-  <div class="fb-tab-wrapper">
-    <ul class="nav nav-tabs fb-tabs">
-      <li
-        role="presentation"
-        ng-class="{'active' : activeCmdTab === 0}"
-        ng-click="activeCmdTab = 0"
-      >
-        <a href>CUSTOM COMMANDS</a>
-      </li>
-      <li
-        role="presentation"
-        ng-class="{'active' : activeCmdTab === 1}"
-        ng-click="activeCmdTab = 1"
-      >
-        <a href>SYSTEM COMMANDS</a>
-      </li>
-    </ul>
-  </div>
-
-  <firebot-item-table
-    ng-if="activeCmdTab === 0"
-    items="commandsService.getCustomCommands()"
-    on-items-update="saveAllCommands(items)"
-    headers="customCommandHeaders"
-    sort-tag-context="commands"
-    orderable="true"
-    add-new-button-text="New Custom Command"
-    on-add-new-clicked="openAddOrEditCustomCommandModal()"
-    context-menu-options="commandMenuOptions(item)"
-    no-data-message="No custom commands saved. You should make one! :)"
-    none-found-message="No custom commands found."
-    search-placeholder="Search commands"
-    test-button="true"
-    on-test-button-clicked="manuallyTriggerCommand(itemId)"
-    status-field="active"
-    custom-filter-name="triggerSearch"
-  >
-    <fb-item-table-toolbar>
-      <div class="btn-group" uib-dropdown>
-        <button id="tools-dropdown" type="button" class="btn btn-default" uib-dropdown-toggle>
-          Tools <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="tools-dropdown">
-          <li role="menuitem"><a href ng-click="resetActiveCooldowns()"><i class="iconify mr-2" data-icon="mdi:clock-fast"></i> Clear All Cooldowns</a></li>
-          <li class="divider"></li>
-          <li role="menuitem"><a href ng-click="openFirebotProfilePage()"><i class="iconify mr-2" data-icon="mdi:open-in-new"></i> Open Firebot Profile Page</a></li>
-        </ul>
-      </div>
-    </fb-item-table-toolbar>
-  </firebot-item-table>
-  <div ng-if="activeCmdTab === 1" style="height: 100%; overflow-y: scroll;">
-    <div>
-      <scroll-sentinel element-class="sys-cmd-header"></scroll-sentinel>
-      <div
-        class="light-bg sticky-top sys-cmd-header p-6 m-0"
-        style="
-          display: flex;
-          flex-direction: row;
-          justify-content: flex-end;
-        "
-      >
-        <searchbar
-          placeholder-text="Search system commands"
-          query="sysCommandSearch"
-          style="flex-basis: 250px"
-        ></searchbar>
-      </div>
-      <div class="p-6">
+<firebot-tabs ng-init="$ctrl.activeTab = 'custom'" active="$ctrl.activeTab" type="underlined" page-tabs="true">
+  <firebot-tab name="custom" label="Custom Commands">
+    <firebot-item-table
+      items="commandsService.getCustomCommands()"
+      on-item-update="saveCustomCommand(item)"
+      on-items-update="saveAllCommands(items)"
+      headers="customCommandHeaders"
+      sort-tag-context="commands"
+      orderable="true"
+      add-new-button-text="New Custom Command"
+      on-add-new-clicked="openAddOrEditCustomCommandModal()"
+      context-menu-options="commandMenuOptions(item)"
+      no-data-message="No custom commands saved. You should make one! :)"
+      none-found-message="No custom commands found."
+      search-placeholder="Search commands"
+      test-button="true"
+      on-test-button-clicked="manuallyTriggerCommand(itemId)"
+      status-field="active"
+      custom-filter-name="triggerSearch"
+    >
+      <fb-item-table-toolbar>
+        <div class="btn-group" uib-dropdown>
+          <button id="tools-dropdown" type="button" class="btn btn-default" uib-dropdown-toggle>
+            Tools <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="tools-dropdown">
+            <li role="menuitem"><a href ng-click="resetActiveCooldowns()"><i class="iconify mr-2" data-icon="mdi:clock-fast"></i> Clear All Cooldowns</a></li>
+            <li role="menuitem"><a href ng-click="resetAllPerStreamCommandUsages()"><i class="iconify mr-2" data-icon="mdi:tally-mark-5"></i> Clear All Per-Stream Usages</a></li>
+            <li class="divider"></li>
+            <li role="menuitem"><a href ng-click="openFirebotProfilePage()"><i class="iconify mr-2" data-icon="mdi:open-in-new"></i> Open Firebot Profile Page</a></li>
+          </ul>
+        </div>
+      </fb-item-table-toolbar>
+    </firebot-item-table>
+  </firebot-tab> 
+  <firebot-tab name="system" label="System Commands">
+    <div style="height: 100%; overflow-y: scroll;">
+      <div>
+        <scroll-sentinel element-class="sys-cmd-header"></scroll-sentinel>
         <div
-          class="pb-4"
+          class="light-bg sticky-top sys-cmd-header p-6 m-0"
           style="
             display: flex;
-            font-size: 11px;
-            font-weight: bold;
+            flex-direction: row;
+            justify-content: flex-end;
           "
         >
-          <div class="muted pl-8" style="flex-basis: 25%;">
-            <i class="fas fa-tag"></i> NAME
-          </div>
-          <div class="muted" style="width: 20%">
-            <i class="fas fa-exclamation"></i> TRIGGER
-          </div>
-          <div class="muted" style="width: 20%">
-            <i class="fas fa-clock"></i> COOLDOWNS
-          </div>
-          <div class="muted" style="width: 20%">
-            <i class="fas fa-lock-alt"></i> PERMISSIONS
-          </div>
-          <div class="muted" style="width: 20%"></div>
-          <div
-            class="muted pr-8"
-            style="flex-basis: 30px; flex-shrink: 0;"
-          ></div>
+          <searchbar
+            placeholder-text="Search system commands"
+            query="sysCommandSearch"
+            style="flex-basis: 250px"
+          ></searchbar>
         </div>
-        <sys-command-row
-          ng-repeat="sysCommand in commandsService.getSystemCommands() | orderBy:'name' | triggerSearch:sysCommandSearch track by sysCommand.id"
-          command="sysCommand"
-        ></sys-command-row>
+        <div class="p-6">
+          <div
+            class="pb-4"
+            style="
+              display: flex;
+              font-size: 11px;
+              font-weight: bold;
+            "
+          >
+            <div class="muted pl-8" style="flex-basis: 25%;">
+              <i class="fas fa-tag"></i> NAME
+            </div>
+            <div class="muted" style="width: 20%">
+              <i class="fas fa-exclamation"></i> TRIGGER
+            </div>
+            <div class="muted" style="width: 20%">
+              <i class="fas fa-clock"></i> COOLDOWNS
+            </div>
+            <div class="muted" style="width: 20%">
+              <i class="fas fa-lock-alt"></i> PERMISSIONS
+            </div>
+            <div class="muted" style="width: 20%"></div>
+            <div
+              class="muted pr-8"
+              style="flex-basis: 30px; flex-shrink: 0;"
+            ></div>
+          </div>
+          <sys-command-row
+            ng-repeat="sysCommand in commandsService.getSystemCommands() | orderBy:'name' | triggerSearch:sysCommandSearch track by sysCommand.id"
+            command="sysCommand"
+          ></sys-command-row>
+        </div>
       </div>
     </div>
-  </div>
-</div>
+  </firebot-tab>
+</firebot-tabs>

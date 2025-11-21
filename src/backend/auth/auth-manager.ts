@@ -1,13 +1,24 @@
-import { EventEmitter } from "events";
-import ClientOAuth2 from "client-oauth2";
-import logger from "../logwrapper";
-import { AuthProvider, AuthProviderDefinition } from "./auth";
-import { SettingsManager } from "../common/settings-manager";
-import frontendCommunicator from "../common/frontend-communicator";
 import { Notification, app } from "electron";
-import windowManagement from "../app-management/electron/window-management";
+import { TypedEmitter } from "tiny-typed-emitter";
+import ClientOAuth2 from "client-oauth2";
 
-class AuthManager extends EventEmitter {
+import type { AuthDetails, AuthProvider, AuthProviderDefinition } from "../../types/auth";
+
+import { SettingsManager } from "../common/settings-manager";
+import windowManagement from "../app-management/electron/window-management";
+import frontendCommunicator from "../common/frontend-communicator";
+import logger from "../logwrapper";
+
+type Events = {
+    "auth-success": (event: AuthSuccessEventArgs) => void;
+};
+
+interface AuthSuccessEventArgs {
+    providerId: string;
+    tokenData: AuthDetails;
+}
+
+class AuthManager extends TypedEmitter<Events> {
     private readonly _httpPort: number;
     private _authProviders: AuthProvider[];
 
@@ -66,7 +77,7 @@ class AuthManager extends EventEmitter {
     }
 
     buildOAuthClientForProvider(provider: AuthProviderDefinition, redirectUri: string): ClientOAuth2 {
-        let scopes;
+        let scopes: string[];
         if (provider.scopes) {
             scopes = Array.isArray(provider.scopes)
                 ? (scopes = provider.scopes)
@@ -120,11 +131,11 @@ class AuthManager extends EventEmitter {
             // Revokes both tokens, refresh token is only revoked if the access_token is properly revoked
             // TODO
         } catch (error) {
-            logger.error("Error revoking token: ", error.message);
+            logger.error("Error revoking token: ", (error as Error).message);
         }
     }
 
-    successfulAuth(providerId: string, tokenData: unknown): void {
+    successfulAuth(providerId: string, tokenData: AuthDetails): void {
         this.emit("auth-success", { providerId: providerId, tokenData: tokenData });
     }
 }
@@ -151,7 +162,7 @@ frontendCommunicator.onAsync("begin-device-auth", async (providerId: string): Pr
     });
 
     if (response.ok) {
-        const deviceAuthData = await response.json();
+        const deviceAuthData = await response.json() as ClientOAuth2.Data;
 
         frontendCommunicator.send("device-code-received", {
             loginUrl: deviceAuthData.verification_uri,
@@ -176,7 +187,7 @@ frontendCommunicator.onAsync("begin-device-auth", async (providerId: string): Pr
             if (tokenResponse.ok) {
                 clearInterval(tokenCheckInterval);
 
-                const tokenData = await tokenResponse.json();
+                const tokenData = await tokenResponse.json() as AuthDetails;
                 manager.successfulAuth(providerId, tokenData);
 
                 if (
@@ -196,7 +207,7 @@ frontendCommunicator.onAsync("begin-device-auth", async (providerId: string): Pr
                     });
                 }
             }
-        }, deviceAuthData.interval * 1000);
+        }, Number(deviceAuthData.interval) * 1000);
 
         frontendCommunicator.on("cancel-device-token-check", () => {
             if (tokenCheckInterval) {

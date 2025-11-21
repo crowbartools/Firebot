@@ -1,18 +1,24 @@
 "use strict";
+
 const { EventEmitter } = require("events");
-const util = require("../utility");
-const logger = require("../logwrapper");
-const frontendCommunicator = require("./frontend-communicator");
+
 const { SettingsManager } = require("./settings-manager");
-const twitchApi = require("../twitch-api/api");
-const twitchChat = require("../chat/twitch-chat");
-const TwitchEventSubClient = require("../twitch-api/eventsub/eventsub-client");
+const { TwitchApi } = require("../streaming-platforms/twitch/api");
+const { TwitchEventSubClient } = require("../streaming-platforms/twitch/api/eventsub/eventsub-client");
+const effectHelpers = require("../effects/effect-helpers");
 const integrationManager = require("../integrations/integration-manager");
-const accountAccess = require("../common/account-access");
+const twitchChat = require("../chat/twitch-chat");
+const frontendCommunicator = require("./frontend-communicator");
+const logger = require("../logwrapper");
+const { wait } = require("../utils");
 
 const { ConnectionState } = require("../../shared/connection-constants");
 
-let isOnline = false;
+/**
+ * @type {import("@twurple/api").HelixStream | null}
+ */
+let currentStream = null;
+
 let onlineCheckIntervalId;
 
 /**
@@ -20,17 +26,13 @@ let onlineCheckIntervalId;
  */
 let manager;
 
-function updateOnlineStatus(online) {
-    if (online !== isOnline) {
-        isOnline = online === true;
-        manager.emit("streamerOnlineChange", isOnline);
-    }
-}
-
 async function checkOnline() {
-    const userId = accountAccess.getAccounts().streamer.userId;
-    const isOnline = await twitchApi.channels.getOnlineStatus(userId);
-    updateOnlineStatus(isOnline);
+    const stream = await TwitchApi.streams.getStreamersCurrentStream();
+
+    if (stream?.id !== currentStream?.id) {
+        currentStream = stream;
+        manager.emit("streamerOnlineChange", stream != null, stream);
+    }
 }
 
 const serviceConnectionStates = {};
@@ -46,9 +48,13 @@ function emitServiceConnectionUpdateEvents(serviceId, connectionState) {
     manager.emit("service-connection-update", eventData);
     frontendCommunicator.send("service-connection-update", eventData);
 
-    if (serviceId === "chat" && connectionState === ConnectionState.Connected) {
-        const eventManager = require("../events/EventManager");
-        eventManager.triggerEvent("firebot", "chat-connected");
+    if (serviceId === "chat") {
+        effectHelpers.setChatConnection(connectionState === ConnectionState.Connected);
+
+        if (connectionState === ConnectionState.Connected) {
+            const { EventManager } = require("../events/event-manager");
+            EventManager.triggerEvent("firebot", "chat-connected");
+        }
     }
 }
 
@@ -56,7 +62,9 @@ function emitServiceConnectionUpdateEvents(serviceId, connectionState) {
 twitchChat.on("connected", () => {
     emitServiceConnectionUpdateEvents("chat", ConnectionState.Connected);
     const rewardsManager = require("../channel-rewards/channel-reward-manager");
-    rewardsManager.refreshChannelRewardRedemptions();
+    rewardsManager.loadChannelRewards().then(() => {
+        rewardsManager.refreshChannelRewardRedemptions();
+    });
 });
 twitchChat.on("disconnected", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Disconnected));
 twitchChat.on("connecting", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Connecting));
@@ -85,12 +93,12 @@ class ConnectionManager extends EventEmitter {
         onlineCheckIntervalId = setInterval(checkOnline, 30000);
     }
 
-    setOnlineStatus(online) {
-        updateOnlineStatus(online);
+    streamerIsOnline() {
+        return currentStream != null;
     }
 
-    streamerIsOnline() {
-        return isOnline;
+    get currentStream() {
+        return currentStream;
     }
 
     chatIsConnected() {
@@ -148,13 +156,14 @@ class ConnectionManager extends EventEmitter {
 
         connectionUpdateInProgress = true;
 
-        const accountAccess = require("./account-access");
-        if (!accountAccess.getAccounts().streamer.loggedIn) {
+        const { AccountAccess } = require("./account-access");
+        if (!AccountAccess.getAccounts().streamer.loggedIn) {
             frontendCommunicator.send("error", "You must sign into your Streamer Twitch account before connecting.");
-        } else if (accountAccess.streamerTokenIssue()) {
-            const botTokenIssue = accountAccess.getAccounts().bot.loggedIn && accountAccess.botTokenIssue();
+        } else if (AccountAccess.streamerTokenIssue()) {
+            const botTokenIssue = AccountAccess.getAccounts().bot.loggedIn
+                && AccountAccess.botTokenIssue();
 
-            frontendCommunicator.send("invalidate-accounts", {
+            frontendCommunicator.send("accounts:invalidate-accounts", {
                 streamer: true,
                 bot: botTokenIssue
             });
@@ -185,7 +194,7 @@ class ConnectionManager extends EventEmitter {
 
             try {
                 for (const service of services) {
-                    await util.wait(175);
+                    await wait(175);
                     await waitForServiceConnectDisconnect(service.id, service.action);
                 }
             } catch (error) {
@@ -197,7 +206,7 @@ class ConnectionManager extends EventEmitter {
 
         currentlyWaitingService = null;
 
-        await util.wait(250);
+        await wait(250);
         frontendCommunicator.send("connect-services-complete");
     }
 }

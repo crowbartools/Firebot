@@ -1,5 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 import { CounterManager } from "../../../counters/counter-manager";
 
 const model: ReplaceVariable = {
@@ -7,8 +6,8 @@ const model: ReplaceVariable = {
         handle: "counter",
         usage: "counter[name]",
         description: "Displays the value of the given counter.",
-        categories: [VariableCategory.NUMBERS],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["numbers"],
+        possibleDataOutput: ["number"]
     },
     evaluator: (_, name: string) => {
         const counter = CounterManager.getItemByName(name);

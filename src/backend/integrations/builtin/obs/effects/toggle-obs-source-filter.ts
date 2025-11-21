@@ -21,15 +21,15 @@ type Scope = {
 };
 
 export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
-  {
-      definition: {
-          id: "ebiggz:obs-toggle-source-filter",
-          name: "Toggle OBS Filter",
-          description: "Toggle filters for OBS sources and scenes",
-          icon: "fad fa-stars",
-          categories: ["common"]
-      },
-      optionsTemplate: `
+    {
+        definition: {
+            id: "ebiggz:obs-toggle-source-filter",
+            name: "Toggle OBS Filter",
+            description: "Toggle filters for OBS sources and scenes",
+            icon: "fad fa-stars",
+            categories: ["common", "integrations"]
+        },
+        optionsTemplate: `
     <eos-container ng-show="missingSources.length > 0">
         <div class="effect-info alert alert-warning">
              <p><b>Warning!</b> 
@@ -91,170 +91,170 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
       </div>
     </eos-container>
   `,
-      optionsController: ($scope: Scope, backendCommunicator: any, $q: any) => {
-          $scope.isObsConfigured = false;
+        optionsController: ($scope: Scope, backendCommunicator: any, $q: any) => {
+            $scope.isObsConfigured = false;
 
-          $scope.sourceList = null;
+            $scope.sourceList = null;
 
-          $scope.searchText = "";
+            $scope.searchText = "";
 
-          $scope.missingSources = [];
+            $scope.missingSources = [];
 
-          if ($scope.effect.selectedFilters == null) {
-              $scope.effect.selectedFilters = [];
-          }
+            if ($scope.effect.selectedFilters == null) {
+                $scope.effect.selectedFilters = [];
+            }
 
-          $scope.filterIsSelected = (sourceName: string, filterName: string) => {
-              return $scope.effect.selectedFilters.some(
-                  s => s.sourceName === sourceName && s.filterName === filterName
-              );
-          };
+            $scope.filterIsSelected = (sourceName: string, filterName: string) => {
+                return $scope.effect.selectedFilters.some(
+                    s => s.sourceName === sourceName && s.filterName === filterName
+                );
+            };
 
-          $scope.toggleFilterSelected = (
-              sourceName: string,
-              filterName: string
-          ) => {
-              if ($scope.filterIsSelected(sourceName, filterName)) {
-                  $scope.effect.selectedFilters = $scope.effect.selectedFilters.filter(
-                      s => !(s.sourceName === sourceName && s.filterName === filterName)
-                  );
-              } else {
-                  $scope.effect.selectedFilters.push({
-                      sourceName,
-                      filterName,
-                      action: true
-                  });
-              }
-          };
+            $scope.toggleFilterSelected = (
+                sourceName: string,
+                filterName: string
+            ) => {
+                if ($scope.filterIsSelected(sourceName, filterName)) {
+                    $scope.effect.selectedFilters = $scope.effect.selectedFilters.filter(
+                        s => !(s.sourceName === sourceName && s.filterName === filterName)
+                    );
+                } else {
+                    $scope.effect.selectedFilters.push({
+                        sourceName,
+                        filterName,
+                        action: true
+                    });
+                }
+            };
 
-          $scope.setFilterAction = (
-              sourceName: string,
-              filterName: string,
-              action: "toggle" | boolean
-          ) => {
-              const selectedFilter = $scope.effect.selectedFilters.find(
-                  s => s.sourceName === sourceName && s.filterName === filterName
-              );
-              if (selectedFilter != null) {
-                  selectedFilter.action = action;
-              }
-          };
+            $scope.setFilterAction = (
+                sourceName: string,
+                filterName: string,
+                action: "toggle" | boolean
+            ) => {
+                const selectedFilter = $scope.effect.selectedFilters.find(
+                    s => s.sourceName === sourceName && s.filterName === filterName
+                );
+                if (selectedFilter != null) {
+                    selectedFilter.action = action;
+                }
+            };
 
-          $scope.getFilterActionDisplay = (
-              sourceName: string,
-              filterName: string
-          ) => {
-              const selectedFilter = $scope.effect.selectedFilters.find(
-                  s => s.sourceName === sourceName && s.filterName === filterName
-              );
+            $scope.getFilterActionDisplay = (
+                sourceName: string,
+                filterName: string
+            ) => {
+                const selectedFilter = $scope.effect.selectedFilters.find(
+                    s => s.sourceName === sourceName && s.filterName === filterName
+                );
 
-              $scope.missingSources = $scope.missingSources.filter(item => item !== selectedFilter);
+                $scope.missingSources = $scope.missingSources.filter(item => item !== selectedFilter);
 
-              if (selectedFilter == null) {
-                  return "";
-              }
+                if (selectedFilter == null) {
+                    return "";
+                }
 
-              if (selectedFilter.action === "toggle") {
-                  return "Toggle";
-              }
-              if (selectedFilter.action === true) {
-                  return "Enable";
-              }
-              return "Disable";
-          };
+                if (selectedFilter.action === "toggle") {
+                    return "Toggle";
+                }
+                if (selectedFilter.action === true) {
+                    return "Enable";
+                }
+                return "Disable";
+            };
 
-          $scope.getMissingActionDisplay = (
-              selectedFilter: unknown
-          ) => {
-              console.log(selectedFilter);
-              if (selectedFilter == null) {
-                  return "";
-              }
-              if (selectedFilter === "toggle") {
-                  return "Toggle";
-              }
-              if (selectedFilter === true) {
-                  return "Enable";
-              }
-              return "Disable";
-          };
+            $scope.getMissingActionDisplay = (
+                selectedFilter: unknown
+            ) => {
+                console.log(selectedFilter);
+                if (selectedFilter == null) {
+                    return "";
+                }
+                if (selectedFilter === "toggle") {
+                    return "Toggle";
+                }
+                if (selectedFilter === true) {
+                    return "Enable";
+                }
+                return "Disable";
+            };
 
-          const capitalizeWords = (input: string) =>
-              input
-                  .split(" ")
-                  .map(
-                      w => w[0].toLocaleUpperCase() + w.substr(1).toLocaleLowerCase()
-                  )
-                  .join(" ");
+            const capitalizeWords = (input: string) =>
+                input
+                    .split(" ")
+                    .map(
+                        w => w[0].toLocaleUpperCase() + w.substr(1).toLocaleLowerCase()
+                    )
+                    .join(" ");
 
-          $scope.formatSourceType = (type: string) => {
-              return capitalizeWords((type ?? "").replace(/_/, " "));
-          };
+            $scope.formatSourceType = (type: string) => {
+                return capitalizeWords((type ?? "").replace(/_/, " "));
+            };
 
-          $scope.filterSources = (searchText: string) => {
-              if ($scope.searchText !== searchText) {
-                  $scope.searchText = searchText;
-              }
-              $scope.sourceListFiltered = ($scope.sourceList as Array<OBSSource>).filter((source: OBSSource) => {
-                  return source.filters.some((filter) => {
-                      return filter.name.toLowerCase().includes(searchText.toLowerCase());
-                  });
-              });
-          };
+            $scope.filterSources = (searchText: string) => {
+                if ($scope.searchText !== searchText) {
+                    $scope.searchText = searchText;
+                }
+                $scope.sourceListFiltered = ($scope.sourceList as Array<OBSSource>).filter((source: OBSSource) => {
+                    return source.filters.some((filter) => {
+                        return filter.name.toLowerCase().includes(searchText.toLowerCase());
+                    });
+                });
+            };
 
-          $scope.deleteSceneAtIndex = (index: number) => {
-              $scope.effect.selectedFilters = $scope.effect.selectedFilters.filter(
-                  item => item !== $scope.missingSources [index]
-              );
-              $scope.missingSources.splice(index, 1);
-          };
+            $scope.deleteSceneAtIndex = (index: number) => {
+                $scope.effect.selectedFilters = $scope.effect.selectedFilters.filter(
+                    item => item !== $scope.missingSources [index]
+                );
+                $scope.missingSources.splice(index, 1);
+            };
 
-          $scope.getStoredData = () => {
-              for (const filterName of $scope.effect.selectedFilters) {
-                  $scope.missingSources.push(filterName);
-              }
-          };
+            $scope.getStoredData = () => {
+                for (const filterName of $scope.effect.selectedFilters) {
+                    $scope.missingSources.push(filterName);
+                }
+            };
 
-          $scope.getSourceList = () => {
-              $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
+            $scope.getSourceList = () => {
+                $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
 
-              $q.when(
-                  backendCommunicator.fireEventAsync("obs-get-sources-with-filters")
-              ).then((sourceList: Array<OBSSource>) => {
-                  $scope.sourceList = sourceList ?? null;
-                  $scope.filterSources($scope.searchText);
-              });
-          };
+                $q.when(
+                    backendCommunicator.fireEventAsync("obs-get-sources-with-filters")
+                ).then((sourceList: Array<OBSSource>) => {
+                    $scope.sourceList = sourceList ?? null;
+                    $scope.filterSources($scope.searchText);
+                });
+            };
 
-          $scope.getSourceList();
-          $scope.getStoredData();
-      },
-      optionsValidator: () => {
-          return [];
-      },
-      onTriggerEvent: async ({ effect }) => {
-          if (effect.selectedFilters == null) {
-              return true;
-          }
+            $scope.getSourceList();
+            $scope.getStoredData();
+        },
+        optionsValidator: () => {
+            return [];
+        },
+        onTriggerEvent: async ({ effect }) => {
+            if (effect.selectedFilters == null) {
+                return true;
+            }
 
-          for (const { sourceName, filterName, action } of effect.selectedFilters) {
-              let newVisibility;
-              if (action === "toggle") {
-                  const currentVisibility = await getFilterEnabledStatus(
-                      sourceName,
-                      filterName
-                  );
-                  if (currentVisibility == null) {
-                      continue;
-                  }
-                  newVisibility = !currentVisibility;
-              } else {
-                  newVisibility = action === true;
-              }
+            for (const { sourceName, filterName, action } of effect.selectedFilters) {
+                let newVisibility;
+                if (action === "toggle") {
+                    const currentVisibility = await getFilterEnabledStatus(
+                        sourceName,
+                        filterName
+                    );
+                    if (currentVisibility == null) {
+                        continue;
+                    }
+                    newVisibility = !currentVisibility;
+                } else {
+                    newVisibility = action === true;
+                }
 
-              await setFilterEnabled(sourceName, filterName, newVisibility);
-          }
+                await setFilterEnabled(sourceName, filterName, newVisibility);
+            }
 
-          return true;
-      }
-  };
+            return true;
+        }
+    };

@@ -1,15 +1,13 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-
-const logger = require('../../../logwrapper');
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
+import logger from '../../../logwrapper';
 
 const model : ReplaceVariable = {
     definition: {
         handle: "objectWalkPath",
         description: "Returns the value from an object at the given dot-notated path",
         usage: "objectWalkPath[subject | JSON text, path.to.value]",
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (
         trigger: Trigger,
@@ -18,8 +16,8 @@ const model : ReplaceVariable = {
     ) : unknown => {
         if (typeof subject == 'string' || subject instanceof String) {
             try {
-                subject = JSON.parse(`${subject}`);
-            } catch (err) {
+                subject = JSON.parse(`${subject.toString()}`);
+            } catch {
                 return null;
             }
         }

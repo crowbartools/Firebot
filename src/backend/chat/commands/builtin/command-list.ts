@@ -1,4 +1,7 @@
 import { SystemCommand } from "../../../../types/commands";
+import * as cloudSync from '../../../cloud-sync';
+import { SortTagManager } from "../../../sort-tags/sort-tag-manager";
+import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 
 /**
  * The `!commands` command
@@ -6,6 +9,7 @@ import { SystemCommand } from "../../../../types/commands";
 export const CommandListSystemCommand: SystemCommand<{
     successTemplate: string;
     noCommandsTemplate: string;
+    defaultTag?: string;
 }> = {
     definition: {
         id: "firebot:commandlist",
@@ -35,30 +39,36 @@ export const CommandListSystemCommand: SystemCommand<{
                 tip: "Variables: {username}",
                 default: "{username}, there are no commands that you are allowed to run.",
                 useTextArea: true
+            },
+            defaultTag: {
+                type: "sort-tag-select",
+                title: "Default Tag",
+                description: "The command tag that should be selected by default when users load into your profile page.",
+                context: "commands"
             }
         }
     },
     onTriggerEvent: async (event) => {
-        const cloudSync = require('../../../cloud-sync/profile-sync.js');
-        const twitchChat = require("../../twitch-chat.js");
-
         const { commandOptions } = event;
 
-        const profileJSON = {
+        const streamerName = await cloudSync.syncProfileData({
             username: event.chatMessage.username,
             userRoles: event.chatMessage.roles,
-            profilePage: 'commands'
-        };
+            profilePage: "commands"
+        });
 
-        const binId = await cloudSync.syncProfileData(profileJSON);
+        let profileUrl = `https://firebot.app/profile/${streamerName}`;
 
-        if (binId == null) {
-            await twitchChat.sendChatMessage(commandOptions.noCommandsTemplate
-                .replace("{username}", event.chatMessage.username), null, "bot");
-        } else {
-            await twitchChat.sendChatMessage(commandOptions.successTemplate
-                .replace("{url}", `https://firebot.app/profile?id=${binId}`), null, "bot"
-            );
+        if (event.commandOptions?.defaultTag) {
+            const commandTags = SortTagManager.getSortTagsForContext("commands");
+            const defaultTag = commandTags.find(t => t.id === event.commandOptions?.defaultTag);
+            if (defaultTag != null) {
+                profileUrl += `?commands=${encodeURIComponent(defaultTag.name)}`;
+            }
         }
+
+        await TwitchApi.chat.sendChatMessage(commandOptions.successTemplate
+            .replaceAll("{url}", profileUrl), null, true
+        );
     }
 };

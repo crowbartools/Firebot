@@ -1,7 +1,5 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-
-const customVariableManager = require("../../../common/custom-variable-manager");
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
+import { CustomVariableManager } from "../../../common/custom-variable-manager";
 
 const model : ReplaceVariable = {
     definition: {
@@ -22,8 +20,8 @@ const model : ReplaceVariable = {
             }
         ],
         description: "Get the data saved in the custom variable.",
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.ALL]
+        categories: ["advanced"],
+        possibleDataOutput: ["ALL"]
     },
     evaluator: (
         trigger: Trigger,
@@ -31,11 +29,8 @@ const model : ReplaceVariable = {
         propertyPath: string,
         defaultData: unknown
     ) : unknown => {
-        const data = customVariableManager.getCustomVariable(name, propertyPath, defaultData);
-        if (data == null) {
-            return null;
-        }
-        return data;
+        const data = CustomVariableManager.getCustomVariable(name, propertyPath, defaultData);
+        return data ?? null;
     }
 };
 

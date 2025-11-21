@@ -1,6 +1,6 @@
-import { DateTime } from "luxon";
+import type { DateTime } from "luxon";
 
-import { EffectList } from "./effects";
+import type { EffectList } from "./effects";
 
 export type Timer = {
     id: string;
@@ -31,6 +31,6 @@ export type ScheduledTask = {
     schedule: string;
     inputType: string;
     onlyWhenLive: boolean;
-    effects: EffectList[];
+    effects: EffectList;
     sortTags: string[];
 };

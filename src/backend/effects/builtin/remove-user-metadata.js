@@ -1,14 +1,12 @@
 "use strict";
 
-const { EffectCategory } = require('../../../shared/effect-constants');
-
 const effect = {
     definition: {
         id: "firebot:remove-user-metadata",
         name: "Remove User Metadata",
         description: "Remove a key from metadata associated to a given user",
         icon: "fad fa-user-cog",
-        categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
+        categories: ["advanced", "scripting", "firebot control"],
         dependencies: []
     },
     globalSettings: {},

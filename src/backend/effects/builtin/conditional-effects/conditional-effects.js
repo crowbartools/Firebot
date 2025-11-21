@@ -32,7 +32,8 @@ const model = {
                         modalId="{{modalId}}"></effect-list>
 
                     <div style="margin-top: 10px">
-                        <button class="btn btn-danger" ng-click="deleteClauseAtIndex($index)"><i class="far fa-trash"></i></button>
+                        <button class="btn btn-default" ng-click="duplicateClauseAtIndex($index)" title="Duplicate Condition"><i class="far fa-clone"></i></button>
+                        <button class="btn btn-danger" ng-click="deleteClauseAtIndex($index)" title="Delete Condition"><i class="far fa-trash"></i></button>
                     </div>
                 </condition-section>
             </div>
@@ -64,7 +65,7 @@ const model = {
             />
         </eos-container>
     `,
-    optionsController: ($scope, utilityService) => {
+    optionsController: ($scope, utilityService, objectCopyHelper) => {
 
         $scope.sortableOptions = {
             handle: ".dragHandle",
@@ -87,13 +88,22 @@ const model = {
             });
         };
 
-        $scope.deleteClauseAtIndex = $index => {
+        $scope.duplicateClauseAtIndex = ($index) => {
+            const newCondition = objectCopyHelper.copyAndReplaceIds($scope.effect.ifs[$index]);
+            newCondition.label = newCondition.label?.length
+                ? `${newCondition.label} Copy`
+                : "Copy";
+
+            $scope.effect.ifs.splice($index + 1, 0, newCondition);
+        };
+
+        $scope.deleteClauseAtIndex = ($index) => {
             utilityService.showConfirmationModal({
                 title: "Remove Clause",
                 question: `Are you sure you want to remove this ${$index === 0 ? 'IF' : 'IF ELSE'} clause?`,
                 confirmLabel: "Remove",
                 confirmBtnType: "btn-danger"
-            }).then(confirmed => {
+            }).then((confirmed) => {
                 if (confirmed) {
                     $scope.effect.ifs.splice($index, 1);
                 }
@@ -115,7 +125,7 @@ const model = {
         const errors = [];
         return errors;
     },
-    onTriggerEvent: event => {
+    onTriggerEvent: (event) => {
         return new Promise(async (resolve) => {
             // What should this do when triggered.
             const { effect, trigger, outputs, abortSignal } = event;
@@ -150,7 +160,7 @@ const model = {
                 };
 
                 effectRunner.processEffects(processEffectsRequest)
-                    .then(result => {
+                    .then((result) => {
                         if (result != null && result.success === true) {
                             if (result.stopEffectExecution) {
                                 return resolve({

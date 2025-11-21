@@ -15,7 +15,8 @@
                 itemDescription: "@?",
                 itemShowDivider: "@?",
                 noChoiceText: "@?",
-                onSelect: "&?"
+                onSelect: "&?",
+                disabled: "<?"
             },
             require: {
                 ngModelCtrl: '^ngModel'
@@ -28,6 +29,7 @@
                     on-select="$ctrl.onSelect != null ? $ctrl.onSelect({ item: $item }) : undefined"
                     theme="bootstrap"
                     class="control-type-list"
+                    ng-disabled="$ctrl.disabled"
                 >
                     <ui-select-match placeholder="{{$ctrl.placeholder || ''}}">{{$select.selected[$ctrl._itemName]}}</ui-select-match>
                     <ui-select-choices repeat="item[$ctrl._itemId] as item in $ctrl.items | searchableSelectFilter:$select.search:$ctrl._itemName:$ctrl._itemDescription" style="position:relative;">

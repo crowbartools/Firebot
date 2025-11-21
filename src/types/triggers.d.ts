@@ -1,4 +1,5 @@
-import { FirebotChatMessage } from "./chat";
+import type { FirebotChatMessage } from "./chat";
+import type { CommandDefinition, SubCommand } from "./commands";
 
 export type TriggerType =
     | "command"
@@ -8,24 +9,38 @@ export type TriggerType =
     | "event"
     | "hotkey"
     | "timer"
+    | "scheduled_task"
     | "counter"
     | "preset"
     | "quick_action"
-    | "manual";
+    | "manual"
+    | "channel_reward"
+    | "overlay_widget";
+
+export type TriggerMeta = {
+    triggerId?: string;
+    [x: string]: unknown;
+};
 
 export type Trigger = {
     type: TriggerType;
     metadata: {
         username: string;
         hotkey?: unknown;
-        command?: unknown;
-        userCommand?: { trigger: string; args: string[] };
+        command?: CommandDefinition;
+        userCommand?: {
+            trigger: string;
+            args: string[];
+            triggeredArg?: string;
+            triggeredSubcmd?: SubCommand;
+            subcommandId?: string;
+        };
         chatMessage?: FirebotChatMessage;
-        event?: { id: string; name: string };
-        eventSource?: { id: string; name: string };
+        event?: { id: string, name: string };
+        eventSource?: { id: string, name: string };
         eventData?: {
             chatMessage?: FirebotChatMessage;
-            [x: string]: unknown
+            [x: string]: unknown;
         };
         counter?: {
             id: string;
@@ -37,6 +52,7 @@ export type Trigger = {
         };
         [x: string]: unknown;
     };
+    effectOutputs?: { [key: string]: unknown };
 };
 
 export type TriggersObject = {

@@ -9,12 +9,24 @@
             /**
              * @type {Array<import("../../../types/variables").ReplaceVariable['definition']>}
              */
-            service.allVariables = backendCommunicator.fireEventSync("getReplaceVariableDefinitions");
+            service.allVariables = backendCommunicator.fireEventSync("variables:get-replace-variable-definitions");
+
+            service.additionalVariableEvents = backendCommunicator.fireEventSync("variables:get-additional-variable-events");
 
             service.triggerCache = {};
 
             backendCommunicator.on("replace-variable-registered", (definition) => {
                 service.allVariables.push(definition);
+                service.triggerCache = {};
+            });
+
+            backendCommunicator.on("replace-variable-unregistered", (handle) => {
+                service.allVariables = service.allVariables.filter(v => v.handle !== handle);
+                service.triggerCache = {};
+            });
+
+            backendCommunicator.on("additional-variable-events-updated", (additionalVariableEvents) => {
+                service.additionalVariableEvents = additionalVariableEvents;
                 service.triggerCache = {};
             });
 
@@ -32,7 +44,7 @@
                     return service.triggerCache[cacheKey];
                 }
 
-                const filtered = service.allVariables.filter(v => {
+                const filtered = service.allVariables.filter((v) => {
 
                     if (triggerData.dataOutput === "number") {
                         if (v.possibleDataOutput == null || !v.possibleDataOutput.includes("number")) {
@@ -50,6 +62,10 @@
                     }
 
                     if (Array.isArray(variableTrigger)) {
+                        if (triggerData.type === "event") {
+                            const additionalEvents = service.additionalVariableEvents[v.handle]?.map(e => `${e.eventSourceId}:${e.eventId}`) ?? [];
+                            variableTrigger.push(...additionalEvents);
+                        }
                         if (variableTrigger.some(id => id === triggerData.id)) {
                             return true;
                         }

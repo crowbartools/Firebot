@@ -11,9 +11,10 @@
                 <button type="button" class="close" aria-label="Close" ng-click="$ctrl.dismiss()"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">{{$ctrl.label}}</h4>
             </div>
-            <div class="modal-body" style="margin-bottom: 10px;">
-                <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;margin-top: 10px;">
-                    <div style="display:flex; align-items: end; justify-content: space-between; width: 100%;">
+            <div class="modal-body">
+                <div class="flex flex-col justify-between items-center mt-4">
+                    <p ng-if="$ctrl.description" class="mb-6 self-start">{{$ctrl.description}}</p>
+                    <div class="flex justify-between" style="align-items: end; width: 100%;">
                         <div class="form-group" ng-class="{'has-error': $ctrl.hasValidationError}" style="width: 100%; margin: 0 15px 0 0;">
 
                             <ui-select ng-model="$ctrl.model" theme="bootstrap" spinner-enabled="true" on-select="$ctrl.viewerSelected()">
@@ -21,7 +22,7 @@
                                     <div>{{$select.selected.displayName}}<span ng-if="$select.selected.displayName.toLowerCase() !== $select.selected.username.toLowerCase()" class="muted" style="vertical-align: bottom;">&nbsp;({{$select.selected.username}})</span></div>
                                 </ui-select-match>
                                 <ui-select-choices minimum-input-length="1" repeat="channel in $ctrl.channels | filter: $select.search" refresh="$ctrl.searchForChannels($select.search)" refresh-delay="400" style="position:relative;">
-                                    <div style="height: 35px; display:flex; flex-direction: row; align-items: center;">
+                                    <div class="flex items-center" style="height: 35px;">
                                         <img style="height: 30px; width: 30px; border-radius: 5px; margin-right:10px;" ng-src="{{channel.avatarUrl || $ctrl.defaultAvatar}}">
                                         <div style="font-weight: 100;font-size: 17px;">{{channel.displayName}}<span ng-if="channel.displayName.toLowerCase() !== channel.username.toLowerCase()" class="muted"> ({{channel.username}})</span></div>
                                     </div>
@@ -40,12 +41,13 @@
                 dismiss: '&',
                 modalInstance: "<"
             },
-            controller: function($http, $scope, utilityService, backendCommunicator, focus) {
+            controller: function(backendCommunicator, focus) {
                 const $ctrl = this;
 
                 $ctrl.model = null;
 
                 $ctrl.label = "Enter Text";
+                $ctrl.description = "";
                 $ctrl.inputPlaceholder = "Search Twitch for a viewer...";
                 $ctrl.saveText = "Save";
                 $ctrl.validationFn = () => true;
@@ -56,12 +58,12 @@
 
                 $ctrl.channels = [];
 
-                $ctrl.searchForChannels = function(query) {
+                $ctrl.searchForChannels = (query) => {
                     if (query == null || query.trim() === "") {
                         return;
                     }
                     backendCommunicator.fireEventAsync("search-twitch-channels", query)
-                        .then(channels => {
+                        .then((channels) => {
                             console.log(channels);
                             if (channels != null) {
                                 $ctrl.channels = channels;
@@ -69,13 +71,17 @@
                         });
                 };
 
-                $ctrl.viewerSelected = function() {
+                $ctrl.viewerSelected = () => {
                     focus("focusAddButton");
                 };
 
-                $ctrl.$onInit = function () {
+                $ctrl.$onInit = () => {
                     if ($ctrl.resolve.label) {
                         $ctrl.label = $ctrl.resolve.label;
+                    }
+
+                    if ($ctrl.resolve.description) {
+                        $ctrl.description = $ctrl.resolve.description;
                     }
 
                     if ($ctrl.resolve.inputPlaceholder) {
@@ -95,7 +101,7 @@
                     }
                 };
 
-                $ctrl.save = function() {
+                $ctrl.save = () => {
                     if ($ctrl.model == null || $ctrl.model === "") {
                         return;
                     }

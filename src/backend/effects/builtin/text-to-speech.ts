@@ -1,10 +1,15 @@
-import frontendCommunicator from "../../../backend/common/frontend-communicator";
-import { EffectCategory } from "../../../shared/effect-constants";
 import { EffectType } from "../../../types/effects";
+import frontendCommunicator from "../../common/frontend-communicator";
+
+interface TtsVoice {
+    id: string;
+    name: string;
+    description: string;
+}
 
 const effect: EffectType<{
     text: string;
-    voiceId: "default" | string;
+    voiceId: string;
     wait?: boolean;
 }> = {
     definition: {
@@ -12,7 +17,7 @@ const effect: EffectType<{
         name: "Text-To-Speech",
         description: "Have Firebot read some text out loud with TTS.",
         icon: "fad fa-microphone-alt",
-        categories: [EffectCategory.FUN],
+        categories: ["fun"],
         dependencies: []
     },
     optionsTemplate: `
@@ -45,13 +50,14 @@ const effect: EffectType<{
             $scope.effect.wait = false;
         }
 
-        $scope.ttsVoices = [{
-            id: "default",
-            name: "Default",
-            description: "The default voice set in Settings > TTS"
-        },
-        ...ttsService.getVoices()
-        ];
+        $scope.ttsVoices = [
+            {
+                id: "default",
+                name: "Default",
+                description: "The default voice set in Settings > TTS"
+            },
+            ...ttsService.getVoices() as TtsVoice[]
+        ] as TtsVoice[];
 
 
         $scope.getSelectedVoiceName = () => {
@@ -60,23 +66,20 @@ const effect: EffectType<{
                 return "Default";
             }
 
-            const voice = ttsService.getVoiceById(voiceId);
+            const voice = ttsService.getVoiceById(voiceId) as TtsVoice;
 
             return voice?.name ?? "Unknown Voice";
         };
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.text == null || effect.text.length < 1) {
             errors.push("Please input some text.");
         }
         return errors;
     },
-    onTriggerEvent: async (event) => {
-        const effect = event.effect;
-
+    onTriggerEvent: async ({ effect }) => {
         await frontendCommunicator.fireEventAsync("read-tts", effect);
-
         return true;
     }
 };

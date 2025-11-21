@@ -1,5 +1,5 @@
-import { ScriptModules } from "@crowbartools/firebot-custom-scripts-types";
 import OBSWebSocket from "obs-websocket-js";
+import type { EventManagerModule } from "../../../../types";
 import {
     OBS_CURRENT_PROFILE_CHANGED_EVENT_ID,
     OBS_CURRENT_PROGRAM_SCENE_CHANGED_EVENT_ID,
@@ -44,9 +44,9 @@ type CachedGroupInfo = {
         /// The item id for the group inside of this scene.
         itemId: number;
     }[];
-}
+};
 
-let eventManager: ScriptModules["eventManager"];
+let eventManager: EventManagerModule;
 
 const obs = new OBSWebSocket();
 
@@ -617,7 +617,7 @@ export function initRemote(
         forceConnect?: boolean;
     },
     modules: {
-        eventManager: ScriptModules["eventManager"];
+        eventManager: EventManagerModule;
     }
 ) {
     eventManager = modules.eventManager;
@@ -696,7 +696,7 @@ export async function setCurrentSceneCollection(
     }
 }
 
-export type SourceData = Record<string, Array<{ id: number; name: string, groupName?: string }>>;
+export type SourceData = Record<string, Array<{ id: number, name: string, groupName?: string }>>;
 
 export async function getSourceData(): Promise<SourceData> {
     if (!connected) {
@@ -834,7 +834,7 @@ export type OBSSourceScreenshotSettings = {
     imageWidth?: number;
     imageHeight?: number;
     imageCompressionQuality?: number;
-}
+};
 
 export type OBSSourceTransformKeys =
     | "positionX"
@@ -1226,7 +1226,6 @@ export async function setTextSourceSettings(sourceName: string, settings: OBSTex
 export async function createRecordChapter(chapterName: string) {
     try {
         // obs-websockets-js hasn't been updated to include "CreateRecordChapter" yet
-        // @ts-expect-error
         await obs.call("CreateRecordChapter", {
             chapterName
         });
@@ -1419,7 +1418,7 @@ export async function saveReplayBuffer(): Promise<boolean> {
     return true;
 }
 
-export type ObsRawResponse = { success: boolean; response?: string; }
+export type ObsRawResponse = { success: boolean, response?: string };
 
 export async function sendRawObsRequest(functionName: string, payload?: string): Promise<ObsRawResponse> {
     const rawResponse: ObsRawResponse = { success: false };

@@ -4,16 +4,14 @@ const { SettingsManager } = require("../../common/settings-manager");
 const { ResourceTokenManager } = require("../../resource-token-manager");
 const webServer = require("../../../server/http-server-manager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
-const { EffectCategory } = require('../../../shared/effect-constants');
 const logger = require("../../logwrapper");
-const accountAccess = require("../../common/account-access");
-const util = require("../../utility");
+const { AccountAccess } = require("../../common/account-access");
 const fs = require('fs/promises');
 const path = require("path");
 const frontendCommunicator = require('../../common/frontend-communicator');
-const { wait } = require("../../utility");
+const { wait } = require("../../utils");
 const { parseYoutubeId } = require("../../../shared/youtube-url-parser");
-const { v4: uuid } = require("uuid");
+const { randomUUID } = require("crypto");
 const { resolveTwitchClipVideoUrl } = require("../../common/handlers/twitch-clip-url-resolver");
 
 /**
@@ -28,8 +26,15 @@ const playVideo = {
         name: "Play Video",
         description: "Plays a local, Youtube, or Twitch video in the overlay.",
         icon: "fad fa-video",
-        categories: [EffectCategory.COMMON, EffectCategory.OVERLAY, EffectCategory.TWITCH],
-        dependencies: []
+        categories: ["common", "overlay", "fun"],
+        dependencies: [],
+        outputs: [
+            {
+                label: "Video Duration",
+                description: "The Duration of the playing video",
+                defaultName: "videoDuration"
+            }
+        ]
     },
     /**
      * Global settings that will be available in the Settings tab
@@ -121,6 +126,7 @@ const playVideo = {
                 input-title="Twitch Username"
                 model="effect.twitchClipUsername"
                 placeholder-text="Ex: $streamer, $user, etc"
+                menu-position="under"
             />
             <div class="mt-10 form-group flex-row jspacebetween" style="margin-bottom: 0;">
                 <firebot-checkbox
@@ -173,7 +179,7 @@ const playVideo = {
             </eos-container>
         </div>
 
-        <eos-container ng-if="effect.videoType != 'Random Twitch Clip' && effect.videoType != 'Twitch Clip'" header="Volume" pad-top="true">
+        <eos-container ng-if="shouldShowVolumeControl()" header="Volume" pad-top="true">
             <div class="volume-slider-wrapper">
                 <i class="fal fa-volume-down volume-low"></i>
                 <rzslider rz-slider-model="effect.volume" rz-slider-options="{floor: 0, ceil: 10, hideLimitLabels: true}"></rzslider>
@@ -251,7 +257,7 @@ const playVideo = {
      * The controller for the front end Options
      * Port over from effectHelperService.js
      */
-    optionsController: ($scope, $rootScope, $timeout, utilityService) => {
+    optionsController: ($scope, $rootScope, $timeout, utilityService, settingsService) => {
         $scope.waitChange = () => {
             if ($scope.effect.videoType !== 'Random Twitch Clip' && $scope.effect.videoType !== 'Twitch Clip') {
                 if ($scope.effect.wait) {
@@ -262,6 +268,9 @@ const playVideo = {
         $scope.showOverlayInfoModal = function (overlayInstance) {
             utilityService.showOverlayInfoModal(overlayInstance);
         };
+
+        $scope.shouldShowVolumeControl = () => !['Random Twitch Clip', 'Twitch Clip'].includes($scope.effect.videoType) || settingsService.getSetting("UseExperimentalTwitchClipUrlResolver");
+
 
         $scope.videoPositions = [
             "Top Left",
@@ -375,7 +384,8 @@ const playVideo = {
             inbetweenRepeat: effect.inbetweenRepeat,
             customCoords: effect.customCoords,
             loop: effect.loop === true,
-            rotation: effect.rotation ? effect.rotation + effect.rotType : "0deg"
+            rotation: effect.rotation ? effect.rotation + effect.rotType : "0deg",
+            zIndex: effect.zIndex
         };
 
         // Get random sound
@@ -434,58 +444,24 @@ const playVideo = {
         }
 
         if (effect.videoType === "Twitch Clip" || effect.videoType === "Random Twitch Clip") {
-            const twitchApi = require("../../twitch-api/api");
-            const client = twitchApi.streamerClient;
-
-            let clipId;
+            const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 
             /**@type {import('@twurple/api').HelixClip} */
             let clip;
+
             if (effect.videoType === "Twitch Clip") {
-                clipId = effect.twitchClipUrl.split("/").pop();
-                try {
-                    clip = await client.clips.getClipById(clipId);
-                } catch (error) {
-                    logger.error(`Unable to find clip by id: ${clipId}`, error);
-                    return true;
-                }
+                clip = await TwitchApi.clips.getClipFromClipUrl(effect.twitchClipUrl);
             } else if (effect.videoType === "Random Twitch Clip") {
-                const username = effect.twitchClipUsername || accountAccess.getAccounts().streamer.username;
-                try {
-                    const user = await twitchApi.users.getUserByName(username);
+                const username = effect.twitchClipUsername || AccountAccess.getAccounts().streamer.username;
+                const dateNow = new Date();
 
-                    if (user == null) {
-                        logger.warn(`Could not found a user by the username ${username}`);
-                        return true;
-                    }
-                    const filter = {
-                        limit: 100,
-                        // discard isFeatured parameter if it is falsy so featured clips aren't excluded
-                        isFeatured: effect.isFeatured || undefined
-                    };
-
-                    if (effect.useMaxClipAge === true) {
-                        const dateNow = new Date();
-                        const startDate = new Date(dateNow - (effect.maxClipAge * 1000)).toISOString();
-                        filter.startDate = startDate;
-                        filter.endDate = dateNow.toISOString();
-                    }
-
-                    const clips = await client.clips.getClipsForBroadcaster(user.id, filter);
-
-                    if (clips.data.length < 1) {
-                        logger.warn(`User ${username} has no clips. Unable to get random.`);
-                        return true;
-                    }
-
-                    const randomClipIndex = util.getRandomInt(0, clips.data.length - 1);
-                    clip = clips.data[randomClipIndex];
-
-                    clipId = clip.id;
-                } catch (error) {
-                    logger.error(`Unable to find clip random clip for: ${username}`, error);
-                    return true;
-                }
+                clip = await TwitchApi.clips.getRandomClipForUserByName(
+                    username,
+                    100,
+                    effect.isFeatured || undefined,
+                    effect.useMaxClipAge === true ? new Date(dateNow - (effect.maxClipAge * 1000)) : undefined,
+                    effect.useMaxClipAge === true ? dateNow : undefined
+                );
             }
 
             if (clip == null) {
@@ -523,7 +499,8 @@ const playVideo = {
                 exitAnimation: effect.exitAnimation,
                 exitDuration: effect.exitDuration,
                 overlayInstance: data.overlayInstance,
-                rotation: effect.rotation ? effect.rotation + effect.rotType : "0deg"
+                rotation: effect.rotation ? effect.rotation + effect.rotType : "0deg",
+                zIndex: effect.zIndex
             });
 
             if (effect.wait) {
@@ -544,7 +521,7 @@ const playVideo = {
                 data.videoStarttime = youtubeData.startTime;
             }
 
-            resourceToken = uuid();
+            resourceToken = randomUUID();
 
         } else if (effect.videoType === "Local Video" || effect.videoType === "Random From Folder") {
             const result = await frontendCommunicator.fireEventAsync("getVideoDuration", data.filepath);
@@ -596,11 +573,17 @@ const playVideo = {
         if (effect.wait) {
             try {
                 await waitPromise;
-            } catch (error) {
+            } catch {
                 return false;
             }
         }
-        return true;
+
+        return {
+            success: true,
+            outputs: {
+                videoDuration: data.videoDuration != null ? data.videoDuration : 0
+            }
+        };
     },
     /**
      * Code to run in the overlay
@@ -615,7 +598,7 @@ const playVideo = {
             onOverlayEvent: (event) => {
                 // eslint-disable-next-line no-undef
                 if (!startedVidCache) {
-                    // eslint-disable-line no-undef
+
                     startedVidCache = {}; // eslint-disable-line no-undef
                 }
 
@@ -678,6 +661,7 @@ const playVideo = {
                 const filepathNew = `http://${window.location.hostname}:7472/resource/${token}`;
 
                 // Generate UUID to use as id
+
                 // eslint-disable-next-line no-undef
                 const elementId = uuid();
                 const videoPlayerId = `${elementId}-video`;
@@ -700,7 +684,9 @@ const playVideo = {
                 const sizeStyles =
                     (data.videoWidth ? `width: ${data.videoWidth}px;` : "") +
                     (data.videoHeight ? `height: ${data.videoHeight}px;` : "") +
-                    (data.rotation ? `transform: rotate(${data.rotation});` : '');
+                    (data.rotation ? `transform: rotate(${data.rotation});` : '') +
+                    (data.zIndex ? `position: relative; z-index: ${data.zIndex};` : '');
+
 
                 if (videoType === "Local Video") {
                     const loopAttribute = loop ? "loop" : "";
@@ -729,7 +715,7 @@ const playVideo = {
                     video.oncanplay = function () {
                         // eslint-disable-next-line no-undef
                         if (startedVidCache[this.id]) {
-                            // eslint-disable-line no-undef
+
                             return;
                         }
 

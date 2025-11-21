@@ -1,7 +1,7 @@
 "use strict";
 
 (function() {
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     angular.module("firebotApp")
         .component("addOrEditPollChoiceModal", {
@@ -93,7 +93,7 @@
                         $ctrl.pollChoice = JSON.parse(angular.toJson($ctrl.resolve.pollChoice));
                         $ctrl.isNew = false;
                     } else {
-                        $ctrl.pollChoice.id = uuid();
+                        $ctrl.pollChoice.id = randomUUID();
                     }
                     $ctrl.options = JSON.parse(angular.toJson($ctrl.resolve.options));
                 };

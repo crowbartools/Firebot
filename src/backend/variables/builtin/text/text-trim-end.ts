@@ -1,14 +1,13 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import { convertToString } from '../../../utility';
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
+import { stringify } from '../../../utils';
 
 const model : ReplaceVariable = {
     definition: {
         handle: "trimEnd",
         description: "Removes any whitespace from the end of input text.",
         usage: "trimEnd[text]",
-        categories: [VariableCategory.TEXT],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["text"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (
         trigger: Trigger,
@@ -17,7 +16,7 @@ const model : ReplaceVariable = {
         if (subject == null) {
             return '';
         }
-        return convertToString(subject).trimEnd();
+        return stringify(subject).trimEnd();
     }
 };
 

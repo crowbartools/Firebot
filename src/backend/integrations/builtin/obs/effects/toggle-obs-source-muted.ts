@@ -16,15 +16,15 @@ type Scope = {
 };
 
 export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
-  {
-      definition: {
-          id: "ebiggz:obs-toggle-source-muted",
-          name: "Toggle OBS Audio Source Muted",
-          description: "Toggle an OBS source's muted status",
-          icon: "fad fa-volume-mute",
-          categories: ["common"]
-      },
-      optionsTemplate: `
+    {
+        definition: {
+            id: "ebiggz:obs-toggle-source-muted",
+            name: "Toggle OBS Audio Source Muted",
+            description: "Toggle an OBS source's muted status",
+            icon: "fad fa-volume-mute",
+            categories: ["common", "integrations"]
+        },
+        optionsTemplate: `
     <eos-container ng-show="missingSources.length > 0">
         <div class="effect-info alert alert-warning">
             <p><b>Warning!</b> 
@@ -76,122 +76,122 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
       </div>
     </eos-container>
   `,
-      optionsController: ($scope: Scope, backendCommunicator: any, $q: any) => {
-          $scope.isObsConfigured = false;
+        optionsController: ($scope: Scope, backendCommunicator: any, $q: any) => {
+            $scope.isObsConfigured = false;
 
-          $scope.sourceList = null;
+            $scope.sourceList = null;
 
-          $scope.missingSources = [];
+            $scope.missingSources = [];
 
-          if ($scope.effect.selectedSources == null) {
-              $scope.effect.selectedSources = [];
-          }
+            if ($scope.effect.selectedSources == null) {
+                $scope.effect.selectedSources = [];
+            }
 
-          $scope.sourceIsSelected = (sourceName: string) => {
-              return $scope.effect.selectedSources.some(
-                  s => s.sourceName === sourceName
-              );
-          };
+            $scope.sourceIsSelected = (sourceName: string) => {
+                return $scope.effect.selectedSources.some(
+                    s => s.sourceName === sourceName
+                );
+            };
 
-          $scope.toggleSourceSelected = (sourceName: string) => {
-              if ($scope.sourceIsSelected(sourceName)) {
-                  $scope.effect.selectedSources = $scope.effect.selectedSources.filter(
-                      s => !(s.sourceName === sourceName)
-                  );
-              } else {
-                  $scope.effect.selectedSources.push({
-                      sourceName,
-                      action: true
-                  });
-              }
-          };
+            $scope.toggleSourceSelected = (sourceName: string) => {
+                if ($scope.sourceIsSelected(sourceName)) {
+                    $scope.effect.selectedSources = $scope.effect.selectedSources.filter(
+                        s => !(s.sourceName === sourceName)
+                    );
+                } else {
+                    $scope.effect.selectedSources.push({
+                        sourceName,
+                        action: true
+                    });
+                }
+            };
 
-          $scope.setSourceAction = (
-              sourceName: string,
-              action: "toggle" | boolean
-          ) => {
-              const selectedSource = $scope.effect.selectedSources.find(
-                  s => s.sourceName === sourceName
-              );
-              if (selectedSource != null) {
-                  selectedSource.action = action;
-              }
-          };
+            $scope.setSourceAction = (
+                sourceName: string,
+                action: "toggle" | boolean
+            ) => {
+                const selectedSource = $scope.effect.selectedSources.find(
+                    s => s.sourceName === sourceName
+                );
+                if (selectedSource != null) {
+                    selectedSource.action = action;
+                }
+            };
 
-          $scope.getSourceActionDisplay = (sourceName: string) => {
-              const selectedSource = $scope.effect.selectedSources.find(
-                  s => s.sourceName === sourceName
-              );
+            $scope.getSourceActionDisplay = (sourceName: string) => {
+                const selectedSource = $scope.effect.selectedSources.find(
+                    s => s.sourceName === sourceName
+                );
 
-              $scope.missingSources = $scope.missingSources.filter(item => item !== selectedSource);
+                $scope.missingSources = $scope.missingSources.filter(item => item !== selectedSource);
 
-              if (selectedSource == null) {
-                  return "";
-              }
+                if (selectedSource == null) {
+                    return "";
+                }
 
-              if (selectedSource.action === "toggle") {
-                  return "Toggle";
-              }
-              if (selectedSource.action === true) {
-                  return "Mute";
-              }
-              return "Unmute";
-          };
+                if (selectedSource.action === "toggle") {
+                    return "Toggle";
+                }
+                if (selectedSource.action === true) {
+                    return "Mute";
+                }
+                return "Unmute";
+            };
 
-          const capitalizeWords = (input: string) =>
-              input
-                  .split(" ")
-                  .map(
-                      w => w[0].toLocaleUpperCase() + w.substr(1).toLocaleLowerCase()
-                  )
-                  .join(" ");
+            const capitalizeWords = (input: string) =>
+                input
+                    .split(" ")
+                    .map(
+                        w => w[0].toLocaleUpperCase() + w.substr(1).toLocaleLowerCase()
+                    )
+                    .join(" ");
 
-          $scope.formatSourceType = (type: string) => {
-              return capitalizeWords((type ?? "").replace(/_/, " "));
-          };
+            $scope.formatSourceType = (type: string) => {
+                return capitalizeWords((type ?? "").replace(/_/, " "));
+            };
 
-          $scope.deleteSceneAtIndex = (index: number) => {
-              $scope.effect.selectedSources = $scope.effect.selectedSources.filter(
-                  item => item !== $scope.missingSources [index]
-              );
-              $scope.missingSources.splice(index, 1);
-          };
+            $scope.deleteSceneAtIndex = (index: number) => {
+                $scope.effect.selectedSources = $scope.effect.selectedSources.filter(
+                    item => item !== $scope.missingSources [index]
+                );
+                $scope.missingSources.splice(index, 1);
+            };
 
-          $scope.getStoredData = () => {
-              for (const sceneName of $scope.effect.selectedSources) {
-                  $scope.missingSources.push(sceneName);
-              }
-          };
+            $scope.getStoredData = () => {
+                for (const sceneName of $scope.effect.selectedSources) {
+                    $scope.missingSources.push(sceneName);
+                }
+            };
 
-          $scope.getSourceList = () => {
-              $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
+            $scope.getSourceList = () => {
+                $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
 
-              $q.when(
-                  backendCommunicator.fireEventAsync("obs-get-audio-sources")
-              ).then((sourceList: Array<OBSSource>) => {
-                  $scope.sourceList = sourceList ?? null;
-              });
-          };
+                $q.when(
+                    backendCommunicator.fireEventAsync("obs-get-audio-sources")
+                ).then((sourceList: Array<OBSSource>) => {
+                    $scope.sourceList = sourceList ?? null;
+                });
+            };
 
-          $scope.getSourceList();
-          $scope.getStoredData();
-      },
-      optionsValidator: () => {
-          return [];
-      },
-      onTriggerEvent: async ({ effect }) => {
-          if (effect.selectedSources == null) {
-              return true;
-          }
+            $scope.getSourceList();
+            $scope.getStoredData();
+        },
+        optionsValidator: () => {
+            return [];
+        },
+        onTriggerEvent: async ({ effect }) => {
+            if (effect.selectedSources == null) {
+                return true;
+            }
 
-          for (const { sourceName, action } of effect.selectedSources) {
-              if (action === "toggle") {
-                  await toggleSourceMuted(sourceName);
-              } else {
-                  await setSourceMuted(sourceName, action);
-              }
-          }
+            for (const { sourceName, action } of effect.selectedSources) {
+                if (action === "toggle") {
+                    await toggleSourceMuted(sourceName);
+                } else {
+                    await setSourceMuted(sourceName, action);
+                }
+            }
 
-          return true;
-      }
-  };
+            return true;
+        }
+    };

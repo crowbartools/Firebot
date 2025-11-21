@@ -1,11 +1,12 @@
 "use strict";
-(function() {
+(function () {
     angular
         .module("firebotApp")
-        .controller("effectQueuesController", function(
+        .controller("effectQueuesController", function (
             $scope,
             effectQueuesService,
-            utilityService
+            utilityService,
+            backendCommunicator
         ) {
             $scope.effectQueuesService = effectQueuesService;
 
@@ -14,8 +15,8 @@
             };
 
             $scope.getQueueModeName = (modeId) => {
-                const mode = effectQueuesService.queueModes.find(m => m.id === modeId);
-                return mode ? mode.display : "Unknown";
+                const mode = effectQueuesService.queueModes.find(m => m.value === modeId);
+                return mode ? mode.label : "Unknown";
             };
 
             $scope.headers = [
@@ -25,7 +26,7 @@
                     dataField: "name",
                     sortable: true,
                     cellTemplate: `{{data.name}}`,
-                    cellController: () => {}
+                    cellController: () => { }
                 },
                 {
                     name: "MODE",
@@ -35,8 +36,8 @@
                     cellTemplate: `{{getQueueModeName(data.mode)}}`,
                     cellController: ($scope) => {
                         $scope.getQueueModeName = (modeId) => {
-                            const mode = effectQueuesService.queueModes.find(m => m.id === modeId);
-                            return mode ? mode.display : "Unknown";
+                            const mode = effectQueuesService.queueModes.find(m => m.value === modeId);
+                            return mode ? mode.label : "Unknown";
                         };
                     }
                 },
@@ -46,13 +47,7 @@
                     dataField: "interval",
                     sortable: true,
                     cellTemplate: `{{(data.mode === 'interval' || data.mode === 'auto') ? (data.interval || 0) + 's' : 'n/a'}}`,
-                    cellController: () => {}
-                },
-                {
-                    name: "QUEUE LENGTH",
-                    icon: "fa-tally",
-                    cellTemplate: `{{data.length || 0}}`,
-                    cellController: () => {}
+                    cellController: () => { }
                 }
             ];
 
@@ -92,7 +87,7 @@
                                     confirmLabel: "Delete",
                                     confirmBtnType: "btn-danger"
                                 })
-                                .then(confirmed => {
+                                .then((confirmed) => {
                                     if (confirmed) {
                                         effectQueuesService.deleteEffectQueue(item.id);
                                     }
@@ -103,6 +98,11 @@
                 ];
 
                 return options;
+            };
+
+
+            $scope.openEffectQueueMonitor = () => {
+                backendCommunicator.send("open-effect-queue-monitor");
             };
         });
 }());

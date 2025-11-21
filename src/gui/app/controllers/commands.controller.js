@@ -15,8 +15,6 @@
             // Cache commands on app load.
             commandsService.refreshCommands();
 
-            $scope.activeCmdTab = 0;
-
             $scope.commandsService = commandsService;
             $scope.sts = sortTagsService;
 
@@ -74,6 +72,7 @@
                 utilityService.showModal({
                     component: "addOrEditCustomCommandModal",
                     breadcrumbName: command ? "Edit Command" : "Add Command",
+                    size: "mdlg",
                     resolveObj: {
                         command: () => command
                     },
@@ -99,9 +98,9 @@
                     className: "info",
                     content: "Opening Firebot profile page..."
                 });
-                const profileToken = await backendCommunicator.fireEventAsync("get-firebot-profile-token");
-                if (profileToken) {
-                    $rootScope.openLinkExternally(`https://firebot.app/profile?id=${profileToken}`);
+                const channelName = await backendCommunicator.fireEventAsync("sync-profile-data-to-crowbar-api");
+                if (channelName) {
+                    $rootScope.openLinkExternally(`https://firebot.app/profile/${channelName}`);
                 }
             };
 
@@ -111,6 +110,18 @@
 
             $scope.resetCooldownsForCommand = (command) => {
                 commandsService.resetCooldownsForCommand(command.id);
+            };
+
+            $scope.resetAllPerStreamCommandUsages = () => {
+                commandsService.resetAllPerStreamCommandUsages();
+            };
+
+            $scope.resetPerStreamUsagesForCommand = (command) => {
+                commandsService.resetPerStreamUsagesForCommand(command.id);
+            };
+
+            $scope.saveCustomCommand = (command) => {
+                commandsService.saveCustomCommand(command);
             };
 
             $scope.saveAllCommands = (commands) => {
@@ -130,6 +141,12 @@
                         html: `<a href ><i class="iconify" data-icon="mdi:clock-fast" style="margin-right: 10px;"></i> Clear Cooldowns</a>`,
                         click: () => {
                             $scope.resetCooldownsForCommand(command);
+                        }
+                    },
+                    {
+                        html: `<a href ><i class="iconify" data-icon="mdi:tally-mark-5" style="margin-right: 10px;"></i> Clear Per-Stream Usages</a>`,
+                        click: () => {
+                            $scope.resetPerStreamUsagesForCommand(command);
                         }
                     },
                     {
@@ -180,14 +197,13 @@
                         <span
                             class="muted ml-2"
                             style="font-size: 11px"
-                            ng-show="data.hidden"
+                            ng-if="data.hidden"
                             uib-tooltip="Hidden from !commands list"
                             tooltip-append-to-body="true"
                         >
                             <i class="fas fa-eye-slash"></i>
                         </span>
-                    `,
-                    cellController: () => {}
+                    `
                 },
                 {
                     name: "COOLDOWNS",
@@ -203,8 +219,7 @@
                         <span uib-tooltip="User cooldown">
                             <i class="far fa-user"></i> {{data.cooldown.user ? data.cooldown.user + "s" : "-" }}
                         </span>
-                    `,
-                    cellController: () => {}
+                    `
                 },
                 {
                     name: "PERMISSIONS",
@@ -239,6 +254,7 @@
                     command.restrictionData.restrictions.find(r => r.type === "firebot:permissions");
 
                             if (permissions) {
+                                const isInverted = permissions.invertCondition === true;
                                 if (permissions.mode === "roles") {
                                     const roleIds = permissions.roleIds;
                                     let rolesOutput = "None selected";
@@ -282,9 +298,9 @@
                                     if (ranksOutput !== "None selected") {
                                         itemsToDisplay.push(ranksDisplay);
                                     }
-                                    return itemsToDisplay.length > 0 ? itemsToDisplay.join(", ") : "Roles/Ranks (None selected)";
+                                    return itemsToDisplay.length > 0 ? (isInverted ? "Not: " : "") + itemsToDisplay.join(", ") : "Roles/Ranks (None selected)";
                                 } else if (permissions.mode === "viewer") {
-                                    return `Viewer (${permissions.username ? permissions.username : 'No name'})`;
+                                    return `${isInverted ? "Not: " : ""}Viewer (${permissions.username ? permissions.username : 'No name'})`;
                                 }
                             } else {
                                 return "This command is available to everyone";

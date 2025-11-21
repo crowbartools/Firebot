@@ -1,5 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 import currencyAccess from "../../../currency/currency-access";
 import currencyManager from "../../../currency/currency-manager";
@@ -9,10 +8,17 @@ const model : ReplaceVariable = {
         handle: "rawTopCurrency",
         description: "Returns a raw array containing those with the most of the specified currency. Items in the array contain `place`, `username` and `amount` properties.",
         usage: "rawTopCurrency[currencyName]",
-        possibleDataOutput: [OutputDataType.ARRAY]
+        hasSuggestions: true,
+        noSuggestionsText: "No currencies have been created yet.",
+        possibleDataOutput: ["array"]
+    },
+    getSuggestions: async () => {
+        const currencies = Object.values(currencyAccess.getCurrencies());
+        return currencies.map(c => ({
+            usage: `rawTopCurrency[${c.name}]`
+        }));
     },
 
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
     evaluator: async (_, currencyName: string, count: number = 10) => {
 
         if (currencyName == null) {

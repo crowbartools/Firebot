@@ -4,7 +4,7 @@ const { getPathInTmpDir } = require("../../../common/data-access");
 const { SettingsManager } = require("../../../common/settings-manager");
 const { ResourceTokenManager } = require("../../../resource-token-manager");
 const webServer = require("../../../../server/http-server-manager");
-const { v4: uuid } = require("uuid");
+const { randomUUID } = require("crypto");
 const fs = require('fs');
 const fsp = require('fs/promises');
 const path = require("path");
@@ -12,7 +12,7 @@ const logger = require("../../../logwrapper");
 const frontendCommunicator = require("../../../common/frontend-communicator");
 const integrationManager = require("../../integration-manager");
 const { EffectCategory } = require('../../../../shared/effect-constants');
-const { wait } = require("../../../utility");
+const { wait } = require("../../../utils");
 const { PollyClient, DescribeVoicesCommand, SynthesizeSpeechCommand, ListLexiconsCommand } = require('@aws-sdk/client-polly');
 
 frontendCommunicator.onAsync("getAwsPollyVoices", async () => {
@@ -120,7 +120,7 @@ const playSound = {
         name: "Text-To-Speech (Amazon Polly)",
         description: "Have Firebot read out some text using Amazon Polly.",
         icon: "fad fa-microphone-alt",
-        categories: [EffectCategory.FUN, EffectCategory.INTEGRATIONS],
+        categories: ["integrations"],
         dependencies: []
     },
     /**
@@ -571,7 +571,7 @@ const playSound = {
                 await fsp.mkdir(POLLY_TMP_DIR, { recursive: true });
             }
 
-            mp3Path = path.join(POLLY_TMP_DIR, `${uuid()}.mp3`);
+            mp3Path = path.join(POLLY_TMP_DIR, `${randomUUID()}.mp3`);
 
             const destination = fs.createWriteStream(mp3Path);
             const stream = synthSpeedResponse.AudioStream.pipe(destination, { end: true });

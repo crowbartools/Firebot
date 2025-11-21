@@ -4,15 +4,25 @@
 
     angular
         .module("firebotApp")
-        .controller("viewersController", function($route, $scope, viewersService, currencyService,
-            utilityService, settingsService) {
-
+        .controller("viewersController", function(
+            $route, 
+            $scope, 
+            viewersService, 
+            currencyService,
+            utilityService, 
+            settingsService, 
+            ngToast
+        ) {
+            $scope.isViewerDBOn = settingsService.getSetting("ViewerDB");
             $scope.viewerTablePageSize = settingsService.getSetting("ViewerListPageSize");
 
+            $scope.turnOnDatabase = () => {
+                settingsService.saveSetting("ViewerDB", true);
+                $scope.isViewerDBOn = true;
+            };
+
             $scope.showUserDetailsModal = (userId) => {
-                const closeFunc = () => {
-                    viewersService.updateViewers();
-                };
+                const closeFunc = () => {};
                 utilityService.showModal({
                     component: "viewerDetailsModal",
                     backdrop: true,
@@ -30,6 +40,36 @@
                     closeCallback: () => {
                         $route.reload();
                     }
+                });
+            };
+
+            $scope.showExportViewersModal = () => {
+                utilityService.showModal({
+                    component: "exportViewersModal",
+                    closeCallback: (response) => {
+                        if (response.success) {
+                            ngToast.create({
+                                className: 'success',
+                                content: 'Viewers exported!'
+                            });
+                        } else {
+                            ngToast.create({
+                                className: 'danger',
+                                content: 'Failed to export viewers'
+                            });
+                        }
+
+                        $route.reload();
+                    }
+                });
+            };
+
+            $scope.showPurgeViewersModal = () => {
+                utilityService.showModal({
+                    component: "purgeViewersModal",
+                    size: 'sm',
+                    backdrop: false,
+                    keyboard: true
                 });
             };
 

@@ -1,11 +1,13 @@
 import fsp from "fs/promises";
 import path from "path";
-import logger from "./logwrapper";
-import frontendCommunicator from "./common/frontend-communicator";
-import profileManager from "./common/profile-manager";
+
+import { FirebotSettingsDefaults } from "../types/settings";
+
+import { ProfileManager } from "./common/profile-manager";
 import { SettingsManager } from "./common/settings-manager";
 import webServer from "../server/http-server-manager";
-import { FirebotSettingsDefaults } from "../types/settings";
+import frontendCommunicator from "./common/frontend-communicator";
+import logger from "./logwrapper";
 
 export enum FontFormat {
     TrueType = "truetype",
@@ -18,8 +20,8 @@ export type FirebotFont = {
     filename: string;
     path: string;
     name: string;
-    format: FontFormat
-}
+    format: FontFormat;
+};
 
 class FontManager {
     cachedFonts: FirebotFont[] = [];
@@ -74,7 +76,7 @@ class FontManager {
     }
 
     get fontsFolder() {
-        return profileManager.getPathInProfile("/fonts");
+        return ProfileManager.getPathInProfile("/fonts");
     }
 
     get fontCssPath() {
@@ -126,7 +128,7 @@ class FontManager {
 
             return true;
         } catch (error) {
-            logger.error(`Error installing font from ${path}`, error);
+            logger.error(`Error installing font from ${filepath}`, error);
             return false;
         }
     }

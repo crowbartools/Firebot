@@ -126,8 +126,18 @@
                             placeholder="Enter message (Leave blank for default)"
                             rows="4"
                             cols="40"
-                            ng-model="$ctrl.rankLadder.customPromotionMessageTemplate"
+                            ng-model="$ctrl.rankLadder.settings.customPromotionMessageTemplate"
                         />
+                    </div>
+
+                    <div class="form-group flex justify-between">
+                        <div>
+                            <label class="control-label" style="margin:0;">Show Badge in Chat</label>
+                            <p class="help-block">If enabled, users who are ranked on this ladder will have a badge in Firebot's chat</p>
+                        </div>
+                        <div class="ml-5">
+                            <toggle-button toggle-model="$ctrl.rankLadder.settings.showBadgeInChat" auto-update-value="true" font-size="32"></toggle-button>
+                        </div>
                     </div>
 
                     <div

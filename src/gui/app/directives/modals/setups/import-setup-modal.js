@@ -1,8 +1,6 @@
 "use strict";
 
 (function() {
-    const fsp = require("fs/promises");
-
     const { marked } = require("marked");
     const { sanitize } = require("dompurify");
 
@@ -59,7 +57,10 @@
                             <h4 class="muted">Import Questions</h4>
                             <div ng-repeat="question in $ctrl.setup.importQuestions track by question.id">
                                 <h5>{{question.question}} <tooltip ng-show="question.helpText" text="question.helpText" /></h5>
-                                <input type="{{question.answerType || 'text'}}" class="form-control" ng-model="question.answer" placeholder="Enter answer" />
+                                <input ng-if="question.answerType !== 'preset'" type="{{question.answerType || 'text'}}" class="form-control" ng-model="question.answer" placeholder="Enter answer" />
+                                <select ng-if="question.answerType === 'preset'" class="fb-select" ng-model="question.answer">
+                                    <option ng-repeat="preset in question.presetOptions" label="{{preset}}" value="{{preset}}">{{preset}}</option>
+                                </select>
                             </div>
                         </div>
 
@@ -75,9 +76,11 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function($q, logger, ngToast, commandsService, countersService, currencyService,
+            controller: function(ngToast, commandsService, countersService, currencyService,
                 effectQueuesService, eventsService, hotkeyService, presetEffectListsService,
-                timerService, scheduledTaskService, viewerRolesService, quickActionsService, variableMacroService, viewerRanksService, backendCommunicator, $sce) {
+                timerService, scheduledTaskService, viewerRolesService, quickActionsService,
+                variableMacroService, viewerRanksService, backendCommunicator, $sce,
+                overlayWidgetsService, settingsService) {
                 const $ctrl = this;
 
                 $ctrl.setupFilePath = null;
@@ -95,16 +98,20 @@
                     ...effectQueuesService.getEffectQueues().map(i => i.id),
                     ...eventsService.getAllEvents().map(i => i.id),
                     ...eventsService.getAllEventGroups().map(i => i.id),
-                    ...hotkeyService.getHotkeys().map(i => i.id),
+                    ...hotkeyService.hotkeys.map(i => i.id),
                     ...presetEffectListsService.getPresetEffectLists().map(i => i.id),
                     ...timerService.getTimers().map(i => i.id),
                     ...scheduledTaskService.getScheduledTasks().map(i => i.id),
                     ...variableMacroService.macros.map(i => i.id),
                     ...viewerRolesService.getCustomRoles().map(i => i.id),
                     ...viewerRanksService.rankLadders.map(i => i.id),
+                    ...overlayWidgetsService.overlayWidgetConfigs.map(i => i.id),
                     ...quickActionsService.quickActions
                         .filter(qa => qa.type === "custom")
-                        .map(i => i.id)
+                        .map(i => i.id),
+                    ...settingsService.getSetting("GlobalValues", true).map(v =>
+                        `GlobalValue:${v.name}`
+                    )
                 ].forEach((id) => {
                     $ctrl.currentIds[id] = true;
                 });
@@ -123,7 +130,9 @@
                     variableMacros: "Variable Macro",
                     viewerRoles: "Viewer Role",
                     viewerRankLadders: "Viewer Rank Ladder",
-                    quickActions: "Quick Action"
+                    quickActions: "Quick Action",
+                    overlayWidgetConfigs: "Overlay Widget",
+                    globalValues: "Global Value"
                 };
 
                 $ctrl.setup = null;
@@ -149,39 +158,34 @@
                     modal.document.body.style.fontFamily = "sans-serif";
                 };
 
-                $ctrl.onFileSelected = (filepath) => {
-                    $q.when(fsp.readFile(filepath))
-                        .then((setup) => {
-                            setup = JSON.parse(setup);
-                            if (setup == null || setup.components == null) {
-                                $ctrl.resetSelectedFile("Unable to load setup file: file is invalid");
-                                return;
-                            }
-                            $ctrl.setup = setup;
-                            // parse markdown
-                            $ctrl.setup.description = $sce.trustAsHtml(
-                                sanitize(marked($ctrl.setup.description, {}))
-                            );
-                            //set default answers
-                            if ($ctrl.setup.importQuestions) {
-                                $ctrl.setup.importQuestions = $ctrl.setup.importQuestions.map((q) => {
-                                    if (q.defaultAnswer) {
-                                        q.answer = q.defaultAnswer;
-                                    }
-                                    return q;
-                                });
-                            }
-                            $ctrl.setupSelected = true;
-                        }, (reason) => {
-                            logger.error("Failed to load setup file", reason);
-                            $ctrl.allowCancel = true;
-                            $ctrl.resetSelectedFile("Failed to load setup file: file is invalid");
-                            return;
-                        });
+                $ctrl.onFileSelected = async (filepath) => {
+                    /** @type {import("../../../../../backend/setups/setup-manager").LoadSetupResult} */
+                    const result = await backendCommunicator.fireEventAsync("setups:load-setup", filepath);
+
+                    if (result.success) {
+                        $ctrl.setup = result.setup;
+                        $ctrl.setup.description = $sce.trustAsHtml(
+                            sanitize(marked($ctrl.setup.description, {}))
+                        );
+
+                        //set default answers
+                        if ($ctrl.setup.importQuestions) {
+                            $ctrl.setup.importQuestions = $ctrl.setup.importQuestions.map((q) => {
+                                if (q.defaultAnswer) {
+                                    q.answer = q.defaultAnswer;
+                                }
+                                return q;
+                            });
+                        }
+                        $ctrl.setupSelected = true;
+                    } else {
+                        $ctrl.allowCancel = true;
+                        $ctrl.resetSelectedFile(result.error ?? "Failed to load setup file");
+                        return;
+                    }
                 };
 
-                $ctrl.importSetup = () => {
-
+                $ctrl.importSetup = async () => {
                     if ($ctrl.setup.requireCurrency && $ctrl.selectedCurrency == null) {
                         ngToast.create("Please select a currency to use. If you don't have a currency, create one in the Currency tab and then import this Setup again.");
                         return;
@@ -193,23 +197,20 @@
                         return;
                     }
 
-                    $q.when(
-                        backendCommunicator.fireEventAsync("import-setup", {
-                            setup: $ctrl.setup,
-                            selectedCurrency: $ctrl.selectedCurrency
-                        })
-                    )
-                        .then((successful) => {
-                            if (successful) {
-                                ngToast.create({
-                                    className: 'success',
-                                    content: `Successfully imported Setup: ${$ctrl.setup.name}`
-                                });
-                                $ctrl.dismiss();
-                            } else {
-                                ngToast.create(`Failed to import Setup: ${$ctrl.setup.name}`);
-                            }
+                    const success = await backendCommunicator.fireEventAsync("setups:import-setup", {
+                        setup: $ctrl.setup,
+                        selectedCurrency: $ctrl.selectedCurrency
+                    });
+
+                    if (success) {
+                        ngToast.create({
+                            className: 'success',
+                            content: `Successfully imported Setup: ${$ctrl.setup.name}`
                         });
+                        $ctrl.dismiss();
+                    } else {
+                        ngToast.create(`Failed to import Setup: ${$ctrl.setup.name}`);
+                    }
                 };
 
                 $ctrl.$onInit = () => {

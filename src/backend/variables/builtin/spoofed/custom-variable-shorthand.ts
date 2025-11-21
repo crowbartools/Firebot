@@ -1,5 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
@@ -14,10 +13,10 @@ const model : ReplaceVariable = {
             {
                 usage: '$example[path, to, value]',
                 description: "Returns the value of the customVariable 'example'; Synonymous with $customVariable[example, path.to.value]"
-            },
+            }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.ALL],
+        categories: ["advanced"],
+        possibleDataOutput: ["ALL"],
         spoof: true
     }
 };

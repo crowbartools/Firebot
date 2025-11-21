@@ -1,111 +1,181 @@
-<div
-  style="
-    min-width: 500px;
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  "
+<firebot-tabs
+    ng-init="$ctrl.activeTab = 'roles'"
+    active="$ctrl.activeTab"
+    type="underlined"
+    page-tabs="true"
 >
-  <div class="fb-tab-wrapper">
-    <ul class="nav nav-tabs fb-tabs">
-      <li
-        role="presentation"
-        ng-class="{'active' : activeTab === 0}"
-        ng-click="activeTab = 0"
-      >
-        <a href>ROLES</a>
-      </li>
-      <li
-        role="presentation"
-        ng-class="{'active' : activeTab === 1}"
-        ng-click="activeTab = 1"
-      >
-        <a href>RANKS</a>
-      </li>
-    </ul>
-  </div>
+    <firebot-tab name="roles" label="Roles">
+        <div style="height: 100%; overflow-y: scroll; padding: 15px">
+            <div
+                class="mb-4"
+                style="display: flex; flex-direction: row; align-items: center"
+            >
+                <span
+                    class="mr-4"
+                    style="
+                        text-transform: uppercase;
+                        font-weight: 200;
+                        font-size: 19px;
+                    "
+                    >Custom Roles</span
+                >
+                <div
+                    class="clickable"
+                    ng-click="showAddOrEditCustomRoleModal()"
+                    style="font-size: 15px"
+                >
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+            </div>
 
-  <div style="height: 100%;">
-    <div ng-if="activeTab === 0" style="height: 100%;overflow-y: scroll;padding: 15px;">
-        <div class="mb-4" style="display:flex;flex-direction: row;align-items: center;">
-            <span class="mr-4" style="text-transform: uppercase;font-weight: 200;font-size: 19px;">Custom Roles</span>
-            <div class="clickable" ng-click="showAddOrEditCustomRoleModal()" style="font-size: 15px;"><i class="fas fa-plus-circle"></i></div>
-        </div>
-        
-        <div class="new-tile-grid" style="width: 100%">
-            <div ng-repeat="role in viewerRolesService.getCustomRoles() track by $index" class="new-tile grapefruit centered">
-                <div class="edit-btn" ng-click="showAddOrEditCustomRoleModal(role)"></div>
-                <div class="content row">
-                    <div class="detail-wrapper nomargin">
-                        <div class="detail" style="font-size: 1.6em;">
-                            {{role.name}}
-                        </div>
-                        <div class="detail-description mt-2"><i class="fal fa-user"></i> {{role.viewers.length}}</div>
-                    </div>
-                </div>
-            </div>
-        
-            <p ng-if="viewerRolesService.getCustomRoles().length < 1" class="muted">No custom roles saved.</p>
-        </div>
-        
-        <h3 class="mt-12" style="text-transform: uppercase;font-weight: 200;font-size: 19px;">Twitch Roles</h3>
-        <p class="muted">These roles are predefined by Twitch and cannot be edited.</p>
-        <div class="new-tile-grid" style="width: 100%">
-            <div ng-repeat="role in viewerRolesService.getTwitchRoles() track by $index" class="new-tile gray centered">
-                <div class="content row">
-                    <div class="detail-wrapper nomargin">
-                        <div class="detail" style="font-size: 1.6em;">
-                            {{role.name}}
+            <div class="new-tile-grid" style="width: 100%">
+                <div
+                    ng-repeat="role in viewerRolesService.getCustomRoles() track by $index"
+                    class="new-tile grapefruit centered"
+                >
+                    <div
+                        class="edit-btn"
+                        ng-click="showAddOrEditCustomRoleModal(role)"
+                    ></div>
+                    <div class="content row">
+                        <div class="detail-wrapper nomargin">
+                            <div class="detail" style="font-size: 1.6em">
+                                {{role.name}}
+                            </div>
+                            <div class="detail-description mt-2">
+                                <i class="fal fa-user"></i>
+                                {{role.viewers.length}}
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <p
+                    ng-if="viewerRolesService.getCustomRoles().length < 1"
+                    class="muted"
+                >
+                    No custom roles saved.
+                </p>
             </div>
-        </div>
-        
-        <h3 class="mt-12" style="text-transform: uppercase;font-weight: 200;font-size: 19px;">Firebot Roles</h3>
-        <p class="muted">These roles are predefined by Firebot and cannot be edited.</p>
-        <div class="new-tile-grid" style="width: 100%">
-            <div ng-repeat="role in viewerRolesService.getFirebotRoles() track by $index" class="new-tile gray centered">
-                <div class="content row">
-                    <div class="detail-wrapper nomargin">
-                        <div class="detail" style="font-size: 1.6em;">
-                            {{role.name}}
+
+            <h3
+                class="mt-12"
+                style="
+                    text-transform: uppercase;
+                    font-weight: 200;
+                    font-size: 19px;
+                "
+            >
+                Twitch Roles
+            </h3>
+            <p class="muted">
+                These roles are predefined by Twitch and cannot be renamed or
+                deleted.
+            </p>
+            <div class="new-tile-grid" style="width: 100%">
+                <div
+                    ng-repeat="role in viewerRolesService.getTwitchRoles() track by $index"
+                    class="new-tile gray centered"
+                >
+                    <div
+                        class="view-btn"
+                        ng-click="showViewTwitchRoleModal(role)"
+                    ></div>
+                    <div class="content row">
+                        <div class="detail-wrapper nomargin">
+                            <div class="detail" style="font-size: 1.6em">
+                                {{role.name}}
+                            </div>
+                            <div class="detail-description mt-2">
+                                <i class="fal fa-user"></i>
+                                {{viewerRolesService.getViewersForTwitchRole(role.id).length}}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <h3 ng-if="viewerRolesService.getTeamRoles().length >= 1" class="mt-12" style="text-transform: uppercase;font-weight: 200;font-size: 19px;">Team Roles</h3>
-        <p ng-if="viewerRolesService.getTeamRoles().length >= 1" class="muted">These roles are predefined by Twitch and cannot be edited.</p>
-        <div class="new-tile-grid" style="width: 100%">
-            <div ng-repeat="role in viewerRolesService.getTeamRoles() track by $index" class="new-tile gray centered">
-                <div class="content row">
-                    <div class="detail-wrapper nomargin">
-                        <div class="detail" style="font-size: 1.6em;">
-                            {{role.name}}
+
+            <h3
+                class="mt-12"
+                style="
+                    text-transform: uppercase;
+                    font-weight: 200;
+                    font-size: 19px;
+                "
+            >
+                Firebot Roles
+            </h3>
+            <p class="muted">
+                These roles are predefined by Firebot and cannot be edited.
+            </p>
+            <div class="new-tile-grid" style="width: 100%">
+                <div
+                    ng-repeat="role in viewerRolesService.getFirebotRoles() track by $index"
+                    class="new-tile gray centered"
+                >
+                    <div class="content row">
+                        <div class="detail-wrapper nomargin">
+                            <div class="detail" style="font-size: 1.6em">
+                                {{role.name}}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <p ng-if="viewerRolesService.getTeamRoles().length < 1" class="muted">There are no stream teams you are a part of.</p>
+
+            <h3
+                ng-if="viewerRolesService.getTeamRoles().length >= 1"
+                class="mt-12"
+                style="
+                    text-transform: uppercase;
+                    font-weight: 200;
+                    font-size: 19px;
+                "
+            >
+                Team Roles
+            </h3>
+            <p
+                ng-if="viewerRolesService.getTeamRoles().length >= 1"
+                class="muted"
+            >
+                These roles are predefined by Twitch and cannot be edited.
+            </p>
+            <div class="new-tile-grid" style="width: 100%">
+                <div
+                    ng-repeat="role in viewerRolesService.getTeamRoles() track by $index"
+                    class="new-tile gray centered"
+                >
+                    <div class="content row">
+                        <div class="detail-wrapper nomargin">
+                            <div class="detail" style="font-size: 1.6em">
+                                {{role.name}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p
+                    ng-if="viewerRolesService.getTeamRoles().length < 1"
+                    class="muted"
+                >
+                    There are no stream teams you are a part of.
+                </p>
+            </div>
         </div>
-    </div>
-    <firebot-item-table
-        ng-if="activeTab === 1"
-        items="viewerRanksService.rankLadders"
-        on-items-update="viewerRanksService.saveAllRankLadders(items)"
-        headers="rankLadderHeaders"
-        sort-tag-context="rank ladders"
-        orderable="true"
-        add-new-button-text="New Rank Ladder"
-        on-add-new-clicked="viewerRanksService.showAddOrEditRankLadderModal()"
-        context-menu-options="rankLadderMenuOptions(item)"
-        no-data-message="No rank ladders saved. You should make one! :)"
-        none-found-message="No rank ladders found."
-        search-placeholder="Search rank ladders"
-        test-button="false"
-    />
-  </div>
-</div>
+    </firebot-tab>
+    <firebot-tab name="ranks" label="Ranks">
+        <firebot-item-table
+            items="viewerRanksService.rankLadders"
+            on-items-update="viewerRanksService.saveAllRankLadders(items)"
+            headers="rankLadderHeaders"
+            sort-tag-context="rank ladders"
+            orderable="true"
+            add-new-button-text="New Rank Ladder"
+            on-add-new-clicked="viewerRanksService.showAddOrEditRankLadderModal()"
+            context-menu-options="rankLadderMenuOptions(item)"
+            no-data-message="No rank ladders saved. You should make one! :)"
+            none-found-message="No rank ladders found."
+            search-placeholder="Search rank ladders"
+            test-button="false"
+        />
+    </firebot-tab>
+</firebot-tabs>

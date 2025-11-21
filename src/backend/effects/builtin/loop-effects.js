@@ -5,8 +5,7 @@ const { EffectCategory } = require('../../../shared/effect-constants');
 const logger = require("../../logwrapper");
 const { SettingsManager } = require("../../common/settings-manager");
 const conditionManager = require("./conditional-effects/conditions/condition-manager");
-
-const wait = ms => new Promise(r => setTimeout(r, ms));
+const { wait } = require("../../utils");
 
 const model = {
     definition: {
@@ -177,7 +176,7 @@ const model = {
                     maxLoopCount = parseInt(effect.loopCount);
                 }
 
-                while (true) { //eslint-disable-line no-constant-condition
+                while (true) {
                     if (abortSignal.aborted) {
                         return resolve(true);
                     }
@@ -193,7 +192,10 @@ const model = {
                         break;
                     }
 
-                    const conditionsPass = await conditionManager.runConditions(effect.conditionData, trigger);
+                    const conditionsPass = await conditionManager.runConditions(effect.conditionData, {
+                        ...trigger,
+                        effectOutputs: lastOutputs
+                    });
 
                     if (conditionsPass) {
                         const result = await runEffects(currentLoopCount, null, lastOutputs);

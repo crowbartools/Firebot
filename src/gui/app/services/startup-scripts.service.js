@@ -25,13 +25,14 @@
                 return startupScripts[startupScriptDataId];
             };
 
-            service.saveStartupScriptData = function(startupScriptData) {
+            service.saveStartupScriptData = async function(startupScriptData) {
                 if (!startupScriptData) {
                     return;
                 }
 
                 startupScripts[startupScriptData.id] = startupScriptData;
-                backendCommunicator.fireEvent("saveStartupScriptData",
+
+                await backendCommunicator.fireEventAsync("saveStartupScriptData",
                     startupScriptData);
             };
 

@@ -1,8 +1,7 @@
 import { decode } from 'he';
 
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import { convertToString } from '../../../utility';
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
+import { stringify } from '../../../utils';
 
 const model : ReplaceVariable = {
     definition: {
@@ -15,14 +14,14 @@ const model : ReplaceVariable = {
                 description: `Returns "<p>Hello & Welcome!</p>"`
             }
         ],
-        categories: [VariableCategory.TEXT],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["text"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (
         trigger: Trigger,
         text: unknown
     ) => {
-        return decode(convertToString(text));
+        return decode(stringify(text));
     }
 };
 

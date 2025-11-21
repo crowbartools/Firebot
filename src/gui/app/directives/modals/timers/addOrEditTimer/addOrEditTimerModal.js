@@ -52,7 +52,7 @@
                     ></effect-list>
                 </div>
                 <p class="muted" style="font-size:11px;margin-top:6px;">
-                    <b>ProTip:</b> If you want to have this timer display a single chat message at a time, try the <b>Run Random Effect</b> or <b>Run Sequential Effect</b>
+                    <b>PROTIP:</b> If you want to have this timer display a single chat message at a time, try setting the effect list's Run Mode to <strong>Sequential</strong> or <strong>Random</strong>
                 </p>
             </div>
 
@@ -95,7 +95,11 @@
                 if ($ctrl.timer.name === "") {
                     ngToast.create("Please provide a name for the Timer.");
                     return false;
-                } else if ($ctrl.timer.interval < 1) {
+                } else if (
+                    $ctrl.timer.interval == null
+                    || $ctrl.timer.interval === ""
+                    || $ctrl.timer.interval <= 0
+                ) {
                     ngToast.create("Timer interval must be greater than 0.");
                     return false;
                 }
@@ -107,17 +111,16 @@
                     return;
                 }
 
-                timerService.saveTimer($ctrl.timer).then(successful => {
-                    if (successful) {
-                        $ctrl.close({
-                            $value: {
-                                timer: $ctrl.timer
-                            }
-                        });
-                    } else {
-                        ngToast.create("Failed to save timer. Please try again or view logs for details.");
-                    }
-                });
+                const successful = timerService.saveTimer($ctrl.timer);
+                if (successful) {
+                    $ctrl.close({
+                        $value: {
+                            timer: $ctrl.timer
+                        }
+                    });
+                } else {
+                    ngToast.create("Failed to save timer. Please try again or view logs for details.");
+                }
             };
         }
     });

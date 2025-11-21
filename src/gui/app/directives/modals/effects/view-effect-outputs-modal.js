@@ -67,7 +67,7 @@
                         saveText: "Save",
                         descriptionText: "Ensure that your output names are unique within an effect list. If two effects output to the same name, unexpected behavior may occur.",
                         validationFn: (value) => {
-                            return new Promise(resolve => {
+                            return new Promise((resolve) => {
                                 if (value?.trim().length < 1) {
                                     resolve(false);
                                 } else {

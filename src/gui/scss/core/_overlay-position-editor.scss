@@ -1,0 +1,112 @@
+.overlay-position-editor {
+    position: relative;
+
+    .overlay-dimensions {
+        position: absolute;
+        top: -20px;
+        right: 0;
+        height: 20px;
+        min-width: 1px;
+        padding: 0 10px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgb(51, 51, 51);
+        border: 2px solid rgb(85, 85, 85);
+        border-bottom: 0;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        gap: 5px;
+        &:hover {
+            cursor: pointer;
+            background: rgb(60, 60, 60);
+        }
+    }
+
+    .overlay-canvas {
+        .overlay-widget-preview {
+            .resize-handle {
+                position: absolute;
+                background-color: rgba(50, 120, 255, 0.8);
+                z-index: 10;
+            }
+            .corner-handle {
+                width: 12px;
+                height: 12px;
+                border: 2px solid white;
+            }
+            .top-left {
+                top: -6px;
+                left: -6px;
+                cursor: nw-resize;
+            }
+            .top-right {
+                top: -6px;
+                right: -6px;
+                cursor: ne-resize;
+            }
+            .bottom-left {
+                bottom: -6px;
+                left: -6px;
+                cursor: sw-resize;
+            }
+            .bottom-right {
+                bottom: -6px;
+                right: -6px;
+                cursor: se-resize;
+            }
+        }
+
+        .alignment-controls {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+            z-index: 20;
+
+            .alignment-button {
+                background-color: rgba(50, 120, 255, 0.8);
+                border: none;
+                color: white;
+                padding: 5px;
+                cursor: pointer;
+                border-radius: 3px;
+                transition: background-color 0.2s;
+
+                &:hover {
+                    background-color: rgba(50, 120, 255, 1);
+                }
+
+                i {
+                    font-size: 14px;
+                }
+            }
+        }
+
+        .center-guide {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.7);
+            z-index: 5;
+            pointer-events: none;
+
+            &.horizontal {
+                width: 100%;
+                height: 1px;
+                top: 50%;
+                left: 0;
+                box-shadow: 0 0 3px rgba(255, 255, 255, 0.8);
+            }
+            &.vertical {
+                width: 1px;
+                height: 100%;
+                top: 0;
+                left: 50%;
+                box-shadow: 0 0 3px rgba(255, 255, 255, 0.8);
+            }
+        }
+    }
+
+    // .position-controls {}
+}

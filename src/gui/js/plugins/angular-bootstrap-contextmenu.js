@@ -1,6 +1,5 @@
 (function($, angular) {
 
-  // eslint-disable-next-line angular/file-name, angular/no-service-method
   angular.module('ui.bootstrap.contextMenu', [])
     .service('CustomService', function () {
       'use strict';
@@ -193,7 +192,6 @@
               var ev = {
                 pageX: orientation === 'left' ? event.pageX - $ul[0].offsetWidth + 1 : event.pageY + $ul[0].offsetWidth - 1,
                 pageY: $ul[0].offsetTop + $li[0].offsetTop - 3,
-                // eslint-disable-next-line angular/window-service
                 view: event.view || window,
                 target: event.target,
                 event: $event
@@ -726,5 +724,4 @@
           }
         };
       }]);
-// eslint-disable-next-line angular/window-service
 })(window.angular.element, window.angular);

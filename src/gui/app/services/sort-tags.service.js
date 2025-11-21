@@ -1,10 +1,6 @@
 "use strict";
 
-/**
- * @typedef SortTag
- * @property {string} id
- * @property {string} name
- */
+/** @import { SortTag } from "../../../types/sort-tags" */
 
 (function() {
 
@@ -37,10 +33,6 @@
                 }
                 return sortTags[context];
             };
-
-            backendCommunicator.onAsync("get-sort-tags", async (context) => {
-                return service.getSortTags(context);
-            });
 
             /**
              * @param {string} context

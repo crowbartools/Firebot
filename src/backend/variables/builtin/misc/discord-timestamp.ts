@@ -1,17 +1,14 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { EffectTrigger } from "../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import moment from "moment";
+import type { ReplaceVariable, TriggersObject } from "../../../../types/variables";
+import logger from "../../../logwrapper";
 
-const moment = require("moment");
-const logger = require("../../../logwrapper");
-
-const triggers = {};
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.EVENT] = true;
-triggers[EffectTrigger.MANUAL] = true;
-triggers[EffectTrigger.CUSTOM_SCRIPT] = true;
-triggers[EffectTrigger.PRESET_LIST] = true;
-triggers[EffectTrigger.CHANNEL_REWARD] = true;
+const triggers: TriggersObject = {};
+triggers["command"] = true;
+triggers["event"] = true;
+triggers["manual"] = true;
+triggers["custom_script"] = true;
+triggers["preset"] = true;
+triggers["channel_reward"] = true;
 
 const model : ReplaceVariable = {
     definition: {
@@ -65,8 +62,8 @@ const model : ReplaceVariable = {
             }
         ],
         triggers: triggers,
-        categories: [VariableCategory.TEXT],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["text"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (_, dateString: string, format: string) => {
         let timestamp = moment().unix();

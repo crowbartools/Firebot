@@ -1,13 +1,14 @@
 import { DateTime, Duration } from "luxon";
 
 import { FirebotViewer } from "../../types/viewers";
+import { Currency } from "../../types/currency";
 
 import logger from "../logwrapper";
-import util from "../utility";
-import currencyAccess, { Currency } from "./currency-access";
+import { commafy } from "../utils";
+import currencyAccess from "./currency-access";
 import viewerDatabase from "../viewers/viewer-database";
 import viewerOnlineStatusManager from "../viewers/viewer-online-status-manager";
-import eventManager from "../events/EventManager";
+import { EventManager } from "../events/event-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import connectionManager from "../common/connection-manager";
 import twitchChat from "../chat/twitch-chat";
@@ -15,6 +16,7 @@ import customRolesManager from "../roles/custom-roles-manager";
 import firebotRolesManager from "../roles/firebot-roles-manager";
 import teamRolesManager from "../roles/team-roles-manager";
 import twitchRolesManager from "../../shared/twitch-roles";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
 
 interface GiveCurrencyRequest {
     currencyId: string;
@@ -66,7 +68,7 @@ class CurrencyManager {
                     messageTarget = `everyone`;
                     break;
                 case "allOnlineInRole":
-                    this.addCurrencyToViewerGroupOnlineViewers([role], currencyId, amount);
+                    void this.addCurrencyToViewerGroupOnlineViewers([role], currencyId, amount);
                     messageTarget = `all viewers in role ${role}`;
                     break;
                 case "individual":
@@ -76,12 +78,7 @@ class CurrencyManager {
             }
 
             if (sendChatMessage && messageTarget !== "") {
-                const twitchChat = require("../chat/twitch-chat");
-                if (!twitchChat.chatIsConnected) {
-                    return;
-                }
-
-                await twitchChat.sendChatMessage(`${amount < 0 ? "Removed" : "Gave"} ${util.commafy(amount)} ${currency.name} ${amount < 0 ? "from" : "to"} ${messageTarget}!`);
+                await TwitchApi.chat.sendChatMessage(`${amount < 0 ? "Removed" : "Gave"} ${commafy(amount)} ${currency.name} ${amount < 0 ? "from" : "to"} ${messageTarget}!`, null, true);
             }
         });
 
@@ -159,7 +156,7 @@ class CurrencyManager {
         try {
             // Update the DB with our new currency value.
             await db.updateAsync({ _id: viewer._id }, { $set: updateDoc }, {});
-            eventManager.triggerEvent("firebot", "currency-update", {
+            void EventManager.triggerEvent("firebot", "currency-update", {
                 username: viewer?.username,
                 currencyId: currencyId,
                 currencyName: currencyCache[currencyId]?.name,
@@ -368,7 +365,7 @@ class CurrencyManager {
 
         const onlineViewers = await viewerOnlineStatusManager.getOnlineViewers();
 
-        const teamRoles: Record<string, Array<{ id: string; name: string; }>> = {};
+        const teamRoles: Record<string, Array<{ id: string, name: string }>> = {};
         for (const viewer of onlineViewers) {
             teamRoles[viewer._id] = await teamRolesManager
                 .getAllTeamRolesForViewer(viewer._id);
@@ -417,7 +414,7 @@ class CurrencyManager {
                     await this.adjustCurrency(viewer, currencyId, value, adjustType);
                 }
             }
-        } catch (error) {
+        } catch {
             return;
         }
     }
@@ -522,7 +519,7 @@ class CurrencyManager {
                 return viewer.currency[currencyId];
             }
             return 0;
-        } catch (error) {
+        } catch {
             return null;
         }
     }

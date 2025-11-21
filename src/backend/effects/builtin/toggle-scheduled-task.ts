@@ -1,8 +1,7 @@
 import { EffectType } from "../../../types/effects";
-import { EffectCategory } from '../../../shared/effect-constants';
-import scheduledTaskManager from "../../timers/scheduled-task-manager";
+import { ScheduledTaskManager } from "../../timers/scheduled-task-manager";
 
-const model: EffectType<{
+const effect: EffectType<{
     scheduledTaskId: string;
     toggleType: "toggle" | "enable" | "disable";
     useTag?: boolean;
@@ -13,7 +12,7 @@ const model: EffectType<{
         name: "Toggle Scheduled Effect List",
         description: "Toggle a scheduled effect list's enabled status",
         icon: "fad fa-toggle-off",
-        categories: [EffectCategory.COMMON],
+        categories: ["common", "firebot control"],
         dependencies: []
     },
     optionsTemplate: `
@@ -82,7 +81,7 @@ const model: EffectType<{
         }
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (!effect.useTag && effect.scheduledTaskId == null) {
             errors.push("Please select a scheduled effect list.");
         }
@@ -103,26 +102,26 @@ const model: EffectType<{
         const scheduledTask = scheduledTaskService.getScheduledTasks().find(task => task.id === effect.scheduledTaskId);
         return `${action} ${scheduledTask?.name ?? "Unknown Scheduled Effect List"}`;
     },
-    onTriggerEvent: async (event) => {
+    onTriggerEvent: (event) => {
         const { effect } = event;
         if (!effect.useTag) {
-            const scheduledTask = scheduledTaskManager.getItem(effect.scheduledTaskId);
+            const scheduledTask = ScheduledTaskManager.getItem(effect.scheduledTaskId);
             scheduledTask.enabled = effect.toggleType === "toggle" ? !scheduledTask.enabled : effect.toggleType === "enable";
 
-            scheduledTaskManager.saveScheduledTask(scheduledTask);
+            ScheduledTaskManager.saveScheduledTask(scheduledTask);
 
             return true;
         }
 
-        const tasks = scheduledTaskManager.getAllItems().filter(task => task.sortTags?.includes(effect.sortTagId));
+        const tasks = ScheduledTaskManager.getAllItems().filter(task => task.sortTags?.includes(effect.sortTagId));
 
         tasks.forEach((scheduledTask) => {
             scheduledTask.enabled = effect.toggleType === "toggle" ? !scheduledTask.enabled : effect.toggleType === "enable";
-            scheduledTaskManager.saveScheduledTask(scheduledTask);
+            ScheduledTaskManager.saveScheduledTask(scheduledTask);
         });
 
         return true;
     }
 };
 
-export = model;
+export = effect;

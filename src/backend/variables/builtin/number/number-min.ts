@@ -1,9 +1,8 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const normalizeNumber = (input) => {
     const value = Number(input);
-    return Number.isInteger(value) ? value : null;
+    return Number.isFinite(value) ? value : null;
 };
 
 const model : ReplaceVariable = {
@@ -29,8 +28,8 @@ const model : ReplaceVariable = {
                 description: "Returns 3, the lowest value from the input stringified array and numbers"
             }
         ],
-        categories: [VariableCategory.NUMBERS],
-        possibleDataOutput: [OutputDataType.NULL, OutputDataType.NUMBER]
+        categories: ["numbers"],
+        possibleDataOutput: ["null", "number"]
     },
     evaluator: (
         trigger: Trigger,
@@ -42,11 +41,11 @@ const model : ReplaceVariable = {
             }
             if (typeof value === "string") {
                 try {
-                    const parsed = JSON.parse(value);
+                    const parsed = JSON.parse(value) as object;
                     if (Array.isArray(parsed)) {
                         return parsed.map(normalizeNumber);
                     }
-                } catch (e) {
+                } catch {
                     return normalizeNumber(value);
                 }
             }

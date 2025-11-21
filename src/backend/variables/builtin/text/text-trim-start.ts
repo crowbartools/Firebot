@@ -1,14 +1,13 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import { convertToString } from '../../../utility';
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
+import { stringify } from '../../../utils';
 
 const model : ReplaceVariable = {
     definition: {
         handle: "trimStart",
         description: "Removes any whitespace from the beginning of input text.",
         usage: "trimStart[text]",
-        categories: [VariableCategory.TEXT],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["text"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (
         trigger: Trigger,
@@ -17,7 +16,7 @@ const model : ReplaceVariable = {
         if (subject == null) {
             return '';
         }
-        return convertToString(subject).trimStart();
+        return stringify(subject).trimStart();
     }
 };
 

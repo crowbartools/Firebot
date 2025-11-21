@@ -1,6 +1,5 @@
 "use strict";
 
-const { EffectCategory } = require("../../../../../shared/effect-constants");
 const { integration } = require("../elgato");
 
 const effect = {
@@ -9,7 +8,7 @@ const effect = {
         name: "Update Elgato Light Strips",
         description: "Turn Elgato Light Strips on or off and change the color.",
         icon: "fad fa-lights-holiday fa-align-center",
-        categories: [EffectCategory.INTEGRATIONS],
+        categories: ["integrations"],
         dependencies: []
     },
     globalSettings: {},
@@ -66,7 +65,7 @@ const effect = {
         }
 
         $q.when(backendCommunicator.fireEventAsync("getLightStrips"))
-            .then(lightStrips => {
+            .then((lightStrips) => {
                 if (lightStrips?.length > 0) {
                     $scope.lightStrips = lightStrips;
 

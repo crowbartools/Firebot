@@ -26,19 +26,20 @@
                         <i ng-if="option.iconClass" class="fal" ng-class="option.iconClass"></i>
                     </div>
                     <div class="fb-radio-card-text-container">
-                        <div class="fb-radio-card-title">{{option.label}}</div>
+                        <div class="fb-radio-card-title">{{option.label}} <tooltip ng-if="option.tooltip" text="option.tooltip"></tooltip></div>
                         <div ng-if="option.description" class="fb-radio-card-description">{{option.description}}</div>
                     </div>
                 </div>
             </div>
             `,
-            controller: function() {
+            controller: function($scope) {
                 const $ctrl = this;
 
-                $ctrl.setSelected = function(value) {
-                    $ctrl.modelValue = value;
-                    console.log($ctrl.ngModelCtrl);
-                };
+                $scope.$watch('$ctrl.modelValue', (newValue) => {
+                    if ($ctrl.ngModelCtrl.$viewValue !== newValue) {
+                        $ctrl.ngModelCtrl.$setViewValue(newValue);
+                    }
+                });
             }
         });
 })();

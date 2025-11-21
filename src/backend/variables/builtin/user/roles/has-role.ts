@@ -1,17 +1,15 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
-import { EffectTrigger } from "../../../../../shared/effect-constants";
+import type { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
 
-import twitchApi from "../../../../twitch-api/api";
+import { TwitchApi } from "../../../../streaming-platforms/twitch/api";
 import roleHelpers from "../../../../roles/role-helpers";
 
-const triggers = {};
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.EVENT] = true;
-triggers[EffectTrigger.MANUAL] = true;
-triggers[EffectTrigger.CUSTOM_SCRIPT] = true;
-triggers[EffectTrigger.PRESET_LIST] = true;
-triggers[EffectTrigger.CHANNEL_REWARD] = true;
+const triggers: TriggersObject = {};
+triggers["command"] = true;
+triggers["event"] = true;
+triggers["manual"] = true;
+triggers["custom_script"] = true;
+triggers["preset"] = true;
+triggers["channel_reward"] = true;
 
 const model : ReplaceVariable = {
     definition: {
@@ -29,8 +27,8 @@ const model : ReplaceVariable = {
             }
         ],
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.ALL]
+        categories: ["common", "user based"],
+        possibleDataOutput: ["ALL"]
     },
     evaluator: async (_trigger, username: string, role: string) => {
         if (username == null || username === "") {
@@ -42,7 +40,7 @@ const model : ReplaceVariable = {
         }
 
         try {
-            const user = await twitchApi.users.getUserByName(username);
+            const user = await TwitchApi.users.getUserByName(username);
             if (user == null) {
                 return false;
             }

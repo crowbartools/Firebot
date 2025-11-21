@@ -39,6 +39,21 @@
                     </firebot-setting>
 
                     <firebot-setting
+                        name="Overlay Resolution"
+                        description="The resolution of the overlay's browser source in your broadcasting software. This is used for Overlay Widget positioning and sizing controls."
+                    >
+                        <span
+                            style="padding-right: 10px"
+                        >
+                            {{ overlayResolution.width }} x {{ overlayResolution.height }}
+                        </span>
+                        <firebot-button
+                            text="Edit"
+                            ng-click="openEditOverlayResolutionModal()"
+                        />
+                    </firebot-setting>
+
+                    <firebot-setting
                         name="Force Effects to Continue on Overlay Refresh"
                         description="When refreshing an overlay or using the Clear Effects effect on it, this will force
                         any Play Video or Play Sound effects currently playing on that overlay to continue to the next effect,
@@ -66,7 +81,7 @@
 
                 </div>
           `,
-            controller: function($scope, settingsService, utilityService) {
+            controller: function($scope, settingsService, utilityService, modalFactory) {
                 $scope.settings = settingsService;
 
                 $scope.showOverlayInfoModal = function(overlayInstance) {
@@ -76,6 +91,14 @@
                 $scope.showEditOverlayInstancesModal = function() {
                     utilityService.showModal({
                         component: "editOverlayInstancesModal"
+                    });
+                };
+
+                $scope.overlayResolution = settingsService.getSetting("OverlayResolution") ?? { width: 1280, height: 720 };
+
+                $scope.openEditOverlayResolutionModal = function() {
+                    modalFactory.openEditOverlayResolutionModal((newResolution) => {
+                        $scope.overlayResolution = newResolution;
                     });
                 };
 

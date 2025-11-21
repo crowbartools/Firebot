@@ -3,7 +3,6 @@
 const { SettingsManager } = require("../../common/settings-manager");
 const webServer = require("../../../server/http-server-manager");
 const logger = require("../../logwrapper");
-const { EffectCategory } = require('../../../shared/effect-constants');
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 
 /**
@@ -18,7 +17,7 @@ const showText = {
         name: "Show Text",
         description: "Shows specified text in the overlay.",
         icon: "fad fa-text",
-        categories: [EffectCategory.COMMON, EffectCategory.OVERLAY],
+        categories: ["common", "overlay"],
         dependencies: []
     },
     /**
@@ -259,13 +258,14 @@ const showText = {
             debugBorder: effect.debugBorder,
             dropShadow: effect.dropShadow,
             overlayInstance: effect.overlayInstance,
-            rotation: effect.rotation ? effect.rotation + effect.rotType : "0deg"
+            rotation: effect.rotation ? effect.rotation + effect.rotType : "0deg",
+            zIndex: effect.zIndex
         };
 
         const position = dto.position;
         if (position === "Random") {
             logger.debug("Getting random preset location");
-            dto.position = mediaProcessor.randomLocation(); //eslint-disable-line no-undef
+            dto.position = mediaProcessor.randomLocation();
         }
 
         if (SettingsManager.getSetting("UseOverlayInstances")) {
@@ -376,7 +376,7 @@ const showText = {
                 if (borderColor) {
                     styles += `border: 2px solid ${borderColor};`;
                 }
-
+                styles += data.zIndex ? `position: relative; z-index: ${data.zIndex};` : '';
                 const textDiv = `
                     <div class="text-container"
                         style="${styles}">

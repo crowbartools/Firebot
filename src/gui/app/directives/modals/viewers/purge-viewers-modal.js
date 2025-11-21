@@ -48,6 +48,10 @@
                                 </div>
                             </form>
                         </div>
+                        <label class="control-fb control--checkbox" style="font-size: 13px;"> Are banned
+                            <input type="checkbox" ng-model="$ctrl.options.banned.enabled">
+                            <div class="control__indicator"></div>
+                        </label>
                         <p class="muted">Note: Viewers must meet all of the selected criteria above to be purged (exclusive filter).</p>
                     </div>
                 </div>
@@ -76,19 +80,23 @@
                     chatMessagesSent: {
                         enabled: false,
                         value: 0
+                    },
+                    banned: {
+                        enabled: false
                     }
                 };
 
                 $ctrl.getPurgePreview = () => {
                     $rootScope.showSpinner = true;
                     $q.when(backendCommunicator.fireEventAsync("get-purge-preview", $ctrl.options))
-                        .then((users) => {
+                        .then((viewers) => {
                             $rootScope.showSpinner = false;
                             utilityService.showModal({
                                 component: "previewPurgeModal",
+                                size: "lg",
                                 backdrop: true,
                                 resolveObj: {
-                                    viewers: () => users
+                                    viewers: () => viewers
                                 }
                             });
                         });
@@ -110,7 +118,7 @@
                                         $rootScope.showSpinner = false;
                                         ngToast.create({
                                             className: 'success',
-                                            content: `Successfully purged ${purgedCount} users.`
+                                            content: `Successfully purged ${purgedCount} viewers.`
                                         });
                                         $ctrl.close();
                                     });

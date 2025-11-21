@@ -1,4 +1,5 @@
 import activeChatUserCount from './active-chat-user-count';
+import chatUserCount from "./chat-user-count";
 import color from './color';
 import date from './date';
 import discordTimestamp from './discord-timestamp';
@@ -15,10 +16,10 @@ import topViewTime from './top-view-time';
 import topViewTimeRaw from './top-view-time-raw';
 import unixTimestamp from './unix-timestamp';
 import uptime from './uptime';
-import viewTime from './view-time';
 
 export default [
     activeChatUserCount,
+    chatUserCount,
     color,
     date,
     discordTimestamp,
@@ -34,6 +35,5 @@ export default [
     topViewTime,
     topViewTimeRaw,
     unixTimestamp,
-    uptime,
-    viewTime
+    uptime
 ];

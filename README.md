@@ -19,10 +19,10 @@ Head on over to [Firebot's website](https://firebot.app) and download the latest
 Please visit our [Discord server](https://discord.gg/crowbartools-372817064034959370) or send us a [Threads](https://threads.net/@FirebotApp) or [Bluesky](https://bsky.app/profile/firebot.app). We are more than happy to help.
 
 ### I found a bug, how do I report it?
-You can create a Bug Report [here](https://github.com/crowbartools/Firebot/issues/new?assignees=ebiggz%2C+LastMageTV&labels=bug&template=bug_report.md&title=%5BBUG%5D+). We'll reply as soon as we can.
+You can create a Bug Report [here](https://github.com/crowbartools/Firebot/issues/new?assignees=&template=bug_report.yml). We'll reply as soon as we can.
 
 ### I have a new feature idea, where do I share it?
-We'd love to hear your idea! You can submit a Feature Request [here](https://github.com/crowbartools/Firebot/issues/new?assignees=ebiggz%2C+LastMageTV&labels=Feature+Request&template=feature_request.md&title=%5BFeature+Request%5D+).
+We'd love to hear your idea! You can submit a Feature Request [here](https://github.com/crowbartools/Firebot/issues/new?assignees=&template=feature_request.md).
 
 ## License
 This code (everything in the repository) is provided under the GNU General Public License v3.0. This means that you're free to take the code in this repository and modify it in whatever way you like and distribute this code for any purpose. However, if you release it then it must be under this same license, make it open source, and provide documentation of changes made. All versions must have copyright credit pointing back to this source.

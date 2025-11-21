@@ -1,25 +1,32 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 import currencyAccess from "../../../currency/currency-access";
 import currencyManager from "../../../currency/currency-manager";
-const util = require("../../../utility");
+import { commafy } from "../../../utils";
 
 const model : ReplaceVariable = {
     definition: {
         handle: "topCurrency",
         description: "Comma separated list of users with the most of the given currency. Defaults to top 10, you can provide a custom number as a second argument.",
         usage: "topCurrency[currencyName]",
-        examples: [
+        hasSuggestions: true,
+        noSuggestionsText: "No currencies have been created yet.",
+        possibleDataOutput: ["text"]
+    },
+    getSuggestions: () => {
+        const currencies = Object.values(currencyAccess.getCurrencies());
+        return currencies.flatMap(c => ([
             {
-                usage: "topCurrency[Points, 5]",
-                description: "Returns comma-separated list of top 5 users with their Points amounts"
+                usage: `topCurrency[${c.name}]`,
+                description: `Get the top 10 ${c.name} usernames and amounts`
+            },
+            {
+                usage: `topCurrency[${c.name}, 5]`,
+                description: `Get the top 5 ${c.name} usernames and amounts`
             }
-        ],
-        possibleDataOutput: [OutputDataType.TEXT]
+        ]));
     },
 
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
     evaluator: async (_, currencyName: string, count: number = 10) => {
 
         if (currencyName == null) {
@@ -42,8 +49,8 @@ const model : ReplaceVariable = {
 
         const currencies = Object.values(currencyData);
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const currency = <{name: string, id: any} | null>currencies.find((c: {name: string, id: unknown}) => c.name.toLowerCase() === currencyName.toLowerCase());
+
+        const currency = currencies.find((c: { name: string, id: unknown }) => c.name.toLowerCase() === currencyName.toLowerCase());
 
         if (currency == null) {
             return "[Invalid currency name]";
@@ -52,7 +59,7 @@ const model : ReplaceVariable = {
         const topCurrencyHolders = await currencyManager.getTopCurrencyHolders(currency.id, count);
 
         const topHoldersDisplay = topCurrencyHolders.map((u, i) => {
-            return `#${i + 1}) ${u.displayName} - ${util.commafy(u.currency[currency.id])}`;
+            return `#${i + 1}) ${u.displayName} - ${commafy(u.currency[currency.id])}`;
         }).join(", ");
 
         return topHoldersDisplay;

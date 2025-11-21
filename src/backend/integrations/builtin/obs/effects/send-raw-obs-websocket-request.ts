@@ -10,7 +10,7 @@ export const SendRawOBSWebSocketRequestEffectType: EffectType<{
         name: "Send Raw OBS WebSocket Request",
         description: "Send a raw WebSocket request to OBS",
         icon: "fad fa-plug",
-        categories: ["advanced"],
+        categories: ["advanced", "integrations"],
         outputs: [
             {
                 label: "API Response",

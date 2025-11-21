@@ -11,6 +11,7 @@
         "timers",
         "hotkeys",
         "quick-actions",
+        "overlay-widgets",
         "chat",
         "conditionals",
         "restrictions",
@@ -23,10 +24,17 @@
         "ui",
         "overlay",
         "scripts",
-        "ranks"
+        "ranks",
+        "moderation"
     ],
-    "[typescript]": {
-      "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    "[javascript]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
     },
-    "prettier.trailingComma": "none"
+    "[typescript]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    "prettier.trailingComma": "none",
+    "[scss]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }

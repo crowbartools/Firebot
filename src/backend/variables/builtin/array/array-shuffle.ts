@@ -1,5 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const shuffle = (subject: unknown[]) : unknown[] => {
     const arrayCopy = subject.slice(0);
@@ -27,8 +26,8 @@ const model : ReplaceVariable = {
                 description: "Returns a shuffled version of the raw array."
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["text"]
     },
 
     evaluator: (

@@ -1,14 +1,13 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import { convertToString } from '../../../utility';
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
+import { stringify } from '../../../utils';
 
 const model : ReplaceVariable = {
     definition: {
         handle: "splitText",
         description: "Splits text with the given separator and returns an array. Useful for Custom Variables.",
         usage: "splitText[text, separator]",
-        categories: [VariableCategory.TEXT],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["text"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (
         trigger: Trigger,
@@ -18,7 +17,7 @@ const model : ReplaceVariable = {
         if (subject == null) {
             return [];
         }
-        return convertToString(subject).split(convertToString(separator));
+        return stringify(subject).split(stringify(separator));
     }
 };
 

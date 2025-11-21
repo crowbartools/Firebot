@@ -8,7 +8,10 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
             listener(data);
         });
     },
-    deleteVariable: (key) => {
-        ipcRenderer.send("customVariableDelete", key);
+    send: (channel, ...args) => {
+        ipcRenderer.send(channel, ...args);
+    },
+    sendSync: (channel, ...args) => {
+        return ipcRenderer.sendSync(channel, ...args);
     }
 });

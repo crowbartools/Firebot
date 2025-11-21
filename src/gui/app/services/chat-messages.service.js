@@ -2,7 +2,7 @@
 (function() {
     const moment = require('moment');
 
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     angular
         .module('firebotApp')
@@ -132,19 +132,35 @@
             };
 
             // Chat Alert Message
-            service.chatAlertMessage = function(message) {
-
+            service.chatAlertMessage = function(message, icon = "fad fa-exclamation-circle") {
                 const alertItem = {
-                    id: uuid(),
+                    id: randomUUID(),
                     type: "alert",
-                    data: message
+                    message: message,
+                    icon: icon
                 };
 
                 service.chatQueue.push(alertItem);
             };
 
-            backendCommunicator.on("chat-feed-system-message", (message) => {
-                service.chatAlertMessage(message);
+            backendCommunicator.on("chat-feed-system-message", (message, icon) => {
+                service.chatAlertMessage(message, icon);
+            });
+
+            // Custom Highlight and Banner
+            service.customHighlightAndBanner = function(messageId, customHighlightColor, customBannerIcon, customBannerText) {
+                const messageItem = service.chatQueue.find(i => i.type === "message" && i.data.id === messageId);
+                if (messageItem == null) {
+                    return;
+                }
+
+                messageItem.data.customHighlightColor = customHighlightColor;
+                messageItem.data.customBannerIcon = customBannerIcon;
+                messageItem.data.customBannerText = customBannerText;
+            };
+
+            backendCommunicator.on("chat-feed-custom-highlight", (data) => {
+                service.customHighlightAndBanner(data.messageId, data.customHighlightColor, data.customBannerIcon, data.customBannerText);
             });
 
             // Chat Update Handler
@@ -194,7 +210,7 @@
                         break;
                     case "ChatAlert":
                         logger.debug("Chat alert from backend.");
-                        service.chatAlertMessage(data.message);
+                        service.chatAlertMessage(data.message, data.icon);
                         break;
                     default:
                     // Nothing
@@ -270,35 +286,20 @@
 
             backendCommunicator.on("twitch:chat:user:delete-messages", markUserMessagesAsDeleted);
 
-            service.changeModStatus = (username, shouldBeMod) => {
-                backendCommunicator.send("update-user-mod-status", {
-                    username,
-                    shouldBeMod
-                });
+            service.hideMessageInChatFeed = function(messageId) {
+                const messageItem = service.chatQueue.find(i => i.type === "message" && i.data.id === messageId);
+                if (messageItem == null) {
+                    return;
+                }
+
+                messageItem.data.isHiddenFromChatFeed = true;
             };
 
-            // $interval(() => {
-            //     if (messageHoldingQueue.length > 0) {
-            //         service.chatQueue = service.chatQueue.concat(messageHoldingQueue);
-            //         messageHoldingQueue = [];
-
-            //         // Trim messages.
-            //         service.pruneChatQueue();
-
-            //         //hacky way to ensure we stay scroll glued
-            //         $timeout(() => {
-            //             $rootScope.$broadcast('ngScrollGlue.scroll');
-            //         }, 1);
-            //     }
-            // }, 250);
+            backendCommunicator.on("chat-feed-message-hide", (data) => {
+                service.hideMessageInChatFeed(data.messageId);
+            });
 
             backendCommunicator.on("twitch:chat:rewardredemption", (redemption) => {
-                const redemptionItem = {
-                    id: uuid(),
-                    type: "redemption",
-                    data: redemption
-                };
-
                 if (service.chatQueue && service.chatQueue.length > 0) {
                     const lastQueueItem = service.chatQueue[service.chatQueue.length - 1];
                     if (!lastQueueItem.rewardMatched &&
@@ -307,12 +308,16 @@
                             lastQueueItem.data.customRewardId === redemption.reward.id &&
                             lastQueueItem.data.userId === redemption.user.id) {
                         lastQueueItem.rewardMatched = true;
-                        service.chatQueue.splice(-1, 0, redemptionItem);
+                        lastQueueItem.data.reward = redemption.reward;
                         return;
                     }
                 }
 
-                service.chatQueue.push(redemptionItem);
+                service.chatQueue.push({
+                    id: randomUUID(),
+                    type: "redemption",
+                    data: redemption
+                });
             });
 
             backendCommunicator.on("twitch:chat:user-joined", (user) => {
@@ -331,7 +336,7 @@
                 service.clearUserList();
             });
 
-            backendCommunicator.on("twitch:chat:automod-update", ({messageId, newStatus, resolverName }) => {
+            backendCommunicator.on("twitch:chat:automod-update", ({ messageId, newStatus, resolverName }) => {
 
                 const messageItem = service.chatQueue.find(i => i.type === "message" &&
                     (i.data.id === messageId || i.data.autoModHeldMessageId === messageId)
@@ -345,7 +350,7 @@
                 messageItem.data.autoModResolvedBy = resolverName;
             });
 
-            backendCommunicator.on("twitch:chat:automod-update-error", ({messageId, likelyExpired}) => {
+            backendCommunicator.on("twitch:chat:automod-update-error", ({ messageId, likelyExpired }) => {
                 const messageItem = service.chatQueue.find(i => i.type === "message" &&
                     (i.data.id === messageId || i.data.autoModHeldMessageId === messageId)
                 );
@@ -445,7 +450,7 @@
 
                 // Push new message to queue.
                 const messageItem = {
-                    id: uuid(),
+                    id: randomUUID(),
                     type: "message",
                     data: chatMessage
                 };
@@ -466,28 +471,42 @@
                 service.pruneChatQueue();
             });
 
-            service.allEmotes = [];
-            service.filteredEmotes = [];
+            service.allEmotes = {
+                streamer: [],
+                bot: [],
+                thirdParty: []
+            };
+
+            service.filteredEmotes = {
+                streamer: [],
+                bot: [],
+                thirdParty: []
+            };
+
             service.refreshEmotes = () => {
                 const showBttvEmotes = settingsService.getSetting("ChatShowBttvEmotes");
                 const showFfzEmotes = settingsService.getSetting("ChatShowFfzEmotes");
                 const showSevenTvEmotes = settingsService.getSetting("ChatShowSevenTvEmotes");
 
-                service.filteredEmotes = service.allEmotes.filter((e) => {
-                    if (showBttvEmotes !== true && e.origin === "BTTV") {
-                        return false;
-                    }
+                service.filteredEmotes = {
+                    streamer: service.allEmotes.streamer,
+                    bot: service.allEmotes.bot,
+                    thirdParty: service.allEmotes.thirdParty.filter((e) => {
+                        if (showBttvEmotes !== true && e.origin === "BTTV") {
+                            return false;
+                        }
 
-                    if (showFfzEmotes !== true && e.origin === "FFZ") {
-                        return false;
-                    }
+                        if (showFfzEmotes !== true && e.origin === "FFZ") {
+                            return false;
+                        }
 
-                    if (showSevenTvEmotes !== true && e.origin === "7TV") {
-                        return false;
-                    }
+                        if (showSevenTvEmotes !== true && e.origin === "7TV") {
+                            return false;
+                        }
 
-                    return true;
-                });
+                        return true;
+                    })
+                };
             };
 
             backendCommunicator.on("all-emotes", (emotes) => {

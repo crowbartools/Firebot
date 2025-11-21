@@ -1,7 +1,7 @@
 "use strict";
 
 (function() {
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     angular.module("firebotApp")
         .component("manageSortTagsModal", {
@@ -48,7 +48,7 @@
 
                 $ctrl.tags = [];
 
-                $ctrl.removeTag = tagId => {
+                $ctrl.removeTag = (tagId) => {
                     $ctrl.tags = $ctrl.tags.filter(t => t.id !== tagId);
                 };
 
@@ -59,7 +59,7 @@
                             label: tag ? "Edit Tag Name" : "Add Tag",
                             saveText: "OK",
                             validationFn: (value) => {
-                                return new Promise(resolve => {
+                                return new Promise((resolve) => {
                                     if (value == null || value.trim().length < 1) {
                                         resolve(false);
                                     } else {
@@ -74,7 +74,7 @@
                                 tag.name = name;
                             } else {
                                 $ctrl.tags.push({
-                                    id: uuid(),
+                                    id: randomUUID(),
                                     name: name
                                 });
                             }

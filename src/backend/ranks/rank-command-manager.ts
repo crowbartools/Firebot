@@ -1,9 +1,9 @@
-import { CommandOption, SystemCommand } from "../../types/commands";
-import { RankLadder } from "../../types/ranks";
-import commandManager from "../chat/commands/command-manager";
+import type { SystemCommand } from "../../types/commands";
+import type { RankLadder } from "../../types/ranks";
+import { CommandManager } from "../chat/commands/command-manager";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
 import rankManager from "./rank-manager";
 import viewerDatabase from "../viewers/viewer-database";
-import type TwitchChat from "../chat/twitch-chat";
 import logger from "../logwrapper";
 
 type RankCommandRefreshRequestAction = "create" | "update" | "delete";
@@ -16,7 +16,7 @@ type RankCommandOptions = {
     demoteRankMessageTemplate: string;
     setRankMessageTemplate: string;
     removeRankMessageTemplate: string;
-}
+};
 
 class RankCommandManager {
     constructor() {
@@ -34,7 +34,7 @@ class RankCommandManager {
     createRankCommandDefinition(rankLadder: RankLadder): SystemCommand<RankCommandOptions> {
         const cleanRankLadderName = rankLadder.name.replace(/\s+/g, '-').toLowerCase();
 
-        const sharedCommandOptions: Record<string, CommandOption> = {
+        const sharedCommandOptions: Partial<SystemCommand<RankCommandOptions>["definition"]["options"]> = {
             selfRankMessageTemplate: {
                 type: "string",
                 title: "Self Rank Message Template",
@@ -61,7 +61,7 @@ class RankCommandManager {
             }
         };
 
-        const manualCommandOptions: Record<string, CommandOption> = {
+        const manualCommandOptions: Partial<SystemCommand<RankCommandOptions>["definition"]["options"]> = {
             promoteRankMessageTemplate: {
                 type: "string",
                 title: "Promote Rank Message Template",
@@ -114,7 +114,7 @@ class RankCommandManager {
                 options: {
                     ...sharedCommandOptions,
                     ...(rankLadder.mode === "manual" ? manualCommandOptions : {})
-                },
+                } as SystemCommand<RankCommandOptions>["definition"]["options"],
                 subCommands: [
                     {
                         arg: "list",
@@ -221,15 +221,12 @@ class RankCommandManager {
                 ]
             },
             onTriggerEvent: async (event) => {
-                const twitchChat: typeof TwitchChat = require("../chat/twitch-chat");
-
                 const { commandOptions, chatMessage } = event;
                 const triggeredSubcmd = event.userCommand.triggeredSubcmd;
                 const args = event.userCommand.args;
 
                 const sendMessage = (message: string) =>
-                    twitchChat.sendChatMessage(message, undefined, undefined, chatMessage.id);
-
+                    TwitchApi.chat.sendChatMessage(message, chatMessage.id, true);
 
                 // If no arguments are provided, show the user's rank
                 if (args.length === 0) {
@@ -237,7 +234,8 @@ class RankCommandManager {
                     if (userRank) {
                         const rankMessage =
                             commandOptions.selfRankMessageTemplate
-                                .replace("{rank}", userRank.name);
+                                .replaceAll("{rank}", userRank.name)
+                                .replaceAll("{user}", event.userCommand.commandSender);
                         await sendMessage(rankMessage);
                     } else {
                         await sendMessage("You are currently not ranked.");
@@ -255,8 +253,8 @@ class RankCommandManager {
                         if (viewerRank) {
                             const rankMessage =
                                 commandOptions.otherRankMessageTemplate
-                                    .replace("{rank}", viewerRank.name)
-                                    .replace("{user}", username);
+                                    .replaceAll("{rank}", viewerRank.name)
+                                    .replaceAll("{user}", username);
                             await sendMessage(rankMessage);
                         } else {
                             await sendMessage(`${username} is currently not ranked.`);
@@ -272,7 +270,7 @@ class RankCommandManager {
                             })
                             .join(", ");
                         const rankListMessage = commandOptions.rankListMessageTemplate
-                            .replace("{ranks}", ranks);
+                            .replaceAll("{ranks}", ranks);
                         await sendMessage(rankListMessage);
                     } else if (triggeredSubcmd.arg === "promote") {
                         if (rankLadder.mode === "auto") {
@@ -300,8 +298,8 @@ class RankCommandManager {
                         await viewerDatabase.setViewerRank(viewer, rankLadder.id, nextRankId);
 
                         const promoteMessage = commandOptions.promoteRankMessageTemplate
-                            .replace("{user}", username)
-                            .replace("{rank}", nextRank.name);
+                            .replaceAll("{user}", username)
+                            .replaceAll("{rank}", nextRank.name);
 
                         await sendMessage(promoteMessage);
                     } else if (triggeredSubcmd.arg === "demote") {
@@ -330,8 +328,8 @@ class RankCommandManager {
                         await viewerDatabase.setViewerRank(viewer, rankLadder.id, previousRankId);
 
                         const demoteMessage = commandOptions.demoteRankMessageTemplate
-                            .replace("{user}", username)
-                            .replace("{rank}", previousRank?.name ?? "not ranked");
+                            .replaceAll("{user}", username)
+                            .replaceAll("{rank}", previousRank?.name ?? "not ranked");
 
                         await sendMessage(demoteMessage);
                     } else if (triggeredSubcmd.arg === "set") {
@@ -359,8 +357,8 @@ class RankCommandManager {
                         await viewerDatabase.setViewerRank(viewer, rankLadder.id, rank.id);
 
                         const setRankMessage = commandOptions.setRankMessageTemplate
-                            .replace("{user}", username)
-                            .replace("{rank}", rank.name);
+                            .replaceAll("{user}", username)
+                            .replaceAll("{rank}", rank.name);
 
                         await sendMessage(setRankMessage);
                     } else if (triggeredSubcmd.arg === "remove") {
@@ -379,7 +377,7 @@ class RankCommandManager {
                         await viewerDatabase.setViewerRank(viewer, rankLadder.id, null);
 
                         const removeRankMessage = commandOptions.removeRankMessageTemplate
-                            .replace("{user}", username);
+                            .replaceAll("{user}", username);
 
                         await sendMessage(removeRankMessage);
                     } else {
@@ -405,16 +403,16 @@ class RankCommandManager {
 
         switch (action) {
             case "update":
-                commandManager.unregisterSystemCommand(`firebot:rank-ladder:${rankLadder.id}`);
-                commandManager.registerSystemCommand(
+                CommandManager.unregisterSystemCommand(`firebot:rank-ladder:${rankLadder.id}`);
+                CommandManager.registerSystemCommand(
                     this.createRankCommandDefinition(rankLadder)
                 );
                 break;
             case "delete":
-                commandManager.unregisterSystemCommand(`firebot:rank-ladder:${rankLadder.id}`);
+                CommandManager.unregisterSystemCommand(`firebot:rank-ladder:${rankLadder.id}`);
                 break;
             case "create":
-                commandManager.registerSystemCommand(
+                CommandManager.registerSystemCommand(
                     this.createRankCommandDefinition(rankLadder)
                 );
                 break;

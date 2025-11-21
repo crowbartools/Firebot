@@ -1,13 +1,15 @@
 import { TypedEmitter } from "tiny-typed-emitter";
 import { JsonDB } from "node-json-db";
 import { DateTime } from "luxon";
+import { randomUUID } from "crypto";
 
 import { CommandDefinition, SystemCommand, SystemCommandDefinition } from "../../../types/commands";
-import logger from "../../logwrapper";
-import util from "../../utility";
-import profileManager from "../../common/profile-manager";
+
+import { AccountAccess } from "../../common/account-access";
+import { ProfileManager } from "../../common/profile-manager";
 import frontendCommunicator from "../../common/frontend-communicator";
-import accountAccess from "../../common/account-access";
+import logger from "../../logwrapper";
+import { deepClone } from "../../utils";
 
 type Events = {
     "created-item": (item: object) => void;
@@ -18,7 +20,7 @@ type Events = {
 };
 
 interface SystemCommandOverrides {
-    [overrideId: string]: SystemCommandDefinition
+    [overrideId: string]: SystemCommandDefinition;
 }
 
 interface CommandCache {
@@ -39,11 +41,59 @@ class CommandManager extends TypedEmitter<Events> {
     constructor() {
         super();
 
+        frontendCommunicator.on("get-all-system-commands", () => {
+            logger.info("got 'get all cmds' request");
+            return this.getSystemCommands();
+        });
+
+        frontendCommunicator.on("get-all-system-command-definitions", () => {
+            logger.info("got 'get all cmd defs' request");
+            return this.getAllSystemCommandDefinitions();
+        });
+
+        frontendCommunicator.on("get-system-command", (commandId: string) => {
+            logger.info("got 'get cmd' request", commandId);
+            return this.getSystemCommandById(commandId);
+        });
+
+        frontendCommunicator.on("save-system-command-override", (sysCommand: SystemCommandDefinition) => {
+            logger.info("got 'save sys cmd' request");
+            this.saveSystemCommandOverride(sysCommand);
+        });
+
+        frontendCommunicator.on("remove-system-command-override", (id: string) => {
+            logger.info("got 'remove sys cmd' request");
+            this.removeSystemCommandOverride(id);
+        });
+
+        frontendCommunicator.on("get-all-custom-commands", () => {
+            return this.getAllCustomCommands();
+        });
+
+        frontendCommunicator.on("save-custom-command", (commandData: { command: CommandDefinition, user: string }) => {
+            this.saveCustomCommand(commandData.command, commandData.user);
+        });
+
+        frontendCommunicator.on("save-all-custom-commands", (commands: CommandDefinition[]) => {
+            this.saveAllCustomCommands(commands);
+        });
+
+        frontendCommunicator.on("delete-custom-command", (id: string) => {
+            this.deleteCustomCommand(id);
+        });
+
+        frontendCommunicator.on("get-all-commands", () => {
+            return {
+                customCommands: this.getAllCustomCommands(),
+                systemCommands: this.getAllSystemCommandDefinitions()
+            };
+        });
+
         this.refreshCommandCache();
     }
 
     private getCommandsDb(): JsonDB {
-        return profileManager.getJsonDbInProfile("/chat/commands");
+        return ProfileManager.getJsonDbInProfile("/chat/commands");
     }
 
     /**
@@ -107,7 +157,7 @@ class CommandManager extends TypedEmitter<Events> {
      * @returns The cached `SystemCommand` object that matches the given ID, or `null` if there is no matching system command
      */
     getSystemCommandById(id: string): SystemCommand {
-        return util.deepClone(this._registeredSysCommands.find(c => c.definition.id === id));
+        return deepClone(this._registeredSysCommands.find(c => c.definition.id === id));
     }
 
     /**
@@ -138,7 +188,7 @@ class CommandManager extends TypedEmitter<Events> {
      * @returns An array of all cached `SystemCommand` objects
      */
     getSystemCommands(): SystemCommand[] {
-        return util.deepClone(this._registeredSysCommands.map((c) => {
+        return deepClone(this._registeredSysCommands.map((c) => {
             c.definition.type = "system";
             return c;
         }));
@@ -151,14 +201,14 @@ class CommandManager extends TypedEmitter<Events> {
      */
     getAllSystemCommandDefinitions(): SystemCommandDefinition[] {
         const cmdDefs = this._registeredSysCommands.map((c) => {
-            const override = this._commandCache.systemCommandOverrides[c.definition.id];
+            const override = deepClone(this._commandCache.systemCommandOverrides[c.definition.id]);
             if (override != null) {
                 if (c.definition.options) {
                     const options = structuredClone(c.definition.options);
                     if (override.options) {
                         for (const key of Object.keys(options)) {
-                            if (override.options[key]?.value) {
-                                options[key].value = override.options[key].value;
+                            if (override.options[key]?.value != null) {
+                                options[key].value = override.options[key].value as unknown;
                             }
                         }
                     }
@@ -206,7 +256,7 @@ class CommandManager extends TypedEmitter<Events> {
             return c.definition;
         });
 
-        return util.deepClone(cmdDefs);
+        return deepClone(cmdDefs);
     }
 
     /**
@@ -216,7 +266,7 @@ class CommandManager extends TypedEmitter<Events> {
      * @returns The cached `CommandDefinition` object for the given custom command
      */
     getCustomCommandById(id: string): CommandDefinition {
-        return util.deepClone(this._commandCache.customCommands.find(c => c.id === id));
+        return deepClone(this._commandCache.customCommands.find(c => c.id === id));
     }
 
     /**
@@ -226,7 +276,7 @@ class CommandManager extends TypedEmitter<Events> {
      */
     getAllCustomCommands(): CommandDefinition[] {
         // Deep copy so we don't pollute the cache
-        return util.deepClone(this._commandCache.customCommands);
+        return deepClone(this._commandCache.customCommands);
     }
 
     /**
@@ -295,7 +345,7 @@ class CommandManager extends TypedEmitter<Events> {
             if (fireEvent) {
                 this.emit("updated-item", command);
             }
-        } catch (err) { }
+        } catch { }
 
         frontendCommunicator.send("system-command-override-saved", command);
     }
@@ -316,7 +366,7 @@ class CommandManager extends TypedEmitter<Events> {
             commandDb.delete(`/systemCommandOverrides/${id}`);
             const command = this.getSystemCommandById(id);
             this.emit("updated-item", command);
-        } catch (err) {} //eslint-disable-line no-empty
+        } catch {}
 
         frontendCommunicator.send("system-commands-updated");
     }
@@ -335,17 +385,16 @@ class CommandManager extends TypedEmitter<Events> {
         if (command.id == null || command.id === "") {
             eventType = "created-item";
             // generate id for new command
-            const { v4: uuid } = require("uuid");
-            command.id = uuid();
+            command.id = randomUUID();
 
             command.createdBy = user
                 ? user
-                : accountAccess.getAccounts().streamer.username;
+                : AccountAccess.getAccounts().streamer.username;
             command.createdAt = DateTime.now().toISO();
         } else {
             command.lastEditBy = user
                 ? user
-                : accountAccess.getAccounts().streamer.username;
+                : AccountAccess.getAccounts().streamer.username;
             command.lastEditAt = DateTime.now().toISO();
         }
 
@@ -360,7 +409,7 @@ class CommandManager extends TypedEmitter<Events> {
         try {
             commandDb.push(`/customCommands/${command.id}`, command);
             this.emit(eventType, command);
-        } catch (err) {}
+        } catch {}
 
         const existingCommandIndex = this._commandCache.customCommands.findIndex(c => c.id === command.id);
         if (existingCommandIndex === -1) {
@@ -402,7 +451,7 @@ class CommandManager extends TypedEmitter<Events> {
                 return acc;
             }, {});
             commandDb.push("/customCommands", customCommandsObj);
-        } catch (err) {}
+        } catch {}
 
         this._commandCache.customCommands = commands;
 
@@ -426,7 +475,7 @@ class CommandManager extends TypedEmitter<Events> {
             commandDb.delete(`/customCommands/${id}`);
             this.emit("deleted-item", command);
         } catch (err) {
-            logger.warn("error when deleting command", err.message);
+            logger.warn("error when deleting command", (err as Error).message);
         }
 
         this._commandCache.customCommands = this._commandCache.customCommands.filter(c => c.id !== id);
@@ -454,7 +503,7 @@ class CommandManager extends TypedEmitter<Events> {
         const commandsDb = this.getCommandsDb();
 
         if (commandsDb != null) {
-            const cmdData: CommandCache = commandsDb.getData("/");
+            const cmdData = commandsDb.getData("/") as CommandCache;
 
             if (cmdData.systemCommandOverrides) {
                 this._commandCache.systemCommandOverrides = cmdData.systemCommandOverrides;
@@ -486,61 +535,4 @@ class CommandManager extends TypedEmitter<Events> {
  */
 const manager = new CommandManager();
 
-frontendCommunicator.on("get-all-system-commands", () => {
-    logger.info("got 'get all cmds' request");
-    return manager.getSystemCommands();
-});
-
-frontendCommunicator.on("get-all-system-command-definitions", () => {
-    logger.info("got 'get all cmd defs' request");
-    return manager.getAllSystemCommandDefinitions();
-});
-
-frontendCommunicator.on("get-system-command", (commandId: string) => {
-    logger.info("got 'get cmd' request", commandId);
-    return manager.getSystemCommandById(commandId);
-});
-
-frontendCommunicator.on("save-system-command-override", (sysCommand: SystemCommandDefinition) => {
-    logger.info("got 'save sys cmd' request");
-    manager.saveSystemCommandOverride(sysCommand);
-});
-
-frontendCommunicator.on("remove-system-command-override", (id: string) => {
-    logger.info("got 'remove sys cmd' request");
-    manager.removeSystemCommandOverride(id);
-});
-
-frontendCommunicator.on("get-all-custom-commands", () => {
-    return manager.getAllCustomCommands();
-});
-
-frontendCommunicator.on("save-custom-command", (commandData: { command: CommandDefinition, user: string }) => {
-    manager.saveCustomCommand(commandData.command, commandData.user);
-});
-
-frontendCommunicator.on("save-all-custom-commands", (commands: CommandDefinition[]) => {
-    manager.saveAllCustomCommands(commands);
-});
-
-frontendCommunicator.on("delete-custom-command", (id: string) => {
-    manager.deleteCustomCommand(id);
-});
-
-frontendCommunicator.on("get-all-commands", () => {
-    return {
-        customCommands: manager.getAllCustomCommands(),
-        systemCommands: manager.getAllSystemCommandDefinitions()
-    };
-});
-
-frontendCommunicator.onAsync("get-firebot-profile-token", () => {
-    const cloudSync = require('../../cloud-sync/profile-sync');
-    return cloudSync.syncProfileData({
-        username: undefined,
-        userRoles: [],
-        profilePage: "commands"
-    });
-});
-
-export = manager;
+export { manager as CommandManager };

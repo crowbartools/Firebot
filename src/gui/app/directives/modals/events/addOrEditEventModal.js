@@ -4,7 +4,7 @@
 
 (function() {
 
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     angular.module("firebotApp").component("addOrEditEventModal", {
         template:
@@ -152,7 +152,7 @@
                         confirmLabel: "Delete",
                         confirmBtnType: "btn-danger"
                     })
-                    .then(confirmed => {
+                    .then((confirmed) => {
                         if (confirmed) {
                             $ctrl.close({
                                 $value: {
@@ -173,7 +173,7 @@
                 }
 
                 if ($ctrl.isNewEvent) {
-                    $ctrl.event.id = uuid();
+                    $ctrl.event.id = randomUUID();
                 }
 
                 $ctrl.close({

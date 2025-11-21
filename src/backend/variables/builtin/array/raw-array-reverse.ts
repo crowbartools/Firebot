@@ -1,6 +1,5 @@
 // Deprecated
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 import arrayReverse from './array-reverse';
 
@@ -9,8 +8,8 @@ const model : ReplaceVariable = {
         handle: "rawArrayReverse",
         description: "(Deprecated: use $arrayReverse) Returns a new shuffled array",
         usage: "rawArrayReverse[array]",
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT],
+        categories: ["advanced"],
+        possibleDataOutput: ["text"],
         hidden: true
     },
     evaluator: arrayReverse.evaluator

@@ -1,5 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const getPropertyAtPath = (subject: unknown, path: string) => {
     if (subject == null) {
@@ -96,8 +95,8 @@ const model : ReplaceVariable = {
                 description: 'Filter out any item in the array that has a key property which equals "value"'
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (
         trigger: Trigger,

@@ -1,6 +1,5 @@
 // Deprecated
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 import arrayShuffle from './array-shuffle';
 
@@ -9,8 +8,8 @@ const model : ReplaceVariable = {
         handle: "rawArrayShuffle",
         description: "(Deprecated: use $arrayShuffle) Returns a new shuffled array",
         usage: "rawArrayShuffle[array]",
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT],
+        categories: ["advanced"],
+        possibleDataOutput: ["text"],
         hidden: true
     },
     evaluator: arrayShuffle.evaluator

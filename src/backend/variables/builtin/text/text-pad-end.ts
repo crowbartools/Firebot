@@ -1,5 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
@@ -16,8 +15,8 @@ const model : ReplaceVariable = {
                 description: "Adds spaces to the end of the input until the length of the output equals 'count'"
             }
         ],
-        categories: [VariableCategory.TEXT],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
+        categories: ["text"],
+        possibleDataOutput: ["text", "number"]
     },
     evaluator(trigger: Trigger, input: string, count: number, countIsLength: null | string | boolean, padChar: null | string = " ") {
         if (input === null) {

@@ -1,7 +1,6 @@
+import { getParticipant } from 'extra-life-ts';
 import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import integrationManager from "../../../../integrations/integration-manager";
-const { getParticipant } = require('extra-life-ts');
 
 const ExtraLifeInfo: ReplaceVariable = {
     definition: {
@@ -57,8 +56,8 @@ const ExtraLifeInfo: ReplaceVariable = {
                 description: "Get all profile data for the current logged in extra life account in JSON format."
             }
         ],
-        categories: [VariableCategory.COMMON, VariableCategory.INTEGRATION],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "integrations"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (_, infoPath: string, participantID: number, returnJson: boolean) => {
         if (participantID == null) {
@@ -69,22 +68,20 @@ const ExtraLifeInfo: ReplaceVariable = {
             infoPath = 'fundraisingGoal';
         }
 
-        return getParticipant(participantID).then((result) => {
-            result = result.data;
-
+        return getParticipant(participantID).then(({ data }) => {
             if (returnJson) {
-                return JSON.stringify(result);
+                return JSON.stringify(data);
             }
 
             if (infoPath === "donateLink") {
-                return result.links.donate;
+                return data.links.donate;
             }
 
             if (infoPath === "profileLink") {
-                return result.links.page;
+                return data.links.page;
             }
 
-            return result[infoPath];
+            return data[infoPath];
         });
     }
 };

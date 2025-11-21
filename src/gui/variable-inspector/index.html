@@ -393,7 +393,7 @@
           },
           deleteVariable() {
             console.log("DELETING VARIABLE", this.variable.key);
-            window.ipcRenderer.deleteVariable(this.variable.key);
+            window.ipcRenderer.send("custom-variables:delete", this.variable.key);
           },
         },
         computed: {
@@ -462,21 +462,7 @@
         },
       });
 
-      window.ipcRenderer.on("all-variables", (variables) => {
-        console.log("ALL VARS", variables);
-        app.variables = variables.map((v) => ({
-          key: v.key,
-          history: [
-            {
-              ...v,
-              action: "set",
-            },
-          ],
-          expanded: false
-        }));
-      });
-
-      window.ipcRenderer.on("variable-set", ({ key, value, ttl }) => {
+      window.ipcRenderer.on("custom-variables:created", ({ key, value, ttl }) => {
         console.log("VAR SET", key, value, ttl);
         const foundVar = app.variables.find((v) => v.key === key);
         if (foundVar) {
@@ -502,7 +488,7 @@
         }
       });
 
-      window.ipcRenderer.on("variable-expire", ({ key, value }) => {
+      window.ipcRenderer.on("custom-variables:expired", ({ key, value }) => {
         console.log("VAR EXPIRE", key, value);
         const foundVar = app.variables.find((v) => v.key === key);
         if (foundVar) {
@@ -527,13 +513,28 @@
         }
       });
 
-      window.ipcRenderer.on("variable-deleted", ({ key }) => {
+      window.ipcRenderer.on("custom-variables:deleted", ({ key }) => {
         console.log("VAR DELETE", key);
         const foundVar = app.variables.find(variable => variable.key === key);
 
         if (foundVar) {
           app.variables.splice(app.variables.indexOf(foundVar), 1);
         }
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const variables = window.ipcRenderer.sendSync("custom-variables:get-initial-inspector-variables");
+        console.log("ALL VARS", variables);
+        app.variables = variables.map((v) => ({
+          key: v.key,
+          history: [
+            {
+              ...v,
+              action: "set",
+            },
+          ],
+          expanded: false
+        }));
       });
     </script>
   </body>

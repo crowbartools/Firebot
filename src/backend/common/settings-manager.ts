@@ -2,9 +2,7 @@ import { EventEmitter } from "events";
 import { JsonDB } from "node-json-db";
 import fs from "fs";
 import path from "path";
-import logger from "../logwrapper";
-import dataAccess from "./data-access";
-import frontendCommunicator from "./frontend-communicator";
+
 import {
     FirebotAutoUpdateLevel,
     FirebotGlobalSettings,
@@ -13,8 +11,12 @@ import {
     FirebotSettingsTypes
 } from "../../types/settings";
 
+import * as dataAccess from "./data-access";
+import frontendCommunicator from "./frontend-communicator";
+import logger from "../logwrapper";
+
 class SettingsManager extends EventEmitter {
-    settingsCache = {};
+    settingsCache: Partial<Record<keyof FirebotSettingsTypes, unknown>> = {};
 
     constructor() {
         super();
@@ -102,13 +104,14 @@ class SettingsManager extends EventEmitter {
         return success;
     }
 
-    private getDataFromFile(settingPath: string, forceCacheUpdate = false, defaultValue = undefined) {
+    private getDataFromFile<T = unknown>(settingPath: string, forceCacheUpdate = false, defaultValue: T = undefined) {
         try {
             if (this.settingsCache[settingPath] == null || forceCacheUpdate) {
-                const data = this.getSettingsFile().getData(settingPath);
+                const data = this.getSettingsFile().getData(settingPath) as T;
                 this.settingsCache[settingPath] = data ?? defaultValue;
             }
-        } catch (err) {
+        } catch (error) {
+            const err = error as Error;
             if (defaultValue !== undefined) {
                 this.settingsCache[settingPath] = defaultValue;
             }
@@ -116,31 +119,31 @@ class SettingsManager extends EventEmitter {
                 logger.warn(err);
                 if (
                     err.name === "DatabaseError" &&
-                err.inner instanceof SyntaxError &&
-                err.inner.stack.includes("JSON.parse")
+                err["inner"] instanceof SyntaxError &&
+                err["inner"].stack.includes("JSON.parse")
                 ) {
                     this.handleCorruptSettingsFile();
                 }
             }
         }
-        return this.settingsCache[settingPath];
+        return this.settingsCache[settingPath] as T;
     }
 
-    private getDataFromGlobalSettingsFile(settingPath: string, forceCacheUpdate = false, defaultValue = undefined) {
+    private getDataFromGlobalSettingsFile<T = unknown>(settingPath: string, forceCacheUpdate = false, defaultValue: T = undefined) {
         try {
             if (this.settingsCache[settingPath] == null || forceCacheUpdate) {
-                const data = this.getGlobalSettingsFile().getData(settingPath);
+                const data = this.getGlobalSettingsFile().getData(settingPath) as T;
                 this.settingsCache[settingPath] = data ?? defaultValue;
             }
         } catch (err) {
             if (defaultValue !== undefined) {
                 this.settingsCache[settingPath] = defaultValue;
             }
-            if (err.name !== "DataError") {
+            if ((err as Error).name !== "DataError") {
                 logger.warn(err);
             }
         }
-        return this.settingsCache[settingPath];
+        return this.settingsCache[settingPath] as T;
     }
 
     private pushDataToFile(settingPath: string, data: unknown) {
@@ -149,7 +152,7 @@ class SettingsManager extends EventEmitter {
             this.settingsCache[settingPath] = data;
             frontendCommunicator.send("settings:setting-updated", { settingPath, data });
         } catch (err) {
-            logger.debug(err.message);
+            logger.debug((err as Error).message);
         }
     }
 
@@ -159,7 +162,7 @@ class SettingsManager extends EventEmitter {
             this.settingsCache[settingPath] = data;
             frontendCommunicator.send("settings:setting-updated", { settingPath, data });
         } catch (err) {
-            logger.debug(err.message);
+            logger.debug((err as Error).message);
         }
     }
 
@@ -185,7 +188,7 @@ class SettingsManager extends EventEmitter {
      * @param settingName Name of the setting
      * @returns String representing the full JSON path of the setting data
      */
-    getSettingPath(settingName: string) {
+    getSettingPath(settingName: keyof FirebotSettingsTypes): string {
         return FirebotSettingsPaths[settingName] ?? `/settings/${settingName[0].toLowerCase()}${settingName.slice(1)}`;
     }
 

@@ -1,6 +1,5 @@
-import commandManager from "../../chat/commands/command-manager";
-import {EffectCategory} from "../../../shared/effect-constants";
-import {EffectType} from "../../../types/effects";
+import type { EffectType } from "../../../types/effects";
+import { CommandManager } from "../../chat/commands/command-manager";
 
 const effect: EffectType<{
     commandId: string;
@@ -13,7 +12,7 @@ const effect: EffectType<{
         name: "Toggle Command",
         description: "Toggle a command's active status",
         icon: "fad fa-toggle-off",
-        categories: [EffectCategory.COMMON],
+        categories: ["common", "firebot control"],
         dependencies: []
     },
     optionsTemplate: `
@@ -82,7 +81,7 @@ const effect: EffectType<{
         }
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.commandType !== "tag" && effect.commandId == null) {
             errors.push("Please select a command.");
         }
@@ -110,11 +109,11 @@ const effect: EffectType<{
         }
         return `${action} ${command?.trigger ?? "Unknown Command"}`;
     },
-    onTriggerEvent: async (event) => {
+    onTriggerEvent: (event) => {
         const { commandId, commandType, toggleType, sortTagId } = event.effect;
 
         if (commandType === "system") {
-            const systemCommand = commandManager
+            const systemCommand = CommandManager
                 .getAllSystemCommandDefinitions().find(c => c.id === commandId);
 
             if (systemCommand == null) {
@@ -124,9 +123,9 @@ const effect: EffectType<{
 
             systemCommand.active = toggleType === "toggle" ? !systemCommand.active : toggleType === "enable";
 
-            commandManager.saveSystemCommandOverride(systemCommand);
+            CommandManager.saveSystemCommandOverride(systemCommand);
         } else if (commandType === "custom") {
-            const customCommand = commandManager.getCustomCommandById(commandId);
+            const customCommand = CommandManager.getCustomCommandById(commandId);
 
             if (customCommand == null) {
                 // command doesn't exist anymore
@@ -135,15 +134,15 @@ const effect: EffectType<{
 
             customCommand.active = toggleType === "toggle" ? !customCommand.active : toggleType === "enable";
 
-            commandManager.saveCustomCommand(customCommand, "System");
+            CommandManager.saveCustomCommand(customCommand, "System");
         } else if (commandType === "tag") {
-            let commands = commandManager.getAllCustomCommands();
+            let commands = CommandManager.getAllCustomCommands();
             commands = commands.filter(c => c.sortTags?.includes(sortTagId));
 
             commands.forEach((customCommand) => {
                 customCommand.active = toggleType === "toggle" ? !customCommand.active : toggleType === "enable";
 
-                commandManager.saveCustomCommand(customCommand, "System");
+                CommandManager.saveCustomCommand(customCommand, "System");
             });
         }
     }

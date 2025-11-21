@@ -30,10 +30,14 @@
     </body>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/motion@12.23.16/dist/motion.min.js"></script>
     
     <script src="js/reconnecting-websocket.js"></script>
     <script src="js/util.js"></script>
+    <script src="js/overlay-widgets.js"></script>
     <script src="js/plugins/create.js"></script>
+    <script src="js/plugins/countUp.umd.js"></script>
     <script src="js/fireworks.js"></script>
     <script src="js/confetti.js"></script>
     <script src="js/fitty.js"></script>
@@ -52,8 +56,28 @@
             document.title = "Firebot Overlay (Default)";
         }
 
-        <% for(let event of events) {%>
-            firebotOverlay.on('<%-event.name%>', <%-event.onOverlayEvent%>);
+        <% for(let effectEvent of effectEvents) {%>
+            effectEvents.on('<%-effectEvent.name%>', <%-effectEvent.onOverlayEvent%>);
         <% } %>
+
+        <% for(let widgetEvent of widgetEvents) {%>
+            widgetEvents.on('<%-widgetEvent.name%>', <%-widgetEvent.callback%>);
+        <% } %>
+
+        const widgetInitCallbacks = [
+            <% for(let widgetInitCallback of widgetInitCallbacks) { %>
+                ["<%-widgetInitCallback.typeId%>", <%-widgetInitCallback.callback%>],
+            <% } %>
+        ];
+        
+        for(const [widgetType, callback] of widgetInitCallbacks) {
+            try {
+                const utils = new OverlayWidgetInitUtils(widgetType);
+                callback(utils);
+            } catch(ex) {
+                console.error("Error in widget init callback", ex);
+            }
+        }
+
     </script>
 </html> 

@@ -1,5 +1,5 @@
+import type { UIExtension } from "./extension-types";
 import frontendCommunicator from "../common/frontend-communicator";
-import { UIExtension } from "./extension-types";
 
 class UIExtensionManager {
     private _extensions: UIExtension[] = [];
@@ -59,13 +59,17 @@ class UIExtensionManager {
                     filters: extension.providers.filters?.map(filter => ({
                         name: filter.name,
                         functionRaw: this.prepareFunc(filter.function, "filterFunc")
+                    })),
+                    parameters: extension.providers.parameters?.map(param => ({
+                        parameterConfig: param.parameterConfig,
+                        template: param.template,
+                        controllerRaw: this.prepareFunc(param.controller, "paramCtrl")
                     }))
                 }
                 : undefined
         };
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
     private prepareFunc(func: Function | undefined, name: string) {
         let rawFunc = func?.toString() ?? "() => {}";
         const namelessFunction = /^[\s]*function[\s]*\(/;

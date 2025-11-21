@@ -27,22 +27,6 @@
                             />
                         </div>
 
-                        <div class="form-group" ng-class="{'has-error': $ctrl.formFieldHasError('giftSubMonths')}">
-                            <label for="giftSubMonths" class="control-label">Gift Sub Months</label>
-                            <input
-                                type="number"
-                                id="giftSubMonths"
-                                name="giftSubMonths"
-                                class="form-control input-md"
-                                placeholder="Enter months"
-                                ng-model="$ctrl.giftReceiver.giftSubMonths"
-                                ui-validate="'$value != null && $value > 0'"
-                                required
-                                menu-position="under"
-                                style="width: 50%;"
-                            />
-                        </div>
-
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -61,8 +45,7 @@
                 $ctrl.isNew = true;
 
                 $ctrl.giftReceiver = {
-                    gifteeUsername: null,
-                    giftSubMonths: null
+                    gifteeUsername: null
                 };
 
                 $ctrl.formFieldHasError = (fieldName) => {

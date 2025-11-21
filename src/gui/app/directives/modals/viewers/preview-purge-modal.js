@@ -19,7 +19,8 @@
                     table-data-set="$ctrl.viewers"
                     headers="$ctrl.headers"
                     query="$ctrl.search"
-                    clickable="false"
+                    clickable="true"
+                    on-row-click="$ctrl.viewerRowClicked(data)"
                     track-by-field="_id"
                     starting-sort-field="username"
                     no-data-message="No viewers met purge criteria">
@@ -34,7 +35,7 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function() {
+            controller: function(modalService) {
                 const $ctrl = this;
 
                 $ctrl.search = "";
@@ -48,6 +49,14 @@
                 };
 
                 $ctrl.headers = [
+                    {
+                        headerStyles: {
+                            'width': '50px'
+                        },
+                        sortable: false,
+                        cellTemplate: `<img ng-src="{{data.twitch ? data.profilePicUrl : '../images/placeholders/default-profile-pic.png'}}"  style="width: 25px;height: 25px;border-radius: 25px;"/>`,
+                        cellController: () => {}
+                    },
                     {
                         name: "USERNAME",
                         icon: "fa-user",
@@ -86,8 +95,36 @@
                         sortable: true,
                         cellTemplate: `{{data.chatMessages}}`,
                         cellController: () => {}
+                    },
+                    {
+                        headerStyles: {
+                            'width': '15px'
+                        },
+                        cellStyles: {
+                            'width': '15px'
+                        },
+                        sortable: false,
+                        cellTemplate: `<i class="fal fa-chevron-right"></i>`,
+                        cellController: () => {}
                     }
                 ];
+
+                $ctrl.viewerRowClicked = (data) => {
+                    $ctrl.showUserDetailsModal(data._id);
+                };
+
+                $ctrl.showUserDetailsModal = (userId) => {
+                    const closeFunc = () => {};
+                    modalService.showModal({
+                        component: "viewerDetailsModal",
+                        backdrop: true,
+                        resolveObj: {
+                            userId: () => userId
+                        },
+                        closeCallback: closeFunc,
+                        dismissCallback: closeFunc
+                    });
+                };
             }
         });
 }());

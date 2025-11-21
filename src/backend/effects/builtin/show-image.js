@@ -184,7 +184,8 @@ const showImage = {
             exitAnimation: effect.exitAnimation,
             exitDuration: effect.exitDuration,
             customCoords: effect.customCoords,
-            imageRotation: effect.rotation ? effect.rotation + effect.rotType : "0deg"
+            imageRotation: effect.rotation ? effect.rotation + effect.rotType : "0deg",
+            zIndex: effect.zIndex
         };
 
         if (SettingsManager.getSetting("UseOverlayInstances")) {
@@ -271,9 +272,8 @@ const showImage = {
                 const styles =
                     (data.imageWidth ? `width: ${data.imageWidth};` : "") +
                     (data.imageHeight ? `height: ${data.imageHeight};` : "") +
-                    (data.imageRotation ? `transform: rotate(${data.imageRotation});` : "");
-                console.log(data.imageRotation);
-                console.log(styles);
+                    (data.imageRotation ? `transform: rotate(${data.imageRotation});` : "") +
+                    (data.zIndex ? `position: relative; z-index: ${data.zIndex};` : '');
                 const imageTag = `<img src="${filepathNew}" style="${styles}" />`;
 
                 showElement(imageTag, positionData, animationData); // eslint-disable-line no-undef

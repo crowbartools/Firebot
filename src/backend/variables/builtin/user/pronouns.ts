@@ -1,7 +1,6 @@
 import { app } from "electron";
 
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 import logger from "../../../logwrapper";
 
@@ -18,7 +17,7 @@ const callUrl = async (url: string): Promise<Response> => {
             return response;
         }
     } catch (error) {
-        logger.warn(`error calling readApi url: ${url}`, error.message);
+        logger.warn(`error calling readApi url: ${url}`, (error as Error).message);
         return null;
     }
 };
@@ -41,14 +40,14 @@ const model : ReplaceVariable = {
                 description: "Returns 'her' pronoun in she/her set if available, otherwise uses them."
             }
         ],
-        categories: [VariableCategory.COMMON],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common"],
+        possibleDataOutput: ["text"]
     },
     evaluator: async (
         trigger,
         username: string,
         pronounNumber: number | string = 0,
-        // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
         fallback : string = "they/them"
     ) => {
 
@@ -56,7 +55,7 @@ const model : ReplaceVariable = {
             pronounNumber = Number(`${pronounNumber}`);
         }
 
-        if (!Number.isFinite(<number>pronounNumber)) {
+        if (!Number.isFinite(pronounNumber)) {
             logger.warn(`Pronoun index not a number using ${fallback}`);
             return fallback;
         }

@@ -25,7 +25,7 @@
                 </div>
             </eos-container>
             `,
-            controller: function($q, settingsService) {
+            controller: function($q, soundService, settingsService) {
                 const ctrl = this;
 
                 ctrl.settings = settingsService;
@@ -49,18 +49,7 @@
                         };
                     }
 
-                    $q.when(navigator.mediaDevices.enumerateDevices()).then((deviceList) => {
-                        deviceList = deviceList
-                            .filter(
-                                d =>
-                                    d.kind === "audiooutput" &&
-                d.deviceId !== "communications" &&
-                d.deviceId !== "default"
-                            )
-                            .map((d) => {
-                                return { label: d.label, deviceId: d.deviceId };
-                            });
-
+                    $q.when(soundService.getOutputDevices()).then((deviceList) => {
                         ctrl.audioOutputDevices = ctrl.audioOutputDevices.concat(deviceList);
                     });
 

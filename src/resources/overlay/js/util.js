@@ -70,10 +70,14 @@ $.fn.extend({
 
 				element.removeClass('animated ' + animationName);
 
-				callback(data);
+                if(callback != null) {
+                    callback(data);
+                }
 			});
 		} else {
-			callback(data);
+            if(callback != null) {
+                callback(data);
+            }
 		}
         return this;
     }
@@ -173,21 +177,23 @@ function showElement(
 		animationData.totalDuration,
 		animationData.resourceToken
 	);
+
+    return uniqueId;
 }
 
 function getStylesForCustomCoords(customCoords) {
 
 	var style = "position:absolute;margin:auto;"
-	if(customCoords.top !== null) {
+	if(customCoords.top != null) {
 		style = style + "top:" + customCoords.top.toString() + "px;"
 	}
-	if(customCoords.bottom !== null) {
+	if(customCoords.bottom != null) {
 		style = style + "bottom:" + customCoords.bottom.toString() + "px;"
 	}
-	if(customCoords.left !== null) {
+	if(customCoords.left != null) {
 		style = style + "left:" + customCoords.left.toString() + "px;"
 	}
-	if(customCoords.right !== null) {
+	if(customCoords.right != null) {
 		style = style + "right:" + customCoords.right.toString() + "px;"
 	}
 

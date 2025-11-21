@@ -1,5 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
@@ -24,8 +23,8 @@ const model : ReplaceVariable = {
                 description: 'Returns a new array with 4 added to the start of the raw array'
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["text"]
     },
 
     evaluator: (
@@ -38,7 +37,7 @@ const model : ReplaceVariable = {
             try {
                 subject = JSON.parse(`${subject}`);
 
-            //eslint-disable-next-line no-empty
+
             } catch (ignore) {}
         }
         if (!Array.isArray(subject)) {

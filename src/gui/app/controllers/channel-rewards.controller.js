@@ -1,8 +1,8 @@
 "use strict";
-(function() {
+(function () {
     angular
         .module("firebotApp")
-        .controller("channelRewardsController", function(
+        .controller("channelRewardsController", function (
             $scope,
             channelRewardsService,
             utilityService,
@@ -10,14 +10,15 @@
         ) {
             $scope.channelRewardsService = channelRewardsService;
 
-            $scope.activeChannelRewardTab = 0;
-
             $scope.canUseChannelRewards = () => accountAccess.accounts["streamer"].loggedIn
-                && (accountAccess.accounts["streamer"].broadcasterType === "affiliate"
-                    || accountAccess.accounts["streamer"].broadcasterType === "partner");
+                && channelRewardsService.userIsEligible;
 
             // triggering twitch sync
             channelRewardsService.syncChannelRewards();
+
+            $scope.saveChannelReward = (reward) => {
+                channelRewardsService.saveChannelReward(reward);
+            };
 
             $scope.onRewardsUpdated = (items) => {
                 channelRewardsService.saveAllRewards(items);
@@ -33,7 +34,7 @@
                             <img ng-src="{{data.twitchData.image ? data.twitchData.image.url1x : data.twitchData.defaultImage.url1x}}"  style="width: 100%;filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.50));"/>
                         </div>
                     `,
-                    cellController: () => {}
+                    cellController: () => { }
                 },
                 {
                     name: "NAME",
@@ -44,7 +45,7 @@
                     dataField: "twitchData.title",
                     sortable: true,
                     cellTemplate: `{{data.twitchData.title}} <i ng-hide="data.manageable" class="fas fa-lock muted" style="font-size: 12px;" uib-tooltip="This reward was created either outside of Firebot or in an older version. Its settings cannot be changed in Firebot." />`,
-                    cellController: () => {}
+                    cellController: () => { }
                 },
                 {
                     name: "COST",
@@ -52,11 +53,11 @@
                     dataField: "twitchData.cost",
                     sortable: true,
                     cellTemplate: `{{data.twitchData.cost}}`,
-                    cellController: () => {}
+                    cellController: () => { }
                 },
                 {
                     cellTemplate: `<span class="paused-dot" style="margin-right: 5px" ng-class="{'paused': data.twitchData.isPaused, 'unpaused': !data.twitchData.isPaused}"></span>{{data.twitchData.isPaused ? 'Paused' : 'Unpaused' }}`,
-                    cellController: () => {}
+                    cellController: () => { }
                 }
             ];
 

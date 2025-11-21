@@ -1,6 +1,5 @@
 "use strict";
 
-const { EffectCategory } = require("../../../../../shared/effect-constants");
 const hueManager = require("../hue-manager");
 
 const effect = {
@@ -9,7 +8,7 @@ const effect = {
         name: "Activate Hue Scene",
         description: "Activate a Philips Hue scene",
         icon: "far fa-house-signal fa-align-center",
-        categories: [EffectCategory.INTEGRATIONS],
+        categories: ["integrations"],
         dependencies: []
     },
     globalSettings: {},

@@ -45,7 +45,7 @@
                 $ctrl.label = "Enter Text";
                 $ctrl.inputPlaceholder = "Enter Text";
                 $ctrl.saveText = "Save";
-                $ctrl.validationFn = (value) => value != null;
+                $ctrl.validationFn = value => value != null;
                 $ctrl.validationText = "Please provide a date.";
                 $ctrl.hasValidationError = false;
                 $ctrl.inputType = "text";

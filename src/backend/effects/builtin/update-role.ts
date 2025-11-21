@@ -1,15 +1,14 @@
 import { EffectType } from "../../../types/effects";
-import { EffectCategory } from "../../../shared/effect-constants";
-import twitchApi from "../../twitch-api/api";
-import customRolesManager from "../../roles/custom-roles-manager";
-import logger from "../../logwrapper";
-import viewerDatabase from "../../viewers/viewer-database";
 import { BasicViewer } from "../../../types/viewers";
+import { TwitchApi } from "../../streaming-platforms/twitch/api";
+import customRolesManager from "../../roles/custom-roles-manager";
+import viewerDatabase from "../../viewers/viewer-database";
+import logger from "../../logwrapper";
 
 /**
  * The 'Update Role' effect
  */
-const model: EffectType<{
+const effect: EffectType<{
     addRoleId: string;
     customViewer: string;
     removeRoleId: string;
@@ -24,7 +23,7 @@ const model: EffectType<{
         name: "Update Viewer Roles",
         description: "Add, remove, or clear users from a custom role.",
         icon: "fad fa-user-tag",
-        categories: [EffectCategory.ADVANCED],
+        categories: ["fun", "advanced", "firebot control"],
         dependencies: []
     },
     optionsTemplate: `
@@ -151,7 +150,7 @@ const model: EffectType<{
 
         if (effect.viewerType === "current") {
             user.id = event.trigger.metadata.userId as string | undefined ?? event.trigger.metadata.eventData?.userId as string | undefined;
-            user.username = event.trigger.metadata.username as string | undefined ?? event.trigger.metadata.eventData?.username as string | undefined;
+            user.username = event.trigger.metadata.username ?? event.trigger.metadata.eventData?.username as string | undefined;
             user.displayName = event.trigger.metadata.userDisplayName as string | undefined ?? event.trigger.metadata.eventData?.userDisplayName as string | undefined;
         } else {
             user.username = effect.customViewer ? effect.customViewer.trim() : "";
@@ -169,7 +168,7 @@ const model: EffectType<{
                 user.id = viewer._id;
                 user.displayName = viewer.displayName;
             } else {
-                const twitchUser = await twitchApi.users.getUserByName(user.username);
+                const twitchUser = await TwitchApi.users.getUserByName(user.username);
 
                 if (twitchUser == null) {
                     logger.warn(`Unable to ${effect.addRoleId ? "add" : "remove"} custom role for ${user.username}. User does not exist.`);
@@ -193,4 +192,4 @@ const model: EffectType<{
     }
 };
 
-export = model;
+export = effect;

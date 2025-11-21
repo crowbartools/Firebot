@@ -3,9 +3,10 @@
 const { SettingsManager } = require("../../common/settings-manager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/http-server-manager");
-const twitchApi = require("../../twitch-api/api");
+const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 const { EffectCategory } = require('../../../shared/effect-constants');
 const logger = require("../../logwrapper");
+const { wait } = require("../../utils");
 
 const shoutoutStyles = `
     .firebot-shoutout-wrapper {
@@ -133,7 +134,7 @@ const effect = {
                             </div>
                         </div>
                         <div ng-if="effect.showLastGame" class="firebot-shoutout-game-wrapper">
-                            <div class="firebot-shoutout-game-boxart" style="background-image:url('{{defaultGameBoxArt}}');" />
+                            <div class="firebot-shoutout-game-boxart" ng-if="!effect.hideCategoryArt" style="background-image:url('{{defaultGameBoxArt}}');" />
                             <div class="firebot-shoutout-game-dimmer" />
                             <div class="firebot-shoutout-game-text-wrapper">
                                 <div class="firebot-shoutout-game-lastseen">
@@ -158,10 +159,14 @@ const effect = {
             <firebot-input style="margin-top:10px" input-title="Scale" model="effect.scale" placeholder-text="Enter number (ie 1, 1.25, 0.75, etc)" input-type="number" disable-variables="true" />
 
             <div style="padding-top:20px">
-                <label class="control-fb control--checkbox"> Show last game/category
-                    <input type="checkbox" ng-model="effect.showLastGame">
-                    <div class="control__indicator"></div>
-                </label>
+                <firebot-checkbox
+                    label="Show last game/category"
+                    model="effect.showLastGame"
+                />
+                <firebot-checkbox
+                    label="Hide game/category art"
+                    model="effect.hideCategoryArt"
+                />
             </div>
 
             <firebot-input ng-if="effect.showLastGame" input-title="Last Seen Text" model="effect.lastGameText" placeholder-text="Enter text" />
@@ -178,6 +183,12 @@ const effect = {
             <p class="muted" style="font-size:11px;margin-top:6px;">
                 <b>Note:</b> The total duration will be an additional 4 seconds (2 second enter animation, 2 second exit animation)
             </p>
+            <div style="padding-top:20px">
+                <label class="control-fb control--checkbox"> Wait for shoutout to finish <tooltip text="'Wait for the shoutout to finish before letting the next effect play.'"></tooltip>
+                    <input type="checkbox" ng-model="effect.waitForShoutout">
+                    <div class="control__indicator"></div>
+                </label>
+            </div>
         </eos-container>
         <eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
         <eos-overlay-instance effect="effect" class="setting-padtop"></eos-overlay-instance>
@@ -258,7 +269,7 @@ const effect = {
             }
         }
 
-        const user = await twitchApi.users.getUserByName(effect.username);
+        const user = await TwitchApi.users.getUserByName(effect.username);
 
         if (user == null) {
             return;
@@ -266,7 +277,7 @@ const effect = {
 
         effect.username = user.displayName;
 
-        const channelInfo = await twitchApi.channels.getChannelInformation(user.id);
+        const channelInfo = await TwitchApi.channels.getChannelInformation(user.id);
         if (channelInfo == null) {
             return;
         }
@@ -275,7 +286,7 @@ const effect = {
 
         if (effect.showLastGame) {
             try {
-                const game = await twitchApi.categories.getCategoryById(channelInfo.gameId);
+                const game = await TwitchApi.categories.getCategoryById(channelInfo.gameId);
                 effect.gameName = channelInfo.gameName != null && channelInfo.gameName !== "" ? channelInfo.gameName : null;
                 effect.gameBoxArtUrl = game.boxArtUrl;
             } catch (error) {
@@ -285,6 +296,10 @@ const effect = {
         }
 
         webServer.sendToOverlay("shoutout", effect);
+        if (effect.waitForShoutout) {
+            const durationInMils = (Math.round(effect.duration + 2) || 0) * 1000;
+            await wait(durationInMils);
+        }
         return true;
     },
     overlayExtension: {
@@ -313,7 +328,7 @@ const effect = {
 
                 const shoutoutElement = `
                 <div>
-                    <div class="firebot-shoutout-wrapper" style="background: linear-gradient(0deg, ${data.bgColor2} 0%, ${data.bgColor1} 100%); transform: scale(${scale});">
+                    <div class="firebot-shoutout-wrapper" style="background: linear-gradient(0deg, ${data.bgColor2} 0%, ${data.bgColor1} 100%); transform: scale(${scale});${data.zIndex ? ` position: relative; z-index: ${data.zIndex};` : ''}">
 
                         <div style="position:relative;">
                             <div class="firebot-shoutout-avatar-wrapper firebot-shoutout-padding">
@@ -334,7 +349,7 @@ const effect = {
                         </div>
 
                         <div class="firebot-shoutout-game-wrapper" style="display:${!data.showLastGame || data.gameName == null ? 'none' : 'inherit'};">
-                            <div class="firebot-shoutout-game-boxart" style="background-image:url('${data.gameBoxArtUrl}');"></div>
+                            <div class="firebot-shoutout-game-boxart" style="background-image:url('${data.gameBoxArtUrl}');display:${data.hideCategoryArt ? 'none' : 'block'};"></div>
                             <div class="firebot-shoutout-game-dimmer" />
                             <div class="firebot-shoutout-game-text-wrapper">
                                 <div class="firebot-shoutout-game-lastseen">

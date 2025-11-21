@@ -12,7 +12,7 @@ export const SetOBSColorSourceColorEffectType: EffectType<{
         name: "Set OBS Color Source Color",
         description: "Sets the color in an OBS color source",
         icon: "fad fa-palette",
-        categories: ["common"]
+        categories: ["common", "integrations"]
     },
     optionsTemplate: `
     <eos-container header="OBS Color Source">

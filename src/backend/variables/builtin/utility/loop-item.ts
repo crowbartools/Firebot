@@ -1,13 +1,12 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
         handle: "loopItem",
         usage: "loopItem",
         description: "The item for current loop iteration inside of a Loop Effects effect using Array loop mode",
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["number", "text"]
     },
     evaluator: (trigger) => {
         return trigger.metadata.loopItem;

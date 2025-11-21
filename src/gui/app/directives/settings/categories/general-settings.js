@@ -10,7 +10,7 @@
                     >
                         <firebot-select
                             aria-label="App Theme"
-                            options="['Light', 'Midnight', 'Obsidian']"
+                            options="{'Light': 'Light', 'Midnight': 'Midnight', 'PurpleSky': 'Purple Sky', 'Obsidian': 'Obsidian',}"
                             ng-init="selectedTheme = settings.getSetting('Theme')"
                             selected="selectedTheme"
                             on-update="settings.saveSetting('Theme', option)"
@@ -194,7 +194,7 @@
                     </firebot-setting>
                 </div>
           `,
-        controller: function ($rootScope, $scope, settingsService, $q) {
+        controller: function ($rootScope, $scope, soundService, settingsService, $q) {
             $scope.openLink = $rootScope.openLinkExternally;
             $scope.settings = settingsService;
 
@@ -205,15 +205,7 @@
                 }
             ];
 
-            $q.when(navigator.mediaDevices.enumerateDevices()).then((deviceList) => {
-                deviceList = deviceList
-                    .filter(
-                        d => d.kind === "audiooutput" && d.deviceId !== "communications" && d.deviceId !== "default"
-                    )
-                    .map((d) => {
-                        return { label: d.label, deviceId: d.deviceId };
-                    });
-
+            $q.when(soundService.getOutputDevices()).then((deviceList) => {
                 $scope.audioOutputDevices = $scope.audioOutputDevices.concat(deviceList);
             });
 

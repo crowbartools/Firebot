@@ -1,18 +1,20 @@
+import { Awaitable } from "../../../../types/util-types";
+
 type ScriptParameters = Record<
-string,
-{
-    type: string;
-    description: string;
-    secondaryDescription: string;
-    value: unknown;
-    default: unknown;
-}
+    string,
+    {
+        type: string;
+        description: string;
+        secondaryDescription: string;
+        value: unknown;
+        default: unknown;
+    }
 >;
 
 type ScriptReturnObject = {
     success: boolean;
     errorMessage?: string;
-    effects: unknown[] | { id: string; list: unknown[] };
+    effects: unknown[] | { id: string, list: unknown[] };
     callback?: VoidFunction;
 };
 
@@ -34,6 +36,7 @@ type RunRequest = {
         };
         version: string;
     };
+    scriptDataDir: string;
     trigger: Trigger;
 };
 
@@ -55,11 +58,11 @@ export type ScriptData = {
 };
 
 export type CustomScript = {
-    getScriptManifest(): CustomScriptManifest | PromiseLike<CustomScriptManifest>;
+    getScriptManifest(): Awaitable<CustomScriptManifest>;
     getDefaultParameters(): ScriptParameters;
     run(
         runRequest: RunRequest
-    ): void | PromiseLike<void> | ScriptReturnObject | PromiseLike<ScriptReturnObject>;
-    parametersUpdated?: (parameters: Record<string, unknown>) => void | PromiseLike<void>;
-    stop?: () => void | PromiseLike<void>;
+    ): Awaitable<void | ScriptReturnObject>;
+    parametersUpdated?: (parameters: Record<string, unknown>) => Awaitable<void>;
+    stop?: (uninstalling: boolean) => Awaitable<void>;
 };

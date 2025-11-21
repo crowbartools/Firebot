@@ -1,6 +1,4 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
-import { EffectTrigger } from '../../../../../shared/effect-constants';
+import type { ReplaceVariable } from "../../../../../types/variables";
 
 import userRoles from './user-roles';
 
@@ -39,8 +37,8 @@ const model : ReplaceVariable = {
                 description: "Returns all Twitch team roles of the specified user"
             }
         ],
-        categories: [VariableCategory.COMMON, VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.ARRAY],
+        categories: ["common", "user based"],
+        possibleDataOutput: ["array"],
         hidden: true
     },
     evaluator: userRoles.evaluator

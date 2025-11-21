@@ -1,59 +1,71 @@
 "use strict";
+
+/** @import { FirebotViewer } from "../../../types/viewers" */
+
 (function() {
     //This handles viewer lists.
 
     angular
         .module("firebotApp")
-        .factory("viewersService", function(settingsService, backendCommunicator, $q) {
+        .factory("viewersService", function(settingsService, backendCommunicator) {
             const service = {};
 
             // Check to see if the DB is turned on or not.
-            service.isViewerDbOn = function() {
+            service.isViewerDbOn = () => {
                 return settingsService.getSetting("ViewerDB");
             };
 
+            /** @type {FirebotViewer[]} */
             service.viewers = [];
             let waitingForUpdate = false;
-            service.updateViewers = function() {
+
+            service.updateViewers = async () => {
                 if (waitingForUpdate) {
-                    return Promise.resolve();
+                    return;
                 }
 
                 waitingForUpdate = true;
-                return $q((resolve) => {
-                    backendCommunicator.fireEventAsync("get-all-viewers")
-                        .then((viewers) => {
-                            resolve(viewers);
-                        });
-                }).then((viewers) => {
-                    service.viewers = viewers;
-                    waitingForUpdate = false;
-                });
+
+                const viewers = await backendCommunicator.fireEventAsync("viewer-database:get-all-viewers");
+                service.viewers = viewers;
+                waitingForUpdate = false;
             };
 
-            service.updateViewer = function(userId) {
-                return $q((resolve) => {
-                    backendCommunicator.fireEventAsync("get-firebot-viewer-data", userId)
-                        .then((viewer) => {
-                            resolve(viewer);
-                        });
-                }).then((viewer) => {
-                    if (viewer) {
-                        const index = service.viewers.findIndex(v => v._id === viewer._id);
-                        if (index >= 0) {
-                            service.viewers[index] = viewer;
-                        }
-                    }
-                });
+            /** @param {FirebotViewer} viewer */
+            const createOrUpdateViewer = (viewer) => {
+                const index = service.viewers.findIndex(v => v._id === viewer._id);
+
+                if (index > -1) {
+                    service.viewers[index] = viewer;
+                } else {
+                    service.viewers.push(viewer);
+                }
+            };
+
+            service.updateViewer = async (userId) => {
+                const viewer = await backendCommunicator.fireEventAsync("get-firebot-viewer-data", userId);
+                createOrUpdateViewer(viewer);
             };
 
             service.updateBannedStatus = (username, shouldBeBanned) => {
                 backendCommunicator.fireEvent("update-user-banned-status", { username, shouldBeBanned });
             };
 
-            service.updateModStatus = (username, shouldBeMod) => {
-                backendCommunicator.fireEvent("update-user-mod-status", { username, shouldBeMod });
-            };
+            backendCommunicator.on("viewer-database:viewer-created", (viewer) => {
+                createOrUpdateViewer(viewer);
+            });
+
+            backendCommunicator.on("viewer-database:viewer-updated", (viewer) => {
+                createOrUpdateViewer(viewer);
+            });
+
+            backendCommunicator.on("viewer-database:viewer-deleted", (userId) => {
+                service.viewers = service.viewers.filter(v => v._id !== userId);
+            });
+
+            backendCommunicator.on("viewer-database:viewers-updated", () => {
+                service.updateViewers();
+            });
 
             // Did user see warning alert about connecting to chat first?
             service.sawWarningAlert = true;

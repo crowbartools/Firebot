@@ -1,5 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 import currencyAccess from "../../../currency/currency-access";
 import currencyManager from "../../../currency/currency-manager";
@@ -9,14 +8,23 @@ const model : ReplaceVariable = {
         handle: "currencyRank",
         description: "Returns the rank of the current user based on how much of the given currency they have.",
         usage: "currencyRank[currencyName]",
-        examples: [
+        hasSuggestions: true,
+        noSuggestionsText: "No currencies have been created yet.",
+        categories: ["user based", "numbers"],
+        possibleDataOutput: ["number"]
+    },
+    getSuggestions: async () => {
+        const currencies = Object.values(currencyAccess.getCurrencies());
+        return currencies.flatMap(c => ([
             {
-                usage: "currencyRank[currencyName, username]",
-                description: "Returns the rank for the specified user in the specified currency"
+                usage: `currencyRank[${c.name}, $user]`,
+                description: `Get the ${c.name} rank for the current user`
+            },
+            {
+                usage: `currencyRank[${c.name}, someUserName]`,
+                description: `Get the ${c.name} rank for a specific user`
             }
-        ],
-        categories: [VariableCategory.USER, VariableCategory.NUMBERS],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        ]));
     },
     evaluator: async (trigger: Trigger, currencyName: string, username?: string) => {
         username ??= trigger.metadata.username;

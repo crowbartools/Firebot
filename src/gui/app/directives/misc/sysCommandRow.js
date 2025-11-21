@@ -174,6 +174,10 @@
                 commandsService.resetCooldownsForCommand($ctrl.command.id);
             };
 
+            $ctrl.resetPerStreamUsagesForCommand = () => {
+                commandsService.resetPerStreamUsagesForCommand($ctrl.command.id);
+            };
+
             $ctrl.toggleCommandActiveState = function() {
                 $ctrl.command.active = !$ctrl.command.active;
                 commandsService.saveSystemCommandOverride($ctrl.command);
@@ -191,6 +195,12 @@
                         html: `<a href ><i class="iconify" data-icon="mdi:clock-fast" style="margin-right: 10px;"></i> Clear Cooldowns</a>`,
                         click: () => {
                             $ctrl.resetCooldownsForCommand();
+                        }
+                    },
+                    {
+                        html: `<a href ><i class="iconify" data-icon="mdi:tally-mark-5" style="margin-right: 10px;"></i> Clear Per-Stream Usages</a>`,
+                        click: () => {
+                            $ctrl.resetPerStreamUsagesForCommand();
                         }
                     },
                     {

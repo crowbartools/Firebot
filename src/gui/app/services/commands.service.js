@@ -120,6 +120,26 @@
                 backendCommunicator.send("reset-active-cooldowns");
             };
 
+            service.resetAllPerStreamCommandUsages = () => {
+                backendCommunicator.send("reset-all-per-stream-command-usages");
+                ngToast.create({
+                    className: "success",
+                    content: "All per-stream command usages cleared successfully"
+                });
+            };
+
+            service.resetPerStreamUsagesForCommand = (commandId) => {
+                backendCommunicator.send("reset-per-stream-usages-for-command", commandId);
+                const command = service.commandsCache.customCommands.find(c => c.id === commandId);
+                const toastMessage = command != null
+                    ? `Per-stream usages cleared for <strong>${command.trigger}</strong>`
+                    : `Per-stream usages cleared`;
+                ngToast.create({
+                    className: "success",
+                    content: toastMessage
+                });
+            };
+
             backendCommunicator.on("active-cooldowns-reset", () => {
                 ngToast.create({
                     className: "success",

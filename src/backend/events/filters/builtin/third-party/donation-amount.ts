@@ -3,7 +3,7 @@ import { createNumberFilter } from "../../filter-factory";
 const filter = createNumberFilter({
     id: "firebot:donation-amount",
     name: "Donation Amount",
-    description: "Filter by the amount of donation from StreamLabs/Tipeee/ExtraLife",
+    description: "Filter by the amount of donation",
     eventMetaKey: "donationAmount",
     events: [
         { eventSourceId: "streamlabs", eventId: "donation" },

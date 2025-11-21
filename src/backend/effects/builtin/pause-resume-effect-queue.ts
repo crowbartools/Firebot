@@ -1,19 +1,18 @@
-import { EffectType } from "../../../types/effects";
-import { EffectCategory } from "../../../shared/effect-constants";
-import effectQueueManager, { EffectQueue } from "../queues/effect-queue-manager";
-import effectQueueRunner from "../queues/effect-queue-runner";
+import type { EffectType, EffectQueueConfig } from "../../../types/effects";
+import { EffectQueueConfigManager } from "../queues/effect-queue-config-manager";
 import logger from "../../logwrapper";
 
-const model: EffectType<{
+const effect: EffectType<{
     effectQueue: string;
     action: "Pause" | "Resume" | "Toggle";
+    runEffectsImmediatelyWhenPaused?: boolean;
 }> = {
     definition: {
         id: "firebot:pause-effect-queue",
         name: "Pause/Resume Effect Queue",
         description: "Pauses or resumes an effect queue. Effects sent to a paused queue will run once the queue is resumed.",
         icon: "fad fa-pause-circle",
-        categories: [EffectCategory.SCRIPTING]
+        categories: ["scripting", "firebot control"]
     },
     optionsTemplate: `
         <eos-container header="Effect Queue">
@@ -49,9 +48,17 @@ const model: EffectType<{
                     </li>
                 </ul>
             </div>
+            <firebot-checkbox
+                ng-if="effect.action === 'Pause' || effect.action === 'Toggle'"
+                label="Run Effects Immediately When Paused"
+                tooltip="When the queue is paused and effects are added to it, run them immediately instead of waiting for the queue to be resumed. This is useful if you want to temporarily pause queue functionality and have effects set to this queue to run as if there was no queue."
+                model="effect.runEffectsImmediatelyWhenPaused"
+                allow-indeterminate="true"
+                style="margin-top: 15px; margin-bottom: 0px;"
+            />
         </eos-container>
     `,
-    optionsController: ($scope, effectQueuesService: any) => {
+    optionsController: ($scope, effectQueuesService) => {
         $scope.effectQueues = effectQueuesService.getEffectQueues();
         $scope.effectQueueName = null;
 
@@ -64,7 +71,7 @@ const model: EffectType<{
             }
         }
 
-        $scope.selectEffectQueue = (queue: EffectQueue) => {
+        $scope.selectEffectQueue = (queue: EffectQueueConfig) => {
             $scope.effect.effectQueue = queue.id;
             $scope.effectQueueName = queue.name;
         };
@@ -84,24 +91,23 @@ const model: EffectType<{
         const queue = effectQueuesService.getEffectQueue(effect.effectQueue);
         return `${effect.action} ${queue?.name ?? "Unknown Queue"}`;
     },
-    onTriggerEvent: async ({ effect }) => {
-        const queue = effectQueueManager.getItem(effect.effectQueue);
+    onTriggerEvent: ({ effect }) => {
+        const queue = EffectQueueConfigManager.getItem(effect.effectQueue);
 
         if (queue == null) {
             logger.debug(`Effect queue ${effect.effectQueue} not found`);
             return false;
         }
         if (effect.action === "Pause") {
-            effectQueueManager.pauseQueue(effect.effectQueue);
+            EffectQueueConfigManager.pauseQueue(effect.effectQueue, effect.runEffectsImmediatelyWhenPaused);
         } else if (effect.action === "Resume") {
-            effectQueueManager.resumeQueue(effect.effectQueue);
+            EffectQueueConfigManager.resumeQueue(effect.effectQueue);
         } else {
-            effectQueueManager.toggleQueue(effect.effectQueue);
+            EffectQueueConfigManager.toggleQueue(effect.effectQueue, effect.runEffectsImmediatelyWhenPaused);
         }
-
 
         return true;
     }
 };
 
-module.exports = model;
+export = effect;

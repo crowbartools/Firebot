@@ -1,22 +1,25 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger, TriggersObject } from "../../../../types/variables";
+import type { UserCommand } from "../../../../types/commands";
 
-const { EffectTrigger } = require("../../../../shared/effect-constants");
-
-const triggers = {};
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.MANUAL] = true;
+const triggers: TriggersObject = {};
+triggers["command"] = true;
+triggers["event"] = [
+    "twitch:chat-message"
+];
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
         handle: "argCount",
         description: "Returns the number of command args.",
         triggers: triggers,
-        categories: [VariableCategory.NUMBERS],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["trigger based", "numbers"],
+        possibleDataOutput: ["number"]
     },
     evaluator: (trigger: Trigger) : number => {
-        return trigger.metadata.userCommand ? trigger.metadata.userCommand.args.length : 0;
+        return trigger.metadata.userCommand?.args?.length
+            ?? (trigger.metadata.eventData?.userCommand as UserCommand)?.args?.length
+            ?? 0;
     }
 };
 

@@ -1,5 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 import arrayFilter from './array-filter';
 
@@ -23,8 +22,8 @@ const model : ReplaceVariable = {
             }
         ],
 
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT],
+        categories: ["advanced"],
+        possibleDataOutput: ["text"],
         hidden: true
     },
     evaluator: arrayFilter.evaluator

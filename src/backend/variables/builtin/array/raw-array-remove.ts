@@ -1,6 +1,5 @@
 // Deprecated
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 import arrayRemove from "./array-remove";
 
@@ -19,8 +18,8 @@ const model : ReplaceVariable = {
                 description: 'Removes the element at the last index'
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT],
+        categories: ["advanced"],
+        possibleDataOutput: ["text"],
         hidden: true
     },
     evaluator: arrayRemove.evaluator

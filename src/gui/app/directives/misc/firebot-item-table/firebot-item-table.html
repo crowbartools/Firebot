@@ -1,192 +1,219 @@
 <div>
-  <scroll-sentinel
-    element-class="{{$ctrl.headerClass}}"
-  ></scroll-sentinel>
-  <div class="light-bg sticky-top fit-header p-6 m-0 {{$ctrl.headerClass}}">
-    <div class="flex-row">
-      <button
-        ng-click="$ctrl.onAddNewClicked()"
-        class="btn btn-primary hvr-icon-grow mr-4"
-        ng-disabled="$ctrl.addNewButtonDisabled"
-      >
-        <i class="fas fa-plus-circle hvr-icon mr-2"></i>
-        {{$ctrl.addNewButtonText}}
-      </button>
-      <div ng-transclude="toolbar"></div>
-    </div>
-    <div class="fit-header-sort-search" ng-show="$ctrl.items.length > 0">
-      <sort-tag-dropdown
-        context="{{$ctrl.sortTagContext}}"
-        on-update="$ctrl.updateSortTags()"
-        class="mr-4"
-      />
-      <searchbar
-        placeholder-text="{{$ctrl.searchPlaceholder}}"
-        query="searchQuery"
-        class="fit-header-search"
-      ></searchbar>
-      <button
-          ng-if="$ctrl.showAdvancedOptionsButton"
-          uib-tooltip="Advanced Search Options"
-          tooltip-append-to-body="true"
-          tooltip-placement="top-right"
-          uib-popover-template="'advancedSearchOptionsPopover.html'"
-          popover-placement="bottom-right"
-          popover-append-to-body="true"
-          popover-trigger="'outsideClick'"
-          class="btn-reset fbit-advance-search-btn"
-      >
-        <i 
-          class="fas fa-toolbox"
-        ></i>
-        <div ng-if="$ctrl.hasAdvancedOptionsApplied()" class="options-applied-indicator"></div>
-      </button>
-      <script type="text/ng-template" id="advancedSearchOptionsPopover.html">
-          <div class="p-3">
-            <firebot-checkbox
-              ng-if="$ctrl.customFilterName != null"
-              label="Full text search"
-              model="$ctrl.useFullTextSearch"
-              tooltip="Search all fields. Prefix with ! to perform an exclusive search."
-              tooltip-placement="top-right"
-              style="margin: 0;"
-            />
-          </div>
-      </script>
-      
-    </div>
-  </div>
-  <div class="p-6">
-    <div
-      ng-if="$ctrl.items.length === 0"
-      class="noselect muted pl-5"
-    >
-      <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span
-      ><span class="ml-3">{{$ctrl.noDataMessage}}</span>
-    </div>
-    <div
-      ng-if="$ctrl.items.length > 0 && filteredItems && filteredItems.length < 1"
-      class="noselect muted pl-5"
-    >
-      <span class="ml-3">{{$ctrl.noneFoundMessage}}</span>
-    </div>
-    <table
-      ng-show="$ctrl.items.length > 0 && (filteredItems == null || filteredItems.length > 0)"
-      class="fb-table fit-table"
-    >
-      <thead class="fit-table-header">
-        <tr>
-          <th ng-if="$ctrl.testButton == true" class="fit-test-button-header"></th>
-          <th
-            ng-repeat="header in $ctrl.headers track by $index"
-            ng-style="header.headerStyles"
-            class="fit-custom-header"
-            ng-click="header.sortable && header.dataField && $ctrl.setOrderField(header.dataField)" 
-            ng-class="{'selected': header.dataField && $ctrl.isOrderField(header.dataField), 'not-clickable': !header.sortable || !header.dataField}"
-          >
-            <div style="display:flex;">
-              <span style="display:inline-block;">
-                <i ng-show="header.icon" class="fas" ng-class="header.icon"></i>
-              </span>
-              <span ng-show="header.name" class="mx-2 my-0">
-                {{header.name}}
-              </span>
-              <span ng-if="header.sortable && header.dataField" style="display:inline-block; width: 11px;">
-                  <i ng-show="$ctrl.isOrderField(header.dataField)" class="fal" ng-class="{'fa-arrow-to-bottom': !$ctrl.order.reverse,'fa-arrow-to-top': $ctrl.order.reverse}"></i>
-              </span>
-            </div>
-          </th>
-          <th 
-            ng-if="$ctrl.sortTagContext != null" 
-            class="fit-custom-header"
-            ng-click="$ctrl.setOrderField('%sorttags%')" 
-            ng-class="{'selected': $ctrl.isOrderField('%sorttags%')}"
-          >
-            <div style="display:flex;">
-              <span style="display:inline-block;">
-                <i class="fas fa-tag"></i>
-              </span>
-              <span class="mx-2 my-0">
-                TAGS
-              </span>
-              <span style="display:inline-block; width: 11px;">
-                  <i ng-show="$ctrl.isOrderField('%sorttags%')" class="fal" ng-class="{'fa-arrow-to-bottom': !$ctrl.order.reverse,'fa-arrow-to-top': $ctrl.order.reverse}"></i>
-              </span>
-            </div>
-          </th>
-          <th ng-if="$ctrl.showStatusIndicator"></th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.items" class="fit-table-body">
-        <tr
-          ng-repeat="item in filteredItems = ($ctrl.items | sortTagSearch:sts.getSelectedSortTag($ctrl.sortTagContext) | dynamicFilter:$ctrl.getFilterName():searchQuery | orderBy:$ctrl.dynamicOrder:$ctrl.order.reverse) as visible track by item.id"
-          context-menu="$ctrl.getContextMenu(item)"
-          context-menu-class="angular-context-menu"
-        >
-          <td ng-if="$ctrl.testButton == true" class="fit-test-button-body">
-            <span aria-label="Test" 
-              ng-click="$ctrl.onTestButtonClicked({ itemId: item.id })"
-              uib-tooltip="Test Effects"
-              tooltip-append-to-body="true"
+    <scroll-sentinel element-class="{{$ctrl.headerClass}}"></scroll-sentinel>
+    <div class="light-bg sticky-top fit-header p-6 m-0 {{$ctrl.headerClass}}">
+        <div class="flex-row">
+            <button
+                ng-click="$ctrl.onAddNewClicked()"
+                class="btn btn-primary hvr-icon-grow mr-4"
+                ng-disabled="$ctrl.addNewButtonDisabled"
             >
-              <i class="fas fa-play-circle clickable"></i>
-            </span>
-          </td>
-          <td
-            ng-repeat="header in $ctrl.headers track by $index"
-            ng-style="header.cellStyles"
-            ng-class="header.cellClass"
-          >
-            <sortable-table-cell
-              data="item"
-              header="header"
-              cell-index="$index"
-            ></sortable-table-cell>
-          </td>
-          <td
-            ng-if="$ctrl.sortTagContext != null"
-            class="fit-table-sort-tags py-4"
-          >
-            <sort-tags-row item="item" context="$ctrl.sortTagContext" on-update="$ctrl.triggerItemsUpdate()"></sort-tags-row>
-          </td>
-          <td ng-if="$ctrl.showStatusIndicator">
-            <status-indicator status="$ctrl.getStatus(item)" />
-          </td>
-          <td class="fit-table-drag-handle">
-            <div>
-              <span style="width: 12.5px; display: inline-block;">
-                <span
-                  class="dragHandle"
-                  ng-click="$event.stopPropagation();"
-                  ng-show="$ctrl.orderable && $ctrl.order.field == null && sts.getSelectedSortTag($ctrl.sortTagContext) == null && (searchQuery == null || searchQuery.length < 1)"
+                <i class="fas fa-plus-circle hvr-icon mr-2"></i>
+                {{$ctrl.addNewButtonText}}
+            </button>
+            <div ng-transclude="toolbar"></div>
+        </div>
+        <div class="fit-header-sort-search" ng-show="$ctrl.items.length > 0">
+            <sort-tag-dropdown
+                ng-if="$ctrl.sortTagContext != null"
+                context="{{$ctrl.sortTagContext}}"
+                on-update="$ctrl.updateSortTags()"
+                class="mr-4"
+            />
+            <searchbar
+                ng-hide="$ctrl.hideSearch === true"
+                placeholder-text="{{$ctrl.searchPlaceholder}}"
+                query="searchQuery"
+                class="fit-header-search"
+            ></searchbar>
+            <button
+                ng-if="$ctrl.showAdvancedOptionsButton"
+                uib-tooltip="Advanced Search Options"
+                tooltip-append-to-body="true"
+                tooltip-placement="top-right"
+                uib-popover-template="'advancedSearchOptionsPopover.html'"
+                popover-placement="bottom-right"
+                popover-append-to-body="true"
+                popover-trigger="'outsideClick'"
+                class="btn-reset fbit-advance-search-btn"
+            >
+                <i class="fas fa-toolbox"></i>
+                <div
+                    ng-if="$ctrl.hasAdvancedOptionsApplied()"
+                    class="options-applied-indicator"
+                ></div>
+            </button>
+            <script
+                type="text/ng-template"
+                id="advancedSearchOptionsPopover.html"
+            >
+                <div class="p-3">
+                  <firebot-checkbox
+                    ng-if="$ctrl.customFilterName != null"
+                    label="Full text search"
+                    model="$ctrl.useFullTextSearch"
+                    tooltip="Search all fields. Prefix with ! to perform an exclusive search."
+                    tooltip-placement="top-right"
+                    style="margin: 0;"
+                  />
+                </div>
+            </script>
+        </div>
+    </div>
+    <div class="p-6">
+        <div ng-if="$ctrl.items.length === 0" class="noselect muted pl-5">
+            <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span
+            ><span class="ml-3">{{$ctrl.noDataMessage}}</span>
+        </div>
+        <div
+            ng-if="$ctrl.items.length > 0 && filteredItems && filteredItems.length < 1"
+            class="noselect muted pl-5"
+        >
+            <span class="ml-3">{{$ctrl.noneFoundMessage}}</span>
+        </div>
+        <table
+            ng-show="$ctrl.items.length > 0 && (filteredItems == null || filteredItems.length > 0)"
+            class="fb-table fit-table"
+        >
+            <thead class="fit-table-header">
+                <tr>
+                    <th
+                        ng-if="$ctrl.testButton == true"
+                        class="fit-test-button-header"
+                    ></th>
+                    <th
+                        ng-repeat="header in ::$ctrl.headers track by $index"
+                        ng-style="header.headerStyles"
+                        class="fit-custom-header"
+                        ng-click="header.sortable && header.dataField && $ctrl.setOrderField(header.dataField)"
+                        ng-class="{'selected': header.dataField && $ctrl.isOrderField(header.dataField), 'not-clickable': !header.sortable || !header.dataField}"
+                    >
+                        <div style="display: flex">
+                            <span style="display: inline-block">
+                                <i
+                                    ng-show="header.icon"
+                                    class="fas"
+                                    ng-class="header.icon"
+                                ></i>
+                            </span>
+                            <span ng-show="header.name" class="mx-2 my-0">
+                                {{header.name}}
+                            </span>
+                            <span
+                                ng-if="header.sortable && header.dataField"
+                                style="display: inline-block; width: 11px"
+                            >
+                                <i
+                                    ng-show="$ctrl.isOrderField(header.dataField)"
+                                    class="fal"
+                                    ng-class="{'fa-arrow-to-bottom': !$ctrl.order.reverse,'fa-arrow-to-top': $ctrl.order.reverse}"
+                                ></i>
+                            </span>
+                        </div>
+                    </th>
+                    <th
+                        ng-if="$ctrl.sortTagContext != null"
+                        class="fit-custom-header"
+                        ng-click="$ctrl.setOrderField('%sorttags%')"
+                        ng-class="{'selected': $ctrl.isOrderField('%sorttags%')}"
+                    >
+                        <div style="display: flex">
+                            <span style="display: inline-block">
+                                <i class="fas fa-tag"></i>
+                            </span>
+                            <span class="mx-2 my-0"> TAGS </span>
+                            <span style="display: inline-block; width: 11px">
+                                <i
+                                    ng-show="$ctrl.isOrderField('%sorttags%')"
+                                    class="fal"
+                                    ng-class="{'fa-arrow-to-bottom': !$ctrl.order.reverse,'fa-arrow-to-top': $ctrl.order.reverse}"
+                                ></i>
+                            </span>
+                        </div>
+                    </th>
+                    <th ng-if="$ctrl.showStatusIndicator"></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody
+                ui-sortable="$ctrl.sortableOptions"
+                ng-model="$ctrl.items"
+                class="fit-table-body"
+            >
+                <tr
+                    ng-repeat="item in filteredItems = ($ctrl.items | sortTagSearch:sts.getSelectedSortTag($ctrl.sortTagContext) | dynamicFilter:$ctrl.getFilterName():searchQuery | orderBy:$ctrl.dynamicOrder:$ctrl.order.reverse) track by item.id"
+                    context-menu="$ctrl.getContextMenu(item)"
+                    context-menu-class="angular-context-menu"
                 >
-                  <i class="fal fa-bars" aria-hidden="true"></i>
-                </span>
-              </span>
-              <div class="ml-10">
-                <button aria-label="Open Context Menu"  
-                  class="noselect clickable text-5xl"
-                  context-menu="$ctrl.getContextMenu(item)"
-                  context-menu-on="click"
-                  context-menu-class="angular-context-menu"
-                  context-menu-orientation="left"
-                  context-menu-bottom-offset="60px"
-                >
-                  <i class="fal fa-ellipsis-h"></i>
-              </button>
-              </div>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div
-    class="light-bg sticky-bottom fit-footer"
-    ng-transclude="footer"
-  ></div>
-  <scroll-sentinel
-    element-class="fit-footer"
-  ></scroll-sentinel>
+                    <td
+                        ng-if="::($ctrl.testButton == true)"
+                        class="fit-test-button-body"
+                    >
+                        <span
+                            aria-label="Test"
+                            ng-click="$ctrl.onTestButtonClicked({ itemId: item.id })"
+                            uib-tooltip="Test Effects"
+                            tooltip-append-to-body="true"
+                        >
+                            <i class="fas fa-play-circle clickable"></i>
+                        </span>
+                    </td>
+                    <td
+                        ng-repeat="header in ::$ctrl.headers track by $index"
+                        ng-style="::header.cellStyles"
+                        ng-class="::header.cellClass"
+                    >
+                        <sortable-table-cell
+                            data="item"
+                            header="header"
+                            cell-index="$index"
+                        ></sortable-table-cell>
+                    </td>
+                    <td
+                        ng-if="::($ctrl.sortTagContext != null)"
+                        class="fit-table-sort-tags py-4"
+                    >
+                        <sort-tags-row
+                            item="item"
+                            context="$ctrl.sortTagContext"
+                            on-update="$ctrl.triggerItemsUpdate()"
+                        ></sort-tags-row>
+                    </td>
+                    <td ng-if="::$ctrl.showStatusIndicator">
+                        <status-indicator status="$ctrl.getStatus(item)" enabled-label="::$ctrl.statusEnabledLabel" disabled-label="::$ctrl.statusDisabledLabel" />
+                    </td>
+                    <td class="fit-table-drag-handle">
+                        <div>
+                            <span style="width: 12.5px; display: inline-block">
+                                <span
+                                    class="dragHandle"
+                                    ng-click="$event.stopPropagation();"
+                                    ng-if="$ctrl.orderable && $ctrl.order.field == null && sts.getSelectedSortTag($ctrl.sortTagContext) == null && (searchQuery == null || searchQuery.length < 1)"
+                                >
+                                    <i
+                                        class="fal fa-bars"
+                                        aria-hidden="true"
+                                    ></i>
+                                </span>
+                            </span>
+                            <div class="ml-10">
+                                <button
+                                    aria-label="Open Context Menu"
+                                    class="noselect clickable text-5xl"
+                                    context-menu="$ctrl.getContextMenu(item)"
+                                    context-menu-on="click"
+                                    context-menu-class="angular-context-menu"
+                                    context-menu-orientation="left"
+                                    context-menu-bottom-offset="60px"
+                                >
+                                    <i class="fal fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="light-bg sticky-bottom fit-footer" ng-transclude="footer"></div>
+    <scroll-sentinel element-class="fit-footer"></scroll-sentinel>
 </div>

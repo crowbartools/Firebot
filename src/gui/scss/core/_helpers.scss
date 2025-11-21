@@ -2,147 +2,147 @@
 // Font size
 
 .text-xs {
-  font-size: 0.75rem;
+    font-size: 0.75rem;
 }
 
 .text-sm {
-font-size: 0.875rem;
+    font-size: 0.875rem;
 }
 
 .text-base {
-font-size: 1rem;
+    font-size: 1rem;
 }
 
 .text-lg {
-font-size: 1.125rem;
+    font-size: 1.125rem;
 }
 
 .text-xl {
-font-size: 1.25rem;
+    font-size: 1.25rem;
 }
 
 .text-2xl {
-font-size: 1.5rem;
+    font-size: 1.5rem;
 }
 
 .text-3xl {
-font-size: 1.875rem;
+    font-size: 1.875rem;
 }
 
 .text-4xl {
-font-size: 2.25rem;
+    font-size: 2.25rem;
 }
 
 .text-5xl {
-font-size: 3rem;
+    font-size: 3rem;
 }
 
 .text-6xl {
-font-size: 4rem;
+    font-size: 4rem;
 }
 
 
 // Font weight
 
 .font-thin {
-font-weight: 100;
+    font-weight: 100;
 }
 
 .font-extralight {
-font-weight: 200;
+    font-weight: 200;
 }
 
 .font-light {
-font-weight: 300;
+    font-weight: 300;
 }
 
 .font-normal {
-font-weight: 400;
+    font-weight: 400;
 }
 
 .font-medium {
-font-weight: 500;
+    font-weight: 500;
 }
 
 .font-semibold {
-font-weight: 600;
+    font-weight: 600;
 }
 
 .font-bold {
-font-weight: 700;
+    font-weight: 700;
 }
 
 .font-extrabold {
-font-weight: 800;
+    font-weight: 800;
 }
 
 .font-black {
-font-weight: 900;
+    font-weight: 900;
 }
 
 
 // Margin & Padding
 
 @function value($size) {
-  @if ($size == 0) {
-      @return 0;
-  } @else if ($size == "px") {
-      @return 1px;
-  } @else {
-      @return calc($size / 4) + rem;
-  }
+    @if ($size == 0) {
+        @return 0;
+    } @else if ($size == "px") {
+        @return 1px;
+    } @else {
+        @return calc($size / 4) + rem;
+    }
 }
 
 @mixin options($props, $size, $value) {
-  @each $prop, $propAcr in $props {
-      .#{$propAcr}-#{$size} {
-          #{$prop}: $value;
-      }
+    @each $prop, $propAcr in $props {
+        .#{$propAcr}-#{$size} {
+            #{$prop}: $value;
+        }
 
-      .#{$propAcr}x-#{$size} {
-          #{$prop}-left: $value;
-          #{$prop}-right: $value;
-      }
+        .#{$propAcr}x-#{$size} {
+            #{$prop}-left: $value;
+            #{$prop}-right: $value;
+        }
 
-      .#{$propAcr}y-#{$size} {
-          #{$prop}-top: $value;
-          #{$prop}-bottom: $value;
-      }
+        .#{$propAcr}y-#{$size} {
+            #{$prop}-top: $value;
+            #{$prop}-bottom: $value;
+        }
 
-      @each $side, $sideAcr in ("top": "t", "right": "r", "bottom": "b", "left": "l") {
-          .#{$propAcr}#{$sideAcr}-#{$size} {
-              #{$prop}-#{$side}: $value;
-          }
-      }
-  }
+        @each $side, $sideAcr in ("top": "t", "right": "r", "bottom": "b", "left": "l") {
+            .#{$propAcr}#{$sideAcr}-#{$size} {
+                #{$prop}-#{$side}: $value;
+            }
+        }
+    }
 }
 
 @mixin spacing($props) {
-  @include options($props, "px", 1px);
-  @include options($props, 0\.5, value(0.5));
-  @include options($props, 1\.5, value(1.5));
-  @include options($props, 2\.5, value(2.5));
-  @include options($props, 3\.5, value(3.5));
+    @include options($props, "px", 1px);
+    @include options($props, 0\.5, value(0.5));
+    @include options($props, 1\.5, value(1.5));
+    @include options($props, 2\.5, value(2.5));
+    @include options($props, 3\.5, value(3.5));
 
-  $i: 0;
-  @while $i < 97 {
-      @if ($i < 12) {
-          @include options($props, $i, value($i));
-          $i: $i + 1;
-      } @else if ($i >= 12 and $i < 16) {
-          @include options($props, $i, value($i));
-          $i: $i + 2;
-      } @else if ($i >= 16 and $i < 64) {
-          @include options($props, $i, value($i));
-          $i: $i + 4;
-      } @else if ($i >= 64 and $i < 80) {
-          @include options($props, $i, value($i));
-          $i: $i + 8;
-      } @else if ($i >= 80 and $i <= 96) {
-          @include options($props, $i, value($i));
-          $i: $i + 16;
-      }
-  }
+    $i: 0;
+    @while $i < 97 {
+        @if ($i < 12) {
+            @include options($props, $i, value($i));
+            $i: $i + 1;
+        } @else if ($i >= 12 and $i < 16) {
+            @include options($props, $i, value($i));
+            $i: $i + 2;
+        } @else if ($i >= 16 and $i < 64) {
+            @include options($props, $i, value($i));
+            $i: $i + 4;
+        } @else if ($i >= 64 and $i < 80) {
+            @include options($props, $i, value($i));
+            $i: $i + 8;
+        } @else if ($i >= 80 and $i <= 96) {
+            @include options($props, $i, value($i));
+            $i: $i + 16;
+        }
+    }
 }
 
 @include spacing(("margin": "m", "padding": "p"));
@@ -150,7 +150,11 @@ font-weight: 900;
 // Flexbox
 
 .flex {
-  display: flex;
+    display: flex;
+}
+
+.inline-flex {
+    display: inline-flex;
 }
 
 .flex-col {
@@ -178,7 +182,7 @@ font-weight: 900;
 }
 
 .items-center {
-  align-items: center;
+    align-items: center;
 }
 
 .items-end {
@@ -199,6 +203,10 @@ font-weight: 900;
 
 .capitalize {
     text-transform: capitalize;
+}
+
+.uppercase {
+    text-transform: uppercase;
 }
 
 .text-center {

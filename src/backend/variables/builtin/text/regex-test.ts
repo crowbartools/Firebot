@@ -1,10 +1,9 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
         handle: "regexTest",
-        description: "Check whether a string matches a regular expression",
+        description: "Check whether a string matches a [regular expression](https://developer.mozilla.org/docs/Web/JavaScript/Guide/Regular_expressions)",
         usage: "regexTest[string, expression]",
         examples: [
             {
@@ -12,8 +11,8 @@ const model : ReplaceVariable = {
                 description: "Add flags to the regex evaluation."
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (
         trigger: Trigger,
@@ -24,7 +23,7 @@ const model : ReplaceVariable = {
         try {
             const regex = RegExp(`${expression}`, `${flags}`);
             return regex.test(`${stringToEvaluate}`);
-        } catch (err) {
+        } catch {
             return false;
         }
     }

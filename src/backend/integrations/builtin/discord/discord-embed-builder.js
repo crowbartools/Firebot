@@ -1,8 +1,8 @@
 "use strict";
 
-const twitchApi = require("../../../twitch-api/api");
+const { TwitchApi } = require("../../../streaming-platforms/twitch/api");
 
-const accountAccess = require("../../../common/account-access");
+const { AccountAccess } = require("../../../common/account-access");
 
 function parseColor(color = "#29b9ed") {
     let colorInt = parseInt(color.substring(1), 16);
@@ -28,20 +28,18 @@ function buildCustomEmbed(customEmbedData, color) {
     }
     if (customEmbedData.imageUrl) {
         customEmbed.image = {
-            url: customEmbedData.imageUrl //eslint-disable-line camelcase
+            url: customEmbedData.imageUrl
         };
     }
     return customEmbed;
 }
 
 async function buildChannelEmbed(color) {
-    const streamer = accountAccess.getAccounts().streamer;
-
     /**@type {import('@twurple/api').HelixStream} */
     let currentStream;
     try {
-        currentStream = await twitchApi.streamerClient.streams.getStreamByUserId(streamer.userId);
-    } catch (error) {
+        currentStream = await TwitchApi.streams.getStreamersCurrentStream();
+    } catch {
         // stream not running
     }
 
@@ -56,7 +54,7 @@ async function buildChannelEmbed(color) {
     try {
         user = await currentStream.getUser();
         game = await currentStream.getGame();
-    } catch (error) {
+    } catch {
         //some other error
     }
 
@@ -88,7 +86,7 @@ async function buildChannelEmbed(color) {
  * @param color
  */
 async function buildClipEmbed(clip, color) {
-    const streamer = accountAccess.getAccounts().streamer;
+    const streamer = AccountAccess.getAccounts().streamer;
     const game = await clip.getGame();
     return {
         title: clip.title,
@@ -113,8 +111,8 @@ async function buildClipEmbed(clip, color) {
 }
 
 async function buildScreenshotEmbed(imageUrl, color) {
-    const streamer = accountAccess.getAccounts().streamer;
-    const channelInfo = await twitchApi.channels.getChannelInformation();
+    const streamer = AccountAccess.getAccounts().streamer;
+    const channelInfo = await TwitchApi.channels.getChannelInformation();
     return {
         title: channelInfo.title,
         color: parseColor(color),

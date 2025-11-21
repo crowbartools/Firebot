@@ -79,7 +79,7 @@
                                 type="text"
                                 id="expression"
                                 name="expression"
-                                ng-minlength="3"
+                                ng-minlength="1"
                                 required
                                 class="form-control input-lg"
                                 style="font-size: 16px; padding: 10px 16px; height: 100px;"
@@ -155,7 +155,7 @@
                                 return {
                                     success: false,
                                     reason: "Argument Name length must be at least 2 characters."
-                                }
+                                };
                             }
                             return true;
                         },
@@ -164,7 +164,7 @@
                                 return {
                                     success: false,
                                     reason: "Argument Name must start with a lowercase letter."
-                                }
+                                };
                             }
                             return true;
                         },

@@ -1,18 +1,18 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../../types/variables";
 import customRolesManager from "../../../../roles/custom-roles-manager";
-import util from "../../../../utility";
 import logger from "../../../../logwrapper";
+import { getRandomInt } from "../../../../utils";
 
 const model : ReplaceVariable = {
     definition: {
         handle: "rawRandomCustomRoleUser",
         usage: "rawRandomCustomRoleUser[role]",
         description: "Returns a random user that has the specified custom role as an object containing `id`, `username`, and `displayName` properties.",
-        categories: [VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.OBJECT]
+        categories: ["user based"],
+        possibleDataOutput: ["object"],
+        hidden: true
     },
-    evaluator: async (_, role: string) => {
+    evaluator: (_, role: string) => {
         if (role == null || role === '') {
             logger.debug("Unable to evaluate rawRandomCustomRoleUser. No custom role specified");
             return null;
@@ -30,7 +30,7 @@ const model : ReplaceVariable = {
             return null;
         }
 
-        const randIndex = util.getRandomInt(0, customRole.viewers.length - 1);
+        const randIndex = getRandomInt(0, customRole.viewers.length - 1);
 
         return customRole.viewers[randIndex];
     }

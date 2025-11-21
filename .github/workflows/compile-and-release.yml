@@ -6,10 +6,9 @@ name: Build and Draft Release
 on:
   workflow_dispatch:
   push:
-    branches: master
+    branches: [master]
 
 jobs:
-
   checkversion:
     name: Check if version has corrosponding tag
     runs-on: ubuntu-latest
@@ -53,13 +52,13 @@ jobs:
           echo "${TEMPLATE}" >> $GITHUB_OUTPUT
           echo "${EOF}" >> $GITHUB_OUTPUT
 
-      - name: 'Check: package version has corrosponding git tag'
+      - name: "Check: package version has corrosponding git tag"
         id: dobuild
         shell: bash
         run: echo dobuild=$(git show-ref --tags --verify --quiet -- "refs/tags/v${{ steps.version.outputs.version }}" && echo 0 || echo 1) >> $GITHUB_OUTPUT
 
   compile:
-    name: 'Compile'
+    name: "Compile"
     needs: [checkversion]
     if: needs.checkversion.outputs.dobuild == 1
     strategy:
@@ -69,15 +68,15 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Nodejs
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: '20.14.0'
+          node-version: "22.19.0"
 
       - name: Install correct npm version
-        run: npm install -g npm@10.8.1
+        run: npm install -g npm@10.9.3
 
       - name: Linux Build Prep
         if: runner.os == 'linux'
@@ -85,11 +84,8 @@ jobs:
 
       - name: MacOS Build Prep
         if: runner.os == 'macOS'
-        # Force install this dep until node-appdmg then electron-installer-dmg gets updated
         # appdmg will fail to install without python setuptools since gh runners now use python 3.12. See: https://github.com/electron/forge/issues/3371
-        run: |
-          brew install python-setuptools
-          npm install github:SReject/electron-installer-dmg#9bdb5217b078c724918271549f34d362aecbf6bb
+        run: brew install python-setuptools
 
       - name: Install Global Dependencies
         run: npm install --global --production --omit=dev grunt-cli

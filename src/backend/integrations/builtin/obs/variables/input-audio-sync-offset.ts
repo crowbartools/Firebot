@@ -1,25 +1,23 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { TriggerType } from "../../../../common/EffectType";
+import { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
 import {
     OBS_EVENT_SOURCE_ID,
     OBS_INPUT_AUDIO_BALANCE_CHANGED_EVENT_ID
 } from "../constants";
-import { VariableCategory } from "../../../../../shared/variable-constants";
 
-const triggers = {};
-triggers[TriggerType.EVENT] = [
+const triggers: TriggersObject = {};
+triggers["event"] = [
     `${OBS_EVENT_SOURCE_ID}:${OBS_INPUT_AUDIO_BALANCE_CHANGED_EVENT_ID}`
 ];
-triggers[TriggerType.MANUAL] = true;
+triggers["manual"] = true;
 
 export const InputAudioSyncOffsetVariable: ReplaceVariable = {
     definition: {
         handle: "obsInputAudioSyncOffset",
         description: "Returns the audio sync offset (in milliseconds) of the OBS input.",
         possibleDataOutput: ["number"],
-        categories: [VariableCategory.ADVANCED, VariableCategory.INTEGRATION, VariableCategory.OBS]
+        categories: ["advanced", "integrations", "obs"]
     },
-    evaluator: async (trigger) => {
+    evaluator: (trigger) => {
         const inputAudioSyncOffset = trigger.metadata?.eventData?.inputAudioSyncOffset;
         return inputAudioSyncOffset ?? 0;
     }
