@@ -19,6 +19,7 @@ import { FirebotImporter } from "./third-party/firebot-importer";
 
 class ImportManager {
     private _registeredImporters: Record<string, ThirdPartyImporter> = {};
+    private _abortController: AbortController;
 
     constructor() {
         frontendCommunicator.onAsync("import:load-quotes",
@@ -36,6 +37,10 @@ class ImportManager {
         frontendCommunicator.onAsync("import:import-viewers",
             async (request: ImportRequest) => await this.importViewers(request)
         );
+
+        frontendCommunicator.onAsync("import:abort-import", async () => {
+            this._abortController.abort("Aborted by user");
+        });
     }
 
     registerDefaultImporters(): void {
@@ -170,11 +175,12 @@ class ImportManager {
     private async importViewers(request: ImportRequest): Promise<LoadResult<ParsedViewers>> {
         const importer = this._registeredImporters[request.appId];
         let error: string;
+        this._abortController = new AbortController();
 
         if (importer) {
             if (importer.importViewers != null) {
                 try {
-                    return await importer.importViewers(request.data as unknown[], request.settings);
+                    return await importer.importViewers(request.data as unknown[], request.settings, this._abortController.signal);
                 } catch (error) {
                     logger.error(`Unexpected error while importing ${importer.appName} viewers`, error);
                     return {
