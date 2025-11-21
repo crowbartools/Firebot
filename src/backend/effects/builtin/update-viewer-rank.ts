@@ -13,7 +13,7 @@ const effect: EffectType<{
         name: "Update Viewer Rank",
         description: "Update a viewers rank within a given rank ladder",
         icon: "fad fa-award",
-        categories: ["common", "fun"],
+        categories: ["common", "fun", "firebot control"],
         dependencies: []
     },
     optionsTemplate: `

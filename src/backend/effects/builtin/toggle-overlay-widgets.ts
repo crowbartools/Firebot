@@ -11,7 +11,7 @@ const effect: EffectType<{
         name: "Toggle Overlay Widgets",
         description: "Toggle the active status of overlay widgets.",
         icon: "fad fa-toggle-off",
-        categories: ["overlay", "advanced"],
+        categories: ["overlay", "advanced", "firebot control"],
         dependencies: []
     },
     optionsTemplate: `

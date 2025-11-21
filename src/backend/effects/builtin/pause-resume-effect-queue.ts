@@ -12,7 +12,7 @@ const effect: EffectType<{
         name: "Pause/Resume Effect Queue",
         description: "Pauses or resumes an effect queue. Effects sent to a paused queue will run once the queue is resumed.",
         icon: "fad fa-pause-circle",
-        categories: ["scripting"]
+        categories: ["scripting", "firebot control"]
     },
     optionsTemplate: `
         <eos-container header="Effect Queue">

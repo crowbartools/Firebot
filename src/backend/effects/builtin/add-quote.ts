@@ -13,7 +13,7 @@ const effect: EffectType<{
         name: "Add Quote",
         description: "Adds a quote to the quote database.",
         icon: "fad fa-quote-right",
-        categories: ["fun"],
+        categories: ["fun", "firebot control"],
         dependencies: [],
         outputs: [
             {

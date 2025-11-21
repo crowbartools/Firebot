@@ -12,7 +12,7 @@ const effect: EffectType<{
         name: "Set User Metadata",
         description: "Save metadata associated to a given user",
         icon: "fad fa-user-cog",
-        categories: ["advanced", "scripting"],
+        categories: ["advanced", "scripting", "firebot control"],
         dependencies: []
     },
     optionsTemplate: `

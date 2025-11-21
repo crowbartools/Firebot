@@ -19,7 +19,7 @@ const currency = {
         name: "Update Currency",
         description: "Update a viewers currency.",
         icon: "fad fa-money-bill",
-        categories: [EffectCategory.COMMON, EffectCategory.FUN],
+        categories: ["common", "fun", "firebot control"],
         dependencies: [],
         outputs: [
             {

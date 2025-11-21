@@ -17,7 +17,7 @@ const effect: EffectType<{
         name: "Toggle Connection",
         description: "Toggle connection to Twitch and any linked Integrations",
         icon: "fad fa-plug",
-        categories: ["advanced"],
+        categories: ["advanced", "firebot control"],
         dependencies: []
     },
     optionsTemplate: `
