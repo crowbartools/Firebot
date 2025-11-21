@@ -11,6 +11,9 @@ const queueHeader = {
             if (this.queue.mode === "auto") {
                 return "Sequential";
             }
+            if (this.queue.mode === "manual") {
+                return "Manual";
+            }
             return "Unknown";
         },
         shouldShowInterval() {
