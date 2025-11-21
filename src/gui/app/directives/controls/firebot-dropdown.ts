@@ -39,6 +39,7 @@ type Bindings = {
 
 type Controller = {
     getSelectedOptionName: () => string;
+    getSelectedOptionIcon: () => string | undefined;
     selectOption: (option: DropdownOption) => void;
 };
 
@@ -75,7 +76,10 @@ type Controller = {
                 ng-disabled="$ctrl.isDisabled"
                 ng-class="{'dark': $ctrl.dark === true}"
             >
-                <span class="firebot-dropdown-label">{{$ctrl.getSelectedOptionName()}}</span>
+                <span class="firebot-dropdown-label">
+                    <i ng-if="$ctrl.getSelectedOptionIcon()" class="far muted" ng-class="$ctrl.getSelectedOptionIcon()"></i>
+                    <span>{{$ctrl.getSelectedOptionName()}}</span>
+                </span>
                 <i class="fas fa-chevron-down"></i>
             </button>
             <ul
@@ -164,6 +168,11 @@ type Controller = {
                     return $ctrl.placeholder;
                 }
                 return selectedOption.name;
+            };
+
+            $ctrl.getSelectedOptionIcon = function () {
+                const selectedOption = $ctrl.options.find(opt => opt.value === $ctrl.modelValue || (opt.value == null && $ctrl.modelValue == null));
+                return selectedOption?.icon;
             };
 
 
