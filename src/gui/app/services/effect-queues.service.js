@@ -50,25 +50,25 @@
                 {
                     value: "auto",
                     label: "Sequential",
-                    description: "Runs effect list in the queue sequentially. Priority items will be added before non-priority. Optional delay defaults to 0s.",
+                    description: "Effect lists run one after another in order. Priority items are placed at the front of the queue.",
                     iconClass: "fa-sort-numeric-down"
                 },
                 {
                     value: "custom",
-                    label: "Custom",
-                    description: "Wait the custom amount of time defined for each individual effect list.",
+                    label: "Custom Delay",
+                    description: "Each effect list defines how long the queue waits before triggering the next effect list.",
                     iconClass: "fa-clock"
                 },
                 {
                     value: "interval",
                     label: "Interval",
-                    description: "Runs effect lists on a set interval.",
+                    description: "Effect lists run at a fixed time interval.",
                     iconClass: "fa-stopwatch"
                 },
                 {
                     value: "manual",
                     label: "Manual",
-                    description: "Queue will only run the next effect list when manually triggered by a Trigger Manual Queue effect.",
+                    description: "Effect lists only run when triggered by a Trigger Manual Queue effect.",
                     iconClass: "fa-step-forward"
                 }
             ];

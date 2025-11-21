@@ -69,6 +69,7 @@
                 $scope.alternateBackgrounds = settingsService.getSetting("ChatAlternateBackgrounds");
                 $scope.hideDeletedMessages = settingsService.getSetting("ChatHideDeletedMessages");
                 $scope.reverseChatOrder = settingsService.getSetting("ChatReverseOrder");
+                $scope.showSharedChatInfo = settingsService.getSetting("ChatShowSharedChatInfo");
                 $scope.showAvatars = settingsService.getSetting("ChatAvatars");
                 $scope.showTimestamps = settingsService.getSetting("ChatTimestamps");
                 $scope.showBttvEmotes = settingsService.getSetting("ChatShowBttvEmotes");

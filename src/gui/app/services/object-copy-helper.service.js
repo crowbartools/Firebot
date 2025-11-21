@@ -78,6 +78,12 @@
                 return service.copyAndReplaceIds(object);
             };
 
+            service.cloneEffect = (effect) => {
+                const clonedEffect = JSON.parse(angular.toJson(effect));
+                clonedEffect.id = randomUUID();
+                return clonedEffect;
+            };
+
             return service;
         });
 }());

@@ -7,7 +7,7 @@ const effect: EffectType = {
         name: "Retrigger Last Activity",
         description: "Retrigger the most recent event in the Dashboard Activity Feed",
         icon: "fad fa-redo",
-        categories: ["advanced", "scripting"],
+        categories: ["dashboard", "advanced", "scripting"],
         dependencies: []
     },
     optionsTemplate: `

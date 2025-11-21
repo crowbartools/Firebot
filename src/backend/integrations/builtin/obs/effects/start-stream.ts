@@ -7,7 +7,7 @@ export const StartStreamEffectType: EffectType = {
         name: "OBS Start Stream",
         description: "Tell OBS to start streaming",
         icon: "fad fa-play-circle",
-        categories: ["common"]
+        categories: ["common", "integrations"]
     },
     optionsTemplate: `
     <eos-container>

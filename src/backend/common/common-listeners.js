@@ -1,14 +1,39 @@
 "use strict";
 
 const { app, dialog, shell, autoUpdater } = require("electron");
+const os = require('os');
 const logger = require("../logwrapper");
 const { restartApp } = require("../app-management/electron/app-helpers");
+
+function getLocalIpAddress() {
+    try {
+        const networkInterfaces = os.networkInterfaces();
+        for (const interfaceName of Object.keys(networkInterfaces)) {
+            const addresses = networkInterfaces[interfaceName];
+            for (const address of addresses) {
+                // Look for IPv4 addresses that are not internal (loopback)
+                if (address.family === 'IPv4' && !address.internal) {
+                    return address.address;
+                }
+            }
+        }
+    } catch {}
+    return null;
+}
 
 exports.setupCommonListeners = () => {
     const frontendCommunicator = require("./frontend-communicator");
     const { SettingsManager } = require("./settings-manager");
     const { BackupManager } = require("../backup-manager");
     const webServer = require("../../server/http-server-manager");
+
+    frontendCommunicator.onAsync("get-ip-address", async () => {
+        return getLocalIpAddress();
+    });
+
+    frontendCommunicator.onAsync("getPlatform", async () => {
+        return process.platform;
+    });
 
     frontendCommunicator.on("show-twitch-preview", () => {
         const windowManagement = require("../app-management/electron/window-management");

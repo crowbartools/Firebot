@@ -10,7 +10,7 @@ const effect = {
         name: "Spin The Wheel",
         description: "Trigger StreamLab's \"Spin the Wheel\" feature",
         icon: "fad fa-tire",
-        categories: [EffectCategory.INTEGRATIONS],
+        categories: ["integrations"],
         dependencies: []
     },
     globalSettings: {},

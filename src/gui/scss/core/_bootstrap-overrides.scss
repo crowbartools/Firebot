@@ -51,13 +51,26 @@
     }
 }
 
+.sticky-bottom-element {
+    position: sticky;
+    bottom: 0;
+    z-index: 999;
+    &.is-stuck {
+        border-top: 1px solid #24262a;
+        margin-top: 10px;
+        box-shadow: 0 -6px 9px -2px #0000004d;
+        border-bottom-left-radius: 0px;
+        border-bottom-right-radius: 0px;
+    }
+}
+
 .effect-footer-sentinel,
 .fb-scroll-sentinel {
     width: 100%;
 }
 
 .modal-content {
-    border-radius: 8px;
+    border-radius: 10px;
     background-color: $light-background-color;
     position: relative;
     border: 1px solid transparent;
@@ -149,7 +162,7 @@
 // Buttons
 
 .btn {
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 9px 12px;
     transform: scale(1) translateZ(0);
     transition-property: transform;
@@ -192,20 +205,21 @@
 }
 
 .btn-primary {
-    background-color: $primary-button-bg;
+    background: linear-gradient(135deg, lighten($primary-button-bg, 8%) 0%, $primary-button-bg 100%);
     border-color: transparent;
     &:hover {
-        background-color: $primary-button-hover-bg;
+        background: linear-gradient(135deg, lighten($primary-button-hover-bg, 8%) 0%, $primary-button-hover-bg 100%);
     }
     &:active,
     &:focus {
-        background-color: $primary-button-bg !important;
+        background: linear-gradient(135deg, lighten($primary-button-bg, 8%) 0%, $primary-button-bg 100%) !important;
     }
 }
 
 .btn-primary[disabled]:hover {
-    background-color: $primary-button-bg;
+    background: linear-gradient(135deg, lighten($primary-button-bg, 8%) 0%, $primary-button-bg 100%);
     opacity: 0.75;
+    transform: none;
 }
 
 .btn-default {
@@ -373,7 +387,7 @@
 }
 
 .dropdown-menu {
-    border-radius: 8px;
+    border-radius: 10px;
     border: 2px solid $dropdown-menu-border;
     background-color: $dropdown-menu-bg;
     z-index: 999999999;
@@ -436,7 +450,7 @@
     box-shadow: none;
     background-color: $form-control-bg;
     color: $form-control-text;
-    border-radius: 8px;
+    border-radius: 10px;
     &:focus {
         box-shadow: none;
         background-color: adjust-color($form-control-bg, $red: -10, $green: -10, $blue: -10);
@@ -481,7 +495,7 @@
 .color-picker-wrapper .input-group .input-group-addon {
     width: 45px;
     border: transparent !important;
-    border-radius: 8px;
+    border-radius: 10px;
     &:first-child {
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
@@ -545,24 +559,42 @@ label {
 
 .alert {
     border-radius: 8px;
+    border-width: 1px;
+    border-style: solid;
 }
 
 .alert-info {
     color: $alert-info-text-color;
     background-color: $alert-info-bg;
-    border-color: transparent;
+    border-color: $alert-info-border;
 }
 
 .alert-warning {
     color: $alert-warning-text-color;
     background-color: $alert-warning-bg;
-    border-color: transparent;
+    border-color: $alert-warning-border;
 }
 
 .alert-danger {
     color: $alert-danger-text-color;
     background-color: $alert-danger-bg;
-    border-color: transparent;
+    border-color: $alert-danger-border;
+}
+
+.alert-success {
+    color: $alert-success-text-color;
+    background-color: $alert-success-bg;
+    border-color: $alert-success-border;
+}
+
+// Toast notifications need solid backgrounds for visibility
+.ng-toast__message {
+    background-color: #373c3e;
+    border-radius: 8px;
+    .alert {
+        margin-bottom: 0px;
+    }
+    margin-bottom: 20px;
 }
 
 .fb-tabbed-page {

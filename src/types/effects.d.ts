@@ -12,11 +12,13 @@ interface EffectScope<EffectModel> extends ng.IScope {
 export type EffectCategory =
     | "common"
     | "twitch"
+    | "moderation"
     | "chat based"
-    | "Moderation"
+    | "dashboard"
     | "overlay"
     | "fun"
     | "integrations"
+    | "firebot control"
     | "advanced"
     | "scripting";
 
@@ -111,16 +113,22 @@ export type EffectDefinition<EffectModel = unknown> = {
          * This is useful when you want to run variable replacement manually, or not at all.
          */
     keysExemptFromAutoVariableReplacement?: Array<keyof EffectModel>;
+    /**
+     * If true, this effect does nothing when triggered (ex Comment effect)
+     * No-op effects are ignored by the random and sequential effects
+     */
+    isNoOp?: boolean;
 };
 
 export type EffectInstance<EffectModel = unknown> = {
     id: string;
     type: string;
-    effectLabel?: string;
+    effectLabel?: string | null;
+    effectComment?: string | null;
     active?: boolean;
-    abortTimeout?: number;
-    percentWeight?: number;
-    outputNames?: Record<string, unknown>;
+    abortTimeout?: number | null;
+    percentWeight?: number | null;
+    outputNames?: Record<string, string>;
 } & {
     [K in keyof EffectModel]: EffectModel[K];
 } & {
@@ -144,10 +152,17 @@ export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
     overlayExtension?: OverlayExtension<OverlayData>;
 };
 
+export type EffectListRunMode = "all" | "random" | "sequential";
+
 export interface EffectList {
     id: string;
     list: EffectInstance[];
-    queue?: string;
+    queue?: string | null;
+    queuePriority?: "high" | "none";
+    queueDuration?: number;
+    runMode?: EffectListRunMode;
+    weighted?: boolean;
+    dontRepeatUntilAllUsed?: boolean;
 }
 
 export type PresetEffectList = {
@@ -177,7 +192,11 @@ export type EffectQueueConfig = {
 export type QueueStatus = "running" | "paused" | "idle" | "canceled";
 
 export type RunEffectsContext = {
-    effects?: EffectList;
+    trigger: Trigger;
+    effects: EffectList;
+    outputs?: {
+        [x: string]: unknown;
+    };
     [key: string]: unknown;
 };
 

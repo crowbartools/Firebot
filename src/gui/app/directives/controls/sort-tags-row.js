@@ -59,30 +59,47 @@
                     </script>
                 </div>
             `,
-            controller: function($scope, $element, sortTagsService) {
+            controller: function($scope, $element, $timeout, sortTagsService) {
                 const $ctrl = this;
 
                 $ctrl.isPopupVisible = false;
+                $ctrl.cachedSortTags = [];
+                $ctrl.cachedOverflow = false;
+
+                // Cache sort tags to avoid repeated service calls
+                function updateCachedTags() {
+                    $ctrl.cachedSortTags = sortTagsService.getSortTagsForItem($ctrl.context, $ctrl.item.sortTags);
+                }
 
                 $scope.editSortTags = () => {
                     $ctrl.isPopupVisible = false;
                     sortTagsService.showEditSortTagsModal($ctrl.context);
                 };
 
-                $scope.getSortTags = () => sortTagsService.getSortTagsForItem($ctrl.context, $ctrl.item.sortTags);
+                $scope.getSortTags = () => $ctrl.cachedSortTags;
 
-                $scope.getSortTagNames = () => $scope.getSortTags().map(t => t.name).join("<br>");
+                $scope.getSortTagNames = () => $ctrl.cachedSortTags.map(t => t.name).join("<br>");
 
+                // Debounce overflow check
+                let overflowTimeout;
                 $scope.getOverflowTagCount = () => {
-                    const allTags = $element.find(".sort-tags").children().toArray();
-                    return Math.max(allTags.reduce((acc, child) => {
-                        const parent = child.parentNode;
-                        if ((child.offsetLeft - parent.offsetLeft > parent.offsetWidth) ||
+                    if (overflowTimeout) {
+                        return $ctrl.cachedOverflow ? 1 : 0;
+                    }
+                    overflowTimeout = $timeout(() => {
+                        const allTags = $element.find(".sort-tags").children().toArray();
+                        const count = Math.max(allTags.reduce((acc, child) => {
+                            const parent = child.parentNode;
+                            if ((child.offsetLeft - parent.offsetLeft > parent.offsetWidth) ||
                                 (child.offsetTop - parent.offsetTop > parent.offsetHeight)) {
-                            acc++;
-                        }
-                        return acc;
-                    }, 0), 0);
+                                acc++;
+                            }
+                            return acc;
+                        }, 0), 0);
+                        $ctrl.cachedOverflow = count > 0;
+                        overflowTimeout = null;
+                    }, 100);
+                    return $ctrl.cachedOverflow ? 1 : 0;
                 };
 
                 $scope.hasOverflow = () => {
@@ -118,7 +135,13 @@
                     if ($ctrl.item.sortTags == null) {
                         $ctrl.item.sortTags = [];
                     }
+                    updateCachedTags();
                 };
+
+                // Watch for changes to item.sortTags and update cache
+                $scope.$watch(() => $ctrl.item.sortTags, () => {
+                    updateCachedTags();
+                }, true);
             }
         });
 }());

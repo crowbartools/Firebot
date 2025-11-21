@@ -3,7 +3,6 @@
 const { SettingsManager } = require("../../common/settings-manager");
 const webServer = require("../../../server/http-server-manager");
 const logger = require("../../logwrapper");
-const { EffectCategory } = require('../../../shared/effect-constants');
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 
 /**
@@ -18,7 +17,7 @@ const showText = {
         name: "Show Text",
         description: "Shows specified text in the overlay.",
         icon: "fad fa-text",
-        categories: [EffectCategory.COMMON, EffectCategory.OVERLAY],
+        categories: ["common", "overlay"],
         dependencies: []
     },
     /**

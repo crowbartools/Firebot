@@ -25,7 +25,7 @@ const model: EffectType<{
         name: "Set Chat Mode",
         description: "Sets the chat mode(s) for your Twitch channel",
         icon: "fad fa-comment-check",
-        categories: ["common", "twitch"],
+        categories: ["common", "twitch", "chat based", "moderation"],
         dependencies: {
             twitch: true
         }

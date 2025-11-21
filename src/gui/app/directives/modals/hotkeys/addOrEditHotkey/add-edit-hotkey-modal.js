@@ -11,20 +11,20 @@
             </div>
             <div class="modal-body">
                 <div class="function-button-settings">
-                    <div class="alert alert-warning" ng-show="$ctrl.isNewHotkey">
-                        <b>Things to keep in mind with hotkeys:</b>
+                    <div class="alert alert-info" ng-show="$ctrl.isNewHotkey">
+                        <b>Important Hotkey Guidelines:</b>
                         <ul>
-                            <li>Firebot cannot override hotkeys that are already reserved by other apps. </li>
-                            <li>Firebot cannot detect if a hotkey is already in use by another app.</li>
-                            <li>If you bind a hotkey to a single letter, you will not be able to type that letter in other applications.</li>
-                            <li>Hotkeys are disabled while this modal is open.</li>
+                            <li>Firebot cannot override hotkeys already reserved by other applications.</li>
+                            <li>Firebot cannot detect conflicts with hotkeys from other applications.</li>
+                            <li>Binding to a single letter will prevent typing that letter in other applications.</li>
+                            <li>Hotkeys are temporarily disabled while this modal is open.</li>
                         </ul>
                     </div>
 
-                    <h3>Name</h3>
-                    <input type="text" class="form-control" ng-model="$ctrl.hotkey.name">
+                    <h4>Name</h4>
+                    <input type="text" class="form-control" ng-model="$ctrl.hotkey.name" placeholder="Enter name">
 
-                    <h3 style="margin-top:20px;">Hotkey</h3>
+                    <h4 style="margin-top:20px;">Keybind</h4>
                     <hotkey-capture on-capture="$ctrl.onHotkeyCapture(hotkey)" hotkey="$ctrl.hotkey.code"></hotkey-capture>
 
                     <eos-collapsable-panel show-label="Advanced" hide-label="Hide Advanced">
@@ -35,10 +35,10 @@
                     </eos-collapsable-panel>
 
                     <div style="margin-top:20px;">
-                        <effect-list 
-                            header="What should this hotkey do?" 
-                            effects="$ctrl.hotkey.effects" 
-                            trigger="hotkey" 
+                        <effect-list
+                            header="What should this hotkey do?"
+                            effects="$ctrl.hotkey.effects"
+                            trigger="hotkey"
                             trigger-meta="{ rootEffects: $ctrl.hotkey.effects }"
                             update="$ctrl.effectListUpdated(effects)"
                         ></effect-list>
@@ -59,6 +59,8 @@
         },
         controller: function(hotkeyService, ngToast, backendCommunicator) {
             const $ctrl = this;
+
+            $ctrl.isNewHotkey = true;
 
             $ctrl.hotkey = {
                 name: "",
@@ -85,7 +87,9 @@
             };
 
             $ctrl.save = () => {
-                if (!hotkeyValid()) return;
+                if (!hotkeyValid()) {
+                    return;
+                }
 
                 const successful = hotkeyService.saveHotkey($ctrl.hotkey);
                 if (successful) {
@@ -135,7 +139,7 @@
                 }
 
                 return true;
-            }
+            };
         }
     });
 }());

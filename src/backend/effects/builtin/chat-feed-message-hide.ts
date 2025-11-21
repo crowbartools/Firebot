@@ -16,7 +16,7 @@ const effect: EffectType<{
         name: "Hide Message In Chat Feed",
         description: "Hide a message in Firebot's chat feed",
         icon: "fad fa-eye-slash",
-        categories: ["common", "chat based"],
+        categories: ["common", "dashboard", "chat based"],
         dependencies: ["chat"],
         triggers: triggers
     },

@@ -10,7 +10,7 @@ const effect: EffectType<{
         name: "Activity Feed Alert",
         description: "Display an alert in Firebot's Activity Feed",
         icon: "fad fa-comment-exclamation",
-        categories: ["fun"],
+        categories: ["dashboard"],
         dependencies: []
     },
     optionsTemplate: `

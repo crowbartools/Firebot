@@ -8,15 +8,15 @@
     padding: 15px 15px;
     margin-bottom: 5px;
     &.selectable:hover {
-      background: #4e515a;
+        background: #4e515a;
     }
 }
 
 .list-add-btn-wrapper {
-    margin:  5px 0 10px 0px;
+    margin: 5px 0 10px 0px;
 
     .list-add-btn {
-        background: #24262A;
+        background: #24262a;
         width: auto;
         display: inline-flex;
         flex-direction: row;
@@ -25,12 +25,13 @@
         height: 30px;
         font-size: 13px;
         padding: 0 10px;
-        border-radius: 8px;
+        border-radius: 10px;
         margin-bottom: 4px;
         justify-content: space-between;
         cursor: pointer;
         border: none;
-        &:hover, &:focus {
+        &:hover,
+        &:focus {
             opacity: 0.8;
         }
     }
@@ -51,7 +52,7 @@
     }
     .arrow-line {
         width: 2px;
-        background: #24262A;
+        background: #24262a;
         height: 10px;
     }
     .arrow-tip {
@@ -59,7 +60,7 @@
         height: 0;
         border-left: 6px solid transparent;
         border-right: 6px solid transparent;
-        border-top: 10px solid #24262A;
+        border-top: 10px solid #24262a;
     }
 }
 
@@ -104,7 +105,7 @@
     height: 20px;
     width: 20px;
     background: #e6e6e6;
-    border-radius: 6px;
+    border-radius: 8px;
 }
 
 .small-control .control__indicator {
@@ -200,7 +201,7 @@
     padding: 10px 15px;
     outline: 0;
     border: 0;
-    border-radius: 0;
+    border-radius: 10px;
     background: #e6e6e6;
     color: #7b7b7b;
     appearance: none;
@@ -241,8 +242,8 @@
 .fb-select {
     height: 42px;
     color: white;
-    background: #24262A;
-    border-radius: 8px;
+    background: #24262a;
+    border-radius: 10px;
     border: none;
     width: 100%;
     padding: 0 10px;
@@ -294,7 +295,7 @@
         padding: 1px;
         padding-left: 15px;
         margin-bottom: 0;
-        display:flex;
+        display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
@@ -396,37 +397,135 @@ input:checked + .slider:before {
 /* end slider */
 
 .hotkey-capture {
-    display: inline-flex;
+    display: flex;
     align-items: center;
+
     .hotkey-display {
-        border: 2px solid #5cb85c;
+        border: 2px solid #68696c;
+        border-radius: 8px;
         height: 40px;
         display: flex;
         align-items: center;
-        min-width: 200px;
-        padding: 0 20px;
-        border-bottom-left-radius: 8px;
-        border-top-left-radius: 8px;
-        border-right: none;
-        cursor: pointer;
-        user-select: none;
-        font-weight: 900;
+        justify-content: space-between;
+        min-width: 280px;
+        padding: 0 8px 0 20px;
+        gap: 12px;
+        transition: all 0.2s ease;
+        outline: none;
+        position: relative;
+        flex-grow: 1;
+
+        .hotkey-content {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            user-select: none;
+            font-weight: 900;
+            min-width: 0;
+
+            .hotkey-value {
+                letter-spacing: 0.5px;
+            }
+        }
+
+        .hotkey-chip-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 8px;
+            border: none;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            outline: none;
+            flex-shrink: 0;
+
+            &.idle {
+                background-color: #68696c;
+                color: white;
+
+                &:hover {
+                    background-color: #7a7b7e;
+                }
+
+                &:focus {
+                    box-shadow: 0 0 0 3px rgba(104, 105, 108, 0.4);
+                }
+            }
+
+            &.recording {
+                background-color: #c9302c;
+                color: white;
+                animation: pulse-chip 1.5s ease-in-out infinite;
+
+                &:hover {
+                    background-color: #d9534f;
+                    transform: scale(1.05);
+                }
+
+                &:active {
+                    transform: scale(0.98);
+                }
+
+                &:focus {
+                    box-shadow: 0 0 0 3px rgba(201, 48, 44, 0.4);
+                }
+            }
+
+            i {
+                font-size: 10px;
+            }
+
+            span {
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
+            }
+        }
+
         &.grayscale {
             border: 2px solid #68696c;
         }
     }
-    button {
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-        &.btn-default:focus {
-            color: white !important;
-            background-color: #68696c !important;
-        }
-    }
+
     &.capturing {
         .hotkey-display {
             border-color: #c9302c;
+            background-color: rgba(201, 48, 44, 0.05);
+            animation: pulse-border 1.5s ease-in-out infinite;
+
+            &:hover {
+                background-color: rgba(201, 48, 44, 0.1);
+                border-color: #d9534f;
+            }
+
+            &:focus-within {
+                box-shadow: 0 0 0 3px rgba(201, 48, 44, 0.25);
+            }
         }
+    }
+}
+
+@keyframes pulse-border {
+    0%,
+    100% {
+        border-color: #c9302c;
+    }
+    50% {
+        border-color: #d9534f;
+    }
+}
+
+@keyframes pulse-chip {
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(201, 48, 44, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 4px rgba(201, 48, 44, 0.2);
     }
 }
 
@@ -601,7 +700,7 @@ table.fb-table-alt {
             position: relative;
         }
         &.ellipsis:before {
-            content: '&nbsp;';
+            content: "&nbsp;";
             visibility: hidden;
         }
         &.ellipsis span {
@@ -656,7 +755,7 @@ table.fb-table-alt {
 .fb-table-row {
     height: 45px;
     background: $fb-table-row-bg;
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 0 15px;
     display: flex;
     align-items: center;
@@ -694,7 +793,7 @@ table.fb-table-alt {
 .sys-command-row {
     background: $fb-table-row-bg;
     height: 45px;
-    border-radius: 8px;
+    border-radius: 10px;
     box-shadow: $fb-table-shadow;
     display: flex;
     align-items: center;
@@ -718,14 +817,14 @@ table.fb-table-alt {
     border: 2px solid adjust-color($fb-table-row-bg, $red: -5, $green: -5, $blue: -5);
     border-top: none;
     box-shadow: $sys-cmd-expanded-shadow;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 
 .expandable-item {
     background: $fb-table-row-bg;
     height: 45px;
-    border-radius: 8px;
+    border-radius: 10px;
     box-shadow: $fb-table-shadow;
     display: flex;
     align-items: center;
@@ -754,8 +853,8 @@ table.fb-table-alt {
     border: 2px solid adjust-color($fb-table-row-bg, $red: -5, $green: -5, $blue: -5);
     border-top: none;
     box-shadow: $sys-cmd-expanded-shadow;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
     &.smaller-item {
         border-bottom-left-radius: 4px;
         border-bottom-right-radius: 4px;
@@ -765,7 +864,7 @@ table.fb-table-alt {
 .integration-row {
     background: $integration-row-bg;
     height: 60px;
-    border-radius: 8px;
+    border-radius: 10px;
     box-shadow: $fb-table-shadow;
     display: flex;
     align-items: center;
@@ -787,18 +886,161 @@ table.fb-table-alt {
 .menunoclick:hover {
     cursor: default !important;
 }
-.effect-list {
-    background: $effect-list-bg-color;
-    border-radius: 8px;
-    .effect-list-header {
-        margin-bottom: 15px;
-        border-top-left-radius: 8px;
-        border-top-right-radius: 8px;
-        padding-left: 15px;
-        padding-right: 10px;
-        height: 50px;
-        font-weight: 100;
-        border-bottom: 1px solid $light-background-color;
+
+.firebot-dropdown-input {
+    position: relative;
+
+    .firebot-dropdown-btn {
+        height: 40px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 14px;
+        background-color: $form-control-bg;
+        color: $form-control-text;
+        border: none;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.15s ease;
+
+        &:hover {
+            background-color: adjust-color($form-control-bg, $red: -10, $green: -10, $blue: -10);
+        }
+
+        &.dark {
+            background-color: rgba(0, 0, 0, 0.25);
+
+            &:hover {
+                background: rgba(0, 0, 0, 0.35);
+            }
+        }
+
+        &:focus-visible {
+            outline: 2px solid lighten($primary-button-bg, 25%);
+            outline-offset: 2px;
+        }
+
+        i.fa-chevron-down {
+            font-size: 10px;
+            opacity: 0.6;
+            transition: transform 0.2s ease;
+        }
+    }
+
+    .firebot-dropdown-label {
+        flex: 1;
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+// Dropdown menu styles
+.firebot-dropdown-menu {
+    width: 100%;
+    margin-top: 4px;
+    padding: 6px;
+    background: rgb(35, 35, 38);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+
+    li {
+        list-style: none;
+
+        .firebot-dropdown-menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 9px 12px;
+            border-radius: 8px;
+            color: $content-text-color;
+            font-size: 13px;
+            text-decoration: none;
+            transition: background 0.12s ease;
+            cursor: pointer;
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.08);
+            }
+
+            .firebot-dropdown-menu-label {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex: 1;
+
+                i {
+                    width: 16px;
+                    font-size: 13px;
+                    opacity: 0.7;
+                }
+
+                span {
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+
+            .firebot-dropdown-check-icon {
+                font-size: 12px;
+                color: #4ade80;
+                margin-left: 8px;
+            }
+
+            .firebot-dropdown-menu-chip {
+                display: inline-block;
+                padding: 2px 8px;
+                margin-left: 8px;
+                font-size: 10px;
+                font-weight: 600;
+                background: rgb(0 0 0 / 20%);
+                border-radius: 7px;
+                color: rgba(255, 255, 255, 0.8);
+                white-space: nowrap;
+            }
+
+            &.info {
+                &:hover {
+                    background: rgba(70, 161, 240, 0.15);
+                    color: lighten($primary-button-bg, 20%);
+                }
+            }
+
+            &.danger {
+                &:hover {
+                    background: rgba(239, 68, 68, 0.15);
+                    color: #fca5a5;
+                }
+            }
+        }
+
+        .firebot-dropdown-menu-empty {
+            padding: 12px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 12px;
+            font-style: italic;
+        }
+    }
+
+    .firebot-dropdown-menu-divider {
+        height: 1px;
+        margin: 6px 0;
+        background: rgba(255, 255, 255, 0.1);
+    }
+}
+
+// When dropdown is open
+.dropdown-toggle.open {
+    .firebot-dropdown-btn i.fa-chevron-down {
+        transform: rotate(180deg);
     }
 }
 
@@ -921,7 +1163,6 @@ table.fb-table-alt {
             padding: 2px 8px 1px 7px;
         }
     }
-
 }
 .sort-tag-add {
     border: none;

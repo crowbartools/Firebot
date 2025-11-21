@@ -11,7 +11,7 @@ const effect: EffectType<{
         name: "Trigger Manual Effect Queue",
         description: "Runs the next effect list in a manual effect queue.",
         icon: "fad fa-step-forward",
-        categories: ["scripting"]
+        categories: ["scripting", "firebot control"]
     },
     optionsTemplate: `
         <eos-container header="Manual Effect Queue">

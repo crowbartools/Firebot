@@ -1,6 +1,6 @@
 {
     "name": "firebotv5",
-    "version": "5.65.0",
+    "version": "5.65.0-beta1",
     "description": "Powerful all-in-one bot for Twitch streamers.",
     "main": "build/main.js",
     "scripts": {
@@ -24,6 +24,7 @@
         "@eslint/js": "^9.37.0",
         "@octokit/rest": "^22.0.0",
         "@stylistic/eslint-plugin": "^5.4.0",
+        "@types/angular": "^1.8.4",
         "@types/archiver": "^6.0.3",
         "@types/escape-html": "^1.0.4",
         "@types/express": "^5.0.3",
@@ -52,7 +53,6 @@
     },
     "dependencies": {
         "@aws-sdk/client-polly": "^3.26.0",
-        "@crowbartools/firebot-custom-scripts-types": "^5.53.2-6",
         "@seald-io/nedb": "^4.0.4",
         "@twurple/api": "^7.4.0",
         "@twurple/auth": "^7.4.0",
@@ -88,7 +88,7 @@
         "cronstrue": "^3.3.0",
         "custom-electron-titlebar": "^4.1.0",
         "deepmerge": "^4.2.2",
-        "dompurify": "^2.2.2",
+        "dompurify": "^3.3.0",
         "ejs": "^3.1.10",
         "electron-oauth2": "^3.0.0",
         "electron-regedit": "^2.0.0",

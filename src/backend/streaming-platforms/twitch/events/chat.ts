@@ -6,3 +6,15 @@ export function triggerChatCleared(username: string, userId: string): void {
         userId
     });
 }
+
+export function triggerSharedChatEnabled() {
+    void EventManager.triggerEvent("twitch", "shared-chat-started", {});
+}
+
+export function triggerSharedChatUpdated() {
+    void EventManager.triggerEvent("twitch", "shared-chat-updated", {});
+}
+
+export function triggerSharedChatEnded() {
+    void EventManager.triggerEvent("twitch", "shared-chat-ended", {});
+}

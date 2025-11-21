@@ -1,14 +1,12 @@
 "use strict";
 
-const { EffectCategory } = require('../../../shared/effect-constants');
-
 const model = {
     definition: {
         id: "firebot:cooldown-command",
         name: "Cooldown Command",
         description: "Manually add or remove a cooldown for a command",
         icon: "fad fa-hourglass-half",
-        categories: [EffectCategory.COMMON, EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
+        categories: ["common", "advanced", "scripting", "firebot control"],
         dependencies: []
     },
     globalSettings: {},

@@ -31,6 +31,6 @@ export type ScheduledTask = {
     schedule: string;
     inputType: string;
     onlyWhenLive: boolean;
-    effects: EffectList[];
+    effects: EffectList;
     sortTags: string[];
 };

@@ -11,7 +11,7 @@ const effect: EffectType<{
         name: "Evaluate JavaScript",
         description: "Evaluate a JavaScript expression",
         icon: "fab fa-js",
-        categories: ["advanced"],
+        categories: ["advanced", "scripting"],
         dependencies: [],
         outputs: [
             {

@@ -26,3 +26,5 @@ export interface BasicViewer {
     twitchRoles?: string[];
     profilePicUrl?: string;
 }
+
+export type NewFirebotViewer = BasicViewer & Partial<Omit<FirebotViewer, "_id" | "username" | "displayName" | "twitchRoles" | "profilePicUrl">>

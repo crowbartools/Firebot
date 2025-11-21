@@ -10,7 +10,7 @@ const effect: EffectType<{
         name: "Chat Feed Alert",
         description: "Display an alert in Firebot's chat feed",
         icon: "fad fa-exclamation-circle",
-        categories: ["common", "chat based"],
+        categories: ["common", "dashboard", "chat based"],
         dependencies: []
     },
     optionsTemplate: `

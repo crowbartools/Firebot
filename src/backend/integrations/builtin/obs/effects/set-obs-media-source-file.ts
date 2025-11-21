@@ -10,7 +10,7 @@ export const SetOBSMediaSourceFileEffectType: EffectType<{
         name: "Set OBS Media Source File",
         description: "Sets the file of an OBS media source",
         icon: "fad fa-film",
-        categories: ["common"]
+        categories: ["common", "integrations"]
     },
     optionsTemplate: `
     <eos-container header="OBS Media Source">

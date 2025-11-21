@@ -49,6 +49,7 @@ export type FirebotSettingsTypes = {
     ChatShowBttvEmotes: boolean;
     ChatShowFfzEmotes: boolean;
     ChatShowSevenTvEmotes: boolean;
+    ChatShowSharedChatInfo: boolean;
     ChatTaggedNotificationSound: { name: string, path?: string | undefined };
     ChatTaggedNotificationVolume: number;
     ChatTimestamps: boolean;
@@ -86,6 +87,7 @@ export type FirebotSettingsTypes = {
     };
     OverlayInstances: string[];
     PersistCustomVariables: boolean;
+    PresetRecursionLimit: boolean;
     QuickActions: Record<string, {
         enabled: boolean;
         position: number;
@@ -178,6 +180,7 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     ChatShowBttvEmotes: true,
     ChatShowFfzEmotes: true,
     ChatShowSevenTvEmotes: true,
+    ChatShowSharedChatInfo: true,
     ChatTaggedNotificationSound: { name: "None" },
     ChatTaggedNotificationVolume: 5,
     ChatTimestamps: true,
@@ -215,6 +218,7 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
         height: 720
     },
     PersistCustomVariables: false,
+    PresetRecursionLimit: true,
     QuickActions: {},
     RunCustomScripts: false,
     SeenAdvancedCommandModePopup: false,

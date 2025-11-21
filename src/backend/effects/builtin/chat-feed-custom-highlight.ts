@@ -19,7 +19,7 @@ const effect: EffectType<{
         name: "Highlight Message In Chat Feed",
         description: "Apply a custom highlight and/or banner to a message in the Firebot chat feed",
         icon: "fas fa-highlighter",
-        categories: ["common", "chat based"],
+        categories: ["common", "chat based", "dashboard"],
         dependencies: ["chat"],
         triggers: triggers
     },

@@ -7,7 +7,7 @@ export const StopStreamEffectType: EffectType = {
         name: "OBS Stop Stream",
         description: "Tell OBS to stop streaming",
         icon: "fad fa-stop-circle",
-        categories: ["common"]
+        categories: ["common", "integrations"]
     },
     optionsTemplate: `
     <eos-container>

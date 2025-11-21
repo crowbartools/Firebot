@@ -26,7 +26,7 @@ const model: EffectType<{
         name: "Play Sound",
         description: "Plays a sound effect",
         icon: "fad fa-waveform",
-        categories: ["common"],
+        categories: ["common", "fun", "overlay"],
         dependencies: []
     },
     optionsTemplate: `
@@ -167,7 +167,7 @@ const model: EffectType<{
                 const elementId = uuid() as string;
 
                 const filepath = data.isUrl ? data.url : data.filepath.toLowerCase();
-                let mediaType;
+                let mediaType: string | null = null;
                 if (filepath.endsWith("mp3")) {
                     mediaType = "audio/mpeg";
                 } else if (filepath.endsWith("ogg")) {
@@ -180,18 +180,22 @@ const model: EffectType<{
                     mediaType = "audio/flac";
                 }
 
-                const audioElement = `<audio id="${elementId}" src="${data.isUrl ? data.url : resourcePath}" type="${mediaType}"></audio>`;
+                const audioElement = document.createElement("audio");
+                audioElement.id = elementId;
+                audioElement.src = data.isUrl ? data.url : resourcePath;
+                if (mediaType) {
+                    audioElement.setAttribute("type", mediaType);
+                }
 
                 // Throw audio element on page.
                 document.getElementById("wrapper").append(audioElement);
 
-                const audio = document.getElementById(elementId) as HTMLAudioElement;
                 // @ts-ignore
-                audio.volume = parseFloat(data.volume) / 10;
+                audioElement.volume = parseFloat(data.volume) / 10;
 
-                audio.oncanplay = () => audio.play();
+                audioElement.oncanplay = () => audioElement.play();
 
-                audio.onended = () => {
+                audioElement.onended = () => {
                     document.getElementById(elementId).remove();
                 };
             }

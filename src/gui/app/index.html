@@ -85,6 +85,9 @@
         <!-- Iconify ref for MDI icons -->
         <script src="https://code.iconify.design/1/1.0.6/iconify.min.js"></script>
 
+        <!-- Hack for js files compiled from ts -->
+        <script>var exports = {};</script>
+
         <script src="./app-main.js"></script>
 
         <!-- include: "type": "js", "files": "controllers/**/*.js" -->
@@ -550,53 +553,7 @@
 
         <!-- overlay info modal -->
         <script type="text/ng-template" id="overlayInfoModal.html">
-            <div class="modal-header" style="text-align:center;">
-                <h2 class="modal-title">Firebot Overlay Info</h2>
-                <button type="button" class="close" aria-label="Close" ng-click="dismiss()" style="position: absolute;right: 25px;"><span aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="modal-body" style="text-align:center;display:flex;flex-direction: column;align-items: center;font-weight: 100;">
-                <div ng-hide="showingInstance">
-                    <p>Effects that show things on stream (ie images, videos, etc) need Firebot's overlay file to be added to your broadcasting software.</p>
-                    <h3>How To Add The Overlay</h3>
-                    <p>In your broadcasting software, add a <b>Browser/Webpage Source</b></p>
-
-                    <p>Then in the settings for this <b>Browser/Webpage Source</b>, there should be a URL field. Copy and paste the below URL into that field.</p>
-
-                    <p>Do <b>not</b> select "Local file".</p>
-
-                    <p>Make sure the browser source fills your canvas, ie 1920x1080 or 1280x720.</p>
-                </div>
-
-                <div style="display: flex;width: 100%;margin: 15px 0;">
-
-                <div style="margin-right: 5px;">
-                    <div class="dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="broadcast-software-types" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        <span class="dropdown-text">{{selectedBroadcastingSoftware}}</span>
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="options-sounds">
-                        <li ng-repeat="bcs in broadcastingSoftwares"><a href ng-click="updateSelectedBroadcastingSoftware(bcs)">{{bcs}}</a></li>
-                    </ul>
-                    </div>
-                </div>
-
-                <div style="width:100%;">
-                    <div class="input-group">
-                        <input type="text" class="form-control" style="cursor:text;" ng-model="overlayPath" disabled>
-                        <span class="input-group-btn">
-                            <button class="btn btn-primary" type="button" ng-click="copy()">Copy</button>
-                        </span>
-                    </div>
-                </div>
-                </div>
-
-                <p ng-show="selectedBroadcastingSoftware === 'Direct Link/2 PC Setup'" class="muted">
-                    <b>Note:</b> For 2 PC setups, you will need to update "localhost" in the url with the local IP address of this computer.
-                </p>
-
-            </div>
-            <div class="modal-footer" style="text-align:center;"></div>
+            
         </script>
 
         <!-- show events modal -->

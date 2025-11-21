@@ -12,7 +12,7 @@ const effect: EffectType<{
         name: "Toggle Command",
         description: "Toggle a command's active status",
         icon: "fad fa-toggle-off",
-        categories: ["common"],
+        categories: ["common", "firebot control"],
         dependencies: []
     },
     optionsTemplate: `

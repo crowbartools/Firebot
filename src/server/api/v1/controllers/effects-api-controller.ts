@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { EffectInstance } from "../../../../types/effects";
+import { EffectList } from "../../../../types/effects";
 import { PresetEffectListManager } from "../../../../backend/effects/preset-lists/preset-effect-list-manager";
 import { EffectManager } from "../../../../backend/effects/effect-manager";
 import effectRunner from "../../../../backend/common/effect-runner";
@@ -31,7 +31,7 @@ export function getEffect(req: Request, res: Response): void {
 
 export async function runEffects(
     req: Request<undefined, undefined, {
-        effects: EffectInstance[];
+        effects: EffectList;
         triggerData: {
             username: string;
         };

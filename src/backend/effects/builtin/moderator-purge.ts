@@ -10,7 +10,7 @@ const effect: EffectType<{
         name: "Purge",
         description: "Purge a users chat messages from chat.",
         icon: "fad fa-comment-slash",
-        categories: ["common", "Moderation", "twitch"],
+        categories: ["common", "moderation", "twitch", "chat based"],
         dependencies: ["chat"]
     },
     optionsTemplate: `

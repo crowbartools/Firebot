@@ -116,6 +116,9 @@ export type FirebotChatMessage = {
     threadParentMessageSenderDisplayName?: string;
     isSharedChatMessage: boolean;
     sharedChatRoomId?: string;
+    sharedChatRoomUsername?: string;
+    sharedChatRoomDisplayName?: string;
+    sharedChatRoomProfilePicUrl?: string;
     isHiddenFromChatFeed?: boolean;
     viewerRanks?: Record<string, string>;
     viewerCustomRoles?: string[];
@@ -144,4 +147,11 @@ export type FirebotCheermoteInstance = {
     url: string;
     animatedUrl: string;
     color: string;
+};
+
+export type SharedChatParticipant = {
+    broadcasterId: string;
+    broadcasterName: string;
+    broadcasterDisplayName: string;
+    profilePictureUrl: string;
 };

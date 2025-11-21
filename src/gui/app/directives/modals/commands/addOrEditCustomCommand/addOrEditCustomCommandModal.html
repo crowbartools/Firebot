@@ -6,29 +6,61 @@
     show-trigger-name="true"
 ></context-menu-modal-header>
 
-<div class="modal-body">
+<div class="modal-body" ng-style="{'padding': $ctrl.command.simple ? '15px' : '0 0 15px'}">
     <simple-command-options
         command="$ctrl.command"
         ng-if="$ctrl.command.simple"
     ></simple-command-options>
 
     <div ng-if="!$ctrl.command.simple">
-        <div class="general-button-settings">
-            <div>
-                <div class="input-group pb-5">
-                    <span class="input-group-addon" id="basic-addon3"
-                        >Trigger</span
-                    >
-                    <input
-                        type="text"
-                        class="form-control"
-                        aria-describedby="basic-addon3"
-                        ng-model="$ctrl.command.trigger"
-                        placeholder="!something or phrase"
-                    />
+        <firebot-tabs active="$ctrl.activeTab" type="underlined" full-width="true">
+            <firebot-tab index="0" name="general" label="General" icon="fas fa-cog">
+                <firebot-input
+                    input-title="Trigger"
+                    title-tooltip="Displayed on the command list webpage"
+                    placeholder-text="!something or phrase"
+                    model="$ctrl.command.trigger"
+                    disable-variables="true"
+                    class="pb-4"
+                    input-group-min-width="130px"
+                >
+                </firebot-input>
+
+                <firebot-input
+                    input-title="Description"
+                    title-tooltip="Displayed on the command list webpage"
+                    placeholder-text="Enter description"
+                    model="$ctrl.command.description"
+                    disable-variables="true"
+                    class="pb-4"
+                    input-group-min-width="130px"
+                >
+                </firebot-input>
+
+                <div class="controls-fb-inline pb-5">
+                    <label class="control-fb control--checkbox"
+                        >Enabled
+                        <input
+                            type="checkbox"
+                            ng-model="$ctrl.command.active"
+                            aria-label="..."
+                            checked
+                        />
+                        <div class="control__indicator"></div>
+                    </label>
+                    <label class="control-fb control--checkbox"
+                        >Hidden
+                        <tooltip text="'Hide this command from the !commands list'"></tooltip>
+                        <input
+                            type="checkbox"
+                            ng-model="$ctrl.command.hidden"
+                            aria-label="..."
+                        />
+                        <div class="control__indicator"></div>
+                    </label>
                 </div>
 
-                <div class="controls-fb-inline">
+                <div class="controls-fb-inline pb-5">
                     <label class="control-fb control--checkbox"
                         >Auto Delete Trigger
                         <tooltip
@@ -57,11 +89,10 @@
                 </div>
 
                 <eos-collapsable-panel
-                    show-label="Advanced"
-                    hide-label="Hide Advanced"
+                    show-label="Show RegEx Options"
+                    hide-label="Hide RegEx Options"
                 >
-                    <h4>RegEx Trigger</h4>
-                    <p class="pb-4">
+                    <p class="pb-3">
                         For advanced users only! Enable this to make Firebot
                         treat the trigger as a JavaScript flavored regular
                         expression. This will allow you to define more complex
@@ -77,7 +108,7 @@
                         <div class="control__indicator"></div>
                     </label>
                     <div
-                        class="input-group mt-2"
+                        class="input-group mt-3"
                         ng-if="$ctrl.command.triggerIsRegex"
                     >
                         <span class="input-group-addon" id="tooltip-desc"
@@ -97,204 +128,64 @@
                     </div>
                 </eos-collapsable-panel>
 
-                <firebot-input
-                    input-title="Description"
-                    title-tooltip="Displayed on the command list webpage"
-                    placeholder-text="Enter description"
-                    model="$ctrl.command.description"
-                    disable-variables="true"
-                    class="pt-4"
-                >
-                </firebot-input>
-
-                <div class="mt-10" ng-hide="$ctrl.command.triggerIsRegex">
-                    <div class="settings-title">
-                        <h3>Aliases</h3>
-                    </div>
+                <div ng-hide="$ctrl.command.triggerIsRegex" class="pb-5">
+                    <h4 class="mb-2">Aliases</h4>
                     <editable-tags
                         model="$ctrl.command.aliases"
                         settings="aliasesListOptions"
                     ></editable-tags>
                 </div>
 
-                <div class="mt-10">
-                    <div class="settings-title">
-                        <h3>Cooldowns</h3>
-                    </div>
-                    <command-cooldown-settings
-                        command="$ctrl.command"
-                    ></command-cooldown-settings>
+                <div class="settings-title">
+                    <h3>
+                        <span ng-hide="$ctrl.command.scanWholeMessage || $ctrl.command.triggerIsRegex">Base </span>Effects
+                        <tooltip
+                            ng-hide="$ctrl.command.scanWholeMessage || $ctrl.command.triggerIsRegex"
+                            class="text-3xl"
+                            text="'Always triggered if there are no subcommands. If there are subcommands, this is only triggered when the user does not provide any arguments.'"
+                        ></tooltip>
+                    </h3>
                 </div>
 
-                <div class="mt-10">
-                    <div class="settings-title">
-                        <h3>Stats</h3>
-                    </div>
+                <effect-list
+                    header="What should this command do?"
+                    effects="$ctrl.command.effects"
+                    trigger="command"
+                    trigger-meta="{ rootEffects: $ctrl.command.effects }"
+                    update="$ctrl.effectListUpdated(effects)"
+                    is-array="true"
+                ></effect-list>
 
-                    <div class="input-group">
-                        <span class="input-group-addon">Usage count</span>
-                        <input
-                            class="form-control"
-                            type="number"
-                            min="0"
-                            placeholder="0"
-                            ng-model="$ctrl.command.count"
-                        />
-                    </div>
+            </firebot-tab>
 
-                    <div class="mt-10">
-                        <h3 class="mb-2">
-                            Restrictions
-                            <span
-                                class="muted pl-1 text-xl"
-                                style="font-family: 'Quicksand'"
-                                >(Permissions, currency costs, and more)</span
-                            >
-                        </h3>
-                        <restrictions-list
-                            restriction-data="$ctrl.command.restrictionData"
-                            trigger="command"
-                            trigger-meta="$ctrl.triggerMeta"
-                        >
-                        </restrictions-list>
-                    </div>
-
-                    <div class="other-settings mt-10">
-                        <div class="settings-title">
-                            <h3>Settings</h3>
-                        </div>
-                        <div class="controls-fb-inline">
-                            <label class="control-fb control--checkbox"
-                                >Enabled
-                                <input
-                                    type="checkbox"
-                                    ng-model="$ctrl.command.active"
-                                    aria-label="..."
-                                    checked
-                                />
-                                <div class="control__indicator"></div>
-                            </label>
-                            <label class="control-fb control--checkbox"
-                                >Hidden
-                                <tooltip
-                                    text="'Hide this command from the !commands list'"
-                                ></tooltip>
-                                <input
-                                    type="checkbox"
-                                    ng-model="$ctrl.command.hidden"
-                                    aria-label="..."
-                                />
-                                <div class="control__indicator"></div>
-                            </label>
-                            <label class="control-fb control--checkbox"
-                                >Treat quoted text as single argument
-                                <tooltip
-                                    text="'When this option is enabled, text inside of double quotes will be treated as a single argument without the quotes. Example: !command &quot;This is an argument&quot; will have a single argument with the value: This is an argument'"
-                                ></tooltip>
-                                <input
-                                    type="checkbox"
-                                    ng-model="$ctrl.command.treatQuotedTextAsSingleArg"
-                                    aria-label="..."
-                                />
-                                <div class="control__indicator"></div>
-                            </label>
-                            <label class="control-fb control--checkbox"
-                                >Only trigger when channel is live
-                                <tooltip
-                                    text="'When this option is enabled, users will only be able to trigger this command when the channel is live.'"
-                                ></tooltip>
-                                <input
-                                    type="checkbox"
-                                    ng-model="$ctrl.command.onlyTriggerWhenChannelIsLive"
-                                    aria-label="..."
-                                />
-                                <div class="control__indicator"></div>
-                            </label>
-                        </div>
-                        <div class="controls-fb-inline mt-4">
-                            <div class="settings-title">
-                                <h3>Ignore</h3>
-                            </div>
-                            <label class="control-fb control--checkbox"
-                                >Streamer Account
-                                <tooltip
-                                    text="'Whether or not the streamer account should be able to trigger this command.'"
-                                ></tooltip>
-                                <input
-                                    type="checkbox"
-                                    ng-model="$ctrl.command.ignoreStreamer"
-                                    aria-label="..."
-                                />
-                                <div class="control__indicator"></div>
-                            </label>
-                            <label class="control-fb control--checkbox"
-                                >Bot Account
-                                <tooltip
-                                    text="'Whether or not the bot account should be able to trigger this command.'"
-                                ></tooltip>
-                                <input
-                                    type="checkbox"
-                                    ng-model="$ctrl.command.ignoreBot"
-                                    aria-label="..."
-                                />
-                                <div class="control__indicator"></div>
-                            </label>
-                            <label class="control-fb control--checkbox"
-                                >Whispers
-                                <tooltip
-                                    text="'Whether or not whispers should be able to trigger this command.'"
-                                ></tooltip>
-                                <input
-                                    type="checkbox"
-                                    ng-model="$ctrl.command.ignoreWhispers"
-                                    aria-label="..."
-                                />
-                                <div class="control__indicator"></div>
-                            </label>
-                        </div>
-
-                        <div class="controls-fb-inline mt-4">
-                            <div class="settings-title">
-                                <h3>Shared Chat</h3>
-                            </div>
-                            <firebot-radios
-                                options="$ctrl.sharedChatRadioOptions"
-                                model="$ctrl.command.allowTriggerBySharedChat"
-                                inline="true"
-                            />
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-10">
-                    <div
-                        class="settings-title"
-                        ng-hide="$ctrl.command.scanWholeMessage || $ctrl.command.triggerIsRegex"
+            <firebot-tab index="1" name="access" label="Access Control" icon="fas fa-shield-alt">
+                <h3 class="mb-3">
+                    Restrictions
+                    <span
+                        class="muted pl-1 text-lg"
+                        style="font-family: 'Quicksand'"
+                        >(Permissions, currency costs, and more)</span
                     >
-                        <h3>
-                            Base Effects
-                            <tooltip
-                                class="text-3xl"
-                                text="'Always triggered if there are no subcommands. If there are subcommands, this is only triggered when the user does not provide any arguments.'"
-                            ></tooltip>
-                        </h3>
-                    </div>
+                </h3>
+                <restrictions-list
+                    restriction-data="$ctrl.command.restrictionData"
+                    trigger="command"
+                    trigger-meta="$ctrl.triggerMeta"
+                    class="pb-6"
+                >
+                </restrictions-list>
 
-                    <effect-list
-                        header="What should this command do?"
-                        effects="$ctrl.command.effects"
-                        trigger="command"
-                        trigger-meta="{ rootEffects: $ctrl.command.effects }"
-                        update="$ctrl.effectListUpdated(effects)"
-                        is-array="true"
-                    ></effect-list>
-                </div>
+                <h3 class="mb-3 mt-6">Cooldowns</h3>
+                <command-cooldown-settings
+                    command="$ctrl.command"
+                ></command-cooldown-settings>
+            </firebot-tab>
 
+            <firebot-tab index="2" name="subcommands" label="Subcommands" icon="fas fa-sitemap" ng-if="!$ctrl.command.scanWholeMessage && !$ctrl.command.triggerIsRegex">
                 <div
-                    class="mt-12"
-                    ng-hide="$ctrl.command.scanWholeMessage || $ctrl.command.triggerIsRegex"
+                    class="mt-8"
                 >
                     <div class="settings-title">
-                        <h3>Subcommands</h3>
                         <p class="muted">
                             Optionally trigger different effects based on
                             subcommand triggers
@@ -379,12 +270,102 @@
                             aria-label="Add Subcommand"
                             tooltip-append-to-body="true"
                         >
-                            <i class="far fa-plus"></i>
+                            <i class="far fa-plus mr-2"></i> Add Subcommand
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </firebot-tab>
+
+            <firebot-tab index="3" name="advanced" label="Advanced" icon="fas fa-sliders-h">
+                <h3 class="mb-3">Behavior Options</h3>
+                <div class="controls-fb-inline pb-5">
+                    <label class="control-fb control--checkbox"
+                        >Treat quoted text as single argument
+                        <tooltip
+                            text="'When this option is enabled, text inside of double quotes will be treated as a single argument without the quotes. Example: !command &quot;This is an argument&quot; will have a single argument with the value: This is an argument'"
+                        ></tooltip>
+                        <input
+                            type="checkbox"
+                            ng-model="$ctrl.command.treatQuotedTextAsSingleArg"
+                            aria-label="..."
+                        />
+                        <div class="control__indicator"></div>
+                    </label>
+                    <label class="control-fb control--checkbox"
+                        >Only trigger when channel is live
+                        <tooltip
+                            text="'When this option is enabled, users will only be able to trigger this command when the channel is live.'"
+                        ></tooltip>
+                        <input
+                            type="checkbox"
+                            ng-model="$ctrl.command.onlyTriggerWhenChannelIsLive"
+                            aria-label="..."
+                        />
+                        <div class="control__indicator"></div>
+                    </label>
+                </div>
+
+                <h3 class="mb-3 mt-5">Ignore Triggers From</h3>
+                <div class="controls-fb-inline pb-5">
+                    <label class="control-fb control--checkbox"
+                        >Streamer Account
+                        <tooltip
+                            text="'Whether or not the streamer account should be able to trigger this command.'"
+                        ></tooltip>
+                        <input
+                            type="checkbox"
+                            ng-model="$ctrl.command.ignoreStreamer"
+                            aria-label="..."
+                        />
+                        <div class="control__indicator"></div>
+                    </label>
+                    <label class="control-fb control--checkbox"
+                        >Bot Account
+                        <tooltip
+                            text="'Whether or not the bot account should be able to trigger this command.'"
+                        ></tooltip>
+                        <input
+                            type="checkbox"
+                            ng-model="$ctrl.command.ignoreBot"
+                            aria-label="..."
+                        />
+                        <div class="control__indicator"></div>
+                    </label>
+                    <label class="control-fb control--checkbox"
+                        >Whispers
+                        <tooltip
+                            text="'Whether or not whispers should be able to trigger this command.'"
+                        ></tooltip>
+                        <input
+                            type="checkbox"
+                            ng-model="$ctrl.command.ignoreWhispers"
+                            aria-label="..."
+                        />
+                        <div class="control__indicator"></div>
+                    </label>
+                </div>
+
+                <h3 class="mb-3 mt-5">Shared Chat</h3>
+                <firebot-radios
+                    options="$ctrl.sharedChatRadioOptions"
+                    model="$ctrl.command.allowTriggerBySharedChat"
+                    inline="true"
+                    class="pb-5"
+                />
+
+                <h3 class="mb-3 mt-5">Stats</h3>
+                <div class="input-group">
+                    <span class="input-group-addon">Usage count</span>
+                    <input
+                        class="form-control"
+                        type="number"
+                        min="0"
+                        placeholder="0"
+                        ng-model="$ctrl.command.count"
+                    />
+                </div>
+            </firebot-tab>
+        </firebot-tabs>
     </div>
 </div>
 

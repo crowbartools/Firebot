@@ -12,7 +12,7 @@ const effect: EffectType<{
         name: "Timeout",
         description: "Timeout a user.",
         icon: "fad fa-user-clock",
-        categories: ["common", "Moderation", "twitch"],
+        categories: ["common", "moderation", "twitch"],
         dependencies: ["chat"]
     },
     optionsTemplate: `

@@ -421,8 +421,8 @@ body {
     opacity: 1;
     transition: 0.3s;
     text-transform: capitalize;
-    font-weight: 100;
-    font-family: Quicksand;
+    font-weight: 700;
+    font-family: "Inter";
 }
 
 .nav-header-title.contracted {
@@ -447,12 +447,12 @@ body {
 }
 
 .nav-header-icon {
-    height: 40px;
-    width: 40px;
+    height: 35px;
+    width: 35px;
     align-self: flex-start;
-    margin-top: 10px;
-    margin-left: 40px;
-    margin-right: 0px;
+    margin-top: 13px;
+    margin-left: 10px;
+    margin-right: 15px;
     transition: 0.5s;
 }
 
@@ -527,7 +527,7 @@ body {
     img {
         height: 42px;
         width: 42px;
-        border-radius: 25px;
+        border-radius: 15px;
     }
     hr {
         margin: 5px 0px 5px 0px !important;
@@ -1669,35 +1669,6 @@ thead th {
     }
 }
 
-.effect-bar {
-    background: $primary-button-bg;
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    color: white;
-    height: 40px;
-    padding-left: 15px;
-    border-radius: 8px;
-    line-height: 1.1;
-    justify-content: space-between;
-
-    &.disabled {
-        background: #6c6c6c;
-        color: rgba(255, 255, 255, 0.8);
-    }
-
-    &:hover {
-        background: $primary-button-hover-bg;
-        cursor: pointer;
-    }
-
-    &.has-bottom-panel {
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
-    }
-}
-
 .small-slider {
     .rzslider {
         margin: 16px 0 15px 0 !important;
@@ -1714,16 +1685,6 @@ thead th {
             }
         }
     }
-}
-
-.effect-weight-panel {
-    height: 40px;
-    background: rgb(19 130 157 / 27%);
-    border-bottom-right-radius: 8px;
-    border-bottom-left-radius: 8px;
-    padding: 0 15px;
-    display: flex;
-    align-items: center;
 }
 
 .flex-center {

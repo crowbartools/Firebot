@@ -12,7 +12,7 @@ const effect: EffectType<{
         name: "Manage Active Chat Users",
         description: "Add or remove users from the active chat user lists.",
         icon: "fad fa-users",
-        categories: ["common", "Moderation"],
+        categories: ["common", "moderation"],
         dependencies: []
     },
     optionsTemplate: `

@@ -19,12 +19,13 @@
             style: "@",
             menuPosition: "@?",
             varBtnPosition: "@?",
-            class: "@?"
+            class: "@?",
+            inputGroupMinWidth: "@?"
         },
         template: `
                 <div style="{{$ctrl.style}}" class="{{$ctrl.class}}">
                     <div ng-if="$ctrl.useInputGroup && $ctrl.inputType != 'codemirror'" class="input-group">
-                        <span class="input-group-addon" id="{{$ctrl.inputGroupId}}">{{$ctrl.inputTitle}}<tooltip ng-if="$ctrl.titleTooltip != null" text="$ctrl.titleTooltip"></tooltip></span>
+                        <span class="input-group-addon" id="{{$ctrl.inputGroupId}}" ng-style="{'min-width': $ctrl.inputGroupMinWidth || undefined }">{{$ctrl.inputTitle}}<tooltip ng-if="$ctrl.titleTooltip != null" text="$ctrl.titleTooltip"></tooltip></span>
                         <input
                             id="{{$ctrl.inputId}}"
                             ng-if="$ctrl.forceInputInternal"

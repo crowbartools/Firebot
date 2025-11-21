@@ -105,7 +105,7 @@ class ActiveUserHandler extends TypedEmitter<Events> {
     }
 
     getAllActiveUsers(): User[] {
-        return this._activeUsers.keys().map((id) => {
+        return this._activeUsers.keys().filter(v => !isNaN(Number(v))).map((id) => {
             return {
                 id: id,
                 username: this._activeUsers.get(id)

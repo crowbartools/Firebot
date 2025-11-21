@@ -3,7 +3,7 @@ import Datastore from "@seald-io/nedb";
 import { DateTime } from "luxon";
 import type { HelixUser, HelixBan } from "@twurple/api";
 
-import type { BasicViewer, FirebotViewer } from "../../types/viewers";
+import type { BasicViewer, FirebotViewer, NewFirebotViewer } from "../../types/viewers";
 import type { Rank, RankLadder } from "../../types/ranks";
 
 import { AccountAccess } from "../common/account-access";
@@ -109,7 +109,13 @@ class ViewerDatabase extends TypedEmitter<{
         });
 
         frontendCommunicator.onAsync("create-firebot-viewer-data", async (viewer: BasicViewer) => {
-            return this.createNewViewer(viewer.id, viewer.username, viewer.displayName, viewer.profilePicUrl, viewer.twitchRoles);
+            return this.createNewViewer({
+                id: viewer.id, 
+                username: viewer.username, 
+                displayName: viewer.displayName, 
+                profilePicUrl: viewer.profilePicUrl, 
+                twitchRoles: viewer.twitchRoles
+            });
         });
 
         frontendCommunicator.onAsync("get-firebot-viewer-data", async (userId: string) => {
@@ -190,18 +196,7 @@ class ViewerDatabase extends TypedEmitter<{
         return this._db;
     }
 
-    async createNewViewer(
-        userId: string,
-        username: string,
-        displayName: string,
-        profilePicUrl?: string,
-        twitchRoles?: string[],
-        isOnline = false,
-        lastSeen?: number,
-        joinDate?: number,
-        minutesInChannel?: number,
-        chatMessages?: number,
-    ): Promise<FirebotViewer> {
+    async createNewViewer(viewer: NewFirebotViewer): Promise<FirebotViewer> {
         if (this.isViewerDBOn() !== true) {
             return;
         }
@@ -209,21 +204,21 @@ class ViewerDatabase extends TypedEmitter<{
         const streamerUserId = AccountAccess.getAccounts().streamer.userId;
         const botUserId = AccountAccess.getAccounts().bot.userId;
 
-        const disableAutoStatAccrual = userId === streamerUserId || userId === botUserId;
+        const disableAutoStatAccrual = viewer.id === streamerUserId || viewer.id === botUserId;
 
-        let viewer: FirebotViewer = {
-            username: username,
-            _id: userId,
-            displayName: displayName,
-            profilePicUrl: profilePicUrl,
+        let viewerToCreate: FirebotViewer = {
+            username: viewer.username,
+            _id: viewer.id,
+            displayName: viewer.displayName,
+            profilePicUrl: viewer.profilePicUrl,
             twitch: true,
-            twitchRoles: twitchRoles || [],
-            online: isOnline,
+            twitchRoles: viewer.twitchRoles || [],
+            online: viewer.online,
             onlineAt: Date.now(),
-            lastSeen: lastSeen || Date.now(),
-            joinDate: joinDate || Date.now(),
-            minutesInChannel: minutesInChannel || 0,
-            chatMessages: chatMessages || 0,
+            lastSeen: Date.now(),
+            joinDate: Date.now(),
+            minutesInChannel: viewer.minutesInChannel || 0,
+            chatMessages: 0,
             disableAutoStatAccrual: disableAutoStatAccrual,
             disableActiveUserList: false,
             disableViewerList: false,
@@ -234,16 +229,16 @@ class ViewerDatabase extends TypedEmitter<{
 
         // THIS IS WHERE YOU ADD IN ANY DYNAMIC FIELDS THAT ALL VIEWERS SHOULD HAVE.
         // Add in all of our currencies and set them to 0.
-        viewer = currencyAccess.addCurrencyToNewViewer(viewer);
+        viewerToCreate = currencyAccess.addCurrencyToNewViewer(viewerToCreate);
 
         // Insert our record into db.
         try {
-            const newViewer = await this._db.insertAsync(viewer);
+            const newViewer = await this._db.insertAsync(viewerToCreate);
 
             void EventManager.triggerEvent("firebot", "viewer-created", {
-                username,
-                userId,
-                userDisplayName: displayName
+                username: viewer.username,
+                userId: viewer.id,
+                userDisplayName: viewer.displayName
             });
 
             frontendCommunicator.send("viewer-database:viewer-created", newViewer as FirebotViewer);
@@ -255,14 +250,14 @@ class ViewerDatabase extends TypedEmitter<{
     }
 
     async addNewViewerFromChat(viewerDetails: BasicViewer, isOnline = true) {
-        return await this.createNewViewer(
-            viewerDetails.id,
-            viewerDetails.username,
-            viewerDetails.displayName,
-            viewerDetails.profilePicUrl,
-            viewerDetails.twitchRoles,
-            isOnline
-        );
+        return await this.createNewViewer({
+            id: viewerDetails.id,
+            username: viewerDetails.username,
+            displayName: viewerDetails.displayName,
+            profilePicUrl: viewerDetails.profilePicUrl,
+            twitchRoles: viewerDetails.twitchRoles,
+            online: isOnline
+        });
     }
 
     async getViewerById(id: string): Promise<FirebotViewer> {

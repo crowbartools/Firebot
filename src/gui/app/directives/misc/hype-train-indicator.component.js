@@ -11,7 +11,7 @@
                 <div
                     class="stream-info-stat hype-train-indicator"
                     style="margin-left:10px"
-                    uib-tooltip="Hype Train in progress"
+                    uib-tooltip="{{ hts.isSharedTrain ? 'Shared ' : '' }}Hype Train in progress"
                     tooltip-append-to-body="true"
                     tooltip-placement="bottom"
                 >

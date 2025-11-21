@@ -1,6 +1,5 @@
 "use strict";
 
-const { EffectCategory } = require("../../../../shared/effect-constants");
 const integrationManager = require("../../integration-manager");
 const discordEmbedBuilder = require('./discord-embed-builder');
 const discord = require("./discord-message-sender");
@@ -26,7 +25,7 @@ module.exports = {
         name: "Send Discord Message",
         description: "Send a message and/or embed to a Discord channel",
         icon: "fab fa-discord",
-        categories: [EffectCategory.INTEGRATIONS],
+        categories: ["integrations"],
         dependencies: [],
         outputs: [
             {

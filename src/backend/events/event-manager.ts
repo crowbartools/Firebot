@@ -1,6 +1,10 @@
 import { TypedEmitter } from "tiny-typed-emitter";
 
-import { EventDefinition, EventSource } from "../../types/events";
+import type {
+    EventManagerModule,
+    EventDefinition,
+    EventSource
+} from "../../types";
 
 import { AccountAccess } from "../common/account-access";
 import { EventsAccess } from "./events-access";
@@ -27,7 +31,7 @@ class EventManager extends TypedEmitter<{
         isManual: boolean;
         isRetrigger: boolean;
     }) => void;
-}> {
+}> implements EventManagerModule {
     private _registeredEventSources: RegisteredEventSource[] = [];
 
     constructor() {
@@ -159,15 +163,15 @@ class EventManager extends TypedEmitter<{
     }
 
     async triggerEvent(
-        sourceId: string,
+        eventSourceId: string,
         eventId: string,
         meta: Record<string, unknown>,
         isManual = false,
         isRetrigger = false,
         isSimulation = false
     ): Promise<void> {
-        const source = this.getEventSourceById(sourceId);
-        const event = this.getEventById(sourceId, eventId);
+        const source = this.getEventSourceById(eventSourceId);
+        const event = this.getEventById(eventSourceId, eventId);
         if (event == null) {
             return;
         }

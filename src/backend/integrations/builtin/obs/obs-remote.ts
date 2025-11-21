@@ -1,5 +1,5 @@
-import { ScriptModules } from "@crowbartools/firebot-custom-scripts-types";
 import OBSWebSocket from "obs-websocket-js";
+import type { EventManagerModule } from "../../../../types";
 import {
     OBS_CURRENT_PROFILE_CHANGED_EVENT_ID,
     OBS_CURRENT_PROGRAM_SCENE_CHANGED_EVENT_ID,
@@ -46,7 +46,7 @@ type CachedGroupInfo = {
     }[];
 };
 
-let eventManager: ScriptModules["eventManager"];
+let eventManager: EventManagerModule;
 
 const obs = new OBSWebSocket();
 
@@ -617,7 +617,7 @@ export function initRemote(
         forceConnect?: boolean;
     },
     modules: {
-        eventManager: ScriptModules["eventManager"];
+        eventManager: EventManagerModule;
     }
 ) {
     eventManager = modules.eventManager;

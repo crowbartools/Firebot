@@ -165,6 +165,18 @@
                         </setting-description-addon>
                     </firebot-setting>
 
+                    <firebot-setting
+                        name="Preset Effect List Recursion Limit"
+                        description="Limits how many times a preset effect list can recursively call itself to prevent Firebot from hanging. When enabled, execution stops after 100 recursive calls."
+                    >
+                        <toggle-button
+                            toggle-model="settings.getSetting('PresetRecursionLimit')"
+                            on-toggle="settings.saveSetting('PresetRecursionLimit', !settings.getSetting('PresetRecursionLimit'))"
+                            font-size="40"
+                            accessibility-label="(settings.getSetting('PresetRecursionLimit') ? 'Enabled' : 'Disabled') + ' Preset Effect List Recursion Limit'"
+                        />
+                    </firebot-setting>
+
                     <div style="margin-top: 20px">
                         <p class="muted">Looking for a setting that used to be located here? Try checking in the Tools app menu!</p>
                     </div>

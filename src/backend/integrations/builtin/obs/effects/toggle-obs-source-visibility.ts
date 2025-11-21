@@ -29,7 +29,7 @@ export const ToggleSourceVisibilityEffectType: EffectType<EffectProperties> =
             name: "Toggle OBS Source Visibility",
             description: "Toggle an OBS source's visibility",
             icon: "fad fa-clone",
-            categories: ["common"]
+            categories: ["common", "integrations"]
         },
         optionsTemplate: `
 <eos-container ng-show="missingSources.length > 0">
