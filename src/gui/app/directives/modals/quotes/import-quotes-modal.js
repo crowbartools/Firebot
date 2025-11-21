@@ -11,7 +11,18 @@
                 <div class="modal-body pb-0">
                     <div ng-hide="$ctrl.quotes">
                         <h4>Import from</h5>
-                        <p class="muted mb-12">Currently only quotes from Streamlabs Chatbot (desktop bot), Mix It Up and Firebot can be imported.</p>
+                        <div class="muted mb-12">
+                            <p class="mb-2">Currently quotes from Streamlabs Chatbot (desktop bot), Mix It Up and Firebot can be imported.</p>
+                            <p>CSV files can also be imported, so long as the values are in the following order (and the first line is a header line):</p>
+                            <p class="font-bold">
+                                ID,
+                                Quote,
+                                Originator <tooltip text="'The user who was quoted.'"></tooltip>,
+                                Creator <tooltip text="'The user who added the quote.'"></tooltip>,
+                                Game/Category,
+                                Creation Date <tooltip text="'In ISO format (i.e. 2025-01-30)'"></tooltip>
+                            </p>
+                        </div>
 
                         <h4>Choose file</h4>
                         <p class="muted mb-2">To get the export file in Streamlabs Chatbot, go to Connections -> Cloud -> Create Split Excel and find the file called Quotes.xlsx.</p>

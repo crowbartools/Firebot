@@ -19,7 +19,7 @@ const effect: EffectType<{
         name: "Clear Effects",
         description: "Remove overlay effects, stop sounds, or clear effect queues",
         icon: "fad fa-minus-circle",
-        categories: ["common", "overlay"],
+        categories: ["common", "overlay", "firebot control"],
         dependencies: []
     },
     optionsTemplate: `

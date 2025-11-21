@@ -9,7 +9,7 @@ const effect: EffectType<{
         name: "Sync Data to Profile Page",
         description: "Syncs your data to your Firebot profile page",
         icon: "fad fa-sync",
-        categories: ["advanced", "scripting"],
+        categories: ["advanced", "scripting", "firebot control"],
         dependencies: {
             twitch: true
         }

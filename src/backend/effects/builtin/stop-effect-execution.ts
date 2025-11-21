@@ -19,7 +19,7 @@ const model: EffectType<{
         name: "Stop Effect Execution",
         description: "Stop the execution of the current effect list.",
         icon: "fad fa-stop-circle",
-        categories: ["scripting"],
+        categories: ["scripting", "firebot control"],
         dependencies: []
     },
     optionsTemplate: `

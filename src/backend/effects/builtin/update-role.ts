@@ -23,7 +23,7 @@ const effect: EffectType<{
         name: "Update Viewer Roles",
         description: "Add, remove, or clear users from a custom role.",
         icon: "fad fa-user-tag",
-        categories: ["fun", "advanced"],
+        categories: ["fun", "advanced", "firebot control"],
         dependencies: []
     },
     optionsTemplate: `
