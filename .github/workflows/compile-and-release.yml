@@ -68,18 +68,18 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Install Python deps
         run: python -m pip install --upgrade packaging pip setuptools
 
       - name: Setup Nodejs
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v4
         with:
-          node-version: "22.19.0"
+          node-version: "20.14.0"
 
       - name: Install correct npm version
-        run: npm install -g npm@10.9.3
+        run: npm install -g npm@10.8.1
 
       - name: Linux Build Prep
         if: runner.os == 'linux'
