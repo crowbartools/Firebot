@@ -44,7 +44,7 @@ const effect: EffectType<{
         }
         return errors;
     },
-    onTriggerEvent: async ({ effect }) => {
+    onTriggerEvent: ({ effect }) => {
         frontendCommunicator.send("showToast", {
             content: effect.message,
             className: effect.alertType
