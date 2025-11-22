@@ -14,11 +14,11 @@ triggers["event"] = [
 
 const model : ReplaceVariable = {
     definition: {
-        handle: "sharedChatSourceUser",
-        description: "Outputs a user object (userId, username, displayName) for the source user of a shared chat message, or null if not a shared chat message.",
+        handle: "sharedChatSourceAvatarUrl",
+        description: "Outputs the avatar URL for the source user of a shared chat message, or null if not a shared chat message.",
         triggers: triggers,
         categories: ["common", "trigger based"],
-        possibleDataOutput: ["object", "null"]
+        possibleDataOutput: ["text", "null"]
     },
     evaluator: (trigger) => {
 
@@ -30,16 +30,11 @@ const model : ReplaceVariable = {
             chatMessage = trigger.metadata.eventData.chatMessage;
         }
 
-        if (!chatMessage || !chatMessage.sharedChatRoomId) {
+        if (!chatMessage || (!chatMessage.sharedChatRoomProfilePicUrl)) {
             return null;
         }
 
-        return {
-            userId: chatMessage.sharedChatRoomId,
-            username: chatMessage.sharedChatRoomUsername,
-            displayName: chatMessage.sharedChatRoomDisplayName,
-            avatarUrl: chatMessage.sharedChatRoomProfilePicUrl
-        };
+        return chatMessage.sharedChatRoomProfilePicUrl;
     }
 };
 
