@@ -11,7 +11,7 @@
         },
         template: `
             <div class="mb-4">
-                <div class="sys-command-row" ng-init="hidePanel = true" ng-click="hidePanel = !hidePanel" ng-class="{'expanded': !hidePanel}">
+                <div class="sys-command-row" ng-init="hidePanel = true" ng-click="hidePanel = !hidePanel" ng-class="{'expanded': !hidePanel}" context-menu="$ctrl.subcommandContextMenu()" context-menu-orientation="left">
                     <div class="pl-8"" style="flex-basis: 30%;">
                         {{$ctrl.subcommand.regex || $ctrl.subcommand.fallback ? ($ctrl.subcommand.usage || "").split(" ")[0] : $ctrl.subcommand.arg}}
                         <span ng-show="$ctrl.fullyEditable">
@@ -277,6 +277,32 @@
                 } else {
                     return "This subcommand will use the permissions of the base command.";
                 }
+            };
+
+            $ctrl.subcommandContextMenu = () => {
+                const options = [
+                    {
+                        html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit Trigger</a>`,
+                        click: () => {
+                            $ctrl.edit();
+                        }
+                    },
+                    {
+                        html: `<a href ><i class="far fa-${$ctrl.subcommand.active ? 'ban' : 'check'}" style="margin-right: 10px;"></i> ${$ctrl.subcommand.active ? 'Disable' : 'Enable'}</a>`,
+                        click: () => {
+                            $ctrl.subcommand.active = !$ctrl.subcommand.active;
+                        }
+                    },
+                    {
+                        html: `<a href style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
+                        click: () => {
+                            $ctrl.delete();
+                        },
+                        compile: true
+                    }
+                ];
+
+                return options;
             };
         }
     });
