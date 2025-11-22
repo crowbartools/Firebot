@@ -38,6 +38,7 @@ interface OverlayAlertEffect {
         weight: number;
         italic: boolean;
     };
+    textShadow?: boolean;
     accentColor?: string;
     accentBold?: boolean;
     accentItalic?: boolean;
@@ -66,6 +67,7 @@ interface OverlayAlertEffect {
     inbetweenDuration?: number;
     inbetweenRepeat?: number;
     overlayInstance?: string;
+    textPosition?: "below" | "above" | "left" | "right" | "overlay";
 }
 
 type OverlayData = Pick<
@@ -73,6 +75,7 @@ type OverlayData = Pick<
     | "mediaType"
     | "text"
     | "font"
+    | "textShadow"
     | "accentColor"
     | "accentBold"
     | "accentItalic"
@@ -89,6 +92,7 @@ type OverlayData = Pick<
     | "inbetweenDelay"
     | "inbetweenDuration"
     | "inbetweenRepeat"
+    | "textPosition"
 > & {
     mediaUrl?: string;
     mediaFilePath?: string;
@@ -106,11 +110,28 @@ const overlayAlertStyles = `
         width: 100%;
         height: 100%;
     }
+    .firebot-overlay-alert-container.text-above {
+        flex-direction: column-reverse;
+    }
+    .firebot-overlay-alert-container.text-left {
+        flex-direction: row-reverse;
+    }
+    .firebot-overlay-alert-container.text-right {
+        flex-direction: row;
+    }
+    .firebot-overlay-alert-container.text-overlay {
+        position: relative;
+    }
     .firebot-overlay-alert-media {
         display: flex;
         justify-content: center;
         align-items: center;
         width: 100%;
+    }
+    .firebot-overlay-alert-container.text-left .firebot-overlay-alert-media,
+    .firebot-overlay-alert-container.text-right .firebot-overlay-alert-media {
+        width: auto;
+        flex: 1;
     }
     .firebot-overlay-alert-media img,
     .firebot-overlay-alert-media video {
@@ -123,6 +144,27 @@ const overlayAlertStyles = `
         margin-top: 20px;
         word-wrap: break-word;
         width: 100%;
+    }
+    .firebot-overlay-alert-container.text-above .firebot-overlay-alert-text {
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+    .firebot-overlay-alert-container.text-left .firebot-overlay-alert-text,
+    .firebot-overlay-alert-container.text-right .firebot-overlay-alert-text {
+        margin-top: 0;
+        margin-left: 20px;
+        margin-right: 20px;
+        width: auto;
+        flex: 1;
+    }
+    .firebot-overlay-alert-container.text-overlay .firebot-overlay-alert-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        margin: 0;
+        width: auto;
+        max-width: 90%;
     }
 `;
 
@@ -141,7 +183,7 @@ const effect: EffectType<OverlayAlertEffect> = {
             <style>${overlayAlertStyles}</style>
             <div style="display:flex; align-items: center; justify-content: center; width: 100%; min-height: 200px; background: #1a1a1a; padding: 20px; border-radius: 8px;">
                 <div style="max-width: 400px; width: 100%;">
-                    <div class="firebot-overlay-alert-container">
+                    <div class="firebot-overlay-alert-container" ng-class="getPreviewContainerClass()">
                         <div class="firebot-overlay-alert-media" ng-if="getPreviewMediaSrc()" ng-style="getPreviewMediaStyle()">
                             <img ng-if="effect.mediaType === 'image'" ng-src="{{getPreviewMediaSrc()}}" style="max-height: 200px;" />
                             <video ng-if="effect.mediaType === 'video' && effect.videoSourceType === 'local'" controls style="max-height: 200px;">
@@ -239,6 +281,16 @@ const effect: EffectType<OverlayAlertEffect> = {
                 <font-options ng-model="effect.font" allow-alpha="true"></font-options>
             </div>
 
+            <div class="form-group flex justify-between">
+                <div>
+                    <label class="control-label" style="margin:0;">Shadow</label>
+                    <p class="help-block">Add a drop shadow to the text for better readability.</p>
+                </div>
+                <div class="ml-5">
+                    <toggle-button toggle-model="effect.textShadow" auto-update-value="true" font-size="32"></toggle-button>
+                </div>
+            </div>
+
             <div>
                 <h4>Accent Settings</h4>
                 <p class="muted" style="font-size:11px;margin-bottom:10px;">
@@ -265,6 +317,15 @@ const effect: EffectType<OverlayAlertEffect> = {
                         model="effect.autoAccentVariables"
                     />
                 </div>
+            </div>
+
+            <div class="mt-4">
+                <h4>Text Position</h4>
+                <firebot-dropdown
+                    options="textPositionOptions"
+                    ng-model="effect.textPosition"
+                    placeholder="Select text position"
+                />
             </div>
         </eos-container>
 
@@ -413,6 +474,22 @@ const effect: EffectType<OverlayAlertEffect> = {
             $scope.effect.mediaScale = 100;
         }
 
+        if ($scope.effect.textPosition == null) {
+            $scope.effect.textPosition = "below";
+        }
+
+        if ($scope.effect.textShadow == null) {
+            $scope.effect.textShadow = false;
+        }
+
+        $scope.textPositionOptions = [
+            { name: "Below Media", value: "below" },
+            { name: "Above Media", value: "above" },
+            { name: "Left of Media", value: "left" },
+            { name: "Right of Media", value: "right" },
+            { name: "On Top of Media", value: "overlay" }
+        ];
+
         $scope.showOverlayInfoModal = function (overlayInstance: string) {
             utilityService.showOverlayInfoModal(overlayInstance);
         };
@@ -503,13 +580,34 @@ const effect: EffectType<OverlayAlertEffect> = {
         // Get preview text style
         $scope.getPreviewTextStyle = function () {
             const font = $scope.effect.font ?? ({} as typeof $scope.effect.font);
-            return {
+            const style: Record<string, string | number> = {
                 fontFamily: font.family || "Open Sans",
                 fontSize: `${font.size || 24}px`,
                 color: font.color || "#FFFFFF",
                 fontWeight: font.weight || 400,
                 fontStyle: font.italic ? "italic" : "normal"
             };
+            if ($scope.effect.textShadow) {
+                style.filter = "drop-shadow(1px 1px 5px black)";
+            }
+            return style;
+        };
+
+        // Get preview container class based on text position
+        $scope.getPreviewContainerClass = function () {
+            const position = $scope.effect.textPosition || "below";
+            switch (position) {
+                case "above":
+                    return "text-above";
+                case "left":
+                    return "text-left";
+                case "right":
+                    return "text-right";
+                case "overlay":
+                    return "text-overlay";
+                default:
+                    return "";
+            }
         };
     },
     optionsValidator: (effect) => {
@@ -576,6 +674,7 @@ const effect: EffectType<OverlayAlertEffect> = {
             mediaType: effect.mediaType,
             text: effect.text,
             font: effect.font,
+            textShadow: effect.textShadow,
             accentColor: effect.accentColor,
             accentBold: effect.accentBold,
             accentItalic: effect.accentItalic,
@@ -584,6 +683,7 @@ const effect: EffectType<OverlayAlertEffect> = {
             duration: effect.duration || 5,
             position: effect.position,
             mediaScale: effect.mediaScale || 100,
+            textPosition: effect.textPosition || "below",
             enterAnimation: effect.enterAnimation,
             enterDuration: effect.enterDuration,
             exitAnimation: effect.exitAnimation,
@@ -756,13 +856,16 @@ const effect: EffectType<OverlayAlertEffect> = {
 
                 // Build font style
                 const font = data.font;
-                const fontStyle = `
+                let fontStyle = `
                     font-family: ${font?.family || "Open Sans"};
                     font-size: ${font?.size || 24}px;
                     color: ${font?.color || "#FFFFFF"};
                     font-weight: ${font?.weight || 400};
                     font-style: ${font?.italic ? "italic" : "normal"};
                 `;
+                if (data.textShadow) {
+                    fontStyle += " filter: drop-shadow(1px 1px 5px black);";
+                }
 
                 // Process text with accent tags
                 const processedText = processAccentTags(
@@ -818,12 +921,30 @@ const effect: EffectType<OverlayAlertEffect> = {
                 const containerWidth = position.width;
                 const containerHeight = position.height;
 
+                // Get container class based on text position
+                let containerClass = "firebot-overlay-alert-container";
+                const textPosition = data.textPosition || "below";
+                switch (textPosition) {
+                    case "above":
+                        containerClass += " text-above";
+                        break;
+                    case "left":
+                        containerClass += " text-left";
+                        break;
+                    case "right":
+                        containerClass += " text-right";
+                        break;
+                    case "overlay":
+                        containerClass += " text-overlay";
+                        break;
+                }
+
                 const alertElement = `
                     <div style="
                         width: ${containerWidth}px;
                         height: ${containerHeight}px;
                     ">
-                        <div class="firebot-overlay-alert-container">
+                        <div class="${containerClass}">
                             ${mediaHtml}
                             ${textHtml}
                         </div>
