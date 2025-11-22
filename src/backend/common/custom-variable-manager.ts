@@ -1,10 +1,11 @@
 
 import { TypedEmitter } from "tiny-typed-emitter";
-import NodeCache from "node-cache";
+import NodeCache, { WrappedValue } from "node-cache";
 import type { JsonDB } from "node-json-db";
 
 import { EventManager } from "../events/event-manager";
 import { ProfileManager } from "../common/profile-manager";
+import { SettingsManager } from "./settings-manager";
 import frontendCommunicator from './frontend-communicator';
 import logger from '../logwrapper';
 import { simpleClone } from '../utils';
@@ -14,6 +15,12 @@ interface CustomVariableInspectorItem {
     value: unknown;
     ttl: number;
 }
+
+type FirebotCacheData = {
+    [key: string]: WrappedValue<unknown> & { meta?: {
+        persist?: boolean;
+    }; };
+};
 
 class CustomVariableManager extends TypedEmitter<{
     "created-item": (item: { name: string, value: unknown }) => void;
@@ -97,20 +104,36 @@ class CustomVariableManager extends TypedEmitter<{
             }));
     }
 
-    getAllVariables(): NodeCache.Data {
+    getAllVariables(): FirebotCacheData {
         return simpleClone(this._cache.data);
     }
 
     persistVariablesToFile(): void {
         const db = this.getVariableCacheDb();
-        db.push("/", this._cache.data);
+        const persistAllVars = SettingsManager.getSetting("PersistCustomVariables");
+        if (persistAllVars) {
+            db.push("/", this._cache.data);
+        } else {
+            const dataToPersist = Object.entries(this._cache.data as FirebotCacheData).reduce((acc, [key, { t, v, meta }]) => {
+                if (meta?.persist) {
+                    acc[key] = { t, v, meta };
+                }
+                return acc;
+            }, {} as FirebotCacheData);
+            db.push("/", dataToPersist);
+        }
     }
 
     loadVariablesFromFile(): void {
         const db = this.getVariableCacheDb();
-        const data = db.getData("/") as NodeCache.Data;
+        const data = db.getData("/") as FirebotCacheData;
         if (data) {
-            for (const [key, { t, v }] of Object.entries(data)) {
+            const persistAllVars = SettingsManager.getSetting("PersistCustomVariables");
+            for (const [key, { t, v, meta }] of Object.entries(data)) {
+                if (!persistAllVars && !(meta?.persist)) {
+                    // global persist disabled and this var wasn't marked to persist
+                    continue;
+                }
                 const now = Date.now();
                 if (t && t > 0 && t < now) {
                     // this var has expired
@@ -118,16 +141,22 @@ class CustomVariableManager extends TypedEmitter<{
                     continue;
                 }
                 const ttl = t === 0 ? 0 : (t - now) / 1000;
-                this._cache.set(key, v, ttl);
+                this.setValueWithMeta(key, v, ttl, meta);
             }
         }
+    }
+
+    private setValueWithMeta(key: string, value: unknown, ttl?: number, meta = {}): void {
+        this._cache.set(key, value, ttl ?? 0);
+        this._cache.data[key]["meta"] = meta;
     }
 
     addCustomVariable(
         name: string,
         data: unknown,
         ttl = 0,
-        propertyPath: string = null
+        propertyPath: string = null,
+        persist?: boolean
     ): void {
         //attempt to parse data as json
         try {
@@ -146,13 +175,18 @@ class CustomVariableManager extends TypedEmitter<{
 
         const currentData = this._cache.get(name);
 
+        const meta = (this._cache.data[name] as unknown as FirebotCacheData)?.meta ?? {};
+        if (persist != null) {
+            meta["persist"] = true;
+        }
+
         if (propertyPath == null || propertyPath.length < 1) {
             let dataToSet = dataIsNull ? undefined : data;
             if (currentData && Array.isArray(currentData) && !Array.isArray(data) && !dataIsNull) {
                 currentData.push(data);
                 dataToSet = currentData;
             }
-            this._cache.set(name, dataToSet, ttl ?? 0);
+            this.setValueWithMeta(name, dataToSet, ttl, meta);
             this.emit(eventType, {
                 name: name,
                 value: dataToSet
@@ -191,7 +225,7 @@ class CustomVariableManager extends TypedEmitter<{
                         cursor = cursor[node];
                     }
                 }
-                this._cache.set(name, currentData, ttl ?? 0);
+                this.setValueWithMeta(name, currentData, ttl ?? 0, meta);
                 this.emit(eventType, {
                     name: name,
                     value: currentData

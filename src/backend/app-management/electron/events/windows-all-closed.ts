@@ -22,9 +22,7 @@ export async function windowsAllClosed() {
     HotkeyManager.unregisterAllHotkeys();
 
     // Persist custom variables
-    if (SettingsManager.getSetting("PersistCustomVariables")) {
-        CustomVariableManager.persistVariablesToFile();
-    }
+    CustomVariableManager.persistVariablesToFile();
 
     // Set all users to offline
     await viewerOnlineStatusManager.setAllViewersOffline();
