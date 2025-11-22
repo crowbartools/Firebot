@@ -52,6 +52,7 @@
         class="chat-window"
         ng-init="scrollGlued = true"
         scroll-glue="scrollGlued"
+        scroll-glue-direction="{{reverseChatOrder ? 'top' : 'bottom'}}"
         style="{{customFontSizeStyle}}"
       >
         <div
