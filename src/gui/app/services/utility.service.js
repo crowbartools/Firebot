@@ -1,9 +1,8 @@
 "use strict";
 
-const { sanitize } = require("dompurify");
-const { marked } = require("marked");
-
 (function() {
+    const { sanitize } = require("dompurify");
+    const { marked } = require("marked");
 
     angular
         .module("firebotApp")
