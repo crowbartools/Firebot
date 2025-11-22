@@ -181,7 +181,7 @@
                 ></command-cooldown-settings>
             </firebot-tab>
 
-            <firebot-tab index="2" name="subcommands" label="Subcommands" icon="fas fa-sitemap" ng-if="!$ctrl.command.scanWholeMessage && !$ctrl.command.triggerIsRegex">
+            <firebot-tab index="2" name="subcommands" label="Subcommands" badge="$ctrl.command.subCommands ? $ctrl.command.subCommands.length : 0" icon="fas fa-sitemap" ng-if="!$ctrl.command.scanWholeMessage && !$ctrl.command.triggerIsRegex">
                 <div
                     class="mt-8"
                 >
