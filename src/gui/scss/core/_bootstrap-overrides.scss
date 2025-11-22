@@ -591,6 +591,8 @@ label {
 .ng-toast__message {
     background-color: #373c3e;
     border-radius: 8px;
+    max-width: fit-content;
+    margin: auto;
     .alert {
         margin-bottom: 0px;
     }
