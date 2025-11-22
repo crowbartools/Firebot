@@ -745,6 +745,17 @@
     min-width: 145px;
     display: flex;
     flex-direction: column;
+    position: relative;
+    .feed-overlay {
+        pointer-events: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(0deg, rgb(0 0 0 / 15%) 0%, transparent 25%, transparent 100%);
+        z-index: 1;
+    }
 }
 
 // Chat Screen
@@ -961,6 +972,7 @@
     position: absolute;
     bottom: 15px;
     right: 15px;
+    z-index: 2;
 }
 
 .dashboard-settings-button-container .btn {
@@ -969,6 +981,15 @@
     height: 35px;
     width: 35px;
     padding: 0;
+}
+
+.dashboard-settings-button-container.activity-feed-enabled {
+    .btn {
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.33);
+        font-size: 21px;
+        height: 45px;
+        width: 45px;
+    }
 }
 
 .dashboard-settings-button-container i {
