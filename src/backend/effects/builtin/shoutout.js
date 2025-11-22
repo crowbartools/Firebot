@@ -164,6 +164,7 @@ const effect = {
                     model="effect.showLastGame"
                 />
                 <firebot-checkbox
+                    ng-if="effect.showLastGame"
                     label="Hide game/category art"
                     model="effect.hideCategoryArt"
                 />
