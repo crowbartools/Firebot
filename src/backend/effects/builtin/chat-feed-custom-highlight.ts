@@ -5,7 +5,7 @@ import logger from "../../logwrapper";
 
 const triggers: TriggersObject = {};
 triggers["command"] = true;
-triggers["event"] = ["twitch:chat-message", "twitch:viewer-arrived"];
+triggers["event"] = ["twitch:chat-message", "twitch:viewer-arrived", "firebot:highlight-message"];
 
 const effect: EffectType<{
     highlightEnabled: boolean;

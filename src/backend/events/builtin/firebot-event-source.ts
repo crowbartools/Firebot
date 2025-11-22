@@ -84,8 +84,8 @@ export const FirebotEventSource: EventSource = {
         },
         {
             id: "highlight-message",
-            name: "Chat Message Spotlight",
-            description: "When you choose to spotlight a message, like by displaying on an overlay.",
+            name: "Chat Message Spotlighted",
+            description: "When you spotlight a message via the Firebot chat feed. You can use this to display it on the overlay, for example.",
             cached: false,
             manualMetadata: {
                 username: "Firebot",
