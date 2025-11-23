@@ -13,6 +13,7 @@ import { GiveCurrencyQuickAction } from "./builtin/give-currency";
 import { OpenRewardQueueQuickAction } from "./builtin/open-reward-request-queue";
 import { StreamInfoQuickAction } from "./builtin/stream-info";
 import { StreamPreviewQuickAction } from "./builtin/stream-preview";
+import { StreamScheduleQuickAction } from "./builtin/stream-schedule";
 
 
 class QuickActionManager extends JsonDbManager<QuickActionDefinition> {
@@ -20,7 +21,8 @@ class QuickActionManager extends JsonDbManager<QuickActionDefinition> {
         GiveCurrencyQuickAction,
         OpenRewardQueueQuickAction,
         StreamInfoQuickAction,
-        StreamPreviewQuickAction
+        StreamPreviewQuickAction,
+        StreamScheduleQuickAction
     ];
 
     constructor() {
