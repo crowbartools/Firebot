@@ -1,6 +1,10 @@
-"use strict";
+import type { EffectType } from "../../../types/effects";
+import viewerMetadataManager from "../../viewers/viewer-metadata-manager";
 
-const effect = {
+const effect: EffectType<{
+    username: string;
+    key: string;
+}> = {
     definition: {
         id: "firebot:remove-user-metadata",
         name: "Remove User Metadata",
@@ -9,7 +13,6 @@ const effect = {
         categories: ["advanced", "scripting", "firebot control"],
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container header="Username">
             <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="effect.username" placeholder="Enter username" replace-variables menu-position="below" />
@@ -20,7 +23,6 @@ const effect = {
             <input ng-model="effect.key" type="text" class="form-control" id="chat-text-setting" placeholder="Enter key name" replace-variables>
         </eos-container>
     `,
-    optionsController: () => { },
     optionsValidator: (effect) => {
         const errors = [];
         if (effect.username == null || effect.username === "") {
@@ -34,11 +36,8 @@ const effect = {
     getDefaultLabel: (effect) => {
         return `${effect.username} - ${effect.key}`;
     },
-    onTriggerEvent: async (event) => {
-        const { effect } = event;
+    onTriggerEvent: async ({ effect }) => {
         const { username, key } = effect;
-
-        const viewerMetadataManager = require("../../viewers/viewer-metadata-manager");
 
         await viewerMetadataManager.removeViewerMetadata(username, key);
 
@@ -46,4 +45,4 @@ const effect = {
     }
 };
 
-module.exports = effect;
+export = effect;
