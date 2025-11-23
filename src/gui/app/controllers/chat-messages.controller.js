@@ -158,21 +158,19 @@
             };
 
             // This happens when a chat message is submitted.
-            const chatHistory = [];
-            let currrentHistoryIndex = -1;
             $scope.submitChat = function() {
                 if (chatMessagesService.chatMessage == null || chatMessagesService.chatMessage.length < 1) {
                     return;
                 }
                 chatMessagesService.submitChat(chatMessagesService.chatSender, chatMessagesService.chatMessage, chatMessagesService.threadDetails?.replyToMessageId);
-                chatHistory.unshift(chatMessagesService.chatMessage);
-                currrentHistoryIndex = -1;
+                chatMessagesService.chatHistory.unshift(chatMessagesService.chatMessage);
+                chatMessagesService.currrentHistoryIndex = -1;
                 chatMessagesService.chatMessage = "";
                 chatMessagesService.threadDetails = null;
             };
 
             $scope.onMessageFieldUpdate = () => {
-                currrentHistoryIndex = -1;
+                chatMessagesService.currrentHistoryIndex = -1;
             };
 
             $scope.onMessageFieldKeypress = ($event) => {
@@ -181,22 +179,27 @@
                     //up arrow
                     if (
                         chatMessagesService.chatMessage.length < 1 ||
-                        chatMessagesService.chatMessage === chatHistory[currrentHistoryIndex]
+                        chatMessagesService.currrentHistoryIndex === -1 ||
+                        chatMessagesService.chatMessage === chatMessagesService.chatHistory[chatMessagesService.currrentHistoryIndex]
                     ) {
-                        if (currrentHistoryIndex + 1 < chatHistory.length) {
-                            currrentHistoryIndex++;
-                            chatMessagesService.chatMessage = chatHistory[currrentHistoryIndex];
+                        if (chatMessagesService.currrentHistoryIndex + 1 < chatMessagesService.chatHistory.length) {
+                            chatMessagesService.currrentHistoryIndex++;
+                            chatMessagesService.chatMessage = chatMessagesService.chatHistory[chatMessagesService.currrentHistoryIndex];
                         }
                     }
                 } else if (keyCode === 40) {
                     //down arrow
                     if (
                         chatMessagesService.chatMessage.length > 0 ||
-                        chatMessagesService.chatMessage === chatHistory[currrentHistoryIndex]
+                        chatMessagesService.chatMessage === chatMessagesService.chatHistory[chatMessagesService.currrentHistoryIndex]
                     ) {
-                        if (currrentHistoryIndex - 1 >= 0) {
-                            currrentHistoryIndex--;
-                            chatMessagesService.chatMessage = chatHistory[currrentHistoryIndex];
+                        if (chatMessagesService.currrentHistoryIndex >= 0) {
+                            chatMessagesService.currrentHistoryIndex--;
+                            if (chatMessagesService.currrentHistoryIndex >= 0) {
+                                chatMessagesService.chatMessage = chatMessagesService.chatHistory[chatMessagesService.currrentHistoryIndex];
+                            } else {
+                                chatMessagesService.chatMessage = "";
+                            }
                         }
                     }
                 } else if (keyCode === 13) {
