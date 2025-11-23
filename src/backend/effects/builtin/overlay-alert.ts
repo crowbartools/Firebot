@@ -325,6 +325,7 @@ const effect: EffectType<OverlayAlertEffect> = {
                     options="textPositionOptions"
                     ng-model="effect.textPosition"
                     placeholder="Select text position"
+                    option-toggling="false"
                 />
             </div>
         </eos-container>
