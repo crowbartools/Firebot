@@ -23,11 +23,11 @@
                     class="control-type-list"
                     ng-disabled="$ctrl.disabled"
                 >
-                    <ui-select-match placeholder="Select or search for a font"><span ng-style="{'font-family': $select.selected}">{{$select.selected}}</span></ui-select-match>
+                    <ui-select-match placeholder="Select or search for a font"><span style="font-family: '{{$select.selected}}'">{{$select.selected}}</span></ui-select-match>
                     <ui-select-choices repeat="fontName in $ctrl.fontNames | filter: $select.search | limitTo:100 track by $index" style="position:relative;">
                         <div class="flex-row-center">
                             <div class="px-4">
-                                <div ng-style="{'font-family': fontName}">{{fontName}}</div>
+                                <div style="font-family: '{{fontName}}'">{{fontName}}</div>
                             </div>
                         </div>
                     </ui-select-choices>
