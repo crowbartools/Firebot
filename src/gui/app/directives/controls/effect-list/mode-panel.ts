@@ -86,22 +86,22 @@ type Controller = {
 
             $ctrl.options = [
                 {
-                    name: "All",
+                    name: "Sequential (All)",
                     value: "all",
                     icon: "fa-sort-numeric-down",
-                    tooltip: "Runs all effects in order from top to bottom."
+                    tooltip: "Runs all effects in order from top to bottom when triggered."
                 },
                 {
-                    name: "Sequential",
+                    name: "Sequential (Single)",
                     value: "sequential",
                     icon: "fa-repeat-1",
-                    tooltip: "Runs the next effect in the list each time this triggers. Once all effects have been used, it will start over from the beginning."
+                    tooltip: "Runs the single next effect in the list each time this triggers. Once all effects have been used, it will start over from the beginning."
                 },
                 {
-                    name: "Random",
+                    name: "Random (Single)",
                     value: "random",
                     icon: "fa-random",
-                    tooltip: "Runs a random effect from the list each time this triggers."
+                    tooltip: "Runs a single random effect from the list each time this triggers."
                 }
             ];
 

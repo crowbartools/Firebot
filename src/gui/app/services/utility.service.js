@@ -1,5 +1,8 @@
 "use strict";
+
 (function() {
+    const { sanitize } = require("dompurify");
+    const { marked } = require("marked");
 
     angular
         .module("firebotApp")
@@ -13,6 +16,12 @@
             const service = {};
 
             backendCommunicator.on("showToast", (messageOrOptions) => {
+                if (typeof messageOrOptions === "string") {
+                    messageOrOptions = sanitize(marked.parseInline(messageOrOptions));
+                } else {
+                    messageOrOptions.content = sanitize(marked.parseInline(messageOrOptions.content));
+                }
+
                 ngToast.create(messageOrOptions);
             });
 
@@ -25,7 +34,7 @@
                 }
                 try {
                     itemIndex = itemArray.indexOf(element);
-                } catch (err) {}
+                } catch {}
 
                 if (itemIndex !== -1) {
                     // Item exists, so we're unchecking it.

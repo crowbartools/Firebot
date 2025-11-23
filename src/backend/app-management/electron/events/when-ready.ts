@@ -193,11 +193,8 @@ export async function whenReady() {
     builtinGameLoader.loadGames();
 
     windowManagement.updateSplashScreenStatus("Loading custom variables...");
-    const { SettingsManager } = await import("../../../common/settings-manager");
-    if (SettingsManager.getSetting("PersistCustomVariables")) {
-        const { CustomVariableManager } = await import("../../../common/custom-variable-manager");
-        CustomVariableManager.loadVariablesFromFile();
-    }
+    const { CustomVariableManager } = await import("../../../common/custom-variable-manager");
+    CustomVariableManager.loadVariablesFromFile();
 
     windowManagement.updateSplashScreenStatus("Loading sort tags...");
     const { SortTagManager } = await import("../../../sort-tags/sort-tag-manager");

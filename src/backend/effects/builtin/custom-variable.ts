@@ -1,4 +1,4 @@
-import type { EffectType } from "../../../types/effects";
+import type { EffectType, SettingsService } from "../../../types";
 import { CustomVariableManager } from "../../common/custom-variable-manager";
 
 const effect: EffectType<{
@@ -6,6 +6,7 @@ const effect: EffectType<{
     variableData: string;
     ttl: number;
     propertyPath: string;
+    persistToFile?: boolean;
 }> = {
     definition: {
         id: "firebot:customvariable",
@@ -47,8 +48,18 @@ const effect: EffectType<{
         </eos-container>
 
         <eos-container header="Duration (Optional)" pad-top="true">
-            <p class="muted">Duration (in seconds) this variable should be kept in the cache. Use 0 for indefinite (until Firebot restarts). </p>
+            <p class="muted">Duration (in seconds) this variable should be kept in the cache. Use 0 for indefinite (until Firebot restarts unless persisted). </p>
             <input ng-model="effect.ttl" type="number" class="form-control" id="chat-text-setting" placeholder="Enter seconds">
+
+            <div class="form-group flex justify-between pt-10" ng-if="!persistAllVarsEnabled">
+                <div>
+                    <label class="control-label" style="margin:0;">Persist</label>
+                    <p class="help-block">If enabled, this variable will be saved to file and reloaded when Firebot restarts.</p>
+                </div>
+                <div class="ml-5">
+                    <toggle-button toggle-model="effect.persistToFile" auto-update-value="true" font-size="32"></toggle-button>
+                </div>
+            </div>
         </eos-container>
 
         <eos-container pad-top="true">
@@ -57,7 +68,7 @@ const effect: EffectType<{
             </div>
         </eos-container>
     `,
-    optionsController: ($scope, backendCommunicator) => {
+    optionsController: ($scope, backendCommunicator, settingsService: SettingsService) => {
         if ($scope.effect.ttl === undefined) {
             $scope.effect.ttl = 0;
         }
@@ -88,6 +99,8 @@ const effect: EffectType<{
             }
         ];
 
+        $scope.persistAllVarsEnabled = settingsService.getSetting("PersistCustomVariables");
+
         $scope.initialEditorLabel = $scope.effect?.variableData?.startsWith("{") || $scope.effect?.variableData?.startsWith("[") ? "JSON" : "Basic";
     },
     optionsValidator: (effect) => {
@@ -101,7 +114,7 @@ const effect: EffectType<{
         return effect.name;
     },
     onTriggerEvent: ({ effect }) => {
-        CustomVariableManager.addCustomVariable(effect.name, effect.variableData, effect.ttl, effect.propertyPath);
+        CustomVariableManager.addCustomVariable(effect.name, effect.variableData, effect.ttl, effect.propertyPath, effect.persistToFile);
         return true;
     }
 };

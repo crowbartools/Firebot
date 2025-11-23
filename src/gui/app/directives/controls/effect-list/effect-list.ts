@@ -1,5 +1,8 @@
 "use strict";
 
+import { sanitize } from "dompurify";
+import { marked } from "marked";
+
 import type {
     FirebotComponent,
     EffectList,
@@ -47,6 +50,7 @@ type Controller = {
     showBottomPanel: (effect: EffectInstance) => boolean;
     openNewEffectModal: (index?: number) => void;
     getEffectLabel: (effect: EffectInstance) => string | undefined;
+    getEffectComment: (effect: EffectInstance) => unknown;
     removeEffectAtIndex: (index: number) => void;
     removeAllEffects: () => void;
     openEditEffectModal: (effect: EffectInstance, index: number | null, trigger: TriggerType, isNew: boolean) => void;
@@ -219,9 +223,7 @@ type ContextMenuItemScope = {
                                         </div>
                                     </div>
                                     <!-- Comment Effect Panel -->
-                                    <div ng-if="effect.effectComment">
-                                        {{effect.effectComment || 'No comment provided'}}
-                                    </div>
+                                    <div ng-if="effect.effectComment" ng-bind-html="$ctrl.getEffectComment(effect) || 'No comment provided'" />
                                 </div>
 
                                 <div ng-if="($ctrl.effectsData.runMode === 'random' || $ctrl.effectsData.runMode === 'sequential') && !$last" class="effect-divider" ng-class="{'is-dragging': $ctrl.keyboardDragIndex != null}"></div>
@@ -253,6 +255,7 @@ type ContextMenuItemScope = {
             $q: angular.IQService,
             $rootScope: FirebotRootScope,
             $scope: angular.IScope,
+            $sce: angular.ISCEService,
             $http: angular.IHttpService,
             $injector: angular.auto.IInjectorService,
             effectHelperService: EffectHelperService,
@@ -360,6 +363,14 @@ type ContextMenuItemScope = {
                         return defaultLabel;
                     }
                 }
+                return;
+            };
+
+            $ctrl.getEffectComment = (effect: EffectInstance) => {
+                if (effect.effectComment?.length) {
+                    return $sce.trustAsHtml(sanitize(marked.parseInline(effect.effectComment) as string));
+                }
+
                 return;
             };
 

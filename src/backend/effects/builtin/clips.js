@@ -25,6 +25,11 @@ const clip = {
                 label: "Clip Url",
                 description: "The url of the created clip",
                 defaultName: "clipUrl"
+            },
+            {
+                label: "Thumbnail Url",
+                description: "The url of the created clip's thumbnail",
+                defaultName: "thumbnailUrl"
             }
         ]
     },

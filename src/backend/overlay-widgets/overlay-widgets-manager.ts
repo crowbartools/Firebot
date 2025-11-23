@@ -319,5 +319,25 @@ websocketServerManager.on("overlay-connected", (instanceName: string = "Default"
     }
 });
 
+websocketServerManager.on("overlay-event", (event: { name: string, data: unknown }) => {
+    if (event.name !== "overlay-widget-message") {
+        return;
+    }
+    const data = event.data as { widgetConfigId: string, messageName: string, messageData?: unknown };
+    const config = overlayWidgetConfigManager.getItem(data.widgetConfigId);
+    if (!config) {
+        logger.warn(`Overlay widget config with ID '${data.widgetConfigId}' not found for overlay message.`);
+        return;
+    }
+    const type = manager.getOverlayWidgetType(config.type);
+    if (!type) {
+        logger.warn(`Overlay widget type with ID '${config.type}' not found for overlay message on widget ID '${data.widgetConfigId}'.`);
+        return;
+    }
+    if (type.onOverlayMessage) {
+        void type.onOverlayMessage(config, data.messageName, data.messageData);
+    }
+});
+
 
 export = manager;

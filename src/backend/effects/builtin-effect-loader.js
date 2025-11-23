@@ -53,6 +53,7 @@ exports.loadEffects = () => {
         'run-program',
         'send-custom-websocket-event',
         'sequential-effect',
+        'set-output',
         'set-user-metadata',
         'shoutout',
         'show-image', // No migration needed.

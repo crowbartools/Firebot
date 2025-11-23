@@ -52,6 +52,7 @@
         class="chat-window"
         ng-init="scrollGlued = true"
         scroll-glue="scrollGlued"
+        scroll-glue-direction="{{reverseChatOrder ? 'top' : 'bottom'}}"
         style="{{customFontSizeStyle}}"
       >
         <div
@@ -176,6 +177,7 @@
     ng-show="settings.getSetting('ShowActivityFeed')"
     ng-style="{'width': layout.dashboardActivityFeed }"
   >
+    <div class="feed-overlay"></div>
     <div class="activity-feed-header">
       <div style="display: flex; align-items: center">
         <span>ACTIVITY FEED</span>
@@ -293,7 +295,7 @@
     </div>
   </div>
 
-  <div class="dashboard-settings-button-container">
+  <div class="dashboard-settings-button-container" ng-class="{'activity-feed-enabled': settings.getSetting('ShowActivityFeed')}">
     <firebot-button
       type="default"
       icon="fas fa-cog"

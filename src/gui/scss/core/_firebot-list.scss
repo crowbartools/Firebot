@@ -1,0 +1,77 @@
+.firebot-list-container {
+    min-height: 200px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.firebot-list-description {
+    p {
+        display: flex;
+        align-items: center;
+        line-height: 1.5;
+        i {
+            margin-right: 6px;
+            align-self: baseline;
+            margin-top: 4px;
+        }
+    }
+}
+
+.firebot-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.firebot-list-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 14px 16px;
+}
+
+.firebot-list-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.firebot-list-item-info {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+}
+
+.firebot-list-item-name {
+    font-size: 14px;
+    font-weight: 500;
+    margin-right: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.firebot-list-item-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    background: $alert-info-bg;
+    border: 1px solid $alert-info-border;
+    color: $alert-info-text-color;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.firebot-list-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
