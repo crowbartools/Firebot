@@ -207,6 +207,7 @@
 .btn-primary {
     background: linear-gradient(135deg, lighten($primary-button-bg, 8%) 0%, $primary-button-bg 100%);
     border-color: transparent;
+    border: 0;
     &:hover {
         background: linear-gradient(135deg, lighten($primary-button-hover-bg, 8%) 0%, $primary-button-hover-bg 100%);
     }
