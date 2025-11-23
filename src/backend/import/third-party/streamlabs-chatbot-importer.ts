@@ -29,8 +29,6 @@ type StreamlabsViewer = {
     viewHours: number;
 };
 
-let dbViewers: FirebotViewer[];
-
 const loadFile = async (filepath: string): Promise<{ name: string, data: unknown[][] }[]> => {
     try {
         return xlsx.parse(await fsp.readFile(filepath));
@@ -146,16 +144,13 @@ const addViewersFromTwitch = async (viewers: StreamlabsViewer[], abortSignal: Ab
     return twitchViewers;
 };
 
-const addNewViewers = async (viewers: StreamlabsViewer[], settings: Settings["viewers"], abortSignal: AbortSignal): Promise<void> => {
+const addNewViewers = async (viewers: StreamlabsViewer[], settings: Settings["viewers"], abortSignal: AbortSignal): Promise<FirebotViewer[]> => {
     const twitchViewers = await addViewersFromTwitch(viewers, abortSignal);
     const newViewers: FirebotViewer[] = [];
 
     try {
         for (const viewer of twitchViewers) {
-            if (abortSignal.aborted) {
-                newViewers.forEach(async v => await viewerDatabase.removeViewer(v._id));
-                break;
-            };
+            if (abortSignal.aborted) break;
 
             const roles = await chatRolesManager.getUsersChatRoles(viewer.id);
             const importedViewer = viewers.find(v => v.name.toLowerCase() === viewer.name.toLowerCase());
@@ -172,67 +167,88 @@ const addNewViewers = async (viewers: StreamlabsViewer[], settings: Settings["vi
     } catch (error) {
         logger.error("Failed to create new user", { location: "/import/third-party/streamlabs-chatbot.js:161", error: error });
     }
+
+    return newViewers;
 };
 
-const importViewers = async (data: { viewers: StreamlabsViewer[], settings: Settings["viewers"], abortSignal: AbortSignal }) => {
-    logger.debug(`Attempting to import viewers...`);
-
-    const { viewers, settings, abortSignal } = data;
-    dbViewers = await viewerDatabase.getAllViewers();
-
-    if (!dbViewers.length) {
-        await addNewViewers(viewers, settings, abortSignal);
-        return true;
-    }
-
-    const newViewers: StreamlabsViewer[] = [];
-    const viewersToUpdate: FirebotViewer[] = [];
-    const existingViewers = [...dbViewers];
-
-    for (const v of viewers) {
-        if (abortSignal.aborted) break;
-
-        v.name = String(v.name);
-        const viewer = dbViewers.find(ev => ev.username.toLowerCase() === v.name.toLowerCase());
-
-        if (viewer == null) {
-            newViewers.push(v);
-            continue;
-        }
-
-        if (settings.includeViewHours) {
-            viewer.minutesInChannel += v.viewHours * 60;
-        }
-
-        viewersToUpdate.push(viewer);
-    }
-
+const updateViewers = async (viewers: FirebotViewer[], abortSignal: AbortSignal): Promise<FirebotViewer[]> => {
     const updatedViewers: FirebotViewer[] = [];
-    for (const viewer of viewersToUpdate) {
+    for (const viewer of viewers) {
         if (abortSignal.aborted) break;
 
         try {
             await viewerDatabase.updateViewer(viewer);
             updatedViewers.push(viewer);
         } catch (error) {
-            logger.error("Failed to update user", { location: "/import/third-party/streamlabs-chatbot.js:194", error: error });
+            logger.error("Failed to update user", { location: "/import/third-party/streamlabs-chatbot.js:186", error: error });
         }
     }
 
-    await addNewViewers(newViewers, settings, abortSignal);
+    return updatedViewers;
+};
+
+const importViewers = async (
+    data: { 
+        viewers: StreamlabsViewer[], 
+        settings: Settings["viewers"], 
+        abortSignal: AbortSignal 
+    }): Promise<void> => {
+    logger.debug(`Attempting to import viewers...`);
+
+    const { viewers, settings, abortSignal } = data;
+
+    const existingViewers = await viewerDatabase.getAllViewers();
+    let newViewers: StreamlabsViewer[] = [];
+    const viewersToUpdate: FirebotViewer[] = [];
+
+    if (!existingViewers.length) {
+        newViewers = viewers;
+    } else {
+        for (const v of viewers) {
+            if (abortSignal.aborted) break;
+
+            v.name = String(v.name);
+            let viewer = existingViewers.find(ev => ev.username.toLowerCase() === v.name.toLowerCase());
+
+            if (viewer == null) {
+                newViewers.push(v);
+                continue;
+            }
+
+            if (settings.includeViewHours) {
+                viewer = JSON.parse(JSON.stringify(viewer));
+                viewer.minutesInChannel += v.viewHours * 60;
+            }
+
+            viewersToUpdate.push(viewer);
+        }
+    }
+
+    const updatedViewers = await updateViewers(viewersToUpdate, abortSignal);
+    const addedViewers = await addNewViewers(newViewers, settings, abortSignal);
 
     if (abortSignal.aborted) {
-            updatedViewers.forEach(async uv => {
-                const v = existingViewers.find(ev => ev._id === uv._id);
-
-                await viewerDatabase.updateViewer(v);
-                frontendCommunicator.send("import:cleanup-finished");
-            });
-        return false;
+        reverseImport(addedViewers, updatedViewers, existingViewers);
+        return;
     }
 
     logger.debug(`Finished importing viewers`);
-    return true;
+};
+
+const reverseImport = async (newViewers: FirebotViewer[], updatedViewers: FirebotViewer[], existingViewers: FirebotViewer[]) => {
+    if (newViewers.length) {
+        newViewers.forEach(async v => await viewerDatabase.removeViewer(v._id));
+    }
+
+    if (updatedViewers.length) {
+        updatedViewers.forEach(async uv => {
+            const v = existingViewers.find(ev => ev._id === uv._id);
+
+            await viewerDatabase.updateViewer(v);
+        });
+    }
+
+    frontendCommunicator.send("import:cleanup-finished");
 };
 
 export const StreamlabsChatbotImporter: ThirdPartyImporter<Settings> = {

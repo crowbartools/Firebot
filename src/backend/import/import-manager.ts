@@ -39,7 +39,7 @@ class ImportManager {
         );
 
         frontendCommunicator.onAsync("import:abort-import", async () => {
-            this._abortController.abort("Aborted by user");
+            this._abortController.abort("Import aborted by user");
         });
     }
 
