@@ -299,9 +299,24 @@
                     true
                 );
 
+                $ctrl.scrollToFirstInvalidField = () => {
+                    const invalidField = document.querySelector('.modal-body .ng-invalid[name]:not(form)');
+                    if (invalidField) {
+                        invalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                        // Focus the field if it's focusable
+                        setTimeout(() => {
+                            if (invalidField.focus) {
+                                invalidField.focus();
+                            }
+                        }, 300);
+                    }
+                };
+
                 $ctrl.save = () => {
                     $scope.widgetSettings.$setSubmitted();
                     if ($scope.widgetSettings.$invalid) {
+                        $ctrl.scrollToFirstInvalidField();
                         return;
                     }
 
