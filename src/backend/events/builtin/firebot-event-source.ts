@@ -182,6 +182,20 @@ export const FirebotEventSource: EventSource = {
                 dynamicCountdownWidgetId: "testCountdownId",
                 dynamicCountdownWidgetName: "Test Countdown"
             }
+        },
+        {
+            id: "custom-widget-message-received",
+            name: "Custom Overlay Widget Message Received",
+            description: "When a message is received from a custom overlay widget.",
+            cached: false,
+            manualMetadata: {
+                customWidgetId: "testCountdownId",
+                customWidgetName: "Test Countdown",
+                messageName: "testMessage",
+                messageData: {
+                    foo: "bar"
+                }
+            }
         }
     ]
 };

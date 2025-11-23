@@ -139,6 +139,10 @@ export type OverlayWidgetType<
      */
     onRemove?: WidgetEventHandler<Settings, State>;
     /**
+     * Called when the widget sends a message from the overlay.
+     */
+    onOverlayMessage?: (config: OverlayWidgetConfig<Settings, State>, messageName: string, messageData?: unknown) => Awaitable<void>;
+    /**
      * This code is injected into the overlay. Do not reference any variables outside this scope.
      */
     overlayExtension: {
@@ -218,6 +222,7 @@ export interface IOverlayWidgetEventUtils {
     removeWidget(): void;
     stylesToString(styles: Record<string, string | number | undefined>): string;
     getFontOptionsStyles(fontOptions?: FontOptions): Record<string, string | number | undefined>;
+    sendMessageToFirebot(messageName: string, messageData?: unknown): void;
 }
 
 export interface IOverlayWidgetInitUtils {
