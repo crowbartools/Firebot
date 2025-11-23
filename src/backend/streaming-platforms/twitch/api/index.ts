@@ -20,6 +20,7 @@ import { TwitchHypeTrainApi } from "./resource/hypetrain";
 import { TwitchModerationApi } from "./resource/moderation";
 import { TwitchPollsApi } from "./resource/polls";
 import { TwitchPredictionsApi } from "./resource/predictions";
+import { TwitchScheduleApi } from "./resource/schedule";
 import { TwitchStreamsApi } from "./resource/streams";
 import { TwitchSubscriptionsApi } from "./resource/subscriptions";
 import { TwitchTeamsApi } from "./resource/teams";
@@ -240,6 +241,11 @@ class TwitchApi {
     private _preditions: TwitchPredictionsApi;
     get predictions() {
         return this._preditions ??= new TwitchPredictionsApi(this);
+    }
+
+    private _schedule: TwitchScheduleApi;
+    get schedule() {
+        return this._schedule ??= new TwitchScheduleApi(this);
     }
 
     private _streams: TwitchStreamsApi;
