@@ -7,15 +7,21 @@
 
     angular
         .module("firebotApp")
-        .factory("activityFeedService", function($sce, backendCommunicator, modalService, modalFactory,
-            settingsService, ngToast) {
+        .factory("activityFeedService", function(
+            $sce,
+            backendCommunicator,
+            modalService,
+            modalFactory,
+            settingsService,
+            chatMessagesService,
+            ngToast) {
             const service = {};
 
             service.allActivities = [];
             service.activities = [];
 
             backendCommunicator.on("activity-feed:event-activity", (activity) => {
-
+                const rawMessage = activity.message;
                 activity.message = $sce.trustAsHtml(sanitize(marked.parseInline(activity.message)));
 
                 service.allActivities.unshift(activity);
@@ -29,6 +35,12 @@
                 }
 
                 service.activities.unshift(activity);
+
+                if (settingsService.getSetting("ShowActivityFeedEventsInChat") === true
+                    && activity.excludeFromChatFeed !== true) {
+                    chatMessagesService.chatAlertMessage(rawMessage, activity.icon);
+                }
+
                 if (service.activities.length > 100) {
                     service.activities.length = 100;
                 }
