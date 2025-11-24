@@ -426,8 +426,8 @@ export const TwitchEventSource: EventSource = {
         },
         {
             id: "bits-powerup-message-effect",
-            name: "Power-Up: Message Effects",
-            description: "When a viewer uses the \"Message Effects\" Power-Up in your channel.",
+            name: "Power-up: Message Effects",
+            description: "When a viewer uses the \"Message Effects\" Power-up in your channel.",
             cached: false,
             manualMetadata: {
                 username: "firebot",
@@ -442,14 +442,14 @@ export const TwitchEventSource: EventSource = {
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
                     return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""
-                    }** used a Message Effects Power-Up for **${eventData.bits}** bits`;
+                    }** used a Message Effects Power-up for **${eventData.bits}** bits`;
                 }
             }
         },
         {
             id: "bits-powerup-celebration",
             name: "Power-up: On-Screen Celebration",
-            description: "When a viewer uses the \"On-Screen Celebration\" Power-Up in your channel.",
+            description: "When a viewer uses the \"On-Screen Celebration\" Power-up in your channel.",
             cached: false,
             manualMetadata: {
                 username: "firebot",
@@ -463,14 +463,14 @@ export const TwitchEventSource: EventSource = {
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
                     return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""
-                    }** used a Celebration Power-Up for **${eventData.bits}** bits`;
+                    }** used a Celebration Power-up for **${eventData.bits}** bits`;
                 }
             }
         },
         {
             id: "bits-powerup-gigantified-emote",
             name: "Power-up: Gigantify an Emote",
-            description: "When a viewer uses the \"Gigantify an Emote\" Power-Up in your channel.",
+            description: "When a viewer uses the \"Gigantify an Emote\" Power-up in your channel.",
             cached: false,
             manualMetadata: {
                 username: "firebot",
