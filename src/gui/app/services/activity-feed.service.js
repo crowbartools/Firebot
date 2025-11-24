@@ -16,7 +16,7 @@
 
             backendCommunicator.on("activity-feed:event-activity", (activity) => {
 
-                activity.message = $sce.trustAsHtml(sanitize(marked(activity.message)));
+                activity.message = $sce.trustAsHtml(sanitize(marked.parseInline(activity.message)));
 
                 service.allActivities.unshift(activity);
                 if (service.allActivities.length > 500) {
