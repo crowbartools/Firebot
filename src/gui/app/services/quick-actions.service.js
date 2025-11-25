@@ -37,6 +37,13 @@
                 });
             });
 
+            backendCommunicator.on("trigger-quickaction:stream-schedule", () => {
+                utilityService.showModal({
+                    component: "streamScheduleModal",
+                    size: "md"
+                });
+            });
+
             backendCommunicator.on("trigger-quickaction:give-currency", () => {
                 utilityService.showModal({
                     component: "giveCurrencyModal",
