@@ -173,7 +173,8 @@
                         name: t.name,
                         description: t.description,
                         iconClass: t.icon
-                    }));
+                    }))
+                    .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
 
                 $ctrl.isNewWidget = true;
 
