@@ -1,9 +1,9 @@
 "use strict";
 
-import angular from "angular";
 import type { BackendCommunicator, PlatformService } from "../../../types";
 
 (function() {
+    // @ts-ignore
     angular
         .module("firebotApp")
         .factory("platformService", function(backendCommunicator: BackendCommunicator) {

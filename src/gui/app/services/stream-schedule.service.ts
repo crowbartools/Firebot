@@ -1,6 +1,5 @@
 "use strict";
 
-import angular from "angular";
 import type { BackendCommunicator, StreamScheduleService } from "../../../types";
 
 interface StreamSchedule {
@@ -14,7 +13,7 @@ interface StreamSchedule {
         categoryName: string;
         categoryImage: string;
         isRecurring: boolean;
-    }>,
+    }>;
     settings: {
         vacation: {
             startDate: Date;
@@ -24,6 +23,7 @@ interface StreamSchedule {
 }
 
 (function() {
+    // @ts-ignore
     angular
         .module("firebotApp")
         .factory("streamScheduleService", function(backendCommunicator: BackendCommunicator) {

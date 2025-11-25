@@ -1,8 +1,5 @@
 "use strict";
 
-import { sanitize } from "dompurify";
-import { marked } from "marked";
-
 import type {
     FirebotComponent,
     EffectList,
@@ -88,6 +85,10 @@ type ContextMenuItemScope = {
 (function () {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { randomUUID } = require("crypto");
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const { sanitize } = require("dompurify");
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const { marked } = require("marked");
 
     const effectList: FirebotComponent<Bindings, Controller> = {
         bindings: {
