@@ -110,6 +110,12 @@ export type OverlayWidgetType<
      * State that is used when the widget is shown in live preview mode.
      */
     livePreviewState?: State;
+
+    /**
+     * Array of setting keys that reference local resource paths.
+     * These properties will be automatically converted to resource tokens when sent to the overlay,
+     */
+    resourceKeys?: Array<keyof Settings>;
     /**
      * Function that returns a short string representing the current state of the widget.
      * This is shown in the overlay widget list to give the user a quick overview of the widget's state.
@@ -185,7 +191,11 @@ type OverlayWidgetConfig<Settings = Record<string, unknown>, State = Record<stri
 export type WidgetOverlayEvent<Settings = Record<string, unknown>, State = Record<string, unknown>> = {
     name: "show" | "settings-update" | "state-update" | "message" | "remove";
     data: {
-        widgetConfig: Pick<OverlayWidgetConfig<Settings, State>, "id" | "name" | "type" | "position" | "entryAnimation" | "exitAnimation" | "settings" | "state" | "overlayInstance" | "zIndex">;
+        widgetConfig: Pick<OverlayWidgetConfig<Settings, State>, "id" | "name" | "type" | "position" | "entryAnimation" | "exitAnimation" | "settings" | "state" | "overlayInstance" | "zIndex"> & {
+            resourceTokens: {
+                [K in keyof Settings]: string;
+            };
+        };
         widgetType: Pick<OverlayWidgetType, "id" | "userCanConfigure">;
         previewMode: boolean;
         /**

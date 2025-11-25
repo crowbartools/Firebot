@@ -5,6 +5,7 @@ import overlayWidgetConfigManager from "./overlay-widget-config-manager";
 import websocketServerManager from "../../server/websocket-server-manager";
 import { wait } from "../utils";
 import logger from "../logwrapper";
+import { ResourceTokenManager } from "../resource-token-manager";
 
 type Events = {
     "overlay-widget-type-registered": (overlayWidgetType: OverlayWidgetType) => void;
@@ -80,10 +81,23 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
             await handleWidgetEvent(widgetType.onRemove);
         }
 
+        const resourceTokens = {} as Record<string, string>;
+        if (!!widgetType.resourceKeys?.length) {
+            for (const key of widgetType.resourceKeys) {
+                const value = widgetConfig.settings[key];
+                if (typeof value === "string") {
+                    resourceTokens[key] = ResourceTokenManager.storeResourcePath(value, 30);
+                }
+            }
+        }
+
         websocketServerManager.sendWidgetEventToOverlay({
             name: eventName,
             data: {
-                widgetConfig,
+                widgetConfig: {
+                    ...widgetConfig,
+                    resourceTokens
+                },
                 widgetType,
                 previewMode,
                 ...messageInfo
