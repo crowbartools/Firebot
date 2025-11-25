@@ -26,6 +26,7 @@ export * from "./roles";
 export * from "./settings";
 export * from "./setups";
 export * from "./sort-tags";
+export * from "./stream-schedule";
 export * from "./timers";
 export * from "./triggers";
 export * from "./ui";

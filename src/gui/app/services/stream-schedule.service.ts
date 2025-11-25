@@ -1,26 +1,7 @@
 "use strict";
 
 import type { BackendCommunicator, StreamScheduleService } from "../../../types";
-
-interface StreamSchedule {
-    segments: Array<{
-        id: string;
-        startDate: Date;
-        endDate: Date;
-        title: string;
-        cancelEndDate: Date;
-        categoryId: string;
-        categoryName: string;
-        categoryImage: string;
-        isRecurring: boolean;
-    }>;
-    settings: {
-        vacation: {
-            startDate: Date;
-            endDate: Date;
-        }
-    }
-}
+import type { StreamSchedule } from "../../../types/stream-schedule";
 
 (function() {
     // @ts-ignore
@@ -29,7 +10,7 @@ interface StreamSchedule {
         .factory("streamScheduleService", function(backendCommunicator: BackendCommunicator) {
             const service = {} as StreamScheduleService;
 
-            service.streamSchedule = {};
+            service.streamSchedule = {} as StreamSchedule;
 
             service.loadStreamSchedule = () => {
                 backendCommunicator.fireEventAsync<StreamSchedule>("get-stream-schedule").then((streamSchedule) => {

@@ -1,6 +1,7 @@
 import { ApiResourceBase } from './api-resource-base';
 import type { TwitchApi } from "../";
 import { HelixCreateScheduleSegmentData, HelixSchedule, HelixScheduleSegment, HelixScheduleSettingsUpdate } from '@twurple/api';
+import { StreamSchedule } from "../../../../../types/stream-schedule";
 
 export class TwitchScheduleApi extends ApiResourceBase {
     constructor(apiBase: typeof TwitchApi) {
@@ -10,16 +11,40 @@ export class TwitchScheduleApi extends ApiResourceBase {
     /**
      * Retrieves the stream schedule for the streamer.
      */
-    async getStreamSchedule(): Promise<HelixSchedule> {
+    async getStreamSchedule(): Promise<StreamSchedule> {
         try {
             const streamerId = this.accounts.streamer.userId;
 
             const schedule = await this.streamerClient.schedule.getSchedule(streamerId);
 
-            return schedule.data;
+            return this.mapStreamScheduleData(schedule.data);
         } catch (error) {
             this.logger.error(`Failed to get stream schedule: ${(error as Error).message}`);
             return null;
+        }
+    }
+
+    private mapStreamScheduleData(schedule: HelixSchedule): StreamSchedule {
+        return {
+            segments: schedule.segments.map(async segment => {
+                return {
+                    id: segment.id,
+                    startDate: segment.startDate,
+                    endDate: segment.endDate,
+                    title: segment.title,
+                    cancelEndDate: segment.cancelEndDate,
+                    categoryId: segment.categoryId,
+                    categoryName: segment.categoryName,
+                    categoryImage: (await this.streamerClient.games.getGameById(segment.categoryId)).boxArtUrl,
+                    isRecurring: segment.isRecurring
+                }
+            }),
+            settings: {
+                vacation: {
+                    startDate: schedule.vacationStartDate,
+                    endDate: schedule.vacationEndDate
+                }
+            }
         }
     }
 

@@ -83,6 +83,10 @@ class TwitchApi {
             }
         });
 
+        frontendCommunicator.onAsync("get-stream-schedule", async () =>
+             await this.schedule.getStreamSchedule()
+        );
+
         frontendCommunicator.onAsync("get-channel-rewards", async () => {
             const rewards = await this.channelRewards.getCustomChannelRewards();
             return rewards || [];
