@@ -146,7 +146,8 @@
         webhooksService,
         overlayWidgetsService,
         dynamicParameterRegistry,
-        platformService
+        platformService,
+        streamScheduleService
     ) {
         // 'chatMessagesService' and 'videoService' are included so they're instantiated on app start
 
@@ -196,6 +197,8 @@
         overlayWidgetsService.loadOverlayWidgetTypesAndConfigs();
 
         platformService.loadPlatform();
+
+        streamScheduleService.loadStreamSchedule();
 
         //start notification check
         $timeout(() => {
