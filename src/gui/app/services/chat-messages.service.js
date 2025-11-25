@@ -28,6 +28,10 @@
             // The message/thread currently being replied to
             service.threadDetails = null;
 
+            // History of chat messages sent via Dashboard
+            service.chatHistory = [];
+            service.currrentHistoryIndex = -1;
+
             // Return the chat queue.
             service.getChatQueue = function() {
                 return service.chatQueue;

@@ -822,15 +822,12 @@
 }
 
 .activity-message {
+    display: -webkit-box;
     flex-grow: 9999;
     overflow: hidden;
-}
-
-.activity-message > p:first-child {
-    margin: 0 !important;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-height: 40px;
+    line-clamp: 4;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
 }
 
 .chat-window-column {

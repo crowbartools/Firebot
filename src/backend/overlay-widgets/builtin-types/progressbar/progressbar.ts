@@ -172,7 +172,7 @@ export const progressbar: OverlayWidgetType<Settings, State> = {
                 };
 
                 const titleStyles = {
-                    "font-family": config.settings?.titleFontOptions?.family || 'Inter, sans-serif',
+                    "font-family": (config.settings?.titleFontOptions?.family ? `'${config.settings?.titleFontOptions?.family}'` : 'Inter, sans-serif'),
                     "font-size": (config.settings?.titleFontOptions?.size ? `${config.settings.titleFontOptions.size}px` : '48px'),
                     "font-weight": config.settings?.titleFontOptions?.weight?.toString() || '400',
                     "font-style": config.settings?.titleFontOptions?.italic ? 'italic' : 'normal',

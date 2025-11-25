@@ -63,6 +63,17 @@
                         />
                     </firebot-setting>
 
+                    <firebot-setting
+                        name="Show Activity Feed Events in Chat"
+                        description="When enabled, events that are displayed in the Activity Feed will also be displayed as alerts in the chat feed."
+                    >
+                        <toggle-button
+                            toggle-model="settings.getSetting('ShowActivityFeedEventsInChat')"
+                            on-toggle="settings.saveSetting('ShowActivityFeedEventsInChat', !settings.getSetting('ShowActivityFeedEventsInChat'))"
+                            font-size="40"
+                        />
+                    </firebot-setting>
+
                     <firebot-setting-category
                         name="Sounds"
                         pad-top="true"

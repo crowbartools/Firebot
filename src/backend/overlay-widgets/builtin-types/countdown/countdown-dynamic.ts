@@ -190,7 +190,7 @@ export const dynamicCountdown: OverlayWidgetType<Settings, State> = {
                 const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
                 const containerStyles = {
-                    "font-family": config.settings?.fontOptions?.family || 'Inter, sans-serif',
+                    "font-family": (config.settings?.fontOptions?.family ? `'${config.settings?.fontOptions?.family}'` : 'Inter, sans-serif'),
                     "font-size": (config.settings?.fontOptions?.size ? `${config.settings.fontOptions.size}px` : '48px'),
                     "font-weight": config.settings?.fontOptions?.weight?.toString() || '400',
                     "font-style": config.settings?.fontOptions?.italic ? 'italic' : 'normal',

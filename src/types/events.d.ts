@@ -13,6 +13,7 @@ export type EventDefinition = {
     activityFeed?: {
         icon: string;
         getMessage: (eventData: Record<string, any>) => string;
+        excludeFromChatFeed?: boolean;
     };
 };
 
