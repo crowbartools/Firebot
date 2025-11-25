@@ -86,7 +86,7 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
             for (const key of widgetType.resourceKeys) {
                 const value = widgetConfig.settings[key];
                 if (typeof value === "string") {
-                    resourceTokens[key] = ResourceTokenManager.storeResourcePath(value, 30);
+                    resourceTokens[key] = ResourceTokenManager.storeResourcePath(value, null);
                 }
             }
         }
