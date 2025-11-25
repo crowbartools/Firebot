@@ -359,7 +359,7 @@ export type ParametersWithNameConfig<P> = {
                                     : P[K] extends EffectList
                                         ? EffectListParameter
                                         : P[K] extends FontOptions
-                                            ? FontOptionsParameter : FirebotParameter) & { name: K /* showWhen?: { [K2 in keyof P]?: P[K2] }*/ };
+                                            ? FontOptionsParameter : FirebotParameter) & { name: K, showIf?: { [K2 in keyof P]?: P[K2] } };
 };
 
 type FirebotParamCategory<ParamConfig extends Record<string, unknown>> = {

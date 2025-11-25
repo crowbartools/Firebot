@@ -1,7 +1,9 @@
 import { OverlayWidgetType, IOverlayWidgetEventUtils, WidgetOverlayEvent } from "../../../../types/overlay-widgets";
 
 type Settings = {
+    imageType: "local" | "url";
     filepath: string;
+    url: string;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
@@ -13,6 +15,24 @@ export const image: OverlayWidgetType<Settings, State> = {
     description: "A simple image widget that displays a static image in the overlay.",
     icon: "fa-image",
     settingsSchema: [
+        {
+            name: "imageType",
+            title: "Image Type",
+            description: "Choose between a local file or an external URL.",
+            type: "radio-cards",
+            options: [{
+                value: "local", label: "Local File", iconClass: "fa-folder-open"
+            }, {
+                value: "url", label: "URL", iconClass: "fa-link"
+            }],
+            settings: {
+                gridColumns: 2
+            },
+            validation: {
+                required: true
+            },
+            default: "local"
+        },
         {
             name: "filepath",
             title: "Image File",
@@ -29,6 +49,21 @@ export const image: OverlayWidgetType<Settings, State> = {
             },
             validation: {
                 required: true
+            },
+            showIf: {
+                imageType: "local"
+            }
+        },
+        {
+            name: "url",
+            title: "Image URL",
+            type: "string",
+            default: "",
+            validation: {
+                required: true
+            },
+            showIf: {
+                imageType: "url"
             }
         }
     ],
@@ -54,9 +89,16 @@ export const image: OverlayWidgetType<Settings, State> = {
                     "object-fit": "contain"
                 };
 
+                let imageSrc = "";
+                if (config.settings?.imageType === "url" && config.settings?.url) {
+                    imageSrc = config.settings.url;
+                } else if (config.settings?.imageType === "local" && config.resourceTokens.filepath) {
+                    imageSrc = `http://${window.location.hostname}:7472/resource/${config.resourceTokens.filepath}`;
+                }
+
                 return `
                 <div id="image-container" style="${utils.stylesToString(containerStyles)}">
-                    ${config.resourceTokens.filepath ? `<img src="http://${window.location.hostname}:7472/resource/${config.resourceTokens.filepath}" style="${utils.stylesToString(imageStyles)}" />` : ''}
+                    ${imageSrc ? `<img src="${imageSrc}" style="${utils.stylesToString(imageStyles)}" />` : ''}
                 </div>
                 `;
             };

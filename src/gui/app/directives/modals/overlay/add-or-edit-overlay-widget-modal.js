@@ -136,15 +136,13 @@
                                 <hr />
                                 <h4 style="margin: 0;">Settings</h4>
                                 <div style="margin-top: 0.25rem;font-size: 14px; color: #99a1af; margin-bottom: 1.25rem;">Configure the settings for this widget below.</div>
-                                <dynamic-parameter
-                                    ng-repeat="settingSchema in $ctrl.selectedType.settingsSchema"
-                                    name="{{settingSchema.name}}"
-                                    schema="settingSchema"
-                                    ng-model="$ctrl.widget.settings[settingSchema.name]"
+                                <dynamic-parameters
+                                    settings-schema="$ctrl.selectedType.settingsSchema"
+                                    settings="$ctrl.widget.settings"
                                     trigger="overlay_widget"
-                                    modalId="{{modalId}}"
+                                    modal-id="{{modalId}}"
                                 >
-                                </dynamic-parameter>
+                                </dynamic-parameters>
                             </div>
                         </div>
                     </form>
