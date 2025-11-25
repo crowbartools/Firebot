@@ -137,6 +137,73 @@ function triggerEffect(effect, trigger, outputs, manualAbortSignal, listAbortSig
 }
 
 /**
+ *
+ * @param {import("../../types").EffectInstance} effect
+ * @param {import("../../types").Trigger} trigger
+ * @param {import("../../types").RunEffectsContext} runEffectsContext
+ * @param {AbortController} effectListAbortController
+ * @returns {Promise<void | {stop: boolean, bubbleStop: boolean}>>}
+ */
+async function runEffect(effect, trigger, runEffectsContext, effectListAbortController) {
+    try {
+        const effectExecutionId = randomUUID();
+        const effectAbortController = new AbortController();
+
+        addEffectAbortController("effect", effect.id, {
+            executionId: effectExecutionId,
+            abortController: effectAbortController
+        });
+
+        const response = await triggerEffect(
+            effect,
+            trigger,
+            runEffectsContext.outputs,
+            effectAbortController.signal,
+            effectListAbortController.signal
+        );
+
+        removeEffectAbortController("effect", effect.id, effectExecutionId);
+
+        if (!response || effectAbortController.signal.aborted) {
+            return;
+        }
+        if (!response || response.success === false) {
+            logger.error(`An effect of type ${effect.type} and id ${effect.id} failed to run.`, response.reason);
+        } else {
+            if (typeof response !== "boolean") {
+                const { outputs, execution } = response;
+
+                if (outputs) {
+                    Object.entries(outputs).forEach(([defaultName, value]) => {
+                        const outputNames = effect.outputNames ?? {};
+                        const name = outputNames[defaultName] ?? defaultName;
+                        runEffectsContext.outputs[name] = value;
+                    });
+                }
+
+                if (execution?.stop && !effect.async) {
+                    logger.info(`Stop effect execution triggered for effect list id ${runEffectsContext.effects.id}`);
+
+                    return {
+                        stop: true,
+                        bubbleStop: execution.bubbleStop
+                    };
+                }
+            }
+        }
+
+    } catch (err) {
+        if (err.name === "AbortError") {
+            logger.info(`Effect ${effect.id} (${effect.type}) was aborted manually.`);
+        } else if (err.name === "TimeoutError") {
+            logger.warn(`Effect ${effect.id} (${effect.type}) timed out.`);
+        } else {
+            logger.error(`There was an error running effect of type ${effect.type} with id ${effect.id}`, err);
+        }
+    }
+}
+
+/**
  * @returns {Promise<{success: boolean, stopEffectExecution: boolean, outputs: Record<string, string>}>}
  */
 function runEffects(runEffectsContext) {
@@ -173,6 +240,11 @@ function runEffects(runEffectsContext) {
             });
         });
 
+        /**
+         * @type {Promise<void>[]}
+         */
+        const pendingEffectPromises = [];
+
         for (const effect of effects) {
             if (effectListAbortController.signal.aborted) {
                 return;
@@ -203,69 +275,33 @@ function runEffects(runEffectsContext) {
                 ...(runEffectsContext.outputs ?? {})
             }));
 
-            try {
-                const effectExecutionId = randomUUID();
-                const effectAbortController = new AbortController();
+            if (!effect.async) {
+                const response = await runEffect(effect, trigger, runEffectsContext, effectListAbortController);
+                if (response?.stop) {
+                    removeEffectAbortController(
+                        "effect-list",
+                        runEffectsContext.effects.id,
+                        runEffectsContext.executionId
+                    );
 
-                addEffectAbortController("effect", effect.id, {
-                    executionId: effectExecutionId,
-                    abortController: effectAbortController
-                });
-
-                const response = await triggerEffect(
-                    effect,
-                    trigger,
-                    runEffectsContext.outputs,
-                    effectAbortController.signal,
-                    effectListAbortController.signal
-                );
-
-                removeEffectAbortController("effect", effect.id, effectExecutionId);
-
-                if (!response || effectAbortController.signal.aborted) {
-                    continue;
+                    return resolve({
+                        success: true,
+                        stopEffectExecution: response.bubbleStop,
+                        outputs: runEffectsContext.outputs ?? {}
+                    });
                 }
-                if (!response || response.success === false) {
-                    logger.error(`An effect of type ${effect.type} and id ${effect.id} failed to run.`, response.reason);
-                } else {
-                    if (typeof response !== "boolean") {
-                        const { outputs, execution } = response;
-
-                        if (outputs) {
-                            Object.entries(outputs).forEach(([defaultName, value]) => {
-                                const outputNames = effect.outputNames ?? {};
-                                const name = outputNames[defaultName] ?? defaultName;
-                                runEffectsContext.outputs[name] = value;
-                            });
-                        }
-
-                        if (execution?.stop) {
-                            logger.info(`Stop effect execution triggered for effect list id ${runEffectsContext.effects.id}`);
-
-                            removeEffectAbortController(
-                                "effect-list",
-                                runEffectsContext.effects.id,
-                                runEffectsContext.executionId
-                            );
-
-                            return resolve({
-                                success: true,
-                                stopEffectExecution: execution.bubbleStop,
-                                outputs: runEffectsContext.outputs ?? {}
-                            });
-                        }
-                    }
-                }
-            } catch (err) {
-                if (err.name === "AbortError") {
-                    logger.info(`Effect ${effect.id} (${effect.type}) was aborted manually.`);
-                } else if (err.name === "TimeoutError") {
-                    logger.warn(`Effect ${effect.id} (${effect.type}) timed out.`);
-                } else {
-                    logger.error(`There was an error running effect of type ${effect.type} with id ${effect.id}`, err);
-                }
+            } else {
+                // Async effect - run but don't wait for result
+                const promise = runEffect(effect, trigger, runEffectsContext, effectListAbortController);
+                pendingEffectPromises.push(promise);
             }
         }
+
+        if (pendingEffectPromises.length > 0) {
+            await Promise.allSettled(pendingEffectPromises);
+        }
+
+        logger.debug(`All effects processed for effect list id ${runEffectsContext.effects.id}`);
 
         removeEffectAbortController(
             "effect-list",
