@@ -11,7 +11,8 @@ const effect: EffectType<{
         icon: "fad fa-stopwatch",
         categories: ["common", "advanced", "scripting"],
         dependencies: [],
-        exemptFromTimeouts: true
+        exemptFromTimeouts: true,
+        exemptFromAsync: true
     },
     optionsTemplate: `
         <eos-container header="Duration">

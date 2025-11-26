@@ -513,7 +513,7 @@
         }
       });
 
-      window.ipcRenderer.on("custom-variables:deleted", ({ key }) => {
+      window.ipcRenderer.on("custom-variables:deleted", (key) => {
         console.log("VAR DELETE", key);
         const foundVar = app.variables.find(variable => variable.key === key);
 

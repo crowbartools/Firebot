@@ -416,13 +416,19 @@ body {
 }
 
 .nav-header-title {
-    color: $highlight-color;
-    font-size: 28px;
+    font-size: 25px;
     opacity: 1;
     transition: 0.3s;
+}
+
+.firebot-wordmark {
     text-transform: capitalize;
-    font-weight: 700;
-    font-family: "Inter";
+    font-weight: 900;
+    color: transparent;
+    font-family: "LEMONMILK-Bold", "Inter", sans-serif;
+    -webkit-background-clip: text;
+    background-clip: text;
+    background-image: linear-gradient(to right, #ebb11f, #FFCA05);
 }
 
 .nav-header-title.contracted {
@@ -454,6 +460,7 @@ body {
     margin-left: 10px;
     margin-right: 15px;
     transition: 0.5s;
+    filter: drop-shadow(0px 0px 5px rgb(255 213 0 / 25%));
 }
 
 .nav-header-icon.contracted {
@@ -988,14 +995,12 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    color: $highlight-color;
     font-size: 75px;
-    font-weight: 100;
 }
 
 .welcome-subtitle {
     text-transform: uppercase;
-    font-weight: 100;
+    font-weight: 500;
     letter-spacing: 2px;
     margin-bottom: 20px;
     margin-top: 3px;
@@ -1962,4 +1967,9 @@ column-resizer {
 
 .markdown-container > *:last-child {
     margin-bottom: 0;
+}
+
+@font-face {
+    font-family: "LEMONMILK-Bold";
+    src: url("./fonts/LEMONMILK-Bold.otf");
 }
