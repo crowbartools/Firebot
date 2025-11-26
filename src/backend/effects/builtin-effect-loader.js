@@ -73,6 +73,7 @@ exports.loadEffects = () => {
         'trigger-manual-effect-queue',
         'update-channel-reward',
         'update-counter',
+        'update-moderation-settings',
         'update-role',
         'update-viewer-rank',
 
