@@ -7,7 +7,7 @@
             <div class="fb-nav" ng-class="{'contracted': !$ctrl.sbm.navExpanded}">
                 <div class="nav-header">
                     <img class="nav-header-icon" ng-class="{'contracted': !$ctrl.sbm.navExpanded}" src="../images/logo_transparent.png">
-                    <span class="nav-header-title" ng-class="{'contracted': !$ctrl.sbm.navExpanded}">Firebot</span>
+                    <span class="nav-header-title firebot-wordmark" ng-class="{'contracted': !$ctrl.sbm.navExpanded}">Firebot</span>
                     <span class="nav-expand-button" ng-class="{'contracted': !$ctrl.sbm.navExpanded}" ng-click="$ctrl.sbm.toggleNav()" aria-label="{{$ctrl.sbm.navExpanded ? 'Contract Sidebar' : 'Expand Sidebar'}}">
                         <i class="fal" ng-class="$ctrl.sbm.navExpanded ? 'fa-angle-left' : 'fa-angle-right'"></i>
                     </span>
