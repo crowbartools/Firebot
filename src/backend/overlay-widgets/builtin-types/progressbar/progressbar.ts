@@ -12,6 +12,7 @@ type Settings = {
     trackColor: string;
     minValue: number;
     maxValue: number;
+    onUpdateEffects?: EffectList;
     onCompleteEffects?: EffectList;
 };
 
@@ -90,6 +91,12 @@ export const progressbar: OverlayWidgetType<Settings, State> = {
             showBottomHr: true
         },
         {
+            name: "onUpdateEffects",
+            title: "On Update Effects",
+            description: "Effects to run when the progress bar value is updated.",
+            type: "effectlist"
+        },
+        {
             name: "onCompleteEffects",
             title: "On Complete Effects",
             description: "Effects to run when the progress bar reaches its maximum value.",
@@ -117,6 +124,25 @@ export const progressbar: OverlayWidgetType<Settings, State> = {
             config.state.currentValue >= config.settings.maxValue &&
             (config.previousState?.currentValue ?? 0) < config.settings.maxValue) {
             const effectList = config.settings?.onCompleteEffects;
+
+            const processEffectsRequest = {
+                trigger: {
+                    type: "overlay_widget",
+                    metadata: {
+                        username: "Firebot",
+                        progressBarWidgetId: config.id,
+                        progressBarWidgetName: config.name
+                    }
+                } as Trigger,
+                effects: effectList
+            };
+
+            effectRunner.processEffects(processEffectsRequest).catch((reason) => {
+                logger.error(`Error when running effects: ${reason}`);
+            });
+        // if we haven't reached maxValue, run onUpdateEffects
+        } else if (config.state?.currentValue != null && config.settings?.maxValue != null && config.state.currentValue < config.settings.maxValue) {
+            const effectList = config.settings?.onUpdateEffects;
 
             const processEffectsRequest = {
                 trigger: {
