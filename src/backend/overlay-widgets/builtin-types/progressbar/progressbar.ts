@@ -52,20 +52,22 @@ export const progressbar: OverlayWidgetType<Settings, State> = {
             name: "trackColor",
             title: "Track Color",
             type: "hexcolor",
+            allowAlpha: true,
             default: "#000000",
             validation: {
                 required: true,
-                pattern: "^#[0-9A-Fa-f]{6}$"
+                pattern: "^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$"
             }
         },
         {
             name: "barColor",
             title: "Bar Color",
             type: "hexcolor",
+            allowAlpha: true,
             default: "#00FF00",
             validation: {
                 required: true,
-                pattern: "^#[0-9A-Fa-f]{6}$"
+                pattern: "^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$"
             }
         },
         {
