@@ -79,6 +79,11 @@
                     background-color: rgba(50, 120, 255, 1);
                 }
 
+                &:disabled {
+                    background-color: rgba(100, 100, 100, 0.5);
+                    cursor: not-allowed;
+                }
+
                 i {
                     font-size: 14px;
                 }
