@@ -93,6 +93,20 @@
             }
         }
 
+        .effect-async-badge {
+            display: inline-flex;
+            background: $effect-list-bg-color;
+            color: #cdcdcd;
+            font-size: 12px;
+            padding: 4px 10px;
+            height: 26px;
+            border-radius: 21px;
+            gap: 4px;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+        }
+
         .effect-timeout-btn {
             display: inline-flex;
             background: $effect-button-bg;

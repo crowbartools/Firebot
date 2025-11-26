@@ -165,6 +165,15 @@ type ContextMenuItemScope = {
                                         <div ng-if="$ctrl.getEffectLabel(effect)" class="muted truncate" style="font-size: 12px;">{{$ctrl.getEffectLabel(effect)}}</div>
                                     </div>
                                     <span class="flex-row-center" style="flex-shrink: 0;">
+                                        <div
+                                            ng-if="effect.async"
+                                            uib-tooltip="This effect will run asynchronously. The next effect will not wait for it to complete before starting."
+                                            tooltip-append-to-body="true"
+                                            class="effect-async-badge mr-5"
+                                            aria-label="Async Effect"
+                                        >
+                                            <div>ASYNC</div>
+                                        </div>
                                         <button
                                             ng-if="effect.abortTimeout && effect.abortTimeout > 0"
                                             uib-tooltip="Abort Timeout"
@@ -1039,7 +1048,20 @@ type ContextMenuItemScope = {
                     hasTopDivider: true,
                     children: [
                         {
-                            html: `<a href ><i class="far fa-stopwatch mr-4"></i> Edit Timeout</a>`,
+                            html: `<a href role="menuitem"><i class="far mr-4 fa-code-branch"></i> Toggle Async <tooltip text="'Toggle whether this effect runs asynchronously or synchronously. If an effect is asynchronous, the next effect will not wait for it to complete before starting.'" placement="top-right" /></a>`,
+                            compile: true,
+                            enabled: function ($itemScope: ContextMenuItemScope) {
+                                const effect = $itemScope.effect;
+                                const effectType = effectTypes.find(e => e.definition.id === effect.type);
+                                return !effectType?.definition.exemptFromAsync;
+                            },
+                            click: function ($itemScope: ContextMenuItemScope) {
+                                const effect = $itemScope.effect;
+                                effect.async = !effect.async;
+                            }
+                        },
+                        {
+                            html: `<a href role="menuitem"><i class="far fa-stopwatch mr-4"></i> Edit Timeout</a>`,
                             enabled: function ($itemScope: ContextMenuItemScope) {
                                 const effect = $itemScope.effect;
                                 const effectType = effectTypes.find(e => e.definition.id === effect.type);

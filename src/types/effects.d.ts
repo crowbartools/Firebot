@@ -109,6 +109,10 @@ export type EffectDefinition<EffectModel = unknown> = {
          */
     exemptFromTimeouts?: boolean;
     /**
+     * If true, this effect type cannot be set as "async" in the UI
+     */
+    exemptFromAsync?: boolean;
+    /**
          * Keys of the effect model that should be exempt from having variables replaced in them automatically.
          * This is useful when you want to run variable replacement manually, or not at all.
          */
@@ -129,6 +133,7 @@ export type EffectInstance<EffectModel = unknown> = {
     abortTimeout?: number | null;
     percentWeight?: number | null;
     outputNames?: Record<string, string>;
+    async?: boolean;
 } & {
     [K in keyof EffectModel]: EffectModel[K];
 } & {

@@ -8,12 +8,60 @@
                     z-index: 10;
                 }
 
-                #aboutModalBody > section:not(:first-child) {
-                    margin-top: 1.5em;
+                #aboutModalBody > section + section {
+                    margin-top: 2em;
                 }
 
-                #aboutModalSocialButtons > a:not(:first-child) {
-                    margin-left: 1em;
+                #aboutModalSocialButtons {
+                    width: 150px;
+                    margin: auto;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: space-between;
+                    font-size: 28px;
+                }
+
+                #aboutModalSocialButtons .bluesky {
+                    display: inline-block;
+                    height: 27px;
+                    width: 30px;
+                    line-height: 28px;
+                    background-color: #12d0ff;
+                    mask-image: url('../images/icons/bluesky.png');
+                    mask-position: center;
+                    mask-size: 100% 100%;
+                }
+
+                h1 {
+                    text-transform: capitalize;
+                    font-weight: 900;
+                    color: transparent;
+                    font-family: "LEMONMILK-Bold", "Inter", sans-serif;
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    background-image: linear-gradient(to right, #ebb11f, #FFCA05);
+                }
+
+                .about-version-list {
+                    display: flex;
+                    flex-direction: column;
+                    width: 250px;
+                    margin: auto;
+                }
+
+                .version-list-item {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                }
+
+                .version-list-item > div:first-child {
+                    font-weight: bold;
+                }
+
+                .version-list-item + .version-list-item {
+                    margin-top: 10px;
                 }
             </style>
             <div class="modal-header" style="text-align: center;">
@@ -21,24 +69,31 @@
             </div>
             <div id="aboutModalBody" class="modal-body" style="text-align: center; margin-top: -50px;">
                 <section>
-                    <a href ng-click="$root.openLinkExternally('https://firebot.app')"><img style="width: 160px; height: 160px" src="../images/logo_transparent.png"></a>
+                    <a href ng-click="$root.openLinkExternally('https://firebot.app')"><img style="width: 165px;" src="../images/logo_transparent_2.png"></a>
+                    <h1>Firebot</h1>
                 </section>
 
                 <section>
                     <h5><b>Connect With Us</b></h5>
-                    <div id="aboutModalSocialButtons" style="font-size: 28px;">
+                    <div id="aboutModalSocialButtons">
                         <a href ng-click="$root.openLinkExternally('https://discord.gg/crowbartools-372817064034959370')" title="Discord"><i class="fab fa-discord"></i></a>
-                        <a href ng-click="$root.openLinkExternally('https://bsky.app/profile/firebot.app')" title="Bluesky"><i class="fas fa-cloud"></i></a>
+                        <a href class="bluesky" ng-click="$root.openLinkExternally('https://bsky.app/profile/firebot.app')" title="Bluesky"></a>
                         <a href ng-click="$root.openLinkExternally('https://github.com/crowbartools/Firebot')" title="GitHub"><i class="fab fa-github"></i></a>
                     </div>
                 </section>
 
                 <section>
                     <h5><b>Versions</b></h5>
-                    <p>
-                        Firebot: {{$ctrl.version}}<br/>
-                        OS: {{$ctrl.osType}} {{$ctrl.osVersion}}
-                    </p>
+                    <div class="about-version-list">
+                        <div class="version-list-item">
+                            <div>Firebot</div>
+                            <div>{{$ctrl.version}}</div>
+                        </div>
+                        <div class="version-list-item">
+                            <div>OS</div>
+                            <div>{{$ctrl.osType}} {{$ctrl.osVersion}}</div>
+                        </div>
+                    </div>
                 </section>
 
                 <section>
