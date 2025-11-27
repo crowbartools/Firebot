@@ -215,9 +215,9 @@ const heistCommand: SystemCommand = {
             const teamCreationMessage = (heistSettings.settings.generalMessages.teamCreation as string)
                 .replaceAll("{user}", user.displayName)
                 .replaceAll("{command}", userCommand.trigger)
-                .replaceAll("{maxWager}", maxWager.toString())
-                .replaceAll("{minWager}", minWager.toString())
-                .replaceAll("{requiredUsers}", (heistSettings.settings.generalSettings.minimumUsers as number).toString());
+                .replaceAll("{maxWager}", maxWager?.toString())
+                .replaceAll("{minWager}", minWager?.toString())
+                .replaceAll("{requiredUsers}", (heistSettings.settings.generalSettings.minimumUsers as number)?.toString());
 
             if (teamCreationMessage) {
                 await TwitchApi.chat.sendChatMessage(teamCreationMessage, null, sendAsBot);
