@@ -1,7 +1,7 @@
 import { InstalledPluginConfig } from "../../types/plugins.js";
 import frontendCommunicator from "../common/frontend-communicator.js";
 import JsonDbManager from "../database/json-db-manager.js";
-import profileManager from "../common/profile-manager.js";
+import { ProfileManager } from "../common/profile-manager.js";
 import logger from "../logwrapper.js";
 
 /**
@@ -18,18 +18,18 @@ class PluginConfigManager extends JsonDbManager<InstalledPluginConfig> {
     }
 
     migrateLegacyStartUpScriptsToPlugins() {
-        if (!profileManager.profileDataPathExistsSync("startup-scripts-config.json")) {
+        if (!ProfileManager.profileDataPathExistsSync("startup-scripts-config.json")) {
             return;
         }
 
-        const startUpScriptsDb = profileManager
+        const startUpScriptsDb = ProfileManager
             .getJsonDbInProfile("startup-scripts-config");
 
         const startupScriptsData: Record<string, {
             id: string;
             name: string;
             scriptName: string;
-            parameters?: Record<string, { value: string }>
+            parameters?: Record<string, { value: string }>;
         }> | undefined = startUpScriptsDb.getData("/");
 
         logger.info("Migrating start up scripts to plugins");
@@ -55,7 +55,7 @@ class PluginConfigManager extends JsonDbManager<InstalledPluginConfig> {
 
         logger.info("Deleting start up scripts database");
 
-        profileManager.deletePathInProfile("startup-scripts-config.json");
+        ProfileManager.deletePathInProfile("startup-scripts-config.json");
 
         logger.info("Start up scripts migration complete");
     }
@@ -75,4 +75,4 @@ frontendCommunicator.on("plugin-manager:delete", (pluginConfigId: string) =>
     manager.deleteItem(pluginConfigId)
 );
 
-export = manager;
+export { manager as PluginConfigManager };

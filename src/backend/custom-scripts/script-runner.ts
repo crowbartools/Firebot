@@ -1,5 +1,5 @@
 import { InstalledPluginConfig, LegacyCustomScript, Plugin, ScriptBase, ScriptContext } from "../../types/plugins";
-import profileManager from "../common/profile-manager";
+import { ProfileManager } from "../common/profile-manager";
 import path from "path";
 import logger from "../logwrapper";
 import frontendCommunicator from "../common/frontend-communicator";
@@ -8,7 +8,7 @@ import { LegacyStartUpScript } from "./executors/legacy-startup-script-executor"
 import { IEffectScriptExecutor, IPluginExecutor, ScriptExecutionResult } from "./executors/script-executor.interface";
 import { buildScriptApi } from "./script-api-factory";
 import { SettingsManager } from "../common/settings-manager";
-import pluginConfigManager from "./plugin-config-manager";
+import { PluginConfigManager } from "./plugin-config-manager";
 
 class ScriptRunner {
     private activePlugins: Record<string, Plugin | LegacyCustomScript> = {};
@@ -29,7 +29,7 @@ class ScriptRunner {
             return;
         }
 
-        const scriptsFolder = profileManager.getPathInProfile("/scripts");
+        const scriptsFolder = ProfileManager.getPathInProfile("/scripts");
         const scriptFilePath = path.resolve(scriptsFolder, pluginConfig.fileName);
 
         const script = this.loadScript(scriptFilePath);
@@ -76,7 +76,7 @@ class ScriptRunner {
     }
 
     async startPlugins(): Promise<void> {
-        const pluginConfigs = pluginConfigManager.getAllItems();
+        const pluginConfigs = PluginConfigManager.getAllItems();
         for (const pluginConfig of pluginConfigs) {
             if (pluginConfig.enabled) {
                 logger.info(`Starting plugin ${pluginConfig.fileName}`);
