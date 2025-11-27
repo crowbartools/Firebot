@@ -1,7 +1,7 @@
 "use strict";
 const EventEmitter = require("events");
 
-const effectManager = require("../../../effects/effectManager");
+const { EffectManager } = require("../../../effects/effect-manager");
 
 const integrationDefinition = {
     id: "discord",
@@ -51,7 +51,7 @@ class DiscordIntegration extends EventEmitter {
         super();
     }
     init() {
-        effectManager.registerEffect(require('./send-discord-message-effect'));
+        EffectManager.registerEffect(require('./send-discord-message-effect'));
     }
 }
 

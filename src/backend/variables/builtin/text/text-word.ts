@@ -1,6 +1,5 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import { convertToString } from '../../../utility';
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
+import { stringify } from '../../../utils';
 
 const model : ReplaceVariable = {
     definition: {
@@ -13,8 +12,8 @@ const model : ReplaceVariable = {
                 description: "Get the 4th word. In this example: 'test'"
             }
         ],
-        categories: [VariableCategory.TEXT],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["text"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (
         trigger: Trigger,
@@ -24,7 +23,7 @@ const model : ReplaceVariable = {
         if (subject == null) {
             return "[No text provided]";
         }
-        const text = convertToString(subject);
+        const text = stringify(subject);
 
         let index : number;
         if (position == null) {

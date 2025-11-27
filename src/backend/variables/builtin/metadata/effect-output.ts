@@ -1,5 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
@@ -24,11 +23,11 @@ const model : ReplaceVariable = {
             }
         ],
         description: "Get data that was outputted by a prior effect.",
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["number", "text"]
     },
 
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
     evaluator: (
         { effectOutputs },
         name: string,
@@ -49,8 +48,8 @@ const model : ReplaceVariable = {
 
         if (typeof data === "string") {
             try {
-                data = JSON.parse(data as string);
-            } catch (_) { }
+                data = JSON.parse(data);
+            } catch { }
         }
 
         try {
@@ -61,7 +60,7 @@ const model : ReplaceVariable = {
                 data = data[node];
             }
             return data ?? defaultData;
-        } catch (error) {
+        } catch {
             return defaultData;
         }
     }

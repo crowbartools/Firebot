@@ -1,15 +1,14 @@
 import { randomInt } from 'node:crypto';
 
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
         handle: "randomNumber",
         usage: "randomNumber[min, max]",
         description: "Get a random number between the given range.",
-        categories: [VariableCategory.COMMON, VariableCategory.NUMBERS],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["common", "numbers"],
+        possibleDataOutput: ["number"]
     },
     evaluator: (
         trigger: Trigger,

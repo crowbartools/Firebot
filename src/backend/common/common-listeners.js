@@ -1,15 +1,39 @@
 "use strict";
-const electron = require("electron");
-const { app, ipcMain, dialog, shell } = electron;
+
+const { app, dialog, shell, autoUpdater } = require("electron");
+const os = require('os');
 const logger = require("../logwrapper");
 const { restartApp } = require("../app-management/electron/app-helpers");
 
+function getLocalIpAddress() {
+    try {
+        const networkInterfaces = os.networkInterfaces();
+        for (const interfaceName of Object.keys(networkInterfaces)) {
+            const addresses = networkInterfaces[interfaceName];
+            for (const address of addresses) {
+                // Look for IPv4 addresses that are not internal (loopback)
+                if (address.family === 'IPv4' && !address.internal) {
+                    return address.address;
+                }
+            }
+        }
+    } catch {}
+    return null;
+}
+
 exports.setupCommonListeners = () => {
     const frontendCommunicator = require("./frontend-communicator");
-    const profileManager = require("./profile-manager");
     const { SettingsManager } = require("./settings-manager");
     const { BackupManager } = require("../backup-manager");
     const webServer = require("../../server/http-server-manager");
+
+    frontendCommunicator.onAsync("get-ip-address", async () => {
+        return getLocalIpAddress();
+    });
+
+    frontendCommunicator.onAsync("getPlatform", async () => {
+        return process.platform;
+    });
 
     frontendCommunicator.on("show-twitch-preview", () => {
         const windowManagement = require("../app-management/electron/window-management");
@@ -61,13 +85,13 @@ exports.setupCommonListeners = () => {
     });
 
     frontendCommunicator.on("highlight-message", (data) => {
-        const eventsManager = require("../events/EventManager");
-        eventsManager.triggerEvent("firebot", "highlight-message", data);
+        const { EventManager } = require("../events/event-manager");
+        EventManager.triggerEvent("firebot", "highlight-message", data);
     });
 
     frontendCommunicator.on("category-changed", (category) => {
-        const eventsManager = require("../events/EventManager");
-        eventsManager.triggerEvent("firebot", "category-changed", {category: category});
+        const { EventManager } = require("../events/event-manager");
+        EventManager.triggerEvent("firebot", "category-changed", { category: category });
     });
 
     frontendCommunicator.on("restartApp", () => restartApp());
@@ -76,62 +100,27 @@ exports.setupCommonListeners = () => {
         shell.openPath(BackupManager.backupFolderPath);
     });
 
-    // Front old main
-
-    // When we get an event from the renderer to create a new profile.
-    ipcMain.on("createProfile", (_, profileName) => {
-        profileManager.createNewProfile(profileName);
-    });
-
-    // When we get an event from the renderer to delete a particular profile.
-    ipcMain.on("deleteProfile", () => {
-        profileManager.deleteProfile();
-    });
-
     // Change profile when we get event from renderer
-    ipcMain.on("switchProfile", function(_, profileId) {
-        profileManager.logInProfile(profileId);
-    });
-
-    ipcMain.on("renameProfile", function(_, newProfileId) {
-        profileManager.renameProfile(newProfileId);
-    });
-
-    // Change profile when we get event from renderer
-    ipcMain.on("sendToOverlay", function(_, data) {
+    frontendCommunicator.on("sendToOverlay", (data) => {
         if (data == null) {
             return;
         }
         webServer.sendToOverlay(data.event, data.meta);
     });
 
-    const updaterOptions = {
-        repo: "crowbartools/firebot",
-        currentVersion: app.getVersion()
-    };
+    const updateFeedUrl = `https://update.electronjs.org/crowbartools/Firebot/win32/${app.getVersion()}`;
 
-    ipcMain.on("downloadUpdate", async () => {
-        const GhReleases = require("electron-gh-releases");
-
+    frontendCommunicator.on("downloadUpdate", async () => {
         //back up first
         if (SettingsManager.getSetting("BackupBeforeUpdates")) {
             await BackupManager.startBackup();
         }
 
-        // Download Update
-        const updater = new GhReleases(updaterOptions);
-
-        updater.check((err) => {
-            // Download the update
-            updater.download();
-
-            if (err) {
-                logger.info(err);
-            }
-        });
+        autoUpdater.setFeedURL({ url: updateFeedUrl });
+        autoUpdater.checkForUpdates();
 
         // When an update has been downloaded
-        updater.on("update-downloaded", () => {
+        autoUpdater.on("update-downloaded", () => {
             logger.info("Updated downloaded.");
             //let the front end know and wait a few secs.
             frontendCommunicator.send("updateDownloaded");
@@ -141,19 +130,10 @@ exports.setupCommonListeners = () => {
         });
     });
 
-    ipcMain.on("installUpdate", () => {
+    frontendCommunicator.on("installUpdate", () => {
         logger.info("Installing update...");
         frontendCommunicator.send("installingUpdate");
 
-        const GhReleases = require("electron-gh-releases");
-
-        // Download Update
-        const updater = new GhReleases(updaterOptions);
-
-        updater.install();
-
-        // Access electrons autoUpdater
-        // eslint-disable-next-line no-unused-expressions
-        updater.autoUpdater;
+        autoUpdater.quitAndInstall();
     });
 };

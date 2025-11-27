@@ -1,6 +1,5 @@
-import { TriggersObject } from "../../../../types/triggers";
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
+import type { TriggersObject } from "../../../../types/triggers";
 
 const triggers: TriggersObject = {
     counter: true
@@ -11,8 +10,8 @@ const model: ReplaceVariable = {
         handle: "counterName",
         description: "The name of the counter",
         triggers: triggers,
-        categories: [VariableCategory.TRIGGER, VariableCategory.TEXT],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["trigger based", "text"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (trigger) => {
         return trigger.metadata.counter.name;

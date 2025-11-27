@@ -1,8 +1,8 @@
 "use strict";
 
-(function() {
-    const fsp = require("fs/promises");
+/** @import { FirebotSetup } from "../../../../../types/setups" */
 
+(function() {
     angular.module("firebotApp")
         .component("removeSetupModal", {
             template: `
@@ -55,9 +55,10 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function($q, logger, ngToast, commandsService, countersService, currencyService,
+            controller: function(ngToast, commandsService, countersService, currencyService,
                 effectQueuesService, eventsService, hotkeyService, presetEffectListsService,
-                timerService, scheduledTaskService, viewerRolesService, quickActionsService, variableMacroService, viewerRanksService, backendCommunicator) {
+                timerService, scheduledTaskService, viewerRolesService, quickActionsService,
+                variableMacroService, viewerRanksService, settingsService, backendCommunicator) {
                 const $ctrl = this;
 
                 $ctrl.setupFilePath = null;
@@ -78,9 +79,11 @@
                     variableMacros: "Variable Macro",
                     viewerRoles: "Viewer Role",
                     viewerRankLadders: "Viewer Rank Ladder",
-                    quickActions: "Quick Action"
+                    quickActions: "Quick Action",
+                    globalValues: "Global Value"
                 };
 
+                /** @type { FirebotSetup["components"] } */
                 $ctrl.componentsToRemove = {
                     commands: [],
                     counters: [],
@@ -95,7 +98,8 @@
                     variableMacros: [],
                     viewerRoles: [],
                     viewerRankLadders: [],
-                    quickActions: []
+                    quickActions: [],
+                    globalValues: []
                 };
 
                 $ctrl.hasComponentsToRemove = false;
@@ -108,14 +112,17 @@
                     ...effectQueuesService.getEffectQueues().map(i => i.id),
                     ...eventsService.getAllEvents().map(i => i.id),
                     ...eventsService.getAllEventGroups().map(i => i.id),
-                    ...hotkeyService.getHotkeys().map(i => i.id),
+                    ...hotkeyService.hotkeys.map(i => i.id),
                     ...presetEffectListsService.getPresetEffectLists().map(i => i.id),
                     ...timerService.getTimers().map(i => i.id),
                     ...scheduledTaskService.getScheduledTasks().map(i => i.id),
                     ...variableMacroService.macros.map(i => i.id),
                     ...viewerRolesService.getCustomRoles().map(i => i.id),
                     ...viewerRanksService.rankLadders.map(i => i.id),
-                    ...quickActionsService.quickActions.map(i => i.id)
+                    ...quickActionsService.quickActions.map(i => i.id),
+                    ...settingsService.getSetting("GlobalValues", true).map(v =>
+                        `GlobalValue:${v.name}`
+                    )
                 ].forEach((id) => {
                     $ctrl.currentIds[id] = true;
                 });
@@ -131,56 +138,48 @@
                     $ctrl.setupFilePath = null;
                 };
 
-                $ctrl.onFileSelected = (filepath) => {
-                    $q.when(fsp.readFile(filepath))
-                        .then((setup) => {
-                            setup = JSON.parse(setup);
-                            if (setup == null || setup.components == null) {
-                                $ctrl.resetSelectedFile("Unable to load setup file: file is invalid");
-                                return;
-                            }
-                            $ctrl.setup = setup;
+                $ctrl.onFileSelected = async (filepath) => {
+                    /** @type {import("../../../../../backend/setups/setup-manager").LoadSetupResult} */
+                    const result = await backendCommunicator.fireEventAsync("setups:load-setup", filepath);
 
-                            Object.entries($ctrl.setup.components)
-                                .forEach(([componentType, components]) => {
-                                    components.forEach((component) => {
-                                        if ($ctrl.currentIds[component.id]) {
-                                            $ctrl.componentsToRemove[componentType].push({
-                                                id: component.id,
-                                                name: component.trigger || component.name
-                                            });
-                                            $ctrl.hasComponentsToRemove = true;
-                                        }
-                                    });
+                    if (result.success) {
+                        $ctrl.setup = result.setup;
+
+                        Object.entries($ctrl.setup.components)
+                            .forEach(([componentType, components]) => {
+                                components.forEach((component) => {
+                                    if ($ctrl.currentIds[component.id]) {
+                                        $ctrl.componentsToRemove[componentType].push({
+                                            id: component.id,
+                                            name: component.trigger || component.name
+                                        });
+                                        $ctrl.hasComponentsToRemove = true;
+                                    }
                                 });
+                            });
 
-                            $ctrl.setupSelected = true;
-                        }, (reason) => {
-                            logger.error("Failed to load setup file", reason);
-                            $ctrl.allowCancel = true;
-                            $ctrl.resetSelectedFile("Failed to load setup file: file is invalid");
-                            return;
-                        });
+                        $ctrl.setupSelected = true;
+                    } else {
+                        $ctrl.allowCancel = true;
+                        $ctrl.resetSelectedFile(result.error ?? "Failed to load setup file");
+                        return;
+                    }
                 };
 
                 $ctrl.removeSetup = () => {
+                    const success = backendCommunicator.fireEventSync("setups:remove-setup-components", {
+                        components: $ctrl.componentsToRemove
+                    });
 
-                    $.when(
-                        backendCommunicator.fireEventAsync("remove-setup-components", {
-                            components: $ctrl.componentsToRemove
-                        })
-                    )
-                        .then((successful) => {
-                            if (successful) {
-                                ngToast.create({
-                                    className: 'success',
-                                    content: `Successfully removed components for Setup: ${$ctrl.setup.name}`
-                                });
-                                $ctrl.dismiss();
-                            } else {
-                                ngToast.create(`Failed to remove components for Setup: ${$ctrl.setup.name}`);
-                            }
+                    if (success) {
+                        ngToast.create({
+                            className: 'success',
+                            content: `Successfully removed components for Setup: ${$ctrl.setup.name}`
                         });
+                        $ctrl.dismiss();
+                    } else {
+                        ngToast.create(`Failed to remove components for Setup: ${$ctrl.setup.name}`);
+                    }
                 };
 
                 $ctrl.$onInit = () => {

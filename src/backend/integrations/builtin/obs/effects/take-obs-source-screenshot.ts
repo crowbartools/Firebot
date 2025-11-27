@@ -33,7 +33,7 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
         name: "Take OBS Source Screenshot",
         description: "Takes a screenshot of an OBS Source and saves it.",
         icon: "fad fa-camera-retro",
-        categories: ["common"],
+        categories: ["common", "integrations"],
         outputs: [
             {
                 label: "Screenshot Data URL",

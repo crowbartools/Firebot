@@ -1,5 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 import viewerOnlineStatusManager from "../../../viewers/viewer-online-status-manager";
 
@@ -8,10 +7,10 @@ const model : ReplaceVariable = {
         handle: "rawTopViewTime",
         description: "Returns a raw array containing users with the most view time (in hours). Items contain `username`, 'place` and `minutes` properties.",
         usage: "rawTopViewTime[count]",
-        possibleDataOutput: [OutputDataType.ARRAY]
+        possibleDataOutput: ["array"]
     },
 
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
     evaluator: async (_, count: number = 10) => {
 
         // min of 1

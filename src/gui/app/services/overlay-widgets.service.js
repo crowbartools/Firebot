@@ -37,18 +37,18 @@
                 }
             };
 
-            service.loadOverlayWidgetTypesAndConfigs = async () => {
-                const overlayWidgetTypes = await backendCommunicator.fireEventAsync("overlay-widgets:get-all-types");
+            service.loadOverlayWidgetTypesAndConfigs = () => {
+                const overlayWidgetTypes = backendCommunicator.fireEventSync("overlay-widgets:get-all-types");
                 if (overlayWidgetTypes) {
                     service.overlayWidgetTypes = overlayWidgetTypes;
                 }
 
-                const overlayWidgetConfigs = await backendCommunicator.fireEventAsync("overlay-widgets:get-all-configs");
+                const overlayWidgetConfigs = backendCommunicator.fireEventSync("overlay-widgets:get-all-configs");
                 if (overlayWidgetConfigs) {
                     service.overlayWidgetConfigs = overlayWidgetConfigs;
                 }
 
-                const stateDisplays = await backendCommunicator.fireEventAsync("overlay-widgets:get-state-displays");
+                const stateDisplays = backendCommunicator.fireEventSync("overlay-widgets:get-state-displays");
                 if (stateDisplays) {
                     service.overlayWidgetStateDisplays = stateDisplays;
                 }
@@ -106,9 +106,9 @@
 
             /**
              * @param {OverlayWidgetConfig} config
-             * @returns {Promise.<void>}
+             * @returns {void}
              */
-            service.saveOverlayWidgetConfig = async (config, isNew = false) => {
+            service.saveOverlayWidgetConfig = (config, isNew = false) => {
                 const copiedConfig = JSON.parse(angular.toJson(config));
 
                 if (isNew) {
@@ -118,7 +118,7 @@
                     }
                 }
 
-                const savedConfig = await backendCommunicator.fireEventAsync(
+                const savedConfig = backendCommunicator.fireEventSync(
                     isNew ? "overlay-widgets:save-new-config" : "overlay-widgets:save-config",
                     JSON.parse(angular.toJson(copiedConfig))
                 );
@@ -164,17 +164,15 @@
                     copiedWidget.name += " copy";
                 }
 
-                service.saveOverlayWidgetConfig(copiedWidget, true)
-                    .then((successful) => {
-                        if (successful) {
-                            ngToast.create({
-                                className: 'success',
-                                content: 'Successfully duplicated overlay widget!'
-                            });
-                        } else {
-                            ngToast.create("Unable to duplicate overlay widget.");
-                        }
+                const successful = service.saveOverlayWidgetConfig(copiedWidget, true);
+                if (successful) {
+                    ngToast.create({
+                        className: 'success',
+                        content: 'Successfully duplicated overlay widget!'
                     });
+                } else {
+                    ngToast.create("Unable to duplicate overlay widget.");
+                }
             };
 
             /**
@@ -182,23 +180,27 @@
              * @returns {void}
              */
             service.showAddOrEditOverlayWidgetModal = (overlayWidgetConfig, closeCb) => {
-                const dismiss = () => {
-                    backendCommunicator.fireEvent("overlay-widgets:stop-live-preview");
+                const dismiss = (widgetConfig) => {
+                    backendCommunicator.fireEvent("overlay-widgets:stop-live-preview", widgetConfig);
                     if (closeCb) {
                         closeCb();
                     }
                 };
                 modalService.showModal({
                     component: "addOrEditOverlayWidgetModal",
-                    size: "md",
+                    size: "mdlg",
                     backdrop: false,
                     keyboard: false,
                     resolveObj: {
                         widget: () => overlayWidgetConfig
                     },
                     closeCallback: closeCb,
-                    dismissCallback: dismiss
+                    dismissCallback: () => dismiss(overlayWidgetConfig)
                 });
+            };
+
+            service.triggerOverlayWidgetUIAction = (widgetId, actionId) => {
+                backendCommunicator.fireEvent("overlay-widgets:trigger-ui-action", { widgetId, actionId });
             };
 
             return service;

@@ -1,17 +1,17 @@
-import { FirebotRole } from "../../types/roles";
-import twitchApi from "../twitch-api/api";
+import type { FirebotRole } from "../../types/roles";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
 import frontendCommunicator from "../common/frontend-communicator";
 
 interface TwitchTeam {
     mappedRole: {
         id: string;
         name: string;
-    },
+    };
     members: Array<{
         id: string;
         username: string;
         displayName: string;
-    }>
+    }>;
 }
 
 class TeamRolesManager {
@@ -29,7 +29,7 @@ class TeamRolesManager {
     }
 
     async loadTeamRoles(): Promise<void> {
-        const roles = await twitchApi.teams.getStreamerTeams();
+        const roles = await TwitchApi.teams.getStreamerTeams();
 
         if (!roles?.length) {
             this._streamerTeams = null;

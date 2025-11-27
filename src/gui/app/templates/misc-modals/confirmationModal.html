@@ -1,33 +1,33 @@
 <div class="modal-header">
-  <button type="button" class="close" ng-click="dismiss()">
-    <span>&times;</span>
-  </button>
-  <h4 class="modal-title">{{title}}</h4>
+    <button type="button" class="close" ng-click="dismiss()">
+        <span>&times;</span>
+    </button>
+    <h4 class="modal-title">{{title}}</h4>
 </div>
-<div class="modal-body">
-  <div style="display: flex;">
-    <div class="modal-icon"><i class="fad fa-question-circle" aria-hidden="true"></i></div>
-    <div>
-      <p>{{question}}</p>
-      <p ng-if="tip" class="muted">{{tip}}</p>
+<div class="modal-body pb-0">
+    <div class="flex">
+        <div class="modal-icon"><i class="fad fa-question-circle" aria-hidden="true"></i></div>
+        <div class="flex flex-col items-center">
+            <p ng-class="{'mb-0': !tip }">{{question}}</p>
+            <p ng-if="tip" class="muted">{{tip}}</p>
+        </div>
     </div>
-  </div>
 </div>
 <div class="modal-footer">
-  <button
-    type="button"
-    class="btn"
-    ng-class="cancelBtnType ? cancelBtnType : 'btn-link'"
-    ng-click="dismiss()"
-  >
-    {{cancelLabel ? cancelLabel : "Cancel"}}
-  </button>
-  <button
-    type="button"
-    class="btn"
-    ng-class="confirmBtnType ? confirmBtnType : 'btn-danger'"
-    ng-click="confirm()"
-  >
-    {{confirmLabel ? confirmLabel : "Yes"}}
-  </button>
+    <button
+        type="button"
+        class="btn"
+        ng-class="cancelBtnType ? cancelBtnType : 'btn-link'"
+        ng-click="dismiss()"
+    >
+        {{cancelLabel ? cancelLabel : "Cancel"}}
+    </button>
+    <button
+        type="button"
+        class="btn"
+        ng-class="confirmBtnType ? confirmBtnType : 'btn-danger'"
+        ng-click="confirm()"
+    >
+        {{confirmLabel ? confirmLabel : "Yes"}}
+    </button>
 </div>

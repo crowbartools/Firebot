@@ -16,7 +16,7 @@
             <label class="control-fb control--checkbox" style="font-weight: 600;">
             <div class="flex items-center">
                 <span ng-if="$ctrl.title" ng-bind-html="$ctrl.title" class="markdown-container"></span>
-                <tooltip ng-if="$ctrl.description" text="$ctrl.description"></tooltip>
+                <tooltip ng-if="$ctrl.description" class="ml-2" text="$ctrl.description"></tooltip>
             </div>
               <input type="checkbox" ng-click="$ctrl.local = !$ctrl.local" ng-checked="$ctrl.local" aria-label="...">
               <div class="control__indicator"></div>
@@ -40,7 +40,7 @@
 
             function setTitleAndDescription() {
                 $ctrl.title = parseMarkdown($ctrl.schema.title);
-                $ctrl.description = parseMarkdown($ctrl.schema.description);
+                $ctrl.description = $ctrl.schema.description;
             }
 
             $ctrl.$onInit = function() {

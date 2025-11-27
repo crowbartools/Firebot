@@ -2,9 +2,10 @@
 
 const currencyAccess = require("../../currency/currency-access").default;
 const currencyManager = require("../../currency/currency-manager");
-const twitchChat = require("../../chat/twitch-chat");
 const logger = require("../../logwrapper");
 const { EffectCategory } = require('../../../shared/effect-constants');
+const { ReplaceVariableManager } = require("../../variables/replace-variable-manager");
+const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 
 /**
  * The Currency effect
@@ -18,7 +19,7 @@ const currency = {
         name: "Update Currency",
         description: "Update a viewers currency.",
         icon: "fad fa-money-bill",
-        categories: [EffectCategory.COMMON, EffectCategory.FUN],
+        categories: ["common", "fun", "firebot control"],
         dependencies: [],
         outputs: [
             {
@@ -26,7 +27,8 @@ const currency = {
                 description: "The amount of currency given. Useful if you use a random amount",
                 defaultName: "currencyAmount"
             }
-        ]
+        ],
+        keysExemptFromAutoVariableReplacement: ["message"]
     },
     /**
    * Global settings that will be available in the Settings tab
@@ -324,7 +326,23 @@ const currency = {
                 // Send chat if we have it.
                 if (event.effect.sendChat) {
                     const { message, whisper, chatter } = event.effect;
-                    await twitchChat.sendChatMessage(message, whisper, chatter);
+
+                    // We need to manually evaluate the message here since we skip it in the auto variable replacement step.
+                    // This is because we don't want to replace variables for currency amount before it's been updated.
+                    const evaluatedMessage = await ReplaceVariableManager.populateStringWithTriggerData(
+                        message,
+                        {
+                            ...event.trigger,
+                            effectOutputs: event.outputs
+                        }
+                    );
+
+                    if (whisper) {
+                        const user = await TwitchApi.users.getUserByName(whisper);
+                        await TwitchApi.whispers.sendWhisper(user.id, evaluatedMessage, chatter.toLowerCase() === "bot");
+                    } else {
+                        await TwitchApi.chat.sendChatMessage(evaluatedMessage, null, chatter.toLowerCase() === "bot");
+                    }
                 }
             } catch (error) {
                 logger.error("Error updating currency", error);

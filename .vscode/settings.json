@@ -11,6 +11,7 @@
         "timers",
         "hotkeys",
         "quick-actions",
+        "overlay-widgets",
         "chat",
         "conditionals",
         "restrictions",
@@ -26,6 +27,9 @@
         "ranks",
         "moderation"
     ],
+    "[javascript]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
     "[typescript]": {
         "editor.defaultFormatter": "dbaeumer.vscode-eslint"
     },

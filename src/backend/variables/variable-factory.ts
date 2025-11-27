@@ -1,5 +1,4 @@
-import { ReplaceVariable } from "../../types/variables";
-import { EffectTrigger } from "../../shared/effect-constants";
+import type { ReplaceVariable } from "../../types/variables";
 
 type VariableConfig = {
     handle: string;
@@ -23,8 +22,8 @@ export function createEventDataVariable({
             ...definition,
             possibleDataOutput: Array.isArray(type) ? type : [type],
             triggers: {
-                [EffectTrigger.EVENT]: events,
-                [EffectTrigger.MANUAL]: true
+                ["event"]: events,
+                ["manual"]: true
             }
         },
         evaluator(trigger) {

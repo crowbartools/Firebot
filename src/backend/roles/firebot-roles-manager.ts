@@ -1,12 +1,12 @@
-import { FirebotRole } from "../../types/roles";
+import type { FirebotRole } from "../../types/roles";
 import firebotRoles from "../../shared/firebot-roles";
-import activeChatUsers from "../chat/chat-listeners/active-user-handler";
+import { ActiveUserHandler } from "../chat/active-user-handler";
 
 class FirebotRolesManager {
     private userIsInFirebotRole(role: FirebotRole, userIdOrName: string): boolean {
         switch (role.id) {
             case "ActiveChatters":
-                return activeChatUsers.userIsActive(userIdOrName);
+                return ActiveUserHandler.userIsActive(userIdOrName);
             default:
                 return false;
         }

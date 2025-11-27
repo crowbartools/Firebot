@@ -20,6 +20,7 @@
                 class="mr-4"
             />
             <searchbar
+                ng-hide="$ctrl.hideSearch === true"
                 placeholder-text="{{$ctrl.searchPlaceholder}}"
                 query="searchQuery"
                 class="fit-header-search"
@@ -80,7 +81,7 @@
                         class="fit-test-button-header"
                     ></th>
                     <th
-                        ng-repeat="header in $ctrl.headers track by $index"
+                        ng-repeat="header in ::$ctrl.headers track by $index"
                         ng-style="header.headerStyles"
                         class="fit-custom-header"
                         ng-click="header.sortable && header.dataField && $ctrl.setOrderField(header.dataField)"
@@ -139,12 +140,12 @@
                 class="fit-table-body"
             >
                 <tr
-                    ng-repeat="item in filteredItems = ($ctrl.items | sortTagSearch:sts.getSelectedSortTag($ctrl.sortTagContext) | dynamicFilter:$ctrl.getFilterName():searchQuery | orderBy:$ctrl.dynamicOrder:$ctrl.order.reverse) as visible track by item.id"
+                    ng-repeat="item in filteredItems = ($ctrl.items | sortTagSearch:sts.getSelectedSortTag($ctrl.sortTagContext) | dynamicFilter:$ctrl.getFilterName():searchQuery | orderBy:$ctrl.dynamicOrder:$ctrl.order.reverse) track by item.id"
                     context-menu="$ctrl.getContextMenu(item)"
                     context-menu-class="angular-context-menu"
                 >
                     <td
-                        ng-if="$ctrl.testButton == true"
+                        ng-if="::($ctrl.testButton == true)"
                         class="fit-test-button-body"
                     >
                         <span
@@ -157,9 +158,9 @@
                         </span>
                     </td>
                     <td
-                        ng-repeat="header in $ctrl.headers track by $index"
-                        ng-style="header.cellStyles"
-                        ng-class="header.cellClass"
+                        ng-repeat="header in ::$ctrl.headers track by $index"
+                        ng-style="::header.cellStyles"
+                        ng-class="::header.cellClass"
                     >
                         <sortable-table-cell
                             data="item"
@@ -168,7 +169,7 @@
                         ></sortable-table-cell>
                     </td>
                     <td
-                        ng-if="$ctrl.sortTagContext != null"
+                        ng-if="::($ctrl.sortTagContext != null)"
                         class="fit-table-sort-tags py-4"
                     >
                         <sort-tags-row
@@ -177,8 +178,8 @@
                             on-update="$ctrl.triggerItemsUpdate()"
                         ></sort-tags-row>
                     </td>
-                    <td ng-if="$ctrl.showStatusIndicator">
-                        <status-indicator status="$ctrl.getStatus(item)" />
+                    <td ng-if="::$ctrl.showStatusIndicator">
+                        <status-indicator status="$ctrl.getStatus(item)" enabled-label="::$ctrl.statusEnabledLabel" disabled-label="::$ctrl.statusDisabledLabel" />
                     </td>
                     <td class="fit-table-drag-handle">
                         <div>
@@ -186,7 +187,7 @@
                                 <span
                                     class="dragHandle"
                                     ng-click="$event.stopPropagation();"
-                                    ng-show="$ctrl.orderable && $ctrl.order.field == null && sts.getSelectedSortTag($ctrl.sortTagContext) == null && (searchQuery == null || searchQuery.length < 1)"
+                                    ng-if="$ctrl.orderable && $ctrl.order.field == null && sts.getSelectedSortTag($ctrl.sortTagContext) == null && (searchQuery == null || searchQuery.length < 1)"
                                 >
                                     <i
                                         class="fal fa-bars"

@@ -1,24 +1,21 @@
 "use strict";
 
 (function() {
-
     angular
         .module("firebotApp")
-        .factory("gamesService", function($q, backendCommunicator) {
+        .factory("gamesService", function(backendCommunicator) {
             const service = {};
 
             service.games = [];
 
             service.loadGames = () => {
-                $q.when(backendCommunicator.fireEventAsync("get-games"))
-                    .then(games => {
-                        if (games) {
-                            service.games = games;
-                        }
-                    });
+                const games = backendCommunicator.fireEventSync("games:get-games");
+                if (games) {
+                    service.games = games;
+                }
             };
 
-            backendCommunicator.on("game-settings-updated", (games) => {
+            backendCommunicator.on("games:game-settings-updated", (games) => {
                 if (games) {
                     service.games = games;
                 }
@@ -32,15 +29,15 @@
 
                 service.games[index] = game;
 
-                backendCommunicator.fireEvent("game-settings-update", {
+                backendCommunicator.fireEvent("games:update-game-settings", {
                     gameId: game.id,
                     activeStatus: game.active,
                     settingCategories: game.settingCategories
                 });
             };
 
-            service.resetGameToDefault = gameId => {
-                backendCommunicator.fireEvent("reset-game-to-defaults", gameId);
+            service.resetGameToDefault = (gameId) => {
+                backendCommunicator.fireEvent("games:reset-game-to-defaults", gameId);
             };
 
             return service;

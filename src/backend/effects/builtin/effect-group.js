@@ -2,7 +2,10 @@
 
 const effectRunner = require("../../common/effect-runner");
 const { EffectCategory, EffectTrigger } = require('../../../shared/effect-constants');
-const presetEffectListManager = require("../preset-lists/preset-effect-list-manager");
+const { PresetEffectListManager } = require("../preset-lists/preset-effect-list-manager");
+const logger = require("../../logwrapper");
+const { simpleClone } = require("../../utils");
+const { SettingsManager } = require("../../common/settings-manager");
 
 const effectGroup = {
     definition: {
@@ -11,7 +14,7 @@ const effectGroup = {
         description:
             "Run a preset or custom list of effects",
         icon: "fad fa-list",
-        categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
+        categories: ["advanced", "scripting", "firebot control"],
         dependencies: []
     },
     optionsTemplate: `
@@ -24,7 +27,7 @@ const effectGroup = {
                 ng-model="effect.presetListId"
                 placeholder="Select or search for a preset effect list..."
                 items="presetEffectLists"
-                on-select="presetListSelected(item)"
+                on-select="selectPresetList(item)"
             />
 
             <div style="margin-top: 15px">
@@ -79,8 +82,20 @@ const effectGroup = {
 
         $scope.presetEffectLists = presetEffectListsService.getPresetEffectLists();
 
-        $scope.presetListSelected = (presetList) => {
+        const updatePresetListArgs = (presetList) => {
+            const effectArgNames = Object.keys($scope.effect.presetListArgs);
+            if (effectArgNames.length) {
+                effectArgNames.forEach((argName) => {
+                    if (!presetList.args.some(arg => arg.name === argName)) {
+                        delete $scope.effect.presetListArgs[argName];
+                    }
+                });
+            }
+        };
+
+        $scope.selectPresetList = (presetList) => {
             $scope.selectedPresetList = presetList;
+            updatePresetListArgs(presetList);
         };
 
         $scope.editSelectedPresetList = () => {
@@ -90,7 +105,7 @@ const effectGroup = {
             presetEffectListsService.showAddEditPresetEffectListModal($scope.selectedPresetList)
                 .then((presetList) => {
                     if (presetList) {
-                        $scope.selectedPresetList = presetList;
+                        $scope.selectPresetList(presetList);
                     }
                 });
         };
@@ -118,10 +133,9 @@ const effectGroup = {
                 $scope.effect.presetListId = null;
                 $scope.effect.presetListArgs = {};
             } else {
-                $scope.selectedPresetList = presetList;
+                $scope.selectPresetList(presetList);
             }
         }
-
     },
     optionsValidator: (effect) => {
         const errors = [];
@@ -146,7 +160,7 @@ const effectGroup = {
             let processEffectsRequest = {};
 
             if (effect.listType === "preset") {
-                const presetList = presetEffectListManager.getItem(effect.presetListId);
+                const presetList = PresetEffectListManager.getItem(effect.presetListId);
                 if (presetList == null) {
                     // preset list doesnt exist anymore
                     return resolve(true);
@@ -154,10 +168,26 @@ const effectGroup = {
 
                 // The original trigger may be in use down the chain of events,
                 // we must therefore deepclone it in order to prevent mutations
-                const newTrigger = JSON.parse(JSON.stringify(trigger));
+                const newTrigger = simpleClone(trigger);
 
                 newTrigger.type = EffectTrigger.PRESET_LIST;
                 newTrigger.metadata.presetListArgs = effect.presetListArgs;
+
+                // Prevent hangs if a preset list directly or indirectly calls
+                // itself. Some recursion is allowed, but we cap it at 100 calls.
+                if (newTrigger.metadata.stackDepth == null) {
+                    newTrigger.metadata.stackDepth = {};
+                }
+                if (newTrigger.metadata.stackDepth[presetList.id] == null) {
+                    newTrigger.metadata.stackDepth[presetList.id] = 0;
+                }
+                newTrigger.metadata.stackDepth[presetList.id] += 1;
+
+                const recursionLimitEnabled = SettingsManager.getSetting("PresetRecursionLimit");
+                if (recursionLimitEnabled && newTrigger.metadata.stackDepth[presetList.id] > 100) {
+                    logger.error(`Preset Effect List '${presetList.name}' (ID: ${presetList.id}) has been triggered more than 100 times in the same chain. Stopping execution to prevent infinite loop.`);
+                    return resolve(true);
+                }
 
                 processEffectsRequest = {
                     trigger: newTrigger,

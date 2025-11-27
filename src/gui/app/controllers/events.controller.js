@@ -9,7 +9,7 @@
 
             $scope.es = eventsService;
 
-            const sources = backendCommunicator.fireEventSync("getAllEventSources");
+            const sources = backendCommunicator.fireEventSync("events:get-all-event-sources");
 
             function friendlyEventTypeName(sourceId, eventId) {
                 const source = sources.find(s => s.id === sourceId);
@@ -324,11 +324,31 @@
                 eventsService.setSelectedTab(groupId);
             };
 
+            $scope.pasteEventsAtIndex = (index, above) => {
+                if ($scope.hasCopiedEvents()) {
+                    if (!above) {
+                        index++;
+                    }
+
+                    const groupId = eventsService.getSelectedTab();
+                    const copiedEvents = objectCopyHelper.getCopiedObject("events");
+
+                    if (groupId === "mainevents") {
+                        eventsService.getMainEvents().splice(index, 0, ...copiedEvents);
+                        eventsService.saveMainEvents();
+                    } else {
+                        const group = eventsService.getEventGroup(groupId);
+                        group.events.splice(index, 0, ...copiedEvents);
+                        eventsService.saveGroup(group);
+                    }
+                }
+            };
+
             $scope.eventMenuOptions = function(event) {
 
                 const currentGroupId = eventsService.getSelectedTab();
                 const availableGroups = [
-                    { id: 'mainevents', name: "Main Events"},
+                    { id: 'mainevents', name: "Main Events" },
                     ...eventsService.getEventGroups().map(g => ({ id: g.id, name: g.name }))
                 ].filter(g => g.id !== currentGroupId);
 
@@ -364,7 +384,34 @@
                         }
                     },
                     {
-                        text: "Move to...",
+                        text: "Paste...",
+                        hasTopDivider: true,
+                        enabled: function () {
+                            return $scope.hasCopiedEvents();
+                        },
+                        children: [
+                            {
+                                html: `<a href><span class="iconify mr-4" data-icon="mdi:content-paste"></span> Before</a>`,
+                                click: function ($itemScope) {
+                                    const $index = $itemScope.$index;
+                                    if ($scope.hasCopiedEvents()) {
+                                        $scope.pasteEventsAtIndex($index, true);
+                                    }
+                                }
+                            },
+                            {
+                                html: `<a href><span class="iconify mr-4" data-icon="mdi:content-paste"></span> After</a>`,
+                                click: function ($itemScope) {
+                                    const $index = $itemScope.$index;
+                                    if ($scope.hasCopiedEvents()) {
+                                        $scope.pasteEventsAtIndex($index, false);
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        text: "Transfer to...",
                         children: availableGroups.map((g) => {
                             return {
                                 html: `<a href>${g.name}</a>`,
@@ -445,7 +492,7 @@
             $scope.fireEventManually = function(eventId) {
                 const event = $scope.getSelectedEvents().find(e => e.id === eventId);
                 if (event != null) {
-                    ipcRenderer.send("triggerManualEvent", {
+                    backendCommunicator.send("events:trigger-manual-event", {
                         eventId: event.eventId,
                         sourceId: event.sourceId,
                         eventSettingsId: event.id

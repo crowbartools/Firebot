@@ -1,22 +1,20 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-
-const fs = require("fs");
-const logger = require("../../../logwrapper");
+import fs from "fs";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
+import logger from "../../../logwrapper";
 
 const model : ReplaceVariable = {
     definition: {
         handle: "fileLineCount",
         usage: "fileLineCount[\"path/to/file.txt\"]",
         description: "Count the number of lines in a text file.",
-        categories: [VariableCategory.NUMBERS],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["numbers"],
+        possibleDataOutput: ["number"]
     },
     evaluator: (
         trigger: Trigger,
         filePath: string
     ) : number => {
-        if (filePath === null || typeof filePath !== 'string') {
+        if (filePath == null || typeof filePath !== 'string') {
             logger.error(`Couldn't read file (${filePath}) to count the lines in it.`);
             return 0;
         }

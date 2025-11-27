@@ -1,5 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
@@ -12,8 +11,8 @@ const model : ReplaceVariable = {
                 description: "Returns the value of the preset-list arg 'example'; Synonymous with $presetListArgs[example]"
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.ALL],
+        categories: ["advanced"],
+        possibleDataOutput: ["ALL"],
         spoof: true
     }
 };

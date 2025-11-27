@@ -36,8 +36,8 @@
         controller: function(backendCommunicator) {
             const ctrl = this;
 
-            const events = backendCommunicator.fireEventSync("getAllEvents", false);
-            const sources = backendCommunicator.fireEventSync("getAllEventSources", false);
+            const events = backendCommunicator.fireEventSync("events:get-all-events", false);
+            const sources = backendCommunicator.fireEventSync("events:get-all-event-sources", false);
 
             const getSelected = () => {
                 // sort events by name

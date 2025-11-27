@@ -1,5 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 import logger from '../../../logwrapper';
 import { evalSandboxedJs } from '../../../common/handlers/js-sandbox/sandbox-eval';
 
@@ -22,8 +21,8 @@ const model : ReplaceVariable = {
                 description: 'Calls the sum firebot api and returns the result'
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.ALL]
+        categories: ["advanced"],
+        possibleDataOutput: ["ALL"]
     },
     evaluator: async (trigger: Trigger, code: string, ...args: unknown[]) => {
         try {

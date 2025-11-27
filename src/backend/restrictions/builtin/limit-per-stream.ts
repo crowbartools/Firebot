@@ -1,18 +1,21 @@
-import { Trigger } from "../../../types/triggers";
-import { RestrictionType } from "../../../types/restrictions";
-import accountAccess from "../../common/account-access";
+/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
+
+import type { RestrictionType } from "../../../types/restrictions";
+import type { Trigger } from "../../../types/triggers";
+
+import { AccountAccess } from "../../common/account-access";
 import connectionManager from "../../common/connection-manager";
 import frontendCommunicator from "../../common/frontend-communicator";
 
 type RestrictionData = {
     perUserLimit?: number;
     globalLimit?: number;
-}
+};
 
 type CommandUsages = {
     globalUsages: number;
     perUserUsages: Record<string, number>;
-}
+};
 
 let usageCache: Record<string, CommandUsages> = {};
 
@@ -47,7 +50,7 @@ function incrementUsages(commandKey: string, userKey: string) {
 
 const limitPerStreamRestriction: RestrictionType<RestrictionData> = {
     definition: {
-        id: "limit-per-stream",
+        id: "firebot:limit-per-stream",
         name: "Limit Per Stream",
         description: "Limit the number of times a command can be used in a stream.",
         triggers: ["command"]
@@ -89,7 +92,7 @@ const limitPerStreamRestriction: RestrictionType<RestrictionData> = {
     },
     predicate: async (triggerData, restrictionData, inherited) => {
         return new Promise((resolve, reject) => {
-            const streamer = accountAccess.getAccounts().streamer;
+            const streamer = AccountAccess.getAccounts().streamer;
 
             if (!streamer.loggedIn) {
                 return reject("Streamer account is not logged in.");
@@ -126,7 +129,7 @@ const limitPerStreamRestriction: RestrictionType<RestrictionData> = {
             return resolve(true);
         });
     },
-    onSuccessful: async (triggerData, _, inherited) => {
+    onSuccessful: (triggerData, _, inherited) => {
         const commandId = triggerData.metadata.command?.id;
         if (!commandId) {
             return;
@@ -154,4 +157,4 @@ frontendCommunicator.on("reset-per-stream-usages-for-command", (commandId: strin
     commandKeys.forEach(key => delete usageCache[key]);
 });
 
-module.exports = limitPerStreamRestriction;
+export = limitPerStreamRestriction;

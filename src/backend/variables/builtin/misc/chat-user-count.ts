@@ -1,6 +1,5 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import { getOnlineUserCount, getAllOnlineUsers } from "../../../chat/chat-listeners/active-user-handler";
+import type { ReplaceVariable } from "../../../../types/variables";
+import { ActiveUserHandler } from "../../../chat/active-user-handler";
 import customRolesManager from "../../../roles/custom-roles-manager";
 import logger from "../../../logwrapper";
 
@@ -8,8 +7,8 @@ const model : ReplaceVariable = {
     definition: {
         handle: "chatUserCount",
         description: "Get the total number of current viewers in chat, both active and lurking.",
-        categories: [VariableCategory.NUMBERS],
-        possibleDataOutput: [OutputDataType.NUMBER],
+        categories: ["numbers"],
+        possibleDataOutput: ["number"],
         examples: [
             {
                 usage: "chatUserCount[CustomRole]",
@@ -17,7 +16,7 @@ const model : ReplaceVariable = {
             }
         ]
     },
-    evaluator: async (_, ...args: unknown[]) => {
+    evaluator: (_, ...args: string[]) => {
         logger.debug("Getting number of current viewers in chat.");
 
         if (args && args.length >= 1 && args[0] && args[0] !== "" && `${args[0]}`.toLowerCase() !== "null") {
@@ -33,11 +32,11 @@ const model : ReplaceVariable = {
                 return 0;
             }
 
-            const totalCustomRoleUsers = getAllOnlineUsers().filter(user => customRoleUsers.includes(user.username));
+            const totalCustomRoleUsers = ActiveUserHandler.getAllOnlineUsers().filter(user => customRoleUsers.includes(user.username));
             return totalCustomRoleUsers.length;
         }
 
-        return getOnlineUserCount() || 0;
+        return ActiveUserHandler.getOnlineUserCount() || 0;
     }
 };
 

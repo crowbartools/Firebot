@@ -1,13 +1,14 @@
-import { EffectCategory, EffectDependency, EffectTrigger } from '../../../shared/effect-constants';
 import { EffectType } from "../../../types/effects";
+import { TriggersObject } from '../../../types/triggers';
 import frontendCommunicator from "../../common/frontend-communicator";
 import logger from "../../logwrapper";
 
-const triggers = {};
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.EVENT] = ["twitch:chat-message"];
+const triggers: TriggersObject = {};
+triggers["command"] = true;
+triggers["event"] = ["twitch:chat-message"];
+triggers["preset"] = true;
 
-const model: EffectType<{
+const effect: EffectType<{
     hidden: boolean;
 }> = {
     definition: {
@@ -15,8 +16,8 @@ const model: EffectType<{
         name: "Hide Message In Chat Feed",
         description: "Hide a message in Firebot's chat feed",
         icon: "fad fa-eye-slash",
-        categories: [EffectCategory.COMMON, EffectCategory.CHAT_BASED],
-        dependencies: [EffectDependency.CHAT],
+        categories: ["common", "dashboard", "chat based"],
+        dependencies: ["chat"],
         triggers: triggers
     },
     optionsTemplate: `
@@ -31,27 +32,26 @@ const model: EffectType<{
     optionsValidator: () => {
         return [];
     },
-    onTriggerEvent: async (event) => {
+    onTriggerEvent: (event) => {
         const { trigger } = event;
 
         try {
-            let messageId = null;
-            if (trigger.type === EffectTrigger.COMMAND) {
+            let messageId = "";
+            if (typeof trigger.metadata.chatMessage?.id === "string" && trigger.metadata.chatMessage.id.length > 0) {
                 messageId = trigger.metadata.chatMessage.id;
-            } else if (trigger.type === EffectTrigger.EVENT) {
+            } else if (typeof trigger.metadata.eventData?.chatMessage?.id === "string" && trigger.metadata.eventData.chatMessage.id.length > 0) {
                 messageId = trigger.metadata.eventData.chatMessage.id;
-            }
-
-            if (messageId) {
-                logger.debug("chat-feed-message-hide: Hiding message in chat feed: messageId=", messageId);
-                frontendCommunicator.send("chat-feed-message-hide", { messageId: messageId });
             } else {
                 logger.warn("chat-feed-message-hide: No messageId found in trigger. Cannot hide message.");
+                return;
             }
+
+            logger.debug("chat-feed-message-hide: Hiding message in chat feed: messageId=", messageId);
+            frontendCommunicator.send("chat-feed-message-hide", { messageId: messageId });
         } catch (error) {
             logger.error("chat-feed-message-hide: Error hiding message in chat feed: ", error);
         }
     }
 };
 
-export = model;
+export = effect;

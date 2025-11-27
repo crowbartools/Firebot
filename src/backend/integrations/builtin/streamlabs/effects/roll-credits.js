@@ -1,6 +1,5 @@
 "use strict";
 
-const { EffectCategory } = require("../../../../../shared/effect-constants");
 const logger = require("../../../../logwrapper");
 const integrationManager = require("../../../integration-manager");
 
@@ -16,7 +15,7 @@ const effect = {
         name: "Roll Credits",
         description: "Trigger StreamLab's Roll Credits feature",
         icon: "fad fa-align-center",
-        categories: [EffectCategory.INTEGRATIONS],
+        categories: ["integrations"],
         dependencies: []
     },
     /**

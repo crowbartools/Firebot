@@ -1,8 +1,7 @@
 import { EffectType } from "../../../types/effects";
-import { EffectCategory } from "../../../shared/effect-constants";
-import cloudSync from "../../cloud-sync/profile-sync";
+import * as cloudSync from "../../cloud-sync";
 
-const model: EffectType<{
+const effect: EffectType<{
     profilePage: "commands" | "quotes";
 }> = {
     definition: {
@@ -10,7 +9,7 @@ const model: EffectType<{
         name: "Sync Data to Profile Page",
         description: "Syncs your data to your Firebot profile page",
         icon: "fad fa-sync",
-        categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
+        categories: ["advanced", "scripting", "firebot control"],
         dependencies: {
             twitch: true
         }
@@ -48,4 +47,4 @@ const model: EffectType<{
     }
 };
 
-module.exports = model;
+export = effect;

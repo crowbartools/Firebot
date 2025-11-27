@@ -1,14 +1,13 @@
 import Fuse, { IFuseOptions } from "fuse.js";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import { ReplaceVariable } from "../../../../types/variables";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 const model: ReplaceVariable = {
     definition: {
         handle: "arrayFuzzySearch",
         usage: "arrayFuzzySearch[array, search, propertyPaths?, defaultValue?, threshold?, ignoreDiacritics?]",
         description: "Finds the first element in an array that is closest to the given search. You can optionally include a threshold between 0.0 and 1.0 to filter results where 0.0 is strict and 1.0 is loose, and ignore diacritics on characters (ie é, à, ç, ñ)",
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER],
+        categories: ["advanced"],
+        possibleDataOutput: ["text", "number"],
         examples: [
             {
                 usage: 'arrayFuzzySearch["[\\"apple\\", \\"banana\\", \\"cherry\\"]", apfl]',

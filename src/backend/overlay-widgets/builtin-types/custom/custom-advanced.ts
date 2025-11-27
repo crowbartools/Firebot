@@ -1,4 +1,5 @@
-import { OverlayWidgetType, IOverlayWidgetUtils, WidgetOverlayEvent } from "../../../../types/overlay-widgets";
+import { OverlayWidgetType, IOverlayWidgetEventUtils, WidgetOverlayEvent } from "../../../../types/overlay-widgets";
+import { EventManager } from "../../../events/event-manager";
 
 type Settings = {
     onEventJs: string;
@@ -36,7 +37,16 @@ if (eventName === "show") {
   document
     .getElementById(widgetId)?.remove();
 }`,
-            tip: "The following variables are available:\n- `eventName` (the name of the received event: `show`, `settings-update`, `state-update`, `message`, `remove`)\n- `widgetId` (this widget's unique ID)\n- `widgetState` (the current state of the widget, if any)\n- `messageName` (the name of the received message, if event is 'message')\n- `messageData` (the data sent with the message, if any and if event is 'message')\n- `overlayWrapperElement` (the official root element of the overlay, it's recommended to use this for DOM manipulations)\n- `utils.stylesToString(styles)` (utility function to convert a styles object to an inline css string)",
+            tip:
+`The following variables are available:
+- \`eventName\` (the name of the received event: \`show\`, \`settings-update\`, \`state-update\`, \`message\`, \`remove\`)
+- \`widgetId\` (this widget's unique ID)
+- \`widgetState\` (the current state of the widget, if any)
+- \`messageName\` (the name of the received message, if event is 'message')
+- \`messageData\` (the data sent with the message, if any and if event is 'message')
+- \`overlayWrapperElement\` (the official root element of the overlay, it's recommended to use this for DOM manipulations)
+- \`utils.stylesToString(styles)\` (utility function to convert a styles object to an inline css string)
+- \`utils.sendMessageToFirebot(messageName: string, messageData?: any)\` (utility function to send a message back to Firebot)`,
             settings: {
                 mode: { name: "javascript" },
                 lineNumbers: true,
@@ -57,8 +67,16 @@ if (eventName === "show") {
     },
     supportsLivePreview: false,
     livePreviewState: {},
+    onOverlayMessage(config, messageName, messageData) {
+        void EventManager.triggerEvent("firebot", "custom-widget-message-received", {
+            customWidgetId: config.id,
+            customWidgetName: config.name,
+            customWidgetMessageName: messageName,
+            customWidgetMessageData: messageData
+        });
+    },
     overlayExtension: {
-        eventHandler: async (event: WidgetOverlayEvent<Settings, State>, utils: IOverlayWidgetUtils) => {
+        eventHandler: async (event: WidgetOverlayEvent<Settings, State>, utils: IOverlayWidgetEventUtils) => {
             if (!event.data.widgetConfig.settings.onEventJs) {
                 return;
             }
@@ -96,7 +114,8 @@ if (eventName === "show") {
                 messageData: event.data.messageData,
                 overlayWrapperElement: document.body.querySelector(".wrapper"),
                 utils: {
-                    stylesToString: utils.stylesToString
+                    ...utils,
+                    sendMessageToFirebot: utils.sendMessageToFirebot.bind(utils)
                 }
             });
         }

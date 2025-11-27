@@ -16,11 +16,14 @@
                 contextMenuOptions: "&",
                 noDataMessage: "@",
                 noneFoundMessage: "@",
+                hideSearch: "<?",
                 searchPlaceholder: "@",
                 searchField: "@?",
                 testButton: "<?",
                 onTestButtonClicked: "&",
                 statusField: "@?",
+                statusEnabledLabel: "@?",
+                statusDisabledLabel: "@?",
                 startingSortField: "@?",
                 sortInitiallyReversed: "<?",
                 customFilterName: "@?",
@@ -155,6 +158,37 @@
                         menuItems.push({
                             text: `Effect Queues...`,
                             children: children,
+                            hasTopDivider: true
+                        });
+                    }
+
+                    if ($ctrl.orderable) {
+                        menuItems.push({
+                            text: `Move to...`,
+                            children: [
+                                {
+                                    html: `<a href><i class="fas fa-arrow-up" style="margin-right: 27px;"></i> Top</a>`,
+                                    click: () => {
+                                        const index = $ctrl.items.indexOf(item);
+                                        if (index > -1) {
+                                            $ctrl.items.splice(index, 1);
+                                            $ctrl.items.unshift(item);
+                                            $ctrl.triggerItemsUpdate();
+                                        }
+                                    }
+                                },
+                                {
+                                    html: `<a href><i class="fas fa-arrow-down" style="margin-right: 27px;"></i> Bottom</a>`,
+                                    click: () => {
+                                        const index = $ctrl.items.indexOf(item);
+                                        if (index > -1) {
+                                            $ctrl.items.splice(index, 1);
+                                            $ctrl.items.push(item);
+                                            $ctrl.triggerItemsUpdate();
+                                        }
+                                    }
+                                }
+                            ],
                             hasTopDivider: true
                         });
                     }

@@ -15,8 +15,6 @@
             // Cache commands on app load.
             commandsService.refreshCommands();
 
-            $scope.activeCmdTab = 0;
-
             $scope.commandsService = commandsService;
             $scope.sts = sortTagsService;
 
@@ -74,6 +72,7 @@
                 utilityService.showModal({
                     component: "addOrEditCustomCommandModal",
                     breadcrumbName: command ? "Edit Command" : "Add Command",
+                    size: "mdlg",
                     resolveObj: {
                         command: () => command
                     },
@@ -198,14 +197,13 @@
                         <span
                             class="muted ml-2"
                             style="font-size: 11px"
-                            ng-show="data.hidden"
+                            ng-if="data.hidden"
                             uib-tooltip="Hidden from !commands list"
                             tooltip-append-to-body="true"
                         >
                             <i class="fas fa-eye-slash"></i>
                         </span>
-                    `,
-                    cellController: () => {}
+                    `
                 },
                 {
                     name: "COOLDOWNS",
@@ -221,8 +219,7 @@
                         <span uib-tooltip="User cooldown">
                             <i class="far fa-user"></i> {{data.cooldown.user ? data.cooldown.user + "s" : "-" }}
                         </span>
-                    `,
-                    cellController: () => {}
+                    `
                 },
                 {
                     name: "PERMISSIONS",
@@ -257,6 +254,7 @@
                     command.restrictionData.restrictions.find(r => r.type === "firebot:permissions");
 
                             if (permissions) {
+                                const isInverted = permissions.invertCondition === true;
                                 if (permissions.mode === "roles") {
                                     const roleIds = permissions.roleIds;
                                     let rolesOutput = "None selected";
@@ -300,9 +298,9 @@
                                     if (ranksOutput !== "None selected") {
                                         itemsToDisplay.push(ranksDisplay);
                                     }
-                                    return itemsToDisplay.length > 0 ? itemsToDisplay.join(", ") : "Roles/Ranks (None selected)";
+                                    return itemsToDisplay.length > 0 ? (isInverted ? "Not: " : "") + itemsToDisplay.join(", ") : "Roles/Ranks (None selected)";
                                 } else if (permissions.mode === "viewer") {
-                                    return `Viewer (${permissions.username ? permissions.username : 'No name'})`;
+                                    return `${isInverted ? "Not: " : ""}Viewer (${permissions.username ? permissions.username : 'No name'})`;
                                 }
                             } else {
                                 return "This command is available to everyone";

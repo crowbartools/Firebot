@@ -1,5 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 import objectWalkPath from './object-walk-path';
 
@@ -8,8 +7,8 @@ const model : ReplaceVariable = {
         handle: "rawObjectWalkPath",
         description: "(Deprecated: use $objectWalkPath) Returns the value from a raw object at the given dot-notated path",
         usage: "rawObjectWalkPath[rawobject, path.to.value]",
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT],
+        categories: ["advanced"],
+        possibleDataOutput: ["text"],
         hidden: true
     },
     evaluator: objectWalkPath.evaluator

@@ -61,7 +61,7 @@
                     const options = allRoles
                         .filter(r =>
                             !$ctrl.model.roles.some(rd => rd.roleId === r.id))
-                        .map(r => {
+                        .map((r) => {
                             return {
                                 id: r.id,
                                 name: r.name

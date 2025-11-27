@@ -1,10 +1,9 @@
 import { EffectType } from "../../../types/effects";
-import { EffectCategory } from '../../../shared/effect-constants';
-import overlayWidgetConfigManager from "../../overlay-widgets/overlay-widget-config-manager";
 import { OverlayWidgetConfig } from "../../../types/overlay-widgets";
+import overlayWidgetConfigManager from "../../overlay-widgets/overlay-widget-config-manager";
 
-const model: EffectType<{
-    mode: "toggle" | "disable" | "enable",
+const effect: EffectType<{
+    mode: "toggle" | "disable" | "enable";
     widgetConfigIds: string[];
 }> = {
     definition: {
@@ -12,7 +11,7 @@ const model: EffectType<{
         name: "Toggle Overlay Widgets",
         description: "Toggle the active status of overlay widgets.",
         icon: "fad fa-toggle-off",
-        categories: [EffectCategory.OVERLAY, EffectCategory.ADVANCED],
+        categories: ["overlay", "advanced", "firebot control"],
         dependencies: []
     },
     optionsTemplate: `
@@ -74,7 +73,7 @@ const model: EffectType<{
         }
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
 
         if (effect.mode == null) {
             errors.push("Please select a mode.");
@@ -89,7 +88,7 @@ const model: EffectType<{
     getDefaultLabel: (effect, utilityService) => {
         return `${utilityService.capitalize(effect.mode)} ${effect.widgetConfigIds?.length ?? 0} overlay widget(s)`;
     },
-    onTriggerEvent: async (event) => {
+    onTriggerEvent: (event) => {
         const { effect } = event;
 
         if (effect.mode == null) {
@@ -127,4 +126,4 @@ const model: EffectType<{
     }
 };
 
-export = model;
+export = effect;

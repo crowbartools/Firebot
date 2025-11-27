@@ -1,15 +1,13 @@
 import { FirebotChatMessage } from "../../../types/chat";
 import { CommandDefinition, UserCommand } from "../../../types/commands";
 import { Trigger } from "../../../types/triggers";
-import { TriggerType } from "../../common/EffectType";
 
-import accountAccess from "../../common/account-access";
+import { AccountAccess } from "../../common/account-access";
+import { CommandManager } from "./command-manager";
 import effectRunner from "../../common/effect-runner";
+import chatHelpers from "../chat-helpers";
 import frontendCommunicator from "../../common/frontend-communicator";
 import logger from "../../logwrapper";
-import twitchStreamInfoManager from "../../twitch-api/stream-info-manager";
-import chatHelpers from "../chat-helpers";
-import commandManager from "./command-manager";
 
 interface TriggerWithArgs {
     trigger: string;
@@ -18,10 +16,10 @@ interface TriggerWithArgs {
 
 class CommandRunner {
     private parseCommandTriggerAndArgs(trigger: string, rawMessage: string, scanWholeMessage = false, treatQuotedTextAsSingleArg = false): TriggerWithArgs {
-        let args = [];
+        let args: string[] = [];
 
         if (rawMessage != null) {
-            let rawArgs = [];
+            let rawArgs: string[] = [];
 
             if (treatQuotedTextAsSingleArg) {
                 // Get args
@@ -100,10 +98,6 @@ class CommandRunner {
     }
 
     private execute(command: CommandDefinition, userCommand: UserCommand, firebotChatMessage?: FirebotChatMessage, manual = false) {
-        if (command.onlyTriggerWhenChannelIsLive && !twitchStreamInfoManager.streamInfo.isLive && !manual) {
-            return;
-        }
-
         let effects = command.effects;
         if (command.subCommands && command.subCommands.length > 0 && userCommand.subcommandId != null) {
             if (userCommand.subcommandId === "fallback-subcommand" && command.fallbackSubcommand) {
@@ -118,7 +112,7 @@ class CommandRunner {
 
         const processEffectsRequest = {
             trigger: {
-                type: manual ? TriggerType.MANUAL : TriggerType.COMMAND,
+                type: manual ? "manual" : "command",
                 metadata: {
                     username: userCommand.commandSender,
                     userId: undefined,
@@ -127,7 +121,7 @@ class CommandRunner {
                     userCommand: userCommand,
                     chatMessage: firebotChatMessage
                 }
-            },
+            } as Trigger,
             effects: effects
         };
 
@@ -137,7 +131,7 @@ class CommandRunner {
         }
 
         return effectRunner.processEffects(processEffectsRequest).catch((reason) => {
-            console.log(`error when running effects: ${reason}`);
+            logger.error(`error when running effects: ${reason}`);
         });
     }
 
@@ -152,7 +146,7 @@ class CommandRunner {
             return;
         }
         if (commandSender == null) {
-            commandSender = accountAccess.getAccounts().streamer.username;
+            commandSender = AccountAccess.getAccounts().streamer.username;
         }
 
         logger.info(`Checking command type... ${command.type}`);
@@ -160,14 +154,14 @@ class CommandRunner {
         if (command.type === "system") {
             logger.info("Executing system command");
             //get system command from manager
-            const cmdDef = commandManager.getSystemCommandById(command.id);
+            const cmdDef = CommandManager.getSystemCommandById(command.id);
 
             const commandOptions = {};
             if (command.options != null) {
                 for (const optionName of Object.keys(command.options)) {
                     const option = command.options[optionName];
                     if (option) {
-                        commandOptions[optionName] = option.value ?? option.default;
+                        commandOptions[optionName] = (option.value ?? option.default) as unknown;
                     }
                 }
             }
@@ -182,21 +176,21 @@ class CommandRunner {
         }
         if (command.effects) {
             logger.info("Executing command effects");
-            this.execute(command, userCmd, firebotChatMessage, isManual);
+            void this.execute(command, userCmd, firebotChatMessage, isManual);
         }
     }
 
     triggerCustomCommand(id: string, isManual = true): void {
-        const command = commandManager.getCustomCommandById(id);
+        const command = CommandManager.getCustomCommandById(id);
         if (command != null) {
-            console.log("firing command manually", command);
-            const commandSender = accountAccess.getAccounts().streamer.username,
+            logger.debug("firing command manually", command);
+            const commandSender = AccountAccess.getAccounts().streamer.username,
                 userCmd = this.buildUserCommand(command, null, commandSender);
             this.fireCommand(command, userCmd, null, commandSender, isManual);
         }
     }
 
-    private runCommandFromEffect(command: CommandDefinition, trigger: Trigger, args: string[]): void {
+    private runCommandFromEffect(command: CommandDefinition, trigger: Trigger, args: string): void {
         const message = `${command.trigger} ${args}`;
         const firebotChatMessage = chatHelpers.buildBasicFirebotChatMessage(message, trigger.metadata.username);
 
@@ -206,13 +200,13 @@ class CommandRunner {
         }
     }
 
-    runSystemCommandFromEffect(id: string, trigger: Trigger, args: string[]): void {
-        const command = commandManager.getSystemCommandById(id).definition;
+    runSystemCommandFromEffect(id: string, trigger: Trigger, args: string): void {
+        const command = CommandManager.getSystemCommandById(id).definition;
         this.runCommandFromEffect(command, trigger, args);
     }
 
-    runCustomCommandFromEffect(id: string, trigger: Trigger, args: string[]): void {
-        const command = commandManager.getCustomCommandById(id);
+    runCustomCommandFromEffect(id: string, trigger: Trigger, args: string): void {
+        const command = CommandManager.getCustomCommandById(id);
         this.runCommandFromEffect(command, trigger, args);
     }
 }

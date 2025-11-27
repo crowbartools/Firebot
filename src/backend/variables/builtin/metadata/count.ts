@@ -1,12 +1,13 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger, TriggersObject } from "../../../../types/variables";
+import type { CommandDefinition } from "../../../../types/commands";
 
-const { EffectTrigger } = require("../../../../shared/effect-constants");
-
-const triggers = {};
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.PRESET_LIST] = true;
-triggers[EffectTrigger.MANUAL] = true;
+const triggers: TriggersObject = {};
+triggers["command"] = true;
+triggers["preset"] = true;
+triggers["event"] = [
+    "twitch:chat-message"
+];
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
@@ -14,12 +15,13 @@ const model : ReplaceVariable = {
         usage: "count",
         description: "Displays the number of times the given command has been run.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["trigger based", "common"],
+        possibleDataOutput: ["number"]
     },
     evaluator: (trigger: Trigger) => {
-        const count = trigger.metadata.command && (<Record<string, unknown>>trigger.metadata.command).count;
-        return count || 0;
+        return trigger.metadata.command?.count
+            ?? (trigger.metadata.eventData?.command as CommandDefinition)?.count
+            ?? 0;
     }
 };
 

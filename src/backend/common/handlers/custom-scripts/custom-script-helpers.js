@@ -1,14 +1,16 @@
 "use strict";
-const twitchChat = require("../../../chat/twitch-chat");
-const twitchApi = require("../../../twitch-api/api");
-const profileManager = require("../../profile-manager");
-const settings = require("../../settings-manager").SettingsManager;
-const path = require("path");
-const logger = require("../../../logwrapper");
+
 const { app } = require("electron");
 const EventEmitter = require("events");
+const path = require("path");
 
+const { TwitchApi } = require("../../../streaming-platforms/twitch/api");
+const { ProfileManager } = require("../../profile-manager");
+const { SettingsManager } = require("../../settings-manager");
 const webhookManager = require("../../../webhooks/webhook-config-manager");
+const twitchChat = require("../../../chat/twitch-chat");
+const logger = require("../../../logwrapper");
+const utils = require("../../../utils");
 
 /**
  * Shim around the webhook manager to filter webhooks by script name and re-emit events
@@ -20,6 +22,7 @@ class ScriptWebhookManager extends EventEmitter {
     constructor(scriptName) {
         super();
         this.scriptName = scriptName;
+        this.setMaxListeners(0);
 
         webhookManager.on("webhook-received", ({ config, payload, headers }) => {
             if (config.scriptId !== this.scriptName) {
@@ -89,10 +92,10 @@ class ScriptWebhookManager extends EventEmitter {
     }
 }
 
-const accountAccess = require("../../account-access");
+const { AccountAccess } = require("../../account-access");
 
 function buildModules(scriptManifest) {
-    const streamerName = accountAccess.getAccounts().streamer.username || "Unknown Streamer";
+    const streamerName = AccountAccess.getAccounts().streamer.username || "Unknown Streamer";
     const appVersion = app.getVersion();
 
     const request = require("request");
@@ -111,11 +114,9 @@ function buildModules(scriptManifest) {
         customRequest.prototype.init.call(this, options);
     };
 
-    const notificationManager = require("../../../notifications/notification-manager").default;
+    const notificationManager = require("../../../notifications/notification-manager").NotificationManager;
 
     const scriptNameNormalized = scriptManifest.name.replace(/[#%&{}\\<>*?/$!'":@`|=\s-]+/g, "-").toLowerCase();
-
-    const scriptDataDir = path.resolve(profileManager.getPathInProfile("/script-data/"), `./${scriptNameNormalized}/`);
 
     return {
         request: customRequest,
@@ -128,32 +129,38 @@ function buildModules(scriptManifest) {
         logger: logger,
         // thin chat shim for basic backwards compatibility
         chat: {
+            /**
+             * @deprecated Use `twitchApi.chat.sendChatMessage` instead.
+             */
             smartSend: async (...args) => {
                 await twitchChat.sendChatMessage(...args);
             },
             deleteChat: async (id) => {
-                await twitchApi.chat.deleteChatMessage(id);
+                await TwitchApi.chat.deleteChatMessage(id);
             }
         },
+        /**
+         * @deprecated Use the `twitchApi.chat` class instead.
+         */
         twitchChat: twitchChat,
-        twitchApi: twitchApi,
+        twitchApi: TwitchApi,
         httpServer: require("../../../../server/http-server-manager"),
-        effectManager: require("../../../effects/effectManager"),
+        effectManager: require("../../../effects/effect-manager").EffectManager,
         effectRunner: require("../../effect-runner"),
         conditionManager: require("../../../effects/builtin/conditional-effects/conditions/condition-manager"),
-        restrictionManager: require("../../../restrictions/restriction-manager"),
-        commandManager: require("../../../chat/commands/command-manager"),
-        eventManager: require("../../../events/EventManager"),
-        eventFilterManager: require("../../../events/filters/filter-manager"),
+        restrictionManager: require("../../../restrictions/restriction-manager").RestrictionsManager,
+        commandManager: require("../../../chat/commands/command-manager").CommandManager,
+        eventManager: require("../../../events/event-manager").EventManager,
+        eventFilterManager: require("../../../events/filters/filter-manager").FilterManager,
         eventFilterFactory: require("../../../events/filters/filter-factory"),
-        replaceVariableManager: require("../../../variables/replace-variable-manager"),
+        replaceVariableManager: require("../../../variables/replace-variable-manager").ReplaceVariableManager,
         replaceVariableFactory: require("../../../variables/variable-factory"),
         integrationManager: require("../../../integrations/integration-manager"),
-        customVariableManager: require("../../../common/custom-variable-manager"),
+        customVariableManager: require("../../../common/custom-variable-manager").CustomVariableManager,
         customRolesManager: require("../../../roles/custom-roles-manager"),
         firebotRolesManager: require("../../../roles/firebot-roles-manager"),
-        timerManager: require("../../../timers/timer-manager"),
-        gameManager: require("../../../games/game-manager"),
+        timerManager: require("../../../timers/timer-manager").TimerManager,
+        gameManager: require("../../../games/game-manager").GameManager,
 
         overlayWidgetsManager: require("../../../overlay-widgets/overlay-widgets-manager"),
         overlayWidgetConfigManager: require("../../../overlay-widgets/overlay-widget-config-manager"),
@@ -173,10 +180,17 @@ function buildModules(scriptManifest) {
         viewerMetadataManager: require("../../../viewers/viewer-metadata-manager"),
         viewerOnlineStatusManager: require("../../../viewers/viewer-online-status-manager"),
 
-        quotesManager: require("../../../quotes/quotes-manager"),
+        quotesManager: require("../../../quotes/quote-manager").QuoteManager,
         frontendCommunicator: require("../../frontend-communicator"),
         counterManager: require("../../../counters/counter-manager").CounterManager,
-        utils: require("../../../utility"),
+        utils: {
+            ...utils,
+            // These are for back-compat
+            secondsForHumans: secs => utils.humanizeTime(secs),
+            getUptime: async () => await TwitchApi.streams.getStreamUptime(),
+            formattedSeconds: (secs, simpleOutput = false) =>
+                utils.humanizeTime(secs, simpleOutput === true ? "simple" : "default")
+        },
         resourceTokenManager: require("../../../resource-token-manager").ResourceTokenManager,
         webhookManager: new ScriptWebhookManager(scriptNameNormalized),
         notificationManager: {
@@ -223,12 +237,14 @@ function buildModules(scriptManifest) {
                     .forEach(n => notificationManager.deleteNotification(n.id));
             }
         },
-        uiExtensionManager: require("../../../ui-extensions/ui-extension-manager"),
-        scriptDataDir
+        uiExtensionManager: require("../../../ui-extensions/ui-extension-manager")
     };
 }
 
 function buildRunRequest(scriptManifest, params, trigger) {
+    const scriptNameNormalized = scriptManifest.name.replace(/[#%&{}\\<>*?/$!'":@`|=\s-]+/g, "-").toLowerCase();
+    const scriptDataDir = path.resolve(ProfileManager.getPathInProfile("/script-data/"), `./${scriptNameNormalized}/`);
+
     return {
         modules: buildModules(scriptManifest),
         command: trigger?.metadata?.userCommand,
@@ -236,17 +252,18 @@ function buildRunRequest(scriptManifest, params, trigger) {
             name: trigger?.metadata?.username
         },
         firebot: {
-            accounts: accountAccess.getAccounts(),
-            settings: settings,
+            accounts: AccountAccess.getAccounts(),
+            settings: SettingsManager,
             version: app.getVersion()
         },
         parameters: params,
-        trigger: trigger
+        trigger: trigger,
+        scriptDataDir
     };
 }
 
 function getScriptPath(scriptName) {
-    const scriptsFolder = profileManager.getPathInProfile("/scripts");
+    const scriptsFolder = ProfileManager.getPathInProfile("/scripts");
     return path.resolve(scriptsFolder, scriptName);
 }
 

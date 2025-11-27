@@ -1,7 +1,6 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
-import { convertToString } from '../../../utility';
+import { stringify } from '../../../utils';
 
 const model: ReplaceVariable = {
     definition: {
@@ -14,12 +13,12 @@ const model: ReplaceVariable = {
                 description: 'Encodes the string "Hello, World!" in to base64 (yielding "SGVsbG8sIFdvcmxkIQ==").'
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["text"]
     },
-    async evaluator(_, text: unknown): Promise<string> {
+    evaluator: (_, text: unknown): string => {
         const encoder = new TextEncoder();
-        return btoa(String.fromCharCode(...encoder.encode(convertToString(text))));
+        return btoa(String.fromCharCode(...encoder.encode(stringify(text))));
     }
 };
 

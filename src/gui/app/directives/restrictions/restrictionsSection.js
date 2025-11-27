@@ -1,7 +1,7 @@
 "use strict";
 (function() {
 
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     angular
         .module('firebotApp')
@@ -211,7 +211,7 @@
                                 .filter(r => r.type !== selectedId);*/
 
                             $ctrl.restrictionData.restrictions.push({
-                                id: uuid(),
+                                id: randomUUID(),
                                 type: selectedId
                             });
 

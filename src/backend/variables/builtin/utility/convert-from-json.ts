@@ -1,5 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
@@ -12,8 +11,8 @@ const model : ReplaceVariable = {
                 description: "Returns a raw object from JSON string"
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (
         trigger: Trigger,
@@ -24,9 +23,9 @@ const model : ReplaceVariable = {
         }
         if (typeof jsonText === 'string' || jsonText instanceof String) {
             try {
-                return JSON.parse(`${jsonText}`);
+                return JSON.parse(`${jsonText.toString()}`);
 
-            } catch (err) {
+            } catch {
                 return "[PARSE ERROR]";
             }
         }

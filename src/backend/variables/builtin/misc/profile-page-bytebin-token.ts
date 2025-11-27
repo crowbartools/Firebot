@@ -1,16 +1,14 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType } from "../../../../shared/variable-constants";
-
-const cloudSync = require("../../../cloud-sync/profile-sync");
+import type { ReplaceVariable } from "../../../../types/variables";
+import * as cloudSync from "../../../cloud-sync";
 
 const model : ReplaceVariable = {
     definition: {
         handle: "profilePageBytebinToken",
         description: "Get bytebin id for streamer profile. Access the json by going to https://bytebin.lucko.me/ID-HERE.",
-        possibleDataOutput: [OutputDataType.TEXT],
+        possibleDataOutput: ["text"],
         hidden: true
     },
-    evaluator: async (trigger, page = "commands") => {
+    evaluator: async (trigger, page: "commands" | "quotes" = "commands") => {
         return await cloudSync.syncProfileData({
             username: trigger.metadata.username,
             userRoles: [],

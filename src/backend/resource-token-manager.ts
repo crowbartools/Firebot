@@ -1,9 +1,9 @@
-import { v4 as uuid } from "uuid";
+import { randomUUID } from "crypto";
 import logger from "./logwrapper";
 
 interface ResourceToken {
     path: string;
-    length: number;
+    length: number | null;
 }
 
 class ResourceTokenManager {
@@ -30,7 +30,14 @@ class ResourceTokenManager {
         return null;
     }
 
-    storeResourcePath(path: string, length: string | number) {
+    storeResourcePath(path: string, length: string | number | null) {
+        const existingToken = Object.entries(this.tokens).find(([, value]) => value.path === path);
+
+        // if we already have a token for this path and it is not temporary, return it.
+        if (existingToken && existingToken.length == null) {
+            return existingToken[0];
+        }
+
         let tokenLength = 5;
 
         if (typeof length === "string" && length != null && length !== "") {
@@ -39,8 +46,8 @@ class ResourceTokenManager {
             tokenLength = length;
         }
 
-        const token = uuid();
-        this.tokens[token] = { path: path, length: tokenLength * 1000 };
+        const token = randomUUID();
+        this.tokens[token] = { path: path, length: length != null ? tokenLength * 1000 : null };
         return token;
     }
 }

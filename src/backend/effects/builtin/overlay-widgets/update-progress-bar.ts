@@ -1,5 +1,4 @@
 import { EffectType } from "../../../../types/effects";
-import { EffectCategory } from '../../../../shared/effect-constants';
 import overlayWidgetConfigManager from "../../../overlay-widgets/overlay-widget-config-manager";
 import logger from "../../../logwrapper";
 
@@ -13,7 +12,7 @@ const model: EffectType<{
         name: "Update Progress Bar",
         description: "Update a progress bar's value.",
         icon: "fad fa-percentage",
-        categories: [EffectCategory.OVERLAY, EffectCategory.ADVANCED],
+        categories: ["overlay", "advanced"],
         dependencies: []
     },
     optionsTemplate: `
@@ -68,7 +67,7 @@ const model: EffectType<{
         ];
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.progressBarWidgetId == null) {
             errors.push("Please select a progress bar.");
         } else if (effect.action == null) {
@@ -83,7 +82,7 @@ const model: EffectType<{
         const progressBarName = overlayWidgetsService.getOverlayWidgetConfig(effect.progressBarWidgetId)?.name ?? "Unknown Progress Bar";
         return `${effect.action === "increment" ? "Update" : "Set"} ${progressBarName} ${effect.action === "increment" ? "by" : "to"} ${effect.value}`;
     },
-    onTriggerEvent: async (event) => {
+    onTriggerEvent: (event) => {
         const { effect } = event;
 
         if (effect.progressBarWidgetId == null || effect.action == null || effect.value == null) {

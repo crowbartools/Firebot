@@ -69,7 +69,17 @@ if(typeof module === "object" && module.exports){
         }
     }
 
-    function createDirective(module, attrName, direction){
+    function getDirection(directionName) {
+        var directions = {
+            'bottom': bottom,
+            'top': top,
+            'left': left,
+            'right': right
+        };
+        return directions[directionName] || bottom;
+    }
+
+    function createDirective(module, attrName){
         module.directive(attrName, ['$parse', '$window', '$timeout', function($parse, $window, $timeout){
             return {
                 priority: 1,
@@ -78,17 +88,21 @@ if(typeof module === "object" && module.exports){
                     var el = $el[0],
                         activationState = createActivationState($parse, attrs[attrName], scope);
 
+                    function getCurrentDirection() {
+                        return getDirection(attrs.scrollGlueDirection || 'bottom');
+                    }
+
                     function scrollIfGlued() {
                         if(activationState.getValue()){
                             // Ensures scroll after angular template digest
                             $timeout(function() {
-                              direction.scroll(el);
+                              getCurrentDirection().scroll(el);
                             });
                         }
                     }
 
                     function onScroll() {
-                        activationState.setValue(direction.isAttached(el));
+                        activationState.setValue(getCurrentDirection().isAttached(el));
                     }
 
                     const processScroll = throttle(() => onScroll(), 100);
@@ -98,8 +112,8 @@ if(typeof module === "object" && module.exports){
                     if (!$el[0].hasAttribute('force-glue')) {
                       $el.on('wheel', processScroll);
                     }
-                    
-                    // observe new elements getting added 
+
+                    // observe new elements getting added
                     const observer = new MutationObserver(function(mutationsList) {
                         for(const mutation of mutationsList) {
                             if(mutation.addedNodes.length) {
@@ -114,7 +128,7 @@ if(typeof module === "object" && module.exports){
                                 });
 
                                 if(child.hasAttribute("scroll-glue-anchor")) {
-                                    scope.$watch(function() { return child.offsetHeight }, 
+                                    scope.$watch(function() { return child.offsetHeight },
                                     function(newVal, oldVal) {
                                         if(newVal !== oldVal) {
                                             scrollIfGlued();
@@ -125,10 +139,10 @@ if(typeof module === "object" && module.exports){
                         }
                         scrollIfGlued();
                     });
-                    
+
                     observer.observe($el[0], {
                         childList: true
-                    });   
+                    });
 
                     $window.addEventListener('resize', scrollIfGlued, false);
 
@@ -137,6 +151,11 @@ if(typeof module === "object" && module.exports){
                             scrollIfGlued();
                         }
                     })
+
+                    // Watch for direction changes
+                    attrs.$observe('scrollGlueDirection', function() {
+                        scrollIfGlued();
+                    });
 
                     // Remove listeners on directive destroy
                     $el.on('$destroy', function() {
@@ -191,9 +210,5 @@ if(typeof module === "object" && module.exports){
 
     var module = angular.module('ebScrollLock', []);
 
-    createDirective(module, 'scrollGlue', bottom);
-    createDirective(module, 'scrollGlueTop', top);
-    createDirective(module, 'scrollGlueBottom', bottom);
-    createDirective(module, 'scrollGlueLeft', left);
-    createDirective(module, 'scrollGlueRight', right);
+    createDirective(module, 'scrollGlue');
 }(angular));

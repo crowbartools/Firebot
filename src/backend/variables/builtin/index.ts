@@ -13,7 +13,6 @@ import operandVariables from './operand';
 import overlayWidgets from './overlay-widgets';
 import spoofedVariables from './spoofed';
 import textVariables from './text';
-import twitchVariables from './twitch';
 import userVariables from './user';
 import utilityVariables from './utility';
 
@@ -32,7 +31,6 @@ export default [
     ...operandVariables,
     ...spoofedVariables,
     ...textVariables,
-    ...twitchVariables,
     ...userVariables,
     ...utilityVariables,
     ...overlayWidgets

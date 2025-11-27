@@ -2,7 +2,7 @@
 
 (function() {
     //This handles events
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     angular.module("firebotApp").factory("eventsService", function(backendCommunicator, objectCopyHelper) {
         const service = {};
@@ -72,7 +72,7 @@
         };
 
         service.createGroup = function(name) {
-            const newId = uuid();
+            const newId = randomUUID();
             const newGroup = {
                 id: newId,
                 name: name,
@@ -103,7 +103,7 @@
                 return;
             }
 
-            groups.forEach(group => {
+            groups.forEach((group) => {
                 const indexInGroup = group.events.findIndex(e => e.id === eventToSave.id);
                 if (indexInGroup > -1) {
                     group.events[indexInGroup] = eventToSave;

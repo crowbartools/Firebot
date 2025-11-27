@@ -1,40 +1,18 @@
 import { EventEmitter } from "events";
 import { ChatClient } from "@twurple/chat";
 
-import { BasicViewer } from "../../types/viewers";
+import { AccountAccess } from "../common/account-access";
+import { ActiveUserHandler } from "./active-user-handler";
+import { FirebotDeviceAuthProvider } from "../auth/firebot-device-auth-provider";
+import { SharedChatCache } from "../streaming-platforms/twitch/chat/shared-chat-cache";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
 import chatHelpers from "./chat-helpers";
-import activeUserHandler from "./chat-listeners/active-user-handler";
-import twitchChatListeners from "./chat-listeners/twitch-chat-listeners";
-import * as twitchSlashCommandHandler from "./twitch-slash-command-handler";
-
-import logger from "../logwrapper";
-import firebotDeviceAuthProvider from "../auth/firebot-device-auth-provider";
-import accountAccess from "../common/account-access";
-import frontendCommunicator from "../common/frontend-communicator";
 import chatRolesManager from "../roles/chat-roles-manager";
-import twitchApi from "../twitch-api/api";
-import chatterPoll from "../twitch-api/chatter-poll";
-
-interface ChatMessageRequest {
-    message: string;
-    accountType: string;
-    replyToMessageId?: string;
-}
-
-interface UserModRequest {
-    username: string;
-    shouldBeMod: boolean;
-}
-
-interface UserBanRequest {
-    username: string;
-    shouldBeBanned: boolean;
-}
-
-interface UserVipRequest {
-    username: string;
-    shouldBeVip: boolean;
-}
+import twitchRolesManager from "../roles/twitch-roles-manager";
+import chatterPoll from "../streaming-platforms/twitch/chatter-poll";
+import twitchChatListeners from "./chat-listeners/twitch-chat-listeners";
+import frontendCommunicator from "../common/frontend-communicator";
+import logger from "../logwrapper";
 
 class TwitchChat extends EventEmitter {
     private _streamerChatClient: ChatClient;
@@ -59,7 +37,7 @@ class TwitchChat extends EventEmitter {
     /**
      * Disconnects the streamer and bot from chat
      */
-    async disconnect(emitDisconnectEvent = true): Promise<void> {
+    disconnect(emitDisconnectEvent = true): void {
         if (this._streamerChatClient != null) {
             this._streamerChatClient.quit();
             this._streamerChatClient = null;
@@ -73,25 +51,25 @@ class TwitchChat extends EventEmitter {
         }
         chatterPoll.stopChatterPoll();
 
-        activeUserHandler.clearAllActiveUsers();
+        ActiveUserHandler.clearAllActiveUsers();
     }
 
     /**
      * Connects the streamer and bot to chat
      */
     async connect(): Promise<void> {
-        const streamer = accountAccess.getAccounts().streamer;
+        const streamer = AccountAccess.getAccounts().streamer;
         if (!streamer.loggedIn) {
             return;
         }
 
-        const streamerAuthProvider = firebotDeviceAuthProvider.streamerProvider;
-        if (streamerAuthProvider == null && firebotDeviceAuthProvider.botProvider == null) {
+        const streamerAuthProvider = FirebotDeviceAuthProvider.streamerProvider;
+        if (streamerAuthProvider == null && FirebotDeviceAuthProvider.botProvider == null) {
             return;
         }
 
         this.emit("connecting");
-        await this.disconnect(false);
+        this.disconnect(false);
 
         try {
 
@@ -103,7 +81,7 @@ class TwitchChat extends EventEmitter {
             });
 
             this._streamerChatClient.irc.onRegister(() => {
-                this._streamerChatClient.join(streamer.username);
+                void this._streamerChatClient.join(streamer.username);
                 frontendCommunicator.send("twitch:chat:autodisconnected", false);
             });
 
@@ -129,7 +107,12 @@ class TwitchChat extends EventEmitter {
 
             this._streamerChatClient.connect();
 
-            await chatHelpers.handleChatConnect();
+            /**
+             * DO NOT AWAIT THIS
+             * This is just to cache badges/emotes/cheermotes
+             * Fire and forget this so we can get everything else setup
+            */
+            void chatHelpers.cacheChatAssets();
 
             // Attempt to reload the known bot list in case it failed on start
             await chatRolesManager.cacheViewerListBots();
@@ -138,11 +121,18 @@ class TwitchChat extends EventEmitter {
 
             // Refresh these once we connect to Twitch
             // While connected, we can just react to changes via chat messages/EventSub events
-            await chatRolesManager.loadVips();
-            await chatRolesManager.loadModerators();
+            await twitchRolesManager.loadVips();
+            await twitchRolesManager.loadModerators();
+
+            if (!twitchRolesManager.getSubscribers().length) {
+                await twitchRolesManager.loadSubscribers();
+            }
+
+            // Load the current Shared Chat session
+            await SharedChatCache.loadSessionFromTwitch();
         } catch (error) {
             logger.error("Chat connect error", error);
-            await this.disconnect();
+            this.disconnect();
         }
 
         try {
@@ -162,12 +152,12 @@ class TwitchChat extends EventEmitter {
                 }
             };
             try {
-                const { streamer, bot } = accountAccess.getAccounts();
+                const { streamer, bot } = AccountAccess.getAccounts();
 
                 if (bot.loggedIn) {
 
                     this._botChatClient = new ChatClient({
-                        authProvider: firebotDeviceAuthProvider.botProvider,
+                        authProvider: FirebotDeviceAuthProvider.botProvider,
                         requestMembershipEvents: true
                     });
 
@@ -193,37 +183,6 @@ class TwitchChat extends EventEmitter {
     }
 
     /**
-     * Sends a chat message to the streamers chat (INTERNAL USE ONLY)
-     * @param {string} message The message to send
-     * @param {string} accountType The type of account to whisper with ('streamer' or 'bot')
-     */
-    async _say(message: string, accountType: string, replyToId?: string): Promise<void> {
-        try {
-            logger.debug(`Sending message as ${accountType}.`);
-
-            await twitchApi.chat.sendChatMessage(message, replyToId ?? undefined, accountType === "bot");
-        } catch (error) {
-            logger.error(`Error attempting to send message with ${accountType}`, error);
-        }
-    }
-
-    /**
-     * Sends a whisper to the given user (INTERNAL USE ONLY)
-     * @param {string} message The message to send
-     * @param {string} accountType The type of account to whisper with ('streamer' or 'bot')
-     */
-    async _whisper(message: string, username = "", accountType: string): Promise<void> {
-        try {
-            logger.debug(`Sending whisper as ${accountType} to ${username}.`);
-
-            const recipient = await twitchApi.users.getUserByName(username);
-            await twitchApi.whispers.sendWhisper(recipient.id, message, accountType === "bot");
-        } catch (error) {
-            logger.error(`Error attempting to send whisper with ${accountType}`, error);
-        }
-    }
-
-    /**
      * Sends the message as the bot if available, otherwise as the streamer.
      * If a username is provided, the message will be whispered.
      * If the message is too long, it will be automatically broken into multiple fragments and sent individually.
@@ -232,6 +191,7 @@ class TwitchChat extends EventEmitter {
      * @param username If provided, message will be whispered to the given user.
      * @param accountType Which account to chat as. Defaults to bot if available otherwise, the streamer.
      * @param replyToMessageId A message id to reply to
+     * @deprecated Use the API wrapper methods ({@linkcode TwitchApi.chat.sendChatMessage()} and {@linkcode TwitchApi.whispers.sendWhisper()}) instead
      */
     async sendChatMessage(
         message: string,
@@ -243,151 +203,30 @@ class TwitchChat extends EventEmitter {
             return null;
         }
 
-        // Normalize account type
-        if (accountType != null) {
-            accountType = accountType.toLowerCase();
-        }
-
         const shouldWhisper = username != null && username.trim() !== "";
+        let sendAsBot = true;
 
-        const botAvailable =
-            accountAccess.getAccounts().bot.loggedIn && this._botChatClient && this._botChatClient.irc.isConnected;
+        const botAvailable = AccountAccess.getAccounts().bot.loggedIn
+            && this._botChatClient?.irc?.isConnected === true;
+
         if (accountType == null) {
-            accountType = botAvailable && !shouldWhisper ? "bot" : "streamer";
-        } else if (accountType === "bot" && !botAvailable) {
-            accountType = "streamer";
-        }
-
-        const slashCommandValidationResult = twitchSlashCommandHandler.validateChatCommand(message);
-
-        // If the slash command handler finds, validates, and successfully executes a command, no need to continue.
-        if (slashCommandValidationResult != null && slashCommandValidationResult.success === true) {
-            const slashCommandResult = await twitchSlashCommandHandler.processChatCommand(
-                message,
-                accountType === "bot"
-            );
-            if (!slashCommandResult) {
-                frontendCommunicator.send("chatUpdate", {
-                    fbEvent: "ChatAlert",
-                    message: `Failed to execute "${message}"`
-                });
-            }
-            return;
-        }
-        if (slashCommandValidationResult != null &&
-            slashCommandValidationResult.success === false &&
-            slashCommandValidationResult.foundCommand !== false) {
-            frontendCommunicator.send("chatUpdate", {
-                fbEvent: "ChatAlert",
-                message: slashCommandValidationResult.errorMessage
-            });
-        }
-
-        // split message into fragments that don't exceed the max message length
-        const messageFragments = message
-            .match(/[\s\S]{1,500}/g)
-            .map(mf => mf.trim())
-            .filter(mf => mf !== "");
-
-        // Send all message fragments
-        for (const fragment of messageFragments) {
-            if (shouldWhisper) {
-                await this._whisper(fragment, username, accountType);
-            } else {
-                await this._say(fragment, accountType, replyToMessageId);
+            sendAsBot = botAvailable && !shouldWhisper ? true : false;
+        } else {
+            accountType = accountType.toLowerCase();
+            if (accountType === "bot" && !botAvailable) {
+                sendAsBot = false;
             }
         }
-    }
 
-    async populateChatterList(): Promise<void> {
-        await chatterPoll.runChatterPoll();
-    }
-
-    async getViewerList(): Promise<BasicViewer[]> {
-        const users = activeUserHandler.getAllOnlineUsers();
-        return users;
+        if (shouldWhisper) {
+            const user = await TwitchApi.users.getUserByName(username);
+            await TwitchApi.whispers.sendWhisper(user.id, message, sendAsBot);
+        } else {
+            await TwitchApi.chat.sendChatMessage(message, replyToMessageId, sendAsBot);
+        }
     }
 }
 
 const twitchChat = new TwitchChat();
-
-frontendCommunicator.onAsync("send-chat-message", async (sendData: ChatMessageRequest) => {
-    const { message, accountType, replyToMessageId } = sendData;
-
-    await twitchChat.sendChatMessage(message, null, accountType, replyToMessageId);
-});
-
-frontendCommunicator.onAsync("delete-message", async (messageId: string) => {
-    return await twitchApi.chat.deleteChatMessage(messageId);
-});
-
-frontendCommunicator.onAsync("update-user-mod-status", async (data: UserModRequest) => {
-    if (data == null) {
-        return;
-    }
-    const { username, shouldBeMod } = data;
-    if (username == null || shouldBeMod == null) {
-        return;
-    }
-
-    const user = await twitchApi.users.getUserByName(username);
-    if (user == null) {
-        return;
-    }
-
-    if (shouldBeMod) {
-        await twitchApi.moderation.addChannelModerator(user.id);
-    } else {
-        await twitchApi.moderation.removeChannelModerator(user.id);
-    }
-});
-
-frontendCommunicator.onAsync("update-user-banned-status", async (data: UserBanRequest) => {
-    if (data == null) {
-        return;
-    }
-    const { username, shouldBeBanned } = data;
-    if (username == null || shouldBeBanned == null) {
-        return;
-    }
-
-    const user = await twitchApi.users.getUserByName(username);
-    if (user == null) {
-        return;
-    }
-
-    if (shouldBeBanned) {
-        await twitchApi.moderation.banUser(user.id, "Banned via Firebot");
-    } else {
-        await twitchApi.moderation.unbanUser(user.id);
-    }
-});
-
-frontendCommunicator.onAsync("update-user-vip-status", async (data: UserVipRequest) => {
-    if (data == null) {
-        return;
-    }
-    const { username, shouldBeVip } = data;
-    if (username == null || shouldBeVip == null) {
-        return;
-    }
-
-    const user = await twitchApi.users.getUserByName(username);
-    if (user == null) {
-        return;
-    }
-
-    if (shouldBeVip) {
-        await twitchApi.moderation.addChannelVip(user.id);
-        chatRolesManager.addVipToVipList({
-            id: user.id,
-            username: user.name,
-            displayName: user.displayName
-        });
-    } else {
-        await twitchApi.moderation.removeChannelVip(user.id);
-        chatRolesManager.removeVipFromVipList(user.id);
-    }
-});
 
 export = twitchChat;

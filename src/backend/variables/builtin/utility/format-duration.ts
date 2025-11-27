@@ -1,5 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const SECONDS_IN_MINUTE = 60;
 const SECONDS_IN_HOUR = SECONDS_IN_MINUTE * 60;
@@ -74,8 +73,8 @@ const model : ReplaceVariable = {
                 description: 'Returns the duration in the short with spaces format: 0 yrs 0 wks 0 days 0 hrs 1 min 1 sec'
             }
         ],
-        categories: [VariableCategory.NUMBERS],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.ARRAY]
+        categories: ["numbers"],
+        possibleDataOutput: ["text", "array"]
     },
     evaluator(trigger: Trigger, seconds, format, omit = true) {
 

@@ -89,6 +89,22 @@
                     }
                 ];
 
+                const widgetType = overlayWidgetsService.getOverlayWidgetType(item.type);
+                if (widgetType?.uiActions?.length) {
+                    const children = widgetType.uiActions.map(a => ({
+                        html: `<a href><i class="fas ${a.icon} fa-fw" style="margin-right: 10px;"></i> ${a.label}</a>`,
+                        click: () => {
+                            overlayWidgetsService.triggerOverlayWidgetUIAction(item.id, a.id);
+                        }
+                    }));
+
+                    options.push({
+                        text: `Actions...`,
+                        children: children,
+                        hasTopDivider: true
+                    });
+                }
+
                 return options;
             };
         });

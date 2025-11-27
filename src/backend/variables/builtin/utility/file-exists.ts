@@ -1,23 +1,21 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-
-const fs = require("fs");
-const logger = require("../../../logwrapper");
+import fs from "fs";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
+import logger from "../../../logwrapper";
 
 const model : ReplaceVariable = {
     definition: {
         handle: "fileExists",
         usage: 'fileExists[path\\to\\file.txt]',
         description: "Returns true if a file exists, otherwise returns false.",
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (
         trigger: Trigger,
-        filePath: unknown
+        filePath: string
     ) : boolean => {
 
-        if (filePath === null) {
+        if (filePath == null) {
             return false;
         }
 

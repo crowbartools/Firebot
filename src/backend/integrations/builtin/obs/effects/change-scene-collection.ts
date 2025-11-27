@@ -9,7 +9,7 @@ export const ChangeSceneCollectionEffectType: EffectType<{
         name: "Change OBS Scene Collection",
         description: "Change the active OBS Scene Collection",
         icon: "fad fa-th-list",
-        categories: ["common"]
+        categories: ["common", "integrations"]
     },
     optionsTemplate: `
     <eos-container header="New Scene Collection">
@@ -53,7 +53,7 @@ export const ChangeSceneCollectionEffectType: EffectType<{
             ).then((sceneCollections: string[]) => {
                 $scope.sceneCollections = [];
                 if (sceneCollections != null) {
-                    sceneCollections.forEach(sceneCollection => {
+                    sceneCollections.forEach((sceneCollection) => {
                         $scope.sceneCollections.push({name: sceneCollection, custom: false});
                     });
                 }

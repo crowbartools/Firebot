@@ -1,4 +1,6 @@
-type AppCloseListener = () => void | PromiseLike<void>;
+import { Awaitable } from "../../types/util-types";
+
+type AppCloseListener = () => Awaitable<void>;
 
 class AppCloseListenerManager {
     private listeners: Set<AppCloseListener> = new Set();
@@ -22,6 +24,6 @@ class AppCloseListenerManager {
     }
 }
 
-const appCloseListenerManager = new AppCloseListenerManager();
+const manager = new AppCloseListenerManager();
 
-export = appCloseListenerManager;
+export { manager as AppCloseListenerManager };

@@ -1,7 +1,5 @@
 "use strict";
 
-// Basic template for a modal component, copy this and rename to build a modal.
-
 (function() {
     angular.module("firebotApp").component("setupWizardModal", {
         template: `
@@ -16,7 +14,7 @@
                         <div class="welcome-wrapper">
                             <h3 class="animated fadeIn">Welcome to</h3>
                             <img style="animation-delay: 0.5s" class="animated rollIn" src="../images/logo_transparent.png">
-                        <span style="animation-delay: 1.3s" class="animated bounceIn">Firebot</span>
+                            <span style="animation-delay: 1.3s" class="animated bounceIn firebot-wordmark ml-5">Firebot</span>
                         </div>
                         <div style="animation-delay: 2.0s" class="animated fadeIn welcome-subtitle">
                             <span>A Tool For Twitch Streamers</span>

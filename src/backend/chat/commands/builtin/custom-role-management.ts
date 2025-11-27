@@ -1,7 +1,6 @@
 import { SystemCommand } from "../../../../types/commands";
 import customRoleManager from "../../../roles/custom-roles-manager";
-import chat from "../../twitch-chat";
-import twitchApi from "../../../twitch-api/api";
+import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 
 /**
  * The `!role` command
@@ -56,7 +55,7 @@ export const CustomRoleManagementSystemCommand: SystemCommand = {
         const { args, triggeredArg } = event.userCommand;
 
         if (args.length < 1) {
-            await chat.sendChatMessage("Incorrect command usage!");
+            await TwitchApi.chat.sendChatMessage("Incorrect command usage!", null, true);
             return;
         }
 
@@ -65,19 +64,19 @@ export const CustomRoleManagementSystemCommand: SystemCommand = {
                 const roleName = args.slice(2)[0];
                 const role = customRoleManager.getRoleByName(roleName);
                 if (role == null) {
-                    await chat.sendChatMessage("Can't find a role by that name.");
+                    await TwitchApi.chat.sendChatMessage("Can't find a role by that name.", null, true);
                 } else {
                     const username = args[1].replace("@", "");
-                    const user = await twitchApi.users.getUserByName(username);
+                    const user = await TwitchApi.users.getUserByName(username);
                     if (user == null) {
-                        await chat.sendChatMessage(`Could not add role ${role.name} to ${username}. User does not exist.`);
+                        await TwitchApi.chat.sendChatMessage(`Could not add role ${role.name} to ${username}. User does not exist.`, null, true);
                     } else {
                         customRoleManager.addViewerToRole(role.id, {
                             id: user.id,
                             username: user.name,
                             displayName: user.displayName
                         });
-                        await chat.sendChatMessage(`Added role ${role.name} to ${username}`);
+                        await TwitchApi.chat.sendChatMessage(`Added role ${role.name} to ${username}`, null, true);
                     }
                 }
                 break;
@@ -86,15 +85,15 @@ export const CustomRoleManagementSystemCommand: SystemCommand = {
                 const roleName = args.slice(2)[0];
                 const role = customRoleManager.getRoleByName(roleName);
                 if (role == null) {
-                    await chat.sendChatMessage("Can't find a role by that name.");
+                    await TwitchApi.chat.sendChatMessage("Can't find a role by that name.", null, true);
                 } else {
                     const username = args[1].replace("@", "");
-                    const user = await twitchApi.users.getUserByName(username);
+                    const user = await TwitchApi.users.getUserByName(username);
                     if (user == null) {
-                        await chat.sendChatMessage(`Could not remove role ${role.name} from ${username}. User does not exist.`);
+                        await TwitchApi.chat.sendChatMessage(`Could not remove role ${role.name} from ${username}. User does not exist.`, null, true);
                     } else {
                         customRoleManager.removeViewerFromRole(role.id, user.id);
-                        await chat.sendChatMessage(`Removed role ${role.name} from ${username}`);
+                        await TwitchApi.chat.sendChatMessage(`Removed role ${role.name} from ${username}`, null, true);
                     }
                 }
                 break;
@@ -102,30 +101,30 @@ export const CustomRoleManagementSystemCommand: SystemCommand = {
             case "list": {
                 if (args.length > 1) {
                     const username = args[1].replace("@", "");
-                    const user = await twitchApi.users.getUserByName(username);
+                    const user = await TwitchApi.users.getUserByName(username);
                     if (user == null) {
-                        await chat.sendChatMessage(`Could not get roles for ${username}. User does not exist.`);
+                        await TwitchApi.chat.sendChatMessage(`Could not get roles for ${username}. User does not exist.`, null, true);
                     } else {
-                        const roleNames = customRoleManager.getAllCustomRolesForViewer(user.id).map((r) => r.name);
+                        const roleNames = customRoleManager.getAllCustomRolesForViewer(user.id).map(r => r.name);
                         if (roleNames.length < 1) {
-                            await chat.sendChatMessage(`${username} has no custom roles assigned.`);
+                            await TwitchApi.chat.sendChatMessage(`${username} has no custom roles assigned.`, null, true);
                         } else {
-                            await chat.sendChatMessage(`${username}'s custom roles: ${roleNames.join(", ")}`);
+                            await TwitchApi.chat.sendChatMessage(`${username}'s custom roles: ${roleNames.join(", ")}`, null, true);
                         }
                     }
 
                 } else {
-                    const roleNames = customRoleManager.getCustomRoles().map((r) => r.name);
+                    const roleNames = customRoleManager.getCustomRoles().map(r => r.name);
                     if (roleNames.length < 1) {
-                        await chat.sendChatMessage(`There are no custom roles available.`);
+                        await TwitchApi.chat.sendChatMessage(`There are no custom roles available.`, null, true);
                     } else {
-                        await chat.sendChatMessage(`Available custom roles: ${roleNames.join(", ")}`);
+                        await TwitchApi.chat.sendChatMessage(`Available custom roles: ${roleNames.join(", ")}`, null, true);
                     }
                 }
                 break;
             }
             default:
-                await chat.sendChatMessage("Incorrect command usage!");
+                await TwitchApi.chat.sendChatMessage("Incorrect command usage!", null, true);
         }
     }
 };

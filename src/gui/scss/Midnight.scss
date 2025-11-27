@@ -91,14 +91,21 @@ $dropdown-menu-divider-color: #5a617b;
 
 $muted-text-color: #e4e4e4;
 
-$alert-info-text-color: #f9fdff;
-$alert-info-bg: #3f7d9c;
+$alert-info-text-color: oklch(80.9% 0.105 251.813);
+$alert-info-bg: oklch(0.62 0.21 259.82 / 0.1);
+$alert-info-border: oklch(0.62 0.21 259.82 / 0.2);
 
-$alert-warning-text-color: #8a6d3b;
-$alert-warning-bg: #ffee73;
+$alert-warning-text-color: oklch(97.3% 0.071 103.193 / 0.8);
+$alert-warning-bg: oklch(79.5% 0.184 86.047 / 0.1);
+$alert-warning-border: oklch(79.5% 0.184 86.047 / 0.15);
 
-$alert-danger-text-color: #f9fdff;
-$alert-danger-bg: #ce6c6c;
+$alert-danger-text-color: oklch(88.5% 0.062 18.334 / 0.8);
+$alert-danger-bg: oklch(63.7% 0.237 25.331 / 0.15);
+$alert-danger-border: oklch(63.7% 0.237 25.331 / 0.25);
+
+$alert-success-text-color: oklch(92.5% 0.084 155.995 / 0.85);;
+$alert-success-bg: oklch(72.3% 0.219 149.579 / 0.1);
+$alert-success-border: oklch(72.3% 0.219 149.579 / 0.2);
 
 $fb-tab-wrapper-bg: #3e4356;
 $fb-tab-wrapper-border-color: #2b3145;
@@ -122,23 +129,62 @@ $sys-cmd-expanded-shadow: none;
 
 $integration-row-bg: $light-background-color;
 
+/* controls */
+$primary-button-bg: #16809c;
+$primary-button-hover-bg: #1f849e;
+$link-button-color: #12d0ff;
+$link-button-hover-color: #11add4;
+
 /* Settings Page */
 $settings-sidebar-bg: #313644;
 $settings-category-selected-bg: #2a2f3a;
 $settings-category-hover-bg: #303643;
 
 /* effect & variable choosers */
-$effect-category-bg: $dark-background-color;
+$effect-category-bg: $light-background-color;
 $effect-category-hover-bg: $medium-background-color;
 $effect-category-selected-bg: $light-background-color;
-$effect-def-bg: #515357;
+$effect-def-bg: #3e4356;
 $effect-def-hover-bg: #3e4356;
 $effect-def-selected-border: #767a81;
 $effect-def-selected-check: #2df92d;
-$effect-dialog-bg: #43454a;
 $variable-category-bg: #18191b;
 $variable-magic-tooltip-fg: white;
 $variable-menu-bg: #060707;
+
+/* effect-list */
+$effect-item-bg: #3e4356;
+$effect-item-hover-bg: #474d63;
+$effect-item-drag-bg: #4a5068;
+$effect-item-drag-shadow: 0 0 0 1px rgba(95, 173, 255, 0.8), 0 6px 14px rgba(0, 0, 0, 0.6);
+$effect-drag-handle-color: #9ca3b8;
+$effect-icon-bg: #525b73;
+$effect-icon-color: #f7f7f7;
+$effect-button-bg: #525b73;
+$effect-button-hover-bg: #5f6882;
+$effect-button-icon-color: #d4d9e6;
+$effect-button-icon-hover-color: #ffffff;
+$effect-bottom-panel-bg: #353b4e;
+$effect-add-btn-bg: rgba(255, 255, 255, 0.05);
+$effect-add-btn-border: rgba(255, 255, 255, 0.15);
+$effect-add-btn-hover-bg: rgba(255, 255, 255, 0.1);
+$effect-add-btn-hover-border: rgba(255, 255, 255, 0.3);
+$effect-add-btn-icon-bg: rgba(255, 255, 255, 0.08);
+$effect-add-btn-text-color: #eaeaea;
+$effect-config-panel-border: #343a4d;
+$effect-config-panel-hover-bg: rgba(255, 255, 255, 0.04);
+$effect-config-panel-text-color: rgba(255, 255, 255, 0.95);
+$effect-config-panel-icon-opacity: 0.85;
+$effect-config-panel-preview-bg: rgba(0, 0, 0, 0.25);
+$effect-config-panel-preview-text: rgba(255, 255, 255, 0.8);
+$effect-config-panel-chevron-color: rgba(255, 255, 255, 0.6);
+$effect-config-panel-control-border: rgba(255, 255, 255, 0.08);
+$effect-config-panel-control-label-color: rgba(255, 255, 255, 0.8);
+$effect-config-panel-duration-btn-bg: rgba(0, 0, 0, 0.3);
+$effect-config-panel-duration-btn-hover-bg: rgba(0, 0, 0, 0.4);
+$effect-config-panel-duration-btn-text: #eaeaea;
+$effect-config-panel-duration-value-color: #ffffff;
+$effect-comment-bg: #3a3728;
 
 // Import Core Styles
 @import './core/$importer';

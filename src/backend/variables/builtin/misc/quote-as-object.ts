@@ -1,10 +1,12 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import moment from "moment";
 
-const moment = require("moment");
-const quoteManager = require("../../../quotes/quotes-manager");
-const commandManager = require("../../../chat/commands/command-manager");
-const logger = require("../../../logwrapper");
+import type { ReplaceVariable } from "../../../../types/variables";
+import type { Quote } from "../../../../types/quotes";
+
+import { CommandManager } from "../../../chat/commands/command-manager";
+import { QuoteManager } from "../../../quotes/quote-manager";
+import logger from "../../../logwrapper";
+
 
 const model : ReplaceVariable = {
     definition: {
@@ -24,21 +26,21 @@ const model : ReplaceVariable = {
                 description: "Get only a specific property for a random quote. Valid properties are id, createdAt, creator, originator, text and game."
             }
         ],
-        categories: [VariableCategory.TEXT],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["text"],
+        possibleDataOutput: ["text"]
     },
     evaluator: async (_, quoteId: number, property) => {
-        const quoteCommand = commandManager.getSystemCommandById("firebot:quotesmanagement");
-        const quoteDateFormat = quoteCommand.definition.options.quoteDateFormat.value;
-        let quote;
+        const quoteCommand = CommandManager.getSystemCommandById("firebot:quotesmanagement");
+        const quoteDateFormat = quoteCommand.definition.options.quoteDateFormat.value as string;
+        let quote: Quote;
         quoteId = parseInt(`${quoteId}`);
 
         if (quoteId != null && !isNaN(quoteId)) {
             logger.debug(`Getting quote ${quoteId}...`);
-            quote = await quoteManager.getQuote(quoteId);
+            quote = await QuoteManager.getQuote(quoteId);
         } else {
             logger.debug("Getting random quote...");
-            quote = await quoteManager.getRandomQuote();
+            quote = await QuoteManager.getRandomQuote();
         }
 
         if (quote != null) {

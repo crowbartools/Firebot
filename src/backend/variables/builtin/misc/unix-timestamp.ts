@@ -1,7 +1,6 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import moment from "moment";
 
-const moment = require("moment");
+import type { ReplaceVariable } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
@@ -25,10 +24,10 @@ const model : ReplaceVariable = {
             }
         ],
         description: "The current date formatted as seconds since January 1, 1970 00:00:00 UTC",
-        categories: [VariableCategory.COMMON],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["common"],
+        possibleDataOutput: ["number"]
     },
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
     evaluator: (_, date?: string, format?: string) => {
         const time = moment(date, format);
 

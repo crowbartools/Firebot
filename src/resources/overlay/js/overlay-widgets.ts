@@ -1,12 +1,24 @@
 type WidgetOverlayEvent = import("../../../types/overlay-widgets").WidgetOverlayEvent;
 type Position = import("../../../types/overlay-widgets").Position;
 type OverlayAnimation = import("../../../types/overlay-widgets").Animation;
-type IOverlayWidgetUtils = import("../../../types/overlay-widgets").IOverlayWidgetUtils;
+type IOverlayWidgetEventUtils = import("../../../types/overlay-widgets").IOverlayWidgetEventUtils;
+type IOverlayWidgetInitUtils = import("../../../types/overlay-widgets").IOverlayWidgetInitUtils;
+type FontOptions = import("../../../types/parameters").FontOptions;
 
 // @ts-ignore
 widgetEvents = new EventEmitter();
 
-class OverlayWidgetUtils implements IOverlayWidgetUtils {
+class OverlayWidgetInitUtils implements IOverlayWidgetInitUtils {
+    constructor(protected readonly typeId: string) {
+    }
+    getWidgetContainerElements(): NodeListOf<HTMLElement> {
+        return document.querySelectorAll<HTMLElement>(`[data-widget-type="${this.typeId}"]`);
+    }
+}
+
+(window as any).OverlayWidgetInitUtils = OverlayWidgetInitUtils;
+
+class OverlayWidgetEventUtils implements IOverlayWidgetEventUtils {
 
     constructor(private readonly widgetEvent: WidgetOverlayEvent) {
     }
@@ -16,26 +28,45 @@ class OverlayWidgetUtils implements IOverlayWidgetUtils {
     }
 
     handleOverlayEvent(
-        generateWidgetHtml: (widgetConfig: WidgetOverlayEvent["data"]["widgetConfig"]) => string
+        generateWidgetHtml: (widgetConfig: WidgetOverlayEvent["data"]["widgetConfig"]) => string,
+        updateOnMessage = false
     ): void {
         switch (this.widgetEvent.name) {
             case "show": {
-                this.initializeWidget(
+                const createdWidget = this.initializeWidget(
                     generateWidgetHtml(this.widgetEvent.data.widgetConfig)
                 );
+                if (createdWidget) {
+                    createdWidget["widgetConfig"] = this.widgetEvent.data.widgetConfig;
+                }
                 break;
             }
             case "settings-update": {
-                this.updateWidgetContent(generateWidgetHtml(this.widgetEvent.data.widgetConfig));
+                const updatedWidget = this.updateWidgetContent(generateWidgetHtml(this.widgetEvent.data.widgetConfig));
+                if (updatedWidget) {
+                    updatedWidget["widgetConfig"] = this.widgetEvent.data.widgetConfig;
+                }
                 this.updateWidgetPosition();
                 break;
             }
             case "state-update": {
-                this.updateWidgetContent(generateWidgetHtml(this.widgetEvent.data.widgetConfig));
+                const updatedWidget = this.updateWidgetContent(generateWidgetHtml(this.widgetEvent.data.widgetConfig));
+                if (updatedWidget) {
+                    updatedWidget["widgetConfig"] = this.widgetEvent.data.widgetConfig;
+                }
                 break;
             }
             case "remove": {
                 this.removeWidget();
+                break;
+            }
+            case "message": {
+                if (updateOnMessage) {
+                    const updatedWidget = this.updateWidgetContent(generateWidgetHtml(this.widgetEvent.data.widgetConfig));
+                    if (updatedWidget) {
+                        updatedWidget["widgetConfig"] = this.widgetEvent.data.widgetConfig;
+                    }
+                }
                 break;
             }
             default:
@@ -70,14 +101,14 @@ class OverlayWidgetUtils implements IOverlayWidgetUtils {
         }, "");
     }
 
-    getWidgetElement() {
-        return document.getElementById(`${this.widgetId}-container`);
+    getWidgetContainerElement() {
+        return document.querySelector<HTMLElement>(`[data-widget-id="${this.widgetId}"]`);
     }
 
     initializeWidget(
         html: string,
     ) {
-        const container = this.getWidgetElement();
+        const container = this.getWidgetContainerElement();
         if (container) {
             container.remove();
         }
@@ -93,7 +124,7 @@ class OverlayWidgetUtils implements IOverlayWidgetUtils {
         const entryAnimation = this.widgetEvent.data.widgetConfig.entryAnimation;
 
         const wrappedHtml = `
-            <div id="${id}-container" style="${positionStyle}">${html}</div>
+            <div id="${id}-container" data-widget-id="${id}" data-widget-type="${this.widgetEvent.data.widgetType.id}" style="${positionStyle}">${html}</div>
         `;
 
         const overlayWrapper = document.body.querySelector(".wrapper");
@@ -103,15 +134,15 @@ class OverlayWidgetUtils implements IOverlayWidgetUtils {
             if (entryAnimation?.class != null && entryAnimation?.class !== "" && entryAnimation?.class !== "none") {
                 const duration = entryAnimation.duration ? `${entryAnimation.duration}s` : undefined;
                 //@ts-ignore
-                $(`#${id}-container`).animateCss(entryAnimation.class, duration);
+                $(`[data-widget-id="${this.widgetId}"]`).animateCss(entryAnimation.class, duration);
             }
         }
 
-        return this.getWidgetElement();
+        return this.getWidgetContainerElement();
     }
 
     updateWidgetContent(html: string) {
-        const widgetElement = this.getWidgetElement();
+        const widgetElement = this.getWidgetContainerElement();
         if (!widgetElement) {
             console.warn(`Widget element with ID '${this.widgetId}' not found for content update.`);
             return null;
@@ -122,7 +153,7 @@ class OverlayWidgetUtils implements IOverlayWidgetUtils {
     }
 
     updateWidgetPosition() {
-        const widgetElement = this.getWidgetElement();
+        const widgetElement = this.getWidgetContainerElement();
         if (!widgetElement) {
             console.warn(`Widget element with ID '${this.widgetId}' not found for position update.`);
             return null;
@@ -152,7 +183,7 @@ class OverlayWidgetUtils implements IOverlayWidgetUtils {
     }
 
     removeWidget() {
-        const widgetElement = this.getWidgetElement();
+        const widgetElement = this.getWidgetContainerElement();
         if (!widgetElement) {
             return;
         }
@@ -163,7 +194,7 @@ class OverlayWidgetUtils implements IOverlayWidgetUtils {
             const duration = exitAnimation.duration ? `${exitAnimation.duration}s` : undefined;
             //@ts-ignore
             $(widgetElement).animateCss(exitAnimation.class, duration, null, null, () => {
-                const updatedElement = this.getWidgetElement();
+                const updatedElement = this.getWidgetContainerElement();
                 updatedElement?.remove();
             });
         } else {
@@ -173,16 +204,30 @@ class OverlayWidgetUtils implements IOverlayWidgetUtils {
 
     stylesToString(styles: Record<string, string | number | undefined>): string {
         return Object.entries(styles)
+            .filter(([_, value]) => value !== undefined)
             .map(([key, value]) => `${key}: ${value};`)
             .join('')
+    }
+
+    getFontOptionsStyles(fontOptions?: FontOptions): Record<string, string | number | undefined> {
+        return {
+            "font-family": (fontOptions?.family ? `'${fontOptions.family}'` : 'Inter, sans-serif'),
+            "font-size": (fontOptions?.size ? `${fontOptions.size}px` : undefined),
+            "font-weight": fontOptions?.weight?.toString() || undefined,
+            "font-style": fontOptions?.italic ? 'italic' : 'normal',
+            "color": fontOptions?.color || '#FFFFFF',
+        };
+    }
+    sendMessageToFirebot(messageName: string, messageData?: unknown): void {
+        sendWebsocketEvent("overlay-widget-message", {
+            widgetConfigId: this.widgetId,
+            messageName,
+            messageData
+        });
     }
 }
 
 function handleOverlayEvent(event: WidgetOverlayEvent) {
-    console.log(`Handling overlay event: ${event.name}`, event);
-
     // @ts-ignore
-    widgetEvents.emit(`overlay-widget:${event.data.widgetType.id}`, event, new OverlayWidgetUtils(event));
+    widgetEvents.emit(`overlay-widget:${event.data.widgetType.id}`, event, new OverlayWidgetEventUtils(event));
 }
-
-

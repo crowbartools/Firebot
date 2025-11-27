@@ -9,14 +9,15 @@ export type RankLadder = {
     name: string;
     mode: "manual" | "auto";
     settings: {
-        trackBy?: "view_time" | "currency" | "metadata",
+        trackBy?: "view_time" | "currency" | "metadata";
         currencyId?: string;
         metadataKey?: string;
         viewerRestrictions?: {
             roleIds?: string[];
-        },
+        };
         announcePromotionsInChat?: boolean;
         customPromotionMessageTemplate?: string;
+        showBadgeInChat?: boolean;
     };
     ranks: Rank[];
 };

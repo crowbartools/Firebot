@@ -1,12 +1,12 @@
-import { FirebotParameterArray } from "./parameters";
-import { Awaitable } from "./util-types";
+import type { FirebotParameterArray, FontOptions } from "./parameters";
+import type { Awaitable } from "./util-types";
 
 export type Position = {
     x: number;
     y: number;
     width: number;
     height: number;
-}
+};
 
 export type Animation = {
     /**
@@ -17,27 +17,37 @@ export type Animation = {
      * Custom duration in seconds
      */
     duration?: number;
-}
+};
 
-
-type WidgetEvent<Settings, State> = {
-    id: string;
-    settings: Settings;
-    state: State;
+type WidgetEvent<Settings, State> = OverlayWidgetConfig<Settings, State> & {
     previewMode: boolean;
-}
+    previousState?: State;
+    persisted?: boolean;
+};
 
-type WidgetEventResult<State> = {
+export type WidgetEventResult<State> = {
     newState?: State | null;
     /**
      * If true, the new state will be persisted to file.
      * @default false
      */
     persistState?: boolean;
-}
+};
 
-export type WidgetEventHandler<Settings, State> = (event: WidgetEvent<Settings, State>) => Awaitable<WidgetEventResult<State> | undefined>;
+export type WidgetEventHandler<Settings, State, Return = WidgetEventResult<State>> = (event: WidgetEvent<Settings, State>) => Awaitable<Return | undefined>;
 
+export type WidgetUIAction<
+    Settings extends Record<string, unknown> = Record<string, unknown>,
+    State = Record<string, unknown>
+> = {
+    id: string;
+    label: string;
+    icon: string;
+
+    click: (config: OverlayWidgetConfig<Settings, State>) => Awaitable<{
+        newState?: State | null;
+    } | void>;
+};
 
 export type OverlayWidgetType<
     Settings extends Record<string, unknown> = Record<string, unknown>,
@@ -78,6 +88,12 @@ export type OverlayWidgetType<
      * Settings allow the user to customize the widget instance (e.g., font to use, colors, etc.)
      */
     settingsSchema?: FirebotParameterArray<Settings>;
+
+    /**
+     * Array of setting keys that cannot be edited in the Update Overlay Widget Settings effect.
+     */
+    nonEditableSettings?: (keyof Settings)[];
+
     /**
      * Initial state for the widget instance (e.g., current count for a counter widget)
      */
@@ -94,13 +110,24 @@ export type OverlayWidgetType<
      * State that is used when the widget is shown in live preview mode.
      */
     livePreviewState?: State;
+
+    /**
+     * Array of setting keys that reference local resource paths.
+     * These properties will be automatically converted to resource tokens when sent to the overlay,
+     */
+    resourceKeys?: Array<keyof Settings>;
     /**
      * Function that returns a short string representing the current state of the widget.
      * This is shown in the overlay widget list to give the user a quick overview of the widget's state.
      * If null or undefined, no state display is shown.
      */
-    // eslint-disable-next-line no-use-before-define
+
     stateDisplay?: (config: OverlayWidgetConfig<Settings, State>) => string | null;
+    /**
+     * Actions are buttons shown in the overlay widget list for each widget instance.
+     * They allow the user to quickly perform common actions on the widget (e.g., start or stop a countdown timer).
+     */
+    uiActions?: WidgetUIAction<Settings, State>[];
     /**
      * Called before the widget is shown on the overlay. You can modify state here.
      */
@@ -110,9 +137,17 @@ export type OverlayWidgetType<
      */
     onSettingsUpdate?: WidgetEventHandler<Settings, State>;
     /**
+     * Called when the widget state is updated. You can't modify state here (would cause infinite loop).
+     */
+    onStateUpdate?: WidgetEventHandler<Settings, State, void>;
+    /**
      * Called before the widget is removed from the overlay. You can modify state here.
      */
     onRemove?: WidgetEventHandler<Settings, State>;
+    /**
+     * Called when the widget sends a message from the overlay.
+     */
+    onOverlayMessage?: (config: OverlayWidgetConfig<Settings, State>, messageName: string, messageData?: unknown) => Awaitable<void>;
     /**
      * This code is injected into the overlay. Do not reference any variables outside this scope.
      */
@@ -122,12 +157,12 @@ export type OverlayWidgetType<
             js?: string[];
             globalStyles?: string;
         };
-        // eslint-disable-next-line no-use-before-define
-        eventHandler: (event: WidgetOverlayEvent, utils: IOverlayWidgetUtils) => void;
+
+        eventHandler: (event: WidgetOverlayEvent, utils: IOverlayWidgetEventUtils) => void;
         /**
          * Called when the overlay is loaded. Can be async.
          */
-        onInitialLoad?: () => void | Promise<void>;
+        onInitialLoad?: (utils: IOverlayWidgetInitUtils) => Awaitable<void>;
     };
 };
 
@@ -151,12 +186,16 @@ type OverlayWidgetConfig<Settings = Record<string, unknown>, State = Record<stri
     exitAnimation?: Animation | null;
     settings: Settings;
     state?: State;
-}
+};
 
 export type WidgetOverlayEvent<Settings = Record<string, unknown>, State = Record<string, unknown>> = {
     name: "show" | "settings-update" | "state-update" | "message" | "remove";
     data: {
-        widgetConfig: Pick<OverlayWidgetConfig<Settings, State>, "id" | "name" | "type" | "position" | "entryAnimation" | "exitAnimation" | "settings" | "state" | "overlayInstance" | "zIndex">;
+        widgetConfig: Pick<OverlayWidgetConfig<Settings, State>, "id" | "name" | "type" | "position" | "entryAnimation" | "exitAnimation" | "settings" | "state" | "overlayInstance" | "zIndex"> & {
+            resourceTokens: {
+                [K in keyof Settings]: string;
+            };
+        };
         widgetType: Pick<OverlayWidgetType, "id" | "userCanConfigure">;
         previewMode: boolean;
         /**
@@ -168,21 +207,34 @@ export type WidgetOverlayEvent<Settings = Record<string, unknown>, State = Recor
          */
         messageData?: unknown;
     };
-}
+};
 
 /**
  * Utility functions for managing overlay widgets. These functions can used within the overlayExtension.eventHandler
  */
-export interface IOverlayWidgetUtils {
-    handleOverlayEvent(generateWidgetHtml: (widgetConfig: WidgetOverlayEvent["data"]["widgetConfig"]) => string): void;
+export interface IOverlayWidgetEventUtils {
+    /**
+     * Automatically handles overlay events for the widget, including showing, updating, and removing the widget using the provided HTML generator function.
+     *
+     * @param generateWidgetHtml Function that generates the HTML for the widget based on its current configuration.
+     * @param updateOnMessage If true, the widget HTML will be updated when a "message" event is received. Default is false.
+     */
+    handleOverlayEvent(generateWidgetHtml: (widgetConfig: WidgetOverlayEvent["data"]["widgetConfig"]) => string, updateOnMessage = false): void;
     getWidgetPositionStyle(position?: Position): string;
-    getWidgetElement(): HTMLElement | null;
+    getWidgetContainerElement(): HTMLElement | null;
     initializeWidget(
         html: string
     ): void;
     updateWidgetContent(
         newHtml: string,
     ): void;
+    updateWidgetPosition(): void;
     removeWidget(): void;
     stylesToString(styles: Record<string, string | number | undefined>): string;
+    getFontOptionsStyles(fontOptions?: FontOptions): Record<string, string | number | undefined>;
+    sendMessageToFirebot(messageName: string, messageData?: unknown): void;
+}
+
+export interface IOverlayWidgetInitUtils {
+    getWidgetContainerElements(): NodeListOf<HTMLElement>;
 }

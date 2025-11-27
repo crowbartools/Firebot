@@ -1,6 +1,6 @@
 "use strict";
 
-const variableManager = require("../../../../variables/replace-variable-manager");
+const { ReplaceVariableManager } = require("../../../../variables/replace-variable-manager");
 
 exports.registerVariables = () => {
     const slootsCardName = require("../variables/sloots-card-name");
@@ -13,14 +13,12 @@ exports.registerVariables = () => {
     const slootsSoundUrl = require("../variables/sloots-sound-url");
 
 
-    variableManager.registerReplaceVariable(slootsCardName);
-    variableManager.registerReplaceVariable(slootsCardRarity);
-    variableManager.registerReplaceVariable(slootsGiftee);
-    variableManager.registerReplaceVariable(slootsImageUrl);
-    variableManager.registerReplaceVariable(slootsMessage);
-    variableManager.registerReplaceVariable(slootsAlertMessage);
-    variableManager.registerReplaceVariable(slootsChestQuantity);
-    variableManager.registerReplaceVariable(slootsSoundUrl);
+    ReplaceVariableManager.registerReplaceVariable(slootsCardName);
+    ReplaceVariableManager.registerReplaceVariable(slootsCardRarity);
+    ReplaceVariableManager.registerReplaceVariable(slootsGiftee);
+    ReplaceVariableManager.registerReplaceVariable(slootsImageUrl);
+    ReplaceVariableManager.registerReplaceVariable(slootsMessage);
+    ReplaceVariableManager.registerReplaceVariable(slootsAlertMessage);
+    ReplaceVariableManager.registerReplaceVariable(slootsChestQuantity);
+    ReplaceVariableManager.registerReplaceVariable(slootsSoundUrl);
 };
-
-

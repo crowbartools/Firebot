@@ -1,8 +1,15 @@
 import { TypedEmitter } from "tiny-typed-emitter";
-import { EffectQueue, QueueState, RunEffectsContext } from "./effect-queue";
+
+import type {
+    EffectQueueConfig,
+    QueueState,
+    RunEffectsContext
+} from "../../../types/effects";
+
+import { EffectQueue } from "./effect-queue";
+import { EffectManager } from "../effect-manager";
 import logger from "../../logwrapper";
-import type { EffectQueueConfig } from "./effect-queue-config-manager";
-import effectManager from "../effectManager";
+import { simpleClone } from "../../utils";
 
 type Events = {
     "length-updated": (queueData: { id: string, length: number }) => void;
@@ -17,7 +24,7 @@ class EffectQueueRunner extends TypedEmitter<Events> {
     }
 
     get queues(): Record<string, EffectQueue> {
-        return JSON.parse(JSON.stringify(this._queues));
+        return simpleClone(this._queues);
     }
 
     getQueueStateForConfig(config: EffectQueueConfig): QueueState {
@@ -27,6 +34,7 @@ class EffectQueueRunner extends TypedEmitter<Events> {
                 status: config.active === false ? "paused" : "idle",
                 interval: config.interval,
                 mode: config.mode,
+                runEffectsImmediatelyWhenPaused: config.runEffectsImmediatelyWhenPaused,
                 queuedItems: [],
                 activeItems: []
             };
@@ -66,13 +74,26 @@ class EffectQueueRunner extends TypedEmitter<Events> {
         const queue = this._getQueue(queueConfig);
 
         for (const effect of runEffectsContext.effects.list) {
-            const effectType = effectManager.getEffectById(effect.type);
+            const effectType = EffectManager.getEffectById(effect.type);
             if (effectType) {
                 effect["__definition"] = effectType.definition;
             }
         }
 
         queue.addEffects(runEffectsContext, duration, priority);
+    }
+
+    triggerQueue(queueId: string) {
+        if (queueId == null) {
+            return;
+        }
+
+        const queue = this._queues[queueId];
+        if (queue == null) {
+            return;
+        }
+
+        queue.processEffectQueue();
     }
 
     updateQueue(queueConfig: EffectQueueConfig) {

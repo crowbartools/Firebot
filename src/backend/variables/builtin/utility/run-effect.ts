@@ -1,10 +1,9 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import { randomUUID } from "crypto";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
-const { v4: uuid } = require("uuid");
+import effectRunner from "../../../common/effect-runner";
+import logger from "../../../logwrapper";
 
-const logger = require("../../../logwrapper");
-const effectRunner = require("../../../common/effect-runner");
 
 const model : ReplaceVariable = {
     definition: {
@@ -15,8 +14,8 @@ const model : ReplaceVariable = {
             usage: "runEffect[``{\"type\":\"firebot:chat\",\"message\":\"Hello world\"}``]",
             description: "Runs a chat message effect. You can get an effects JSON data via the UI via the overflow menu in the top right of the Edit Effect modal. (Copy Effect Json > For $runEffect[])"
         }],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["text"]
     },
     evaluator: async (
         trigger: Trigger,
@@ -27,7 +26,7 @@ const model : ReplaceVariable = {
             await effectRunner.processEffects({
                 trigger,
                 effects: {
-                    id: uuid(),
+                    id: randomUUID(),
                     list: effectJsonModels
                         .map((json) => {
                             if (typeof json !== 'string' && !(json instanceof String)) {
@@ -35,7 +34,7 @@ const model : ReplaceVariable = {
                             }
 
                             try {
-                                return JSON.parse(`${json}`);
+                                return JSON.parse(`${json.toString()}`);
                             } catch (error) {
                                 logger.warn("Failed to parse effect json in $runEffect", json, error);
                                 return null;

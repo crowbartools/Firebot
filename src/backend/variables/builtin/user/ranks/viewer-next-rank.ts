@@ -1,5 +1,4 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../../types/variables";
 import viewerRankManager from "../../../../ranks/rank-manager";
 import viewerDatabase from "../../../../viewers/viewer-database";
 import logger from "../../../../logwrapper";
@@ -9,8 +8,8 @@ const model : ReplaceVariable = {
         handle: "viewerNextRank",
         usage: "viewerNextRank[username, rankLadderName]",
         description: "Returns the the next rank in specified rank ladder for the user",
-        categories: [VariableCategory.COMMON, VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "user based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: async (trigger, username: null | string, rankLadderName: string) : Promise<string | null> => {
         if (!username?.length || !rankLadderName?.length) {

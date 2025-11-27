@@ -4,17 +4,29 @@ export type NoFunctionValue =
     | number
     | null
     | undefined
-    // eslint-disable-next-line no-use-before-define
+
     | NoFunctionObject
-    // eslint-disable-next-line no-use-before-define
+
     | NoFunctionArray;
 
 export interface NoFunctionObject {
-    [key: string]: NoFunctionValue
+    [key: string]: NoFunctionValue;
 }
 
 export type NoFunctionArray = Array<NoFunctionValue>;
 
 export type Awaitable<T> = T | PromiseLike<T>;
 
+type ObjectOfUnknowns = {
+    [key: string]: unknown;
+};
 
+export type KeyValuePair<K = string, V = string> = {
+    key: K;
+    value: V;
+};
+
+export type FileFilter = {
+    name: string;
+    extensions: string[];
+};

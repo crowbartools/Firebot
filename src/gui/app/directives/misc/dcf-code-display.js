@@ -56,7 +56,7 @@
                 $ctrl.code = details.code;
             });
 
-            backendCommunicator.on("accountUpdate", accounts => {
+            backendCommunicator.on("accounts:account-update", (accounts) => {
                 switch ($ctrl.accountType) {
                     case "streamer":
                         if (accounts.streamer.loggedIn) {

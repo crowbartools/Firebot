@@ -1,23 +1,23 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger, TriggersObject } from "../../../../types/variables";
+import type { UserCommand } from "../../../../types/commands";
 
-const { EffectTrigger } = require("../../../../shared/effect-constants");
-
-const triggers = {};
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.MANUAL] = true;
+const triggers: TriggersObject = {};
+triggers["command"] = true;
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
         handle: "rawArgArray",
         description: "(Deprecated: use $argArray) Returns the raw array of command arguments",
         triggers: triggers,
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.ARRAY],
+        categories: ["trigger based", "advanced"],
+        possibleDataOutput: ["array"],
         hidden: true
     },
     evaluator: (trigger: Trigger) : string[] => {
-        return trigger.metadata.userCommand ? trigger.metadata.userCommand.args : [];
+        return trigger.metadata.userCommand?.args
+            ?? (trigger.metadata.eventData?.userCommand as UserCommand)?.args
+            ?? [];
     }
 };
 

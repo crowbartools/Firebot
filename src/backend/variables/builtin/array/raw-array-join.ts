@@ -1,6 +1,5 @@
 // Deprecated
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 import arrayJoin from './array-join';
 
@@ -9,8 +8,8 @@ const model : ReplaceVariable = {
         handle: "rawArrayJoin",
         description: "(Deprecated: use $arrayJoin) Returns a string with each array item joined together with the given separator",
         usage: "rawArrayJoin[array, separator]",
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT],
+        categories: ["advanced"],
+        possibleDataOutput: ["text"],
         hidden: true
     },
     evaluator: arrayJoin.evaluator

@@ -1,7 +1,6 @@
+import { getParticipantIncentives } from 'extra-life-ts';
 import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import integrationManager from "../../../../integrations/integration-manager";
-const { getParticipantIncentives } = require('extra-life-ts');
 
 const ExtraLifeIncentives: ReplaceVariable = {
     definition: {
@@ -29,8 +28,8 @@ const ExtraLifeIncentives: ReplaceVariable = {
                 description: "Returns ten incentives for current logged in extra life account in JSON format."
             }
         ],
-        categories: [VariableCategory.COMMON, VariableCategory.INTEGRATION],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "integrations"],
+        possibleDataOutput: ["text"]
     },
     evaluator: async (_, rewardDesc: string, numResults: number, participantID: number, returnJson: boolean) => {
         if (numResults == null) {
@@ -45,11 +44,10 @@ const ExtraLifeIncentives: ReplaceVariable = {
             rewardDesc = null;
         }
 
-        let extraLifeCall = await getParticipantIncentives(participantID, {orderBy: 'amount ASC'}).then((result) => {
-            result = result.data;
-
+        let extraLifeCall = await getParticipantIncentives(participantID, { orderBy: 'amount ASC' }).then(({ data }) => {
+            let result = data;
             if (rewardDesc != null) {
-                result = result.filter(function (incentive) {
+                result = data.filter(function (incentive) {
                     return incentive.description === rewardDesc.trim();
                 });
             }

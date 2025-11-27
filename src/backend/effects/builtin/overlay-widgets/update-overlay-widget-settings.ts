@@ -1,9 +1,8 @@
 import { EffectType } from "../../../../types/effects";
-import { EffectCategory } from '../../../../shared/effect-constants';
+import { OverlayWidgetConfig, Position } from "../../../../types/overlay-widgets";
 import overlayWidgetConfigManager from "../../../overlay-widgets/overlay-widget-config-manager";
 import overlayWidgetsManager from "../../../overlay-widgets/overlay-widgets-manager";
 import logger from "../../../logwrapper";
-import { OverlayWidgetConfig, Position } from "../../../../types/overlay-widgets";
 
 const model: EffectType<{
     widgetConfigId: string;
@@ -19,7 +18,7 @@ const model: EffectType<{
         name: "Update Overlay Widget Settings",
         description: "Update the settings of an overlay widget.",
         icon: "fad fa-layer-plus",
-        categories: [EffectCategory.OVERLAY, EffectCategory.ADVANCED],
+        categories: ["overlay", "advanced"],
         dependencies: []
     },
     optionsTemplate: `
@@ -108,7 +107,7 @@ const model: EffectType<{
                     <div ng-if="typeHasSettings">
                         <hr class="mt-0" />
 
-                        <div ng-repeat="setting in selectedType.settingsSchema">
+                        <div ng-repeat="setting in settingsSchema">
                             <firebot-checkbox
                                 label="Edit {{setting.title || setting.name}}"
                                 ng-init="editSetting[setting.name] = (effect.settings[setting.name] != null && effect.settings[setting.name] !== '')"
@@ -168,6 +167,7 @@ const model: EffectType<{
         }
 
         $scope.selectedType = null;
+        $scope.settingsSchema = [];
         $scope.selectedConfig = null;
         $scope.typeHasSettings = false;
 
@@ -175,12 +175,16 @@ const model: EffectType<{
             $scope.selectedConfig = overlayWidgetsService.getOverlayWidgetConfig(id);
             if ($scope.selectedConfig == null) {
                 $scope.selectedType = null;
+                $scope.settingsSchema = [];
                 $scope.typeHasSettings = false;
                 return;
             }
             $scope.selectedType = overlayWidgetsService
                 .getOverlayWidgetType($scope.selectedConfig.type);
-            $scope.typeHasSettings = !!$scope.selectedType?.settingsSchema?.length;
+            $scope.settingsSchema = ($scope.selectedType?.settingsSchema || []).filter((s) => {
+                return !($scope.selectedType?.nonEditableSettings?.includes(s.name) ?? false);
+            });
+            $scope.typeHasSettings = !!$scope.settingsSchema?.length;
         }
 
         $scope.topLevelPropToggled = (prop: string, prevValue: boolean) => {
@@ -223,7 +227,7 @@ const model: EffectType<{
         });
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
 
         if (effect.widgetConfigId == null) {
             errors.push("Please select a overlay widget.");
@@ -239,7 +243,7 @@ const model: EffectType<{
         const overlayWidgetName = overlayWidgetsService.getOverlayWidgetConfig(effect.widgetConfigId)?.name ?? "Unknown Overlay Widget";
         return `${effect.mode === "update" ? "Update" : "Reset"} ${overlayWidgetName}`;
     },
-    onTriggerEvent: async (event) => {
+    onTriggerEvent: (event) => {
         const { effect } = event;
 
         if (effect.widgetConfigId == null) {
@@ -254,7 +258,7 @@ const model: EffectType<{
         }
 
         if (effect.mode === "reset") {
-            overlayWidgetsManager.sendWidgetEventToOverlay("settings-update", widgetConfig);
+            void overlayWidgetsManager.sendWidgetEventToOverlay("settings-update", widgetConfig);
         } else if (effect.mode === "update") {
             const updatedConfig: OverlayWidgetConfig = {
                 ...widgetConfig,
@@ -271,7 +275,7 @@ const model: EffectType<{
                 overlayWidgetConfigManager.saveWidgetConfig(updatedConfig);
                 overlayWidgetConfigManager.triggerUiRefresh();
             } else {
-                overlayWidgetsManager.sendWidgetEventToOverlay("settings-update", updatedConfig);
+                void overlayWidgetsManager.sendWidgetEventToOverlay("settings-update", updatedConfig);
             }
         }
 

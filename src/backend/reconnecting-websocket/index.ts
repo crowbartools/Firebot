@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import WebSocket, { ClientOptions } from 'ws';
 import * as Events from './events';
@@ -369,7 +369,7 @@ export default class ReconnectingWebSocket {
                 }
                 this._debug('connect', {url, protocols: this._protocols});
                 this._ws = new WebSocket(url, this._protocols, wsOptions);
-                this._ws!.binaryType = this._binaryType as any;
+                this._ws.binaryType = this._binaryType as any;
                 this._connectLock = false;
                 this._addListeners();
 
@@ -421,7 +421,7 @@ export default class ReconnectingWebSocket {
         clearTimeout(this._connectTimeout);
         this._uptimeTimeout = setTimeout(() => this._acceptOpen(), minUptime);
 
-        this._ws!.binaryType = this._binaryType as any;
+        this._ws.binaryType = this._binaryType as any;
 
         // send enqueued messages (messages sent before websocket open event)
         this._messageQueue.forEach(message => this._ws?.send(message as any));

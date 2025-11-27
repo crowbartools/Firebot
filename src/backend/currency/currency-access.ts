@@ -1,30 +1,17 @@
 import EventEmitter from "events";
 import { JsonDB } from "node-json-db";
 
+import { Currency } from "../../types/currency";
 import { FirebotViewer } from "../../types/viewers";
-import logger from "../logwrapper";
-import frontendCommunicator from "../common/frontend-communicator";
+
 import { SettingsManager } from "../common/settings-manager";
-import profileManager from "../common/profile-manager";
-
-export type Currency = {
-    id: string;
-    name: string;
-    active: boolean;
-    limit: number;
-    transfer: "Allow" | "Disallow";
-    interval: number;
-    payout: number;
-
-    /** Offline payout */
-    offline?: number | string;
-
-    /** Maps user role IDs to the amount of bonus payout they receive. */
-    bonus: Record<string, number>;
-};
+import { ProfileManager } from "../common/profile-manager";
+import frontendCommunicator from "../common/frontend-communicator";
+import logger from "../logwrapper";
+import { simpleClone } from "../utils";
 
 type CurrencyCache = {
-    [currencyName: string]: Currency
+    [currencyName: string]: Currency;
 };
 
 class CurrencyAccess extends EventEmitter {
@@ -53,8 +40,8 @@ class CurrencyAccess extends EventEmitter {
             this.updateCurrency(currency);
         });
 
-        frontendCommunicator.on("currencies:delete-currency", (currency: Currency) => {
-            this.deleteCurrency(currency);
+        frontendCommunicator.on("currencies:delete-currency", (id: string) => {
+            this.deleteCurrency(id);
         });
     }
 
@@ -63,7 +50,7 @@ class CurrencyAccess extends EventEmitter {
     }
 
     getCurrencyDb(): JsonDB {
-        return profileManager.getJsonDbInProfile("/currency/currency");
+        return ProfileManager.getJsonDbInProfile("/currency/currency");
     }
 
     loadCurrencies(): void {
@@ -75,7 +62,7 @@ class CurrencyAccess extends EventEmitter {
         const db = this.getCurrencyDb();
 
         let resaveCurrencies = false;
-        const cache: CurrencyCache = db.getData("/");
+        const cache = db.getData("/") as CurrencyCache;
 
         Object.keys(cache).forEach((currencyId) => {
             if (cache[currencyId].offline === null || cache[currencyId].offline === "") {
@@ -93,7 +80,7 @@ class CurrencyAccess extends EventEmitter {
     }
 
     getCurrencies(): CurrencyCache {
-        return JSON.parse(JSON.stringify(this._currencyCache));
+        return simpleClone(this._currencyCache);
     }
 
     getCurrencyById(id: string): Currency {
@@ -124,7 +111,7 @@ class CurrencyAccess extends EventEmitter {
         return viewer;
     }
 
-    importCurrency(currency: Currency) {
+    importCurrency(currency: Currency): void {
         if (this.isViewerDBOn() !== true) {
             return;
         }
@@ -157,7 +144,7 @@ class CurrencyAccess extends EventEmitter {
         }
     }
 
-    createCurrency(currency: Currency) {
+    createCurrency(currency: Currency): boolean {
         if (this.isViewerDBOn() !== true) {
             return false;
         }
@@ -175,7 +162,7 @@ class CurrencyAccess extends EventEmitter {
         return true;
     }
 
-    updateCurrency(currency: Currency) {
+    updateCurrency(currency: Currency): void {
         if (this.isViewerDBOn() !== true) {
             return;
         }
@@ -185,17 +172,19 @@ class CurrencyAccess extends EventEmitter {
         this.emit("currencies:currency-updated", currency);
     }
 
-    deleteCurrency(currency: Currency) {
+    deleteCurrency(id: string): void {
         if (this.isViewerDBOn() !== true) {
             return;
         }
 
-        delete this._currencyCache[currency.id];
+        const currency = simpleClone(this._currencyCache[id]);
+
+        delete this._currencyCache[id];
         this.saveAllCurrencies();
         this.emit("currencies:currency-deleted", currency);
     }
 
-    private saveAllCurrencies() {
+    private saveAllCurrencies(): void {
         this.getCurrencyDb().push("/", this._currencyCache);
         frontendCommunicator.send("currencies:currencies-updated", this.getCurrencies());
     }

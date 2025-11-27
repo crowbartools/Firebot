@@ -133,6 +133,12 @@
                 if (validation.maxLength != null) {
                     N.$validators.maxLength = (_, view) => (view == null ? true : String(view).length <= validation.maxLength);
                 }
+                if (validation.min != null) {
+                    N.$validators.min = (_, view) => (view == null ? true : view >= validation.min);
+                }
+                if (validation.max != null) {
+                    N.$validators.max = (_, view) => (view == null ? true : view <= validation.max);
+                }
                 if (validation.pattern != null) {
                     const re = validation.pattern instanceof RegExp ? validation.pattern : new RegExp(validation.pattern);
                     N.$validators.pattern = (_, view) => (view == null || view === '' ? true : re.test(String(view)));
@@ -192,6 +198,12 @@
                 }
                 if (errors.maxLength) {
                     messages.push(`Must be at most ${schema.validation.maxLength} characters.`);
+                }
+                if (errors.min) {
+                    messages.push(`Must be at least ${schema.validation.min}.`);
+                }
+                if (errors.max) {
+                    messages.push(`Must be at most ${schema.validation.max}.`);
                 }
                 if (errors.pattern) {
                     messages.push(`Invalid format.`);

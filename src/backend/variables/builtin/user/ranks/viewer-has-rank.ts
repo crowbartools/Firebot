@@ -1,5 +1,4 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../../types/variables";
 import viewerRankManager from "../../../../ranks/rank-manager";
 import viewerDatabase from "../../../../viewers/viewer-database";
 import logger from "../../../../logwrapper";
@@ -9,8 +8,8 @@ const model : ReplaceVariable = {
         handle: "viewerHasRank",
         usage: "viewerHasRank[username, rankLadderName, rankName]",
         description: "Whether the viewer has the specified rank in the specified rank ladder",
-        categories: [VariableCategory.COMMON, VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.BOOLEAN]
+        categories: ["common", "user based"],
+        possibleDataOutput: ["bool"]
     },
     evaluator: async (trigger, username: string, rankLadderName: string, rankName: string) : Promise<boolean> => {
         if (!username?.length || !rankLadderName?.length || !rankName?.length) {

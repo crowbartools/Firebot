@@ -1,4 +1,4 @@
-import { EffectList } from "./effects";
+import type { EffectList } from "./effects";
 
 export type BaseParameter = {
     /**
@@ -47,10 +47,18 @@ export type BooleanParameter = BaseParameter & {
 export type NumberParameter = BaseParameter & {
     type: "number";
     placeholder?: string;
-    default: number;
+    default?: number;
     validation?: {
         min?: number;
         max?: number;
+    };
+};
+
+export type DateTimeParameter = BaseParameter & {
+    type: "date-time";
+    default?: string;
+    validation?: {
+        futureOnly?: boolean;
     };
 };
 
@@ -208,7 +216,7 @@ export type FontOptions = {
     weight: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
     italic: boolean;
     color: string;
-}
+};
 
 export type FontOptionsParameter = BaseParameter & {
     type: "font-options";
@@ -234,13 +242,24 @@ export type CodeMirrorParameter = BaseParameter & {
     type: "codemirror";
     default?: string;
     settings?: {
-        mode: { name: "javascript", json?: boolean } | "htmlmixed" | "css" | { mode: "xml", htmlMode: true },
-        theme: 'blackboard',
-        lineNumbers?: boolean,
-        autoRefresh?: boolean,
-        showGutter?: boolean
-    }
-}
+        mode: { name: "javascript", json?: boolean } | "htmlmixed" | "css" | { mode: "xml", htmlMode: true };
+        theme: 'blackboard';
+        lineNumbers?: boolean;
+        autoRefresh?: boolean;
+        showGutter?: boolean;
+    };
+};
+
+export type CounterSelectParameter = BaseParameter & {
+    type: "counter-select";
+    default?: never;
+};
+
+export type SortTagSelectParameter = BaseParameter & {
+    type: "sort-tag-select";
+    context: string;
+    default?: never;
+};
 
 export type UnknownParameter = BaseParameter & {
     [key: string]: unknown;
@@ -251,6 +270,7 @@ type FirebotParameter =
     | PasswordParameter
     | BooleanParameter
     | NumberParameter
+    | DateTimeParameter
     | EnumParameter
     | EffectListParameter
     | DiscordChannelWebhookParameter
@@ -266,17 +286,26 @@ type FirebotParameter =
     | FontNameParameter
     | FontOptionsParameter
     | RadioCardsParameter
-    | CodeMirrorParameter;
+    | CodeMirrorParameter
+    | CounterSelectParameter
+    | SortTagSelectParameter;
 
 export type ParametersConfig<P> = {
     [K in keyof P]: (P[K] extends string
         ?
         | StringParameter
         | PasswordParameter
+        | DateTimeParameter
         | FilepathParameter
         | ChatterSelectParameter
         | CurrencySelectParameter
         | EnumParameter<string>
+        | HexColorParameter
+        | FontNameParameter
+        | RadioCardsParameter<string>
+        | CodeMirrorParameter
+        | CounterSelectParameter
+        | SortTagSelectParameter
         : P[K] extends number
             ? NumberParameter | EnumParameter<number>
             : P[K] extends boolean
@@ -294,7 +323,7 @@ export type ParametersConfig<P> = {
                                     : P[K] extends EffectList
                                         ? EffectListParameter
                                         : P[K] extends FontOptions
-                                            ? FontOptionsParameter : FirebotParameter);
+                                            ? FontOptionsParameter : FirebotParameter) & { value?: P[K] };
 };
 
 export type ParametersWithNameConfig<P> = {
@@ -302,6 +331,7 @@ export type ParametersWithNameConfig<P> = {
         ?
         | StringParameter
         | PasswordParameter
+        | DateTimeParameter
         | FilepathParameter
         | ChatterSelectParameter
         | CurrencySelectParameter
@@ -310,6 +340,8 @@ export type ParametersWithNameConfig<P> = {
         | FontNameParameter
         | RadioCardsParameter<string>
         | CodeMirrorParameter
+        | CounterSelectParameter
+        | SortTagSelectParameter
         : P[K] extends number
             ? NumberParameter | EnumParameter<number> | RadioCardsParameter<number>
             : P[K] extends boolean
@@ -327,7 +359,7 @@ export type ParametersWithNameConfig<P> = {
                                     : P[K] extends EffectList
                                         ? EffectListParameter
                                         : P[K] extends FontOptions
-                                            ? FontOptionsParameter : FirebotParameter) & { name: K, /* showWhen?: { [K2 in keyof P]?: P[K2] }*/ };
+                                            ? FontOptionsParameter : FirebotParameter) & { name: K, showIf?: { [K2 in keyof P]?: P[K2] | Array<P[K2]> } };
 };
 
 type FirebotParamCategory<ParamConfig extends Record<string, unknown>> = {

@@ -1,6 +1,7 @@
 "use strict";
 
 (function() {
+    const { randomUUID } = require("crypto");
 
     angular.module("firebotApp").component("addOrEditPresetEffectListModal", {
         template: `
@@ -44,11 +45,12 @@
                 </div>
 
                 <div style="margin-top: 20px;">
-                    <collapsable-panel header="How to trigger from StreamDeck">
+                    <collapsable-panel header="How to trigger from Stream Deck">
                         <p>Steps:</p>
                         <ol>
-                            <li>Add "Website" Action to a StreamDeck button</li>
-                            <li>Set URL to <b>http://localhost:7472/api/v1/effects/preset/{{$ctrl.presetList.id}}</b></li>
+                            <li ng-if="$ctrl.isNewPresetList === true">Configure your new preset effect list and click <strong>Save</strong></li>
+                            <li>Add "Website" Action to a Stream Deck button</li>
+                            <li>Set URL to <strong>http://localhost:7472/api/v1/effects/preset/{{$ctrl.presetList.id}}</strong<></li>
                             <li>Check "GET request in background"</li>
                         </ol>
                     </collapsable-panel>
@@ -72,6 +74,7 @@
             $ctrl.isNewPresetList = true;
 
             $ctrl.presetList = {
+                id: randomUUID(),
                 name: "",
                 effects: null,
                 args: [],
@@ -133,17 +136,16 @@
                     return;
                 }
 
-                presetEffectListsService.savePresetEffectList($ctrl.presetList).then((savedList) => {
-                    if (savedList != null) {
-                        $ctrl.close({
-                            $value: {
-                                presetEffectList: savedList
-                            }
-                        });
-                    } else {
-                        ngToast.create("Failed to save preset effect list. Please try again or view logs for details.");
-                    }
-                });
+                const savedList = presetEffectListsService.savePresetEffectList($ctrl.presetList, $ctrl.isNewPresetList);
+                if (savedList != null) {
+                    $ctrl.close({
+                        $value: {
+                            presetEffectList: savedList
+                        }
+                    });
+                } else {
+                    ngToast.create("Failed to save preset effect list. Please try again or view logs for details.");
+                }
             };
         }
     });

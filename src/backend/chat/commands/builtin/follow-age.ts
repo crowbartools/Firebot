@@ -1,9 +1,8 @@
 import { DateTime } from "luxon";
 
 import { SystemCommand } from "../../../../types/commands";
-import twitchApi from "../../../twitch-api/api";
-import chat from "../../twitch-chat";
-import util from "../../../utility";
+import { TwitchApi } from "../../../streaming-platforms/twitch/api";
+import { getDateDiffString } from "../../../utils";
 
 /**
  * The `!followage` command
@@ -38,23 +37,26 @@ export const FollowAgeSystemCommand: SystemCommand<{
         const commandSender = event.userCommand.commandSender;
         const commandOptions = event.commandOptions;
 
-        const rawFollowDate = await twitchApi.users.getFollowDateForUser(commandSender);
+        const rawFollowDate = await TwitchApi.users.getFollowDateForUser(commandSender);
 
         if (rawFollowDate === null) {
-            await chat.sendChatMessage(`${commandSender} is not following the channel.`);
+            await TwitchApi.chat.sendChatMessage(`${commandSender} is not following the channel.`, null, true);
         } else {
             const followDate = DateTime.fromJSDate(rawFollowDate),
                 now = DateTime.utc();
 
-            const followAgeString = util.getDateDiffString(
+            const followAgeString = getDateDiffString(
                 followDate.toJSDate(),
                 now.toJSDate()
             );
 
-            await chat.sendChatMessage(commandOptions.displayTemplate
-                .replaceAll("{user}", commandSender)
-                .replaceAll("{followage}", followAgeString)
-                .replaceAll("{followdate}", followDate.toFormat("dd MMMM yyyy HH:mm"))
+            await TwitchApi.chat.sendChatMessage(
+                commandOptions.displayTemplate
+                    .replaceAll("{user}", commandSender)
+                    .replaceAll("{followage}", followAgeString)
+                    .replaceAll("{followdate}", followDate.toFormat("dd MMMM yyyy HH:mm")),
+                null,
+                true
             );
         }
     }

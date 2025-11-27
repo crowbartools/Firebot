@@ -11,7 +11,18 @@
                 <div class="modal-body pb-0">
                     <div ng-hide="$ctrl.quotes">
                         <h4>Import from</h5>
-                        <p class="muted mb-12">Currently only quotes from Streamlabs Chatbot (desktop bot) and Mix It Up can be imported.</p>
+                        <div class="muted mb-12">
+                            <p class="mb-2">Currently quotes from Streamlabs Chatbot (desktop bot), Mix It Up and Firebot can be imported.</p>
+                            <p>CSV files can also be imported, so long as the values are in the following order (and the first line is a header line):</p>
+                            <p class="font-bold">
+                                ID,
+                                Quote,
+                                Originator <tooltip text="'The user who was quoted.'"></tooltip>,
+                                Creator <tooltip text="'The user who added the quote.'"></tooltip>,
+                                Game/Category,
+                                Creation Date <tooltip text="'In ISO format (i.e. 2025-01-30)'"></tooltip>
+                            </p>
+                        </div>
 
                         <h4>Choose file</h4>
                         <p class="muted mb-2">To get the export file in Streamlabs Chatbot, go to Connections -> Cloud -> Create Split Excel and find the file called Quotes.xlsx.</p>
@@ -19,7 +30,7 @@
                         <file-chooser
                             model="$ctrl.importFilePath"
                             on-update="$ctrl.onFileSelected(filepath)"
-                            options="{filters: [ {name: 'Microsoft Excel', extensions: '.xlsx'}, {name: 'Text File', extensions: '.txt'} ]}"
+                            options="{filters: [ {name: 'Microsoft Excel', extensions: '.xlsx'}, {name: 'Text File', extensions: '.txt'}, {name: 'CSV File', extensions: '.csv'} ]}"
                             hide-manual-edit="true"
                         >
                         </file-chooser>
@@ -46,7 +57,9 @@
                 </div>
                 <div class="modal-footer pt-0">
                     <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
-                    <button ng-show="$ctrl.quotes" ng-click="$ctrl.importQuotes()" class="btn btn-primary">Import</button>
+                    <button ng-show="$ctrl.quotes" ng-click="$ctrl.importQuotes()" class="btn btn-primary" ng-disabled="$ctrl.importing">
+                        {{$ctrl.importing ? 'Importing...' : 'Import'}}
+                    </button>
                 </div>
             `,
             bindings: {
@@ -54,8 +67,11 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function(backendCommunicator, quotesService, importService) {
+            controller: function(backendCommunicator, importService) {
                 const $ctrl = this;
+
+                $ctrl.importer = "";
+                $ctrl.importing = false;
 
                 $ctrl.headers = [
                     {
@@ -70,6 +86,18 @@
                         icon: "fa-quote-right",
                         dataField: "text",
                         cellTemplate: `{{data.text}}`
+                    },
+                    {
+                        name: "AUTHOR",
+                        icon: "fa-user",
+                        dataField: "originator",
+                        headerStyles: {
+                            'padding': '0px 15px'
+                        },
+                        cellStyles: {
+                            'padding': '0px 15px'
+                        },
+                        cellTemplate: `{{data.originator}}`
                     },
                     {
                         name: "DATE",
@@ -97,15 +125,25 @@
                     }
                 ];
 
-                $ctrl.onFileSelected = (filepath) => {
+                $ctrl.onFileSelected = async (filepath) => {
                     //get the file type from the filepath
                     const fileType = filepath.split(".").pop();
                     let data;
-                    if (fileType === "xlsx") {
-                        data = importService.parseStreamlabsChatbotData(filepath);
-                    } else if (fileType === "txt") {
-                        data = importService.parseMixItUpData(filepath, "quotes");
+
+                    switch (fileType) {
+                        case "xlsx":
+                            $ctrl.importer = "streamlabs-chatbot";
+                            break;
+                        case "txt":
+                            $ctrl.importer = "mixitup";
+                            break;
+                        case "csv":
+                            $ctrl.importer = "firebot";
+                            break;
                     }
+
+                    data = await importService.loadQuotes($ctrl.importer, filepath);
+
                     if (data && data.quotes) {
                         $ctrl.quotes = data.quotes;
                         $ctrl.search = "";
@@ -114,13 +152,20 @@
                     }
                 };
 
-                $ctrl.importQuotes = () => {
-                    quotesService.addQuotes($ctrl.quotes);
-                };
+                $ctrl.importQuotes = async () => {
+                    $ctrl.importing = true;
 
-                backendCommunicator.on("quotes-update", () => {
-                    $ctrl.close();
-                });
+                    const result = await backendCommunicator.fireEventAsync("import:import-quotes", {
+                        appId: $ctrl.importer,
+                        data: $ctrl.quotes,
+                        settings: {}
+                    });
+
+                    if (result.success) {
+                        $ctrl.importing = false;
+                        $ctrl.close();
+                    }
+                };
             }
         });
 }());

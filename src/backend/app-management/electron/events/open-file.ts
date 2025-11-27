@@ -1,14 +1,11 @@
-"use strict";
-
-import { Event } from "electron";
+import type { Event } from "electron";
+import logger from "../../../logwrapper";
 import { checkForFirebotSetupInPath } from "../../file-open-helpers";
 
 export function openFile(event: Event, path: string) {
     if (event.defaultPrevented) {
         return;
     }
-
-    const logger = require("../../../logwrapper");
 
     logger.debug(`Received Firebot open file request: ${path}`);
 

@@ -14,10 +14,10 @@
                     template: "<general-settings />"
                 },
                 {
-                    name: "Setups",
-                    description: "Share your best creations with others. Or import others!",
-                    icon: "fa-box-full",
-                    template: "<setups-settings />"
+                    name: "Dashboard",
+                    description: "Settings related to Dashboard components like chat, Quick Actions, and more",
+                    icon: "fa-signal-stream",
+                    template: "<dashboard-settings />"
                 },
                 {
                     name: "Triggers",

@@ -1,25 +1,42 @@
 import { CronJob } from "cron";
 import { DateTime } from "luxon";
-import { TriggerType } from "../common/EffectType";
+
+import type { ScheduledTask } from "../../types/timers";
+import type { Trigger } from "../../types/triggers";
+
 import JsonDbManager from "../database/json-db-manager";
-import logger from "../logwrapper";
-import accountAccess from "../common/account-access";
+import { AccountAccess } from "../common/account-access";
 import connectionManager from "../common/connection-manager";
 import effectRunner from "../common/effect-runner";
 import frontendCommunicator from "../common/frontend-communicator";
-import { ScheduledTask } from "../../types/timers";
+import logger from "../logwrapper";
 
 interface ScheduledTaskRunner {
-    taskDefinition: ScheduledTask,
-    cronjob: CronJob
+    taskDefinition: ScheduledTask;
+    cronjob: CronJob;
 }
 
 class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
-    taskCache: Map<string, ScheduledTaskRunner>;
+    taskCache: Map<string, ScheduledTaskRunner> = new Map();
 
     constructor() {
         super("ScheduledTask", "scheduled-tasks");
-        this.taskCache = new Map<string, ScheduledTaskRunner>();
+
+        frontendCommunicator.on("scheduled-tasks:get-scheduled-tasks",
+            () => this.getAllItems()
+        );
+
+        frontendCommunicator.on("scheduled-tasks:save-scheduled-task",
+            (task: ScheduledTask) => this.saveScheduledTask(task)
+        );
+
+        frontendCommunicator.on("scheduled-tasks:save-all-scheduled-tasks",
+            (tasks: ScheduledTask[]) => this.saveAllItems(tasks)
+        );
+
+        frontendCommunicator.on("scheduled-tasks:delete-scheduled-task",
+            (id: string) => this.deleteScheduledTask(id)
+        );
     }
 
     start(): void {
@@ -57,17 +74,17 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
 
                 const effectsRequest = {
                     trigger: {
-                        type: TriggerType.SCHEDULED_TASK,
+                        type: "scheduled_task",
                         metadata: {
-                            username: accountAccess.getAccounts().streamer.username,
-                            userId: accountAccess.getAccounts().streamer.userId,
-                            userDisplayName: accountAccess.getAccounts().streamer.displayName,
+                            username: AccountAccess.getAccounts().streamer.username,
+                            userId: AccountAccess.getAccounts().streamer.userId,
+                            userDisplayName: AccountAccess.getAccounts().streamer.displayName,
                             task: task
                         }
-                    },
+                    } as Trigger,
                     effects: task.effects
                 };
-                effectRunner.processEffects(effectsRequest);
+                void effectRunner.processEffects(effectsRequest);
 
                 this.logNextTaskRun(task);
             }
@@ -81,7 +98,7 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
             taskRunner.cronjob = this.createCronJob(taskRunner.taskDefinition);
         }
 
-        if (taskRunner.cronjob.running) {
+        if (taskRunner.cronjob.isActive) {
             logger.debug(`Scheduled task timer for "${taskRunner.taskDefinition.name}" is already running`);
         } else {
             taskRunner.cronjob.start();
@@ -96,8 +113,8 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
             taskRunner.cronjob = this.createCronJob(taskRunner.taskDefinition);
         }
 
-        if (taskRunner.cronjob.running) {
-            taskRunner.cronjob.stop();
+        if (taskRunner.cronjob.isActive) {
+            void taskRunner.cronjob.stop();
             logger.debug(`Scheduled task timer for "${taskRunner.taskDefinition.name}" stopped`);
         } else {
             logger.debug(`Scheduled task timer for "${taskRunner.taskDefinition.name}" is not running`);
@@ -108,11 +125,11 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
         }
     }
 
-    private logNextTaskRun(task: ScheduledTask) {
+    private logNextTaskRun(task: ScheduledTask): void {
         if (this.taskCache.has(task.id)) {
             const taskRunner = this.taskCache.get(task.id);
 
-            if (taskRunner.cronjob.running) {
+            if (taskRunner.cronjob.isActive) {
                 logger.debug(`Scheduled task "${task.name}" next run: ${taskRunner.cronjob.nextDate().toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS)}`);
             } else {
                 logger.debug(`Scheduled task "${task.name}" not running.`);
@@ -122,13 +139,13 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
         }
     }
 
-    saveScheduledTask(task: ScheduledTask): ScheduledTask | null {
+    saveScheduledTask(task: ScheduledTask): ScheduledTask {
         logger.debug(`Saving scheduled task "${task.name}"...`);
         const savedTask = super.saveItem(task);
 
         if (savedTask) {
             if (this.taskCache.has(savedTask.id) &&
-                this.taskCache.get(savedTask.id).cronjob?.running) {
+                this.taskCache.get(savedTask.id).cronjob?.isActive) {
                 this.stopTask(this.taskCache.get(savedTask.id));
             }
 
@@ -176,18 +193,6 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
     }
 }
 
-const scheduledTaskManager = new ScheduledTaskManager();
+const manager = new ScheduledTaskManager();
 
-frontendCommunicator.onAsync("getScheduledTasks", async () => scheduledTaskManager.getAllItems());
-
-frontendCommunicator.onAsync("saveScheduledTask", async (task: ScheduledTask) => scheduledTaskManager.saveScheduledTask(task));
-
-frontendCommunicator.onAsync("saveAllScheduledTasks", async (tasks: ScheduledTask[]) => {
-    scheduledTaskManager.saveAllItems(tasks);
-});
-
-frontendCommunicator.on("deleteScheduledTask", (id: string) => {
-    scheduledTaskManager.deleteScheduledTask(id);
-});
-
-export = scheduledTaskManager;
+export { manager as ScheduledTaskManager };

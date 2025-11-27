@@ -1,7 +1,6 @@
-import path from 'node:path';
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import dataAccess from "../../../common/data-access";
+import path from "path";
+import type { ReplaceVariable } from "../../../../types/variables";
+import * as dataAccess from "../../../common/data-access";
 
 const model : ReplaceVariable = {
     definition: {
@@ -14,10 +13,10 @@ const model : ReplaceVariable = {
                 description: "Gets the full path to the `/sub/dir/path/image.gif` in the overlay-resources folder as a text string."
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["text"]
     },
-    evaluator: async (trigger, ...values: unknown[]) =>
+    evaluator: (_, ...values: string[]) =>
         (
             (values != null || values.length > 0)
                 ? `${path.resolve(dataAccess.getPathInUserData("/overlay-resources"), values.join("/"))}`

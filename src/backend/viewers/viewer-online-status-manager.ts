@@ -5,9 +5,11 @@ import { SettingsManager } from "../common/settings-manager";
 import viewerDatabase from "./viewer-database";
 import chatRolesManager from "../roles/chat-roles-manager";
 import connectionManager from "../common/connection-manager";
-import eventManager from "../events/EventManager";
+import { EventManager } from "../events/event-manager";
 import twitchChat from "../chat/twitch-chat";
+import twitchChatterPoll from "../streaming-platforms/twitch/chatter-poll";
 import frontendCommunicator from "../common/frontend-communicator";
+import { ActiveUserHandler } from "../chat/active-user-handler";
 
 class ViewerOnlineStatusManager {
     private _updateLastSeenIntervalId: NodeJS.Timeout;
@@ -35,12 +37,16 @@ class ViewerOnlineStatusManager {
 
             logger.debug("Disconnecting from viewer database.");
         });
+
+        ActiveUserHandler.on("user:online", (user) => {
+            void this.setChatViewerOnline(user);
+        });
     }
 
     async getOnlineViewers(): Promise<FirebotViewer[]> {
         try {
             return await viewerDatabase.getViewerDb().findAsync({ online: true });
-        } catch (error) {
+        } catch {
             return [];
         }
     }
@@ -117,8 +123,8 @@ class ViewerOnlineStatusManager {
     }
 
     async setAllChatViewersOnline(): Promise<void> {
-        await twitchChat.populateChatterList();
-        const viewers = await twitchChat.getViewerList();
+        await twitchChatterPoll.runChatterPoll();
+        const viewers = ActiveUserHandler.getAllOnlineUsers();
 
         if (viewers == null) {
             return;
@@ -134,7 +140,7 @@ class ViewerOnlineStatusManager {
                 twitchRoles: viewer.twitchRoles
             };
 
-            this.setChatViewerOnline(viewerPacket);
+            void this.setChatViewerOnline(viewerPacket);
         }
     }
 
@@ -167,7 +173,7 @@ class ViewerOnlineStatusManager {
 
         logger.debug('ViewerDB: Trying to set all viewers to offline.');
 
-        const { numAffected } = await viewerDatabase.getViewerDb().updateAsync({online: true}, {$set: { online: false }}, { multi: true });
+        const { numAffected } = await viewerDatabase.getViewerDb().updateAsync({ online: true }, { $set: { online: false } }, { multi: true });
 
         if (numAffected > 0) {
             logger.debug(`ViewerDB: Set ${numAffected} viewers to offline.`);
@@ -188,7 +194,7 @@ class ViewerOnlineStatusManager {
             const { numAffected } = await viewerDatabase.getViewerDb().updateAsync({ online: true }, { $set: { lastSeen: Date.now() } }, { multi: true });
 
             logger.debug(`ViewerDB: Setting last seen date for ${numAffected} viewers`);
-        } catch (error) {
+        } catch {
             logger.debug("ViewerDB: Error setting last seen");
         }
     }
@@ -238,7 +244,7 @@ class ViewerOnlineStatusManager {
 
                 onlineViewers.forEach(viewer => this.calcViewerOnlineMinutes(viewer));
             }
-        } catch (error) { }
+        } catch { }
     }
 
     /**
@@ -255,13 +261,13 @@ class ViewerOnlineStatusManager {
         }
         if (newHours !== previousHours) {
 
-            eventManager.triggerEvent("firebot", "view-time-update", {
+            void EventManager.triggerEvent("firebot", "view-time-update", {
                 username: viewer.username,
                 previousViewTime: previousHours,
                 newViewTime: newHours
             });
 
-            viewerDatabase.calculateAutoRanks(viewer._id, "view_time");
+            void viewerDatabase.calculateAutoRanks(viewer._id, "view_time");
         }
     }
 }
@@ -269,11 +275,11 @@ class ViewerOnlineStatusManager {
 const viewerOnlineStatusManager = new ViewerOnlineStatusManager();
 
 twitchChat.on("connected", () => {
-    viewerOnlineStatusManager.setAllChatViewersOnline();
+    void viewerOnlineStatusManager.setAllChatViewersOnline();
 });
 
 twitchChat.on("disconnected", () => {
-    viewerOnlineStatusManager.setAllViewersOffline();
+    void viewerOnlineStatusManager.setAllViewersOffline();
 });
 
 export = viewerOnlineStatusManager;

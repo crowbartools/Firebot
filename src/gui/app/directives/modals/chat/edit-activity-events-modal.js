@@ -4,16 +4,20 @@
     angular.module("firebotApp")
         .component("editActivityEventsModal", {
             template: `
-            <div class="modal-header" style="text-align: center">
-                <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
-                <h4 class="modal-title">Edit Activity Events</h4>
+            <div class="sticky-element">
+                <div class="modal-header" style="text-align: center">
+                    <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
+                    <h4 class="modal-title">Edit Activity Feed Events</h4>
+                </div>
+                <div style="padding: 0 35px">
+                    <p>Select which events you want to see in the Activity Feed</p>
+                    <div style="margin-bottom: 10px;">
+                        <searchbar placeholder-text="Search events" query="eventSearch" />
+                    </div>
+                </div>
             </div>
             <div class="modal-body" style="padding: 0 35px">
-              <p>Select which events you want to see in the activity feed</p>
               <div class="viewer-db-switches">
-                <div style="margin-bottom: 10px;">
-                    <searchbar placeholder-text="Search events" query="eventSearch" />
-                </div>
                 <div ng-hide="eventSearch && !!eventSearch.length" style="display: flex;align-items: center;justify-content: space-between;margin-bottom:10px;padding-bottom: 5px; border-bottom: 1px solid #585858;">
                         <span style="font-weight: 900;" id="selectAllLabel">Select All</span>
                         <span>
@@ -47,20 +51,14 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function($q, backendCommunicator, settingsService) {
+            controller: function(backendCommunicator, settingsService) {
                 const $ctrl = this;
 
                 $ctrl.events = [];
 
                 $ctrl.allowedEvents = settingsService.getSetting("AllowedActivityEvents");
 
-                $q.when(backendCommunicator
-                    .fireEventAsync("get-activity-feed-supported-events"))
-                    .then((supportedEvents) => {
-                        if (supportedEvents != null) {
-                            $ctrl.events = supportedEvents;
-                        }
-                    });
+                $ctrl.events = backendCommunicator.fireEventSync("activity-feed:get-activity-feed-supported-events") ?? [];
 
                 $ctrl.toggleEventChecked = function(event) {
                     const eventKey = `${event.sourceId}:${event.eventId}`;

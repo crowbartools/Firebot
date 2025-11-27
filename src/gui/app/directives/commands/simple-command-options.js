@@ -1,6 +1,6 @@
 "use strict";
 (function() {
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
     angular.module("firebotApp").component("simpleCommandOptions", {
         bindings: {
             command: "="
@@ -60,7 +60,7 @@
                         break;
                     case "subs":
                         $ctrl.command.restrictionData.restrictions = [{
-                            id: uuid(),
+                            id: randomUUID(),
                             type: "firebot:permissions",
                             mode: "roles",
                             roleIds: ["sub", "mod", "broadcaster"]
@@ -68,7 +68,7 @@
                         break;
                     case "mods":
                         $ctrl.command.restrictionData.restrictions = [{
-                            id: uuid(),
+                            id: randomUUID(),
                             type: "firebot:permissions",
                             mode: "roles",
                             roleIds: ["mod", "broadcaster"]
@@ -101,7 +101,7 @@
                     const chatEffect = $ctrl.command.effects.list.find(e => e.type === "firebot:chat");
                     if (chatEffect) {
                         $ctrl.chatEffect = {
-                            id: uuid(),
+                            id: randomUUID(),
                             type: "firebot:chat",
                             message: chatEffect.message
                         };
@@ -109,7 +109,7 @@
                 }
                 if ($ctrl.chatEffect == null) {
                     $ctrl.chatEffect = {
-                        id: uuid(),
+                        id: randomUUID(),
                         type: "firebot:chat",
                         message: ""
                     };

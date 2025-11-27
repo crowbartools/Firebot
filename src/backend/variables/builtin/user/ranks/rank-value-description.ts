@@ -1,7 +1,5 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../../types/variables";
 import viewerRankManager from "../../../../ranks/rank-manager";
-import viewerDatabase from "../../../../viewers/viewer-database";
 import logger from "../../../../logwrapper";
 
 const model : ReplaceVariable = {
@@ -9,10 +7,10 @@ const model : ReplaceVariable = {
         handle: "rankValueDescription",
         usage: "rankValueDescription[rankLadderName, rankName]",
         description: "Returns the threshold value description of the specified rank in the rank ladder, i.e. '50 hours'. Only applicable to auto rank ladders.",
-        categories: [VariableCategory.COMMON, VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "user based"],
+        possibleDataOutput: ["text"]
     },
-    evaluator: async (trigger, rankLadderName: string, rankName: string) : Promise<string | null> => {
+    evaluator: (trigger, rankLadderName: string, rankName: string): string => {
         if (!rankLadderName?.length || !rankName?.length) {
             logger.debug(`$rankValueDescription: Invalid rank ladder name or rank name provided`);
             return null;

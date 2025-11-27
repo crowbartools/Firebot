@@ -1,6 +1,6 @@
 "use strict";
 
-const eventManager = require("../../../events/EventManager");
+const { EventManager } = require("../../../events/event-manager");
 
 const EVENT_SOURCE_ID = "streamelements";
 const EventId = {
@@ -53,7 +53,7 @@ const eventSourceDefinition = {
 };
 
 exports.registerEvents = () => {
-    eventManager.registerEventSource(eventSourceDefinition);
+    EventManager.registerEventSource(eventSourceDefinition);
 };
 
 const currencies = new Map([
@@ -86,7 +86,7 @@ const currencies = new Map([
 ]);
 
 exports.processDonationEvent = (eventData) => {
-    eventManager.triggerEvent(EVENT_SOURCE_ID, EventId.DONATION, {
+    EventManager.triggerEvent(EVENT_SOURCE_ID, EventId.DONATION, {
         donationAmount: eventData.amount,
         formattedDonationAmount: currencies.get(eventData.currency) + eventData.amount,
         donationMessage: eventData.message,
@@ -95,7 +95,7 @@ exports.processDonationEvent = (eventData) => {
 };
 
 exports.processFollowEvent = (eventData) => {
-    eventManager.triggerEvent(EVENT_SOURCE_ID, EventId.FOLLOW, {
+    EventManager.triggerEvent(EVENT_SOURCE_ID, EventId.FOLLOW, {
         username: eventData.displayName
     });
 };

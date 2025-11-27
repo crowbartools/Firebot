@@ -7,16 +7,22 @@
 
     angular
         .module("firebotApp")
-        .factory("activityFeedService", function($sce, backendCommunicator, utilityService,
-            settingsService, ngToast) {
+        .factory("activityFeedService", function(
+            $sce,
+            backendCommunicator,
+            modalService,
+            modalFactory,
+            settingsService,
+            chatMessagesService,
+            ngToast) {
             const service = {};
 
             service.allActivities = [];
             service.activities = [];
 
-            backendCommunicator.on("event-activity", (activity) => {
-
-                activity.message = $sce.trustAsHtml(sanitize(marked(activity.message)));
+            backendCommunicator.on("activity-feed:event-activity", (activity) => {
+                const rawMessage = activity.message;
+                activity.message = $sce.trustAsHtml(sanitize(marked.parseInline(activity.message)));
 
                 service.allActivities.unshift(activity);
                 if (service.allActivities.length > 500) {
@@ -29,6 +35,12 @@
                 }
 
                 service.activities.unshift(activity);
+
+                if (settingsService.getSetting("ShowActivityFeedEventsInChat") === true
+                    && activity.excludeFromChatFeed !== true) {
+                    chatMessagesService.chatAlertMessage(rawMessage, activity.icon);
+                }
+
                 if (service.activities.length > 100) {
                     service.activities.length = 100;
                 }
@@ -61,16 +73,35 @@
                 }
             };
 
+            service.clearAllActivities = () => {
+                modalFactory.showConfirmationModal({
+                    title: "Clear All Activities",
+                    question: "Are you sure you want to clear all activities?",
+                    confirmLabel: "Clear",
+                    confirmBtnType: "btn-danger"
+                }).then((confirmed) => {
+                    if (confirmed) {
+                        service.allActivities = [];
+                        service.activities = [];
+                        ngToast.create({
+                            className: 'success',
+                            content: "Successfully cleared all activities!",
+                            timeout: 5000
+                        });
+                    }
+                });
+            };
+
             service.unacknowledgedCount = () => {
                 return service.activities.filter(a => !a.acknowledged).length;
             };
 
-            backendCommunicator.on("acknowledge-all-activity", () => {
+            backendCommunicator.on("activity-feed:acknowledge-all-activity", () => {
                 service.markAllAcknowledged();
             });
 
             service.retriggerEvent = (activityId) => {
-                backendCommunicator.send("retrigger-event", activityId);
+                backendCommunicator.send("activity-feed:retrigger-event", activityId);
                 ngToast.create({
                     className: 'success',
                     content: "Successfully retriggered event!",
@@ -79,9 +110,9 @@
             };
 
             service.showEditActivityFeedEventsModal = () => {
-                utilityService.showModal({
+                modalService.showModal({
                     component: "editActivityEventsModal",
-                    size: "sm",
+                    size: "md",
                     closeCallback: () => {
                         const allowedEvents = settingsService.getSetting("AllowedActivityEvents");
                         service.activities = service.allActivities

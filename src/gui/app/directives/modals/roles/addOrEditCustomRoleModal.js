@@ -2,7 +2,7 @@
 
 (function() {
 
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     angular.module("firebotApp").component("addOrEditCustomRoleModal", {
         template: `
@@ -15,7 +15,18 @@
                     <div style="display:inline-block;font-size: 14px;font-weight: 500;opacity: 0.7;margin:0;padding:0;text-transform: uppercase;margin-bottom: 1px;margin-left: 10px;">Name</div>
                     <input type="text" class="form-control" ng-model="$ctrl.role.name" placeholder="Enter name">
                 </div>
-                <div style="padding-top: 25px;">
+
+                <div class="form-group flex justify-between pt-10">
+                    <div>
+                        <label class="control-label" style="margin:0;">Show Badge in Chat</label>
+                        <p class="help-block">If enabled, users who are in this role will have a badge in Firebot's chat</p>
+                    </div>
+                    <div class="ml-5">
+                        <toggle-button toggle-model="$ctrl.role.showBadgeInChat" auto-update-value="true" font-size="32"></toggle-button>
+                    </div>
+                </div>
+
+                <div>
                     <div>
                         <div class="settings-title" style="margin-bottom: 4px;display: flex;justify-content: space-between;">
                             <div style="display:flex; align-items: center;">
@@ -29,6 +40,7 @@
                             </div>
                     </div>
                 </div>
+
                 <div id="user-list" style="padding-bottom: 20px;">
                     <div style="min-height: 45px;background-color:#282a2e;border-radius:8px;">
 
@@ -70,6 +82,7 @@
 
             $ctrl.role = {
                 name: "",
+                showBadgeInChat: false,
                 viewers: []
             };
 
@@ -84,7 +97,7 @@
                         label: "Add Viewer",
                         saveText: "Add",
                         validationFn: (user) => {
-                            return new Promise(resolve => {
+                            return new Promise((resolve) => {
                                 if (user == null) {
                                     return resolve(false);
                                 }
@@ -111,7 +124,7 @@
                     question: `Are you sure you want to remove ${displayName} from this role?`,
                     confirmLabel: "Remove",
                     confirmBtnType: "btn-danger"
-                }).then(confirmed => {
+                }).then((confirmed) => {
                     if (confirmed) {
                         $ctrl.role.viewers = $ctrl.role.viewers.filter(v => v.id !== userId);
                     }
@@ -145,7 +158,7 @@
                 }
 
                 if ($ctrl.isNewRole) {
-                    $ctrl.role.id = uuid();
+                    $ctrl.role.id = randomUUID();
                 }
 
                 $ctrl.close({

@@ -33,8 +33,8 @@
         };
 
         // Deleted a currency through the modal.
-        service.deleteCurrency = (currency) => {
-            backendCommunicator.send("currencies:delete-currency", currency);
+        service.deleteCurrency = (id) => {
+            backendCommunicator.send("currencies:delete-currency", id);
         };
 
         backendCommunicator.on("currencies:currencies-updated", (currencies) => {

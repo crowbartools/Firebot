@@ -1,22 +1,29 @@
 "use strict";
 
 (function() {
-    const dataAccess = require("../../backend/common/data-access.js");
-
     angular
         .module("firebotApp")
-        .factory("connectionService", function(soundService, $rootScope, backendCommunicator,
-            logger, accountAccess, settingsService, utilityService, integrationService) {
+        .factory("connectionService", function(
+            soundService,
+            $rootScope,
+            backendCommunicator,
+            logger,
+            accountAccess,
+            profileManager,
+            settingsService,
+            utilityService,
+            integrationService
+        ) {
             const service = {};
 
-            backendCommunicator.on("accountUpdate", (accounts) => {
+            backendCommunicator.on("accounts:account-update", (accounts) => {
                 service.accounts = accounts;
                 service.loadProfiles();
             });
-            service.getAccounts = () => {
-                service.accounts = backendCommunicator.fireEventSync("getAccounts");
+            service.loadAccounts = () => {
+                service.accounts = backendCommunicator.fireEventSync("accounts:get-accounts");
             };
-            service.getAccounts();
+            service.loadAccounts();
 
             const defaultPhotoUrl = "../images/placeholders/nologin.png";
 
@@ -98,29 +105,29 @@
                 });
             };
 
-            backendCommunicator.on("invalidate-accounts", service.invalidateAccounts);
+            backendCommunicator.on("accounts:invalidate-accounts", service.invalidateAccounts);
 
-            service.validateAccounts = async () => {
-                await backendCommunicator.fireEventAsync("validate-twitch-accounts");
+            service.validateAccounts = () => {
+                backendCommunicator.fireEventSync("validate-twitch-accounts");
             };
 
             // Create new profile
-            service.createNewProfile = function(profileId) {
-                ipcRenderer.send("createProfile", profileId);
+            service.createNewProfile = (profileId) => {
+                backendCommunicator.send("profiles:create-profile", profileId);
             };
 
-            service.renameProfile = function(newProfileId) {
-                ipcRenderer.send("renameProfile", newProfileId);
+            service.renameProfile = (newProfileId) => {
+                backendCommunicator.send("profiles:rename-profile", newProfileId);
             };
 
             // delete profile
-            service.deleteProfile = function() {
-                ipcRenderer.send("deleteProfile");
+            service.deleteProfile = () => {
+                backendCommunicator.send("profiles:delete-profile");
             };
 
             // switch profile
-            service.switchProfiles = function(profileId) {
-                ipcRenderer.send("switchProfile", profileId);
+            service.switchProfiles = (profileId) => {
+                backendCommunicator.send("profiles:switch-profile", profileId);
             };
 
             service.profiles = [];
@@ -128,14 +135,7 @@
             service.loadProfiles = () => {
                 // Get full list of active profiles.
 
-                let activeProfileIds;
-                try {
-                    const globalSettingDb = dataAccess.getJsonDbInUserData("./global-settings");
-                    activeProfileIds = globalSettingDb.getData("./profiles/activeProfiles");
-                } catch (err) {
-                    logger.warn(`Couldn't load active profiles.`);
-                    return;
-                }
+                const activeProfileIds = profileManager.getActiveProfiles();
 
                 if (activeProfileIds == null) {
                     return;
@@ -151,13 +151,7 @@
 
                     // Try to get streamer settings for this profile.
                     // If it exists, overwrite defaults.
-                    let streamer;
-                    try {
-                        const profileDb = dataAccess.getJsonDbInUserData(`./profiles/${profileId}/auth-twitch`);
-                        streamer = profileDb.getData("/streamer");
-                    } catch (err) {
-                        logger.info(`Couldn't get streamer data for profile ${profileId} while updating the UI. It's possible this account hasn't logged in yet.`);
-                    }
+                    const streamer = profileManager.getAccountInfo(profileId, "streamer");
 
                     if (streamer) {
                         if (streamer.username) {

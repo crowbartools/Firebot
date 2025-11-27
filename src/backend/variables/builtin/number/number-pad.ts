@@ -1,13 +1,12 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
         handle: "padNumber",
         description: "Pads the given number up to the specified number of decimal places.",
         usage: "padNumber[value, places]",
-        categories: [VariableCategory.NUMBERS],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["numbers"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (
         trigger: Trigger,

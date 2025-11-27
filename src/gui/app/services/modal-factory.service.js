@@ -1,8 +1,6 @@
 "use strict";
 (function() {
 
-    const dataAccess = require("../../backend/common/data-access.js");
-
     angular
         .module("firebotApp")
         .factory("modalFactory", function(
@@ -25,6 +23,28 @@
                 });
             });
 
+            backendCommunicator.onAsync("openGetInputModal", (data) => {
+                return new Promise((resolve) => {
+                    service.openGetInputModal({
+                        ...data.config,
+                        validationFn: async (value) => {
+                            if (value != null) {
+                                if (data.validation == null) {
+                                    return true;
+                                }
+
+                                if (data.validation.required) {
+                                    if (value == null || value === "") {
+                                        return false;
+                                    }
+                                }
+                            }
+                            return true;
+                        }
+                    }, resolve, () => resolve(null));
+                });
+            });
+
             service.showSetupWizard = function(allowExit = false) {
                 modalService.showModal({
                     component: "setupWizardModal",
@@ -34,7 +54,7 @@
                 });
             };
 
-            service.openGetInputModal = function(options, callback) {
+            service.openGetInputModal = function(options, callback, dismissCallback) {
                 modalService.showModal({
                     component: "inputModal",
                     size: "sm",
@@ -53,7 +73,8 @@
                     },
                     closeCallback: (resp) => {
                         callback(resp.model);
-                    }
+                    },
+                    dismissCallback
                 });
             };
 
@@ -111,6 +132,7 @@
                     resolveObj: {
                         model: () => options.model,
                         label: () => options.label,
+                        description: () => options.description,
                         saveText: () => options.saveText,
                         validationFn: () => options.validationFn,
                         validationText: () => options.validationText
@@ -123,81 +145,7 @@
 
             service.showOverlayInfoModal = function(instanceName) {
                 const overlayInfoModalContext = {
-                    templateUrl: "overlayInfoModal.html",
-                    controllerFunc: (
-                        $scope,
-                        $rootScope,
-                        $uibModalInstance,
-                        ngToast,
-                        settingsService,
-                        instanceName
-                    ) => {
-
-                        $scope.usingOverlayInstances = settingsService.getSetting("UseOverlayInstances");
-
-                        $scope.broadcastingSoftwares = [
-                            "Local", "Direct Link/2 PC Setup"
-                        ];
-
-                        $scope.selectedBroadcastingSoftware = "Local";
-
-                        $scope.updateSelectedBroadcastingSoftware = (type) => {
-                            $scope.selectedBroadcastingSoftware = type;
-                            $scope.buildOverlayPath();
-                        };
-
-                        $scope.overlayPath = "";
-                        $scope.buildOverlayPath = () => {
-                            let overlayPath = dataAccess.getPathInUserData("overlay.html");
-
-                            const port = settingsService.getSetting("WebServerPort");
-
-                            const params = {};
-                            if ($scope.selectedBroadcastingSoftware === "Direct Link/2 PC Setup") {
-                                overlayPath = `http://localhost:${port}/overlay`;
-
-                            } else {
-                                if (port !== 7472 && !isNaN(port)) {
-                                    params["port"] = settingsService.getSetting("WebServerPort");
-                                }
-                                overlayPath = `file:///${overlayPath.replace(/^\//g, "")}`;
-                            }
-
-
-                            if (instanceName != null && instanceName !== "") {
-                                $scope.showingInstance = true;
-                                params["instance"] = encodeURIComponent(instanceName);
-                            }
-
-                            let paramCount = 0;
-                            Object.entries(params).forEach((p) => {
-                                const key = p[0],
-                                    value = p[1];
-
-                                const prefix = paramCount === 0 ? "?" : "&";
-
-                                overlayPath += `${prefix}${key}=${value}`;
-
-                                paramCount++;
-                            });
-
-                            $scope.overlayPath = overlayPath;
-                        };
-                        $scope.buildOverlayPath();
-
-                        $scope.pathCopied = false;
-                        $scope.copy = function() {
-                            $rootScope.copyTextToClipboard($scope.overlayPath);
-                            ngToast.create({
-                                className: 'success',
-                                content: "Overlay path copied!"
-                            });
-                        };
-
-                        $scope.dismiss = function() {
-                            $uibModalInstance.dismiss("cancel");
-                        };
-                    },
+                    component: "overlayInfoModal",
                     resolveObj: {
                         instanceName: () => {
                             return instanceName;
@@ -386,7 +334,7 @@
                             if (!$scope.downloadComplete) {
                                 $scope.downloadHasError = true;
                                 $scope.errorMessage =
-                  "Download is taking longer than normal. There may have been an error. You can keep waiting or close this and try again later.";
+                                    "Download is taking longer than normal. There may have been an error. You can keep waiting or close this and try again later.";
                             }
                         }, 180 * 1000);
 
@@ -712,7 +660,7 @@
 
                             const { triggerType, triggerMeta } = $scope;
                             try {
-                                const variableErrors = await backendCommunicator.fireEventAsync("validateVariables", {
+                                const variableErrors = await backendCommunicator.fireEventAsync("variables:validate-variables", {
                                     data: $scope.effect,
                                     trigger: {
                                         type: triggerType,
@@ -735,7 +683,7 @@
                                     if (firstError.message) {
                                         errorDetails.push({
                                             title: "Error",
-                                            message: service.capitalize(firstError.message)
+                                            message: firstError.message
                                         });
                                     }
 
@@ -856,7 +804,7 @@
                         };
 
                         $scope.runEffect = function() {
-                            ipcRenderer.send('runEffectsManually', { effects: { list: [$scope.effect] } });
+                            backendCommunicator.send('runEffectsManually', { effects: { list: [$scope.effect] } });
                         };
 
                         $scope.delete = function() {

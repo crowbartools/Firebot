@@ -3,7 +3,7 @@
 // Modal for adding or editing a command
 
 (function () {
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     angular.module("firebotApp").component("addOrEditCustomCommandModal", {
         templateUrl:
@@ -24,7 +24,7 @@
                 cooldownMessage: "This command is still on cooldown for: {timeLeft}",
                 cooldown: {},
                 effects: {
-                    id: uuid(),
+                    id: randomUUID(),
                     list: []
                 },
                 restrictionData: {
@@ -102,7 +102,7 @@
                         utilityService.showConfirmationModal({
                             title: "Default Mode",
                             question: `Do you want to always use Advanced Mode for new Commands?`,
-                            tip: "Note: You can change this in Settings > Commands at any time",
+                            tip: "Note: You can change this in Settings > Triggers at any time",
                             confirmLabel: "Yes",
                             confirmBtnType: "btn-default",
                             cancelLabel: "Not right now",
@@ -122,6 +122,8 @@
             };
 
             $ctrl.$onInit = function () {
+                $ctrl.activeTab = 'general';
+
                 if ($ctrl.resolve.command == null) {
                     $ctrl.isNewCommand = true;
                 } else {
@@ -220,7 +222,8 @@
                         hasNumberArg: () => $ctrl.command.subCommands && $ctrl.command.subCommands.some(sc => sc.arg === "\\d+"),
                         hasUsernameArg: () => $ctrl.command.subCommands && $ctrl.command.subCommands.some(sc => sc.arg === "@\\w+"),
                         hasFallbackArg: () => $ctrl.command.fallbackSubcommand != null,
-                        otherArgNames: () => $ctrl.command.subCommands && $ctrl.command.subCommands.filter(c => !c.regex && (arg ? c.arg !== arg.arg : true)).map(c => c.arg.toLowerCase()) || []
+                        otherArgNames: () => $ctrl.command.subCommands && $ctrl.command.subCommands.filter(c => !c.regex && (arg ? c.arg !== arg.arg : true)).map(c => c.arg.toLowerCase()) || [],
+                        parentTrigger: () => $ctrl.command.trigger
                     },
                     closeCallback: (newArg) => {
                         if (newArg.fallback) {

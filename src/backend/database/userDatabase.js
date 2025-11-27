@@ -6,7 +6,7 @@ const viewerOnlineStatusManager = require("../viewers/viewer-online-status-manag
 
 exports.getUserDb = () => viewerDatabase.getViewerDb();
 exports.connectUserDatabase = async () => viewerDatabase.connectViewerDatabase();
-exports.createNewUser = async (...args) => viewerDatabase.createNewViewer(...args);
+exports.createNewUser = async (viewer) => viewerDatabase.createNewViewer(viewer);
 exports.addNewUserFromChat = async (...args) => viewerDatabase.addNewViewerFromChat(...args);
 exports.getUserById = async id => viewerDatabase.getViewerById(id);
 exports.getUserByUsername = async username => viewerDatabase.getViewerByUsername(username);

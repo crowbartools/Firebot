@@ -7,7 +7,7 @@
             <div class="fb-nav" ng-class="{'contracted': !$ctrl.sbm.navExpanded}">
                 <div class="nav-header">
                     <img class="nav-header-icon" ng-class="{'contracted': !$ctrl.sbm.navExpanded}" src="../images/logo_transparent.png">
-                    <span class="nav-header-title" ng-class="{'contracted': !$ctrl.sbm.navExpanded}">Firebot</span>
+                    <span class="nav-header-title firebot-wordmark" ng-class="{'contracted': !$ctrl.sbm.navExpanded}">Firebot</span>
                     <span class="nav-expand-button" ng-class="{'contracted': !$ctrl.sbm.navExpanded}" ng-click="$ctrl.sbm.toggleNav()" aria-label="{{$ctrl.sbm.navExpanded ? 'Contract Sidebar' : 'Expand Sidebar'}}">
                         <i class="fal" ng-class="$ctrl.sbm.navExpanded ? 'fa-angle-left' : 'fa-angle-right'"></i>
                     </span>
@@ -25,6 +25,7 @@
                             <nav-link page="Preset Effect Lists" name="{{ 'SIDEBAR.OTHER.PRESET_EFFECT_LISTS' | translate }}" icon="fa-magic"></nav-link>
                             <nav-link page="Hotkeys" name="{{'SIDEBAR.OTHER.HOTKEYS' | translate }}" icon="fa-keyboard"></nav-link>
                             <nav-link page="Counters" name="{{'SIDEBAR.OTHER.COUNTERS' | translate }}" icon="fa-tally"></nav-link>
+                            <nav-link page="Overlay Widgets" name="Overlay Widgets" icon="fa-layer-plus"></nav-link>
 
                             <div ng-if="$ctrl.extensionPages().length">
                                 <nav-category name="Custom" pad-top="true"></nav-category>
@@ -32,17 +33,15 @@
                             </div>
 
                             <nav-category name="{{'SIDEBAR.MANAGEMENT' | translate }}" pad-top="true"></nav-category>
-                            <nav-link page="Overlay Widgets" name="Overlay Widgets" icon="fa-layer-plus"></nav-link>
                             <nav-link page="Effect Queues" name="{{ 'SIDEBAR.OTHER.EFFECT_QUEUES' | translate }}" icon="fa-stream"></nav-link>
                             <nav-link page="Variable Macros" name="Variable Macros" icon="fa-brackets"></nav-link>
-                            <nav-link page="Games" name="Games" icon="fa-dice"></nav-link>
-                            <nav-link page="Moderation" name="Moderation" icon="fa-gavel"></nav-link>
-                            <nav-link page="Currency" name="{{'SIDEBAR.MANAGEMENT.CURRENCY' | translate }}" icon="fa-money-bill" ng-if="$ctrl.isViewerDBOn()"></nav-link>
                             <nav-link page="Quotes" name="{{'SIDEBAR.MANAGEMENT.QUOTES' | translate }}" icon="fa-quote-right"></nav-link>
-                            <nav-link page="Viewers" name="{{'SIDEBAR.MANAGEMENT.VIEWERS' | translate }}" icon="fa-users" ng-if="$ctrl.isViewerDBOn()"></nav-link>
+                            <nav-link page="Games" name="Games" icon="fa-dice"></nav-link>
+                            <nav-link page="Currency" name="{{'SIDEBAR.MANAGEMENT.CURRENCY' | translate }}" icon="fa-money-bill" ng-if="$ctrl.isViewerDBOn()"></nav-link>
                             <nav-link page="Roles And Ranks" name="{{'SIDEBAR.MANAGEMENT.VIEWER_ROLES' | translate }}" icon="fa-user-tag"></nav-link>
+                            <nav-link page="Viewers" name="{{'SIDEBAR.MANAGEMENT.VIEWERS' | translate }}" icon="fa-users"></nav-link>
+                            <nav-link page="Moderation" name="Moderation" icon="fa-gavel"></nav-link>
                             <nav-link page="Settings" name="{{'SIDEBAR.MANAGEMENT.SETTINGS' | translate }}" icon="fa-cog"></nav-link>
-                            <nav-link page="Updates" name="{{'SIDEBAR.MANAGEMENT.UPDATES' | translate }}" icon="fa-download" badge-text="$ctrl.updateIsAvailable() ? 'NEW' : ''"></nav-link>
                         </ul>
                     </nav>
 

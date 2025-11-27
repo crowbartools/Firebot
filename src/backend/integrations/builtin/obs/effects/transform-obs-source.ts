@@ -19,7 +19,7 @@ export const TransformSourceEffectType: EffectType<{
         name: "Transform OBS Source",
         description: "Transforms the position, scale, or rotation of an OBS source either instantly or animated over time",
         icon: "fad fa-arrows",
-        categories: ["common"]
+        categories: ["common", "integrations"]
     },
     optionsTemplate: `
         <eos-container ng-if="isUsingInvalidItemId" pad-top="true">

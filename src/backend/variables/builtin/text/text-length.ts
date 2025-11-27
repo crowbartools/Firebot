@@ -1,13 +1,12 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
         handle: "textLength",
         usage: "textLength[text]",
         description: "Returns the length of the input text",
-        categories: [VariableCategory.TEXT],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["text"],
+        possibleDataOutput: ["number"]
     },
     evaluator: (
         trigger: Trigger,

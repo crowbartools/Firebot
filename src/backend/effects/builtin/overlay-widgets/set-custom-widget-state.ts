@@ -1,9 +1,6 @@
 import { EffectType } from "../../../../types/effects";
-import { EffectCategory } from '../../../../shared/effect-constants';
 import overlayWidgetConfigManager from "../../../overlay-widgets/overlay-widget-config-manager";
 import logger from "../../../logwrapper";
-import type { DynamicCountdownWidgetConfig } from "../../../overlay-widgets/builtin-types/countdown/countdown-dynamic";
-import countdownManager from "../../../overlay-widgets/builtin-types/countdown/countdown-manager";
 
 const model: EffectType<{
     customWidgetId: string;
@@ -15,7 +12,7 @@ const model: EffectType<{
         name: "Set Custom Widget State",
         description: "Set the state of a Custom or Custom (Advanced) Overlay Widget.",
         icon: "fad fa-cog",
-        categories: [EffectCategory.OVERLAY, EffectCategory.ADVANCED],
+        categories: ["overlay", "advanced"],
         dependencies: []
     },
     optionsTemplate: `
@@ -67,7 +64,7 @@ const model: EffectType<{
         };
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.customWidgetId == null) {
             errors.push("Please select a custom widget.");
         }

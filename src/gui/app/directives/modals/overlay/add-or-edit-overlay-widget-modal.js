@@ -2,7 +2,7 @@
 
 (function() {
 
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     /** @typedef {import("../../../../../types/overlay-widgets").OverlayWidgetType} OverlayWidgetType */
     /** @typedef {import("../../../../../types/overlay-widgets").OverlayWidgetConfig} OverlayWidgetConfig */
@@ -136,13 +136,13 @@
                                 <hr />
                                 <h4 style="margin: 0;">Settings</h4>
                                 <div style="margin-top: 0.25rem;font-size: 14px; color: #99a1af; margin-bottom: 1.25rem;">Configure the settings for this widget below.</div>
-                                <dynamic-parameter
-                                    ng-repeat="settingSchema in $ctrl.selectedType.settingsSchema"
-                                    name="{{settingSchema.name}}"
-                                    schema="settingSchema"
-                                    ng-model="$ctrl.widget.settings[settingSchema.name]"
+                                <dynamic-parameters
+                                    settings-schema="$ctrl.selectedType.settingsSchema"
+                                    settings="$ctrl.widget.settings"
+                                    trigger="overlay_widget"
+                                    modal-id="{{modalId}}"
                                 >
-                                </dynamic-parameter>
+                                </dynamic-parameters>
                             </div>
                         </div>
                     </form>
@@ -171,7 +171,8 @@
                         name: t.name,
                         description: t.description,
                         iconClass: t.icon
-                    }));
+                    }))
+                    .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
 
                 $ctrl.isNewWidget = true;
 
@@ -208,13 +209,15 @@
                     }
 
                     $ctrl.selectedType = foundType;
+
+                    $ctrl.widget.settings = {};
                 };
 
                 /**
                  * @type {OverlayWidgetConfig}
                  */
                 $ctrl.widget = {
-                    id: uuid(),
+                    id: randomUUID(),
                     name: null,
                     type: null,
                     active: true,
@@ -249,12 +252,13 @@
                 $ctrl.$onInit = () => {
                     if ($ctrl.resolve.widget != null) {
                         $ctrl.isNewWidget = false;
-                        $ctrl.widget = JSON.parse(angular.toJson($ctrl.resolve.widget));
 
-                        const foundType = overlayWidgetsService.getOverlayWidgetType($ctrl.widget.type);
+                        const foundType = overlayWidgetsService.getOverlayWidgetType($ctrl.resolve.widget.type);
                         if (foundType != null) {
                             $ctrl.onTypeSelected(foundType);
                         }
+
+                        $ctrl.widget = JSON.parse(angular.toJson($ctrl.resolve.widget));
 
                         // Reset overlay instance to default (or null) if the saved instance doesn't exist anymore
                         if ($ctrl.widget.overlayInstance != null) {
@@ -294,9 +298,24 @@
                     true
                 );
 
+                $ctrl.scrollToFirstInvalidField = () => {
+                    const invalidField = document.querySelector('.modal-body .ng-invalid[name]:not(form)');
+                    if (invalidField) {
+                        invalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                        // Focus the field if it's focusable
+                        setTimeout(() => {
+                            if (invalidField.focus) {
+                                invalidField.focus();
+                            }
+                        }, 300);
+                    }
+                };
+
                 $ctrl.save = () => {
                     $scope.widgetSettings.$setSubmitted();
                     if ($scope.widgetSettings.$invalid) {
+                        $ctrl.scrollToFirstInvalidField();
                         return;
                     }
 
@@ -320,13 +339,13 @@
                         delete $ctrl.widget.exitAnimation;
                     }
 
-                    overlayWidgetsService.saveOverlayWidgetConfig($ctrl.widget, $ctrl.isNewWidget).then((successful) => {
-                        if (successful) {
-                            $ctrl.dismiss();
-                        } else {
-                            ngToast.create("Failed to save overlay widget. Please try again or view logs for details.");
-                        }
-                    });
+                    const successful = overlayWidgetsService.saveOverlayWidgetConfig($ctrl.widget, $ctrl.isNewWidget);
+
+                    if (successful) {
+                        $ctrl.dismiss();
+                    } else {
+                        ngToast.create("Failed to save overlay widget. Please try again or view logs for details.");
+                    }
                 };
 
                 $ctrl.delete = function() {

@@ -1,24 +1,22 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { EffectTrigger } from "../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, TriggersObject } from "../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.EVENT] = [
+const triggers: TriggersObject = {};
+triggers["event"] = [
     "streamlabs:donation",
     "streamlabs:eldonation",
     "tipeeestream:donation",
     "streamelements:donation",
     "extralife:donation"
 ];
-triggers[EffectTrigger.MANUAL] = true;
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
         handle: "donationMessage",
         description: "The message from a donation",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "trigger based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (trigger) => {
         const donationMessage = (trigger.metadata.eventData && trigger.metadata.eventData.donationMessage) || "";

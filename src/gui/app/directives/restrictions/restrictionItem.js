@@ -21,6 +21,7 @@
                             <div style="padding-left: 15px;font-family: 'Quicksand';font-size: 16px;">{{$ctrl.restrictionDefinition.definition.name}}</div>
 
                             <div style="display: flex; align-items: center;">
+                                <div ng-show="hidePanel && $ctrl.restriction.invertCondition" class="label label-danger mr-2">NOT</div>
                                 <div ng-show="hidePanel" style="opacity: 0.6; margin-right: 20px; max-width: 200px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
                                     {{$ctrl.displayText}}
                                 </div>
@@ -32,11 +33,19 @@
                     </div>
                     <div uib-collapse="hidePanel" class="expandable-item-expanded">
                         <div style="padding: 15px 20px 10px 20px;">
-                            <restriction-options 
-                                restriction="$ctrl.restriction" 
-                                restriction-definition="$ctrl.restrictionDefinition" 
+                            <restriction-options
+                                restriction="$ctrl.restriction"
+                                restriction-definition="$ctrl.restrictionDefinition"
                                 restriction-mode="$ctrl.restrictionMode"
                             ></restriction-options>
+                            <div style="padding-top: 20px">
+                                <firebot-checkbox
+                                    label="Invert Condition"
+                                    tooltip="Makes this restriction pass when it normally wouldn't — for example, allow only if the user is NOT a mod."
+                                    model="$ctrl.restriction.invertCondition"
+                                    style="margin: 0;"
+                                />
+                            </div>
                             <div style="padding-top: 10px">
                                 <button class="btn btn-danger" ng-click="$ctrl.delete()" aria-label="Delete restriction"><i class="far fa-trash"></i></button>
                             </div>
@@ -58,7 +67,7 @@
                     if (displayValueFunc != null && $ctrl.restriction != null) {
                         // Invoke the func and inject any dependencies
                         $q.when($injector.invoke(displayValueFunc, {}, { restriction: $ctrl.restriction }))
-                            .then(displayText => {
+                            .then((displayText) => {
                                 $ctrl.displayText = displayText;
                             });
                     }

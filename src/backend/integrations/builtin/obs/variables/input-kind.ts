@@ -1,25 +1,23 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { TriggerType } from "../../../../common/EffectType";
+import { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
 import {
     OBS_EVENT_SOURCE_ID,
     OBS_INPUT_CREATED_EVENT_ID
 } from "../constants";
-import { VariableCategory } from "../../../../../shared/variable-constants";
 
-const triggers = {};
-triggers[TriggerType.EVENT] = [
+const triggers: TriggersObject = {};
+triggers["event"] = [
     `${OBS_EVENT_SOURCE_ID}:${OBS_INPUT_CREATED_EVENT_ID}`
 ];
-triggers[TriggerType.MANUAL] = true;
+triggers["manual"] = true;
 
 export const InputKindVariable: ReplaceVariable = {
     definition: {
         handle: "obsInputKind",
         description: "Returns the OBS internal name of the kind of OBS input.",
         possibleDataOutput: ["text"],
-        categories: [VariableCategory.ADVANCED, VariableCategory.INTEGRATION, VariableCategory.OBS]
+        categories: ["advanced", "integrations", "obs"]
     },
-    evaluator: async (trigger) => {
+    evaluator: (trigger) => {
         const inputKind = trigger.metadata?.eventData?.inputKind;
         return inputKind ?? "Unknown";
     }

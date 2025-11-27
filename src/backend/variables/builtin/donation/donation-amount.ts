@@ -1,9 +1,7 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { EffectTrigger } from "../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, TriggersObject } from "../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.EVENT] = [
+const triggers: TriggersObject = {};
+triggers["event"] = [
     "twitch:charity-donation",
     "streamlabs:donation",
     "streamlabs:eldonation",
@@ -11,15 +9,15 @@ triggers[EffectTrigger.EVENT] = [
     "streamelements:donation",
     "extralife:donation"
 ];
-triggers[EffectTrigger.MANUAL] = true;
+triggers["manual"] = true;
 
 const model : ReplaceVariable = {
     definition: {
         handle: "donationAmount",
         description: "The amount of a donation",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.NUMBERS, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["common", "numbers", "trigger based"],
+        possibleDataOutput: ["number"]
     },
     evaluator: (trigger) => {
         const donationAmount = (trigger.metadata.eventData && trigger.metadata.eventData.donationAmount) || 0;

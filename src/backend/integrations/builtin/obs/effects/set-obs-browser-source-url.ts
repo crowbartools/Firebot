@@ -10,7 +10,7 @@ export const SetOBSBrowserSourceUrlEffectType: EffectType<{
         name: "Set OBS Browser Source URL",
         description: "Sets the URL in an OBS browser source",
         icon: "fad fa-browser",
-        categories: ["common"]
+        categories: ["common", "integrations"]
     },
     optionsTemplate: `
     <eos-container header="OBS Browser Source">

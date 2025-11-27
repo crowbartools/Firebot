@@ -1,7 +1,6 @@
+import { getParticipantMilestones, getParticipant } from 'extra-life-ts';
 import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 import integrationManager from "../../../../integrations/integration-manager";
-const { getParticipantMilestones, getParticipant } = require('extra-life-ts');
 
 const ExtraLifeMilestones: ReplaceVariable = {
     definition: {
@@ -29,8 +28,8 @@ const ExtraLifeMilestones: ReplaceVariable = {
                 description: "Returns three milestones in JSON format."
             }
         ],
-        categories: [VariableCategory.COMMON, VariableCategory.INTEGRATION],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "integrations"],
+        possibleDataOutput: ["text"]
     },
     evaluator: async (_, milestoneGoal: string, numResults: number, participantID: number, returnJson: boolean) => {
         if (numResults == null) {
@@ -45,18 +44,16 @@ const ExtraLifeMilestones: ReplaceVariable = {
             milestoneGoal = null;
         }
 
-        const currentDonations = await getParticipant(participantID).then((result) => {
-            result = result.data;
-            if (result) {
-                return result.sumDonations;
+        const currentDonations = await getParticipant(participantID).then(({ data }) => {
+            if (data) {
+                return data.sumDonations;
             }
 
             return 0;
         });
 
-        let extraLifeCall = await getParticipantMilestones(participantID, {orderBy: 'fundraisingGoal ASC'}).then((result) => {
-            result = result.data;
-
+        let extraLifeCall = await getParticipantMilestones(participantID, { orderBy: 'fundraisingGoal ASC' }).then(({ data }) => {
+            let result = data;
             if (milestoneGoal != null) {
                 result = result.filter(function (milestone) {
                     return milestone.fundraisingGoal === parseInt(milestoneGoal);

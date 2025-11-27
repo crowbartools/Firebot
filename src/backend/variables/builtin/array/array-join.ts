@@ -1,5 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
@@ -16,14 +15,14 @@ const model : ReplaceVariable = {
                 description: `Returns "apple - banana - cherry".`
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["text"]
     },
 
     evaluator: (
         trigger: Trigger,
         subject: string | unknown[],
-        // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
         separator : string = ","
     ) : string => {
         if (typeof subject === 'string' || subject instanceof String) {

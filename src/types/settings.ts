@@ -3,17 +3,24 @@ export enum FirebotAutoUpdateLevel {
     Bugfix = 1,
     Feature = 2,
     MajorRelease = 3,
-    Betas = 4,
+    Betas = 4
 }
 
 export type FirebotAudioDevice = {
     label: string;
     deviceId: string;
-}
+};
+
+export type FirebotGlobalValue = {
+    name: string;
+    secret?: boolean;
+    value: string;
+};
 
 export type FirebotSettingsTypes = {
     ActiveChatUserListTimeout: number;
     ActiveProfiles: string[];
+    AllowChatCreatedCommandsToRunEffects: boolean;
     AllowCommandsInSharedChat: boolean;
     AllowQuoteCSVDownloads: boolean;
     AllowedActivityEvents: string[];
@@ -38,9 +45,11 @@ export type FirebotSettingsTypes = {
     ChatHideDeletedMessages: boolean;
     ChatHideWhispers: boolean;
     ChatPronouns: boolean;
+    ChatReverseOrder: boolean;
     ChatShowBttvEmotes: boolean;
     ChatShowFfzEmotes: boolean;
     ChatShowSevenTvEmotes: boolean;
+    ChatShowSharedChatInfo: boolean;
     ChatTaggedNotificationSound: { name: string, path?: string | undefined };
     ChatTaggedNotificationVolume: number;
     ChatTimestamps: boolean;
@@ -54,12 +63,14 @@ export type FirebotSettingsTypes = {
     };
     DebugMode: boolean;
     DefaultEffectLabelsEnabled: boolean;
+    DefaultModerationUser: "streamer" | "bot";
     DefaultToAdvancedCommandMode: boolean;
     DefaultTtsVoiceId: string;
     DeleteProfile: string;
-    EventSettings: object; //TODO
+    EventSettings: object; // Pretty sure this is no longer used
     FirstTimeUse: boolean;
     ForceOverlayEffectsToContinueOnRefresh: boolean;
+    GlobalValues: Array<FirebotGlobalValue>;
     IgnoreSubsequentSubEventsAfterCommunitySub: boolean;
     JustUpdated: boolean;
     LastBackupDate: Date;
@@ -73,9 +84,10 @@ export type FirebotSettingsTypes = {
     OverlayResolution: {
         width: number;
         height: number;
-    },
+    };
     OverlayInstances: string[];
     PersistCustomVariables: boolean;
+    PresetRecursionLimit: boolean;
     QuickActions: Record<string, {
         enabled: boolean;
         position: number;
@@ -84,6 +96,7 @@ export type FirebotSettingsTypes = {
     SeenAdvancedCommandModePopup: boolean;
     ShowAdBreakIndicator: boolean;
     ShowActivityFeed: boolean;
+    ShowActivityFeedEventsInChat: boolean;
     ShowChatViewerList: boolean;
     ShowHypeTrainIndicator: boolean;
     ShowUptimeStat: boolean;
@@ -105,7 +118,7 @@ export type FirebotSettingsTypes = {
     WebServerPort: number;
     WhileLoopEnabled: boolean;
     WysiwygBackground: "black" | "white";
-}
+};
 
 export const FirebotGlobalSettings: Partial<Record<keyof FirebotSettingsTypes, boolean>> = {
     ActiveProfiles: true,
@@ -125,6 +138,7 @@ export const FirebotGlobalSettings: Partial<Record<keyof FirebotSettingsTypes, b
 export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     ActiveChatUserListTimeout: 5,
     ActiveProfiles: [],
+    AllowChatCreatedCommandsToRunEffects: false,
     AllowCommandsInSharedChat: false,
     AllowQuoteCSVDownloads: true,
     AllowedActivityEvents: [
@@ -163,9 +177,11 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     ChatHideDeletedMessages: false,
     ChatHideWhispers: false,
     ChatPronouns: true,
+    ChatReverseOrder: false,
     ChatShowBttvEmotes: true,
     ChatShowFfzEmotes: true,
     ChatShowSevenTvEmotes: true,
+    ChatShowSharedChatInfo: true,
     ChatTaggedNotificationSound: { name: "None" },
     ChatTaggedNotificationVolume: 5,
     ChatTimestamps: true,
@@ -179,12 +195,14 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     },
     DebugMode: false,
     DefaultEffectLabelsEnabled: true,
+    DefaultModerationUser: "streamer",
     DefaultToAdvancedCommandMode: false,
     DefaultTtsVoiceId: undefined,
     DeleteProfile: undefined,
     EventSettings: {},
     FirstTimeUse: true,
     ForceOverlayEffectsToContinueOnRefresh: true,
+    GlobalValues: [],
     IgnoreSubsequentSubEventsAfterCommunitySub: true,
     JustUpdated: false,
     LegacySortTagsImported: false,
@@ -201,10 +219,12 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
         height: 720
     },
     PersistCustomVariables: false,
+    PresetRecursionLimit: true,
     QuickActions: {},
     RunCustomScripts: false,
     SeenAdvancedCommandModePopup: false,
     ShowActivityFeed: true,
+    ShowActivityFeedEventsInChat: false,
     ShowAdBreakIndicator: true,
     ShowChatViewerList: true,
     ShowHypeTrainIndicator: true,

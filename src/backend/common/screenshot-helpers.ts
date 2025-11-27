@@ -1,20 +1,22 @@
 import sanitizeFileName from "sanitize-filename";
 import fs from "fs/promises";
 import path from "path";
-import logger from "../logwrapper";
-import twitchApi from "../twitch-api/api";
-import discordEmbedBuilder from "../integrations/builtin/discord/discord-embed-builder";
-import discord from "../integrations/builtin/discord/discord-message-sender";
+import moment from "moment";
+
+import type { CustomEmbed, EmbedType } from "../../types/discord";
+
 import { SettingsManager } from "../common/settings-manager";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
+import discord from "../integrations/builtin/discord/discord-message-sender";
+import discordEmbedBuilder from "../integrations/builtin/discord/discord-embed-builder";
 import mediaProcessor from "../common/handlers/mediaProcessor";
 import webServer from "../../server/http-server-manager";
-import moment from "moment";
-import {CustomEmbed, EmbedType} from "../../types/discord";
+import logger from "../logwrapper";
 
 export async function saveScreenshotToFolder(base64ImageData: string, folderPath: string, fileName?: string) {
     try {
         if (!fileName) {
-            const { title } = await twitchApi.channels.getChannelInformation();
+            const { title } = await TwitchApi.channels.getChannelInformation();
             fileName = `${title} ${moment().format("YYYY-MM-DD HH.mm.ss.SSS A")}`;
         }
         const folder = path.join(folderPath, `${sanitizeFileName(fileName)}.png`);
@@ -77,7 +79,7 @@ export type ScreenshotEffectData = {
     exitDuration?: number;
     rotation?: string;
     rotType?: string;
-}
+};
 
 export function sendScreenshotToOverlay(screenshotDataUrl: string, effect: ScreenshotEffectData) {
     let position = effect.position;

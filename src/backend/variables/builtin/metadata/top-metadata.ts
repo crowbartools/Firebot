@@ -1,8 +1,7 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 import viewerMetadataManager from "../../../viewers/viewer-metadata-manager";
-const util = require("../../../utility");
+import { commafy } from "../../../utils";
 
 const model : ReplaceVariable = {
     definition: {
@@ -15,10 +14,10 @@ const model : ReplaceVariable = {
                 description: "Returns comma-separated list of top 5 users with their death counts"
             }
         ],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: ["text"]
     },
 
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
     evaluator: async (_, metadataKey: string, count: number = 10) => {
 
         if (metadataKey == null) {
@@ -43,7 +42,7 @@ const model : ReplaceVariable = {
 
             // map each entry to #position) name - amount
             .map((user, idx) => {
-                return `#${idx + 1}) ${user.displayName} - ${util.commafy(user.metadata[metadataKey])}`;
+                return `#${idx + 1}) ${user.displayName} - ${commafy(user.metadata[metadataKey] as number)}`;
             })
 
             // convert to commafied string

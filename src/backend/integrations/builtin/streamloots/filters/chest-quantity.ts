@@ -10,4 +10,4 @@ const filter = createNumberFilter({
     eventMetaKey: "quantity"
 });
 
-module.exports = filter;
+export = filter;

@@ -1,14 +1,13 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import { basename, extname } from "path";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
         handle: "fileName",
         usage: 'fileName[path\\to\\file.txt]',
         description: "Returns name of file without extension.",
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (
         trigger: Trigger,
@@ -20,7 +19,7 @@ const model : ReplaceVariable = {
 
         try {
             return basename(filePath, extname(filePath));
-        } catch (err) {
+        } catch {
             // Probably a directory or invalid filename
             return "[Invalid File Path]";
         }

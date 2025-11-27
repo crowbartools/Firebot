@@ -25,8 +25,8 @@ class ExtraLifeIntegration extends EventEmitter {
         this.connected = false;
     }
     init() {
-        const eventManager = require("../../../events/EventManager");
-        eventManager.registerEventSource({
+        const { EventManager } = require("../../../events/event-manager");
+        EventManager.registerEventSource({
             id: "extralife",
             name: "ExtraLife",
             description: "Donation events from ExtraLife",
@@ -43,7 +43,6 @@ class ExtraLifeIntegration extends EventEmitter {
                         donationMessage: "Test message"
                     },
                     isIntegration: true,
-                    queued: true,
                     activityFeed: {
                         icon: "fad fa-money-bill",
                         getMessage: (eventData) => {

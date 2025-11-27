@@ -1,5 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
@@ -16,8 +15,8 @@ const model : ReplaceVariable = {
                 description: "Returns JIM if the user is Jim, otherwise returns JOHN"
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.ALL],
+        categories: ["advanced"],
+        possibleDataOutput: ["ALL"],
         spoof: true
     }
 };

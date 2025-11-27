@@ -1,11 +1,12 @@
 import NodeCache from "node-cache";
 import { DateTime } from "luxon";
 
-import { CommandDefinition, SubCommand } from "../../../types/commands";
-import logger from "../../logwrapper";
-import frontendCommunicator from "../../common/frontend-communicator";
+import { CommandDefinition, Cooldown, SubCommand } from "../../../types/commands";
+
+import { AccountAccess } from "../../common/account-access";
 import { SettingsManager } from "../../common/settings-manager";
-import accountAccess from "../../common/account-access";
+import frontendCommunicator from "../../common/frontend-communicator";
+import logger from "../../logwrapper";
 
 // This is purposefully ridiculous to try and avoid collisions when we split the string
 // (like with system commands that commonly use colons in their name)
@@ -18,7 +19,7 @@ interface CooldownConfig {
     cooldown: {
         global: number;
         user: number;
-    }
+    };
 }
 
 interface ClearCooldownConfig {
@@ -28,7 +29,7 @@ interface ClearCooldownConfig {
     cooldown: {
         global: boolean;
         user: boolean;
-    }
+    };
 }
 
 class CommandCooldownManager {
@@ -50,7 +51,7 @@ class CommandCooldownManager {
     }
 
     getRemainingCooldown(command: CommandDefinition, triggeredSubcmd: SubCommand, username: string): number {
-        if (username === accountAccess.getAccounts().streamer.username
+        if (username === AccountAccess.getAccounts().streamer.username
             && SettingsManager.getSetting("StreamerExemptFromCooldowns") === true) {
             logger.debug("Streamer sent command. Ignoring cooldown.");
             return 0;
@@ -93,7 +94,7 @@ class CommandCooldownManager {
     }
 
     cooldownCommand(command: CommandDefinition, triggeredSubcmd: SubCommand, username: string): void {
-        let cooldown;
+        let cooldown: Cooldown;
         if (triggeredSubcmd == null || triggeredSubcmd.cooldown == null || triggeredSubcmd?.inheritBaseCommandCooldown) {
             cooldown = command.cooldown;
         } else {

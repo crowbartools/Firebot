@@ -7,7 +7,7 @@ export const StopVirtualCamEffectType: EffectType = {
         name: "OBS Stop Virtual Camera",
         description: "Tell OBS to stop the virtual camera",
         icon: "fad fa-camera-home",
-        categories: ["common"]
+        categories: ["common", "integrations"]
     },
     optionsTemplate: `
     <eos-container>

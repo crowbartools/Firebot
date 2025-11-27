@@ -111,7 +111,7 @@
                             .filter(i => i.linked && i.connectionToggle);
 
 
-                        integrations.forEach(i => {
+                        integrations.forEach((i) => {
                             if (count !== 0) {
                                 intTooltip += "<br/>";
                             }

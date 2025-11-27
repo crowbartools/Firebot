@@ -1,5 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const getPropertyAtPath = (subject: unknown, path: string) => {
     if (subject == null) {
@@ -116,15 +115,15 @@ const model : ReplaceVariable = {
                 description: 'Searches the array for an item with a key with the value of "value"'
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
+        categories: ["advanced"],
+        possibleDataOutput: ["text", "number"]
     },
     evaluator: (
         trigger: Trigger,
         subject: string | unknown[],
         matcher: unknown,
         propertyPath : string = null,
-        //eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
         exact : boolean | string = false
     ) : null | number => {
         if (typeof subject === 'string' || subject instanceof String) {

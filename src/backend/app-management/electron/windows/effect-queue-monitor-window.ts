@@ -4,10 +4,10 @@ import { SecretsManager } from "../../../secrets-manager";
 import path from "path";
 import url from "url";
 
-import frontendCommunicator from "../../../common/frontend-communicator";
-import effectQueueConfigManager from "../../../effects/queues/effect-queue-config-manager";
+import type { QueueState } from "../../../../types/effects";
+import { EffectQueueConfigManager } from "../../../effects/queues/effect-queue-config-manager";
 import effectQueueRunner from "../../../effects/queues/effect-queue-runner";
-import type { QueueState } from "../../../effects/queues/effect-queue";
+import frontendCommunicator from "../../../common/frontend-communicator";
 
 let effectQueueMonitorWindow: BrowserWindow = null;
 
@@ -61,7 +61,7 @@ export async function createEffectQueueMonitorWindow() {
             }
         }));
 
-    const queueConfigs = effectQueueConfigManager.getAllItems();
+    const queueConfigs = EffectQueueConfigManager.getAllItems();
 
     const queueConfigsWithState = queueConfigs.map((queueConfig) => {
         const queueState = effectQueueRunner.getQueueStateForConfig(queueConfig);
@@ -83,7 +83,7 @@ function sendToWindow(event: string, data: unknown) {
     effectQueueMonitorWindow.webContents.send(event, data);
 }
 
-effectQueueConfigManager.on("created-item", (queueConfig) => {
+EffectQueueConfigManager.on("created-item", (queueConfig) => {
     const queueState = effectQueueRunner.getQueueStateForConfig(queueConfig);
     sendToWindow("queue-created", {
         ...queueConfig,
@@ -91,7 +91,7 @@ effectQueueConfigManager.on("created-item", (queueConfig) => {
     });
 });
 
-effectQueueConfigManager.on("updated-item", (queueConfig) => {
+EffectQueueConfigManager.on("updated-item", (queueConfig) => {
     const queueState = effectQueueRunner.getQueueStateForConfig(queueConfig);
     sendToWindow("queue-updated", {
         ...queueConfig,
@@ -99,12 +99,12 @@ effectQueueConfigManager.on("updated-item", (queueConfig) => {
     });
 });
 
-effectQueueConfigManager.on("deleted-item", (queueConfig) => {
+EffectQueueConfigManager.on("deleted-item", (queueConfig) => {
     sendToWindow("queue-deleted", queueConfig.id);
 });
 
 effectQueueRunner.on("queue-state-updated", (queueId, queueState: QueueState) => {
-    const queueConfig = effectQueueConfigManager.getItem(queueId);
+    const queueConfig = EffectQueueConfigManager.getItem(queueId);
     if (queueConfig == null) {
         return;
     }
@@ -115,5 +115,5 @@ effectQueueRunner.on("queue-state-updated", (queueId, queueState: QueueState) =>
 });
 
 frontendCommunicator.on("open-effect-queue-monitor", () => {
-    createEffectQueueMonitorWindow();
+    void createEffectQueueMonitorWindow();
 });

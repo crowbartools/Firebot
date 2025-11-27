@@ -1,9 +1,10 @@
 "use strict";
 
-const logger = require("../../../../logwrapper");
 const EventEmitter = require("events");
+const { ReplaceVariableManager } = require("../../../../variables/replace-variable-manager");
 const frontendCommunicator = require("../../../../common/frontend-communicator");
-const util = require("../../../../utility");
+const logger = require("../../../../logwrapper");
+const { simpleClone } = require("../../../../utils");
 
 class ConditionManager extends EventEmitter {
     constructor() {
@@ -41,7 +42,7 @@ class ConditionManager extends EventEmitter {
 
     async runConditions(conditionData, triggerData) {
         if (conditionData?.conditions?.length > 0) {
-            const conditions = JSON.parse(JSON.stringify(conditionData.conditions));
+            const conditions = simpleClone(conditionData.conditions);
 
             let didPass = conditionData.mode !== "inclusive";
             for (const condition of conditions) {
@@ -53,7 +54,7 @@ class ConditionManager extends EventEmitter {
 
                         if (conditionType.leftSideValueType === 'text') {
                             try {
-                                condition.leftSideValue = await util.populateStringWithTriggerData(condition.leftSideValue, triggerData);
+                                condition.leftSideValue = await ReplaceVariableManager.populateStringWithTriggerData(condition.leftSideValue, triggerData);
                             } catch (err) {
                                 logger.warn("Unable to process leftSideValue replace variables for condition", err);
                             }
@@ -61,7 +62,7 @@ class ConditionManager extends EventEmitter {
 
                         if (conditionType.rightSideValueType === 'text') {
                             try {
-                                condition.rightSideValue = await util.populateStringWithTriggerData(condition.rightSideValue, triggerData);
+                                condition.rightSideValue = await ReplaceVariableManager.populateStringWithTriggerData(condition.rightSideValue, triggerData);
                             } catch (err) {
                                 logger.warn("Unable to process rightSideValue replace variables for condition", err);
                             }
@@ -81,7 +82,7 @@ class ConditionManager extends EventEmitter {
                             }
                         }
 
-                    } catch (err) {
+                    } catch {
                         // Tell front end an error happened
                         //logger.warn(`An error happened when attempting to process the conditionType ${conditionTypeSetting.type} for event ${eventData.eventSourceId}:${eventData.eventId}: "${err}"`);
                     }
@@ -102,7 +103,7 @@ frontendCommunicator.on("getConditionTypes", (trigger) => {
     let conditionTypes = manager.getAllConditionTypes();
     if (trigger != null) {
         conditionTypes = conditionTypes
-            .filter(c => {
+            .filter((c) => {
 
                 if (c.triggers == null) {
                     return true;
@@ -122,7 +123,7 @@ frontendCommunicator.on("getConditionTypes", (trigger) => {
                 return false;
             });
     }
-    return conditionTypes.map(c => {
+    return conditionTypes.map((c) => {
         return {
             id: c.id,
             name: c.name,

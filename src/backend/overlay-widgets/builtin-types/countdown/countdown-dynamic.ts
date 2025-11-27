@@ -1,22 +1,26 @@
 import { FontOptions } from "../../../../types/parameters";
-import { OverlayWidgetType, OverlayWidgetConfig, IOverlayWidgetUtils } from "../../../../types/overlay-widgets";
+import { OverlayWidgetType, OverlayWidgetConfig, IOverlayWidgetEventUtils } from "../../../../types/overlay-widgets";
 import { WidgetOverlayEvent } from "../../../../types/overlay-widgets";
 import { Duration } from "luxon";
+import frontendCommunicator from "../../../common/frontend-communicator";
+import logger from "../../../logwrapper";
+import type { EffectList } from "../../../../types/effects";
 
 export type Settings = {
     fontOptions: FontOptions;
     alignment: "left" | "center" | "right";
     runWhenInactive?: boolean;
-}
+    onCompleteEffects?: EffectList;
+};
 
 export type State = {
     remainingSeconds: number;
     mode: "running" | "paused";
-}
+};
 
 export type DynamicCountdownWidgetConfig = OverlayWidgetConfig<Settings, State> & {
     type: "firebot:countdown-dynamic";
-}
+};
 
 export const dynamicCountdown: OverlayWidgetType<Settings, State> = {
     id: "firebot:countdown-dynamic",
@@ -62,8 +66,15 @@ export const dynamicCountdown: OverlayWidgetType<Settings, State> = {
             description: "Whether the countdown should continue running when the widget is not active (visible).",
             type: "boolean",
             default: false
+        },
+        {
+            name: "onCompleteEffects",
+            title: "On Complete Effects",
+            description: "Effects to run when the countdown reaches zero.",
+            type: "effectlist"
         }
     ],
+    nonEditableSettings: ["onCompleteEffects"],
     initialState: {
         remainingSeconds: 0,
         mode: "paused"
@@ -78,10 +89,99 @@ export const dynamicCountdown: OverlayWidgetType<Settings, State> = {
         const secondsDisplay = duration.shiftTo("hours", "minutes", "seconds").toFormat("hh:mm:ss");
         return `${secondsDisplay} (${config.state?.mode ?? 'paused'})`;
     },
+    uiActions: [
+        {
+            id: "toggle",
+            label: "Start/Pause",
+            icon: "fa-play-circle",
+            click: (config) => {
+                if ((config.state?.remainingSeconds ?? 0) > 0) {
+                    return {
+                        newState: {
+                            ...config.state,
+                            mode: config.state.mode === "running" ? "paused" : "running"
+                        },
+                        persistState: true
+                    };
+                }
+            }
+        },
+        {
+            id: "add-time",
+            label: "Add Time",
+            icon: "fa-plus-circle",
+            click: async (config) => {
+                const seconds = await frontendCommunicator.fireEventAsync<number>("openGetInputModal", {
+                    config: {
+                        model: config.state?.remainingSeconds ?? 0,
+                        inputType: "number",
+                        label: "Add Seconds",
+                        saveText: "Save",
+                        descriptionText: "Enter number of seconds to add to the countdown. Can be negative to subtract time.",
+                        inputPlaceholder: "Enter number",
+                        validationText: 'Please enter a valid number.'
+                    },
+                    validation: {
+                        required: true
+                    }
+                });
+
+                if (seconds == null) {
+                    return;
+                }
+
+                logger.debug(`Adding ${seconds} seconds to timer "${config.name}"`);
+
+                const newRemaining = Math.max(0, (config.state?.remainingSeconds ?? 0) + Number(seconds));
+
+                return {
+                    newState: {
+                        ...config.state,
+                        remainingSeconds: newRemaining
+                    }
+                };
+            }
+        },
+        {
+            id: "set-time",
+            label: "Set Time",
+            icon: "fa-clock",
+            click: async (config) => {
+                const seconds = await frontendCommunicator.fireEventAsync("openGetInputModal", {
+                    config: {
+                        model: 0,
+                        inputType: "number",
+                        label: "Set Time",
+                        saveText: "Save",
+                        descriptionText: "Enter the total seconds for the countdown. The countdown will be set to this value.",
+                        inputPlaceholder: "Enter number",
+                        validationText: 'Please enter a valid number.'
+                    },
+                    validation: {
+                        required: true
+                    }
+                });
+
+                if (seconds == null) {
+                    return;
+                }
+
+                const newRemaining = Math.max(0, Number(seconds));
+
+                return {
+                    newState: {
+                        ...config.state,
+                        remainingSeconds: newRemaining,
+                        mode: newRemaining === 0 ? "paused" : config.state?.mode ?? "paused"
+                    }
+                };
+            }
+        }
+    ],
     overlayExtension: {
-        eventHandler: (event: WidgetOverlayEvent<Settings, State>, utils: IOverlayWidgetUtils) => {
+        eventHandler: (event: WidgetOverlayEvent<Settings, State>, utils: IOverlayWidgetEventUtils) => {
             const generateWidgetHtml = (config: typeof event["data"]["widgetConfig"]) => {
-                const remainingSeconds = config.state?.remainingSeconds as number ?? 0;
+                const remainingSeconds = config.state?.remainingSeconds ?? 0;
 
                 // show time as hh:mm:ss
                 const hours = Math.floor(remainingSeconds / 3600);
@@ -90,7 +190,7 @@ export const dynamicCountdown: OverlayWidgetType<Settings, State> = {
                 const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
                 const containerStyles = {
-                    "font-family": config.settings?.fontOptions?.family || 'Inter, sans-serif',
+                    "font-family": (config.settings?.fontOptions?.family ? `'${config.settings?.fontOptions?.family}'` : 'Inter, sans-serif'),
                     "font-size": (config.settings?.fontOptions?.size ? `${config.settings.fontOptions.size}px` : '48px'),
                     "font-weight": config.settings?.fontOptions?.weight?.toString() || '400',
                     "font-style": config.settings?.fontOptions?.italic ? 'italic' : 'normal',

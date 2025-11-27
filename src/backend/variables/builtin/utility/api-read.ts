@@ -1,8 +1,8 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import { app } from "electron";
+
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 import logger from "../../../logwrapper";
-import { app } from "electron";
 
 const callUrl = async (url: string): Promise<Response> => {
     try {
@@ -17,7 +17,7 @@ const callUrl = async (url: string): Promise<Response> => {
             return response;
         }
     } catch (error) {
-        logger.warn(`error calling readApi url: ${url}`, error.message);
+        logger.warn(`error calling readApi url: ${url}`, (error as Error).message);
         return error.message;
     }
 };
@@ -33,8 +33,8 @@ const model: ReplaceVariable = {
                 description: "Traverse a JSON response object."
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
+        categories: ["advanced"],
+        possibleDataOutput: ["text", "number"]
     },
     evaluator: async (
         trigger: Trigger,
@@ -47,9 +47,9 @@ const model: ReplaceVariable = {
                 if (content != null) {
                     const jsonPathNodes = responseJsonPath.split(".");
                     try {
-                        let currentObject = null;
+                        let currentObject: unknown = null;
                         for (const node of jsonPathNodes) {
-                            const objToTraverse = currentObject === null ? JSON.parse(content) : currentObject;
+                            const objToTraverse: unknown = currentObject === null ? JSON.parse(content) : currentObject;
                             if (objToTraverse[node] != null) {
                                 currentObject = objToTraverse[node];
                             } else {
@@ -66,7 +66,7 @@ const model: ReplaceVariable = {
             }
 
             return content;
-        } catch (err) {
+        } catch {
             return "[API ERROR]";
         }
     }

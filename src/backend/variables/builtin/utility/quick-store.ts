@@ -1,5 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
@@ -16,8 +15,8 @@ const model : ReplaceVariable = {
 
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.ALL]
+        categories: ["advanced"],
+        possibleDataOutput: ["ALL"]
     },
     evaluator: function (
         trigger: Trigger,
@@ -37,7 +36,7 @@ const model : ReplaceVariable = {
         if (meta.quickstore == null) {
             meta.quickstore = Object.create(null);
         }
-        const quickstore = meta.quickstore;
+        const quickstore = meta.quickstore as Record<string, unknown>;
 
         // Retrieve value
         if (arguments.length < 3) {

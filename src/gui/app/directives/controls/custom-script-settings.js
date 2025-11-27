@@ -60,14 +60,15 @@
                 <div ng-hide="isLoadingParameters">
                     <span ng-hide="scriptHasParameters()" class="muted">Script has no settings.</span>
                     <div ng-show="scriptHasParameters()">
-                        <command-option
-                            ng-repeat="(parameterName, parameterMetadata) in effect.parameters"
-                            name="parameterName"
-                            metadata="parameterMetadata"
+                        <dynamic-parameter
+                            ng-repeat="(settingName, settingSchema) in effect.parameters"
+                            name="{{settingName}}"
+                            schema="settingSchema"
+                            ng-model="effect.parameters[settingName].value"
                             trigger="{{trigger}}"
                             trigger-meta="triggerMeta"
                             modalId="{{modalId}}"
-                        ></command-option>
+                        ></dynamic-parameter>
                     </div>
                 </div>
             </eos-container>
@@ -109,7 +110,7 @@
                         }
 
                         if ($scope.scriptManifest != null && $scope.scriptManifest.startupOnly && !$ctrl.allowStartup) {
-                            utilityService.showInfoModal(`Unable to load '${$scope.effect.scriptName}' as this script can only be used as a Startup Script (Settings > Advanced > Startup Scripts)`);
+                            utilityService.showInfoModal(`Unable to load '${$scope.effect.scriptName}' as this script can only be used as a Startup Script (Settings > Scripts > Startup Scripts)`);
                             $scope.effect.scriptName = undefined;
                             $scope.effect.parameters = undefined;
                             $scope.scriptManifest = undefined;
@@ -195,7 +196,7 @@
                     let realDir;
                     try {
                         realDir = fs.realpathSync(dir);
-                    } catch (e) {
+                    } catch {
                         // If realpath fails, skip this directory
                         return result;
                     }
@@ -208,7 +209,7 @@
                     let scriptFileNames;
                     try {
                         scriptFileNames = fs.readdirSync(dir);
-                    } catch (e) {
+                    } catch {
                         // If readdir fails, skip this directory
                         return result;
                     }
@@ -219,7 +220,7 @@
                         let stat;
                         try {
                             stat = fs.statSync(fullPath);
-                        } catch (e) {
+                        } catch {
                             // If stat fails for whatever reason, skip this entry
                             continue;
                         }

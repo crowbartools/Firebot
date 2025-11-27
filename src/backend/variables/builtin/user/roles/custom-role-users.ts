@@ -1,5 +1,4 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../../types/variables";
 import customRolesManager from "../../../../roles/custom-roles-manager";
 
 const model : ReplaceVariable = {
@@ -7,8 +6,8 @@ const model : ReplaceVariable = {
         handle: "customRoleUsers",
         usage: "customRoleUsers[role]",
         description: "Returns an array of all the user display names in the specified custom role.",
-        categories: [VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.ARRAY],
+        categories: ["user based"],
+        possibleDataOutput: ["array"],
         examples: [
             {
                 usage: "customRoleUsers[role, username]",
@@ -20,7 +19,7 @@ const model : ReplaceVariable = {
             }
         ]
     },
-    evaluator: async (_, role: string, propertyName?: string) => {
+    evaluator: (_, role: string, propertyName?: string) => {
         if (role == null || role === '') {
             return [];
         }

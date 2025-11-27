@@ -1,5 +1,4 @@
 import { EffectType } from "../../../../types/effects";
-import { EffectCategory } from '../../../../shared/effect-constants';
 import overlayWidgetConfigManager from "../../../overlay-widgets/overlay-widget-config-manager";
 import overlayWidgetsManager from "../../../overlay-widgets/overlay-widgets-manager";
 import logger from "../../../logwrapper";
@@ -14,7 +13,7 @@ const model: EffectType<{
         name: "Send Message to Custom Widget",
         description: "Send a message to a Custom or Custom (Advanced) Overlay Widget.",
         icon: "fad fa-paper-plane",
-        categories: [EffectCategory.OVERLAY, EffectCategory.ADVANCED],
+        categories: ["overlay", "advanced"],
         dependencies: []
     },
     optionsTemplate: `
@@ -67,7 +66,7 @@ const model: EffectType<{
         };
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (effect.customWidgetId == null) {
             errors.push("Please select a custom widget.");
         } else if (effect.messageName == null || effect.messageName.trim() === "") {

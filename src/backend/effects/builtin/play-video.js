@@ -4,16 +4,14 @@ const { SettingsManager } = require("../../common/settings-manager");
 const { ResourceTokenManager } = require("../../resource-token-manager");
 const webServer = require("../../../server/http-server-manager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
-const { EffectCategory } = require('../../../shared/effect-constants');
 const logger = require("../../logwrapper");
-const accountAccess = require("../../common/account-access");
-const util = require("../../utility");
+const { AccountAccess } = require("../../common/account-access");
 const fs = require('fs/promises');
 const path = require("path");
 const frontendCommunicator = require('../../common/frontend-communicator');
-const { wait } = require("../../utility");
+const { wait } = require("../../utils");
 const { parseYoutubeId } = require("../../../shared/youtube-url-parser");
-const { v4: uuid } = require("uuid");
+const { randomUUID } = require("crypto");
 const { resolveTwitchClipVideoUrl } = require("../../common/handlers/twitch-clip-url-resolver");
 
 /**
@@ -28,7 +26,7 @@ const playVideo = {
         name: "Play Video",
         description: "Plays a local, Youtube, or Twitch video in the overlay.",
         icon: "fad fa-video",
-        categories: [EffectCategory.COMMON, EffectCategory.OVERLAY, EffectCategory.TWITCH],
+        categories: ["common", "overlay", "fun"],
         dependencies: [],
         outputs: [
             {
@@ -128,6 +126,7 @@ const playVideo = {
                 input-title="Twitch Username"
                 model="effect.twitchClipUsername"
                 placeholder-text="Ex: $streamer, $user, etc"
+                menu-position="under"
             />
             <div class="mt-10 form-group flex-row jspacebetween" style="margin-bottom: 0;">
                 <firebot-checkbox
@@ -445,18 +444,18 @@ const playVideo = {
         }
 
         if (effect.videoType === "Twitch Clip" || effect.videoType === "Random Twitch Clip") {
-            const twitchApi = require("../../twitch-api/api");
+            const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 
             /**@type {import('@twurple/api').HelixClip} */
             let clip;
 
             if (effect.videoType === "Twitch Clip") {
-                clip = await twitchApi.clips.getClipFromClipUrl(effect.twitchClipUrl);
+                clip = await TwitchApi.clips.getClipFromClipUrl(effect.twitchClipUrl);
             } else if (effect.videoType === "Random Twitch Clip") {
-                const username = effect.twitchClipUsername || accountAccess.getAccounts().streamer.username;
+                const username = effect.twitchClipUsername || AccountAccess.getAccounts().streamer.username;
                 const dateNow = new Date();
 
-                clip = await twitchApi.clips.getRandomClipForUserByName(
+                clip = await TwitchApi.clips.getRandomClipForUserByName(
                     username,
                     100,
                     effect.isFeatured || undefined,
@@ -522,7 +521,7 @@ const playVideo = {
                 data.videoStarttime = youtubeData.startTime;
             }
 
-            resourceToken = uuid();
+            resourceToken = randomUUID();
 
         } else if (effect.videoType === "Local Video" || effect.videoType === "Random From Folder") {
             const result = await frontendCommunicator.fireEventAsync("getVideoDuration", data.filepath);
@@ -574,7 +573,7 @@ const playVideo = {
         if (effect.wait) {
             try {
                 await waitPromise;
-            } catch (error) {
+            } catch {
                 return false;
             }
         }
@@ -599,7 +598,7 @@ const playVideo = {
             onOverlayEvent: (event) => {
                 // eslint-disable-next-line no-undef
                 if (!startedVidCache) {
-                    // eslint-disable-line no-undef
+
                     startedVidCache = {}; // eslint-disable-line no-undef
                 }
 
@@ -662,6 +661,7 @@ const playVideo = {
                 const filepathNew = `http://${window.location.hostname}:7472/resource/${token}`;
 
                 // Generate UUID to use as id
+
                 // eslint-disable-next-line no-undef
                 const elementId = uuid();
                 const videoPlayerId = `${elementId}-video`;
@@ -715,7 +715,7 @@ const playVideo = {
                     video.oncanplay = function () {
                         // eslint-disable-next-line no-undef
                         if (startedVidCache[this.id]) {
-                            // eslint-disable-line no-undef
+
                             return;
                         }
 

@@ -1,16 +1,15 @@
-import { ReplaceVariable } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../../types/variables";
 import customRolesManager from "../../../../roles/custom-roles-manager";
 import logger from "../../../../logwrapper";
-import util from "../../../../utility";
+import { getRandomInt } from "../../../../utils";
 
 const model : ReplaceVariable = {
     definition: {
         handle: "randomCustomRoleUser",
         usage: "randomCustomRoleUser[role]",
         description: "Returns a random user's display name that is in any of the specified custom role(s).",
-        categories: [VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.OBJECT],
+        categories: ["user based"],
+        possibleDataOutput: ["text", "object"],
         examples: [
             {
                 usage: "randomCustomRoleUser[customRolesToInclude, usersToExclude, customRolesToExclude, displayName|username|id|raw]",
@@ -34,7 +33,7 @@ const model : ReplaceVariable = {
             }
         ]
     },
-    evaluator: async (_, roles: string | string[], ignoreUsers?: string | string[], ignoreRoles?: string | string[], propName?: string) => {
+    evaluator: (_, roles: string | string[], ignoreUsers?: string | string[], ignoreRoles?: string | string[], propName?: string) => {
         function parseArg(param?: string | string[]): string[] {
             if (param != null) {
                 if (Array.isArray(param)) {
@@ -46,7 +45,7 @@ const model : ReplaceVariable = {
             return [];
         }
 
-        const failResult: Readonly<{noRoles: string; noUsers: string;}> = {
+        const failResult: Readonly<{ noRoles: string, noUsers: string }> = {
             noRoles: "[No custom role specified]",
             noUsers: ""
         };
@@ -97,7 +96,7 @@ const model : ReplaceVariable = {
         }
 
         if (selectableUsers.length > 0) {
-            const randIndex = util.getRandomInt(0, selectableUsers.length - 1);
+            const randIndex = getRandomInt(0, selectableUsers.length - 1);
             switch (propName?.toLowerCase()) {
                 case "id":
                     return selectableUsers[randIndex].id;

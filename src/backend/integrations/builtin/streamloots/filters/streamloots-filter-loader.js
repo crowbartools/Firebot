@@ -1,6 +1,6 @@
 "use strict";
 
-const filterManager = require("../../../../events/filters/filter-manager");
+const { FilterManager } = require("../../../../events/filters/filter-manager");
 
 exports.registerFilters = () => {
     const cardName = require("./card-name");
@@ -8,8 +8,8 @@ exports.registerFilters = () => {
     const chestGift = require("./chest-gift");
     const chestQuantity = require("./chest-quantity");
 
-    filterManager.registerFilter(cardName);
-    filterManager.registerFilter(cardRarity);
-    filterManager.registerFilter(chestGift);
-    filterManager.registerFilter(chestQuantity);
+    FilterManager.registerFilter(cardName);
+    FilterManager.registerFilter(cardRarity);
+    FilterManager.registerFilter(chestGift);
+    FilterManager.registerFilter(chestQuantity);
 };

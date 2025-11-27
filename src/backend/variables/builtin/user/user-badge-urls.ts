@@ -1,11 +1,9 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import { EffectTrigger } from "../../../../shared/effect-constants";
+import type { ReplaceVariable, TriggersObject } from "../../../../types/variables";
 
-const triggers = {};
-triggers[EffectTrigger.MANUAL] = true;
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.EVENT] = [
+const triggers: TriggersObject = {};
+triggers["manual"] = true;
+triggers["command"] = true;
+triggers["event"] = [
     "twitch:chat-message",
     "twitch:first-time-chat",
     "firebot:highlight-message",
@@ -23,14 +21,14 @@ const model : ReplaceVariable = {
         ],
         description: "Outputs the URLs of a chatter's selected badge images from the associated command or event.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "trigger based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (trigger, target: null | string = null) => {
         let messageParts = [];
-        if (trigger.type === EffectTrigger.COMMAND) {
+        if (trigger.type === "command") {
             messageParts = trigger.metadata.chatMessage.badges;
-        } else if (trigger.type === EffectTrigger.EVENT) {
+        } else if (trigger.type === "event") {
             messageParts = trigger.metadata.eventData.chatMessage.badges;
         }
         const badgeUrls = messageParts.map(e => e.url);

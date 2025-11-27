@@ -1,7 +1,7 @@
 "use strict";
 
 (function() {
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
     angular.module("firebotApp")
         .component("addOrEditSubcommandModal", {
             template: `
@@ -32,12 +32,16 @@
                         Arg Trigger Text <tooltip text="'The text that should trigger this subcommand'">
                     </div>
                     <div style="width: 100%; position: relative;">
-                        <div class="form-group" ng-class="{'has-error': $ctrl.nameError}">
+                        <div class="form-group" ng-class="{'has-error': $ctrl.nameError}" style="margin-bottom: 0;">
                             <input type="text" id="nameField" class="form-control" ng-model="$ctrl.arg.arg" ng-keyup="$event.keyCode == 13 && $ctrl.save() " aria-describedby="helpBlock" placeholder="Enter trigger text" ng-keydown="$event.keyCode != 32 ? $event:$event.preventDefault()">
                             <span id="helpBlock" class="help-block" ng-show="$ctrl.nameError">{{$ctrl.nameErrorText}}</span>
                         </div>
                     </div>
                 </div>
+
+                <p class="muted mt-3" ng-if="$ctrl.arg.type && ($ctrl.arg.type === 'Custom' ? $ctrl.arg.arg : true)">
+                   Example usage: {{$ctrl.parentTrigger || "!command"}} <b>{{$ctrl.getExampleText()}}</b>
+                </p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
@@ -64,11 +68,13 @@
 
                 $ctrl.arg = {
                     active: true,
-                    id: uuid(),
+                    id: randomUUID(),
                     type: "Custom",
                     arg: "",
                     regex: false
                 };
+
+                $ctrl.parentTrigger = undefined;
 
                 $ctrl.onTypeChange = () => {
                     $ctrl.arg.usage = null;
@@ -114,6 +120,19 @@
                     $ctrl.kindErrorText = "";
                     return true;
                 }
+
+                $ctrl.getExampleText = () => {
+                    if ($ctrl.arg.type === "Custom") {
+                        return $ctrl.arg.arg ?? "subcommand";
+                    } else if ($ctrl.arg.type === "Number") {
+                        return "42";
+                    } else if ($ctrl.arg.type === "Username") {
+                        return "@user";
+                    } else if ($ctrl.arg.type === "Fallback") {
+                        return "any other text";
+                    }
+                    return "";
+                };
 
                 const numberRegex = "\\d+";
                 const usernameRegex = "@\\w+";
@@ -194,6 +213,8 @@
                         $ctrl.arg = JSON.parse(angular.toJson($ctrl.resolve.arg));
                         $ctrl.isNewArg = false;
                     }
+
+                    $ctrl.parentTrigger = $ctrl.resolve.parentTrigger;
                 };
             }
         });

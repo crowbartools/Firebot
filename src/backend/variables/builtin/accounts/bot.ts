@@ -1,19 +1,16 @@
-import { ReplaceVariable} from "../../../../types/variables";
-import { OutputDataType } from "../../../../shared/variable-constants";
-
-const accountAccess = require("../../../common/account-access");
+import type { ReplaceVariable } from "../../../../types/variables";
+import { AccountAccess } from "../../../common/account-access";
 
 const model : ReplaceVariable = {
     definition: {
         handle: "bot",
         description: "Outputs the Bot account username.",
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: ["text"]
     },
     evaluator: () => {
-        if (accountAccess.getAccounts().bot.loggedIn) {
-            return accountAccess.getAccounts().bot.username;
-        }
-        return "Unknown Bot";
+        return AccountAccess.getAccounts().bot?.loggedIn === true
+            ? AccountAccess.getAccounts().bot.username
+            : "Unknown Bot";
     }
 };
 

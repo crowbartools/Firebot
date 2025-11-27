@@ -1,11 +1,13 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { EffectTrigger } from "../../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger, TriggersObject } from "../../../../types/variables";
+import type { UserCommand } from "../../../../types/commands";
 
-const triggers = {};
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.CHANNEL_REWARD] = true;
-triggers[EffectTrigger.MANUAL] = true;
+const triggers: TriggersObject = {};
+triggers["command"] = true;
+triggers["channel_reward"] = true;
+triggers["event"] = [
+    "twitch:chat-message"
+];
+triggers["manual"] = true;
 
 /**
  * The $target variable
@@ -22,11 +24,13 @@ const model : ReplaceVariable = {
             }
         ],
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["common", "trigger based"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (trigger: Trigger, index: number) => {
-        let args = trigger.metadata.userCommand?.args ?? <string[]>trigger.metadata.args;
+        let args = trigger.metadata.userCommand?.args
+            ?? (trigger.metadata.eventData?.userCommand as UserCommand)?.args
+            ?? <string[]>trigger.metadata.args;
         if (args == null || <unknown>args === '') {
             args = [];
         }

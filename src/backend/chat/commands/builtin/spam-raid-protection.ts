@@ -1,8 +1,7 @@
 import { SystemCommand } from "../../../../types/commands";
-import twitchApi from "../../../twitch-api/api";
-import chat from "../../twitch-chat";
+import { TwitchApi } from "../../../streaming-platforms/twitch/api";
+import { TwitchSlashCommandHelpers } from "../../../streaming-platforms/twitch/chat/slash-commands/twitch-command-helpers";
 import raidMessageChecker from "../../moderation/raid-message-checker";
-import { TwitchCommandHelpers } from "../../twitch-commands/twitch-command-helpers";
 
 /**
  * The `!spamraidprotection` command
@@ -135,42 +134,42 @@ export const SpamRaidProtectionSystemCommand: SystemCommand<{
 
         if (args.length === 0) {
             if (commandOptions.enableFollowerOnly) {
-                const duration = TwitchCommandHelpers.getRawDurationInSeconds(commandOptions.enableFollowerOnlyDuration);
-                await twitchApi.chat.setFollowerOnlyMode(true, duration);
+                const duration = TwitchSlashCommandHelpers.getRawDurationInSeconds(commandOptions.enableFollowerOnlyDuration);
+                await TwitchApi.chat.setFollowerOnlyMode(true, duration);
             }
 
             if (commandOptions.enableSubscriberOnly) {
-                await twitchApi.chat.setSubscriberOnlyMode(true);
+                await TwitchApi.chat.setSubscriberOnlyMode(true);
             }
 
             if (commandOptions.enableEmoteOnly) {
-                await twitchApi.chat.setEmoteOnlyMode(true);
+                await TwitchApi.chat.setEmoteOnlyMode(true);
             }
 
             if (commandOptions.enableSlowMode) {
-                await twitchApi.chat.setSlowMode(true, commandOptions.enableSlowModeDelay);
+                await TwitchApi.chat.setSlowMode(true, commandOptions.enableSlowModeDelay);
             }
 
             if (commandOptions.clearChat) {
-                await twitchApi.chat.clearChat();
+                await TwitchApi.chat.clearChat();
             }
 
             if (commandOptions.banRaiders || commandOptions.blockRaiders) {
                 await raidMessageChecker.enable(commandOptions.banRaiders, commandOptions.blockRaiders);
             }
 
-            await chat.sendChatMessage(commandOptions.displayTemplate);
+            await TwitchApi.chat.sendChatMessage(commandOptions.displayTemplate, null, true);
         }
 
         if (args[0] === "off") {
-            await twitchApi.chat.setFollowerOnlyMode(false);
-            await twitchApi.chat.setSubscriberOnlyMode(false);
-            await twitchApi.chat.setEmoteOnlyMode(false);
-            await twitchApi.chat.setSlowMode(false);
+            await TwitchApi.chat.setFollowerOnlyMode(false);
+            await TwitchApi.chat.setSubscriberOnlyMode(false);
+            await TwitchApi.chat.setEmoteOnlyMode(false);
+            await TwitchApi.chat.setSlowMode(false);
 
             raidMessageChecker.disable();
 
-            await chat.sendChatMessage("Protection turned off.");
+            await TwitchApi.chat.sendChatMessage("Protection turned off.", null, true);
         }
     }
 };

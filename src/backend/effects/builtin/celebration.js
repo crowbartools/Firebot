@@ -169,7 +169,7 @@ const celebration = {
 
                     const confettiParty = setInterval(function () {
                         // launch a few confetti from the left edge
-                        confettiStage({ // eslint-disable-line no-undef
+                        confettiStage({
                             particleCount: 10,
                             angle: 60,
                             spread: 40,
@@ -179,7 +179,7 @@ const celebration = {
                             origin: { x: 0, y: 0.9 }
                         });
                         // and launch a few from the right edge
-                        confettiStage({ // eslint-disable-line no-undef
+                        confettiStage({
                             particleCount: 10,
                             angle: 120,
                             spread: 40,

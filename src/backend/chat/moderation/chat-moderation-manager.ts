@@ -1,74 +1,24 @@
 import { JsonDB } from "node-json-db";
 import fsp from "fs/promises";
-import logger from "../../logwrapper";
-import profileManager from "../../common/profile-manager";
-import frontendCommunicator from "../../common/frontend-communicator";
-import rolesManager from "../../roles/custom-roles-manager";
-import permitCommand from "./url-permit-command";
-import utils from "../../utility";
+
+import {
+    AllowList,
+    BannedRegularExpressions,
+    BannedWords,
+    ChatModerationSettings,
+    ModerationImportRequest,
+    ModerationUser
+} from "../../../types/moderation";
 import { FirebotChatMessage } from "../../../types/chat";
+
+import { TwitchApi } from "../../streaming-platforms/twitch/api";
+import { ProfileManager } from "../../common/profile-manager";
+import rolesManager from "../../roles/custom-roles-manager";
 import viewerDatabase from '../../viewers/viewer-database';
-import twitchApi from "../../twitch-api/api";
-
-export interface ModerationTerm {
-    text: string;
-    createdAt: number;
-}
-
-export interface ModerationUser {
-    id: string;
-    username: string;
-    displayName: string;
-}
-
-export interface AllowedUser {
-    id: string;
-    username: string;
-    displayName: string;
-    createdAt: number;
-}
-
-export interface BannedWords {
-    words: ModerationTerm[];
-}
-
-export interface BannedRegularExpressions {
-    regularExpressions: ModerationTerm[];
-}
-
-export interface AllowList {
-    urls: ModerationTerm[];
-    users: AllowedUser[];
-}
-
-export interface ModerationImportRequest {
-    filePath: string;
-    delimiter: "newline" | "comma" | "space";
-}
-
-export interface ChatModerationSettings {
-    bannedWordList: {
-        enabled: boolean;
-        exemptRoles: string[];
-        outputMessage?: string;
-    };
-    emoteLimit: {
-        enabled: boolean;
-        exemptRoles: string[];
-        max: number;
-        outputMessage?: string;
-    };
-    urlModeration: {
-        enabled: boolean;
-        exemptRoles: string[];
-        viewTime: {
-            enabled: boolean;
-            viewTimeInHours: number;
-        };
-        outputMessage?: string;
-    };
-    exemptRoles: string[];
-}
+import permitCommand from "./url-permit-command";
+import frontendCommunicator from "../../common/frontend-communicator";
+import logger from "../../logwrapper";
+import { getUrlRegex } from "../../utils";
 
 class ChatModerationManager {
     bannedWords: BannedWords = { words: [] };
@@ -176,7 +126,7 @@ class ChatModerationManager {
     // Banned words
 
     private getBannedWordsDb(): JsonDB {
-        return profileManager.getJsonDbInProfile("/chat/moderation/banned-words", false);
+        return ProfileManager.getJsonDbInProfile("/chat/moderation/banned-words", false);
     }
 
     private getBannedWordsList(): string[] {
@@ -240,7 +190,7 @@ class ChatModerationManager {
             this.getBannedWordsDb().push("/", this.bannedWords);
             success = true;
         } catch (error) {
-            if (error.name === 'DatabaseError') {
+            if ((error as Error).name === 'DatabaseError') {
                 logger.error("Error saving banned words data", error);
             }
         }
@@ -254,7 +204,7 @@ class ChatModerationManager {
     // Regular Expressions
 
     private getBannedRegularExpressionsDb(): JsonDB {
-        return profileManager.getJsonDbInProfile("/chat/moderation/banned-regular-expressions", false);
+        return ProfileManager.getJsonDbInProfile("/chat/moderation/banned-regular-expressions", false);
     }
 
     private getBannedRegularExpressionsList(): string[] {
@@ -289,7 +239,7 @@ class ChatModerationManager {
             this.getBannedRegularExpressionsDb().push("/", this.bannedRegularExpressions);
             success = true;
         } catch (error) {
-            if (error.name === 'DatabaseError') {
+            if ((error as Error).name === 'DatabaseError') {
                 logger.error("Error saving banned regular expressions data", error);
             }
         }
@@ -300,7 +250,7 @@ class ChatModerationManager {
     }
 
     private getAllowlistDb(): JsonDB {
-        return profileManager.getJsonDbInProfile("/chat/moderation/url-allowlist", false);
+        return ProfileManager.getJsonDbInProfile("/chat/moderation/url-allowlist", false);
     }
 
 
@@ -367,7 +317,7 @@ class ChatModerationManager {
             this.getAllowlistDb().push("/", this.allowlist);
             success = true;
         } catch (error) {
-            if (error.name === 'DatabaseError') {
+            if ((error as Error).name === 'DatabaseError') {
                 logger.error("Error saving URL allowlist data", error);
             }
         }
@@ -422,7 +372,7 @@ class ChatModerationManager {
             this.getAllowlistDb().push("/", this.allowlist);
             success = true;
         } catch (error) {
-            if (error.name === 'DatabaseError') {
+            if ((error as Error).name === 'DatabaseError') {
                 logger.error("Error saving user allowlist data", error);
             }
         }
@@ -435,7 +385,7 @@ class ChatModerationManager {
     // Moderation Settings
 
     private getChatModerationSettingsDb(): JsonDB {
-        return profileManager.getJsonDbInProfile("/chat/moderation/chat-moderation-settings");
+        return ProfileManager.getJsonDbInProfile("/chat/moderation/chat-moderation-settings");
     }
 
     private saveChatModerationSettings(settings: ChatModerationSettings): boolean {
@@ -446,7 +396,7 @@ class ChatModerationManager {
             this.getChatModerationSettingsDb().push("/", this.chatModerationSettings);
             success = true;
         } catch (error) {
-            if (error.name === 'DatabaseError') {
+            if ((error as Error).name === 'DatabaseError') {
                 logger.error("Error saving chat moderation settings", error);
             }
         }
@@ -473,15 +423,16 @@ class ChatModerationManager {
     }
 
     private matchesBannedRegex(input: string) {
-        const expressions = this.getBannedRegularExpressionsList().reduce(function(newArray, regex) {
-            try {
-                newArray.push(new RegExp(regex, "gi"));
-            } catch (error) {
-                logger.warn(`Unable to parse banned RegEx: ${regex}`, error);
-            }
+        const expressions = this.getBannedRegularExpressionsList()
+            .reduce((newArray, regex) => {
+                try {
+                    newArray.push(new RegExp(regex, "gi"));
+                } catch (error) {
+                    logger.warn(`Unable to parse banned RegEx: ${regex}`, error);
+                }
 
-            return newArray;
-        }, []);
+                return newArray;
+            }, [] as RegExp[]);
         const inputWords = input.split(" ");
 
         for (const exp of expressions) {
@@ -500,11 +451,11 @@ class ChatModerationManager {
     }
 
     private async deleteMessage(messageId: string, outputMessage?: string, username?: string) {
-        await twitchApi.chat.deleteChatMessage(messageId);
+        await TwitchApi.chat.deleteChatMessage(messageId);
 
         if (outputMessage?.length) {
             outputMessage = outputMessage.replaceAll("{userName}", username);
-            await twitchApi.chat.sendChatMessage(outputMessage);
+            await TwitchApi.chat.sendChatMessage(outputMessage, null, true);
         }
     }
 
@@ -513,7 +464,7 @@ class ChatModerationManager {
 
     load() {
         try {
-            const settings: ChatModerationSettings = this.getChatModerationSettingsDb().getData("/");
+            const settings = this.getChatModerationSettingsDb().getData("/") as ChatModerationSettings;
             if (settings && Object.keys(settings).length > 0) {
                 this.chatModerationSettings = settings;
                 if (settings.exemptRoles == null) {
@@ -574,22 +525,22 @@ class ChatModerationManager {
                 }
             }
 
-            const words: BannedWords = this.getBannedWordsDb().getData("/");
+            const words = this.getBannedWordsDb().getData("/") as BannedWords;
             if (words && Object.keys(words).length > 0) {
                 this.bannedWords = words;
             }
 
-            const regularExpressions: BannedRegularExpressions = this.getBannedRegularExpressionsDb().getData("/");
+            const regularExpressions = this.getBannedRegularExpressionsDb().getData("/") as BannedRegularExpressions;
             if (regularExpressions && Object.keys(regularExpressions).length > 0) {
                 this.bannedRegularExpressions = regularExpressions;
             }
 
-            const allowlist: AllowList = this.getAllowlistDb().getData("/");
+            const allowlist = this.getAllowlistDb().getData("/") as AllowList;
             if (allowlist && Object.keys(allowlist).length > 0) {
                 this.allowlist = allowlist;
             }
         } catch (error) {
-            if (error.name === 'DatabaseError') {
+            if ((error as Error).name === 'DatabaseError') {
                 logger.error("Error loading chat moderation data", error);
             }
         }
@@ -650,7 +601,7 @@ class ChatModerationManager {
         ) {
             let shouldDeleteMessage = false;
             const message = chatMessage.rawText;
-            const regex = utils.getUrlRegex();
+            const regex = getUrlRegex();
 
             if (regex.test(message)) {
                 logger.debug("URL moderation: Found URL in message");

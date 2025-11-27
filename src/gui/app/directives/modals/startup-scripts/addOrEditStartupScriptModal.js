@@ -2,7 +2,7 @@
 
 (function() {
 
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     angular.module("firebotApp")
         .component("addOrEditStartupScriptModal", {
@@ -61,7 +61,7 @@
                     }
 
                     if ($ctrl.isNewScript) {
-                        $ctrl.scriptData.id = uuid();
+                        $ctrl.scriptData.id = randomUUID();
                     }
 
                     if ($ctrl.initFirst) {

@@ -1,14 +1,20 @@
 import { app } from "electron";
-import path from "path";
-import fsp from "fs/promises";
 import fs from "fs";
-import logger from "./logwrapper";
-import utils from "./utility";
-import { SettingsManager } from "./common/settings-manager";
-import dataAccess from "./common/data-access.js";
-import frontendCommunicator from "./common/frontend-communicator";
+import fsp from "fs/promises";
+import path from "path";
 import unzipper from "unzipper";
 import archiver from "archiver";
+
+import { SettingsManager } from "./common/settings-manager";
+import * as dataAccess from "./common/data-access";
+import frontendCommunicator from "./common/frontend-communicator";
+import logger from "./logwrapper";
+import { emptyFolder } from "./utils";
+
+interface ZipEntry {
+    path: string;
+    autodrain: () => Promise<void>;
+}
 
 const RESTORE_FOLDER_PATH = dataAccess.getPathInTmpDir("/restore");
 const PROFILES_FOLDER_PATH = dataAccess.getPathInUserData("/profiles");
@@ -50,7 +56,7 @@ class BackupManager {
             frontendCommunicator.send("backups:backup-complete", manualActivation);
         });
 
-        frontendCommunicator.onAsync("backups:restore-backup", async (backupFilePath: string): Promise<{ success: boolean; reason?: string; }> => {
+        frontendCommunicator.onAsync("backups:restore-backup", async (backupFilePath: string): Promise<{ success: boolean, reason?: string }> => {
             return await this.restoreBackup(backupFilePath);
         });
 
@@ -209,7 +215,7 @@ class BackupManager {
             varIgnoreInArchive.push("overlay-resources/**");
         }
 
-        archive.glob('**/*', {
+        archive.glob("**/*", {
             ignore: varIgnoreInArchive,
             cwd: path.resolve(dataAccess.getPathInUserData("/"))
         });
@@ -232,19 +238,23 @@ class BackupManager {
 
         if (shouldBackUp) {
             const isSameDay =
-          lastBackupDate != null &&
+                lastBackupDate != null &&
           lastBackupDate.getDate() === todayDate.getDate() &&
           lastBackupDate.getMonth() === todayDate.getMonth() &&
           lastBackupDate.getFullYear() === todayDate.getFullYear();
 
             if (!isSameDay) {
                 logger.info("Doing once a day backup");
-                await this.startBackup();
+                try {
+                    await this.startBackup();
+                } catch (error) {
+                    logger.error("Error during once a day backup", error);
+                }
             }
         }
     }
 
-    async restoreBackup(backupFilePath: string): Promise<{ success: boolean; reason?: string; }> {
+    async restoreBackup(backupFilePath: string): Promise<{ success: boolean, reason?: string }> {
         // Validate backup zip
         try {
             const valid = await this.validateBackupZip(backupFilePath);
@@ -254,7 +264,7 @@ class BackupManager {
                     reason: "Provided zip is not a valid Firebot V5 backup."
                 };
             }
-        } catch (error) {
+        } catch {
             return {
                 success: false,
                 reason: "Failed to validate the backup zip."
@@ -263,7 +273,7 @@ class BackupManager {
 
         // Clear out the /restore folder
         try {
-            await utils.emptyFolder(RESTORE_FOLDER_PATH);
+            await emptyFolder(RESTORE_FOLDER_PATH);
         } catch (error) {
             logger.warn("Error clearing backup restore folder", error);
         }
@@ -273,7 +283,7 @@ class BackupManager {
 
         // Clear out the profiles folder
         try {
-            await utils.emptyFolder(PROFILES_FOLDER_PATH);
+            await emptyFolder(PROFILES_FOLDER_PATH);
         } catch (error) {
             logger.warn("Error clearing profiles folder", error);
             return {
@@ -303,13 +313,13 @@ class BackupManager {
 
         await fs.createReadStream(backupFilePath)
             .pipe(unzipper.Parse() //eslint-disable-line new-cap
-                .on('entry', (entry) => {
+                .on("entry", (entry: ZipEntry) => {
                     if (entry.path.includes("profiles")) {
                         hasProfilesDir = true;
                     } else if (entry.path.includes("global-settings")) {
                         hasGlobalSettings = true;
                     }
-                    entry.autodrain();
+                    void entry.autodrain();
                 }))
             .promise();
 

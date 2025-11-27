@@ -1,5 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
@@ -16,8 +15,8 @@ const model : ReplaceVariable = {
                 description: "Returns the length of the raw array."
             }
         ],
-        categories: [VariableCategory.ADVANCED, VariableCategory.NUMBERS],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        categories: ["advanced", "numbers"],
+        possibleDataOutput: ["number"]
     },
     evaluator: (
         trigger: Trigger,

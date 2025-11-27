@@ -1,29 +1,31 @@
-import logger from "../logwrapper";
-import accountAccess, { FirebotAccount } from "../common/account-access";
-import twitchAuth from "./twitch-auth";
-import TwitchApi from "../twitch-api/api";
-import { AuthDetails, AuthProviderDefinition } from "./auth";
 import { AccessToken, getExpiryDateOfAccessToken } from "@twurple/auth";
-import { DeviceAuthProvider } from "./twitch-device-auth-provider";
+
+import { AuthDetails, AuthProviderDefinition } from "../../types/auth";
+
+import { AccountAccess } from "../common/account-access";
+import { DeviceAuthProvider } from "../streaming-platforms/twitch/auth/twitch-device-auth-provider";
+import { TwitchApi } from "../streaming-platforms/twitch/api";
+import { TwitchAuthProviders } from "../streaming-platforms/twitch/auth/twitch-auth";
 import frontendCommunicator from "../common/frontend-communicator";
+import logger from "../logwrapper";
 
 type ValidationRequest = {
     accountType: "streamer" | "bot";
     authDetails: AuthDetails;
-}
+};
 
 class FirebotDeviceAuthProvider {
     streamerProvider: DeviceAuthProvider;
     botProvider: DeviceAuthProvider;
 
     private onRefresh(accountType: "streamer" | "bot", userId: string, token: AccessToken): void {
-        const account: FirebotAccount = accountType === "streamer"
-            ? accountAccess.getAccounts().streamer
-            : accountAccess.getAccounts().bot;
+        const account = accountType === "streamer"
+            ? AccountAccess.getAccounts().streamer
+            : AccountAccess.getAccounts().bot;
 
         logger.debug(`Persisting ${accountType} access token`);
 
-        const auth: AuthDetails = account.auth ?? { } as AuthDetails;
+        const auth = (account.auth ?? {}) as AuthDetails;
         auth.access_token = token.accessToken; // eslint-disable-line camelcase
         auth.refresh_token = token.refreshToken; // eslint-disable-line camelcase
         auth.expires_in = token.expiresIn; // eslint-disable-line camelcase
@@ -34,20 +36,20 @@ class FirebotDeviceAuthProvider {
         });
 
         account.auth = auth;
-        accountAccess.updateAccount(accountType, account, false, true);
+        AccountAccess.updateAccount(accountType, account, false, true);
     }
 
     setupDeviceAuthProvider(): void {
-        if (accountAccess.getAccounts().streamer.loggedIn) {
-            const streamerAcccount = accountAccess.getAccounts().streamer;
+        if (AccountAccess.getAccounts().streamer.loggedIn) {
+            const streamerAcccount = AccountAccess.getAccounts().streamer;
 
-            const scopes: string[] = Array.isArray(twitchAuth.streamerAccountProvider.scopes)
-                ? twitchAuth.streamerAccountProvider.scopes
-                : twitchAuth.streamerAccountProvider.scopes.split(" ");
+            const scopes = Array.isArray(TwitchAuthProviders.streamerAccountProvider.scopes)
+                ? TwitchAuthProviders.streamerAccountProvider.scopes
+                : TwitchAuthProviders.streamerAccountProvider.scopes.split(" ");
 
             this.streamerProvider = new DeviceAuthProvider({
                 userId: streamerAcccount.userId,
-                clientId: twitchAuth.twitchClientId,
+                clientId: TwitchAuthProviders.twitchClientId,
                 accessToken: {
                     accessToken: streamerAcccount.auth.access_token,
                     refreshToken: streamerAcccount.auth.refresh_token,
@@ -62,22 +64,22 @@ class FirebotDeviceAuthProvider {
                 if (isENotFoundError) {
                     return;
                 }
-                accountAccess.setAccountTokenIssue("streamer");
+                AccountAccess.setAccountTokenIssue("streamer");
             });
         } else {
             this.streamerProvider = null;
         }
 
-        if (accountAccess.getAccounts().bot.loggedIn) {
-            const botAcccount = accountAccess.getAccounts().bot;
+        if (AccountAccess.getAccounts().bot.loggedIn) {
+            const botAcccount = AccountAccess.getAccounts().bot;
 
-            const scopes: string[] = Array.isArray(twitchAuth.botAccountProvider.scopes)
-                ? twitchAuth.botAccountProvider.scopes
-                : twitchAuth.botAccountProvider.scopes.split(" ");
+            const scopes: string[] = Array.isArray(TwitchAuthProviders.botAccountProvider.scopes)
+                ? TwitchAuthProviders.botAccountProvider.scopes
+                : TwitchAuthProviders.botAccountProvider.scopes.split(" ");
 
             this.botProvider = new DeviceAuthProvider({
                 userId: botAcccount.userId,
-                clientId: twitchAuth.twitchClientId,
+                clientId: TwitchAuthProviders.twitchClientId,
                 accessToken: {
                     accessToken: botAcccount.auth.access_token,
                     refreshToken: botAcccount.auth.refresh_token,
@@ -92,7 +94,7 @@ class FirebotDeviceAuthProvider {
                 if (isENotFoundError) {
                     return;
                 }
-                accountAccess.setAccountTokenIssue("bot");
+                AccountAccess.setAccountTokenIssue("bot");
             });
         } else {
             this.botProvider = null;
@@ -122,16 +124,16 @@ class FirebotDeviceAuthProvider {
         );
     }
 
-    async validateTwitchAccount(request: ValidationRequest): Promise<boolean> {
+    validateTwitchAccount(request: ValidationRequest): boolean {
         let definition: AuthProviderDefinition;
 
         switch (request.accountType) {
             case "streamer":
-                definition = twitchAuth.streamerAccountProvider;
+                definition = TwitchAuthProviders.streamerAccountProvider;
                 break;
 
             case "bot":
-                definition = twitchAuth.botAccountProvider;
+                definition = TwitchAuthProviders.botAccountProvider;
                 break;
 
             default:
@@ -145,46 +147,46 @@ class FirebotDeviceAuthProvider {
         return true;
     }
 
-    async validateTwitchAccounts() {
+    validateTwitchAccounts() {
         const invalidAccounts = {
             streamer: false,
             bot: false
         };
 
-        if (accountAccess.getAccounts().streamer.loggedIn === true) {
+        if (AccountAccess.getAccounts().streamer.loggedIn === true) {
             if (
-                !(await this.validateTwitchAccount({
+                !(this.validateTwitchAccount({
                     accountType: "streamer",
-                    authDetails: accountAccess.getAccounts().streamer.auth
+                    authDetails: AccountAccess.getAccounts().streamer.auth
                 }))
             ) {
                 invalidAccounts.streamer = true;
             }
         }
 
-        if (accountAccess.getAccounts().bot.loggedIn === true) {
+        if (AccountAccess.getAccounts().bot.loggedIn === true) {
             if (
-                !(await this.validateTwitchAccount({
+                !(this.validateTwitchAccount({
                     accountType: "bot",
-                    authDetails: accountAccess.getAccounts().bot.auth
+                    authDetails: AccountAccess.getAccounts().bot.auth
                 }))
             ) {
                 invalidAccounts.bot = true;
             }
         }
 
-        frontendCommunicator.send("invalidate-accounts", invalidAccounts);
+        frontendCommunicator.send("accounts:invalidate-accounts", invalidAccounts);
     }
 }
 
 const firebotDeviceAuthProvider = new FirebotDeviceAuthProvider();
 
-accountAccess.events.on("account-update", () => {
+AccountAccess.on("account-update", () => {
     firebotDeviceAuthProvider.setupDeviceAuthProvider();
 });
 
-frontendCommunicator.onAsync("validate-twitch-accounts", async () => {
-    await firebotDeviceAuthProvider.validateTwitchAccounts();
+frontendCommunicator.on("validate-twitch-accounts", () => {
+    firebotDeviceAuthProvider.validateTwitchAccounts();
 });
 
-export = firebotDeviceAuthProvider;
+export { firebotDeviceAuthProvider as FirebotDeviceAuthProvider };

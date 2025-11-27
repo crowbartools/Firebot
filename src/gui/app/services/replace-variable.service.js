@@ -9,9 +9,9 @@
             /**
              * @type {Array<import("../../../types/variables").ReplaceVariable['definition']>}
              */
-            service.allVariables = backendCommunicator.fireEventSync("getReplaceVariableDefinitions");
+            service.allVariables = backendCommunicator.fireEventSync("variables:get-replace-variable-definitions");
 
-            service.additionalVariableEvents = backendCommunicator.fireEventSync("get-additional-variable-events");
+            service.additionalVariableEvents = backendCommunicator.fireEventSync("variables:get-additional-variable-events");
 
             service.triggerCache = {};
 

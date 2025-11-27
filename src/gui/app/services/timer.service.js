@@ -2,7 +2,7 @@
 (function() {
     angular
         .module("firebotApp")
-        .factory("timerService", function(backendCommunicator, $q, utilityService, objectCopyHelper, ngToast) {
+        .factory("timerService", function(backendCommunicator, utilityService, objectCopyHelper, ngToast) {
             const service = {};
 
             service.timers = [];
@@ -16,39 +16,32 @@
                 }
             }
 
-            backendCommunicator.on("timerUpdate", timer => {
+            backendCommunicator.on("timerUpdate", (timer) => {
                 updateTimer(timer);
             });
 
-            backendCommunicator.on("all-timers-updated", timers => {
+            backendCommunicator.on("all-timers-updated", (timers) => {
                 service.timers = timers;
             });
 
-            service.loadTimers = function() {
-                $q.when(backendCommunicator.fireEventAsync("getTimers"))
-                    .then(timers => {
-                        if (timers) {
-                            service.timers = timers;
-                        }
-                    });
+            service.loadTimers = () => {
+                service.timers = backendCommunicator.fireEventSync("timers:get-timers");
             };
 
             service.getTimers = () => service.timers;
 
-            service.saveTimer = function(timer) {
-                return $q.when(backendCommunicator.fireEventAsync("saveTimer", timer))
-                    .then(savedTimer => {
-                        if (savedTimer) {
-                            updateTimer(savedTimer);
-                            return true;
-                        }
-                        return false;
-                    });
+            service.saveTimer = (timer) => {
+                const savedTimer = backendCommunicator.fireEventSync("timers:save-timer", timer);
+                if (savedTimer) {
+                    updateTimer(savedTimer);
+                    return true;
+                }
+                return false;
             };
 
             service.saveAllTimers = function(timers) {
                 service.timers = timers;
-                backendCommunicator.fireEventAsync("saveAllTimers", timers);
+                backendCommunicator.fireEvent("timers:save-all-timers", timers);
             };
 
             service.toggleTimerActiveState = function(timer) {
@@ -76,16 +69,15 @@
                     copiedTimer.name += " copy";
                 }
 
-                service.saveTimer(copiedTimer).then(successful => {
-                    if (successful) {
-                        ngToast.create({
-                            className: 'success',
-                            content: 'Successfully duplicated a timer!'
-                        });
-                    } else {
-                        ngToast.create("Unable to duplicate timer.");
-                    }
-                });
+                const successful = service.saveTimer(copiedTimer);
+                if (successful) {
+                    ngToast.create({
+                        className: 'success',
+                        content: 'Successfully duplicated a timer!'
+                    });
+                } else {
+                    ngToast.create("Unable to duplicate timer.");
+                }
             };
 
             // Deletes a timer.
@@ -96,11 +88,11 @@
 
                 service.timers = service.timers.filter(t => t.id !== timer.id);
 
-                backendCommunicator.fireEvent("deleteTimer", timer.id);
+                backendCommunicator.fireEvent("timers:delete-timer", timer.id);
             };
 
             service.showAddEditTimerModal = function(timer) {
-                return new Promise(resolve => {
+                return new Promise((resolve) => {
                     utilityService.showModal({
                         component: "addOrEditTimerModal",
                         breadcrumbName: "Edit Timer",
@@ -108,7 +100,7 @@
                         resolveObj: {
                             timer: () => timer
                         },
-                        closeCallback: response => {
+                        closeCallback: (response) => {
                             resolve(response.timer);
                         }
                     });

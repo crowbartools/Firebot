@@ -1,6 +1,5 @@
 import { ReplaceVariable } from "../../../../../types/variables";
 import { isStreaming } from "../obs-remote";
-import { VariableCategory } from "../../../../../shared/variable-constants";
 
 export const IsStreamingVariable: ReplaceVariable = {
     definition: {
@@ -8,7 +7,7 @@ export const IsStreamingVariable: ReplaceVariable = {
         description:
       "Returns 'true' if OBS is currently streaming or 'false' if it is not.",
         possibleDataOutput: ["bool"],
-        categories: [VariableCategory.ADVANCED, VariableCategory.INTEGRATION, VariableCategory.OBS]
+        categories: ["advanced", "integrations", "obs"]
     },
     evaluator: async () => {
         const streamState = await isStreaming();

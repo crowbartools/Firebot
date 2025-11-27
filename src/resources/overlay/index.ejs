@@ -37,6 +37,7 @@
     <script src="js/util.js"></script>
     <script src="js/overlay-widgets.js"></script>
     <script src="js/plugins/create.js"></script>
+    <script src="js/plugins/countUp.umd.js"></script>
     <script src="js/fireworks.js"></script>
     <script src="js/confetti.js"></script>
     <script src="js/fitty.js"></script>
@@ -65,13 +66,14 @@
 
         const widgetInitCallbacks = [
             <% for(let widgetInitCallback of widgetInitCallbacks) { %>
-                <%-widgetInitCallback%>,
+                ["<%-widgetInitCallback.typeId%>", <%-widgetInitCallback.callback%>],
             <% } %>
         ];
         
-        for(const callback of widgetInitCallbacks) {
+        for(const [widgetType, callback] of widgetInitCallbacks) {
             try {
-                callback();
+                const utils = new OverlayWidgetInitUtils(widgetType);
+                callback(utils);
             } catch(ex) {
                 console.error("Error in widget init callback", ex);
             }

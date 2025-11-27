@@ -1,5 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 import logger from '../../../logwrapper';
 
 
@@ -8,17 +7,17 @@ const model : ReplaceVariable = {
         handle: "objectKeys",
         description: "Gets an array of the keys for a given object.",
         usage: "objectKeys[object]",
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.ARRAY]
+        categories: ["advanced"],
+        possibleDataOutput: ["array"]
     },
     evaluator: (
         _,
-        subject: string | object | unknown
+        subject: string | object
     ) : unknown => {
         if (typeof subject === 'string' || subject instanceof String) {
             try {
-                subject = JSON.parse(`${subject}`);
-            } catch (err) {
+                subject = JSON.parse(`${subject.toString()}`) as object;
+            } catch {
                 logger.error("Invalid object specified", subject);
                 return null;
             }

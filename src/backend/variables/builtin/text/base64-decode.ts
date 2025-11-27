@@ -1,8 +1,7 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
-import { convertToString } from '../../../utility';
 import logger from '../../../logwrapper';
+import { stringify } from '../../../utils';
 
 const model: ReplaceVariable = {
     definition: {
@@ -19,15 +18,15 @@ const model: ReplaceVariable = {
                 description: 'Returns an empty string because "test string" is not valid base64.'
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["text"]
     },
-    async evaluator(_, text: unknown): Promise<string> {
+    evaluator: (_, text: unknown): string => {
         const decoder = new TextDecoder();
         try {
-            return decoder.decode(Uint8Array.from(atob(convertToString(text)), c => c.charCodeAt(0)));
+            return decoder.decode(Uint8Array.from(atob(stringify(text)), c => c.charCodeAt(0)));
         } catch {
-            logger.error(`Failed to decode base64 string: ${convertToString(text)}`);
+            logger.error(`Failed to decode base64 string: ${stringify(text)}`);
             return "";
         }
     }

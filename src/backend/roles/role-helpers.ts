@@ -1,10 +1,11 @@
-import { FirebotRole } from "../../types/roles";
+import { TypedEmitter } from "tiny-typed-emitter";
+import type { FirebotRole } from "../../types/roles";
 import firebotRolesManager from "./firebot-roles-manager";
+import twitchRolesManager from "./twitch-roles-manager";
 import chatRolesManager from "./chat-roles-manager";
 import teamRolesManager from "./team-roles-manager";
 import customRolesManager from "./custom-roles-manager";
-import twitchRolesManager from "../../shared/twitch-roles";
-import { TypedEmitter } from "tiny-typed-emitter";
+import twitchRoles from "../../shared/twitch-roles";
 
 export interface FirebotViewerRoles {
     twitchRoles: FirebotRole[];
@@ -21,7 +22,7 @@ class RoleHelpers extends TypedEmitter<Events> {
     constructor() {
         super();
 
-        chatRolesManager.on("viewer-role-updated", (userId, roleId, action) => {
+        twitchRolesManager.on("viewer-role-updated", (userId, roleId, action) => {
             this.emit("viewer-role-updated", userId, roleId, action);
         });
 
@@ -43,7 +44,7 @@ class RoleHelpers extends TypedEmitter<Events> {
 
     async getAllRolesForViewerNameSpaced(userId: string): Promise<FirebotViewerRoles> {
         return {
-            twitchRoles: (await chatRolesManager.getUsersChatRoles(userId)).map(twitchRolesManager.mapTwitchRole),
+            twitchRoles: (await chatRolesManager.getUsersChatRoles(userId)).map(twitchRoles.mapTwitchRole),
             firebotRoles: firebotRolesManager.getAllFirebotRolesForViewer(userId),
             customRoles: customRolesManager.getAllCustomRolesForViewer(userId),
             teamRoles: await teamRolesManager.getAllTeamRolesForViewer(userId)

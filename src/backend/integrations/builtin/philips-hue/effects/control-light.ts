@@ -1,39 +1,6 @@
-"use strict";
-
-import { EffectScope, EffectType } from "../../../../../types/effects";
+import type { EffectScope, EffectType } from "../../../../../types/effects";
+import type { HueControlLightEffectData, HueLightData } from "../hue-types";
 import hueManager from "../hue-manager";
-
-export type HueControlLightEffectData = {
-    lightId: string;
-    updateActivated: boolean;
-    activationAction?: "off" | "on" | "toggle";
-    updateBrightness: boolean;
-    brightnessPercentage?: string;
-    updateColor: boolean;
-    /**
-     * Hex color string
-     */
-    color?: string;
-    triggerEffectAnimation: boolean;
-    effectAnimationType?: "colorloop" | "none";
-    triggerAlert: boolean;
-    alertType?: "short" | "long" | "disable";
-    transitionType?: "default" | "instant" | "fast" | "slow" | "custom";
-    customTransitionSecs?: string;
-};
-
-type HueLightData = {
-    id: string;
-    name: string;
-    type: string;
-    capabilities: {
-        control?: {
-            mindimlevel?: undefined,
-            colorgamuttype?: "C",
-            colorgamut?: [number, number][],
-        }
-    };
-}
 
 const model: EffectType<HueControlLightEffectData> = {
     definition: {
@@ -137,7 +104,7 @@ const model: EffectType<HueControlLightEffectData> = {
             selectedLightCapabilities: {
                 color: boolean;
                 dimming: boolean;
-            }
+            };
         },
         backendCommunicator
     ) => {
@@ -233,8 +200,8 @@ const model: EffectType<HueControlLightEffectData> = {
         return [];
     },
     onTriggerEvent: async ({ effect }) => {
-        hueManager.controlHueLight(effect.lightId, effect);
+        await hueManager.controlHueLight(effect.lightId, effect);
     }
 };
 
-module.exports = model;
+export = model;

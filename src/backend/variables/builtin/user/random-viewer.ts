@@ -1,16 +1,15 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import activeUserHandler from "../../../chat/chat-listeners/active-user-handler";
-import logger from "../../../logwrapper";
+import type { ReplaceVariable } from "../../../../types/variables";
+import { ActiveUserHandler } from "../../../chat/active-user-handler";
 import customRolesManager from "../../../roles/custom-roles-manager";
-import { getRandomInt } from "../../../utility";
+import logger from "../../../logwrapper";
+import { getRandomInt } from "../../../utils";
 
 const model : ReplaceVariable = {
     definition: {
         handle: "randomViewer",
         description: "Get a random viewer's username that is presently in your channel's chat.",
-        categories: [VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.OBJECT],
+        categories: ["user based"],
+        possibleDataOutput: ["text", "object"],
         examples: [
             {
                 usage: "randomViewer[customRolesToInclude, usersToExclude, customRolesToExclude, username|displayName|id|raw]",
@@ -38,7 +37,7 @@ const model : ReplaceVariable = {
         const failResult = "[Unable to get random viewer]";
         logger.debug("Getting random viewer...");
 
-        const onlineViewerCount = activeUserHandler.getOnlineUserCount();
+        const onlineViewerCount = ActiveUserHandler.getOnlineUserCount();
 
         if (onlineViewerCount === 0) {
             logger.warn("randomViewer: no online viewers are available to select from");
@@ -87,7 +86,7 @@ const model : ReplaceVariable = {
             logger.warn(`randomViewer ignoring unknown excluded role(s): ${unknownRoleNames.join(", ")}`);
         }
 
-        let selectableUsers = activeUserHandler.getAllOnlineUsers();
+        let selectableUsers = ActiveUserHandler.getAllOnlineUsers();
         if (excludedUserNames.length > 0) {
             selectableUsers = selectableUsers.filter(user => !excludedUserNames.includes(user.username));
         }

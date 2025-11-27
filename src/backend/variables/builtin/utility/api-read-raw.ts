@@ -1,5 +1,4 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 import readApi from './api-read';
 
@@ -14,8 +13,8 @@ const model: ReplaceVariable = {
                 description: "Traverse a JSON response object."
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER],
+        categories: ["advanced"],
+        possibleDataOutput: ["text", "number"],
         hidden: true
     },
     evaluator: (

@@ -25,16 +25,9 @@
             }
 
             service.loadChannelRewards = () => {
-                $q.when(backendCommunicator.fireEventAsync("get-channel-rewards"))
-                    .then((channelRewards) => {
-                        if (channelRewards) {
-                            service.channelRewards = channelRewards;
-                        }
-                    });
-                $q.when(backendCommunicator.fireEventAsync("get-channel-rewards-eligibility"))
-                    .then((eligible) => {
-                        service.userIsEligible = eligible;
-                    });
+                service.channelRewards = backendCommunicator.fireEventSync("get-channel-rewards");
+
+                service.userIsEligible = backendCommunicator.fireEventSync("get-channel-rewards-eligibility");
             };
 
             service.saveChannelReward = (channelReward) => {

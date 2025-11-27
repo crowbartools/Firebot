@@ -18,7 +18,7 @@
                     menuPosition: "@",
                     buttonPosition: "@"
                 },
-                controller: function($scope, $element, replaceVariableService, $timeout, $sce, variableMacroService) {
+                controller: function($scope, $element, replaceVariableService, $timeout, $sce, variableMacroService, backendCommunicator, modalService, settingsService) {
 
                     const insertAt = (str, sub, pos) => `${str.slice(0, pos)}${sub}${str.slice(pos)}`;
 
@@ -36,6 +36,8 @@
 
                     $scope.variableMacroService = variableMacroService;
 
+                    $scope.settingsService = settingsService;
+
                     $scope.activeCategory = "common";
                     $scope.setActiveCategory = (category) => {
                         $scope.activeCategory = category;
@@ -46,12 +48,6 @@
                         if ($scope.activeCategory !== "magic") {
                             $scope.activeCategory = null;
                         }
-                    };
-
-                    const parseMarkdown = (text) => {
-                        return $sce.trustAsHtml(
-                            sanitize(marked(text))
-                        );
                     };
 
                     function findTriggerDataScope(currentScope) {
@@ -67,6 +63,44 @@
                         return findTriggerDataScope(currentScope.$parent);
                     }
 
+                    const parseMarkdown = (text) => {
+                        return $sce.trustAsHtml(
+                            sanitize(marked(text))
+                        );
+                    };
+
+                    $scope.suggestionsLoading = {};
+
+                    function getSuggestionsForVariable(variableHandle) {
+                        $scope.suggestionsLoading[variableHandle] = true;
+
+                        const { trigger, triggerMeta } = findTriggerDataScope();
+
+                        backendCommunicator.fireEventAsync("variables:get-variable-suggestions", {
+                            variableHandle,
+                            triggerType: trigger,
+                            triggerMeta
+                        })
+                            .then((suggestions) => {
+                                const variable = $scope.variables.find(v => v.handle === variableHandle);
+                                if (variable != null) {
+                                    variable.suggestions = suggestions?.map((s) => {
+                                        return {
+                                            ...s,
+                                            description: s.description ? parseMarkdown(s.description) : undefined
+                                        };
+                                    }) ?? [];
+                                }
+                                $scope.suggestionsLoading[variableHandle] = false;
+                            });
+                    }
+
+                    $scope.suggestionsToggled = (variable, isOpen) => {
+                        if (isOpen && !variable.suggestions?.length) {
+                            getSuggestionsForVariable(variable.handle);
+                        }
+                    };
+
                     function getVariables() {
                         const { trigger, triggerMeta } = findTriggerDataScope();
 
@@ -74,14 +108,6 @@
                             $scope.magicVariables = triggerMeta.magicVariables;
                             $scope.hasMagicVariables = Object.values($scope.magicVariables).some(v => v.length > 0);
                         }
-
-                        $timeout(function() {
-                            const offset = $element.offset();
-                            const menuHeight = ($scope.hasMagicVariables ? 385 : 350) + 10; // 10px to account for app title bar
-                            if (offset.top <= menuHeight && ($scope.menuPosition === "above" || $scope.menuPosition == null)) {
-                                $scope.menuPosition = "under";
-                            }
-                        }, 0, false);
 
                         if (!$scope.disableVariableMenu) {
                             $scope.variables = replaceVariableService.getVariablesForTrigger({
@@ -95,9 +121,10 @@
                                     examples: v.examples?.map((e) => {
                                         return {
                                             ...e,
-                                            description: parseMarkdown(e.description || "")
+                                            description: e.description ? parseMarkdown(e.description) : undefined
                                         };
-                                    })
+                                    }),
+                                    suggestions: []
                                 };
                             });
                         }
@@ -120,7 +147,14 @@
                         } else {
                             $timeout(() => {
                                 $element.next(".variable-menu").find("#variable-search").focus();
-                            }, 5);
+
+                                const offset = $element.offset();
+                                const menuHeight = $element.next(".variable-menu").height();
+
+                                if (offset.top <= menuHeight && ($scope.menuPosition === "above" || $scope.menuPosition == null || $scope.menuPosition === "")) {
+                                    $scope.menuPosition = "under";
+                                }
+                            }, 1);
                         }
                     };
 
@@ -163,6 +197,13 @@
                     $scope.getAliases = (variable) => {
                         return variable.aliases?.map(a => `$${a}`).join(", ");
                     };
+
+                    $scope.openEditGlobalValuesModal = function () {
+                        modalService.showModal({
+                            component: "editGlobalValuesModal",
+                            size: "sm"
+                        });
+                    };
                 },
                 link: function(scope, element) {
 
@@ -195,35 +236,42 @@
                     const menu = angular.element(`
                         <div class="variable-menu" ng-show="showMenu" ng-class="[menuPosition, { 'has-magic-vars': hasMagicVariables }]">
                             <div style="padding:10px;border-bottom: 1px solid #48474a;">
-                                <div style="position: relative;">
+                                <div class="relative">
                                     <input id="variable-search" type="text" class="form-control" placeholder="Search variables..." ng-model="variableSearchText" ng-change="searchUpdated()" style="padding-left: 27px;">
                                     <span class="searchbar-icon"><i class="far fa-search"></i></span>
                                 </div>
                             </div>
 
-                            <div style="display: flex; flex-direction: row;">
-                                <div class="effect-categories dark">
+                            <div class="flex">
+                                <div class="variable-categories dark">
                                     <div
-                                        class="effect-category-wrapper dark"
+                                        class="variable-category"
                                         ng-class="{'selected': activeCategory === 'macros'}"
                                         ng-click="setActiveCategory('macros');"
                                     >
-                                        <div class="category-text"><i class="fas fa-layer-group"></i> Macros</div>
+                                        <div><i class="fas fa-layer-group"></i> Macros</div>
                                     </div>
                                     <div
-                                        class="effect-category-wrapper dark"
+                                        class="variable-category"
+                                        ng-class="{'selected': activeCategory === 'global-values'}"
+                                        ng-click="setActiveCategory('global-values');"
+                                    >
+                                        <div><i class="fas fa-globe"></i> Global Values</div>
+                                    </div>
+                                    <div
+                                        class="variable-category"
                                         ng-class="{'selected': activeCategory === 'magic'}"
                                         ng-click="setActiveCategory('magic');"
                                         ng-show="hasMagicVariables"
                                     >
-                                        <div class="category-text"><i class="far fa-magic"></i> Magic</div>
+                                        <div><i class="far fa-magic"></i> Magic</div>
                                     </div>
-                                    <div class="effect-category-header muted" style="padding-top:5px;">Categories</div>
-                                    <div class="effect-category-wrapper dark" ng-class="{'selected': activeCategory == null}" ng-click="setActiveCategory(null);">
-                                        <div class="category-text">All</div>
+                                    <div class="variable-category-header muted pt-2">Categories</div>
+                                    <div class="variable-category" ng-class="{'selected': activeCategory == null}" ng-click="setActiveCategory(null);">
+                                        <div>All</div>
                                     </div>
-                                    <div class="effect-category-wrapper dark" ng-repeat="category in categories" ng-class="{'selected': activeCategory === category}" ng-click="setActiveCategory(category);">
-                                        <div class="category-text">{{category}}
+                                    <div class="variable-category" ng-repeat="category in categories" ng-class="{'selected': activeCategory === category}" ng-click="setActiveCategory(category);">
+                                        <div>{{category}}
                                             <tooltip
                                                 style="margin-left: 5px"
                                                 ng-if="category === 'integrations' || category === 'obs'"
@@ -232,18 +280,33 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div style="overflow-y: auto;width: 100%;" ng-style="{ height: hasMagicVariables ? '408px': '375px', padding: activeCategory === 'macros' ? '10px 0' : '10px' }">
-                                    <div ng-hide="activeCategory === 'magic' || activeCategory === 'macros'" ng-repeat="variable in variables | orderBy:'handle' | variableCategoryFilter:activeCategory | variableSearch:variableSearchText" style="margin-bottom: 8px;">
+                                <div style="overflow-y: auto;width: 100%;" ng-style="{ height: hasMagicVariables ? '441px': '403px', padding: activeCategory === 'macros' ? '10px 0' : '10px' }">
+                                    <div ng-hide="activeCategory === 'magic' || activeCategory === 'macros' || activeCategory === 'global-values'" ng-repeat="variable in variables | orderBy:'handle' | variableCategoryFilter:activeCategory | variableSearch:variableSearchText" style="margin-bottom: 8px;">
                                         <div style="font-weight: 900;">\${{variable.usage ? variable.usage : variable.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="addVariable(variable)"></i></div>
+                                        <div ng-if="variable.sensitive === true" class="text-danger"><strong>WARNING</strong>: May contain sensitive data! <tooltip text="'This variable may contain sensitive/private data. You probably should NOT post it in chat, show it on overlays, or write it to insecure areas, like log files'"></tooltip></div>
                                         <div ng-if="variable.aliases && variable.aliases.length > 0">
                                             <div style="font-size: 12px; opacity: 0.75;">Aliases: {{getAliases(variable)}}</div>
                                         </div>
                                         <div class="muted" ng-bind-html="variable.description"></div>
+                                        <div ng-show="variable.hasSuggestions" style="font-size: 13px;padding-left: 5px; margin-top:3px;">
+                                            <collapsable-section show-text="Suggestions" hide-text="Suggestions" text-color="#0b8dc6" on-toggle="suggestionsToggled(variable, isOpen)">
+                                                <div ng-repeat="suggestion in variable.suggestions" style="margin-top: 3px; margin-bottom: 3px;">
+                                                    <div style="font-weight: 900;">\${{suggestion.usage}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="addVariable(suggestion)"></i></div>
+                                                    <div class="muted" ng-bind-html="suggestion.description"></div>
+                                                </div>
+                                                <div ng-if="suggestionsLoading[variable.handle]" style="padding: 3px 10px;">
+                                                    <i class="fas fa-circle-notch fa-spin"></i>
+                                                </div>
+                                                <div ng-if="!suggestionsLoading[variable.handle] && (!variable.suggestions || variable.suggestions.length === 0)" style="text-align: center; padding: 1px 10px;" class="muted">
+                                                   {{ variable.noSuggestionsText || "No suggestions available" }}
+                                                </div>
+                                            </collapsable-section>
+                                        </div>
                                         <div ng-show="variable.examples && variable.examples.length > 0" style="font-size: 13px;padding-left: 5px; margin-top:3px;">
                                             <collapsable-section show-text="Other examples" hide-text="Other examples" text-color="#0b8dc6">
                                                 <div ng-repeat="example in variable.examples" style="margin-bottom: 6px;">
                                                     <div style="font-weight: 900;">\${{example.usage}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="addVariable(example)"></i></div>
-                                                    <div class="muted" ng-bind-html="example.description"></div>
+                                                    <div ng-if="example.description" class="muted" ng-bind-html="example.description"></div>
                                                 </div>
                                             </collapsable-section>
                                         </div>
@@ -259,6 +322,17 @@
                                             on-add-to-text-clicked="addMacro(macro)"
                                         />
                                     </div>
+                                    <div ng-show="activeCategory === 'global-values'" style="position: relative;">
+                                        <div class="mb-2 pr-4" style="text-align: right;">
+                                            <firebot-button type="primary" size="small" text="Manage Global Values" ng-click="openEditGlobalValuesModal()" />
+                                        </div>
+                                        <div
+                                            ng-repeat="globalValue in settingsService.getSetting('GlobalValues') | filter: { name: variableSearchText } track by globalValue.name"
+                                            style="margin-bottom: 8px;"
+                                        >
+                                            <div style="font-weight: 900;">$!{{globalValue.name}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="insertText('$!' + globalValue.name)"></i></div>
+                                        </div>
+                                    </div>
                                     <div ng-show="activeCategory === 'magic'" style="position: relative;">
                                         <div style="position: absolute; right: 0;">
                                             <a
@@ -269,7 +343,7 @@
                                             >What are these?</a>
                                         </div>
                                         <div ng-if="magicVariables.customVariables.length > 0">
-                                            <div class="effect-category-header" style="padding-top: 0; padding-left: 0;">Custom Variables</div>
+                                            <div class="variable-category-header" style="padding-top: 0; padding-left: 0;">Custom Variables</div>
                                             <div ng-repeat="variable in magicVariables.customVariables | variableSearch:variableSearchText track by variable.name" style="margin-bottom: 8px;">
                                                 <div style="font-weight: 900;">{{variable.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="insertText(variable.handle)"></i></div>
                                                 <div ng-show="variable.examples && variable.examples.length > 0" style="font-size: 13px;padding-left: 5px; margin-top:3px;">
@@ -284,7 +358,7 @@
                                         </div>
 
                                         <div ng-if="magicVariables.effectOutputs.length > 0">
-                                            <div class="effect-category-header" style="padding-left: 0;">Effect Outputs</div>
+                                            <div class="variable-category-header" style="padding-left: 0;">Effect Outputs</div>
                                             <div ng-repeat="variable in magicVariables.effectOutputs | variableSearch:variableSearchText track by variable.name" style="margin-bottom: 8px;">
                                                 <div style="font-weight: 900;">{{variable.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="insertText(variable.handle)"></i></div>
                                                 <div ng-show="variable.description" class="muted">{{variable.description}}</div>
@@ -301,7 +375,7 @@
                                         </div>
 
                                         <div ng-if="magicVariables.presetListArgs.length > 0">
-                                            <div class="effect-category-header" style="padding-left: 0;">Preset List Args</div>
+                                            <div class="variable-category-header pl-0">Preset List Args</div>
                                             <div ng-repeat="variable in magicVariables.presetListArgs | variableSearch:variableSearchText track by variable.name" style="margin-bottom: 8px;">
                                                 <div style="font-weight: 900;">{{variable.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="insertText(variable.handle)"></i></div>
                                             </div>

@@ -1,5 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
@@ -12,8 +11,8 @@ const model : ReplaceVariable = {
                 description: "Returns true as a equals a and b equals b"
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.BOOLEAN],
+        categories: ["advanced"],
+        possibleDataOutput: ["bool"],
         spoof: true
     }
 };

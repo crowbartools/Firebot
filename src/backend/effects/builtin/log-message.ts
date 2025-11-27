@@ -1,8 +1,7 @@
 import { EffectType } from "../../../types/effects";
-import { EffectCategory } from "../../../shared/effect-constants";
 import logger from "../../logwrapper";
 
-const model: EffectType<{
+const effect: EffectType<{
     logLevel: "Info" | "Warning" | "Error" | "Debug";
     logMessage: string;
 }> = {
@@ -11,7 +10,7 @@ const model: EffectType<{
         name: "Log Message",
         description: "Adds an entry to the Firebot log. This is useful for debugging.",
         icon: "fad fa-file-alt",
-        categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
+        categories: ["advanced", "scripting"],
         dependencies: []
     },
     optionsTemplate: `
@@ -38,7 +37,7 @@ const model: EffectType<{
         $scope.effect.logLevel = $scope.effect.logLevel ?? "Info";
     },
     optionsValidator: (effect) => {
-        const errors = [];
+        const errors: string[] = [];
         if (!(effect.logMessage?.length > 0)) {
             errors.push("Please input a log message.");
         }
@@ -69,4 +68,4 @@ const model: EffectType<{
     }
 };
 
-module.exports = model;
+export = effect;

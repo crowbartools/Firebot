@@ -207,11 +207,6 @@
                     controller: "settingsController"
                 })
 
-                .when("/updates", {
-                    templateUrl: "./templates/_updates.html",
-                    controller: "updatesController"
-                })
-
                 .when("/events", {
                     templateUrl: "./templates/live-events/_events.html",
                     controller: "eventsController"

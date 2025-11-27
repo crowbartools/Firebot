@@ -1,14 +1,13 @@
 import { SystemCommand } from "../../../../../types/commands";
 import Steam from "./steam-access";
-import twitchChat from "../../../twitch-chat";
-import TwitchApi from "../../../../twitch-api/api";
+import { TwitchApi } from "../../../../streaming-platforms/twitch/api";
 
 /**
  * The `!steam` command
  */
 export const SteamSystemCommand: SystemCommand<{
     outputTemplate: string;
-    defaultCurrency: string;
+    countryCode: string;
 }> = {
     definition: {
         id: "firebot:steam",
@@ -31,10 +30,10 @@ export const SteamSystemCommand: SystemCommand<{
                 default: `{gameName} (Price: {price} - Released: {releaseDate} - Metacritic: {metaCriticScore}) {steamUrl}`,
                 useTextArea: true
             },
-            defaultCurrency: {
+            countryCode: {
                 type: "string",
-                title: "Default Currency (Optional)",
-                tip: "Examples: USD, EUR, CAD, GBP",
+                title: "Country Code (Optional)",
+                tip: "A two-letter ISO-3166 country code. Examples: US, CA, SE, NO",
                 default: ""
             }
         }
@@ -52,7 +51,7 @@ export const SteamSystemCommand: SystemCommand<{
         }
 
         if (gameName != null && gameName !== "") {
-            const gameDetails = await Steam.getSteamGameDetails(gameName, commandOptions.defaultCurrency);
+            const gameDetails = await Steam.getSteamGameDetails(gameName, commandOptions.countryCode);
 
             if (gameDetails !== null) {
                 message = commandOptions.outputTemplate
@@ -65,6 +64,6 @@ export const SteamSystemCommand: SystemCommand<{
             }
         }
 
-        await twitchChat.sendChatMessage(message);
+        await TwitchApi.chat.sendChatMessage(message, null, true);
     }
 };

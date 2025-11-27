@@ -19,8 +19,8 @@
                 }
             };
 
-            service.loadEffectQueues = async () => {
-                const effectQueues = await backendCommunicator.fireEventAsync("getEffectQueues");
+            service.loadEffectQueues = () => {
+                const effectQueues = backendCommunicator.fireEventSync("effect-queues:get-effect-queues");
                 if (effectQueues != null) {
                     service.effectQueues = effectQueues;
                 }
@@ -50,20 +50,26 @@
                 {
                     value: "auto",
                     label: "Sequential",
-                    description: "Runs effect list in the queue sequentially. Priority items will be added before non-priority. Optional delay defaults to 0s.",
+                    description: "Effect lists run one after another in order. Priority items are placed at the front of the queue.",
                     iconClass: "fa-sort-numeric-down"
                 },
                 {
                     value: "custom",
-                    label: "Custom",
-                    description: "Wait the custom amount of time defined for each individual effect list.",
+                    label: "Custom Delay",
+                    description: "Each effect list defines how long the queue waits before triggering the next effect list.",
                     iconClass: "fa-clock"
                 },
                 {
                     value: "interval",
                     label: "Interval",
-                    description: "Runs effect lists on a set interval.",
+                    description: "Effect lists run at a fixed time interval.",
                     iconClass: "fa-stopwatch"
+                },
+                {
+                    value: "manual",
+                    label: "Manual",
+                    description: "Effect lists only run when triggered by a Trigger Manual Queue effect.",
+                    iconClass: "fa-step-forward"
                 }
             ];
 
@@ -75,8 +81,8 @@
                 return service.effectQueues.find(eq => eq.id === id);
             };
 
-            service.saveEffectQueue = async (effectQueue) => {
-                const savedEffectQueue = await backendCommunicator.fireEventAsync("saveEffectQueue", effectQueue);
+            service.saveEffectQueue = (effectQueue) => {
+                const savedEffectQueue = backendCommunicator.fireEventSync("effect-queues:save-effect-queue", effectQueue);
 
                 if (savedEffectQueue != null) {
                     updateEffectQueue(savedEffectQueue);
@@ -88,17 +94,17 @@
             };
 
             service.toggleEffectQueue = (queue) => {
-                backendCommunicator.fireEvent("toggleEffectQueue", queue.id);
+                backendCommunicator.fireEvent("effect-queues:toggle-effect-queue", queue.id);
                 queue.active = !queue.active;
             };
 
             service.clearEffectQueue = (queueId) => {
-                backendCommunicator.fireEvent("clearEffectQueue", queueId);
+                backendCommunicator.fireEvent("effect-queues:clear-effect-queue", queueId);
             };
 
             service.saveAllEffectQueues = (effectQueues) => {
                 service.effectQueues = effectQueues;
-                backendCommunicator.fireEvent("saveAllEffectQueues", effectQueues);
+                backendCommunicator.fireEvent("effect-queues:save-all-effect-queues", effectQueues);
             };
 
             service.effectQueueNameExists = (name) => {
@@ -118,21 +124,20 @@
                     copiedEffectQueue.name += " copy";
                 }
 
-                service.saveEffectQueue(copiedEffectQueue).then((successful) => {
-                    if (successful) {
-                        ngToast.create({
-                            className: 'success',
-                            content: 'Successfully duplicated an effect queue!'
-                        });
-                    } else {
-                        ngToast.create("Unable to duplicate effect queue.");
-                    }
-                });
+                const successful = service.saveEffectQueue(copiedEffectQueue);
+                if (successful) {
+                    ngToast.create({
+                        className: 'success',
+                        content: 'Successfully duplicated an effect queue!'
+                    });
+                } else {
+                    ngToast.create("Unable to duplicate effect queue.");
+                }
             };
 
             service.deleteEffectQueue = (effectQueueId) => {
                 service.effectQueues = service.effectQueues.filter(eq => eq.id !== effectQueueId);
-                backendCommunicator.fireEvent("deleteEffectQueue", effectQueueId);
+                backendCommunicator.fireEvent("effect-queues:delete-effect-queue", effectQueueId);
             };
 
             service.showAddEditEffectQueueModal = (effectQueueId) => {

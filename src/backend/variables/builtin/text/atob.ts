@@ -1,5 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 import base64Decode from './base64-decode';
 
 const model: ReplaceVariable = {
@@ -17,8 +16,8 @@ const model: ReplaceVariable = {
                 description: 'Returns an empty string because "test string" is not valid base64.'
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["advanced"],
+        possibleDataOutput: ["text"]
     },
     evaluator: base64Decode.evaluator
 };

@@ -6,10 +6,9 @@ name: Build and Draft Release
 on:
   workflow_dispatch:
   push:
-    branches: master
+    branches: [master]
 
 jobs:
-
   checkversion:
     name: Check if version has corrosponding tag
     runs-on: ubuntu-latest
@@ -53,13 +52,13 @@ jobs:
           echo "${TEMPLATE}" >> $GITHUB_OUTPUT
           echo "${EOF}" >> $GITHUB_OUTPUT
 
-      - name: 'Check: package version has corrosponding git tag'
+      - name: "Check: package version has corrosponding git tag"
         id: dobuild
         shell: bash
         run: echo dobuild=$(git show-ref --tags --verify --quiet -- "refs/tags/v${{ steps.version.outputs.version }}" && echo 0 || echo 1) >> $GITHUB_OUTPUT
 
   compile:
-    name: 'Compile'
+    name: "Compile"
     needs: [checkversion]
     if: needs.checkversion.outputs.dobuild == 1
     strategy:
@@ -71,10 +70,13 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Install Python deps
+        run: python -m pip install --upgrade packaging pip setuptools
+
       - name: Setup Nodejs
         uses: actions/setup-node@v4
         with:
-          node-version: '20.14.0'
+          node-version: "20.14.0"
 
       - name: Install correct npm version
         run: npm install -g npm@10.8.1
@@ -89,7 +91,7 @@ jobs:
         run: brew install python-setuptools
 
       - name: Install Global Dependencies
-        run: npm install --global --production --omit=dev grunt-cli
+        run: npm install --global --production --omit=dev grunt-cli node-gyp
 
       - name: Install Project Dependencies
         run: npm install

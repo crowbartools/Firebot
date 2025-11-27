@@ -1,12 +1,14 @@
+/* eslint-disable @typescript-eslint/no-base-to-string */
 import { EventFilter, FilterSettings, PresetValue } from "../../../types/events";
+import { Awaitable } from "../../../types/util-types";
 import { ComparisonType } from "../../../shared/filter-constants";
-import { extractPropertyWithPath } from "../../utility";
+import { extractPropertyWithPath } from "../../utils";
 
 type EventData = {
     eventSourceId: string;
     eventId: string;
     eventMeta: Record<string, unknown>;
-}
+};
 
 type FilterEvent = Omit<EventData, "eventMeta">;
 
@@ -20,11 +22,11 @@ type FilterConfig = {
 };
 
 type PresetFilterConfig = FilterConfig & {
-    presetValues: (...args: unknown[]) => Promise<PresetValue[]> | PresetValue[];
-    valueIsStillValid?(filterSettings: FilterSettings, ...args: unknown[]): Promise<boolean> | boolean;
-    getSelectedValueDisplay?(filterSettings: FilterSettings, ...args: unknown[]): Promise<string> | string;
+    presetValues: (...args: unknown[]) => Awaitable<PresetValue[]>;
+    valueIsStillValid?(filterSettings: FilterSettings, ...args: unknown[]): Awaitable<boolean>;
+    getSelectedValueDisplay?(filterSettings: FilterSettings, ...args: unknown[]): Awaitable<string>;
     allowIsNot?: boolean;
-}
+};
 
 const TEXT_COMPARISON_TYPES = [
     ComparisonType.IS,
@@ -127,7 +129,7 @@ export function createTextFilter({
         ...config,
         comparisonTypes: TEXT_COMPARISON_TYPES,
         valueType: "text",
-        async predicate(filterSettings, eventData) {
+        predicate(filterSettings, eventData) {
             const { comparisonType, value } = filterSettings;
             const { eventMeta } = eventData;
 
@@ -136,7 +138,7 @@ export function createTextFilter({
                 eventValue = eventValue.toString().toLowerCase();
             }
             const filterValue =
-        (caseInsensitive ? value?.toLowerCase() : value) ?? "";
+                (caseInsensitive ? value?.toLowerCase() : value) ?? "";
 
             return compareValue(comparisonType, filterValue, eventValue);
         }
@@ -147,13 +149,13 @@ export function createNumberFilter({
     eventMetaKey,
     ...config
 }: Omit<FilterConfig, "caseInsensitive" | "presetValues" | "allowIsNot">): Omit<EventFilter, "presetValues" | "valueType"> & {
-        valueType: "number";
-    } {
+    valueType: "number";
+} {
     return {
         ...config,
         comparisonTypes: NUMBER_COMPARISON_TYPES,
         valueType: "number",
-        async predicate(filterSettings, eventData) {
+        predicate(filterSettings, eventData) {
             const { comparisonType, value } = filterSettings;
             const { eventMeta } = eventData;
 
@@ -173,7 +175,7 @@ export function createTextOrNumberFilter({
         ...config,
         comparisonTypes: NUMBER_TEXT_COMPARISON_TYPES,
         valueType: "text",
-        async predicate(filterSettings, eventData) {
+        predicate(filterSettings, eventData) {
             const { comparisonType, value } = filterSettings;
             const { eventMeta } = eventData;
 
@@ -182,7 +184,7 @@ export function createTextOrNumberFilter({
                 eventValue = eventValue.toString().toLowerCase();
             }
             const filterValue =
-        (caseInsensitive ? value?.toString()?.toLowerCase() : value) ?? "";
+                (caseInsensitive ? value?.toString()?.toLowerCase() : value) ?? "";
             return compareValue(comparisonType, filterValue, eventValue);
         }
     };
@@ -201,7 +203,7 @@ export function createPresetFilter({
         comparisonTypes.push(ComparisonType.IS_NOT);
     }
 
-    const valueDisplay = getSelectedValueDisplay ?? (async (filterSettings, presetValues?: PresetValue[]) => {
+    const valueDisplay = getSelectedValueDisplay ?? ((filterSettings, presetValues?: PresetValue[]) => {
         return presetValues.find(pv => pv.value === filterSettings.value)?.display ?? "[Not Set]";
     });
 
@@ -212,7 +214,7 @@ export function createPresetFilter({
         presetValues,
         getSelectedValueDisplay: valueDisplay,
         valueIsStillValid,
-        async predicate(filterSettings, eventData) {
+        predicate(filterSettings, eventData) {
             const { value, comparisonType } = filterSettings;
             const { eventMeta } = eventData;
 

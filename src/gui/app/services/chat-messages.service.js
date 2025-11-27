@@ -2,7 +2,7 @@
 (function() {
     const moment = require('moment');
 
-    const { v4: uuid } = require("uuid");
+    const { randomUUID } = require("crypto");
 
     angular
         .module('firebotApp')
@@ -27,6 +27,10 @@
             service.messageText = "";
             // The message/thread currently being replied to
             service.threadDetails = null;
+
+            // History of chat messages sent via Dashboard
+            service.chatHistory = [];
+            service.currrentHistoryIndex = -1;
 
             // Return the chat queue.
             service.getChatQueue = function() {
@@ -122,19 +126,23 @@
                 }
             };
 
-            service.highlightMessage = (username, userId, displayName, rawText) => {
+            service.highlightMessage = (username, userId, displayName, rawText, chatMessage) => {
                 backendCommunicator.fireEvent("highlight-message", {
                     username: username,
                     userId: userId,
                     displayName: displayName,
-                    messageText: rawText
+                    messageText: rawText,
+                    chatMessage: {
+                        ...chatMessage,
+                        timestamp: chatMessage.timestamp ? chatMessage.timestamp.toISOString() : null
+                    }
                 });
             };
 
             // Chat Alert Message
             service.chatAlertMessage = function(message, icon = "fad fa-exclamation-circle") {
                 const alertItem = {
-                    id: uuid(),
+                    id: randomUUID(),
                     type: "alert",
                     message: message,
                     icon: icon
@@ -145,6 +153,22 @@
 
             backendCommunicator.on("chat-feed-system-message", (message, icon) => {
                 service.chatAlertMessage(message, icon);
+            });
+
+            // Custom Highlight and Banner
+            service.customHighlightAndBanner = function(messageId, customHighlightColor, customBannerIcon, customBannerText) {
+                const messageItem = service.chatQueue.find(i => i.type === "message" && i.data.id === messageId);
+                if (messageItem == null) {
+                    return;
+                }
+
+                messageItem.data.customHighlightColor = customHighlightColor;
+                messageItem.data.customBannerIcon = customBannerIcon;
+                messageItem.data.customBannerText = customBannerText;
+            };
+
+            backendCommunicator.on("chat-feed-custom-highlight", (data) => {
+                service.customHighlightAndBanner(data.messageId, data.customHighlightColor, data.customBannerIcon, data.customBannerText);
             });
 
             // Chat Update Handler
@@ -283,35 +307,7 @@
                 service.hideMessageInChatFeed(data.messageId);
             });
 
-            service.changeModStatus = (username, shouldBeMod) => {
-                backendCommunicator.send("update-user-mod-status", {
-                    username,
-                    shouldBeMod
-                });
-            };
-
-            // $interval(() => {
-            //     if (messageHoldingQueue.length > 0) {
-            //         service.chatQueue = service.chatQueue.concat(messageHoldingQueue);
-            //         messageHoldingQueue = [];
-
-            //         // Trim messages.
-            //         service.pruneChatQueue();
-
-            //         //hacky way to ensure we stay scroll glued
-            //         $timeout(() => {
-            //             $rootScope.$broadcast('ngScrollGlue.scroll');
-            //         }, 1);
-            //     }
-            // }, 250);
-
             backendCommunicator.on("twitch:chat:rewardredemption", (redemption) => {
-                const redemptionItem = {
-                    id: uuid(),
-                    type: "redemption",
-                    data: redemption
-                };
-
                 if (service.chatQueue && service.chatQueue.length > 0) {
                     const lastQueueItem = service.chatQueue[service.chatQueue.length - 1];
                     if (!lastQueueItem.rewardMatched &&
@@ -320,12 +316,16 @@
                             lastQueueItem.data.customRewardId === redemption.reward.id &&
                             lastQueueItem.data.userId === redemption.user.id) {
                         lastQueueItem.rewardMatched = true;
-                        service.chatQueue.splice(-1, 0, redemptionItem);
+                        lastQueueItem.data.reward = redemption.reward;
                         return;
                     }
                 }
 
-                service.chatQueue.push(redemptionItem);
+                service.chatQueue.push({
+                    id: randomUUID(),
+                    type: "redemption",
+                    data: redemption
+                });
             });
 
             backendCommunicator.on("twitch:chat:user-joined", (user) => {
@@ -344,7 +344,7 @@
                 service.clearUserList();
             });
 
-            backendCommunicator.on("twitch:chat:automod-update", ({messageId, newStatus, resolverName }) => {
+            backendCommunicator.on("twitch:chat:automod-update", ({ messageId, newStatus, resolverName }) => {
 
                 const messageItem = service.chatQueue.find(i => i.type === "message" &&
                     (i.data.id === messageId || i.data.autoModHeldMessageId === messageId)
@@ -358,7 +358,7 @@
                 messageItem.data.autoModResolvedBy = resolverName;
             });
 
-            backendCommunicator.on("twitch:chat:automod-update-error", ({messageId, likelyExpired}) => {
+            backendCommunicator.on("twitch:chat:automod-update-error", ({ messageId, likelyExpired }) => {
                 const messageItem = service.chatQueue.find(i => i.type === "message" &&
                     (i.data.id === messageId || i.data.autoModHeldMessageId === messageId)
                 );
@@ -458,7 +458,7 @@
 
                 // Push new message to queue.
                 const messageItem = {
-                    id: uuid(),
+                    id: randomUUID(),
                     type: "message",
                     data: chatMessage
                 };

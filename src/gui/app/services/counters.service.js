@@ -3,7 +3,7 @@
 (function() {
     angular
         .module("firebotApp")
-        .factory("countersService", function($q, backendCommunicator, utilityService, objectCopyHelper, ngToast) {
+        .factory("countersService", function(backendCommunicator, utilityService, objectCopyHelper, ngToast) {
             const service = {};
 
             service.counters = [];
@@ -18,12 +18,7 @@
             };
 
             service.loadCounters = () => {
-                $q.when(backendCommunicator.fireEventAsync("counters:get-counters"))
-                    .then((counters) => {
-                        if (counters) {
-                            service.counters = counters;
-                        }
-                    });
+                service.counters = backendCommunicator.fireEventSync("counters:get-counters");
             };
 
             service.getCounter = (counterId) => {
@@ -35,12 +30,12 @@
                 backendCommunicator.fireEvent("counters:delete-counter", counterId);
             };
 
-            service.saveCounter = async (counter) => {
+            service.saveCounter = (counter) => {
                 if (counter == null) {
                     return;
                 }
 
-                const savedCounter = await backendCommunicator.fireEventAsync("counters:save-counter", counter);
+                const savedCounter = backendCommunicator.fireEventSync("counters:save-counter", counter);
                 if (savedCounter) {
                     updateCounter(savedCounter);
                     return true;
@@ -73,16 +68,15 @@
                     copiedCounter.name += " copy";
                 }
 
-                service.saveCounter(copiedCounter).then((successful) => {
-                    if (successful) {
-                        ngToast.create({
-                            className: 'success',
-                            content: 'Successfully duplicated a counter!'
-                        });
-                    } else {
-                        ngToast.create("Unable to duplicate counter.");
-                    }
-                });
+                const successful = service.saveCounter(copiedCounter);
+                if (successful) {
+                    ngToast.create({
+                        className: 'success',
+                        content: 'Successfully duplicated a counter!'
+                    });
+                } else {
+                    ngToast.create("Unable to duplicate counter.");
+                }
             };
 
             service.getTxtFilePath = (counterName) => {

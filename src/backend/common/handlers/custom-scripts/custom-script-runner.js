@@ -1,13 +1,14 @@
 "use strict";
-const { ipcMain, shell } = require("electron");
-const { v4: uuid } = require("uuid");
-const logger = require("../../../logwrapper");
-const utils = require("../../../utility");
-const profileManager = require("../../profile-manager");
-const { getScriptPath, buildRunRequest, mapParameters } = require("./custom-script-helpers");
+const { shell } = require("electron");
+const { randomUUID } = require("crypto");
+
+const { SettingsManager } = require("../../settings-manager");
+const { ProfileManager } = require("../../profile-manager");
 const effectRunner = require("../../effect-runner.js");
-import frontendCommunicator from "../../frontend-communicator";
-import { SettingsManager } from "../../settings-manager";
+const frontendCommunicator = require("../../frontend-communicator");
+const logger = require("../../../logwrapper");
+const { wait, simpleClone } = require("../../../utils");
+const { getScriptPath, buildRunRequest, mapParameters } = require("./custom-script-helpers");
 
 /**
  * @typedef { import('./script-types').ScriptData } ScriptData
@@ -26,7 +27,7 @@ const activeCustomScripts = {};
  * @param {Trigger} trigger
  */
 async function executeScript(scriptData, trigger, isStartupScript = false) {
-    const { scriptName, parameters, id} = scriptData;
+    const { scriptName, parameters, id } = scriptData;
 
     const scriptFilePath = getScriptPath(scriptName);
 
@@ -75,7 +76,7 @@ async function executeScript(scriptData, trigger, isStartupScript = false) {
     if (manifest.startupOnly && !isStartupScript) {
         frontendCommunicator.send(
             "error",
-            `Could not run startup-only script "${manifest.name}" as it was executed outside of Firebot startup (Settings > Advanced > Startup Scripts)`
+            `Could not run startup-only script "${manifest.name}" as it was executed outside of Firebot startup (Settings > Scripts > Startup Scripts)`
         );
         return;
     }
@@ -85,7 +86,7 @@ async function executeScript(scriptData, trigger, isStartupScript = false) {
     // wait for script to finish for a maximum of 10 secs
     let response;
     try {
-        response = await Promise.race([Promise.resolve(customScript.run(runRequest)), utils.wait(10 * 1000)]);
+        response = await Promise.race([Promise.resolve(customScript.run(runRequest)), wait(10 * 1000)]);
     } catch (error) {
         logger.error(`Error while running script '${scriptName}'`, error);
         return;
@@ -121,18 +122,18 @@ async function executeScript(scriptData, trigger, isStartupScript = false) {
         effectsObj = effects;
     } else if (effectsIsArray) {
         effectsObj = {
-            id: uuid(),
+            id: randomUUID(),
             list: effects
                 .filter(e => e.type != null && e.type !== "")
                 .map((e) => {
                     if (e.id == null) {
-                        e.id = uuid();
+                        e.id = randomUUID();
                     }
                     return e;
                 })
         };
 
-        const clonedTrigger = JSON.parse(JSON.stringify(trigger || {}));
+        const clonedTrigger = simpleClone(trigger || {});
 
         const processEffectsRequest = {
             trigger: clonedTrigger,
@@ -254,8 +255,8 @@ async function stopAllScripts() {
     logger.info("Stopped all custom scripts");
 }
 
-ipcMain.on("openScriptsFolder", function () {
-    shell.openPath(profileManager.getPathInProfile("/scripts"));
+frontendCommunicator.on("openScriptsFolder", () => {
+    shell.openPath(ProfileManager.getPathInProfile("/scripts"));
 });
 
 exports.runScript = runScript;

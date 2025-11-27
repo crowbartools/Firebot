@@ -1,6 +1,5 @@
 // Deprecated
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 import arrayFind from './array-find';
 
@@ -19,8 +18,8 @@ const model : ReplaceVariable = {
                 description: 'Searches each item in the array for an item that has a "key" property that equals "value"'
             }
         ],
-        categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER],
+        categories: ["advanced"],
+        possibleDataOutput: ["text", "number"],
         hidden: true
     },
 

@@ -1,88 +1,548 @@
-.select-effect-header {
-    background: $effect-dialog-bg;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-}
-
-.select-effect-footer {
+.effect-icon {
+    width: 30px;
+    height: 30px;
+    display: flex;
     align-items: center;
-    background: $effect-dialog-bg;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-    border-top: 2px solid $light-background-border;
-    display: flex;
-    justify-content: space-between;
-    padding: 20px;
-}
-
-.select-effect-search {
-    align-items: center;
-    background: $effect-dialog-bg;
-    border-bottom: 2px solid $light-background-border;
-    border-top: 2px solid $light-background-border;
-    display: flex;
-    height: 55px;
-    padding: 0 13px;
-}
-
-.effect-categories {
-    background: $effect-category-bg;
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    height: 100%;
-    width: 150px;
-    &.dark {
-        background: $variable-category-bg;
-        padding-top: 5px;
-        width: 135px;
-    }
-}
-
-.effect-category-header {
-    font-weight: 700;
-    padding-left: 2.5px;
-    padding: 15px 0 5px 15.5px;
-    font-size: 13px;
-}
-
-.effect-category-wrapper {
-    text-transform: capitalize;
-    font-weight: 300;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin: 0 5px;
-    padding: 0 10px;
+    justify-content: center;
     border-radius: 8px;
+    background-color: var(--effect-icon-bg-color, $effect-icon-bg);
+    color: var(--effect-icon-color, $effect-icon-color);
+    margin-right: 10px;
+    margin-left: 5px;
+    flex-shrink: 0;
+    i {
+        font-size: 16px;
+    }
+}
 
-    .category-bar {
-        height: 100%;
-        width: 2.5px;
-        display: inline-block;
-        margin-right: 15px;
+.effect-list {
+    background: $effect-list-bg-color;
+    border-radius: 10px;
+    .effect-list-header {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        padding-left: 15px;
+        padding-right: 15px;
+        height: 60px;
+        font-weight: 100;
+        border-bottom: 1px solid $light-background-color;
+    }
+    .effect-item {
+        display: flex;
+        align-items: center;
+        padding: 8px 10px;
+        border-radius: 10px;
+        background-color: $effect-item-bg;
+        transition: all 0.15s ease;
+
+        &.has-bottom-panel {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        &.disabled {
+            background-color: color-mix(in srgb, $effect-item-bg 80%, black);
+            outline: $effect-item-bg;
+            outline-width: 1px;
+            outline-style: solid;
+
+            .effect-name,
+            .effect-icon,
+            .effect-drag-handle {
+                opacity: 0.5 !important;
+            }
+        }
+
+        &.comment {
+            background-color: $effect-comment-bg;
+        }
+
+        .effect-drag-handle {
+            width: 10px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: $effect-drag-handle-color;
+            cursor: move;
+            flex-shrink: 0;
+            margin-right: 10px;
+        }
+
+        .effect-name {
+            font-weight: 600;
+        }
+
+        .effect-edit-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 7px;
+            border-radius: 10px;
+            background-color: $effect-button-bg;
+            border: none;
+            i {
+                font-size: 12px;
+                color: $effect-button-icon-color;
+            }
+            &:hover {
+                background-color: $effect-button-hover-bg;
+                i {
+                    color: $effect-button-icon-hover-color;
+                }
+            }
+        }
+
+        .effect-async-badge {
+            display: inline-flex;
+            background: $effect-list-bg-color;
+            color: #cdcdcd;
+            font-size: 12px;
+            padding: 4px 10px;
+            height: 26px;
+            border-radius: 21px;
+            gap: 4px;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+        }
+
+        .effect-timeout-btn {
+            display: inline-flex;
+            background: $effect-button-bg;
+            color: $effect-button-icon-color;
+            font-size: 12px;
+            padding: 4px 7px;
+            height: 26px;
+            border-radius: 10px;
+            gap: 4px;
+            justify-content: center;
+            align-items: center;
+            border: none;
+        }
+
+        .effect-disabled-label {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 4px;
+            font-size: 8px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.8);
+            margin-left: 8px;
+        }
     }
 
-    .category-text {
-        padding: 7px 0;
+    .effect-bottom-panel {
+        height: 40px;
+        background: $effect-bottom-panel-bg;
+        border-bottom-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+        padding: 0 15px;
+        display: flex;
+        align-items: center;
+
+        &.comment {
+            height: auto;
+            background: $effect-comment-bg;
+            padding: 0px 15px 8px;
+        }
     }
 
-    &:hover {
-        background: $effect-category-hover-bg;
-        text-decoration: none;
+    .effect-list-container {
+        position: relative;
+
+        .effect-list-item {
+            border-radius: 6px;
+            transition: all 0.15s ease;
+
+            &:focus-visible {
+                outline: lighten($primary-button-bg, 25%);
+                outline-width: 2px;
+                outline-style: solid;
+            }
+            &.kb-dragging {
+                box-shadow: $effect-item-drag-shadow;
+                transform: translateY(-2px);
+                background-color: $effect-item-drag-bg;
+                scale: 1.02;
+            }
+        }
+
+        &.show-connectors {
+            .effect-list-item {
+                position: relative;
+                margin-bottom: 7.5px;
+
+                &:not(.is-first)::before {
+                    content: "";
+                    position: absolute;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    top: -7.5px;
+                    width: 3px;
+                    height: 7.5px;
+                    background: rgba(255, 255, 255, 0.15);
+                }
+
+                // Hide connectors when dragging
+                &.ui-sortable-helper::before,
+                &.ui-sortable-helper::after {
+                    display: none;
+                }
+            }
+
+            // Hide connectors on the item being keyboard-dragged
+            .effect-list-item.kb-dragging {
+                &::before,
+                &::after {
+                    display: none;
+                }
+            }
+        }
+
+        &.show-dividers {
+            .effect-list-item {
+                margin-bottom: 0;
+            }
+        }
     }
 
-    &.selected {
-        font-weight: 400;
-        background: $effect-category-selected-bg;
-        &.category-bar {
-            background: $highlight-color;
+    .effect-list-item {
+        margin-bottom: 7.5px;
+    }
+
+    .effect-divider {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.1);
+        margin: 8px 8px;
+        position: relative;
+        transition: opacity 0.15s ease;
+
+        &.is-dragging {
+            opacity: 0;
+        }
+    }
+
+    // Hide dividers during mouse drag
+    .effect-list-container.ui-sortable-dragging .effect-divider {
+        opacity: 0;
+    }
+
+    .effect-list-add-btn-wrapper {
+        position: relative;
+        margin-top: 7.5px;
+
+        &.show-connector::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: -7.5px;
+            width: 3px;
+            height: 7.5px;
+            background: rgba(255, 255, 255, 0.15);
+        }
+    }
+
+    .effect-list-add-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: $effect-add-btn-bg;
+        border: 1px dashed $effect-add-btn-border;
+        color: $effect-add-btn-text-color;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        height: 54px;
+        transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+
+        &:hover {
+            background: $effect-add-btn-hover-bg;
+            border-color: $effect-add-btn-hover-border;
+        }
+
+        &:focus-visible {
+            outline: 2px solid lighten($primary-button-bg, 25%);
+            outline-offset: 2px;
+        }
+
+        &__icon-wrapper {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 999px;
+            background: $effect-add-btn-icon-bg;
+            i {
+                font-size: 11px;
+            }
+        }
+
+        &__label {
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
         }
     }
 }
 
-.effect-def-wrapper {
-    border-radius: 8px;
+.effect-list-config-panel {
+    margin-bottom: 15px;
+    overflow: hidden;
+    transition: border-bottom-color 0.3s ease, background-color 0.3s ease;
+    border-bottom: 1px solid $effect-config-panel-border;
+
+    &.no-bottom-margin {
+        margin-bottom: 0;
+    }
+
+    .config-panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0px 16px;
+        height: 40px;
+        cursor: pointer;
+        user-select: none;
+        transition: background 0.2s ease;
+
+        &:hover {
+            background: $effect-config-panel-hover-bg;
+        }
+
+        &:focus-visible {
+            outline: 2px solid lighten($primary-button-bg, 25%);
+            outline-offset: -2px;
+        }
+
+        .config-panel-header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: $effect-config-panel-text-color;
+
+            i {
+                font-size: 14px;
+                opacity: $effect-config-panel-icon-opacity;
+            }
+
+            tooltip {
+                margin-left: -2px;
+            }
+        }
+
+        .config-panel-header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            .config-preview {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-right: 8px;
+
+                .config-preview-main {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    font-size: 12px;
+                    font-weight: 600;
+                    color: rgba(255, 255, 255, 0.95);
+
+                    i {
+                        font-size: 12px;
+                        opacity: 0.8;
+                    }
+                }
+
+                .config-preview-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 4px 10px;
+                    background: $effect-config-panel-preview-bg;
+                    border-radius: 4px;
+                    font-size: 11px;
+                    color: $effect-config-panel-preview-text;
+
+                    i {
+                        font-size: 10px;
+                        opacity: 0.6;
+                    }
+                }
+            }
+
+            .config-panel-chevron {
+                font-size: 11px;
+                color: $effect-config-panel-chevron-color;
+                transition: transform 0.3s ease;
+            }
+        }
+    }
+
+    .config-panel-content {
+        max-height: 0;
+        transition: max-height 0.3s ease;
+        padding: 0 16px;
+    }
+
+    &.expanded {
+        .config-panel-header .config-panel-chevron {
+            transform: rotate(180deg);
+        }
+
+        .config-panel-content {
+            max-height: 500px;
+        }
+    }
+
+    &.expanded.animation-complete {
+        overflow: visible;
+    }
+
+    &.disabled {
+        opacity: 0.80;
+        .config-panel-header {
+            cursor: default;
+            &:hover {
+                background: none;
+            }
+        }
+    }
+
+    .config-panel-control {
+        padding: 14px 14px;
+        border-top: 1px solid $effect-config-panel-control-border;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .config-control-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: $effect-config-panel-control-label-color;
+
+            i {
+                font-size: 12px;
+                opacity: 0.7;
+            }
+
+            tooltip {
+                margin-left: -2px;
+            }
+        }
+
+        .config-control-input {
+            position: relative;
+
+            .config-duration-btn {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                padding: 10px 14px;
+                background: $effect-config-panel-duration-btn-bg;
+                border: none;
+                border-radius: 10px;
+                color: $effect-config-panel-duration-btn-text;
+                font-size: 13px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.15s ease;
+
+                .config-duration-value {
+                    flex: 1;
+                    font-weight: 600;
+                    font-size: 14px;
+                    color: $effect-config-panel-duration-value-color;
+                    text-align: left;
+                }
+
+                i.fa-edit {
+                    font-size: 12px;
+                    opacity: 0.5;
+                    transition: opacity 0.15s ease;
+                }
+
+                &:hover {
+                    background: $effect-config-panel-duration-btn-hover-bg;
+                    border-color: rgba(255, 255, 255, 0.18);
+                    i.fa-edit {
+                        opacity: 0.8;
+                    }
+                }
+
+                &:focus-visible {
+                    outline: 2px solid lighten($primary-button-bg, 25%);
+                    outline-offset: 2px;
+                }
+
+                i.fa-chevron-down {
+                    font-size: 10px;
+                    opacity: 0.6;
+                    transition: transform 0.2s ease;
+                }
+            }
+        }
+    }
+}
+
+.edit-effect-header {
+    background: $light-background-color;
+}
+
+.select-effect-header {
+    background: $light-background-color;
+}
+
+.select-effect-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: $light-background-color;
+    border-top: 2px solid $light-background-border;
+    padding: 20px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.select-effect-search {
+    display: flex;
+    align-items: center;
+    background: $light-background-color;
+    border-bottom: 2px solid $light-background-border;
+    padding: 5px 13px;
+}
+
+.select-effect-list-container {
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    padding: 15px 15px 0;
+    background: $effect-list-bg-color;
+}
+
+.select-effect-def {
+    border-radius: 10px;
     background: $effect-def-bg;
     display: flex;
     flex-direction: row;
@@ -95,7 +555,8 @@
         background: $effect-def-hover-bg;
         cursor: pointer;
     }
-    .effect-icon-wrapper {
+
+    .select-effect-icon-wrapper {
         width: 40px;
         flex-shrink: 0;
         display: flex;
@@ -103,7 +564,7 @@
         margin-right: 4px;
         font-size: 18px;
     }
-    .effect-selected-wrapper {
+    .select-effect-selected {
         width: 60px;
         flex-shrink: 0;
         color: $effect-def-selected-check;
@@ -115,30 +576,50 @@
     }
     &.selected {
         border: solid 2px $effect-def-selected-border;
-        .effect-selected-wrapper {
+        .select-effect-selected {
             opacity: 1;
         }
     }
 }
 
+.select-effect-categories,
+.variable-categories {
+    background: $effect-category-bg;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    height: 100%;
+    width: 150px;
+    padding: 5px;
 
-.change-effect-button {
-    height: 25px;
-    width: 60px;
-    padding: 0;
-    display: inline-block;
-    margin-bottom: 0;
-    font-size: 10px;
-    font-weight: 400;
-    line-height: 1.42857143;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    touch-action: manipulation;
-    cursor: pointer;
-    user-select: none;
-    background-image: none;
-    border: 1px solid transparent;
-    border-radius: 8px;
-    background: $default-btn-bg-color;
+    &.dark {
+        background: $variable-category-bg;
+        width: 140px;
+    }
+}
+
+.select-effect-category-header,
+.variable-category-header {
+    font-weight: 700;
+    padding: 5px 0 5px 15px;
+    font-size: 13px;
+}
+
+.select-effect-category,
+.variable-category {
+    text-transform: capitalize;
+    font-weight: 300;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 7px 10px;
+    border-radius: 10px;
+    &:hover {
+        background: $effect-category-hover-bg;
+        text-decoration: none;
+    }
+    &.selected {
+        font-weight: 400;
+        background: $effect-category-selected-bg;
+    }
 }

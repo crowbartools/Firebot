@@ -67,9 +67,9 @@
                     </div>
                 </div>
                 <div class="modal-footer pt-0">
-                    <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
-                    <button ng-show="$ctrl.filteredViewers" ng-click="$ctrl.importViewers()" class="btn btn-primary" ng-disabled="$ctrl.importing">
-                        {{$ctrl.importing ? 'Importing...' : 'Import'}}
+                    <button type="button" class="btn btn-link" ng-click="$ctrl.cancelImport()">Cancel</button>
+                    <button ng-show="$ctrl.filteredViewers" ng-click="$ctrl.importViewers()" class="btn btn-primary" ng-disabled="$ctrl.importing || $ctrl.aborting">
+                        {{ $ctrl.getButtonText() }}
                     </button>
                 </div>
             `,
@@ -119,6 +119,18 @@
                     }
                 ];
 
+                $ctrl.getButtonText = () => {
+                    if ($ctrl.importing) {
+                        return "Importing...";
+                    }
+
+                    if ($ctrl.aborting) {
+                        return "Canceling Import...";
+                    }
+
+                    return "Import";
+                };
+
                 $ctrl.toggleIncludeViewHours = () => {
                     $ctrl.settings.includeViewHours = !$ctrl.settings.includeViewHours;
                 };
@@ -133,8 +145,8 @@
                     }
                 };
 
-                $ctrl.onFileSelected = (filepath) => {
-                    const data = importService.parseStreamlabsChatbotData(filepath);
+                $ctrl.onFileSelected = async (filepath) => {
+                    const data = await importService.loadViewers("streamlabs-chatbot", filepath);
                     if (data && data.viewers) {
                         $ctrl.viewers = data.viewers;
                         $ctrl.search = "";
@@ -152,7 +164,7 @@
                         resolveObj: {
                             viewer: () => viewer
                         },
-                        closeCallback: response => {
+                        closeCallback: (response) => {
                             if (response.action === "delete") {
                                 $ctrl.filteredViewers = $ctrl.filteredViewers.filter(v => v.id !== response.viewer.id);
                                 return;
@@ -164,16 +176,37 @@
                     });
                 };
 
+                $ctrl.cancelImport = () => {
+                    if (!$ctrl.importing && !$ctrl.aborting) {
+                        $ctrl.close();
+                        return;
+                    }
+
+                    if ($ctrl.importing) {
+                        backendCommunicator.on("import:cleanup-finished", () => {
+                            $ctrl.aborting = false;
+                            $ctrl.close();
+                        });
+
+                        $ctrl.aborting = true;
+                        $ctrl.importing = false;
+
+                        backendCommunicator.fireEvent("import:abort-import");
+                    }
+                };
+
                 $ctrl.importViewers = async () => {
                     const data = {
-                        viewers: $ctrl.filteredViewers,
+                        appId: "streamlabs-chatbot",
+                        data: $ctrl.filteredViewers,
                         settings: $ctrl.settings
                     };
 
                     $ctrl.importing = true;
-                    const success = await backendCommunicator.fireEventAsync("importSlcbViewers", data);
+                    /** @type {import("../../../../../types/import").ImportResult} */
+                    const response = await backendCommunicator.fireEventAsync("import:import-viewers", data);
 
-                    if (success) {
+                    if (response.success) {
                         logger.debug(`Viewer import completed`);
 
                         $ctrl.importing = false;

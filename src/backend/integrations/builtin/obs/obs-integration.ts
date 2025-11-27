@@ -1,18 +1,19 @@
 import { TypedEmitter } from "tiny-typed-emitter";
-import {
+
+import type {
     Integration,
     IntegrationController,
     IntegrationData,
-    IntegrationEvents
-} from "@crowbartools/firebot-custom-scripts-types";
-import { EventManager } from "@crowbartools/firebot-custom-scripts-types/types/modules/event-manager";
+    IntegrationEvents,
+    Awaitable
+} from "../../../../types";
 
-import logger from "../../../logwrapper";
-import effectManager from "../../../effects/effectManager";
-import eventManager from "../../../events/EventManager";
-import eventFilterManager from "../../../events/filters/filter-manager";
-import replaceVariableManager from "../../../variables/replace-variable-manager";
+import { EffectManager } from "../../../effects/effect-manager";
+import { EventManager } from "../../../events/event-manager";
+import { FilterManager } from "../../../events/filters/filter-manager";
+import { ReplaceVariableManager } from "../../../variables/replace-variable-manager";
 import frontendCommunicator from "../../../common/frontend-communicator";
+import logger from "../../../logwrapper";
 
 import { initRemote } from "./obs-remote";
 import { setupFrontendListeners } from "./communicator";
@@ -94,7 +95,7 @@ class ObsIntegration
     connected = false;
     private _isConfigured = false;
 
-    constructor(private readonly eventManager: EventManager) {
+    constructor(private readonly eventManager: typeof EventManager) {
         super();
 
         frontendCommunicator.on(
@@ -135,75 +136,75 @@ class ObsIntegration
     init(
         linked: boolean,
         integrationData: IntegrationData<ObsSettings>
-    ): void | PromiseLike<void> {
+    ): Awaitable<void> {
         logger.info("Starting OBS Control...");
 
         setupFrontendListeners(frontendCommunicator);
 
-        effectManager.registerEffect(ChangeSceneEffectType);
-        effectManager.registerEffect(ChangeSceneCollectionEffectType);
-        effectManager.registerEffect(CreateRecordChapter);
-        effectManager.registerEffect(ToggleSourceVisibilityEffectType);
-        effectManager.registerEffect(ToggleSourceFilterEffectType);
-        effectManager.registerEffect(ToggleSourceMutedEffectType);
-        effectManager.registerEffect(TransformSourceEffectType);
-        effectManager.registerEffect(StartStreamEffectType);
-        effectManager.registerEffect(StopStreamEffectType);
-        effectManager.registerEffect(StartVirtualCamEffectType);
-        effectManager.registerEffect(StopVirtualCamEffectType);
-        effectManager.registerEffect(SaveReplayBufferEffectType);
-        effectManager.registerEffect(SetOBSSourceTextEffectType);
-        effectManager.registerEffect(SetOBSBrowserSourceUrlEffectType);
-        effectManager.registerEffect(SetOBSImageSourceFileEffectType);
-        effectManager.registerEffect(SetOBSMediaSourceFileEffectType);
-        effectManager.registerEffect(SetOBSColorSourceColorEffectType);
-        effectManager.registerEffect(SendRawOBSWebSocketRequestEffectType);
-        effectManager.registerEffect(TakeOBSSourceScreenshotEffectType);
+        EffectManager.registerEffect(ChangeSceneEffectType);
+        EffectManager.registerEffect(ChangeSceneCollectionEffectType);
+        EffectManager.registerEffect(CreateRecordChapter);
+        EffectManager.registerEffect(ToggleSourceVisibilityEffectType);
+        EffectManager.registerEffect(ToggleSourceFilterEffectType);
+        EffectManager.registerEffect(ToggleSourceMutedEffectType);
+        EffectManager.registerEffect(TransformSourceEffectType);
+        EffectManager.registerEffect(StartStreamEffectType);
+        EffectManager.registerEffect(StopStreamEffectType);
+        EffectManager.registerEffect(StartVirtualCamEffectType);
+        EffectManager.registerEffect(StopVirtualCamEffectType);
+        EffectManager.registerEffect(SaveReplayBufferEffectType);
+        EffectManager.registerEffect(SetOBSSourceTextEffectType);
+        EffectManager.registerEffect(SetOBSBrowserSourceUrlEffectType);
+        EffectManager.registerEffect(SetOBSImageSourceFileEffectType);
+        EffectManager.registerEffect(SetOBSMediaSourceFileEffectType);
+        EffectManager.registerEffect(SetOBSColorSourceColorEffectType);
+        EffectManager.registerEffect(SendRawOBSWebSocketRequestEffectType);
+        EffectManager.registerEffect(TakeOBSSourceScreenshotEffectType);
 
-        eventManager.registerEventSource(OBSEventSource);
+        EventManager.registerEventSource(OBSEventSource);
 
-        eventFilterManager.registerFilter(GroupNameEventFilter);
-        eventFilterManager.registerFilter(SceneNameEventFilter);
+        FilterManager.registerFilter(GroupNameEventFilter);
+        FilterManager.registerFilter(SceneNameEventFilter);
 
-        replaceVariableManager.registerReplaceVariable(SceneNameVariable);
-        replaceVariableManager.registerReplaceVariable(SceneCollectionNameVariable);
-        replaceVariableManager.registerReplaceVariable(IsConnectedVariable);
-        replaceVariableManager.registerReplaceVariable(IsStreamingVariable);
-        replaceVariableManager.registerReplaceVariable(IsRecordingVariable);
-        replaceVariableManager.registerReplaceVariable(ColorValueVariable);
-        replaceVariableManager.registerReplaceVariable(GroupItemIdVariable);
-        replaceVariableManager.registerReplaceVariable(GroupNameVariable);
-        replaceVariableManager.registerReplaceVariable(SceneItemIdVariable);
-        replaceVariableManager.registerReplaceVariable(SceneItemNameVariable);
-        replaceVariableManager.registerReplaceVariable(SceneItemEnabledVariable);
-        replaceVariableManager.registerReplaceVariable(TransitionNameVariable);
-        replaceVariableManager.registerReplaceVariable(TransitionDurationVariable);
-        replaceVariableManager.registerReplaceVariable(ReplayBufferPathVariable);
-        replaceVariableManager.registerReplaceVariable(ProfileNameVariable);
-        replaceVariableManager.registerReplaceVariable(VendorNameVariable);
-        replaceVariableManager.registerReplaceVariable(VendorEventTypeVariable);
-        replaceVariableManager.registerReplaceVariable(VendorEventDataVariable);
-        replaceVariableManager.registerReplaceVariable(InputNameVariable);
-        replaceVariableManager.registerReplaceVariable(InputUuidVariable);
-        replaceVariableManager.registerReplaceVariable(InputKindVariable);
-        replaceVariableManager.registerReplaceVariable(InputSettingsVariable);
-        replaceVariableManager.registerReplaceVariable(OldInputNameVariable);
-        replaceVariableManager.registerReplaceVariable(InputActiveVariable);
-        replaceVariableManager.registerReplaceVariable(InputShowingVariable);
-        replaceVariableManager.registerReplaceVariable(InputMutedVariable);
-        replaceVariableManager.registerReplaceVariable(InputVolumeDbVariable);
-        replaceVariableManager.registerReplaceVariable(InputVolumeMultiplierVariable);
-        replaceVariableManager.registerReplaceVariable(InputAudioBalanceVariable);
-        replaceVariableManager.registerReplaceVariable(InputAudioSyncOffsetVariable);
-        replaceVariableManager.registerReplaceVariable(InputAudioTracksVariable);
-        replaceVariableManager.registerReplaceVariable(InputAudioMonitorTypeVariable);
+        ReplaceVariableManager.registerReplaceVariable(SceneNameVariable);
+        ReplaceVariableManager.registerReplaceVariable(SceneCollectionNameVariable);
+        ReplaceVariableManager.registerReplaceVariable(IsConnectedVariable);
+        ReplaceVariableManager.registerReplaceVariable(IsStreamingVariable);
+        ReplaceVariableManager.registerReplaceVariable(IsRecordingVariable);
+        ReplaceVariableManager.registerReplaceVariable(ColorValueVariable);
+        ReplaceVariableManager.registerReplaceVariable(GroupItemIdVariable);
+        ReplaceVariableManager.registerReplaceVariable(GroupNameVariable);
+        ReplaceVariableManager.registerReplaceVariable(SceneItemIdVariable);
+        ReplaceVariableManager.registerReplaceVariable(SceneItemNameVariable);
+        ReplaceVariableManager.registerReplaceVariable(SceneItemEnabledVariable);
+        ReplaceVariableManager.registerReplaceVariable(TransitionNameVariable);
+        ReplaceVariableManager.registerReplaceVariable(TransitionDurationVariable);
+        ReplaceVariableManager.registerReplaceVariable(ReplayBufferPathVariable);
+        ReplaceVariableManager.registerReplaceVariable(ProfileNameVariable);
+        ReplaceVariableManager.registerReplaceVariable(VendorNameVariable);
+        ReplaceVariableManager.registerReplaceVariable(VendorEventTypeVariable);
+        ReplaceVariableManager.registerReplaceVariable(VendorEventDataVariable);
+        ReplaceVariableManager.registerReplaceVariable(InputNameVariable);
+        ReplaceVariableManager.registerReplaceVariable(InputUuidVariable);
+        ReplaceVariableManager.registerReplaceVariable(InputKindVariable);
+        ReplaceVariableManager.registerReplaceVariable(InputSettingsVariable);
+        ReplaceVariableManager.registerReplaceVariable(OldInputNameVariable);
+        ReplaceVariableManager.registerReplaceVariable(InputActiveVariable);
+        ReplaceVariableManager.registerReplaceVariable(InputShowingVariable);
+        ReplaceVariableManager.registerReplaceVariable(InputMutedVariable);
+        ReplaceVariableManager.registerReplaceVariable(InputVolumeDbVariable);
+        ReplaceVariableManager.registerReplaceVariable(InputVolumeMultiplierVariable);
+        ReplaceVariableManager.registerReplaceVariable(InputAudioBalanceVariable);
+        ReplaceVariableManager.registerReplaceVariable(InputAudioSyncOffsetVariable);
+        ReplaceVariableManager.registerReplaceVariable(InputAudioTracksVariable);
+        ReplaceVariableManager.registerReplaceVariable(InputAudioMonitorTypeVariable);
 
         this.setupConnection(integrationData.userSettings);
     }
 
     onUserSettingsUpdate?(
         integrationData: IntegrationData<ObsSettings>
-    ): void | PromiseLike<void> {
+    ): Awaitable<void> {
         this.setupConnection(integrationData.userSettings);
     }
 }
@@ -257,7 +258,7 @@ const integrationConfig: Integration<ObsSettings> = {
             }
         }
     },
-    integration: new ObsIntegration(eventManager)
+    integration: new ObsIntegration(EventManager)
 };
 
 export const definition = integrationConfig.definition;

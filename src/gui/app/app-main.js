@@ -1,9 +1,12 @@
+/* eslint-disable angular/di-unused */
+/* eslint-disable angular/no-run-logic */
+
+
 "use strict";
 (function() {
     const electron = require("electron");
     const shell = electron.shell;
 
-    const profileManager = require("../../backend/common/profile-manager");
     const secrets = require("../../secrets.json");
 
     const moment = require("moment");
@@ -51,6 +54,7 @@
     });
 
     app.directive('focusOn', function() {
+        // eslint-disable-next-line angular/prefer-component
         return function(scope, elem, attr) {
             scope.$on('focusOn', function(e, name) {
                 if (name === attr.focusOn) {
@@ -125,6 +129,7 @@
         ttsService,
         settingsService,
         countersService,
+        hotkeyService,
         gamesService,
         presetEffectListsService,
         startupScriptsService,
@@ -140,7 +145,8 @@
         uiExtensionsService,
         webhooksService,
         overlayWidgetsService,
-        dynamicParameterRegistry
+        dynamicParameterRegistry,
+        platformService
     ) {
         // 'chatMessagesService' and 'videoService' are included so they're instantiated on app start
 
@@ -166,6 +172,8 @@
 
         countersService.loadCounters();
 
+        hotkeyService.loadHotkeys();
+
         gamesService.loadGames();
 
         presetEffectListsService.loadPresetEffectLists();
@@ -186,6 +194,8 @@
         webhooksService.loadWebhookConfigs();
 
         overlayWidgetsService.loadOverlayWidgetTypesAndConfigs();
+
+        platformService.loadPlatform();
 
         //start notification check
         $timeout(() => {
@@ -211,6 +221,21 @@
         dynamicParameterRegistry.register("number", { tag: "fb-param-number" });
         dynamicParameterRegistry.register("password", { tag: "fb-param-password" });
         dynamicParameterRegistry.register("boolean", { tag: "fb-param-boolean", hideTitle: true, hideDescription: true });
+        dynamicParameterRegistry.register("date-time", { tag: "fb-param-date-time",
+            validators: {
+                futureOnly: {
+                    fn: (view, isFuture) => (
+                        view == null || view === ""
+                            ? true
+                            : isFuture
+                                ? new Date(view) > new Date()
+                                : new Date(view) < new Date()
+                    ),
+                    message: isFuture => `Must be in the ${isFuture ? "future" : "past"}.`,
+                    async: false
+                }
+            }
+        });
         dynamicParameterRegistry.register("enum", { tag: "fb-param-enum" });
         dynamicParameterRegistry.register("filepath", { tag: "fb-param-filepath" });
         dynamicParameterRegistry.register("role-percentages", { tag: "fb-param-role-percentages" });
@@ -229,12 +254,14 @@
         dynamicParameterRegistry.register("font-options", { tag: "fb-param-font-options" });
         dynamicParameterRegistry.register("radio-cards", { tag: "fb-param-radio-cards" });
         dynamicParameterRegistry.register("codemirror", { tag: "fb-param-code-mirror" });
+        dynamicParameterRegistry.register("counter-select", { tag: "fb-param-counter-select" });
+        dynamicParameterRegistry.register("sort-tag-select", { tag: "fb-param-sort-tag-select" });
 
         uiExtensionsService.setAsReady();
     });
 
     app.controller("MainController", function($scope, $rootScope, $timeout, connectionService, utilityService,
-        settingsService, backupService, sidebarManager, logger, backendCommunicator, fontManager, ngToast) {
+        settingsService, backupService, sidebarManager, logger, backendCommunicator, fontManager, ngToast, watcherCountService) {
         $rootScope.showSpinner = true;
 
         $scope.fontAwesome5KitUrl = `https://kit.fontawesome.com/${secrets.fontAwesome5KitId}.js`;
@@ -285,7 +312,7 @@
                 const successful = document.execCommand("copy");
                 const msg = successful ? "successful" : "unsuccessful";
                 logger.info(`Copying text command was ${msg}`);
-            } catch (err) {
+            } catch {
                 logger.error("Oops, unable to copy text to clipboard.");
             }
 
@@ -359,7 +386,7 @@
                 templateUrl: "renameProfileModal.html",
                 size: 'sm',
                 resolveObj: {
-                    currentProfileId: () => profileManager.getLoggedInProfile()
+                    currentProfileId: () => ipcRenderer.sendSync("profiles:get-logged-in-profile")
                 },
                 // This is the controller to be used for the modal.
                 controllerFunc: ($scope, $uibModalInstance, connectionService, ngToast, currentProfileId) => {
@@ -429,7 +456,7 @@
             }
         };
 
-        $scope.currentProfileId = profileManager.getLoggedInProfile();
+        $scope.currentProfileId = ipcRenderer.sendSync("profiles:get-logged-in-profile");
 
         /**
          * Initial App Load
@@ -533,7 +560,8 @@
         };
     });
 
-    app.filter("dynamicFilter", function($filter) {
+    // eslint-disable-next-line angular/no-services
+    app.filter("dynamicFilter", ($filter) => {
         return function(items, filterName, ...args) {
             return $filter(filterName ?? "filter")(items, ...args);
         };
@@ -716,6 +744,14 @@
     app.filter('commify', function() {
         return function(input) {
             return input ? input.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "";
+        };
+    });
+
+    app.filter('reverseChat', function() {
+        return (items, reverse) => {
+            return reverse === true
+                ? items.toReversed()
+                : items;
         };
     });
 

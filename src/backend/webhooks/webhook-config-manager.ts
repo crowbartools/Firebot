@@ -1,16 +1,17 @@
 import { WebhookConfig } from "../../types/webhooks";
-import frontendCommunicator from "../common/frontend-communicator";
+
 import JsonDbManager from "../database/json-db-manager";
+import { AccountAccess } from "../common/account-access";
 import { crowbarRelayWebSocket } from "../crowbar-relay/crowbar-relay-websocket";
-import eventManager from "../events/EventManager";
+import { EventManager } from "../events/event-manager";
 import { SettingsManager } from "../common/settings-manager";
-import { maskPII } from "../utils";
+import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
-import accountAccess from "../common/account-access";
+import { maskPII } from "../utils";
 
 type ExtraEvents = {
-    "webhook-received": (data: { config: WebhookConfig; payload: unknown; headers: Record<string, string>; }) => void
-}
+    "webhook-received": (data: { config: WebhookConfig, payload: unknown, headers: Record<string, string> }) => void;
+};
 
 class WebhookConfigManager extends JsonDbManager<WebhookConfig, ExtraEvents> {
     constructor() {
@@ -36,7 +37,7 @@ class WebhookConfigManager extends JsonDbManager<WebhookConfig, ExtraEvents> {
                 logger.debug("Webhook received:", maskPII(msg.data));
             }
 
-            const data = msg.data as { webhookId: string; payload: unknown; headers: Record<string, string>; };
+            const data = msg.data as { webhookId: string, payload: unknown, headers: Record<string, string> };
 
             const webhookConfig = this.getItem(data.webhookId);
             if (!webhookConfig) {
@@ -57,7 +58,7 @@ class WebhookConfigManager extends JsonDbManager<WebhookConfig, ExtraEvents> {
                 headers: data.headers ?? {}
             });
 
-            eventManager.triggerEvent("firebot", "webhook-received", {
+            void EventManager.triggerEvent("firebot", "webhook-received", {
                 webhookId: webhookConfig.id,
                 webhookName: webhookConfig.name,
                 webhookPayload: payload,
@@ -68,7 +69,7 @@ class WebhookConfigManager extends JsonDbManager<WebhookConfig, ExtraEvents> {
     }
 
     getWebhookUrlById(webhookId: string): string {
-        const streamer = accountAccess.getAccounts().streamer;
+        const streamer = AccountAccess.getAccounts().streamer;
         return `https://api.crowbar.tools/v1/webhook/${streamer.channelId}/${webhookId}`;
     }
 }

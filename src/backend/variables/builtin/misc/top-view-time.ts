@@ -1,18 +1,17 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType } from "../../../../shared/variable-constants";
+import type { ReplaceVariable } from "../../../../types/variables";
 
 import viewerOnlineStatusManager from "../../../viewers/viewer-online-status-manager";
-const util = require("../../../utility");
+import { commafy } from "../../../utils";
 
 const model : ReplaceVariable = {
     definition: {
         handle: "topViewTime",
         description: "Comma separated list of users with the most view time (in hours). Defaults to top 10, you can provide a custom number as a second argument.",
         usage: "topViewTime[count]",
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: ["text"]
     },
 
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+
     evaluator: async (_, count: number = 10) => {
 
         // limit to max of 25
@@ -27,7 +26,7 @@ const model : ReplaceVariable = {
 
         const topViewTimeUsersDisplay = topViewTimeUsers.map((u, i) => {
             const hours = u.minutesInChannel > 59 ? Math.floor(u.minutesInChannel / 60) : 0;
-            return `#${i + 1}) ${u.username} - ${util.commafy(hours)}`;
+            return `#${i + 1}) ${u.username} - ${commafy(hours)}`;
         }).join(", ");
 
         return topViewTimeUsersDisplay;

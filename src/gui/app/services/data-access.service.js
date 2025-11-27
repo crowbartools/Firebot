@@ -1,11 +1,14 @@
 "use strict";
+
 (function() {
-
-    const dataAccess = require("../../backend/common/data-access.js");
-
     angular
         .module("firebotApp")
-        .factory("dataAccess", function() {
-            return dataAccess;
+        .factory("dataAccess", (backendCommunicator) => {
+            const service = {};
+
+            service.getPathInUserData = path =>
+                backendCommunicator.fireEventSync("data-access:get-path-in-user-data", path);
+
+            return service;
         });
 }());

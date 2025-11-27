@@ -1,4 +1,4 @@
-import { EffectList } from "./effects";
+import type { EffectList } from "./effects";
 
 export type Counter = {
     id?: string;
@@ -10,4 +10,4 @@ export type Counter = {
     updateEffects?: EffectList;
     minimumEffects?: EffectList;
     maximumEffects?: EffectList;
-}
+};

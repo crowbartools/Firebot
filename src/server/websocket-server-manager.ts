@@ -1,12 +1,15 @@
-import effectManager from "../backend/effects/effectManager";
 import { EventEmitter } from "events";
-import eventManager from "../backend/events/EventManager";
 import http from "http";
-import logger from "../backend/logwrapper";
 import WebSocket from "ws";
-import { OverlayConnectedData, Message, ResponseMessage, EventMessage, InvokePluginMessage, CustomWebSocketHandler } from "../types/websocket";
+
+import type { OverlayConnectedData, Message, ResponseMessage, EventMessage, InvokePluginMessage, CustomWebSocketHandler } from "../types/websocket";
+import type { EffectType } from "../types/effects";
+
 import { WebSocketClient } from "./websocket-client";
+import { EffectManager } from "../backend/effects/effect-manager";
+import { EventManager } from "../backend/events/event-manager";
 import frontendCommunicator from "../backend/common/frontend-communicator";
+import logger from "../backend/logwrapper";
 
 function sendResponse(ws: WebSocketClient, messageId: string | number, data: unknown = null) {
     const response: ResponseMessage = {
@@ -33,6 +36,11 @@ class WebSocketServerManager extends EventEmitter {
 
     private server: WebSocket.Server<typeof WebSocketClient>;
     private customHandlers: CustomWebSocketHandler[] = [];
+
+    constructor() {
+        super();
+        this.setMaxListeners(0);
+    }
 
     createServer(httpServer: http.Server) {
         this.server = new WebSocket.Server<typeof WebSocketClient>({
@@ -83,7 +91,7 @@ class WebSocketServerManager extends EventEmitter {
                                     sendResponse(ws, message.id);
 
                                     const instanceName = (message.data as Array<OverlayConnectedData>)[0].instanceName;
-                                    eventManager.triggerEvent("firebot", "overlay-connected", {
+                                    void EventManager.triggerEvent("firebot", "overlay-connected", {
                                         instanceName
                                     });
                                     this.emit("overlay-connected", instanceName);
@@ -131,22 +139,22 @@ class WebSocketServerManager extends EventEmitter {
                         }
                     }
                 } catch (error) {
-                    ws.close(4006, error.message);
+                    ws.close(4006, (error as Error).message);
                 }
             });
         });
 
-        effectManager.on("effectRegistered", (effect) => {
+        EffectManager.on("effectRegistered", (effect: EffectType) => {
             if (effect.overlayExtension) {
                 // tell the overlay to refresh because a new effect with an overlay extension has been registered
-                this.refreshOverlays();
+                this.refreshAllOverlays();
             }
         });
 
-        effectManager.on("effectUnregistered", ({ hasOverlayEffect }) => {
+        EffectManager.on("effectUnregistered", ({ hasOverlayEffect }) => {
             if (hasOverlayEffect) {
                 // tell the overlay to refresh because a effect with an overlay extension has been removed
-                this.sendToOverlay("OVERLAY:REFRESH", { global: true });
+                this.refreshAllOverlays();
             }
         });
     }
@@ -183,7 +191,7 @@ class WebSocketServerManager extends EventEmitter {
         this.sendToOverlay("OVERLAY:WIDGET-EVENT", { event }, event.data.widgetConfig.overlayInstance ?? null);
     }
 
-    refreshOverlays() {
+    refreshAllOverlays() {
         this.sendToOverlay("OVERLAY:REFRESH", { global: true });
     }
 

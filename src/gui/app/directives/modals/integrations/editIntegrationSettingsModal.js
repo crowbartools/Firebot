@@ -13,9 +13,12 @@
             <div class="modal-body">
 
                 <setting-container ng-if="$ctrl.integration.settingCategories != null" ng-repeat="categoryMeta in $ctrl.settingCategoriesArray | orderBy:'sortRank'"  header="{{categoryMeta.title}}" description="{{categoryMeta.description}}" pad-top="$index > 0 ? true : false" collapsed="false">
-                    <command-option ng-repeat="setting in categoryMeta.settingsArray | orderBy:'sortRank'"
-                                name="setting.settingName"
-                                metadata="setting"></command-option>
+                    <dynamic-parameter
+                        ng-repeat="setting in categoryMeta.settingsArray | orderBy:'sortRank'"
+                        name="{{setting.settingName}}"
+                        schema="setting"
+                        ng-model="$ctrl.integration.settingCategories[categoryMeta.categoryName].settings[setting.settingName].value"
+                    ></dynamic-parameter>
                 </setting-container>
 
             </div>
@@ -41,8 +44,9 @@
             $ctrl.$onInit = function() {
                 if ($ctrl.resolve.integration) {
                     $ctrl.integration = JSON.parse(JSON.stringify($ctrl.resolve.integration));
-                    $ctrl.settingCategoriesArray = Object.values($ctrl.integration.settingCategories)
-                        .map(sc => {
+                    $ctrl.settingCategoriesArray = Object.entries($ctrl.integration.settingCategories)
+                        .map(([categoryName, sc]) => {
+                            sc.categoryName = categoryName;
                             sc.settingsArray = [];
                             const settingNames = Object.keys(sc.settings);
                             for (const settingName of settingNames) {
@@ -65,7 +69,7 @@
                         confirmLabel: "Reset",
                         confirmBtnType: "btn-danger"
                     })
-                    .then(confirmed => {
+                    .then((confirmed) => {
                         if (confirmed) {
                             $ctrl.close({
                                 $value: {

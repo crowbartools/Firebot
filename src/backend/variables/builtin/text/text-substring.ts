@@ -1,14 +1,13 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import { convertToString } from '../../../utility';
+import type { ReplaceVariable, Trigger } from "../../../../types/variables";
+import { stringify } from '../../../utils';
 
 const model : ReplaceVariable = {
     definition: {
         handle: "textSubstring",
         usage: "textSubstring[text, start, end]",
         description: "Returns a substring of the provided text based on the range",
-        categories: [VariableCategory.TEXT],
-        possibleDataOutput: [OutputDataType.TEXT]
+        categories: ["text"],
+        possibleDataOutput: ["text"]
     },
     evaluator: (
         trigger: Trigger,
@@ -16,7 +15,7 @@ const model : ReplaceVariable = {
         start: unknown = 0,
         end: unknown
     ) : string => {
-        const text = convertToString(subject);
+        const text = stringify(subject);
 
         start = Number(start);
         if (!Number.isFinite(start) || <number>start < 1) {

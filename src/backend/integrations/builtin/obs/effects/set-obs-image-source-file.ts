@@ -10,7 +10,7 @@ export const SetOBSImageSourceFileEffectType: EffectType<{
         name: "Set OBS Image Source File",
         description: "Sets the file of an OBS image source",
         icon: "fad fa-photo-video",
-        categories: ["common"]
+        categories: ["common", "integrations"]
     },
     optionsTemplate: `
     <eos-container header="OBS Image Source">

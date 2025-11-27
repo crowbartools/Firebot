@@ -1,14 +1,12 @@
 "use strict";
 
-const { EffectCategory } = require('../../../shared/effect-constants');
-
 const model = {
     definition: {
         id: "firebot:cooldown-command",
         name: "Cooldown Command",
         description: "Manually add or remove a cooldown for a command",
         icon: "fad fa-hourglass-half",
-        categories: [EffectCategory.COMMON, EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
+        categories: ["common", "advanced", "scripting", "firebot control"],
         dependencies: []
     },
     globalSettings: {},
@@ -218,8 +216,8 @@ const model = {
         }
 
         if (effect.sortTagId != null && effect.selectionType === "sortTag") {
-            const commandManager = require("../../chat/commands/command-manager");
-            const commands = commandManager.getAllCustomCommands().filter(c => c.sortTags?.includes(effect.sortTagId));
+            const { CommandManager } = require("../../chat/commands/command-manager");
+            const commands = CommandManager.getAllCustomCommands().filter(c => c.sortTags?.includes(effect.sortTagId));
             commands.forEach(c => commandIds.push(c.id));
         }
 

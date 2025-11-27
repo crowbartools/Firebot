@@ -150,7 +150,7 @@ function emulateKeyPress(keyRaw, modifiers, pressDurationRaw) {
     const { key, isMouseClick } = mapNutKey(keyRaw);
 
     modifiers = modifiers ?? [];
-    const nutModifiers = modifiers.map((k) => mapNutKey(k).key);
+    const nutModifiers = modifiers.map(k => mapNutKey(k).key);
 
     logger.info(`nut-js: Pressing "${keyRaw}" with modifiers: ${modifiers.join(", ")}`);
 

@@ -1,11 +1,8 @@
 "use strict";
 
 (function () {
-
-    angular
-        .module("firebotApp")
-        .component("advancedSettings", {
-            template: `
+    angular.module("firebotApp").component("advancedSettings", {
+        template: `
                 <div>
 
                     <firebot-setting
@@ -31,6 +28,16 @@
                         <firebot-button
                             text="{{settings.getSetting('WhileLoopEnabled') ? 'Disable While Loops' : 'Enable While Loops' }}"
                             ng-click="toggleWhileLoops()"
+                        />
+                    </firebot-setting>
+
+                    <firebot-setting
+                        name="Global Values"
+                        description="Global Values are static values that can be used in effects via a $variable. They can be created and managed here."
+                    >
+                        <firebot-button
+                            text="Edit Global Values"
+                            ng-click="showEditGlobalValuesModal()"
                         />
                     </firebot-setting>
 
@@ -92,8 +99,8 @@
                     </firebot-setting>
 
                     <firebot-setting
-                        name="Persist Custom Variables"
-                        description="Whether or not custom variables should be persisted to a file when Firebot closes."
+                        name="Persist All Custom Variables"
+                        description="Whether or not all custom variables should be persisted to file when Firebot closes."
                     >
                         <firebot-select
                             options="{ true: 'On', false: 'Off' }"
@@ -128,57 +135,106 @@
                         />
                     </firebot-setting>
 
+                    <firebot-setting
+                        name="Allow Chat-Created Commands to Run Effects"
+                        description="Enables the !command system command to import shared effects and run effects through variables inside command responses. Recommended only if you trust your moderators with these advanced features."
+                    >
+                        <toggle-button
+                            toggle-model="settings.getSetting('AllowChatCreatedCommandsToRunEffects')"
+                            on-toggle="settings.saveSetting('AllowChatCreatedCommandsToRunEffects', !settings.getSetting('AllowChatCreatedCommandsToRunEffects'))"
+                            font-size="40"
+                            accessibility-label="(settings.getSetting('AllowChatCreatedCommandsToRunEffects') ? 'Enabled' : 'Disabled') + ' Chat-Created Commands to Run Effects'"
+                        />
+                    </firebot-setting>
+
+                    <firebot-setting
+                        name="Default Moderation User"
+                        description="Sets which user account will perform moderation actions. This includes bans/timeouts, deleting/clearing chat messages, setting chat modes/Shield Mode, and Twitch shoutouts."
+                    >
+                        <firebot-select
+                            options="{ streamer: 'Streamer', bot: 'Bot' }"
+                            ng-init="defaultModerationUser = settings.getSetting('DefaultModerationUser')"
+                            selected="defaultModerationUser"
+                            on-update="settings.saveSetting('DefaultModerationUser', option)"
+                            right-justify="true"
+                            aria-label="Sets which user account will perform moderation actions"
+                        />
+
+                        <setting-description-addon>
+                            <strong>NOTE: If no bot account is logged in, actions will default to the streamer account.</strong>
+                        </setting-description-addon>
+                    </firebot-setting>
+
+                    <firebot-setting
+                        name="Preset Effect List Recursion Limit"
+                        description="Limits how many times a preset effect list can recursively call itself to prevent Firebot from hanging. When enabled, execution stops after 100 recursive calls."
+                    >
+                        <toggle-button
+                            toggle-model="settings.getSetting('PresetRecursionLimit')"
+                            on-toggle="settings.saveSetting('PresetRecursionLimit', !settings.getSetting('PresetRecursionLimit'))"
+                            font-size="40"
+                            accessibility-label="(settings.getSetting('PresetRecursionLimit') ? 'Enabled' : 'Disabled') + ' Preset Effect List Recursion Limit'"
+                        />
+                    </firebot-setting>
+
                     <div style="margin-top: 20px">
                         <p class="muted">Looking for a setting that used to be located here? Try checking in the Tools app menu!</p>
                     </div>
 
                 </div>
           `,
-            controller: function ($scope, settingsService, utilityService, backendCommunicator, modalService) {
-                $scope.settings = settingsService;
+        controller: function ($scope, settingsService, utilityService, backendCommunicator, modalService) {
+            $scope.settings = settingsService;
 
-                $scope.toggleWhileLoops = () => {
-                    const whileLoopsEnabled = settingsService.getSetting("WhileLoopEnabled");
+            $scope.toggleWhileLoops = () => {
+                const whileLoopsEnabled = settingsService.getSetting("WhileLoopEnabled");
 
-                    if (whileLoopsEnabled) {
-                        settingsService.saveSetting("WhileLoopEnabled", false);
-                    } else {
-                        utilityService
-                            .showConfirmationModal({
-                                title: "Enable While Loops",
-                                question: "By enabling this feature, you understand that using While Loops incorrectly can potentially cause performance issues or even freeze Firebot.",
-                                confirmLabel: "I understand, enable.",
-                                confirmBtnType: "btn-primary"
-                            })
-                            .then((confirmed) => {
-                                if (confirmed) {
-                                    settingsService.saveSetting("WhileLoopEnabled", true);
-                                }
-                            });
-                    }
-                };
-
-                $scope.showEditWebhooksModal = function() {
-                    modalService.showModal({
-                        component: "editWebhooksModal"
-                    });
-                };
-
-                $scope.recalculateQuoteIds = () => {
+                if (whileLoopsEnabled) {
+                    settingsService.saveSetting("WhileLoopEnabled", false);
+                } else {
                     utilityService
                         .showConfirmationModal({
-                            title: "Recalculate Quote IDs",
-                            question: `Are you sure you want to recalculate your quote IDs?`,
-                            confirmLabel: "Recalculate",
-                            confirmBtnType: "btn-danger"
+                            title: "Enable While Loops",
+                            question:
+                                "By enabling this feature, you understand that using While Loops incorrectly can potentially cause performance issues or even freeze Firebot.",
+                            confirmLabel: "I understand, enable.",
+                            confirmBtnType: "btn-primary"
                         })
                         .then((confirmed) => {
                             if (confirmed) {
-                                backendCommunicator.fireEvent("recalc-quote-ids");
+                                settingsService.saveSetting("WhileLoopEnabled", true);
                             }
                         });
-                };
+                }
+            };
 
-            }
-        });
-}());
+            $scope.showEditWebhooksModal = function () {
+                modalService.showModal({
+                    component: "editWebhooksModal"
+                });
+            };
+
+            $scope.showEditGlobalValuesModal = function () {
+                modalService.showModal({
+                    component: "editGlobalValuesModal",
+                    size: "sm"
+                });
+            };
+
+            $scope.recalculateQuoteIds = () => {
+                utilityService
+                    .showConfirmationModal({
+                        title: "Recalculate Quote IDs",
+                        question: `Are you sure you want to recalculate your quote IDs?`,
+                        confirmLabel: "Recalculate",
+                        confirmBtnType: "btn-danger"
+                    })
+                    .then((confirmed) => {
+                        if (confirmed) {
+                            backendCommunicator.fireEvent("recalc-quote-ids");
+                        }
+                    });
+            };
+        }
+    });
+})();
