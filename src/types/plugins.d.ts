@@ -16,21 +16,21 @@ import ReplaceVariableManager from "../backend/variables/replace-variable-manage
 type GenericParameters = Record<string, Record<string, unknown>>;
 
 export type InstalledPluginConfig<Params extends GenericParameters = GenericParameters> = {
-    id: string,
-    fileName: string,
-    enabled?: boolean,
-    legacyImport?: boolean,
-    parameters: Params
+    id: string;
+    fileName: string;
+    enabled?: boolean;
+    legacyImport?: boolean;
+    parameters: Params;
 };
 
 type ScriptContext = {
     trigger?: Trigger;
     parameters: Record<string, unknown>;
-}
+};
 
 type DynamicArray<T> = Array<T | ((context: ScriptContext) => Awaitable<T>)>;
 
-type ScriptType = "script" | "plugin"
+type ScriptType = "script" | "plugin";
 
 interface ManifestDescription {
     short: string;
@@ -122,26 +122,26 @@ interface Plugin<Params extends FirebotParams = Record<string, Record<string, un
 /* Legacy types */
 
 type LegacyScriptParameters = Record<
-string,
-{
-    type: any;
-    title?: string;
-    description?: string;
-    secondaryDescription?: string;
-    tip?: string;
-    showBottomHr?: boolean;
-    validation?: {
-        required?: boolean;
-    },
-    value?: unknown;
-    default?: unknown;
-}
+    string,
+    {
+        type: any;
+        title?: string;
+        description?: string;
+        secondaryDescription?: string;
+        tip?: string;
+        showBottomHr?: boolean;
+        validation?: {
+            required?: boolean;
+        };
+        value?: unknown;
+        default?: unknown;
+    }
 >;
 
 type LegacyScriptReturnObject = {
     success: boolean;
     errorMessage?: string;
-    effects: unknown[] | { id: string; list: unknown[] };
+    effects: unknown[] | { id: string, list: unknown[] };
     callback?: VoidFunction;
 };
 
@@ -194,4 +194,4 @@ export type FirebotScriptApi = {
     frontend: FrontendCommunicatorModule;
     effects: EffectManager;
     replaceVariables: ReplaceVariableManager;
-}
+};
