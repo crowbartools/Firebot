@@ -30,7 +30,18 @@
                     return true;
                 }
                 for (const [key, val] of Object.entries(showIf)) {
-                    if (!$ctrl.settings || $ctrl.settings[key] !== val) {
+                    const actualVal = $ctrl.settings ? $ctrl.settings[key] : undefined;
+                    if (Array.isArray(val)) {
+                        // If the value is an array, check for inclusion
+                        if (Array.isArray(actualVal)) {
+                            // If actualVal is also an array, check for any common elements
+                            if (!actualVal.some(v => val.includes(v))) {
+                                return false;
+                            }
+                        } else if (!val.includes(actualVal)) {
+                            return false;
+                        }
+                    } else if (actualVal !== val) {
                         return false;
                     }
                 }
