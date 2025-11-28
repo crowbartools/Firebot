@@ -1,4 +1,5 @@
 import { OverlayWidgetType, IOverlayWidgetEventUtils, WidgetOverlayEvent } from "../../../../types/overlay-widgets";
+import { EventManager } from "../../../events/event-manager";
 
 type Settings = {
     html: string;
@@ -34,8 +35,13 @@ export const custom: OverlayWidgetType<Settings, State> = {
             type: "codemirror",
             title: "onShow JS",
             description: "Optional code that runs when the widget is shown. Ran in an async function (await is supported).",
-            default: `// Example: Change the text color of the widget's\n// content to red\ncontainerElement\n.   .querySelector('#my-widget')\n.   .style.color = 'red';`,
-            tip: "The following variables are available:\n- `containerElement` (the root HTML element of the widget)\n- `widgetId` (this widget's unique ID)\n- `widgetState` (the current state of the widget, if any)",
+            default: `// Example: Change the text color of the widget's\n// content to red\ncontainerElement\n   .querySelector('#my-widget')\n   .style.color = 'red';`,
+            tip:
+`The following variables are available:
+- \`containerElement\` (the root HTML element of the widget)
+- \`widgetId\` (this widget's unique ID)
+- \`widgetState\` (the current state of the widget, if any)
+- \`utils.sendMessageToFirebot(messageName: string, messageData?: any)\` (utility function to send a message back to Firebot)`,
             settings: {
                 mode: { name: "javascript" },
                 lineNumbers: true,
@@ -50,7 +56,12 @@ export const custom: OverlayWidgetType<Settings, State> = {
             title: "onStateUpdate JS",
             description: "Optional code that runs when the widget's state is updated via the Update Custom Widget State effect. Ran in an async function (await is supported).",
             default: ``,
-            tip: "The following variables are available:\n- `containerElement` (the root HTML element of the widget)\n- `widgetId` (this widget's unique ID)\n- `widgetState` (the current state of the widget, if any)",
+            tip:
+`The following variables are available:
+- \`containerElement\` (the root HTML element of the widget)
+- \`widgetId\` (this widget's unique ID)
+- \`widgetState\` (the current state of the widget, if any)
+- \`utils.sendMessageToFirebot(messageName: string, messageData?: any)\` (utility function to send a message back to Firebot)`,
             settings: {
                 mode: { name: "javascript" },
                 lineNumbers: true,
@@ -65,7 +76,14 @@ export const custom: OverlayWidgetType<Settings, State> = {
             title: "onMessage JS",
             description: "Optional code that runs when the widget receives a message from the Send Message To Custom Widget effect. Ran in an async function (await is supported).",
             default: ``,
-            tip: "The following variables are available:\n- `containerElement` (the root HTML element of the widget)\n- `widgetId` (this widget's unique ID)\n- `widgetState` (the current state of the widget, if any)\n- `messageName` (the name of the received message)\n- `messageData` (the data sent with the message, if any)",
+            tip:
+`The following variables are available:
+- \`containerElement\` (the root HTML element of the widget)
+- \`widgetId\` (this widget's unique ID)
+- \`widgetState\` (the current state of the widget, if any)
+- \`messageName\` (the name of the received message)
+- \`messageData\` (the data sent with the message, if any)
+- \`utils.sendMessageToFirebot(messageName: string, messageData?: any)\` (utility function to send a message back to Firebot)`,
             settings: {
                 mode: { name: "javascript" },
                 lineNumbers: true,
@@ -78,6 +96,14 @@ export const custom: OverlayWidgetType<Settings, State> = {
     initialState: {},
     supportsLivePreview: true,
     livePreviewState: {},
+    onOverlayMessage(config, messageName, messageData) {
+        void EventManager.triggerEvent("firebot", "custom-widget-message-received", {
+            customWidgetId: config.id,
+            customWidgetName: config.name,
+            customWidgetMessageName: messageName,
+            customWidgetMessageData: messageData
+        });
+    },
     overlayExtension: {
         eventHandler: async (event: WidgetOverlayEvent<Settings, State>, utils: IOverlayWidgetEventUtils) => {
             utils.handleOverlayEvent((config) => {
@@ -112,7 +138,11 @@ export const custom: OverlayWidgetType<Settings, State> = {
                 await runRawJs(event.data.widgetConfig.settings.onShowJs, {
                     containerElement: utils.getWidgetContainerElement(),
                     widgetId: event.data.widgetConfig.id,
-                    widgetState: event.data.widgetConfig.state
+                    widgetState: event.data.widgetConfig.state,
+                    utils: {
+                        ...utils,
+                        sendMessageToFirebot: utils.sendMessageToFirebot.bind(utils)
+                    }
                 });
             }
 
@@ -120,7 +150,11 @@ export const custom: OverlayWidgetType<Settings, State> = {
                 await runRawJs(event.data.widgetConfig.settings.onStateUpdateJs, {
                     containerElement: utils.getWidgetContainerElement(),
                     widgetId: event.data.widgetConfig.id,
-                    widgetState: event.data.widgetConfig.state
+                    widgetState: event.data.widgetConfig.state,
+                    utils: {
+                        ...utils,
+                        sendMessageToFirebot: utils.sendMessageToFirebot.bind(utils)
+                    }
                 });
             }
 
@@ -130,7 +164,11 @@ export const custom: OverlayWidgetType<Settings, State> = {
                     widgetId: event.data.widgetConfig.id,
                     widgetState: event.data.widgetConfig.state,
                     messageName: event.data.messageName,
-                    messageData: event.data.messageData
+                    messageData: event.data.messageData,
+                    utils: {
+                        ...utils,
+                        sendMessageToFirebot: utils.sendMessageToFirebot.bind(utils)
+                    }
                 });
             }
         }

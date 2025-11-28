@@ -70,7 +70,7 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
             firebotChatMessage.customRewardId = HIGHLIGHT_MESSAGE_REWARD_ID;
             firebotChatMessage.reward = {
                 id: HIGHLIGHT_MESSAGE_REWARD_ID,
-                name: "Highlight Message",
+                name: "Highlight My Message",
                 cost: 0,
                 imageUrl: "https://static-cdn.jtvnw.net/automatic-reward-images/highlight-4.png"
             };

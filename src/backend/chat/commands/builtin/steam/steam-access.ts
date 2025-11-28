@@ -1,17 +1,5 @@
-import Fuse from "fuse.js";
-
+import { AccountAccess } from "../../../../common/account-access";
 import logger from "../../../../logwrapper";
-
-interface SteamCacheItem {
-    appid: number;
-    name: string;
-}
-
-interface SteamAppList {
-    applist: {
-        apps: SteamCacheItem[]
-    }
-}
 
 interface SteamAppDetails {
     name: string;
@@ -50,34 +38,9 @@ interface FirebotSteamGameDetails {
     url: string;
 }
 
-class SteamCacheManager {
-    private _steamCache: SteamCacheItem[] = [];
-
-    async cacheSteamLibrary(): Promise<boolean> {
-        if (this._steamCache.length > 0) {
-            logger.debug('Steam library is still cached. No need to pull again.');
-            return false;
-        }
-
-        logger.debug('Refreshing Steam library cache');
-        const url = "https://api.steampowered.com/ISteamApps/GetAppList/v2/";
-        try {
-            const response = await (await fetch(url)).json() as SteamAppList;
-
-            if (response?.applist?.apps != null) {
-                this._steamCache = response.applist.apps;
-                return true;
-            }
-
-            return false;
-        } catch (error) {
-            logger.error("Unable to get Steam library from Steam API.", error.message);
-            return false;
-        }
-    }
-
+class SteamManager {
     async getSteamGameDetails(requestedGame: string, countryCode?: string) {
-        const appId = await this.getAppIdFromSteamCache(requestedGame);
+        const appId = await this.getAppIdFromGameName(requestedGame);
         if (appId == null) {
             logger.debug('Could not retrieve app id for Steam search.');
             return null;
@@ -116,25 +79,30 @@ class SteamCacheManager {
         return gameDetails;
     }
 
-    private async getAppIdFromSteamCache(requestedGame: string): Promise<number> {
-        // Try to cache library if we don't have one yet.
-        if (this._steamCache.length === 0) {
-            const cacheSuccess = await this.cacheSteamLibrary();
+    private async getAppIdFromGameName(gameName: string): Promise<number> {
+        const streamer = AccountAccess.getAccounts().streamer;
 
-            if (!cacheSuccess) {
-                return null;
+        if (!streamer?.loggedIn) {
+            return null;
+        }
+        try {
+            const response = await fetch(`https://api.crowbar.tools/v1/steam/find-app-id?search=${encodeURIComponent(gameName)}`, {
+                method: "GET",
+                headers: {
+                    'User-Agent': 'Firebot V5 - https://firebot.app',
+                    'Authorization': `Bearer ${streamer.auth.access_token}`
+                }
+            });
+
+            if (response?.ok) {
+                const data = await response.json() as { appId: number | null };
+                return data.appId;
             }
+        } catch (error) {
+            logger.error('Steam app ID fetch failed.', (error as Error).message);
         }
 
-        // Now, let's search the app list and get the closest result.
-        const searchOptions = {
-            keys: ['name'],
-            id: 'appid'
-        };
-        const fuse = new Fuse(this._steamCache, searchOptions);
-
-        const search = fuse.search(requestedGame);
-        return search[0]?.item?.appid;
+        return null;
     }
 
     private async getSteamAppDetails(appId: number, countryCode?: string): Promise<Partial<SteamAppDetails>> {
@@ -163,6 +131,6 @@ class SteamCacheManager {
     }
 }
 
-const steamCacheManager = new SteamCacheManager();
+const steamCacheManager = new SteamManager();
 
 export = steamCacheManager;

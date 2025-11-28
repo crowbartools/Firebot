@@ -95,31 +95,11 @@ class ScriptWebhookManager extends EventEmitter {
 const { AccountAccess } = require("../../account-access");
 
 function buildModules(scriptManifest) {
-    const streamerName = AccountAccess.getAccounts().streamer.username || "Unknown Streamer";
-    const appVersion = app.getVersion();
-
-    const request = require("request");
-
-    const customRequest = request.defaults({
-        headers: {
-            "User-Agent": `Firebot/${appVersion};CustomScript/${scriptManifest.name}/${scriptManifest.version};User/${streamerName}`
-        }
-    });
-
-    // safe guard: enforce our user-agent
-    customRequest.init = function init(options) {
-        if (options != null && options.headers != null) {
-            delete options.headers["User-Agent"];
-        }
-        customRequest.prototype.init.call(this, options);
-    };
-
     const notificationManager = require("../../../notifications/notification-manager").NotificationManager;
 
     const scriptNameNormalized = scriptManifest.name.replace(/[#%&{}\\<>*?/$!'":@`|=\s-]+/g, "-").toLowerCase();
 
     return {
-        request: customRequest,
         spawn: require("child_process").spawn,
         childProcess: require("child_process"),
         fs: require("fs-extra"),

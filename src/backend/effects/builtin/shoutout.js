@@ -10,13 +10,18 @@ const { wait } = require("../../utils");
 
 const shoutoutStyles = `
     .firebot-shoutout-wrapper {
-        font-family: 'Open Sans';
+        font-family: 'Inter', 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         background: black;
-        border-radius: 1vw;
+        border-radius: 1.2vw;
         width: 19vw;
         position: relative;
         padding-top: 63%;
         margin-top: 32%;
+        box-shadow: 0 0.8vw 2.4vw rgba(0, 0, 0, 0.4),
+                    0 0.3vw 0.8vw rgba(0, 0, 0, 0.3),
+                    0 0 0 0.15vw rgba(255, 255, 255, 0.1) inset;
+        backdrop-filter: blur(10px);
+        opacity: 0;
     }
     .firebot-shoutout-padding {
         padding: 0 5%;
@@ -26,19 +31,29 @@ const shoutoutStyles = `
         bottom: 64%;
         left: 0;
         width: 90%;
+        filter: drop-shadow(0 0.5vw 1.5vw rgba(0, 0, 0, 0.5));
+        opacity: 0;
+        z-index: 1;
     }
     .firebot-shoutout-user-avatar {
         width: 100%;
         border-radius: 100%;
         background: black;
         object-fit: cover;
+        border: 0.3vw solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 0 0 0.15vw rgba(0, 0, 0, 0.3),
+                    0 0 2vw rgba(255, 255, 255, 0.1) inset;
     }
     .firebot-shoutout-username {
         font-size: 27px;
         color: white;
         text-align: center;
-        font-weight: 200;
+        font-weight: 900;
         word-break: break-all;
+        letter-spacing: 0.05em;
+        text-shadow: 0 0.2vw 0.8vw rgba(0, 0, 0, 0.1),
+                     0 0.1vw 0.3vw rgba(0, 0, 0, 0.1);
+        opacity: 0;
     }
     .firebot-shoutout-text {
         text-align: center;
@@ -47,55 +62,63 @@ const shoutoutStyles = `
         font-size: 1.5vw;
         margin-top: 27px;
         padding-bottom: 25px;
+        line-height: 1.5;
+        text-shadow: 0 0.15vw 0.5vw rgba(0, 0, 0, 0.1);
+        opacity: 0;
     }
     .firebot-shoutout-game-wrapper {
-        transform: translateY(1px);
         position: relative;
-        border-radius: 1vw;
+        border-radius: 1.2vw;
         overflow: hidden;
         border-top-right-radius: 0;
         border-top-left-radius: 0;
+        opacity: 0;
     }
     .firebot-shoutout-game-boxart {
-        filter: blur(1px);
-        -webkit-filter: blur(1px);
+        filter: blur(1.5px);
+        -webkit-filter: blur(1.5px);
         opacity: 1;
         width: 100%;
         height: 100%;
         position: absolute;
-        top:0;
-        left:0;
-        z-index:-2;
+        top: 0;
+        left: 0;
+        z-index: -2;
         background-size: cover;
         background-position: center;
     }
     .firebot-shoutout-game-dimmer {
-        background: rgba(0, 0, 0, 0.25);
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.6) 100%);
         width: 100%;
         height: 100%;
         position: absolute;
-        top:0;
-        left:0;
-        z-index:-1;
+        top: 0;
+        left: 0;
+        z-index: -1;
     }
     .firebot-shoutout-game-text-wrapper {
         width: 100%;
         height: 100%;
-        padding: 3% 0;
+        padding: 5% 3%;
         display: flex;
         align-items: center;
         justify-content: center;
         text-align: center;
         font-size: 1.6vw;
-        font-weight: 400;
-        text-shadow: 0px 0px 5px #000000;
+        font-weight: 500;
+        text-shadow: 0 0.2vw 0.6vw rgba(0, 0, 0, 0.1),
+                     0 0.1vw 0.2vw rgba(0, 0, 0, 0.1);
         flex-direction: column;
+        gap: 0.3vw;
+        line-height: 1.3;
     }
     .firebot-shoutout-game-lastseen {
-        font-weight: 600;
-        font-size: 1.1vw;
+        font-weight: 700;
+        font-size: 1vw;
         text-align: center;
         text-transform: uppercase;
+        letter-spacing: 0.1em;
+        opacity: 0.9;
     }
 `;
 
@@ -115,25 +138,25 @@ const effect = {
                 <div>
                     <div
                         class="firebot-shoutout-wrapper"
-                        style="width: 300px;background: linear-gradient(0deg, {{effect.bgColor2}} 0%, {{effect.bgColor1}} 100%);"
+                        style="width: 300px;background: linear-gradient(0deg, {{effect.bgColor2}} 0%, {{effect.bgColor1}} 100%); opacity: 1;"
                         >
                         <div style="position:relative;width:initial;">
-                            <div class="firebot-shoutout-avatar-wrapper firebot-shoutout-padding" style="width: 100%;">
+                            <div class="firebot-shoutout-avatar-wrapper firebot-shoutout-padding" style="width: 100%; opacity: 1;">
                                 <img
                                     class="firebot-shoutout-user-avatar"
                                     src="{{defaultAvatar}}"/>
                             </div>
                         </div>
-                        <div class="firebot-shoutout-username" style="padding: 0 10%; color: {{effect.textColor}};font-size: 32px;">SomeUserName</div>
+                        <div class="firebot-shoutout-username" style="padding: 0 10%; color: {{effect.textColor}};font-size: 32px; opacity: 1;">SomeUser</div>
                         <div class="firebot-shoutout-padding">
                             <div
                                 ng-hide="effect.shoutoutText == null || effect.shoutoutText === ''"
                                 class="firebot-shoutout-text"
-                                style="color: {{effect.textColor}};">
+                                style="color: {{effect.textColor}}; opacity: 1;">
                                 {{effect.shoutoutText}}
                             </div>
                         </div>
-                        <div ng-if="effect.showLastGame" class="firebot-shoutout-game-wrapper">
+                        <div ng-if="effect.showLastGame" class="firebot-shoutout-game-wrapper" style="opacity: 1;">
                             <div class="firebot-shoutout-game-boxart" ng-if="!effect.hideCategoryArt" style="background-image:url('{{defaultGameBoxArt}}');" />
                             <div class="firebot-shoutout-game-dimmer" />
                             <div class="firebot-shoutout-game-text-wrapper">
@@ -164,6 +187,7 @@ const effect = {
                     model="effect.showLastGame"
                 />
                 <firebot-checkbox
+                    ng-if="effect.showLastGame"
                     label="Hide game/category art"
                     model="effect.hideCategoryArt"
                 />
@@ -325,13 +349,19 @@ const effect = {
                 const uniqueId = uuid();
 
                 const fittyId = `fit-text-${uniqueId}`;
+                const wrapperId = `shoutout-wrapper-${uniqueId}`;
+                const avatarWrapperId = `avatar-wrapper-${uniqueId}`;
+                const usernameId = `username-${uniqueId}`;
+                const textId = `shoutout-text-${uniqueId}`;
+                const gameWrapperId = `game-wrapper-${uniqueId}`;
+                const boxArtId = `box-art-${uniqueId}`;
 
                 const shoutoutElement = `
                 <div>
-                    <div class="firebot-shoutout-wrapper" style="background: linear-gradient(0deg, ${data.bgColor2} 0%, ${data.bgColor1} 100%); transform: scale(${scale});${data.zIndex ? ` position: relative; z-index: ${data.zIndex};` : ''}">
+                    <div id="${wrapperId}" class="firebot-shoutout-wrapper" style="background: linear-gradient(135deg, ${data.bgColor1} 0%, ${data.bgColor2} 100%); transform: scale(${scale});${data.zIndex ? ` position: relative; z-index: ${data.zIndex};` : ''}">
 
                         <div style="position:relative;">
-                            <div class="firebot-shoutout-avatar-wrapper firebot-shoutout-padding">
+                            <div id="${avatarWrapperId}" class="firebot-shoutout-avatar-wrapper firebot-shoutout-padding">
                                 <img
                                 class="firebot-shoutout-user-avatar"
                                 src="${data.avatarUrl}" />
@@ -340,16 +370,16 @@ const effect = {
                         <div style="padding: 0 10%;">
                             <div>
                                 <div>
-                                    <div id="${fittyId}" class="firebot-shoutout-username" style="color: ${data.textColor}">${data.username}</div>
+                                    <div id="${fittyId}" class="firebot-shoutout-username ${usernameId}" style="color: ${data.textColor}">${data.username}</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="firebot-shoutout-text firebot-shoutout-padding" style="color: ${data.textColor};display:${data.shoutoutText == null || data.shoutoutText === '' ? 'none' : 'inherit'};">
+                        <div id="${textId}" class="firebot-shoutout-text firebot-shoutout-padding" style="color: ${data.textColor};display:${data.shoutoutText == null || data.shoutoutText === '' ? 'none' : 'inherit'};">
                             ${data.shoutoutText}
                         </div>
 
-                        <div class="firebot-shoutout-game-wrapper" style="display:${!data.showLastGame || data.gameName == null ? 'none' : 'inherit'};">
-                            <div class="firebot-shoutout-game-boxart" style="background-image:url('${data.gameBoxArtUrl}');display:${data.hideCategoryArt ? 'none' : 'block'};"></div>
+                        <div id="${gameWrapperId}" class="firebot-shoutout-game-wrapper" style="display:${!data.showLastGame || data.gameName == null ? 'none' : 'inherit'};">
+                            <div id="${boxArtId}" class="firebot-shoutout-game-boxart" style="background-image:url('${data.gameBoxArtUrl}');display:${data.hideCategoryArt ? 'none' : 'block'};"></div>
                             <div class="firebot-shoutout-game-dimmer" />
                             <div class="firebot-shoutout-game-text-wrapper">
                                 <div class="firebot-shoutout-game-lastseen">
@@ -373,28 +403,70 @@ const effect = {
                     fittyObj = fitty(`#${fittyId}`);
                 }, 100);
 
+                const entranceSequence = [
+                    // 1. Card fades and scales in
+                    [
+                        `#${wrapperId}`,
+                        { opacity: [0, 1], scale: [0, 1] },
+                        { type: "spring", bounce: 0.5 }
+                    ],
+                    // 2. Avatar drops in
+                    [
+                        `#${avatarWrapperId}`,
+                        { opacity: [0, 1], scale: [2, 1] },
+                        { type: "spring", bounce: 0.5, at: 0.4 }
+                    ],
+                    // 3. Username fades in
+                    [
+                        `.${usernameId}`,
+                        { opacity: [0, 1] },
+                        { duration: 0.4, ease: "easeOut", at: 0.6 }
+                    ],
+                    // 4. Text content fades in
+                    [
+                        `#${textId}`,
+                        { opacity: [0, 1] },
+                        { duration: 0.4, ease: "easeOut", at: 0.8 }
+                    ]
+                ];
+
+                // Add game wrapper animation if it should be shown
+                if (data.showLastGame && data.gameName != null) {
+                    entranceSequence.push([
+                        `#${gameWrapperId}`,
+                        { opacity: [0, 1] },
+                        { duration: 0.4, ease: "easeOut", at: 1 }
+                    ]);
+                }
+
+                // eslint-disable-next-line no-undef
+                const entranceAnimation = Motion.animate(entranceSequence);
+
+                // Start avatar floating animation after entrance completes
+                entranceAnimation.then(() => {
+                    // eslint-disable-next-line no-undef
+                    Motion.animate(
+                        `#${avatarWrapperId}`,
+                        { y: [0, '-0.5vw', 0] },
+                        { duration: 3, ease: "easeInOut", repeat: Infinity }
+                    );
+                });
 
                 const mils = data.duration * 1000;
 
-                // eslint-disable-next-line no-undef
-                showTimedAnimatedElement(
-                    `#${uniqueId}`,
-                    "flipInY",
-                    2000,
-                    null,
-                    null,
-                    null,
-                    null,
-                    "bounceOut",
-                    2000,
-                    mils && mils > 0 ? mils : 8000,
-                    null,
-                    () => {
+                setTimeout(() => {
+                    // eslint-disable-next-line no-undef
+                    Motion.animate(
+                        `#${wrapperId}`,
+                        { opacity: 0, scale: 0 },
+                        { type: "spring", bounce: 0.5 }
+                    ).then(() => {
+                        $(`#${uniqueId}`).remove();
                         if (fittyObj && fittyObj[0]) {
                             fittyObj[0].unsubscribe();
                         }
-                    }
-                );
+                    });
+                }, mils && mils > 0 ? mils : 8000);
             }
         }
     }

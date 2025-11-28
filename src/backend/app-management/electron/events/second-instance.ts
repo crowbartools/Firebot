@@ -1,4 +1,4 @@
-import type { Event } from "electron";
+import type { BrowserWindow, Event } from "electron";
 import logger from "../../../logwrapper";
 
 export async function secondInstance(event: Event, argv: string[]) {
@@ -10,7 +10,7 @@ export async function secondInstance(event: Event, argv: string[]) {
     try {
         logger.debug("Second instance detected, focusing main window.");
 
-        const { mainWindow } = await import("../window-management");
+        const mainWindow = globalThis.mainWindow as BrowserWindow;
         if (mainWindow) {
             if (!mainWindow.isVisible()) {
                 mainWindow.show();

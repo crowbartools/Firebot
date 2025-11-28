@@ -218,6 +218,13 @@ class OverlayWidgetEventUtils implements IOverlayWidgetEventUtils {
             "color": fontOptions?.color || '#FFFFFF',
         };
     }
+    sendMessageToFirebot(messageName: string, messageData?: unknown): void {
+        sendWebsocketEvent("overlay-widget-message", {
+            widgetConfigId: this.widgetId,
+            messageName,
+            messageData
+        });
+    }
 }
 
 function handleOverlayEvent(event: WidgetOverlayEvent) {

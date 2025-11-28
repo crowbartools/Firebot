@@ -1,6 +1,8 @@
 import { DateTime, Duration, DurationLikeObject } from "luxon";
-import { OverlayWidgetType, IOverlayWidgetEventUtils, WidgetOverlayEvent } from "../../../../types/overlay-widgets";
-import { FontOptions } from "../../../../types/parameters";
+import { FontOptions, EffectList, OverlayWidgetType, IOverlayWidgetEventUtils, WidgetOverlayEvent, Trigger } from "../../../../types";
+import NodeCache from "node-cache";
+import effectRunner from "../../../common/effect-runner";
+import logger from "../../../logwrapper";
 
 type Settings = {
     targetDateTime: string;
@@ -8,9 +10,12 @@ type Settings = {
     fontOptions?: FontOptions;
     horizontalAlignment: "left" | "center" | "right";
     verticalAlignment: "top" | "center" | "bottom";
+    onCompleteEffects?: EffectList;
 };
 
 type State = Record<never, never>;
+
+const completeCache = new NodeCache({ stdTTL: 30, checkperiod: 1 });
 
 export const countdownToDate: OverlayWidgetType<Settings, State> = {
     id: "firebot:countdown-to-date",
@@ -87,6 +92,12 @@ export const countdownToDate: OverlayWidgetType<Settings, State> = {
             },
             default: "center",
             showBottomHr: true
+        },
+        {
+            name: "onCompleteEffects",
+            title: "On Complete Effects",
+            description: "Effects to run when the countdown reaches zero.",
+            type: "effectlist"
         }
     ],
     initialAspectRatio: { width: 3, height: 2 },
@@ -96,6 +107,32 @@ export const countdownToDate: OverlayWidgetType<Settings, State> = {
     stateDisplay: (config) => {
         const endDate = DateTime.fromJSDate(new Date(config.settings.targetDateTime));
         return endDate.toLocaleString(DateTime.DATETIME_SHORT);
+    },
+    onOverlayMessage(config, messageName) {
+        if (messageName === "countdown-to-date-complete") {
+            if (config.settings.onCompleteEffects?.list != null) {
+                const recentlyCompleted = completeCache.get(config.id);
+                if (!recentlyCompleted) {
+                    completeCache.set(config.id, true, 30);
+
+                    const processEffectsRequest = {
+                        trigger: {
+                            type: "overlay_widget",
+                            metadata: {
+                                username: "Firebot",
+                                countdownToDateWidgetId: config.id,
+                                countdownToDateWidgetName: config.name
+                            }
+                        } as Trigger,
+                        effects: config.settings.onCompleteEffects
+                    };
+
+                    effectRunner.processEffects(processEffectsRequest).catch((reason) => {
+                        logger.error(`Error when running effects: ${reason}`);
+                    });
+                }
+            }
+        }
     },
     overlayExtension: {
         dependencies: {
@@ -128,9 +165,13 @@ export const countdownToDate: OverlayWidgetType<Settings, State> = {
                 let remainingTime: Duration = (<DateTime>DateTime.fromISO(config.settings?.targetDateTime))
                     .diffNow(units);
 
-                if (remainingTime.valueOf() < 0) {
+                const remainingMillis = remainingTime.valueOf();
+
+                if (remainingMillis < 0) {
                     // eslint-disable-next-line
                     remainingTime = Duration.fromMillis(0).shiftTo(...units);
+                } else if (remainingMillis < 750 && remainingMillis > -750) {
+                    utils.sendMessageToFirebot("countdown-to-date-complete");
                 }
 
                 let formatted = "";

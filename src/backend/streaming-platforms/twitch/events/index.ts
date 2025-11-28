@@ -426,8 +426,8 @@ export const TwitchEventSource: EventSource = {
         },
         {
             id: "bits-powerup-message-effect",
-            name: "Power-Up: Message Effects",
-            description: "When a viewer uses the \"Message Effects\" Power-Up in your channel.",
+            name: "Power-up: Message Effects",
+            description: "When a viewer uses the \"Message Effects\" Power-up in your channel.",
             cached: false,
             manualMetadata: {
                 username: "firebot",
@@ -442,14 +442,14 @@ export const TwitchEventSource: EventSource = {
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
                     return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""
-                    }** used a Message Effects Power-Up for **${eventData.bits}** bits.`;
+                    }** used a Message Effects Power-up for **${eventData.bits}** bits`;
                 }
             }
         },
         {
             id: "bits-powerup-celebration",
             name: "Power-up: On-Screen Celebration",
-            description: "When a viewer uses the \"On-Screen Celebration\" Power-Up in your channel.",
+            description: "When a viewer uses the \"On-Screen Celebration\" Power-up in your channel.",
             cached: false,
             manualMetadata: {
                 username: "firebot",
@@ -463,14 +463,14 @@ export const TwitchEventSource: EventSource = {
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
                     return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""
-                    }** used a Celebration Power-Up for **${eventData.bits}** bits.`;
+                    }** used a Celebration Power-up for **${eventData.bits}** bits`;
                 }
             }
         },
         {
             id: "bits-powerup-gigantified-emote",
             name: "Power-up: Gigantify an Emote",
-            description: "When a viewer uses the \"Gigantify an Emote\" Power-Up in your channel.",
+            description: "When a viewer uses the \"Gigantify an Emote\" Power-up in your channel.",
             cached: false,
             manualMetadata: {
                 username: "firebot",
@@ -487,7 +487,7 @@ export const TwitchEventSource: EventSource = {
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
                     return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""
-                    }** gigantified the **${eventData.emoteName}** emote for **${eventData.bits}** bits.`;
+                    }** gigantified the **${eventData.emoteName}** emote for **${eventData.bits}** bits`;
                 }
             }
         },
@@ -595,10 +595,10 @@ export const TwitchEventSource: EventSource = {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
                     let message = `**${eventData.userDisplayName}${
                         showUserIdName ? ` (${eventData.username})` : ""
-                    }** was banned by **${eventData.moderator}**.`;
+                    }** was banned by **${eventData.moderator}**`;
 
                     if (eventData.modReason) {
-                        message = `${message} Reason: **${escape(eventData.modReason)}**`;
+                        message = `${message}. Reason: **${escape(eventData.modReason)}**`;
                     }
                     return message;
                 }
@@ -621,7 +621,7 @@ export const TwitchEventSource: EventSource = {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
                     return `**${eventData.userDisplayName}${
                         showUserIdName ? ` (${eventData.username})` : ""
-                    }** was unbanned by **${eventData.moderator}**.`;
+                    }** was unbanned by **${eventData.moderator}**`;
                 }
             }
         },
@@ -644,10 +644,10 @@ export const TwitchEventSource: EventSource = {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
                     let message = `**${eventData.userDisplayName}${
                         showUserIdName ? ` (${eventData.username})` : ""
-                    }** was timed out for **${eventData.timeoutDuration} sec(s)** by ${eventData.moderator}.`;
+                    }** was timed out for **${eventData.timeoutDuration} sec(s)** by ${eventData.moderator}`;
 
                     if (eventData.modReason) {
-                        message = `${message} Reason: **${escape(eventData.modReason)}**`;
+                        message = `${message}. Reason: **${escape(eventData.modReason)}**`;
                     }
                     return message;
                 }
@@ -678,7 +678,8 @@ export const TwitchEventSource: EventSource = {
                     }** redeemed **${eventData.rewardName}**${
                         eventData.messageText && !!eventData.messageText.length ? `: *${escape(eventData.messageText)}*` : ""
                     }`;
-                }
+                },
+                excludeFromChatFeed: true
             }
         },
         {
@@ -756,7 +757,7 @@ export const TwitchEventSource: EventSource = {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
                     const message = `**${eventData.userDisplayName}${
                         showUserIdName ? ` (${eventData.username})` : ""
-                    }** redeemed **Send a Message in Sub-Only Mode**.`;
+                    }** redeemed **Send a Message in Sub-Only Mode**`;
                     return message;
                 }
             }
@@ -780,9 +781,10 @@ export const TwitchEventSource: EventSource = {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
                     const message = `**${eventData.userDisplayName}${
                         showUserIdName ? ` (${eventData.username})` : ""
-                    }** redeemed **Highlight My Message**.`;
+                    }** redeemed **Highlight My Message**`;
                     return message;
-                }
+                },
+                excludeFromChatFeed: true
             }
         },
         {
@@ -805,7 +807,7 @@ export const TwitchEventSource: EventSource = {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
                     const message = `**${eventData.userDisplayName}${
                         showUserIdName ? ` (${eventData.username})` : ""
-                    }** redeemed **Unlock a Random Sub Emote**.`;
+                    }** redeemed **Unlock a Random Sub Emote**`;
                     return message;
                 }
             }
@@ -830,7 +832,7 @@ export const TwitchEventSource: EventSource = {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
                     const message = `**${eventData.userDisplayName}${
                         showUserIdName ? ` (${eventData.username})` : ""
-                    }** redeemed **Choose an Emote to Unlock**.`;
+                    }** redeemed **Choose an Emote to Unlock**`;
                     return message;
                 }
             }
@@ -855,7 +857,7 @@ export const TwitchEventSource: EventSource = {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
                     const message = `**${eventData.userDisplayName}${
                         showUserIdName ? ` (${eventData.username})` : ""
-                    }** redeemed **Modify a Single Emote**.`;
+                    }** redeemed **Modify a Single Emote**`;
                     return message;
                 }
             }
@@ -920,7 +922,7 @@ export const TwitchEventSource: EventSource = {
             activityFeed: {
                 icon: "fad fa-comment-alt",
                 getMessage: (eventData) => {
-                    return `**${eventData.moderator}** has set the chat mode to **${eventData.chatMode}**.`;
+                    return `**${eventData.moderator}** has set the chat mode to **${eventData.chatMode}**`;
                 }
             }
         },
@@ -943,7 +945,7 @@ export const TwitchEventSource: EventSource = {
             activityFeed: {
                 icon: "fad fa-poll-h",
                 getMessage: (eventData) => {
-                    return `Channel poll **${eventData.title}** has begun.`;
+                    return `Channel poll **${eventData.title}** has begun`;
                 }
             }
         },
@@ -967,7 +969,7 @@ export const TwitchEventSource: EventSource = {
             activityFeed: {
                 icon: "fad fa-poll-h",
                 getMessage: (eventData) => {
-                    return `Channel poll **${eventData.title}** has progressed.`;
+                    return `Channel poll **${eventData.title}** has progressed`;
                 }
             }
         },
@@ -1008,9 +1010,9 @@ export const TwitchEventSource: EventSource = {
                 getMessage: (eventData) => {
                     let message: string;
                     if (eventData.description) {
-                        message = `Channel ${eventData.type} goal **${eventData.description}** has begun (**${eventData.currentAmount}**/**${eventData.targetAmount}**).`;
+                        message = `Channel ${eventData.type} goal **${eventData.description}** has begun (**${eventData.currentAmount}**/**${eventData.targetAmount}**)`;
                     } else {
-                        message = `Channel ${eventData.type} goal has begun (**${eventData.currentAmount}**/**${eventData.targetAmount}**).`;
+                        message = `Channel ${eventData.type} goal has begun (**${eventData.currentAmount}**/**${eventData.targetAmount}**)`;
                     }
                     return message;
                 }
@@ -1029,9 +1031,9 @@ export const TwitchEventSource: EventSource = {
                 getMessage: (eventData) => {
                     let message: string;
                     if (eventData.description) {
-                        message = `Channel ${eventData.type} goal **${eventData.description}** has progressed (**${eventData.currentAmount}**/**${eventData.targetAmount}**).`;
+                        message = `Channel ${eventData.type} goal **${eventData.description}** has progressed (**${eventData.currentAmount}**/**${eventData.targetAmount}**)`;
                     } else {
-                        message = `Channel ${eventData.type} goal has progressed (**${eventData.currentAmount}**/**${eventData.targetAmount}**).`;
+                        message = `Channel ${eventData.type} goal has progressed (**${eventData.currentAmount}**/**${eventData.targetAmount}**)`;
                     }
                     return message;
                 }
@@ -1052,11 +1054,11 @@ export const TwitchEventSource: EventSource = {
                     if (eventData.description) {
                         message = `Channel ${eventData.type} goal **${eventData.description}** has ended. Goal **${
                             eventData.isAchieved ? "was" : "was not"
-                        }** achieved. (**${eventData.currentAmount}**/**${eventData.targetAmount}**).`;
+                        }** achieved. (**${eventData.currentAmount}**/**${eventData.targetAmount}**)`;
                     } else {
                         message = `Channel ${eventData.type} goal has ended. Goal **${
                             eventData.isAchieved ? "was" : "was not"
-                        }** achieved. (**${eventData.currentAmount}**/**${eventData.targetAmount}**).`;
+                        }** achieved. (**${eventData.currentAmount}**/**${eventData.targetAmount}**)`;
                     }
                     return message;
                 }
@@ -1073,7 +1075,7 @@ export const TwitchEventSource: EventSource = {
             activityFeed: {
                 icon: "fad fa-question-circle",
                 getMessage: (eventData) => {
-                    return `Channel prediction **${eventData.title}** has begun.`;
+                    return `Channel prediction **${eventData.title}** has begun`;
                 }
             }
         },
@@ -1088,7 +1090,7 @@ export const TwitchEventSource: EventSource = {
             activityFeed: {
                 icon: "fad fa-question-circle",
                 getMessage: (eventData) => {
-                    return `Channel prediction **${eventData.title}** has progressed.`;
+                    return `Channel prediction **${eventData.title}** has progressed`;
                 }
             }
         },
@@ -1103,7 +1105,7 @@ export const TwitchEventSource: EventSource = {
             activityFeed: {
                 icon: "fad fa-question-circle",
                 getMessage: (eventData) => {
-                    return `Channel prediction **${eventData.title}** has been locked.`;
+                    return `Channel prediction **${eventData.title}** has been locked`;
                 }
             }
         },
@@ -1118,7 +1120,7 @@ export const TwitchEventSource: EventSource = {
             activityFeed: {
                 icon: "fad fa-question-circle",
                 getMessage: (eventData) => {
-                    return `Channel prediction **${eventData.title}** has ended. Winning outcome: **${eventData.winningOutcome.title}**.`;
+                    return `Channel prediction **${eventData.title}** has ended. Winning outcome: **${eventData.winningOutcome.title}**`;
                 }
             }
         },
@@ -1162,7 +1164,7 @@ export const TwitchEventSource: EventSource = {
                 getMessage: (eventData) => {
                     return `Level **${eventData.level}** hype train currently at **${Math.floor(
                         (eventData.progress / eventData.goal) * 100
-                    )}%**.`;
+                    )}%**`;
                 }
             }
         },
@@ -1197,7 +1199,7 @@ export const TwitchEventSource: EventSource = {
             activityFeed: {
                 icon: "fad fa-train",
                 getMessage: (eventData) => {
-                    return `Level **${eventData.level}** hype train ended.`;
+                    return `Level **${eventData.level}** hype train ended`;
                 }
             }
         },
@@ -1210,7 +1212,7 @@ export const TwitchEventSource: EventSource = {
             activityFeed: {
                 icon: "fad fa-play-circle",
                 getMessage: () => {
-                    return `Stream started.`;
+                    return `Stream started`;
                 }
             }
         },
@@ -1223,7 +1225,7 @@ export const TwitchEventSource: EventSource = {
             activityFeed: {
                 icon: "fad fa-stop-circle",
                 getMessage: () => {
-                    return `Stream ended.`;
+                    return `Stream ended`;
                 }
             }
         },
@@ -1245,7 +1247,7 @@ export const TwitchEventSource: EventSource = {
             activityFeed: {
                 icon: "fad fa-ribbon",
                 getMessage: (eventData) => {
-                    return `Charity campaign benefitting **${eventData.charityName}** has started.`;
+                    return `Charity campaign benefitting **${eventData.charityName}** has started`;
                 }
             }
         },
@@ -1266,7 +1268,7 @@ export const TwitchEventSource: EventSource = {
             activityFeed: {
                 icon: "fad fa-hand-holding-heart",
                 getMessage: (eventData) => {
-                    return `**${eventData.from}** made a charity donation of **${eventData.donationAmount} ${eventData.donationCurrency}**.`;
+                    return `**${eventData.from}** made a charity donation of **${eventData.donationAmount} ${eventData.donationCurrency}**`;
                 }
             }
         },
@@ -1288,7 +1290,7 @@ export const TwitchEventSource: EventSource = {
             activityFeed: {
                 icon: "fad fa-ribbon",
                 getMessage: (eventData) => {
-                    return `Charity campaign has progressed. Total so far: **${eventData.currentTotalAmount} ${eventData.currentTotalCurrency}**.`;
+                    return `Charity campaign has progressed. Total so far: **${eventData.currentTotalAmount} ${eventData.currentTotalCurrency}**`;
                 }
             }
         },
@@ -1312,7 +1314,7 @@ export const TwitchEventSource: EventSource = {
                 getMessage: (eventData) => {
                     return `Charity campaign has ended. Goal reached: **${
                         eventData.goalReached ? "Yes" : "No"
-                    }**. Total raised: **${eventData.currentTotalAmount} ${eventData.currentTotalCurrency}**.`;
+                    }**. Total raised: **${eventData.currentTotalAmount} ${eventData.currentTotalCurrency}**`;
                 }
             }
         },

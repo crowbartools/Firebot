@@ -28,6 +28,10 @@
             // The message/thread currently being replied to
             service.threadDetails = null;
 
+            // History of chat messages sent via Dashboard
+            service.chatHistory = [];
+            service.currrentHistoryIndex = -1;
+
             // Return the chat queue.
             service.getChatQueue = function() {
                 return service.chatQueue;
@@ -122,12 +126,16 @@
                 }
             };
 
-            service.highlightMessage = (username, userId, displayName, rawText) => {
+            service.highlightMessage = (username, userId, displayName, rawText, chatMessage) => {
                 backendCommunicator.fireEvent("highlight-message", {
                     username: username,
                     userId: userId,
                     displayName: displayName,
-                    messageText: rawText
+                    messageText: rawText,
+                    chatMessage: {
+                        ...chatMessage,
+                        timestamp: chatMessage.timestamp ? chatMessage.timestamp.toISOString() : null
+                    }
                 });
             };
 

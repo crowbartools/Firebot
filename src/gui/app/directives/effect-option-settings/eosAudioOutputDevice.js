@@ -50,7 +50,9 @@
                     }
 
                     $q.when(soundService.getOutputDevices()).then((deviceList) => {
-                        ctrl.audioOutputDevices = ctrl.audioOutputDevices.concat(deviceList);
+                        ctrl.audioOutputDevices = ctrl.audioOutputDevices.concat(
+                            deviceList.toSorted((a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: "base" }))
+                        );
                     });
 
                     // Reset overlay instance to default (or null) if the saved instance doesnt exist anymore

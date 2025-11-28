@@ -85,7 +85,6 @@ export type CommandDefinition<OptionsModel = any> = {
     subCommands?: SubCommand[] | undefined;
     fallbackSubcommand?: SubCommand | undefined;
     treatQuotedTextAsSingleArg?: boolean | undefined;
-    onlyTriggerWhenChannelIsLive?: boolean | undefined;
     minArgs?: number;
     options?: ParametersConfig<OptionsModel>;
     /**

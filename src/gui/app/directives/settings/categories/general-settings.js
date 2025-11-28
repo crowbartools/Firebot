@@ -206,7 +206,9 @@
             ];
 
             $q.when(soundService.getOutputDevices()).then((deviceList) => {
-                $scope.audioOutputDevices = $scope.audioOutputDevices.concat(deviceList);
+                $scope.audioOutputDevices = $scope.audioOutputDevices.concat(
+                    deviceList.toSorted((a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: "base" }))
+                );
             });
 
             $scope.setActiveChatUserTimeout = (value) => {

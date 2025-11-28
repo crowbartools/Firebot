@@ -47,14 +47,17 @@
 
                         <!-- Alignment buttons -->
                         <div class="alignment-controls">
-                            <button class="alignment-button" ng-click="$ctrl.centerHorizontally()" title="Center Horizontally">
+                            <button class="alignment-button" ng-click="$ctrl.centerHorizontally()" uib-tooltip="Center Horizontally" tooltip-append-to-body="true" title="Center Horizontally">
                                 <i class="fas fa-arrows-alt-h"></i>
                             </button>
-                            <button class="alignment-button" ng-click="$ctrl.centerVertically()" title="Center Vertically">
+                            <button class="alignment-button" ng-click="$ctrl.centerVertically()" uib-tooltip="Center Vertically" tooltip-append-to-body="true" title="Center Vertically">
                                 <i class="fas fa-arrows-alt-v"></i>
                             </button>
-                            <button class="alignment-button" ng-click="$ctrl.centerBoth()" title="Center Both">
+                            <button class="alignment-button" ng-click="$ctrl.centerBoth()" uib-tooltip="Center Both" tooltip-append-to-body="true" title="Center Both">
                                 <i class="fas fa-bullseye"></i>
+                            </button>
+                            <button class="alignment-button" ng-click="$ctrl.undoPosition()" ng-disabled="!$ctrl.canUndo()" uib-tooltip="Undo Last Change" tooltip-append-to-body="true" title="Undo Last Change">
+                                <i class="fas fa-undo"></i>
                             </button>
                         </div>
                     </div>
@@ -101,12 +104,6 @@
                                 ng-blur="$ctrl.updateFromDisplayModel(true)"
                             >
                         </div>
-                       <!-- <div class="input-group mt-3">
-                            <span class="input-group-addon">Resolution:</span>
-                            <div class="form-control resolution-display" disabled>
-                                {{ $ctrl.overlayResWidth }} x {{ $ctrl.overlayResHeight }}
-                            </div>
-                        </div> -->
                     </div>
                 </div>
             `,
@@ -228,6 +225,10 @@
                     };
 
                     $ctrl.updateInternalModel();
+
+                    // Initialize history stack
+                    $ctrl.history = [];
+                    $ctrl.pushHistorySnapshot();
                 }
 
                 // Set default values and initialize
@@ -372,13 +373,39 @@
                     $ctrl.showHorizontalGuide = false;
                     $ctrl.showVerticalGuide = false;
 
+                    let lockAxis = null; // 'x' | 'y' | null
+                    let hasMovedForLock = false;
+
                     function mousemove(event) {
                         // Calculate the delta in pixels
                         const deltaXPercent = ((event.pageX - startX) / canvasRect.width) * 100;
                         const deltaYPercent = ((event.pageY - startY) / canvasRect.height) * 100;
 
-                        const deltaX = (deltaXPercent / 100) * $ctrl.overlayResWidth;
-                        const deltaY = (deltaYPercent / 100) * $ctrl.overlayResHeight;
+                        let deltaX = (deltaXPercent / 100) * $ctrl.overlayResWidth;
+                        let deltaY = (deltaYPercent / 100) * $ctrl.overlayResHeight;
+
+                        const shiftPressed = event.shiftKey;
+
+                        if (shiftPressed) {
+                            if (!lockAxis) {
+                                // Wait for some movement before deciding axis
+                                const movementThreshold = 1; // pixels
+                                if (Math.abs(deltaX) > movementThreshold || Math.abs(deltaY) > movementThreshold) {
+                                    hasMovedForLock = true;
+                                    lockAxis = Math.abs(deltaX) >= Math.abs(deltaY) ? 'x' : 'y';
+                                }
+                            }
+
+                            if (lockAxis === 'x') {
+                                deltaY = 0;
+                            } else if (lockAxis === 'y') {
+                                deltaX = 0;
+                            }
+                        } else {
+                            // If Shift released mid-drag, unlock axis
+                            lockAxis = null;
+                            hasMovedForLock = false;
+                        }
 
                         let newX = Math.min($ctrl.overlayResWidth - $ctrl.model.width,
                             Math.max(0, initialX + deltaX));
@@ -418,6 +445,8 @@
                         $scope.$apply(function() {
                             $ctrl.showHorizontalGuide = false;
                             $ctrl.showVerticalGuide = false;
+                            // Save state to history after drag ends
+                            $ctrl.pushHistorySnapshot();
                         });
 
                         $document.off('mousemove', mousemove);
@@ -460,6 +489,9 @@
                     }
 
                     function mouseup() {
+                        $scope.$apply(function() {
+                            $ctrl.pushHistorySnapshot();
+                        });
                         $document.off('mousemove', mousemove);
                         $document.off('mouseup', mouseup);
                     }
@@ -483,6 +515,9 @@
                     const initialWidth = $ctrl.model.width;
                     const initialHeight = $ctrl.model.height;
 
+                    // Aspect ratio used when holding Shift
+                    const initialAspectRatio = initialWidth / initialHeight || 1;
+
                     function mousemove(event) {
                         // Calculate the delta in pixels
                         const deltaXPercent = ((event.pageX - startX) / canvasRect.width) * 100;
@@ -494,43 +529,104 @@
                         const minWidthPx = Math.round($ctrl.minimumWidth * $ctrl.overlayResWidth / 100);
                         const minHeightPx = Math.round($ctrl.minimumHeight * $ctrl.overlayResHeight / 100);
 
-                        // Update model with new dimensions and position based on corner
+                        const shiftPressed = event.shiftKey;
+
                         $scope.$apply(function() {
-                            switch (corner) {
-                                case 'topLeft':
-                                    $ctrl.model.x = Math.min(initialX + initialWidth - minWidthPx,
-                                        Math.max(0, initialX + deltaX));
-                                    $ctrl.model.y = Math.min(initialY + initialHeight - minHeightPx,
-                                        Math.max(0, initialY + deltaY));
-                                    $ctrl.model.width = Math.max(minWidthPx, initialWidth - deltaX);
-                                    $ctrl.model.height = Math.max(minHeightPx, initialHeight - deltaY);
-                                    break;
-                                case 'topRight':
-                                    $ctrl.model.y = Math.min(initialY + initialHeight - minHeightPx,
-                                        Math.max(0, initialY + deltaY));
-                                    $ctrl.model.width = Math.min($ctrl.overlayResWidth - initialX,
-                                        Math.max(minWidthPx, initialWidth + deltaX));
-                                    $ctrl.model.height = Math.max(minHeightPx, initialHeight - deltaY);
-                                    break;
-                                case 'bottomLeft':
-                                    $ctrl.model.x = Math.min(initialX + initialWidth - minWidthPx,
-                                        Math.max(0, initialX + deltaX));
-                                    $ctrl.model.width = Math.max(minWidthPx, initialWidth - deltaX);
-                                    $ctrl.model.height = Math.min($ctrl.overlayResHeight - initialY,
-                                        Math.max(minHeightPx, initialHeight + deltaY));
-                                    break;
-                                case 'bottomRight':
-                                    $ctrl.model.width = Math.min($ctrl.overlayResWidth - initialX,
-                                        Math.max(minWidthPx, initialWidth + deltaX));
-                                    $ctrl.model.height = Math.min($ctrl.overlayResHeight - initialY,
-                                        Math.max(minHeightPx, initialHeight + deltaY));
-                                    break;
+                            let newX = initialX;
+                            let newY = initialY;
+                            let newWidth = initialWidth;
+                            let newHeight = initialHeight;
+
+                            if (shiftPressed) {
+                                // Maintain aspect ratio based on drag direction
+                                switch (corner) {
+                                    case 'topLeft': {
+                                        const sizeDelta = Math.max(deltaX, deltaY);
+                                        newWidth = initialWidth - sizeDelta;
+                                        newHeight = newWidth / initialAspectRatio;
+                                        newWidth = Math.max(minWidthPx, newWidth);
+                                        newHeight = Math.max(minHeightPx, newHeight);
+                                        newX = initialX + (initialWidth - newWidth);
+                                        newY = initialY + (initialHeight - newHeight);
+                                        break;
+                                    }
+                                    case 'topRight': {
+                                        const sizeDelta = Math.max(deltaX, -deltaY);
+                                        newWidth = initialWidth + sizeDelta;
+                                        newHeight = newWidth / initialAspectRatio;
+                                        newWidth = Math.max(minWidthPx, newWidth);
+                                        newHeight = Math.max(minHeightPx, newHeight);
+                                        newY = initialY + (initialHeight - newHeight);
+                                        break;
+                                    }
+                                    case 'bottomLeft': {
+                                        const sizeDelta = Math.max(-deltaX, -deltaY);
+                                        newWidth = initialWidth + sizeDelta;
+                                        newHeight = newWidth / initialAspectRatio;
+                                        newWidth = Math.max(minWidthPx, newWidth);
+                                        newHeight = Math.max(minHeightPx, newHeight);
+                                        newX = initialX + (initialWidth - newWidth);
+                                        break;
+                                    }
+                                    case 'bottomRight': {
+                                        const sizeDelta = Math.max(deltaX, deltaY);
+                                        newWidth = initialWidth + sizeDelta;
+                                        newHeight = newWidth / initialAspectRatio;
+                                        newWidth = Math.max(minWidthPx, newWidth);
+                                        newHeight = Math.max(minHeightPx, newHeight);
+                                        break;
+                                    }
+                                }
+                            } else {
+                                // Freeform resize (existing behavior)
+                                switch (corner) {
+                                    case 'topLeft':
+                                        newX = Math.min(initialX + initialWidth - minWidthPx,
+                                            Math.max(0, initialX + deltaX));
+                                        newY = Math.min(initialY + initialHeight - minHeightPx,
+                                            Math.max(0, initialY + deltaY));
+                                        newWidth = Math.max(minWidthPx, initialWidth - deltaX);
+                                        newHeight = Math.max(minHeightPx, initialHeight - deltaY);
+                                        break;
+                                    case 'topRight':
+                                        newY = Math.min(initialY + initialHeight - minHeightPx,
+                                            Math.max(0, initialY + deltaY));
+                                        newWidth = Math.min($ctrl.overlayResWidth - initialX,
+                                            Math.max(minWidthPx, initialWidth + deltaX));
+                                        newHeight = Math.max(minHeightPx, initialHeight - deltaY);
+                                        break;
+                                    case 'bottomLeft':
+                                        newX = Math.min(initialX + initialWidth - minWidthPx,
+                                            Math.max(0, initialX + deltaX));
+                                        newWidth = Math.max(minWidthPx, initialWidth - deltaX);
+                                        newHeight = Math.min($ctrl.overlayResHeight - initialY,
+                                            Math.max(minHeightPx, initialHeight + deltaY));
+                                        break;
+                                    case 'bottomRight':
+                                        newWidth = Math.min($ctrl.overlayResWidth - initialX,
+                                            Math.max(minWidthPx, initialWidth + deltaX));
+                                        newHeight = Math.min($ctrl.overlayResHeight - initialY,
+                                            Math.max(minHeightPx, initialHeight + deltaY));
+                                        break;
+                                }
                             }
+
+                            // Clamp to canvas bounds
+                            newWidth = Math.min(newWidth, $ctrl.overlayResWidth - newX);
+                            newHeight = Math.min(newHeight, $ctrl.overlayResHeight - newY);
+
+                            $ctrl.model.x = newX;
+                            $ctrl.model.y = newY;
+                            $ctrl.model.width = newWidth;
+                            $ctrl.model.height = newHeight;
                             $ctrl.updateModel();
                         });
                     }
 
                     function mouseup() {
+                        $scope.$apply(function() {
+                            $ctrl.pushHistorySnapshot();
+                        });
                         $document.off('mousemove', mousemove);
                         $document.off('mouseup', mouseup);
                     }
@@ -540,9 +636,12 @@
                 };
 
                 // Center horizontally
-                $ctrl.centerHorizontally = function() {
+                $ctrl.centerHorizontally = function(snapshot = true) {
                     $ctrl.model.x = Math.round(($ctrl.overlayResWidth - $ctrl.model.width) / 2);
                     $ctrl.updateModel();
+                    if (snapshot) {
+                        $ctrl.pushHistorySnapshot();
+                    }
                     // Flash guide for visual feedback
                     $ctrl.showVerticalGuide = true;
                     setTimeout(() => {
@@ -553,9 +652,12 @@
                 };
 
                 // Center vertically
-                $ctrl.centerVertically = function() {
+                $ctrl.centerVertically = function(snapshot = true) {
                     $ctrl.model.y = Math.round(($ctrl.overlayResHeight - $ctrl.model.height) / 2);
                     $ctrl.updateModel();
+                    if (snapshot) {
+                        $ctrl.pushHistorySnapshot();
+                    }
                     // Flash guide for visual feedback
                     $ctrl.showHorizontalGuide = true;
                     setTimeout(() => {
@@ -565,10 +667,51 @@
                     }, 1000);
                 };
 
-                // Center both horizontally and vertically
                 $ctrl.centerBoth = function() {
-                    $ctrl.centerHorizontally();
-                    $ctrl.centerVertically();
+                    $ctrl.centerHorizontally(false);
+                    $ctrl.centerVertically(false);
+                    $ctrl.pushHistorySnapshot();
+                };
+
+                $ctrl.pushHistorySnapshot = function() {
+                    if (!$ctrl.model) {
+                        return;
+                    }
+                    const snapshot = {
+                        x: $ctrl.model.x,
+                        y: $ctrl.model.y,
+                        width: $ctrl.model.width,
+                        height: $ctrl.model.height
+                    };
+
+                    if (!$ctrl.history) {
+                        $ctrl.history = [];
+                    }
+
+                    $ctrl.history.push(snapshot);
+                };
+
+                $ctrl.canUndo = function() {
+                    return $ctrl.history && $ctrl.history.length > 1;
+                };
+
+                $ctrl.undoPosition = function() {
+                    if (!$ctrl.canUndo()) {
+                        return;
+                    }
+
+                    // Remove current state
+                    $ctrl.history.pop();
+                    const previous = $ctrl.history[$ctrl.history.length - 1];
+                    if (!previous) {
+                        return;
+                    }
+
+                    $ctrl.model.x = previous.x;
+                    $ctrl.model.y = previous.y;
+                    $ctrl.model.width = previous.width;
+                    $ctrl.model.height = previous.height;
+                    $ctrl.updateModel();
                 };
             }
         });

@@ -99,8 +99,8 @@
                     </firebot-setting>
 
                     <firebot-setting
-                        name="Persist Custom Variables"
-                        description="Whether or not custom variables should be persisted to a file when Firebot closes."
+                        name="Persist All Custom Variables"
+                        description="Whether or not all custom variables should be persisted to file when Firebot closes."
                     >
                         <firebot-select
                             options="{ true: 'On', false: 'Off' }"

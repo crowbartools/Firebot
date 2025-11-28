@@ -181,7 +181,7 @@
                 ></command-cooldown-settings>
             </firebot-tab>
 
-            <firebot-tab index="2" name="subcommands" label="Subcommands" icon="fas fa-sitemap" ng-if="!$ctrl.command.scanWholeMessage && !$ctrl.command.triggerIsRegex">
+            <firebot-tab index="2" name="subcommands" label="Subcommands" badge="$ctrl.command.subCommands ? $ctrl.command.subCommands.length : 0" icon="fas fa-sitemap" ng-if="!$ctrl.command.scanWholeMessage && !$ctrl.command.triggerIsRegex">
                 <div
                     class="mt-8"
                 >
@@ -287,18 +287,6 @@
                         <input
                             type="checkbox"
                             ng-model="$ctrl.command.treatQuotedTextAsSingleArg"
-                            aria-label="..."
-                        />
-                        <div class="control__indicator"></div>
-                    </label>
-                    <label class="control-fb control--checkbox"
-                        >Only trigger when channel is live
-                        <tooltip
-                            text="'When this option is enabled, users will only be able to trigger this command when the channel is live.'"
-                        ></tooltip>
-                        <input
-                            type="checkbox"
-                            ng-model="$ctrl.command.onlyTriggerWhenChannelIsLive"
                             aria-label="..."
                         />
                         <div class="control__indicator"></div>

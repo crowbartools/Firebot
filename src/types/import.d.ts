@@ -63,6 +63,7 @@ export type ThirdPartyImporter<
 
     importViewers?: (
         viewers: ViewerType[],
-        settings: Settings["viewers"]
+        settings: Settings["viewers"],
+        abortSignal: AbortSignal
     ) => Awaitable<ImportResult>;
 };

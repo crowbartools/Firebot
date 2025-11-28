@@ -1,9 +1,12 @@
 "use strict";
 
-const { marked } = require("marked");
-const { sanitize } = require("dompurify");
+
 
 (function() {
+
+    const { marked } = require("marked");
+    const { sanitize } = require("dompurify");
+
     angular.module("firebotApp").component("tooltip", {
         bindings: {
             text: "<",

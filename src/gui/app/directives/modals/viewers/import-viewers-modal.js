@@ -67,9 +67,9 @@
                     </div>
                 </div>
                 <div class="modal-footer pt-0">
-                    <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
-                    <button ng-show="$ctrl.filteredViewers" ng-click="$ctrl.importViewers()" class="btn btn-primary" ng-disabled="$ctrl.importing">
-                        {{$ctrl.importing ? 'Importing...' : 'Import'}}
+                    <button type="button" class="btn btn-link" ng-click="$ctrl.cancelImport()">Cancel</button>
+                    <button ng-show="$ctrl.filteredViewers" ng-click="$ctrl.importViewers()" class="btn btn-primary" ng-disabled="$ctrl.importing || $ctrl.aborting">
+                        {{ $ctrl.getButtonText() }}
                     </button>
                 </div>
             `,
@@ -119,6 +119,18 @@
                     }
                 ];
 
+                $ctrl.getButtonText = () => {
+                    if ($ctrl.importing) {
+                        return "Importing...";
+                    }
+
+                    if ($ctrl.aborting) {
+                        return "Canceling Import...";
+                    }
+
+                    return "Import";
+                };
+
                 $ctrl.toggleIncludeViewHours = () => {
                     $ctrl.settings.includeViewHours = !$ctrl.settings.includeViewHours;
                 };
@@ -162,6 +174,25 @@
                             $ctrl.filteredViewers[index] = response.viewer;
                         }
                     });
+                };
+
+                $ctrl.cancelImport = () => {
+                    if (!$ctrl.importing && !$ctrl.aborting) {
+                        $ctrl.close();
+                        return;
+                    }
+
+                    if ($ctrl.importing) {
+                        backendCommunicator.on("import:cleanup-finished", () => {
+                            $ctrl.aborting = false;
+                            $ctrl.close();
+                        });
+
+                        $ctrl.aborting = true;
+                        $ctrl.importing = false;
+
+                        backendCommunicator.fireEvent("import:abort-import");
+                    }
                 };
 
                 $ctrl.importViewers = async () => {

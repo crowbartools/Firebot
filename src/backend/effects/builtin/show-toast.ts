@@ -4,6 +4,8 @@ import frontendCommunicator from "../../common/frontend-communicator";
 const effect: EffectType<{
     alertType: "info" | "success" | "warning" | "danger";
     message: string;
+    dismissType: "timeout" | "manual";
+    timeout: number;
 }> = {
     definition: {
         id: "firebot:show-toast",
@@ -30,9 +32,27 @@ const effect: EffectType<{
                 selected="effect.alertType"
             />
         </eos-container>
+
+        <eos-container header="Dismiss Type" pad-top="true">
+            <firebot-select
+                options="{ timeout: 'Dismiss automatically', manual: 'Manually close' }"
+                selected="effect.dismissType"
+            />
+        </eos-container>
+
+        <eos-container ng-if="effect.dismissType === 'timeout'" header="Timeout" pad-top="true">
+            <firebot-input
+                input-title="Seconds"
+                model="effect.timeout"
+                placeholder-text="Enter duration"
+                menu-position="under"
+                data-type="number"
+            />
+        </eos-container>
     `,
     optionsController: ($scope) => {
-        $scope.effect.alertType = $scope.effect.alertType ?? "info";
+        $scope.effect.alertType ??= "info";
+        $scope.effect.dismissType ??= "timeout";
     },
     optionsValidator: (effect) => {
         const errors: string[] = [];
@@ -42,12 +62,19 @@ const effect: EffectType<{
         if (effect.alertType == null) {
             errors.push("Please select an alert type.");
         }
+        if (effect.dismissType === "timeout" && !effect.timeout) {
+            errors.push("Please enter a timeout duration.");
+        }
         return errors;
     },
-    onTriggerEvent: async ({ effect }) => {
+    onTriggerEvent: ({ effect }) => {
         frontendCommunicator.send("showToast", {
             content: effect.message,
-            className: effect.alertType
+            className: effect.alertType,
+            dismissOnTimeout: effect.dismissType === "timeout",
+            timeout: effect.dismissType === "timeout"
+                ? effect.timeout * 1000
+                : undefined
         });
     }
 };

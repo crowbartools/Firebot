@@ -9,6 +9,7 @@ import permissions from "./permissions";
 import timeRange from "./time-range";
 import viewTime from "./view-time";
 import viewerCount from "./viewer-count";
+import onlyWhenLive from "./only-when-live";
 
 export default [
     activeChatUsers,
@@ -21,5 +22,6 @@ export default [
     permissions,
     timeRange,
     viewTime,
-    viewerCount
+    viewerCount,
+    onlyWhenLive
 ];

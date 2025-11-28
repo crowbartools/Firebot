@@ -105,6 +105,7 @@ class ActivityFeedManager {
             message: event.activityFeed.getMessage(metadata),
             icon: event.activityFeed.icon,
             acknowledged: false,
+            excludeFromChatFeed: event.activityFeed.excludeFromChatFeed,
             timestamp: moment().format(this.timeFormat)
         });
     }

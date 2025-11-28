@@ -207,6 +207,7 @@
 .btn-primary {
     background: linear-gradient(135deg, lighten($primary-button-bg, 8%) 0%, $primary-button-bg 100%);
     border-color: transparent;
+    border: 0;
     &:hover {
         background: linear-gradient(135deg, lighten($primary-button-hover-bg, 8%) 0%, $primary-button-hover-bg 100%);
     }
@@ -591,6 +592,8 @@ label {
 .ng-toast__message {
     background-color: #373c3e;
     border-radius: 8px;
+    max-width: fit-content;
+    margin: auto;
     .alert {
         margin-bottom: 0px;
     }

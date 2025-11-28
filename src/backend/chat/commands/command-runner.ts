@@ -6,7 +6,6 @@ import { AccountAccess } from "../../common/account-access";
 import { CommandManager } from "./command-manager";
 import effectRunner from "../../common/effect-runner";
 import chatHelpers from "../chat-helpers";
-import twitchStreamInfoManager from "../../streaming-platforms/twitch/stream-info-manager";
 import frontendCommunicator from "../../common/frontend-communicator";
 import logger from "../../logwrapper";
 
@@ -99,10 +98,6 @@ class CommandRunner {
     }
 
     private execute(command: CommandDefinition, userCommand: UserCommand, firebotChatMessage?: FirebotChatMessage, manual = false) {
-        if (command.onlyTriggerWhenChannelIsLive && !twitchStreamInfoManager.streamInfo.isLive && !manual) {
-            return;
-        }
-
         let effects = command.effects;
         if (command.subCommands && command.subCommands.length > 0 && userCommand.subcommandId != null) {
             if (userCommand.subcommandId === "fallback-subcommand" && command.fallbackSubcommand) {

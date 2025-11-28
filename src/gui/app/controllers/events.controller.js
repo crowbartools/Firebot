@@ -324,6 +324,26 @@
                 eventsService.setSelectedTab(groupId);
             };
 
+            $scope.pasteEventsAtIndex = (index, above) => {
+                if ($scope.hasCopiedEvents()) {
+                    if (!above) {
+                        index++;
+                    }
+
+                    const groupId = eventsService.getSelectedTab();
+                    const copiedEvents = objectCopyHelper.getCopiedObject("events");
+
+                    if (groupId === "mainevents") {
+                        eventsService.getMainEvents().splice(index, 0, ...copiedEvents);
+                        eventsService.saveMainEvents();
+                    } else {
+                        const group = eventsService.getEventGroup(groupId);
+                        group.events.splice(index, 0, ...copiedEvents);
+                        eventsService.saveGroup(group);
+                    }
+                }
+            };
+
             $scope.eventMenuOptions = function(event) {
 
                 const currentGroupId = eventsService.getSelectedTab();
@@ -362,6 +382,33 @@
                         click: () => {
                             $scope.showDeleteEventModal(event.id, event.name ? event.name : 'Unnamed');
                         }
+                    },
+                    {
+                        text: "Paste...",
+                        hasTopDivider: true,
+                        enabled: function () {
+                            return $scope.hasCopiedEvents();
+                        },
+                        children: [
+                            {
+                                html: `<a href><span class="iconify mr-4" data-icon="mdi:content-paste"></span> Before</a>`,
+                                click: function ($itemScope) {
+                                    const $index = $itemScope.$index;
+                                    if ($scope.hasCopiedEvents()) {
+                                        $scope.pasteEventsAtIndex($index, true);
+                                    }
+                                }
+                            },
+                            {
+                                html: `<a href><span class="iconify mr-4" data-icon="mdi:content-paste"></span> After</a>`,
+                                click: function ($itemScope) {
+                                    const $index = $itemScope.$index;
+                                    if ($scope.hasCopiedEvents()) {
+                                        $scope.pasteEventsAtIndex($index, false);
+                                    }
+                                }
+                            }
+                        ]
                     },
                     {
                         text: "Transfer to...",

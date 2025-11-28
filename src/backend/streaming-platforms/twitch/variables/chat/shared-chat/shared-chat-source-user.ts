@@ -37,7 +37,8 @@ const model : ReplaceVariable = {
         return {
             userId: chatMessage.sharedChatRoomId,
             username: chatMessage.sharedChatRoomUsername,
-            displayName: chatMessage.sharedChatRoomDisplayName
+            displayName: chatMessage.sharedChatRoomDisplayName,
+            avatarUrl: chatMessage.sharedChatRoomProfilePicUrl
         };
     }
 };

@@ -38,7 +38,7 @@ export async function runEffects(
     }>,
     res: Response
 ): Promise<void> {
-    if (req.body.effects != null) {
+    if (req.body?.effects != null) {
 
         const triggerData = req.body?.triggerData ?? {} as { username: string };
         if (triggerData.username == null) {

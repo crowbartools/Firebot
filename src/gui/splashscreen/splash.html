@@ -11,6 +11,11 @@
                 height: 100%;
             }
 
+            @font-face {
+                font-family: 'LEMONMILK-Bold';
+                src: url('./fonts/LEMONMILK-Bold.otf');
+            }
+
             body {
                 margin: 0;
                 font-family: "Open Sans";
@@ -64,11 +69,18 @@
                 }
             }
 
+            .firebot-wordmark {
+                text-transform: capitalize;
+                font-weight: 900;
+                color: transparent;
+                font-family: "LEMONMILK-Bold", "Inter", sans-serif;
+                -webkit-background-clip: text;
+                background-clip: text;
+                background-image: linear-gradient(to right, #ebb11f, #FFCA05);
+            }
+
             h1 {
-                font-family: "Inter";
-                font-weight: 700;
                 font-size: 40px;
-                color: #ebb11f;
                 margin: 0;
                 margin-top: 15px;
             }
@@ -153,7 +165,7 @@
                         draggable="false"
                     />
                 </div>
-                <h1>Firebot</h1>
+                <h1 class="firebot-wordmark">Firebot</h1>
                 <div class="spinner">
                     <div class="bounce1"></div>
                     <div class="bounce2"></div>

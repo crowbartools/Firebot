@@ -548,14 +548,10 @@ class TwitchEventSubChatHelpers {
 
         let isAnnouncement = false;
         let announcementColor = undefined;
-        let chatColor = event.color;
+
         if (event instanceof EventSubChannelChatAnnouncementNotificationEvent) {
             isAnnouncement = true;
-            announcementColor = event.color;
-
-            // FIX: See https://github.com/twurple/twurple/issues/646
-            const userColor = await TwitchApi.streamerClient.chat.getColorForUser(event.chatterId);
-            chatColor = userColor ?? chatColor;
+            announcementColor = event.announcementColor;
         }
 
         const chatMessage: FirebotChatMessage = {
@@ -564,7 +560,7 @@ class TwitchEventSubChatHelpers {
             userId: event.chatterId,
             userDisplayName: event.chatterDisplayName,
             rawText: isAction ? this.getChatMessage(event.messageText) : event.messageText,
-            color: chatColor,
+            color: event.color,
             badges: this.parseChatBadges(event.badges),
             parts: [],
             roles: [],
