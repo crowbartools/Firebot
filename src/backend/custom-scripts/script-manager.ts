@@ -1,4 +1,4 @@
-import { InstalledPluginConfig, LegacyCustomScript, Plugin, ScriptBase, ScriptContext } from "../../types/plugins";
+import { InstalledPlugin, InstalledPluginConfig, LegacyCustomScript, Plugin, ScriptBase } from "../../types";
 import { ProfileManager } from "../common/profile-manager";
 import path from "path";
 import logger from "../logwrapper";
@@ -10,7 +10,7 @@ import { buildScriptApi } from "./script-api-factory";
 import { SettingsManager } from "../common/settings-manager";
 import { PluginConfigManager } from "./plugin-config-manager";
 
-class ScriptRunner {
+class ScriptManager {
     private activePlugins: Record<string, Plugin | LegacyCustomScript> = {};
 
     private pluginExecutors: IPluginExecutor[] = [
@@ -38,11 +38,7 @@ class ScriptRunner {
             return;
         }
 
-        const checkIsCorrectType = (s: ScriptBase | LegacyCustomScript): s is Plugin | LegacyCustomScript => {
-            return (s as Plugin).manifest == null || (s as Plugin).manifest.type === "plugin";
-        };
-
-        if (!checkIsCorrectType(script)) {
+        if (!this.isPlugin(script)) {
             logger.warn(`Script ${pluginConfig.fileName} is not a valid plugin.`);
             delete require.cache[require.resolve(scriptFilePath)];
             return;
@@ -86,6 +82,45 @@ class ScriptRunner {
         logger.info("All plugins started");
     }
 
+    async getInstalledPlugins(): Promise<InstalledPlugin[]> {
+        const pluginConfigs = PluginConfigManager.getAllItems();
+        const installedPlugins: InstalledPlugin[] = [];
+
+        for (const pluginConfig of pluginConfigs) {
+            const scriptsFolder = ProfileManager.getPathInProfile("/scripts");
+            const scriptFilePath = path.resolve(scriptsFolder, pluginConfig.fileName);
+
+            const script = this.loadScript(scriptFilePath);
+
+            if (!script) {
+                continue;
+            }
+
+            if (!this.isPlugin(script)) {
+                logger.warn(`Script ${pluginConfig.fileName} is not a valid plugin.`);
+                delete require.cache[require.resolve(scriptFilePath)];
+                continue;
+            }
+
+            for (const executor of this.pluginExecutors) {
+                if (await executor.canHandle(script)) {
+                    try {
+                        const details = await executor.getScriptDetails(script);
+                        if (details) {
+                            installedPlugins.push({
+                                config: pluginConfig,
+                                details
+                            });
+                        }
+                    } catch {}
+                    break;
+                }
+            }
+        }
+
+        return installedPlugins;
+    }
+
     private installRequireInterceptor() {
         const nodeModule = require('module');
         const originalLoad = nodeModule._load;
@@ -111,7 +146,7 @@ class ScriptRunner {
     private loadScript(scriptFilePath: string): ScriptBase | LegacyCustomScript | null {
         let customScript: ScriptBase | LegacyCustomScript | undefined = undefined;
         try {
-            // Make sure we first remove the cached version, incase there was any changes
+            // Make sure we first remove the cached version, in case there was any changes
             if (SettingsManager.getSetting("ClearCustomScriptCache")) {
                 delete require.cache[require.resolve(scriptFilePath)];
             }
@@ -125,8 +160,16 @@ class ScriptRunner {
 
         return customScript;
     }
+
+    private isPlugin(s: ScriptBase | LegacyCustomScript): s is Plugin | LegacyCustomScript {
+        return (s as Plugin).manifest == null || (s as Plugin).manifest.type === "plugin";
+    };
 }
 
-const scriptRunner = new ScriptRunner();
+const scriptManager = new ScriptManager();
 
-export default scriptRunner;
+frontendCommunicator.onAsync("script-manager:get-installed-plugins", async () => {
+    return await scriptManager.getInstalledPlugins();
+});
+
+export default scriptManager;

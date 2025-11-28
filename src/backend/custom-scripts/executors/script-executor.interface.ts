@@ -1,22 +1,13 @@
-import { FirebotParameterCategories, WithValues } from "../../../types/parameters";
-import { InstalledPluginConfig, LegacyCustomScript, Manifest, ScriptBase, ScriptContext } from "../../../types/plugins";
-import { Awaitable } from "../../../types/util-types";
+import { InstalledPluginConfig, LegacyCustomScript, ScriptBase, ScriptContext, Awaitable, ScriptDetails } from "../../../types";
 
-
-export type ScriptDetails = {
-    manifest: Manifest;
-    parameters: WithValues<FirebotParameterCategories<Record<string, Record<string, unknown>>>>;
-};
 
 abstract class IBaseScriptExecutor {
     abstract canHandle(script: ScriptBase | LegacyCustomScript): Awaitable<boolean>;
 
     abstract getScriptDetails(
-        script: ScriptBase | LegacyCustomScript,
-        config: InstalledPluginConfig
+        script: ScriptBase | LegacyCustomScript
     ): Awaitable<ScriptDetails | null>;
 }
-
 
 export type ScriptExecutionResult =
     | {

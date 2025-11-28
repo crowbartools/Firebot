@@ -7,24 +7,24 @@
         .factory("pluginsService", function(backendCommunicator) {
             const service = {};
 
-            let pluginConfigs = {};
+            let installedPlugins = [];
 
             service.loadPlugins = function() {
                 backendCommunicator
-                    .fireEventAsync("plugin-manager:get-all-configs")
-                    .then((configs) => {
-                        if (configs != null) {
-                            pluginConfigs = configs;
+                    .fireEventAsync("script-manager:get-installed-plugins")
+                    .then((plugins) => {
+                        if (plugins != null) {
+                            installedPlugins = plugins;
                         }
                     });
             };
 
             service.getPluginConfigs = function() {
-                return Object.values(pluginConfigs);
+                return Object.values(installedPlugins);
             };
 
             service.getPluginConfig = function(pluginConfigId) {
-                return pluginConfigs[pluginConfigId];
+                return installedPlugins[pluginConfigId];
             };
 
             service.savePluginConfig = function(pluginConfig) {
@@ -32,7 +32,7 @@
                     return;
                 }
 
-                pluginConfigs[pluginConfig.id] = pluginConfig;
+                installedPlugins[pluginConfig.id] = pluginConfig;
 
                 backendCommunicator.fireEvent("plugin-manager:save-config",
                     pluginConfig);
@@ -43,7 +43,7 @@
                     return;
                 }
 
-                delete pluginConfigs[pluginConfigId];
+                delete installedPlugins[pluginConfigId];
 
                 backendCommunicator.fireEvent("plugin-manager:delete",
                     pluginConfigId);

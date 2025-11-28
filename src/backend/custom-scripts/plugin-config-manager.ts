@@ -43,9 +43,9 @@ class PluginConfigManager extends JsonDbManager<InstalledPluginConfig> {
                         enabled: true,
                         legacyImport: true,
                         parameters: Object.entries(script.parameters ?? {}).reduce((acc, [paramKey, param]) => {
-                            acc.legacyParams[paramKey] = param?.value;
+                            acc[paramKey] = param?.value;
                             return acc;
-                        }, { legacyParams: {} })
+                        }, { })
                     });
                 } catch (error) {
                     logger.error(`Failed to migrate start up script ${script.id}: ${error}`);

@@ -35,3 +35,4 @@ export * from "./variables";
 export * from "./viewers";
 export * from "./webhooks";
 export * from "./websocket";
+export * from "./plugins";

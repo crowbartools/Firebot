@@ -598,7 +598,7 @@ async function createMainWindow() {
 
         // const startupScriptsManager = require("../../common/handlers/custom-scripts/startup-scripts-manager");
         // await startupScriptsManager.runStartupScripts();
-        const scriptRunner = require("../../custom-scripts/script-runner").default;
+        const scriptRunner = require("../../custom-scripts/script-manager").default;
         await scriptRunner.startPlugins();
 
         const { EventManager } = require("../../events/event-manager");

@@ -1,19 +1,19 @@
 import { Integration } from "@crowbartools/firebot-custom-scripts-types";
 import { Effect, EffectList, EffectType } from "./effects";
 import { Trigger } from "./triggers";
-import { Awaitable, NoFunctionValue } from "./util-types";
+import { Awaitable } from "./util-types";
 import { ReplaceVariable } from "./variables";
 import { EventFilter } from "./events";
 import { RestrictionType } from "@crowbartools/firebot-custom-scripts-types/types/restrictions";
 import { SystemCommand } from "./commands";
-import { FirebotParameterCategories, FirebotParams } from "./parameters";
+import { FirebotParams, FirebotParameterArray } from "./parameters";
 import { FirebotGame } from "src/backend/games/game-manager";
 import winston from "winston";
 import { FrontendCommunicatorModule } from "./script-modules";
 import EffectManager from "../backend/effects/effectManager";
 import ReplaceVariableManager from "../backend/variables/replace-variable-manager";
 
-type GenericParameters = Record<string, Record<string, unknown>>;
+type GenericParameters = Record<string, unknown>;
 
 export type InstalledPluginConfig<Params extends GenericParameters = GenericParameters> = {
     id: string;
@@ -72,10 +72,10 @@ type EffectScriptResult = {
 };
 
 
-interface ScriptBase<Params extends FirebotParams = Record<string, Record<string, unknown>>> {
+interface ScriptBase<Params extends FirebotParams = Record<string, unknown>> {
     manifest: Manifest;
 
-    parameters?: FirebotParameterCategories<Params>;
+    parametersSchema?: FirebotParameterArray<Params>;
 
     // if uninstalled is true, the script is being removed by the user, thus the script should remove related data files/assets
     // otherwise the script should assume firebot is closing or the script is being reloaded
@@ -83,12 +83,12 @@ interface ScriptBase<Params extends FirebotParams = Record<string, Record<string
 }
 
 // Supplants the "Run Script" effect script functionality
-interface EffectScript<Params extends FirebotParams = Record<string, Record<string, unknown>>> extends ScriptBase<Params> {
+interface EffectScript<Params extends FirebotParams = Record<string, unknown>> extends ScriptBase<Params> {
     run: (context: ScriptContext) => Awaitable<void | EffectScriptResult>;
 }
 
 // Supplants the "Start up" script functionality
-interface Plugin<Params extends FirebotParams = Record<string, Record<string, unknown>>> extends ScriptBase<Params> {
+interface Plugin<Params extends FirebotParams = Record<string, unknown>> extends ScriptBase<Params> {
     // Note: Atleast one is required: onLoad or registers.*
     // if not met, the script will not be loaded and it should be logged the script does nothing
 
@@ -118,6 +118,13 @@ interface Plugin<Params extends FirebotParams = Record<string, Record<string, un
     // called when the user updates plugin-specific parameters
     onParameterUpdate?: (context: ScriptContext) => NoResult;
 }
+
+export type ScriptDetails = Pick<ScriptBase, "manifest" | "parametersSchema">;
+
+export type InstalledPlugin = {
+    config: InstalledPluginConfig;
+    details: ScriptDetails;
+};
 
 /* Legacy types */
 

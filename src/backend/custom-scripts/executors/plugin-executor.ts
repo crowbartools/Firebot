@@ -1,6 +1,6 @@
-import { ScriptBase, LegacyCustomScript, Plugin, ScriptContext, InstalledPluginConfig } from "../../../types/plugins";
-import { IPluginExecutor, ScriptDetails, ScriptExecutionResult } from "./script-executor.interface";
-import effectManager from "../../effects/effectManager";
+import { ScriptBase, LegacyCustomScript, Plugin, ScriptContext, InstalledPluginConfig, ScriptDetails } from "../../../types";
+import { IPluginExecutor, ScriptExecutionResult } from "./script-executor.interface";
+import { EffectManager } from "../../effects/effect-manager";
 
 export class PluginExecutor extends IPluginExecutor {
     constructor() {
@@ -19,7 +19,7 @@ export class PluginExecutor extends IPluginExecutor {
 
         return {
             manifest: script.manifest,
-            parameters: script.parameters
+            parametersSchema: script.parametersSchema
         };
     }
 
@@ -47,7 +47,7 @@ export class PluginExecutor extends IPluginExecutor {
                         ? await effectOrAwaitableEffect(context)
                         : effectOrAwaitableEffect;
 
-                effectManager.registerEffect(effect);
+                EffectManager.registerEffect(effect);
             });
 
             // TODO: Implement other register types
@@ -78,13 +78,14 @@ export class PluginExecutor extends IPluginExecutor {
     }
 
     private buildParameters(script: Plugin, config: InstalledPluginConfig) {
-        return Object.entries(script.parameters).reduce((acc, [categoryKey, category]) => {
-            acc[categoryKey] = Object.entries(category.settings).reduce((subAcc, [paramKey, param]) => {
-                subAcc[paramKey] = config.parameters?.[categoryKey]?.[paramKey] ?? param?.default;
-                return subAcc;
-            }, {} as Record<string, unknown>);
+        return script.parametersSchema.reduce((acc, param) => {
+            if (config.parameters && config.parameters.hasOwnProperty(param.name)) {
+                acc[param.name] = config.parameters[param.name];
+            } else if (param.default != null) {
+                acc[param.name] = param.default;
+            }
             return acc;
-        }, {} as Record<string, Record<string, unknown>>);
+        }, {} as Record<string, unknown>);
     }
 
     private isPlugin(script: ScriptBase | LegacyCustomScript): script is Plugin {

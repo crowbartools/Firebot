@@ -44,8 +44,14 @@
                     template: "<overlay-settings />"
                 },
                 {
+                    name: "Plugins",
+                    description: "Configure and manage your installed plugins.",
+                    icon: "fa-puzzle-piece",
+                    template: "<scripts-settings />"
+                },
+                {
                     name: "Integrations",
-                    description: "Link Firebot to a growing list of third party tools and apps.",
+                    description: "Link Firebot to third party tools and apps.",
                     icon: "fa-globe",
                     template: "<integration-settings />"
                 },
@@ -60,12 +66,6 @@
                     description: "Manage backups and backup settings to ensure your data is never lost.",
                     icon: "fa-file-archive",
                     template: "<backups-settings />"
-                },
-                {
-                    name: "Scripts",
-                    description: "Configure script settings, add start up scripts, and more.",
-                    icon: "fa-code",
-                    template: "<scripts-settings />"
                 },
                 {
                     name: "Advanced",
