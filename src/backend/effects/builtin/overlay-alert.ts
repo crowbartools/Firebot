@@ -1,20 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-"use strict";
 
-import { EffectType } from "../../../types/effects";
-import { SettingsManager } from "../../common/settings-manager";
-import { ResourceTokenManager } from "../../resource-token-manager";
-import webServer from "../../../server/http-server-manager";
-import logger from "../../logwrapper";
 import fs from "fs/promises";
 import path from "path";
-// import { parseYoutubeId } from "../../../shared/youtube-url-parser";
-// import { resolveTwitchClipVideoUrl } from "../../common/handlers/twitch-clip-url-resolver";
-import { playSound } from "../../common/handlers/sound-handler";
-import { wait } from "../../utils";
+
+import type { EffectType, FirebotAudioDevice } from "../../../types";
+
 import { ReplaceVariableManager } from "../../variables/replace-variable-manager";
+import { ResourceTokenManager } from "../../resource-token-manager";
+import { SettingsManager } from "../../common/settings-manager";
+import webServer from "../../../server/http-server-manager";
+import logger from "../../logwrapper";
+import { wait } from "../../utils";
+import { playSound } from "../../common/handlers/sound-handler";
 
 interface OverlayAlertEffect {
     mediaType: "image" | "video" | "none";
@@ -50,7 +49,7 @@ interface OverlayAlertEffect {
     soundUrl?: string;
     soundFolder?: string;
     soundVolume?: number;
-    audioOutputDeviceId?: string;
+    audioOutputDevice?: FirebotAudioDevice;
     duration?: number;
     position?: {
         x: number;
@@ -350,7 +349,7 @@ const effect: EffectType<OverlayAlertEffect> = {
                 <div ng-if="effect.soundType === 'local'">
                     <file-chooser model="effect.soundFile" options="{ filters: [ {name: 'Audio', extensions: ['mp3', 'ogg', 'oga', 'wav', 'flac']} ]}"></file-chooser>
                     <div style="margin-top: 10px;">
-                        <sound-player path="encodeFilePath(effect.soundFile)" volume="effect.soundVolume" output-device="effect.audioOutputDeviceId"></sound-player>
+                        <sound-player path="encodeFilePath(effect.soundFile)" volume="effect.soundVolume" output-device="effect.audioOutputDevice"></sound-player>
                     </div>
                 </div>
 
@@ -371,7 +370,7 @@ const effect: EffectType<OverlayAlertEffect> = {
                 <div class="mt-3">
                     <label class="form-label" style="margin-bottom: 0;display: block;">Output Device</label>
                     <firebot-audio-output-device-select
-                        device-id="effect.audioOutputDeviceId"
+                        device="effect.audioOutputDevice"
                     ></firebot-audio-output-device-select>
                 </div>
             </div>
@@ -797,7 +796,7 @@ const effect: EffectType<OverlayAlertEffect> = {
                 url: effect.soundUrl,
                 folder: effect.soundFolder,
                 volume: effect.soundVolume,
-                audioOutputDeviceId: effect.audioOutputDeviceId,
+                audioOutputDevice: effect.audioOutputDevice,
                 overlayInstance: data.overlayInstance,
                 waitForSound: false
             });

@@ -145,6 +145,10 @@ type Controller = {
                 if ($ctrl.ngModelCtrl.$viewValue !== newValue) {
                     $ctrl.ngModelCtrl.$setViewValue(newValue);
                 }
+
+                if ($ctrl.onUpdate) {
+                    $ctrl.onUpdate();
+                }
             });
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call

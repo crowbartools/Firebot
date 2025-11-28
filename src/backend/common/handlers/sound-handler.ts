@@ -1,11 +1,12 @@
-import { wait, convertByteArrayJsonToByteArray } from "../../utils";
-import logger from "../../logwrapper";
 import fs from "fs/promises";
 import path from "path";
-import { SettingsManager } from "../settings-manager";
+import type { FirebotAudioDevice } from "../../../types";
 import { ResourceTokenManager } from "../../resource-token-manager";
+import { SettingsManager } from "../settings-manager";
 import webServer from "../../../server/http-server-manager";
 import frontendCommunicator from "../frontend-communicator";
+import logger from "../../logwrapper";
+import { wait, convertByteArrayJsonToByteArray } from "../../utils";
 
 export type SoundType = "url" | "rawData" | "folderRandom" | "local";
 
@@ -18,7 +19,7 @@ export async function playSound(soundData: {
     folder?: string;
     volume?: number;
     overlayInstance?: string;
-    audioOutputDeviceId?: string;
+    audioOutputDevice?: FirebotAudioDevice;
     waitForSound?: boolean;
 }) {
     if (soundData.soundType === "rawData") {
@@ -39,14 +40,14 @@ export async function playSound(soundData: {
         volume?: number;
         overlayInstance?: string;
         resourceToken?: string;
-        audioOutputDeviceId?: string;
+        audioOutputDevice?: FirebotAudioDevice;
     } = {
         filepath: soundData.filePath,
         url: soundData.url,
         isUrl: soundData.soundType === "url",
         volume: soundData.volume,
         overlayInstance: soundData.overlayInstance,
-        audioOutputDeviceId: undefined
+        audioOutputDevice: undefined
     };
 
     // Get random sound
@@ -69,14 +70,14 @@ export async function playSound(soundData: {
     }
 
     // Set output device.
-    let selectedOutputDeviceId = soundData.audioOutputDeviceId;
-    if (!selectedOutputDeviceId) {
-        selectedOutputDeviceId = SettingsManager.getSetting("AudioOutputDevice")?.deviceId;
+    let selectedOutputDevice = soundData.audioOutputDevice;
+    if (selectedOutputDevice?.deviceId == null) {
+        selectedOutputDevice = SettingsManager.getSetting("AudioOutputDevice");
     }
-    data.audioOutputDeviceId = selectedOutputDeviceId;
+    data.audioOutputDevice = selectedOutputDevice;
 
     // Generate token if going to overlay, otherwise send to gui.
-    if (selectedOutputDeviceId === "overlay") {
+    if (selectedOutputDevice?.deviceId === "overlay") {
         if (soundData.soundType !== "url") {
             const resourceToken = ResourceTokenManager.storeResourcePath(
                 data.filepath,
@@ -98,7 +99,7 @@ export async function playSound(soundData: {
                 path: data.isUrl ? data.url : data.filepath
             });
 
-            if (selectedOutputDeviceId === "overlay"
+            if (selectedOutputDevice?.deviceId === "overlay"
                         && SettingsManager.getSetting("ForceOverlayEffectsToContinueOnRefresh") === true) {
                 let currentDuration = 0;
                 let returnNow = false;

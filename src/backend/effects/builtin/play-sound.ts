@@ -141,7 +141,7 @@ const model: EffectType<{
             folder: effect.folder,
             volume: effect.volume,
             overlayInstance: effect.overlayInstance,
-            audioOutputDeviceId: effect.audioOutputDevice?.deviceId,
+            audioOutputDevice: effect.audioOutputDevice,
             waitForSound: effect.waitForSound
         });
     },
