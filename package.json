@@ -97,7 +97,7 @@
         "expressionish": "github:SReject/expressionish#d277e5d959e5b0cdf50a38a182016752a0de9dd6",
         "extra-life-ts": "^0.4.0",
         "firebot-nutjs": "github:crowbartools/firebot-nutjs#f52581d4c4426cf7f4dcc2b0d26cf56777e115f8",
-        "form-data": "^4.0.0",
+        "form-data": "^4.0.5",
         "fs-extra": "^11.2.0",
         "fuse.js": "^7.1.0",
         "glob": "^10.3.10",
