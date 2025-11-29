@@ -61,6 +61,8 @@
                 }
             }
 
+            service.willAutoUpdate = false;
+
             // Update Checker
             // This checks for updates.
             service.checkForUpdate = function() {
@@ -120,6 +122,7 @@
 
                                 // Check if we should auto update based on the users setting
                                 if (shouldAutoUpdate(autoUpdateLevel, latestUpdateType)) {
+                                    service.willAutoUpdate = true;
                                     utilityService.showDownloadModal();
                                     backendCommunicator.send("downloadUpdate");
                                 }
