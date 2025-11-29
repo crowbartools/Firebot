@@ -1324,34 +1324,74 @@ thead th {
     z-index: 10000; /* The select2 dropdown has a z-index of 9999 */
 }
 
-/* notification center */
+/* App Bar Icon Buttons */
+
+.app-bar-icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #ffffff;
+    font-size: 18px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.15s ease;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    &:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    &:active {
+        background: rgba(255, 255, 255, 0.12);
+        transform: scale(0.95);
+    }
+}
 
 .update-indicator-wrapper {
-    margin: 0 10px 0 0px;
-    font-size: 24px;
+    margin: 0 4px 0 0;
     position: relative;
 }
-.notifications-wrapper {
-    margin: 0 40px 0 0px;
-    font-size: 24px;
-    position: relative;
-}
-.notification-badge {
-    width: 16px;
-    height: 16px;
-    border-radius: 8px;
-    background: #4098e0;
+
+.update-indicator-badge {
     position: absolute;
-    top: 2px;
-    right: -2px;
-    font-size: 11px;
-    color: white;
-    font-weight: 900;
+    top: 6px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
+    background: #22c55e;
+    border-radius: 50%;
+    pointer-events: none;
+    box-shadow: 0 0 0 2px #2c3e50;
+}
+
+.notifications-wrapper {
+    margin: 0 32px 0 0;
+    position: relative;
+}
+
+.notification-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    min-width: 8px;
+    height: 8px;
+    border-radius: 8px;
+    background: #ff5e5e;
     display: flex;
-    flex-direction: row;
     align-items: center;
     justify-content: center;
     pointer-events: none;
+    box-shadow: 0 0 0 2px #2c3e50;
 }
 
 .notification-popover {

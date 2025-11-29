@@ -62,6 +62,7 @@
             }
 
             service.willAutoUpdate = false;
+            service.newBetaAvailable = false;
 
             // Update Checker
             // This checks for updates.
@@ -87,6 +88,7 @@
                             if (!foundMajorRelease && (updateType === UpdateType.MAJOR || updateType === UpdateType.MAJOR_PRERELEASE)) {
                                 foundMajorRelease = true;
                                 if (settingsService.getSetting("NotifyOnBeta")) {
+                                    service.newBetaAvailable = true;
                                     service.majorUpdate = {
                                         gitName: release.name,
                                         gitVersion: release.tag_name,
