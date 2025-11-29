@@ -29,6 +29,10 @@
 
             service.hasReleaseData = false;
 
+            service.willAutoUpdate = false;
+
+            service.newBetaAvailable = false;
+
             service.updateIsAvailable = function() {
                 return service.hasCheckedForUpdates ? (service.updateData?.updateIsAvailable || service.majorUpdate != null) : false;
             };
@@ -60,9 +64,6 @@
                         return false;
                 }
             }
-
-            service.willAutoUpdate = false;
-            service.newBetaAvailable = false;
 
             // Update Checker
             // This checks for updates.
@@ -102,6 +103,9 @@
                                 (updateType === UpdateType.PRERELEASE && settingsService.getSetting("NotifyOnBeta"))) {
                                 latestRelease = release;
                                 latestUpdateType = updateType;
+                                if (updateType === UpdateType.PRERELEASE) {
+                                    service.newBetaAvailable = true;
+                                }
                                 break;
                             }
                         }

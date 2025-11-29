@@ -34,9 +34,9 @@
 
                 updateTooltip();
 
-                $scope.$watchGroup(() => [
-                    updatesService.newBetaAvailable,
-                    updatesService.willAutoUpdate
+                $scope.$watchGroup([
+                    () => updatesService.newBetaAvailable,
+                    () => updatesService.willAutoUpdate
                 ], function() {
                     updateTooltip();
                 });
