@@ -56,7 +56,7 @@
         style="{{customFontSizeStyle}}"
       >
         <div
-          ng-repeat="chatItem in cms.chatQueue | hideBotMessages | hideWhispers | limitTo:messageDisplayLimit | reverseChat:reverseChatOrder track by chatItem.id"
+          ng-repeat="chatItem in cms.chatQueue | hideBotMessages | hideHiddenMessages | hideWhispers | limitTo:messageDisplayLimit | reverseChat:reverseChatOrder track by chatItem.id"
           class="chat-item"
           ng-class="{ alternate: alternateBackgrounds}"
           scroll-glue-anchor

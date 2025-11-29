@@ -612,6 +612,18 @@
         };
     });
 
+    app.filter("hideHiddenMessages", function() {
+        return function(elements) {
+            return elements.filter((e) => {
+                if (e.type !== 'message') {
+                    return true;
+                }
+                return e.data.isHiddenFromChatFeed !== true;
+            }
+            );
+        };
+    });
+
     app.filter("hideWhispers", function(settingsService) {
         return function(elements) {
             const shouldHide = settingsService.getSetting("ChatHideWhispers");
