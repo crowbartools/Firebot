@@ -4,12 +4,17 @@
     //This handles events
     const { randomUUID } = require("crypto");
 
-    angular.module("firebotApp").factory("eventsService", function(backendCommunicator, objectCopyHelper) {
+    angular.module("firebotApp").factory("eventsService", function(
+        backendCommunicator,
+        settingsService,
+        objectCopyHelper
+    ) {
         const service = {};
 
         let mainEvents = [];
         let groups = [];
 
+        service.eventSetSettings = {};
 
         function loadAllEventData() {
             const eventData = backendCommunicator.fireEventSync("getAllEventData");
@@ -21,6 +26,8 @@
             if (eventData.groups) {
                 groups = eventData.groups;
             }
+
+            service.eventSetSettings = settingsService.getSetting("EventSetSettings");
         }
         loadAllEventData();
 
@@ -135,6 +142,10 @@
                 action: "saveGroup",
                 meta: JSON.parse(angular.toJson(group))
             });
+        };
+
+        service.saveEventSetSettings = () => {
+            settingsService.saveSetting("EventSetSettings", service.eventSetSettings);
         };
 
         service.deleteGroup = function(groupId) {
