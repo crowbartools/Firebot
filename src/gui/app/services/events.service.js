@@ -44,6 +44,10 @@
             groups[index] = group;
         });
 
+        backendCommunicator.on("event-access:event-set-settings-updated",
+            eventSetSettings => service.eventSetSettings = eventSetSettings
+        );
+
         let selectedTab = "mainevents";
         service.setSelectedTab = function(groupId) {
             selectedTab = groupId;

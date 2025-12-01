@@ -148,6 +148,7 @@ class EventsAccess {
         }
 
         SettingsManager.saveSetting("EventSetSettings", settings);
+        frontendCommunicator.send("event-access:event-set-settings-updated", settings);
     }
 
     removeEventFromGroups(eventId: string): void {

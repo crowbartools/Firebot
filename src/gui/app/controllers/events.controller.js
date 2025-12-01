@@ -12,7 +12,7 @@
             $scope.getEventSets = () => {
                 $scope.eventSets = eventsService.getEventGroups()
                     .sort((a, b) => {
-                        return eventsService.eventSetSettings[a.id].position - eventsService.eventSetSettings[b.id].position;
+                        return eventsService.eventSetSettings[a.id]?.position - eventsService.eventSetSettings[b.id]?.position;
                     });
             };
             $scope.getEventSets();
