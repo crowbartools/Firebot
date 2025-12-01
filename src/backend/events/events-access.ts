@@ -94,7 +94,10 @@ class EventsAccess {
             this._groups[group.id] = group;
             eventsDb.push(`/groups/${group.id}`, group);
             logger.debug(`Saved event group '${group.id}'.`);
+
             this.rebuildSettings();
+
+            frontendCommunicator.send("event-access:event-set-saved", this._groups[group.id]);
         } catch (err) {
             logger.warn(`Unable to save event group '${group.id}'.`, err);
         }
@@ -109,7 +112,10 @@ class EventsAccess {
             this._groups = groupsToSave;
             eventsDb.push("/groups", groupsToSave);
             logger.debug(`Saved all groups.`);
+
             this.rebuildSettings();
+
+            frontendCommunicator.send("event-access:all-event-sets-saved", this._groups);
         } catch (err) {
             logger.warn(`Unable to save groups.`, err);
         }
@@ -221,7 +227,10 @@ class EventsAccess {
             eventsDb.delete(`/groups/${groupId}`);
             delete this._groups[groupId];
             logger.debug(`Deleted event group '${groupId}'.`);
+
             this.rebuildSettings();
+
+            frontendCommunicator.send("event-access:event-set-deleted", groupId);
         } catch (err) {
             logger.warn(`Unable to delete event group '${groupId}'.`, err);
         }

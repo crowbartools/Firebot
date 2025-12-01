@@ -17,6 +17,22 @@
             };
             $scope.getEventSets();
 
+            backendCommunicator.on("event-access:event-set-saved",
+                () => $scope.getEventSets()
+            );
+
+            backendCommunicator.on("event-access:all-event-sets-saved",
+                () => $scope.getEventSets()
+            );
+
+            backendCommunicator.on("event-access:event-set-deleted",
+                () => $scope.getEventSets()
+            );
+
+            backendCommunicator.on("event-access:event-set-settings-updated",
+                () => $scope.getEventSets()
+            );
+
             $scope.sortableOptions = {
                 handle: ".dragHandle",
                 'ui-floating': false,
@@ -26,7 +42,7 @@
             };
 
             $scope.sortEventSets = (eventSet) => {
-                return eventsService.eventSetSettings[eventSet.id].position;
+                return eventsService.eventSetSettings[eventSet.id]?.position;
             };
 
             $scope.saveEventSetSettings = () => {
