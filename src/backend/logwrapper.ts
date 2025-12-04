@@ -2,6 +2,8 @@ import { createLogger, format, transports } from "winston";
 import "winston-daily-rotate-file";
 import Transport from "winston-transport";
 import { TransformableInfo } from "logform";
+import { app } from "electron";
+import os from "os";
 import fs from "fs";
 import { getPathInUserData, getJsonDbInUserData } from "./common/data-access";
 import frontendCommunicator from "./common/frontend-communicator";
@@ -65,6 +67,16 @@ function getLogFormat(addMetadataToMessage = true) {
     );
 }
 
+const rotatingFileTransport = new transports.DailyRotateFile({
+    format: getLogFormat(),
+    level: fileLogLevel,
+    dirname: LOG_FOLDER,
+    filename: "%DATE%.log",
+    datePattern: "YYYY-MM-DD",
+    maxFiles: "7d",
+    utc: true
+});
+
 const logger = createLogger({
     level: "silly",
     exitOnError: false,
@@ -83,16 +95,13 @@ const logger = createLogger({
             ),
             level: "silly"
         }),
-        new transports.DailyRotateFile({
-            format: getLogFormat(),
-            level: fileLogLevel,
-            dirname: LOG_FOLDER,
-            filename: "%DATE%.log",
-            datePattern: "YYYY-MM-DD",
-            maxFiles: "7d",
-            utc: true
-        })
+        rotatingFileTransport
     ]
+});
+
+rotatingFileTransport.on("rotate", () => {
+    logger.info("Log rotated");
+    logger.info(`Firebot v${app.getVersion()}; Platform: ${os.platform()} ${os.arch()}; Version: ${os.type()} ${os.release()}`);
 });
 
 process.on("uncaughtException", error => logger.error("Uncaught exception", error));
