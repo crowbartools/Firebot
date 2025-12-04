@@ -84,7 +84,7 @@
                 let overflowTimeout;
                 $scope.checkForOverflow = () => {
                     if (overflowTimeout) {
-                        return $ctrl.cachedOverflow ? 1 : 0;
+                        return;
                     }
                     overflowTimeout = $timeout(() => {
                         const allTags = $element.find(".sort-tags").children().toArray();
