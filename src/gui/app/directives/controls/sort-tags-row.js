@@ -17,7 +17,7 @@
                     popover-append-to-body="true"
                     popover-trigger="'outsideClick'"
                 >
-                    <div class="sort-tags p-px" ng-class="{ 'hidden-tags': hasOverflow() }">
+                    <div class="sort-tags p-px" ng-class="{ 'hidden-tags': $ctrl.hasOverflow }">
                         <span ng-repeat="tag in getSortTags() track by tag.id" class="sort-tag mr-2">
                             <span class="mb-px">{{tag.name}}</span>
                         </span>
@@ -29,7 +29,7 @@
                             <i class="far fa-plus"></i>
                         </button>
                     </div>
-                    <div style="position: absolute;" ng-show="hasOverflow()" uib-tooltip-html="getSortTagNames()">
+                    <div style="position: absolute;" ng-show="$ctrl.hasOverflow" uib-tooltip-html="getSortTagNames()">
                         <button
                             role="button"
                             class="sort-tag-add mb-px"
@@ -64,7 +64,7 @@
 
                 $ctrl.isPopupVisible = false;
                 $ctrl.cachedSortTags = [];
-                $ctrl.cachedOverflow = false;
+                $ctrl.hasOverflow = false;
 
                 // Cache sort tags to avoid repeated service calls
                 function updateCachedTags() {
@@ -82,7 +82,7 @@
 
                 // Debounce overflow check
                 let overflowTimeout;
-                $scope.getOverflowTagCount = () => {
+                $scope.checkForOverflow = () => {
                     if (overflowTimeout) {
                         return $ctrl.cachedOverflow ? 1 : 0;
                     }
@@ -96,14 +96,9 @@
                             }
                             return acc;
                         }, 0), 0);
-                        $ctrl.cachedOverflow = count > 0;
+                        $ctrl.hasOverflow = count > 0;
                         overflowTimeout = null;
                     }, 100);
-                    return $ctrl.cachedOverflow ? 1 : 0;
-                };
-
-                $scope.hasOverflow = () => {
-                    return $scope.getOverflowTagCount() > 0;
                 };
 
                 $scope.sts = sortTagsService;
@@ -136,12 +131,24 @@
                         $ctrl.item.sortTags = [];
                     }
                     updateCachedTags();
+                    $scope.checkForOverflow();
                 };
 
                 // Watch for changes to item.sortTags and update cache
                 $scope.$watch(() => $ctrl.item.sortTags, () => {
                     updateCachedTags();
+                    $scope.checkForOverflow();
                 }, true);
+
+                const resizeObserver = new ResizeObserver(() => {
+                    $scope.checkForOverflow();
+                });
+
+                resizeObserver.observe($element.find(".sort-tags")[0]);
+
+                $scope.$on("$destroy", () => {
+                    resizeObserver.disconnect();
+                });
             }
         });
 }());
