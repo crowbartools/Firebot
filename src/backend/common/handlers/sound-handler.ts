@@ -71,7 +71,7 @@ export async function playSound(soundData: {
 
     // Set output device.
     let selectedOutputDevice = soundData.audioOutputDevice;
-    if (selectedOutputDevice?.deviceId == null) {
+    if (selectedOutputDevice?.deviceId == null || selectedOutputDevice.deviceId === "") {
         selectedOutputDevice = SettingsManager.getSetting("AudioOutputDevice");
     }
     data.audioOutputDevice = selectedOutputDevice;
