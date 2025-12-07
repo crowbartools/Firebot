@@ -24,8 +24,8 @@ class ScriptWebhookManager extends EventEmitter {
         this.scriptName = scriptName;
         this.setMaxListeners(0);
 
-        webhookManager.on("webhook-received", ({ config, ...data }) => {
-            if (config.scriptId !== this.scriptName) {
+        webhookManager.on("webhook-received", (data) => {
+            if (data.config.scriptId !== this.scriptName) {
                 return;
             }
             this.emit("webhook-received", data);
