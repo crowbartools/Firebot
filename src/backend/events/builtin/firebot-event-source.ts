@@ -170,7 +170,8 @@ export const FirebotEventSource: EventSource = {
                 webhookName: "Test Webhook",
                 webhookPayload: {
                     foo: "bar"
-                }
+                },
+                webhookRawPayload: "{ \"foo\": \"bar\" }"
             }
         },
         {

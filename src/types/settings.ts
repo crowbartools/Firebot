@@ -67,6 +67,9 @@ export type FirebotSettingsTypes = {
     DefaultToAdvancedCommandMode: boolean;
     DefaultTtsVoiceId: string;
     DeleteProfile: string;
+    EventSetSettings: Record<string, {
+        position: number;
+    }>;
     EventSettings: object; // Pretty sure this is no longer used
     FirstTimeUse: boolean;
     ForceOverlayEffectsToContinueOnRefresh: boolean;
@@ -199,6 +202,7 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     DefaultToAdvancedCommandMode: false,
     DefaultTtsVoiceId: undefined,
     DeleteProfile: undefined,
+    EventSetSettings: {},
     EventSettings: {},
     FirstTimeUse: true,
     ForceOverlayEffectsToContinueOnRefresh: true,

@@ -66,8 +66,8 @@
     }
 }
 
-.editior-column {
-    width: 215px;
+.editor-column {
+    width: 230px;
     height: 100%;
     background: $editor-column-bg;
     display: flex;
@@ -114,4 +114,9 @@
         -ms-user-select: none; /* Internet Explorer/Edge */
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome and Opera */
+}
+
+.event-set-drag-handle {
+    width: 10px;
+    margin-left: 0.75rem;
 }

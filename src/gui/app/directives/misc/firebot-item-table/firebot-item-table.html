@@ -4,10 +4,10 @@
         <div class="flex-row">
             <button
                 ng-click="$ctrl.onAddNewClicked()"
-                class="btn btn-primary hvr-icon-grow mr-4"
+                class="btn btn-primary mr-4"
                 ng-disabled="$ctrl.addNewButtonDisabled"
             >
-                <i class="fas fa-plus-circle hvr-icon mr-2"></i>
+                <i class="fas fa-plus-circle mr-2"></i>
                 {{$ctrl.addNewButtonText}}
             </button>
             <div ng-transclude="toolbar"></div>
@@ -61,7 +61,7 @@
     </div>
     <div class="p-6">
         <div ng-if="$ctrl.items.length === 0" class="noselect muted pl-5">
-            <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span
+            <span><i class="fas fa-arrow-up"></i></span
             ><span class="ml-3">{{$ctrl.noDataMessage}}</span>
         </div>
         <div

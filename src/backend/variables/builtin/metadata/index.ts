@@ -24,6 +24,7 @@ import webhookHeaders from './webhook-headers';
 import webhookId from './webhook-id';
 import webhookName from './webhook-name';
 import webhookPayload from './webhook-payload';
+import webhookRawPayload from './webhook-raw-payload';
 
 export default [
     arg,
@@ -51,5 +52,6 @@ export default [
     webhookHeaders,
     webhookId,
     webhookName,
-    webhookPayload
+    webhookPayload,
+    webhookRawPayload
 ];

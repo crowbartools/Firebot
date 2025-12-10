@@ -139,10 +139,6 @@
                 });
             };
 
-            ctrl.updateIsAvailable = () => {
-                return updatesService.updateIsAvailable();
-            };
-
             ctrl.$onInit = function() {};
         }
     });
