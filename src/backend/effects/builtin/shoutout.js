@@ -40,7 +40,7 @@ const shoutoutStyles = `
         border-radius: 100%;
         background: black;
         object-fit: cover;
-        border: 0.3vw solid rgba(255, 255, 255, 0.2);
+        border: none;
         box-shadow: 0 0 0 0.15vw rgba(0, 0, 0, 0.3),
                     0 0 2vw rgba(255, 255, 255, 0.1) inset;
     }

@@ -223,7 +223,7 @@ export const progressbar: OverlayWidgetType<Settings, State> = {
             type: "effectlist"
         }
     ],
-    nonEditableSettings: ["onCompleteEffects"],
+    nonEditableSettings: ["onCompleteEffects", "onUpdateEffects"],
     initialAspectRatio: { width: 16, height: 2 },
     initialState: {
         currentValue: 0

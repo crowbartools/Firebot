@@ -56,12 +56,12 @@ const model: EffectType<{
                     <div ng-if="selectedType && (!selectedType.userCanConfigure || selectedType.userCanConfigure.position !== false)">
                         <firebot-checkbox
                             label="Edit Position"
-                            ng-init="editPosition = (effect.position != null && effect.position !== '')"
+                            ng-init="editPosition = (effect.position != null && effect.position !== ''); showTopLevelProp.position = editPosition"
                             model="editPosition"
-                            ng-click="topLevelPropToggled('position', editPosition)"
+                            on-change="topLevelPropToggled('position', newValue)"
                             style="margin: 0px 15px 0px 0px"
                         />
-                        <div ng-if="editPosition" class="ml-5 mb-10">
+                        <div ng-if="showTopLevelProp.position" class="ml-5 mb-10">
                             <overlay-position-editor
                                 model="effect.position"
                                 min-width="25"
@@ -73,12 +73,12 @@ const model: EffectType<{
                     <div>
                         <firebot-checkbox
                             label="Edit z-index"
-                            ng-init="editZIndex = (effect.zIndex != null && effect.zIndex !== '')"
+                            ng-init="editZIndex = (effect.zIndex != null && effect.zIndex !== ''); showTopLevelProp.zIndex = editZIndex"
                             model="editZIndex"
-                            ng-click="topLevelPropToggled('zIndex', editZIndex)"
+                            on-change="topLevelPropToggled('zIndex', newValue)"
                             style="margin: 0px 15px 0px 0px"
                         />
-                        <div ng-if="editZIndex" class="ml-5 mb-10">
+                        <div ng-if="showTopLevelProp.zIndex" class="ml-5 mb-10">
                             <input
                                 type="number"
                                 class="form-control"
@@ -91,12 +91,12 @@ const model: EffectType<{
                     <div>
                         <firebot-checkbox
                             label="Edit Overlay Instance"
-                            ng-init="editOverlayInstance = (effect.overlayInstance != null && effect.overlayInstance !== '')"
+                            ng-init="editOverlayInstance = (effect.overlayInstance != null && effect.overlayInstance !== ''); showTopLevelProp.overlayInstance = editOverlayInstance"
                             model="editOverlayInstance"
-                            ng-click="topLevelPropToggled('overlayInstance', editOverlayInstance)"
+                            on-change="topLevelPropToggled('overlayInstance', newValue)"
                             style="margin: 0px 15px 0px 0px"
                         />
-                        <div ng-if="editOverlayInstance" class="ml-5 mb-10">
+                        <div ng-if="showTopLevelProp.overlayInstance" class="ml-5 mb-10">
                             <select class="fb-select" id="overlay-instance" ng-model="effect.overlayInstance">
                                 <option label="Default" value="">Default</option>
                                 <option ng-repeat="instance in overlayInstances" label="{{instance}}" value="{{instance}}">{{instance}}</option>
@@ -110,12 +110,12 @@ const model: EffectType<{
                         <div ng-repeat="setting in settingsSchema">
                             <firebot-checkbox
                                 label="Edit {{setting.title || setting.name}}"
-                                ng-init="editSetting[setting.name] = (effect.settings[setting.name] != null && effect.settings[setting.name] !== '')"
+                                ng-init="editSetting[setting.name] = (effect.settings[setting.name] != null && effect.settings[setting.name] !== ''); showSetting[setting.name] = editSetting[setting.name]"
                                 model="editSetting[setting.name]"
-                                ng-click="settingsPropToggled(setting.name)"
+                                on-change="settingsPropToggled(setting.name, newValue)"
                                 style="margin: 0px 15px 0px 0px"
                             />
-                            <div ng-if="editSetting[setting.name]" class="ml-5 mb-10">
+                            <div ng-if="showSetting[setting.name]" class="ml-5 mb-10">
                                 <dynamic-parameter
                                     name="{{setting.name}}"
                                     schema="setting"
@@ -123,6 +123,7 @@ const model: EffectType<{
                                     hide-title-and-description="true"
                                     trigger="trigger"
                                     trigger-meta="triggerMeta"
+                                    enable-replace-variables="true"
                                 >
                                 </dynamic-parameter>
                             </div>
@@ -133,6 +134,11 @@ const model: EffectType<{
         </div>
     `,
     optionsController: ($scope, overlayWidgetsService, settingsService) => {
+
+        $scope.editSetting = {};
+        $scope.showSetting = {};
+        $scope.showTopLevelProp = {};
+
         $scope.hasWidgets = overlayWidgetsService.overlayWidgetConfigs.length > 0;
 
         $scope.overlayInstances = settingsService.getSetting("OverlayInstances");
@@ -187,20 +193,23 @@ const model: EffectType<{
             $scope.typeHasSettings = !!$scope.settingsSchema?.length;
         }
 
-        $scope.topLevelPropToggled = (prop: string, prevValue: boolean) => {
-            if (!prevValue) {
+        $scope.topLevelPropToggled = (prop: string, newValue: boolean) => {
+            if (newValue) {
                 $scope.effect[prop] = $scope.selectedConfig?.[prop] ?? null;
+                $scope.showTopLevelProp[prop] = true;
             } else {
                 delete $scope.effect[prop];
+                $scope.showTopLevelProp[prop] = false;
             }
         };
 
-        $scope.settingsPropToggled = (prop: string) => {
-            const prevValue = $scope.editSetting[prop];
-            if (!prevValue) {
+        $scope.settingsPropToggled = (prop: string, newValue: boolean) => {
+            if (newValue) {
                 $scope.effect.settings[prop] = $scope.selectedConfig?.settings?.[prop] ?? null;
+                $scope.showSetting[prop] = true;
             } else {
                 delete $scope.effect.settings[prop];
+                $scope.showSetting[prop] = false;
             }
         };
 
@@ -210,6 +219,8 @@ const model: EffectType<{
 
         $scope.onSelectWidgetConfig = (item: { id: string }) => {
             $scope.editSetting = {};
+            $scope.showSetting = {};
+            $scope.showTopLevelProp = {};
             $scope.effect.settings = {};
             $scope.effect.position = null;
             $scope.effect.zIndex = null;
@@ -218,8 +229,13 @@ const model: EffectType<{
             loadSelectedConfig(item.id);
         };
 
-        $scope.$watch("effect.mode", () => {
+        $scope.$watch("effect.mode", (newValue, oldValue) => {
+            if (newValue === oldValue) {
+                return;
+            }
             $scope.editSetting = {};
+            $scope.showSetting = {};
+            $scope.showTopLevelProp = {};
             $scope.effect.settings = {};
             $scope.effect.position = null;
             $scope.effect.zIndex = null;

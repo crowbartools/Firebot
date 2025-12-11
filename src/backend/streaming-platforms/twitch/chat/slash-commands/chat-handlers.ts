@@ -39,7 +39,7 @@ export const whisperHandler: TwitchSlashCommand<[string, string]> = {
 
 export const announceHandler: TwitchSlashCommand<[string]> = {
     commands: ["/announce"],
-    validateArgs: (...message) => {
+    validateArgs: ([...message]) => {
         if (message == null || message.length < 1) {
             return {
                 success: false,
@@ -59,7 +59,7 @@ export const announceHandler: TwitchSlashCommand<[string]> = {
 
 export const announceblueHandler: TwitchSlashCommand<[string]> = {
     commands: ["/announceblue"],
-    validateArgs: (...message) => {
+    validateArgs: ([...message]) => {
         if (message == null || message.length < 1) {
             return {
                 success: false,
@@ -79,7 +79,7 @@ export const announceblueHandler: TwitchSlashCommand<[string]> = {
 
 export const announcegreenHandler: TwitchSlashCommand<[string]> = {
     commands: ["/announcegreen"],
-    validateArgs: (...message) => {
+    validateArgs: ([...message]) => {
         if (message == null || message.length < 1) {
             return {
                 success: false,
@@ -99,7 +99,7 @@ export const announcegreenHandler: TwitchSlashCommand<[string]> = {
 
 export const announceorangeHandler: TwitchSlashCommand<[string]> = {
     commands: ["/announceorange"],
-    validateArgs: (...message) => {
+    validateArgs: ([...message]) => {
         if (message == null || message.length < 1) {
             return {
                 success: false,
@@ -119,7 +119,7 @@ export const announceorangeHandler: TwitchSlashCommand<[string]> = {
 
 export const announcepurpleHandler: TwitchSlashCommand<[string]> = {
     commands: ["/announcepurple"],
-    validateArgs: (...message) => {
+    validateArgs: ([...message]) => {
         if (message == null || message.length < 1) {
             return {
                 success: false,

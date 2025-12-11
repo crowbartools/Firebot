@@ -58,7 +58,8 @@
             controller: function(ngToast, commandsService, countersService, currencyService,
                 effectQueuesService, eventsService, hotkeyService, presetEffectListsService,
                 timerService, scheduledTaskService, viewerRolesService, quickActionsService,
-                variableMacroService, viewerRanksService, settingsService, backendCommunicator) {
+                variableMacroService, viewerRanksService, overlayWidgetsService,
+                settingsService, backendCommunicator) {
                 const $ctrl = this;
 
                 $ctrl.setupFilePath = null;
@@ -80,6 +81,7 @@
                     viewerRoles: "Viewer Role",
                     viewerRankLadders: "Viewer Rank Ladder",
                     quickActions: "Quick Action",
+                    overlayWidgetConfigs: "Overlay Widget",
                     globalValues: "Global Value"
                 };
 
@@ -99,6 +101,7 @@
                     viewerRoles: [],
                     viewerRankLadders: [],
                     quickActions: [],
+                    overlayWidgetConfigs: [],
                     globalValues: []
                 };
 
@@ -120,6 +123,7 @@
                     ...viewerRolesService.getCustomRoles().map(i => i.id),
                     ...viewerRanksService.rankLadders.map(i => i.id),
                     ...quickActionsService.quickActions.map(i => i.id),
+                    ...overlayWidgetsService.overlayWidgetConfigs.map(i => i.id),
                     ...settingsService.getSetting("GlobalValues", true).map(v =>
                         `GlobalValue:${v.name}`
                     )
