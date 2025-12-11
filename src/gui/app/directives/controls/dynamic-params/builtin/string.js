@@ -5,7 +5,8 @@
             schema: '<',
             value: '<',
             onInput: '&',
-            onTouched: '&'
+            onTouched: '&',
+            enableReplaceVariables: '<?'
         },
         template: `
           <div>
@@ -18,6 +19,8 @@
                 style="width:100%"
                 ng-change="$ctrl.onInput({ value: $ctrl.local })"
                 ng-blur="$ctrl.onTouched()"
+                replace-variables="text"
+                disable-variable-menu="!$ctrl.enableReplaceVariables"
             ></textarea>
             <input
                 ng-if="!$ctrl.schema.useTextArea"
@@ -27,6 +30,8 @@
                 ng-model="$ctrl.local"
                 ng-change="$ctrl.onInput({ value: $ctrl.local })"
                 ng-blur="$ctrl.onTouched()"
+                replace-variables="text"
+                disable-variable-menu="!$ctrl.enableReplaceVariables"
             />
           </div>
         `,
