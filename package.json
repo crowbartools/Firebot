@@ -93,7 +93,7 @@
         "escape-html": "^1.0.3",
         "eventsource": "^1.0.7",
         "express": "^5.1.0",
-        "expressionish": "github:SReject/expressionish#d277e5d959e5b0cdf50a38a182016752a0de9dd6",
+        "expressionish": "github:SReject/expressionish#ab800d753263d46990c8ad5ba1459c366c1acca9",
         "extra-life-ts": "^0.4.0",
         "firebot-nutjs": "github:crowbartools/firebot-nutjs#f52581d4c4426cf7f4dcc2b0d26cf56777e115f8",
         "form-data": "^4.0.5",
