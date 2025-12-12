@@ -279,44 +279,20 @@
             }
         };
 
-        $rootScope.copyTextToClipboard = function(text) {
-            const textArea = document.createElement("textarea");
-            // Place in top-left corner of screen regardless of scroll position.
-            textArea.style.position = "fixed";
-            textArea.style.top = 0;
-            textArea.style.left = 0;
+        $rootScope.copyTextToClipboard = function(text, toastConfig = { show: false }) {
+            navigator.clipboard.writeText(text).then(function() {
+                logger.info("Text copied to clipboard");
 
-            // Ensure it has a small width and height. Setting to 1px / 1em
-            // doesn't work as this gives a negative w/h on some browsers.
-            textArea.style.width = "2em";
-            textArea.style.height = "2em";
+                if (toastConfig?.show) {
+                    ngToast.create({
+                        className: 'info',
+                        content: toastConfig.message || `Copied '${text}' to clipboard`
+                    });
+                }
 
-            // We don't need padding, reducing the size if it does flash render.
-            textArea.style.padding = 0;
-
-            // Clean up any borders.
-            textArea.style.border = "none";
-            textArea.style.outline = "none";
-            textArea.style.boxShadow = "none";
-
-            // Avoid flash of white box if rendered for any reason.
-            textArea.style.background = "transparent";
-
-            textArea.value = text;
-
-            document.body.appendChild(textArea);
-
-            textArea.select();
-
-            try {
-                const successful = document.execCommand("copy");
-                const msg = successful ? "successful" : "unsuccessful";
-                logger.info(`Copying text command was ${msg}`);
-            } catch {
-                logger.error("Oops, unable to copy text to clipboard.");
-            }
-
-            document.body.removeChild(textArea);
+            }, function(err) {
+                logger.error("Could not copy text: ", err);
+            });
         };
 
         backendCommunicator.on("copy-to-clipboard", (data) => {
@@ -324,14 +300,7 @@
                 return;
             }
 
-            $rootScope.copyTextToClipboard(data.text);
-
-            if (!data.silent) {
-                ngToast.create({
-                    className: 'info',
-                    content: data.toastMessage || `Copied '${data.text}' to clipboard`
-                });
-            }
+            $rootScope.copyTextToClipboard(data.text, { show: !data.silent, message: data.toastMessage });
 
             return;
         });

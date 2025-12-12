@@ -114,6 +114,9 @@
                         <a href ng-click="$root.openLinkExternally('https://firebot.app/testimonial-submission')">Submit a Testimonial</a>
                     </p>
                 </section>
+                <section>
+                    <button class="btn btn-sm btn-default-outlined" style="width: 100%;" ng-click="$ctrl.copyDebugInfoToClipboard()">Copy Debug Info</button>
+                </button>
             </div>
             `,
         bindings: {
@@ -121,13 +124,17 @@
             close: "&",
             dismiss: "&"
         },
-        controller: function() {
+        controller: function(backendCommunicator) {
             const $ctrl = this;
 
             $ctrl.$onInit = function() {
                 $ctrl.version = firebotAppDetails.version;
                 $ctrl.osType = firebotAppDetails.os.type;
                 $ctrl.osVersion = firebotAppDetails.os.release;
+            };
+
+            $ctrl.copyDebugInfoToClipboard = function() {
+                backendCommunicator.send("copy-debug-info-to-clipboard");
             };
         }
     });

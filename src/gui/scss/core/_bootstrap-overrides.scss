@@ -243,6 +243,34 @@
     }
 }
 
+.btn-default-outlined {
+    border: 2px solid $default-btn-bg-color;
+    background-color: transparent;
+    color: $default-btn-text-color;
+    &:focus {
+        border: 2px solid $default-btn-bg-color;
+        background-color: transparent;
+        color: $default-btn-text-color;
+        border-color: $default-btn-bg-color !important;
+    }
+    &:disabled {
+        border: 2px solid $default-btn-bg-color;
+        background-color: transparent;
+        color: $default-btn-text-color;
+        opacity: 0.5;
+        &:hover {
+            background-color: $default-btn-bg-color;
+            color: $default-btn-text-color;
+            opacity: 0.75;
+        }
+    }
+    &:hover {
+        background-color: $default-btn-hover-bg;
+        color: $default-btn-text-color;
+    }
+}
+
+
 .btn-default.active.focus,
 .btn-default.active:focus,
 .btn-default.active:hover,
