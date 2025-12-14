@@ -177,13 +177,29 @@
                         />
                     </firebot-setting>
 
+                    <firebot-setting
+                        name="Automatic Firebot Updates"
+                        description="Enables or disables Firebot automatic updates when a new stable release is available."
+                    >
+                        <toggle-button
+                            toggle-model="settings.getSetting('AutoUpdateLevel') !== 0"
+                            on-toggle="toggleAutoUpdates()"
+                            font-size="40"
+                            accessibility-label="(settings.getSetting('AutoUpdateLevel') !== 0 ? 'Enabled' : 'Disabled') + ' Automatic Firebot Updates'"
+                        />
+
+                        <setting-description-addon>
+                            <strong>WARNING: If you disable this option, YOU are responsible for ensuring Firebot is up to date. Outdated versions will NOT be supported via our official channels. Please see our <a href="https://github.com/crowbartools/Firebot/blob/master/.github/SUPPORT.md">support policy</a> for more information.</strong>
+                        </setting-description-addon>
+                    </firebot-setting>
+
                     <div style="margin-top: 20px">
                         <p class="muted">Looking for a setting that used to be located here? Try checking in the Tools app menu!</p>
                     </div>
 
                 </div>
           `,
-        controller: function ($scope, settingsService, utilityService, backendCommunicator, modalService) {
+        controller: function ($scope, settingsService, modalFactory, backendCommunicator, modalService) {
             $scope.settings = settingsService;
 
             $scope.toggleWhileLoops = () => {
@@ -192,7 +208,7 @@
                 if (whileLoopsEnabled) {
                     settingsService.saveSetting("WhileLoopEnabled", false);
                 } else {
-                    utilityService
+                    modalFactory
                         .showConfirmationModal({
                             title: "Enable While Loops",
                             question:
@@ -222,7 +238,7 @@
             };
 
             $scope.recalculateQuoteIds = () => {
-                utilityService
+                modalFactory
                     .showConfirmationModal({
                         title: "Recalculate Quote IDs",
                         question: `Are you sure you want to recalculate your quote IDs?`,
@@ -234,6 +250,27 @@
                             backendCommunicator.fireEvent("recalc-quote-ids");
                         }
                     });
+            };
+
+            $scope.toggleAutoUpdates = () => {
+                if (settingsService.getSetting("AutoUpdateLevel") === 0) {
+                    settingsService.saveSetting("AutoUpdateLevel", 2);
+                } else {
+                    modalFactory
+                        .showConfirmationModal({
+                            title: "Disable Automatic Updates?",
+                            question: "If you disable automatic updates, you will be responsible for updating Firebot yourself and will not receive support unless you are on a supported version. Are you sure you want to disable automatic Firebot updates?",
+                            confirmLabel: "Yes, disable",
+                            confirmBtnType: "btn-danger",
+                            cancelLabel: "No, keep enabled",
+                            cancelBtnType: "btn-default"
+                        })
+                        .then((confirmed) => {
+                            if (confirmed) {
+                                settingsService.saveSetting("AutoUpdateLevel", 0);
+                            }
+                        });
+                }
             };
         }
     });

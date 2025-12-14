@@ -4,6 +4,7 @@ const { app, dialog, shell, autoUpdater } = require("electron");
 const os = require('os');
 const logger = require("../logwrapper");
 const { restartApp } = require("../app-management/electron/app-helpers");
+const { copyDebugInfoToClipboard } = require("../common/debug-info");
 
 function getLocalIpAddress() {
     try {
@@ -136,4 +137,6 @@ exports.setupCommonListeners = () => {
 
         autoUpdater.quitAndInstall();
     });
+
+    frontendCommunicator.on("copy-debug-info-to-clipboard", copyDebugInfoToClipboard);
 };

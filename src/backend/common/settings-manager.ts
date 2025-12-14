@@ -139,7 +139,9 @@ class SettingsManager extends EventEmitter {
             if (defaultValue !== undefined) {
                 this.settingsCache[settingPath] = defaultValue;
             }
-            if ((err as Error).name !== "DataError") {
+            if ((err as Error).name === "DatabaseError") {
+                logger.error(`Failed to read "${settingPath}" in global settings file. File may be corrupt.`, err?.inner?.message ?? err.stack);
+            } else if ((err as Error).name !== "DataError") {
                 logger.warn(err);
             }
         }

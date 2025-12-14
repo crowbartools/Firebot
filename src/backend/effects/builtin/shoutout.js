@@ -357,8 +357,8 @@ const effect = {
                 const boxArtId = `box-art-${uniqueId}`;
 
                 const shoutoutElement = `
-                <div>
-                    <div id="${wrapperId}" class="firebot-shoutout-wrapper" style="background: linear-gradient(135deg, ${data.bgColor1} 0%, ${data.bgColor2} 100%); transform: scale(${scale});${data.zIndex ? ` position: relative; z-index: ${data.zIndex};` : ''}">
+                <div style="scale: ${scale};">
+                    <div id="${wrapperId}" class="firebot-shoutout-wrapper" style="background: linear-gradient(135deg, ${data.bgColor1} 0%, ${data.bgColor2} 100%);${data.zIndex ? ` position: relative; z-index: ${data.zIndex};` : ''}">
 
                         <div style="position:relative;">
                             <div id="${avatarWrapperId}" class="firebot-shoutout-avatar-wrapper firebot-shoutout-padding">
