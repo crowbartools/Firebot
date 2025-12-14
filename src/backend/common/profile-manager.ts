@@ -109,7 +109,8 @@ class ProfileManager {
             globalSettingsDb.push("/profiles/loggedInProfile", profileId);
             logger.info(`New profile created: ${profileId}.${restart ? " Restarting." : ""}`);
         } catch (error) {
-            logger.error(`Error saving ${profileId} profile to global settings. Is the file locked or corrupted?`, error);
+            const errorMessage = (error as Error).name === "DatabaseError" ? error?.inner?.message ?? error.stack : error;
+            logger.error(`Error saving ${profileId} profile to global settings. Is the file locked or corrupted?`, errorMessage);
             dialog.showErrorBox("Error Loading Profile", `An error occurred while trying to load your ${profileId} profile. Please try starting Firebot again. If this issue continues, please reach out on our Discord for support.`);
             app.quit();
             return;
