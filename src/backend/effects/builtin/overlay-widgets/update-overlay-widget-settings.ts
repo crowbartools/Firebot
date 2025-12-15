@@ -178,7 +178,10 @@ const model: EffectType<{
         $scope.typeHasSettings = false;
 
         function loadSelectedConfig(id: string) {
-            $scope.selectedConfig = overlayWidgetsService.getOverlayWidgetConfig(id);
+            const foundConfig = overlayWidgetsService.getOverlayWidgetConfig(id);
+            // @ts-ignore
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            $scope.selectedConfig = foundConfig ? angular.copy(foundConfig) : null;
             if ($scope.selectedConfig == null) {
                 $scope.selectedType = null;
                 $scope.settingsSchema = [];
