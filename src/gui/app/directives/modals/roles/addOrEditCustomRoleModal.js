@@ -64,7 +64,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button ng-if="!$ctrl.isNewRole" type="button" class="btn btn-danger pull-left" ng-click="$ctrl.delete()" uib-tooltip="Delete Role"><i class="fal fa-trash-alt"></i></button>
+                <button ng-if="!$ctrl.isNewRole" type="button" class="btn btn-danger pull-left" ng-click="$ctrl.showRoleDeleteModal()" uib-tooltip="Delete Role"><i class="fal fa-trash-alt"></i></button>
                 <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
                 <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Save</button>
             </div>
@@ -138,17 +138,27 @@
                 }
             };
 
-            $ctrl.delete = function() {
+            $ctrl.showRoleDeleteModal = function(role) {
                 if ($ctrl.isNewRole) {
                     return;
                 }
 
-                $ctrl.close({
-                    $value: {
-                        role: $ctrl.role,
-                        action: "delete"
-                    }
-                });
+                utilityService
+                    .showConfirmationModal({
+                        title: "Delete Role",
+                        question: "Are you sure you want to delete this role?",
+                        confirmLabel: "Delete"
+                    })
+                    .then((confirmed) => {
+                        if (confirmed) {
+                            $ctrl.close({
+                                $value: {
+                                    role: $ctrl.role,
+                                    action: "delete"
+                                }
+                            });
+                        }
+                    });
             };
 
             $ctrl.save = function() {
