@@ -34,7 +34,7 @@ import frontendCommunicator from "../../../common/frontend-communicator";
 import logger from "../../../logwrapper";
 
 class TwitchApi {
-    private _streamerClient: ApiClient;
+    private _streamerClient: UserContextApiClient;
     private _botClient: UserContextApiClient;
 
     constructor() {
@@ -134,7 +134,10 @@ class TwitchApi {
         }
 
         if (AccountAccess.getAccounts().streamer.loggedIn) {
-            this._streamerClient = new ApiClient({ authProvider: streamerProvider });
+            this._streamerClient = new UserContextApiClient(
+                { authProvider: streamerProvider },
+                AccountAccess.getAccounts().streamer.userId
+            );
         }
 
         if (AccountAccess.getAccounts().bot.loggedIn) {
