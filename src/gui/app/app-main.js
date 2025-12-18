@@ -261,7 +261,7 @@
     });
 
     app.controller("MainController", function($scope, $rootScope, $timeout, connectionService, utilityService,
-        settingsService, backupService, sidebarManager, logger, backendCommunicator, fontManager, ngToast, watcherCountService) {
+        settingsService, backupService, sidebarManager, logger, backendCommunicator, fontManager, ngToast, modalFactory) {
         $rootScope.showSpinner = true;
 
         $scope.fontAwesome5KitUrl = `https://kit.fontawesome.com/${secrets.fontAwesome5KitId}.js`;
@@ -516,6 +516,11 @@
             keyboard: false,
             backdrop: "static"
         });*/
+
+        if (settingsService.getSetting("BackupLocationReset") === true) {
+            modalFactory.showInfoModal("Your previous backup location could not be found. Backup location has been reset to default. You can change it in Settings > Backups.");
+            settingsService.deleteSetting("BackupLocationReset");
+        }
     });
 
     // This adds a filter that we can use for ng-repeat, useful when we want to paginate something

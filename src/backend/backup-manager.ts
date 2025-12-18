@@ -182,6 +182,13 @@ class BackupManager {
             manualActivation ? "_manual" : ""
         }.${fileExtension}`;
 
+        if (!fs.existsSync(this._backupFolderPath)) {
+            logger.warn(`Backup path ${this._backupFolderPath} does not exist. Resetting to default.`);
+            SettingsManager.deleteSetting("BackupLocation");
+            this.updateBackupFolderPath();
+            SettingsManager.saveSetting("BackupLocationReset", true);
+        }
+
         const output = fs.createWriteStream(path.join(this._backupFolderPath, filename));
         const archive = archiver(fileExtension, {
             zlib: { level: 9 }

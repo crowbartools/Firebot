@@ -67,6 +67,8 @@ class CustomVariableManager extends TypedEmitter<{
             value,
             ttl: this._cache.getTtl(key)
         });
+
+        this.persistVariablesToFile();
     }
 
     private onCustomVariableExpire(key: string, value: unknown): void {
@@ -80,6 +82,8 @@ class CustomVariableManager extends TypedEmitter<{
             key,
             value
         });
+
+        this.persistVariablesToFile();
     }
 
     private onCustomVariableDelete(key: string, value: unknown): void {
@@ -89,6 +93,8 @@ class CustomVariableManager extends TypedEmitter<{
         });
 
         frontendCommunicator.sendToVariableInspector("custom-variables:deleted", key);
+
+        this.persistVariablesToFile();
     };
 
     private getVariableCacheDb(): JsonDB {
@@ -112,6 +118,7 @@ class CustomVariableManager extends TypedEmitter<{
         const db = this.getVariableCacheDb();
         const persistAllVars = SettingsManager.getSetting("PersistCustomVariables");
         if (persistAllVars) {
+            logger.debug("Persisting all custom variables to file");
             db.push("/", this._cache.data);
         } else {
             const dataToPersist = Object.entries(this._cache.data as FirebotCacheData).reduce((acc, [key, { t, v, meta }]) => {
@@ -120,6 +127,7 @@ class CustomVariableManager extends TypedEmitter<{
                 }
                 return acc;
             }, {} as FirebotCacheData);
+            logger.debug("Persisting specified custom variables to file");
             db.push("/", dataToPersist);
         }
     }

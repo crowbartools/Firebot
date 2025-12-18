@@ -41,6 +41,13 @@ const effect: EffectType<{
                 style="margin: 0px 15px 0px 0px"
             />
         </eos-container>
+
+        <eos-container header="Volume" pad-top="true">
+            <div class="muted">
+                <p style="margin-bottom: 5px;">Text-To-Speech volume can only be adjusted globally.</p>
+                <p>Go to <span class="font-bold">Settings -> TTS</span> to change the volume.</p>
+            </div>
+        </eos-container>
     `,
     optionsController: ($scope, ttsService) => {
         if ($scope.effect.voiceId == null) {
