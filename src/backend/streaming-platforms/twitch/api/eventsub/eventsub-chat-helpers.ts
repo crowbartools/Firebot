@@ -597,7 +597,7 @@ class TwitchEventSubChatHelpers {
         chatMessage.parts = messageParts;
 
         chatMessage.isFounder = chatMessage.badges.some(b => b.title === "founder");
-        chatMessage.isMod = chatMessage.badges.some(b => b.title === "moderator");
+        chatMessage.isMod = chatMessage.badges.some(b => b.title === "moderator" || b.title === "lead_moderator");
         chatMessage.isVip = chatMessage.badges.some(b => b.title === "vip");
         chatMessage.isSubscriber = chatMessage.isFounder ||
             chatMessage.badges.some(b => b.title === "subscriber");

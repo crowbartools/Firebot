@@ -33,6 +33,7 @@ type ChatUser = {
     isMod?: boolean;
     isVip?: boolean;
     online?: boolean;
+    badges?: Map<string, string>;
 };
 
 type Events = {
@@ -238,7 +239,7 @@ class ActiveUserHandler extends TypedEmitter<Events> {
             twitchRoles: [
                 ...(chatUser.isBroadcaster ? ['broadcaster'] : []),
                 ...(chatUser.isFounder || chatUser.isSubscriber ? ['sub'] : []),
-                ...(chatUser.isMod ? ['mod'] : []),
+                ...(chatUser.isMod || chatUser.badges?.has("lead_moderator") ? ['mod'] : []),
                 ...(chatUser.isVip ? ['vip'] : [])
             ],
             profilePicUrl: (await chatHelpers.getUserProfilePicUrl(chatUser.userId)),

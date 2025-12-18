@@ -569,7 +569,7 @@ class FirebotChatHelpers {
         }
 
         firebotChatMessage.isFounder = msg.userInfo.isFounder;
-        firebotChatMessage.isMod = msg.userInfo.isMod;
+        firebotChatMessage.isMod = msg.userInfo.isMod || msg.userInfo.badges.has("lead_moderator");
         firebotChatMessage.isSubscriber = msg.userInfo.isSubscriber;
         firebotChatMessage.isVip = msg.userInfo.isVip;
 
