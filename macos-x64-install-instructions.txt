@@ -2,7 +2,7 @@ Since Firebot is not notarized by Apple, macOS Gatekeeper will block it on first
 
 1. Drag Firebot into the Applications folder
 2. Run Firebot
-3. When the "Firebot Not Opened" alert appears, click **Done** (do NOT click "Move to Trash")
+3. When the "Firebot Not Opened" alert appears, click "Done" (do NOT click "Move to Trash")
 4. Open System Settings
 5. Navigate to Privacy & Security
 6. Scroll down and click "Open Anyway" next to "Firebot was blocked"
