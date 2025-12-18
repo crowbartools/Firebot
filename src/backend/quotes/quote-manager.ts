@@ -280,7 +280,7 @@ class QuoteManager {
     async getRandomQuoteContainingText(text: string): Promise<Quote> {
         try {
             const textPattern = new RegExp(`\\b${this.regExpEscape(text)}\\b`, 'i');
-            const quotes = await this.db.findAsync({ originator: { $regex: textPattern } });
+            const quotes = await this.db.findAsync({ text: { $regex: textPattern } });
 
             if (!quotes.length) {
                 return;
