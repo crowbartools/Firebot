@@ -141,7 +141,7 @@ type Controller = {
                 const items: PreviewItem[] = [];
 
                 if ($ctrl.validQueueSelected()) {
-                    if ($ctrl.effectsData.queuePriority) {
+                    if ($ctrl.effectsData.queuePriority && $ctrl.effectsData.queuePriority === "high") {
                         items.push({
                             icon: "fa-arrow-up",
                             label: "Prioritized",
