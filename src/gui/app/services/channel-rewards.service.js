@@ -15,8 +15,16 @@
 
             service.searchQuery = "";
 
+            /**
+             * Returns the count of rewards that actually exist on Twitch
+             * (excludes locally-disabled rewards that have been deleted from Twitch).
+             */
+            service.getActiveRewardCount = () => {
+                return service.channelRewards.filter(r => !r.deletedOnTwitch).length;
+            };
+
             function updateChannelReward(channelReward) {
-                const index = service.channelRewards.findIndex(r => r.id === channelReward.id);
+                const index = service.channelRewards.findIndex(r => r.firebotId === channelReward.firebotId);
                 if (index > -1) {
                     service.channelRewards[index] = channelReward;
                 } else {
@@ -49,9 +57,9 @@
                 });
             };
 
-            service.deleteChannelReward = (channelRewardId) => {
-                service.channelRewards = service.channelRewards.filter(cr => cr.id !== channelRewardId);
-                backendCommunicator.fireEvent("delete-channel-reward", channelRewardId);
+            service.deleteChannelReward = (firebotId) => {
+                service.channelRewards = service.channelRewards.filter(cr => cr.firebotId !== firebotId);
+                backendCommunicator.fireEvent("delete-channel-reward", firebotId);
             };
 
             service.showAddOrEditRewardModal = (reward) => {
@@ -73,19 +81,22 @@
                 return service.channelRewards.some(r => r.twitchData.title === name);
             };
 
-            service.duplicateChannelReward = (rewardId) => {
-                if (service.channelRewards.length >= 50) {
+            service.duplicateChannelReward = (firebotId) => {
+                if (service.getActiveRewardCount() >= 50) {
                     return;
                 }
 
-                const reward = service.channelRewards.find(r => r.id === rewardId);
+                const reward = service.channelRewards.find(r => r.firebotId === firebotId);
                 if (reward == null) {
                     return;
                 }
                 const copiedReward = objectCopyHelper.copyObject("channel_reward", reward);
                 copiedReward.id = null;
+                copiedReward.firebotId = null;
                 copiedReward.twitchData.id = null;
                 copiedReward.manageable = true;
+                copiedReward.deletedOnTwitch = false;
+                copiedReward.previousTwitchIds = [];
 
                 while (service.channelRewardNameExists(copiedReward.twitchData.title)) {
                     copiedReward.twitchData.title += "copy";
@@ -169,9 +180,9 @@
                 updateChannelReward(channelReward);
             });
 
-            backendCommunicator.on("channel-reward-deleted", (channelRewardId) => {
-                service.channelRewards = service.channelRewards.filter(cr => cr.id !== channelRewardId);
-                delete service.redemptions[channelRewardId];
+            backendCommunicator.on("channel-reward-deleted", (firebotId) => {
+                service.channelRewards = service.channelRewards.filter(cr => cr.firebotId !== firebotId);
+                delete service.redemptions[firebotId];
             });
 
             backendCommunicator.on("channel-reward-redemptions-updated", (redemptions) => {

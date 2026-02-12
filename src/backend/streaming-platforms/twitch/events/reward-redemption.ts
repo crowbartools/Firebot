@@ -33,6 +33,7 @@ export function handleRewardRedemption(
     });
 
     setTimeout(() => {
+        const reward = rewardManager.getChannelRewardByTwitchId(rewardId);
         const redemptionMeta = {
             username,
             userId,
@@ -41,6 +42,7 @@ export function handleRewardRedemption(
             args: (messageText ?? "").split(" "),
             redemptionId,
             rewardId,
+            firebotRewardId: reward?.firebotId ?? rewardId,
             rewardImage: rewardImageUrl,
             rewardName: rewardTitle,
             rewardDescription: rewardPrompt,
@@ -65,6 +67,7 @@ export function handleRewardUpdated(
     rewardCost: number,
     rewardImageUrl: string
 ): void {
+    const reward = rewardManager.getChannelRewardByTwitchId(rewardId);
     const redemptionMeta = {
         username,
         userId,
@@ -73,6 +76,7 @@ export function handleRewardUpdated(
         args: (messageText ?? "").split(" "),
         redemptionId,
         rewardId,
+        firebotRewardId: reward?.firebotId ?? rewardId,
         rewardImage: rewardImageUrl,
         rewardName: rewardTitle,
         rewardDescription: rewardPrompt,

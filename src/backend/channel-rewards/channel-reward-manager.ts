@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import { JsonDB } from "node-json-db";
 
 import { RewardRedemptionMetadata, SavedChannelReward } from "../../types/channel-rewards";
@@ -44,7 +45,8 @@ class ChannelRewardManager {
         });
 
         frontendCommunicator.on("manually-trigger-reward", (channelRewardId: string) => {
-            const savedReward = this.channelRewards[channelRewardId];
+            // channelRewardId may be a firebotId or Twitch ID, use cascading lookup
+            const savedReward = this.getChannelReward(channelRewardId);
 
             if (savedReward == null) {
                 return;
@@ -55,6 +57,7 @@ class ChannelRewardManager {
                 messageText: "Testing reward",
                 redemptionId: "test-redemption-id",
                 rewardId: savedReward.id,
+                firebotRewardId: savedReward.firebotId,
                 rewardCost: savedReward.twitchData.cost,
                 rewardImage: savedReward.twitchData.image ? savedReward.twitchData.image.url4x : savedReward.twitchData.defaultImage.url4x,
                 rewardName: savedReward.twitchData.title,
@@ -81,6 +84,16 @@ class ChannelRewardManager {
         return ProfileManager.getJsonDbInProfile("channel-rewards");
     }
 
+    /**
+     * Ensures a reward has a stable firebotId. Generates one if missing (migration for pre-firebotId data).
+     */
+    private ensureFirebotId(reward: SavedChannelReward): SavedChannelReward {
+        if (!reward.firebotId) {
+            reward.firebotId = crypto.randomUUID();
+        }
+        return reward;
+    }
+
     async loadChannelRewards() {
         logger.debug(`Attempting to load channel rewards...`);
 
@@ -89,11 +102,24 @@ class ChannelRewardManager {
             const channelRewardsData = (this.getChannelRewardsDb().getData("/") || {}) as Record<string, SavedChannelReward>;
             const rewards = Object.values(channelRewardsData);
 
+            // Migration: ensure all existing rewards have a firebotId
+            for (const reward of rewards) {
+                this.ensureFirebotId(reward);
+            }
+
+            // Separate locally-disabled rewards (deleted from Twitch) from active ones
+            const disabledRewards = rewards.filter(r => r.deletedOnTwitch === true);
+            const activeRewards = rewards.filter(r => r.deletedOnTwitch !== true);
+
             // Get all manageable rewards from Twitch
             const twitchManageableRewards: CustomReward[] = await TwitchApi.channelRewards.getManageableCustomChannelRewards();
             if (twitchManageableRewards == null) {
                 logger.error("Manageable Twitch channel rewards returned null!");
-                this.channelRewards = channelRewardsData;
+                // Re-key by firebotId for in-memory storage
+                this.channelRewards = rewards.reduce((acc, r) => {
+                    acc[r.firebotId] = r;
+                    return acc;
+                }, {} as Record<string, SavedChannelReward>);
 
                 this._eligible = false;
                 frontendCommunicator.send("channel-rewards-eligibility-changed", false);
@@ -101,11 +127,12 @@ class ChannelRewardManager {
                 return;
             }
 
-            // Determine new manageable rewards
-            const newManageableChannelRewards = twitchManageableRewards
-                .filter(nr => rewards.every(r => r.id !== nr.id))
+            // Determine new manageable rewards (not already tracked locally)
+            const newManageableChannelRewards: SavedChannelReward[] = twitchManageableRewards
+                .filter(nr => activeRewards.every(r => r.id !== nr.id))
                 .map((nr) => {
                     return {
+                        firebotId: crypto.randomUUID(),
                         id: nr.id,
                         manageable: true,
                         twitchData: nr
@@ -116,7 +143,10 @@ class ChannelRewardManager {
             const twitchUnmanageableRewards = await TwitchApi.channelRewards.getUnmanageableCustomChannelRewards();
             if (twitchUnmanageableRewards == null) {
                 logger.error("Unmanageable Twitch channel rewards returned null!");
-                this.channelRewards = channelRewardsData;
+                this.channelRewards = rewards.reduce((acc, r) => {
+                    acc[r.firebotId] = r;
+                    return acc;
+                }, {} as Record<string, SavedChannelReward>);
 
                 this._eligible = false;
                 frontendCommunicator.send("channel-rewards-eligibility-changed", false);
@@ -126,9 +156,10 @@ class ChannelRewardManager {
 
             // Determine new unmanageable rewards
             const newTwitchUnmanageableRewards: SavedChannelReward[] = twitchUnmanageableRewards
-                .filter(ur => rewards.every(r => r.id !== ur.id))
+                .filter(ur => activeRewards.every(r => r.id !== ur.id))
                 .map((ur) => {
                     return {
+                        firebotId: crypto.randomUUID(),
                         id: ur.id,
                         manageable: false,
                         twitchData: ur
@@ -136,7 +167,8 @@ class ChannelRewardManager {
                 });
 
             // Sync current reward Twitch data/manageability status, remove deleted rewards, then add new rewards
-            const syncedRewards: Record<string, SavedChannelReward> = rewards.map((r) => {
+            // Only sync active (non-disabled) rewards against Twitch
+            const syncedRewards: Record<string, SavedChannelReward> = activeRewards.map((r) => {
                 const rewardTwitchData = twitchManageableRewards.find(tc => tc.id === r.id);
 
                 // If we have a match, this is a manageable reward
@@ -154,10 +186,11 @@ class ChannelRewardManager {
                 .filter(r => r.twitchData != null)
                 .concat(newManageableChannelRewards)
                 .concat(newTwitchUnmanageableRewards)
+                .concat(disabledRewards) // Preserve locally-disabled rewards
                 .reduce((acc, current) => {
-                    acc[current.id] = current;
+                    acc[current.firebotId] = current;
                     return acc;
-                }, {});
+                }, {} as Record<string, SavedChannelReward>);
 
             this.getChannelRewardsDb().push("/", syncedRewards);
 
@@ -178,7 +211,11 @@ class ChannelRewardManager {
             return null;
         }
 
+        // Ensure the reward has a stable firebotId
+        this.ensureFirebotId(channelReward);
+
         if (channelReward.id == null) {
+            // New reward: create on Twitch
             const twitchData = await TwitchApi.channelRewards.createCustomChannelReward(channelReward.twitchData);
             if (twitchData == null) {
                 return null;
@@ -186,17 +223,56 @@ class ChannelRewardManager {
             channelReward.twitchData = twitchData;
             channelReward.id = twitchData.id;
         } else if (channelReward.manageable) {
-            await TwitchApi.channelRewards.updateCustomChannelReward(channelReward.twitchData);
+            if (!channelReward.twitchData.isEnabled && !channelReward.deletedOnTwitch) {
+                // Disabling: delete from Twitch, keep locally
+                await TwitchApi.channelRewards.deleteCustomChannelReward(channelReward.id);
+                channelReward.deletedOnTwitch = true;
+                // Store old Twitch ID for backward-compat lookups
+                if (channelReward.previousTwitchIds == null) {
+                    channelReward.previousTwitchIds = [];
+                }
+                if (!channelReward.previousTwitchIds.includes(channelReward.id)) {
+                    channelReward.previousTwitchIds.push(channelReward.id);
+                }
+            } else if (channelReward.twitchData.isEnabled && channelReward.deletedOnTwitch) {
+                // Re-enabling: check if there's room before recreating on Twitch
+                const activeCount = Object.values(this.channelRewards)
+                    .filter(r => !r.deletedOnTwitch).length;
+                if (activeCount >= 50) {
+                    logger.warn("Cannot re-enable channel reward: Twitch limit of 50 rewards reached.");
+                    channelReward.twitchData.isEnabled = false;
+                    return null;
+                }
+                channelReward.twitchData.isEnabled = true;
+                const twitchData = await TwitchApi.channelRewards.createCustomChannelReward(channelReward.twitchData);
+                if (twitchData == null) {
+                    return null;
+                }
+                // Store old Twitch ID for backward-compat lookups
+                if (channelReward.previousTwitchIds == null) {
+                    channelReward.previousTwitchIds = [];
+                }
+                if (channelReward.id && !channelReward.previousTwitchIds.includes(channelReward.id)) {
+                    channelReward.previousTwitchIds.push(channelReward.id);
+                }
+                channelReward.twitchData = twitchData;
+                channelReward.id = twitchData.id;
+                channelReward.deletedOnTwitch = false;
+            } else if (!channelReward.deletedOnTwitch) {
+                // Normal update: reward exists on Twitch
+                await TwitchApi.channelRewards.updateCustomChannelReward(channelReward.twitchData);
+            }
+            // If deletedOnTwitch && !isEnabled: just save locally, no Twitch API call
         }
 
-        this.channelRewards[channelReward.id] = channelReward;
+        this.channelRewards[channelReward.firebotId] = channelReward;
 
         try {
             const channelRewardsDb = this.getChannelRewardsDb();
 
-            channelRewardsDb.push(`/${channelReward.id}`, channelReward);
+            channelRewardsDb.push(`/${channelReward.firebotId}`, channelReward);
 
-            logger.debug(`Saved channel reward ${channelReward.id} to file.`);
+            logger.debug(`Saved channel reward ${channelReward.firebotId} to file.`);
 
             if (emitUpdateEvent) {
                 frontendCommunicator.send("channel-reward-updated", channelReward);
@@ -216,23 +292,27 @@ class ChannelRewardManager {
 
         let channelReward: SavedChannelReward;
 
-        if (!this.channelRewards[twitchData.id]) {
+        // Look up by Twitch ID since this data comes from Twitch events
+        const existing = this.getChannelRewardByTwitchId(twitchData.id);
+
+        if (!existing) {
             channelReward = {
+                firebotId: crypto.randomUUID(),
                 id: twitchData.id,
                 twitchData,
                 manageable: false
             };
         } else {
-            channelReward = this.channelRewards[twitchData.id];
+            channelReward = existing;
             channelReward.twitchData = twitchData;
         }
 
-        this.channelRewards[twitchData.id] = channelReward;
+        this.channelRewards[channelReward.firebotId] = channelReward;
 
         try {
             const channelRewardsDb = this.getChannelRewardsDb();
 
-            channelRewardsDb.push(`/${channelReward.id}`, channelReward);
+            channelRewardsDb.push(`/${channelReward.firebotId}`, channelReward);
 
             frontendCommunicator.send("channel-reward-updated", channelReward);
 
@@ -246,14 +326,18 @@ class ChannelRewardManager {
     async saveAllChannelRewards(allChannelRewards: SavedChannelReward[], updateTwitch = false): Promise<void> {
         if (updateTwitch) {
             for (const channelReward of allChannelRewards) {
+                // Skip Twitch API updates for rewards deleted from Twitch
+                if (channelReward.deletedOnTwitch) {
+                    continue;
+                }
                 await TwitchApi.channelRewards.updateCustomChannelReward(channelReward.twitchData);
             }
         }
 
         const rewardsObject: Record<string, SavedChannelReward> = allChannelRewards.reduce((acc, current) => {
-            acc[current.id] = current;
+            acc[current.firebotId] = current;
             return acc;
-        }, {});
+        }, {} as Record<string, SavedChannelReward>);
 
         this.channelRewards = rewardsObject;
 
@@ -270,20 +354,27 @@ class ChannelRewardManager {
     }
 
     async deleteChannelReward(channelRewardId: string, propagateToTwitch = true, notifyFrontend = false) {
-        if (channelRewardId == null || this.channelRewards[channelRewardId] == null) {
+        // channelRewardId is now a firebotId
+        const reward = this.channelRewards[channelRewardId];
+        if (channelRewardId == null || reward == null) {
             return;
         }
 
+        const twitchId = reward.id;
+
         delete this.channelRewards[channelRewardId];
-        delete this._channelRewardRedemptions[channelRewardId];
+        // Redemptions are keyed by Twitch ID
+        if (twitchId) {
+            delete this._channelRewardRedemptions[twitchId];
+        }
 
         try {
             const channelRewardsDb = this.getChannelRewardsDb();
 
             channelRewardsDb.delete(`/${channelRewardId}`);
 
-            if (propagateToTwitch) {
-                await TwitchApi.channelRewards.deleteCustomChannelReward(channelRewardId);
+            if (propagateToTwitch && twitchId && !reward.deletedOnTwitch) {
+                await TwitchApi.channelRewards.deleteCustomChannelReward(twitchId);
             }
 
             if (notifyFrontend) {
@@ -297,11 +388,42 @@ class ChannelRewardManager {
         }
     }
 
+    /**
+     * Look up a channel reward by any ID (firebotId, current Twitch ID, or previous Twitch IDs).
+     * Cascading lookup for backward compatibility.
+     */
     getChannelReward(channelRewardId: string): SavedChannelReward {
         if (channelRewardId == null) {
             return null;
         }
-        return this.channelRewards[channelRewardId];
+
+        // 1. Try direct lookup by firebotId (primary key)
+        if (this.channelRewards[channelRewardId]) {
+            return this.channelRewards[channelRewardId];
+        }
+
+        // 2. Try lookup by current Twitch ID
+        const byTwitchId = Object.values(this.channelRewards).find(r => r.id === channelRewardId);
+        if (byTwitchId) {
+            return byTwitchId;
+        }
+
+        // 3. Try lookup by previous Twitch IDs (backward compat after disable/enable cycles)
+        const byPreviousTwitchId = Object.values(this.channelRewards).find(
+            r => r.previousTwitchIds?.includes(channelRewardId)
+        );
+        return byPreviousTwitchId ?? null;
+    }
+
+    /**
+     * Look up a channel reward by its current Twitch ID.
+     * Used by EventSub handlers that receive Twitch IDs in events.
+     */
+    getChannelRewardByTwitchId(twitchId: string): SavedChannelReward {
+        if (twitchId == null) {
+            return null;
+        }
+        return Object.values(this.channelRewards).find(r => r.id === twitchId) ?? null;
     }
 
     getChannelRewardIdByName(channelRewardName: string): string {
@@ -312,7 +434,7 @@ class ChannelRewardManager {
             .filter(r => r.twitchData != null)
             .find(r => r.twitchData.title === channelRewardName);
 
-        return channelReward ? channelReward.id : null;
+        return channelReward ? channelReward.firebotId : null;
     }
 
     private async triggerRewardEffects(metadata: RewardRedemptionMetadata, effectList?: EffectList, manual = false): Promise<void> {
@@ -336,7 +458,7 @@ class ChannelRewardManager {
     }
 
     async triggerChannelReward(rewardId: string, metadata: RewardRedemptionMetadata, manual = false): Promise<boolean | void> {
-        const savedReward = this.channelRewards[rewardId];
+        const savedReward = this.getChannelReward(rewardId);
         if (metadata.username && metadata.userId && metadata.userDisplayName) {
             /*
             If all user data is present mark user as active
@@ -414,7 +536,7 @@ class ChannelRewardManager {
     }
 
     async triggerChannelRewardFulfilled(rewardId: string, metadata: RewardRedemptionMetadata, manual = false): Promise<void> {
-        const savedReward = this.channelRewards[rewardId];
+        const savedReward = this.getChannelReward(rewardId);
         if (savedReward == null) {
             return;
         }
@@ -423,7 +545,7 @@ class ChannelRewardManager {
     }
 
     async triggerChannelRewardCanceled(rewardId: string, metadata: RewardRedemptionMetadata, manual = false): Promise<void> {
-        const savedReward = this.channelRewards[rewardId];
+        const savedReward = this.getChannelReward(rewardId);
         if (savedReward == null) {
             return;
         }

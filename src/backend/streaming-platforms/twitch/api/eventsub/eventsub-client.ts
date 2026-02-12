@@ -211,13 +211,18 @@ class TwitchEventSubClient {
 
         // Channel custom reward remove
         const customRewardRemoveSubscription = this._eventSubListener.onChannelRewardRemove(streamer.userId, async (event) => {
-            const firebotReward: SavedChannelReward | null = channelRewardManager.getChannelReward(event.id);
+            const firebotReward: SavedChannelReward | null = channelRewardManager.getChannelRewardByTwitchId(event.id);
 
             if (!firebotReward) {
                 return;
             }
 
-            await channelRewardManager.deleteChannelReward(event.id, false, true);
+            // If the reward was intentionally disabled (deleted from Twitch by Firebot), don't delete locally
+            if (firebotReward.deletedOnTwitch) {
+                return;
+            }
+
+            await channelRewardManager.deleteChannelReward(firebotReward.firebotId, false, true);
         });
         this._subscriptions.push(customRewardRemoveSubscription);
 

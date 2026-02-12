@@ -13,7 +13,7 @@
       headers="rewardHeaders"
       sort-tag-context="channel rewards"
       orderable="true"
-      add-new-button-disabled="channelRewardsService.channelRewards.length >= 50"
+      add-new-button-disabled="channelRewardsService.getActiveRewardCount() >= 50"
       add-new-button-text="New Channel Reward"
       on-add-new-clicked="channelRewardsService.showAddOrEditRewardModal()"
       context-menu-options="rewardMenuOptions(item)"
@@ -36,7 +36,7 @@
               <tooltip text="'Twitch limits channels to 50 total channel rewards.'" />
             </span>
             <span class="my-0 mx-4" style="font-size: 20px;">
-              {{channelRewardsService.channelRewards.length}} / 50
+              {{channelRewardsService.getActiveRewardCount()}} / 50
             </span>
           </div>
           <div style="width: 100%">
@@ -48,7 +48,7 @@
                 overflow: hidden;
               ">
               <div style="height: 100%; background: #2aa2c0"
-                ng-style="{ width: ((channelRewardsService.channelRewards.length / 50) * 100) + '%' }"></div>
+                ng-style="{ width: ((channelRewardsService.getActiveRewardCount() / 50) * 100) + '%' }"></div>
             </div>
           </div>
         </div>

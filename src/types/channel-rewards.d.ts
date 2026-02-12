@@ -3,9 +3,12 @@ import type { EffectList } from "./effects";
 import type { RestrictionData } from "./restrictions";
 
 export type SavedChannelReward = {
+    firebotId: string;
     id: string;
     twitchData: CustomReward;
     manageable: boolean;
+    deletedOnTwitch?: boolean;
+    previousTwitchIds?: string[];
     effects?: EffectList;
     effectsFulfilled?: EffectList;
     effectsCanceled?: EffectList;
@@ -20,6 +23,7 @@ export type RewardRedemptionMetadata = {
     messageText: string;
     redemptionId: string;
     rewardId: string;
+    firebotRewardId?: string;
     rewardImage: string;
     rewardName: string;
     rewardCost: number;

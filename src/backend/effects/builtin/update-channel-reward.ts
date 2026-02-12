@@ -150,7 +150,7 @@ const effect: EffectType<EffectMeta> = {
 
         $scope.manageableRewards = channelRewardsService
             .channelRewards.filter(r => r.manageable)
-            .map(r => ({ id: r.twitchData.id, name: r.twitchData.title }));
+            .map(r => ({ id: r.firebotId, name: r.twitchData.title }));
 
         $scope.sortTags = sortTagsService.getSortTags("channel rewards");
 
@@ -315,7 +315,9 @@ const effect: EffectType<EffectMeta> = {
 
         switch (selectMode) {
             case "dropdown":
-                rewardName = channelRewardsService.channelRewards.find(r => r.twitchData.id === effect.channelRewardId)?.twitchData.title ?? "Unknown Reward";
+                rewardName = channelRewardsService.channelRewards.find(
+                    r => r.firebotId === effect.channelRewardId || r.twitchData.id === effect.channelRewardId
+                )?.twitchData.title ?? "Unknown Reward";
                 break;
             case "associated":
                 rewardName = "Associated Reward";
@@ -389,7 +391,8 @@ const effect: EffectType<EffectMeta> = {
                     rewardId = effect.channelRewardId;
                     break;
                 case "associated":
-                    rewardId = (trigger.metadata.eventData?.rewardId ?? trigger.metadata.rewardId) as string;
+                    rewardId = (trigger.metadata.eventData?.firebotRewardId ?? trigger.metadata.firebotRewardId
+                        ?? trigger.metadata.eventData?.rewardId ?? trigger.metadata.rewardId) as string;
                     break;
                 case "custom":
                     rewardId = isValidUUID(effect.customId)

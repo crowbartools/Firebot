@@ -6,7 +6,8 @@
             $scope,
             channelRewardsService,
             utilityService,
-            accountAccess
+            accountAccess,
+            ngToast
         ) {
             $scope.channelRewardsService = channelRewardsService;
 
@@ -56,7 +57,14 @@
                     cellController: () => { }
                 },
                 {
-                    cellTemplate: `<span class="paused-dot" style="margin-right: 5px" ng-class="{'paused': data.twitchData.isPaused, 'unpaused': !data.twitchData.isPaused}"></span>{{data.twitchData.isPaused ? 'Paused' : 'Unpaused' }}`,
+                    cellTemplate: `
+                        <span ng-if="data.deletedOnTwitch">
+                            <i class="fas fa-cloud-slash muted" style="margin-right: 5px"></i>Disabled (Not on Twitch)
+                        </span>
+                        <span ng-if="!data.deletedOnTwitch">
+                            <span class="paused-dot" style="margin-right: 5px" ng-class="{'paused': data.twitchData.isPaused, 'unpaused': !data.twitchData.isPaused}"></span>{{data.twitchData.isPaused ? 'Paused' : 'Unpaused' }}
+                        </span>
+                    `,
                     cellController: () => { }
                 }
             ];
@@ -71,8 +79,12 @@
                         }
                     },
                     {
-                        html: `<a href uib-tooltip="This reward was created either outside of Firebot or in an older version. Its enabled status cannot be edited." tooltip-enable="${!item.manageable}"><i class="far fa-toggle-off" style="margin-right: 10px;"></i> ${item.twitchData.isEnabled ? "Disable Channel Reward" : "Enable Channel Reward"}</a>`,
+                        html: `<a href uib-tooltip="${!item.manageable ? 'This reward was created either outside of Firebot or in an older version. Its enabled status cannot be edited.' : (item.twitchData.isEnabled ? 'Disabling will delete the reward from Twitch to free up a slot. Your configuration is preserved locally.' : 'Enabling will recreate the reward on Twitch.')}" tooltip-enable="${!item.manageable || item.manageable}"><i class="far fa-toggle-off" style="margin-right: 10px;"></i> ${item.deletedOnTwitch ? "Enable Channel Reward" : (item.twitchData.isEnabled ? "Disable Channel Reward" : "Enable Channel Reward")}</a>`,
                         click: function () {
+                            if (item.deletedOnTwitch && channelRewardsService.getActiveRewardCount() >= 50) {
+                                ngToast.create("Cannot re-enable: Twitch's 50 reward limit has been reached.");
+                                return;
+                            }
                             item.twitchData.isEnabled = !item.twitchData.isEnabled;
                             channelRewardsService.saveChannelReward(item);
                         },
@@ -86,14 +98,14 @@
                             channelRewardsService.saveChannelReward(item);
                         },
                         compile: true,
-                        enabled: item.manageable
+                        enabled: item.manageable && !item.deletedOnTwitch
                     },
                     {
                         html: `<a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate</a>`,
                         click: function () {
-                            channelRewardsService.duplicateChannelReward(item.id);
+                            channelRewardsService.duplicateChannelReward(item.firebotId);
                         },
-                        enabled: channelRewardsService.channelRewards.length < 50
+                        enabled: channelRewardsService.getActiveRewardCount() < 50
                     },
                     {
                         html: `<a href style="${item.manageable ? 'color: #fb7373;' : ''}" uib-tooltip="This reward was created either outside of Firebot or in an older version. It cannot be deleted from here." tooltip-enable="${!item.manageable}"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
@@ -107,7 +119,7 @@
                                 })
                                 .then((confirmed) => {
                                     if (confirmed) {
-                                        channelRewardsService.deleteChannelReward(item.id);
+                                        channelRewardsService.deleteChannelReward(item.firebotId);
                                     }
                                 });
 

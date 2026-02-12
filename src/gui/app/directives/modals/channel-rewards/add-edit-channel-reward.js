@@ -313,7 +313,7 @@
 
                     return channelRewardsService.channelRewards.some(r => r
                         .twitchData.title.toLowerCase() === name.toLowerCase()
-                        && r.id !== $ctrl.reward.id);
+                        && r.firebotId !== $ctrl.reward.firebotId);
                 };
 
                 $ctrl.validationErrors = {};
