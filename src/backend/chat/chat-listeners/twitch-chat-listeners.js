@@ -169,6 +169,13 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
     });
 
     streamerChatClient.onResub(async (_channel, _user, subInfo, msg) => {
+        twitchRolesManager.upsertSubscriber({
+            id: subInfo.userId,
+            username: msg.userInfo.userName,
+            displayName: msg.userInfo.displayName,
+            subTier: subInfo.plan
+        });
+
         try {
             if (subInfo.message != null && subInfo.message.length > 0) {
                 const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, subInfo.message);

@@ -804,6 +804,12 @@ class TwitchEventSubClient {
 
                 case "resub":
                 case "sub":
+                    twitchRolesManager.upsertSubscriber({
+                        id: event.chatterId,
+                        username: event.chatterName,
+                        displayName: event.chatterDisplayName,
+                        subTier: event.isPrime ? "Prime" : event.tier
+                    });
                     TwitchEventHandlers.sub.triggerSub(
                         event.chatterName,
                         event.chatterId,
@@ -826,6 +832,12 @@ class TwitchEventSubClient {
                     break;
 
                 case "sub_gift":
+                    twitchRolesManager.upsertSubscriber({
+                        id: event.recipientId,
+                        username: event.recipientName,
+                        displayName: event.recipientDisplayName,
+                        subTier: event.tier
+                    });
                     await TwitchEventHandlers.giftSub.triggerSubGift(
                         event.chatterDisplayName ?? "An Anonymous Gifter",
                         event.chatterName,
@@ -845,6 +857,13 @@ class TwitchEventSubClient {
                         // IRC chat included this in the event payload. EventSub does not.
                         const upgradeTier = (await (await event.getBroadcaster()).getSubscriber(event.chatterId)).tier;
 
+                        twitchRolesManager.upsertSubscriber({
+                            id: event.chatterId,
+                            username: event.chatterName,
+                            displayName: event.chatterDisplayName,
+                            subTier: upgradeTier
+                        });
+
                         TwitchEventHandlers.giftSub.triggerSubGiftUpgrade(
                             event.chatterName,
                             event.chatterId,
@@ -857,6 +876,12 @@ class TwitchEventSubClient {
                     break;
 
                 case "prime_paid_upgrade":
+                    twitchRolesManager.upsertSubscriber({
+                        id: event.chatterId,
+                        username: event.chatterName,
+                        displayName: event.chatterDisplayName,
+                        subTier: event.tier
+                    });
                     TwitchEventHandlers.sub.triggerPrimeUpgrade(
                         event.chatterName,
                         event.chatterId,

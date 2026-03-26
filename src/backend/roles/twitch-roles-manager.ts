@@ -98,9 +98,49 @@ class TwitchRolesManager extends TypedEmitter<Events> {
         return this._subscribers;
     }
 
+    upsertSubscriber(subscriber: Subscriber): void {
+        if (!subscriber?.id) {
+            return;
+        }
+
+        const normalizedSubscriber: Subscriber = {
+            id: subscriber.id,
+            username: subscriber.username,
+            displayName: subscriber.displayName,
+            subTier: this.getRoleForSubTier(subscriber.subTier)
+        };
+
+        const existingSubscriber = this._subscribers.find(s => s.id === subscriber.id);
+
+        if (existingSubscriber == null) {
+            this._subscribers.push(normalizedSubscriber);
+            this.emit("viewer-role-updated", subscriber.id, "sub", "added");
+            if (normalizedSubscriber.subTier) {
+                this.emit("viewer-role-updated", subscriber.id, normalizedSubscriber.subTier, "added");
+            }
+            return;
+        }
+
+        const previousSubTier = existingSubscriber.subTier;
+        existingSubscriber.username = normalizedSubscriber.username;
+        existingSubscriber.displayName = normalizedSubscriber.displayName;
+        existingSubscriber.subTier = normalizedSubscriber.subTier;
+
+        if (previousSubTier !== normalizedSubscriber.subTier) {
+            if (previousSubTier) {
+                this.emit("viewer-role-updated", subscriber.id, previousSubTier, "removed");
+            }
+
+            if (normalizedSubscriber.subTier) {
+                this.emit("viewer-role-updated", subscriber.id, normalizedSubscriber.subTier, "added");
+            }
+        }
+    }
+
     private getRoleForSubTier(tier: string): string {
         let role = "";
         switch (tier) {
+            case "Prime":
             case "1000":
                 role = "tier1";
                 break;
