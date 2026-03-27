@@ -3,6 +3,7 @@ import { TypedEmitter } from "tiny-typed-emitter";
 import { AuthProviderConfig, AuthTokenSet, type FirebotAccountType } from "firebot-types";
 import { BaseClient, DeviceFlowHandle, Issuer } from "openid-client";
 import { RealTimeGateway } from "../real-time/real-time.gateway";
+import { Logger } from "@nestjs/common";
 
 interface AuthProvider {
   config: AuthProviderConfig;
@@ -25,6 +26,7 @@ export class AuthProviderManager extends TypedEmitter<{
     metadata: AuthMetadata
   ) => void;
 }> {
+  private readonly logger = new Logger(AuthProviderManager.name);
   private readonly providers: AuthProvider[] = [];
 
   private currentDeviceFlowHandle: DeviceFlowHandle<BaseClient> | null = null;
@@ -106,15 +108,23 @@ export class AuthProviderManager extends TypedEmitter<{
       this.currentDeviceFlowHandle = null;
     }
 
+    const requestedScope = provider.config.scopes.join(" ");
+
     const handle = await provider.client.deviceAuthorization({
-      scope: provider.config.scopes.join(" "),
-    });
+      scope: requestedScope,
+      scopes: requestedScope,
+    } as never);
 
     this.currentDeviceFlowHandle = handle;
 
     this.currentDeviceFlowHandle
       .poll()
       .then((tokenSet) => {
+        const grantedScope = tokenSet.scope ?? "";
+        this.logger.log(
+          `Auth success for ${provider.config.id}. Granted scopes: ${grantedScope || "(none)"}`
+        );
+
         const firebotTokenSet: AuthTokenSet = {
           accessToken: tokenSet.access_token,
           tokenType: tokenSet.token_type,

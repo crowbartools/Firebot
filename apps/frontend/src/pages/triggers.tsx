@@ -117,6 +117,7 @@ type TriggerEditDraft = {
 
 type ActionEditDraft = {
   actionId: string;
+  parameters: Record<string, unknown>;
 };
 
 type ActionSelectorDraft = {
@@ -271,6 +272,169 @@ function getActionTypeDefaultParameters(actionType?: FirebotActionType): Record<
   }
 
   return params;
+}
+
+type ActionEditorParameter = {
+  categoryId: string;
+  categoryTitle?: string;
+  categorySortOrder: number;
+  parameterId: string;
+  parameterSortOrder: number;
+  parameter: {
+    type: string;
+    title?: string;
+    description?: string;
+    tip?: string;
+    sortOrder?: number;
+    placeholder?: string;
+    useTextArea?: boolean;
+    default?: unknown;
+    options?: Array<{ label: string; value: string | number }>;
+    validation?: {
+      required?: boolean;
+      min?: number;
+      max?: number;
+    };
+  };
+};
+
+function getActionEditorParameters(actionType?: FirebotActionType): ActionEditorParameter[] {
+  if (!actionType?.parameters) {
+    return [];
+  }
+
+  const categories = Object.entries(actionType.parameters as Record<string, unknown>).map(
+    ([categoryId, categoryValue]) => {
+      const category = categoryValue as {
+        title?: string;
+        sortOrder?: number;
+        parameters?: Record<string, unknown>;
+      };
+      return {
+        categoryId,
+        categoryTitle: category.title,
+        categorySortOrder: category.sortOrder ?? Number.MAX_SAFE_INTEGER,
+        parameters: category.parameters ?? {},
+      };
+    }
+  );
+
+  const flattened = categories.flatMap((category) =>
+    Object.entries(category.parameters).map(([parameterId, parameterValue]) => {
+      const parameter = parameterValue as ActionEditorParameter["parameter"];
+      return {
+        categoryId: category.categoryId,
+        categoryTitle: category.categoryTitle,
+        categorySortOrder: category.categorySortOrder,
+        parameterId,
+        parameterSortOrder: parameter.sortOrder ?? Number.MAX_SAFE_INTEGER,
+        parameter,
+      };
+    })
+  );
+
+  return flattened.sort((left, right) => {
+    if (left.categorySortOrder !== right.categorySortOrder) {
+      return left.categorySortOrder - right.categorySortOrder;
+    }
+
+    if (left.parameterSortOrder !== right.parameterSortOrder) {
+      return left.parameterSortOrder - right.parameterSortOrder;
+    }
+
+    if (left.categoryId !== right.categoryId) {
+      return left.categoryId.localeCompare(right.categoryId);
+    }
+
+    return left.parameterId.localeCompare(right.parameterId);
+  });
+}
+
+function getActionEditorParameterValue(
+  parameters: Record<string, unknown>,
+  parameterId: string,
+  parameter: ActionEditorParameter["parameter"]
+): unknown {
+  if (parameters[parameterId] != null) {
+    return parameters[parameterId];
+  }
+
+  if ("default" in parameter) {
+    return parameter.default;
+  }
+
+  if (parameter.type === "boolean") {
+    return false;
+  }
+
+  return "";
+}
+
+function parseActionEditorParameterValue(
+  parameter: ActionEditorParameter["parameter"],
+  rawValue: string | boolean
+): unknown {
+  if (parameter.type === "boolean") {
+    return Boolean(rawValue);
+  }
+
+  if (parameter.type === "number") {
+    const asText = String(rawValue);
+    if (!asText.trim().length) {
+      return "";
+    }
+    const parsed = Number(asText);
+    return Number.isNaN(parsed) ? asText : parsed;
+  }
+
+  if (parameter.type === "enum") {
+    const asText = String(rawValue);
+    const option = parameter.options?.find((candidateOption) => String(candidateOption.value) === asText);
+    return option?.value ?? asText;
+  }
+
+  return String(rawValue);
+}
+
+function getActionEditorParameterError(
+  parameter: ActionEditorParameter["parameter"],
+  value: unknown
+): string | null {
+  const required = parameter.validation?.required === true;
+
+  if (parameter.type === "number") {
+    if ((value == null || value === "") && required) {
+      return "This field is required.";
+    }
+
+    if (value != null && value !== "") {
+      const numericValue = typeof value === "number" ? value : Number(value);
+      if (!Number.isFinite(numericValue)) {
+        return "Enter a valid number.";
+      }
+
+      if (parameter.validation?.min != null && numericValue < parameter.validation.min) {
+        return `Must be at least ${parameter.validation.min}.`;
+      }
+
+      if (parameter.validation?.max != null && numericValue > parameter.validation.max) {
+        return `Must be at most ${parameter.validation.max}.`;
+      }
+    }
+
+    return null;
+  }
+
+  if (parameter.type === "boolean") {
+    return null;
+  }
+
+  const textValue = typeof value === "string" ? value : value == null ? "" : String(value);
+  if (required && !textValue.trim().length) {
+    return "This field is required.";
+  }
+
+  return null;
 }
 
 type TriggerTypeOption = {
@@ -977,6 +1141,48 @@ export function TriggersPage() {
     );
   }, [groups, mainTriggers, triggerEditDraft]);
 
+  const actionBeingEdited = useMemo(() => {
+    if (!triggerEditDraft || !actionEditDraft) {
+      return null;
+    }
+
+    return triggerEditDraft.actions.find((action) => action.id === actionEditDraft.actionId) ?? null;
+  }, [actionEditDraft, triggerEditDraft]);
+
+  const actionTypeBeingEdited = useMemo(() => {
+    if (!actionBeingEdited) {
+      return null;
+    }
+
+    return actionTypes?.find((actionType) => actionType.id === actionBeingEdited.actionType) ?? null;
+  }, [actionBeingEdited, actionTypes]);
+
+  const actionEditorParameters = useMemo(
+    () => getActionEditorParameters(actionTypeBeingEdited ?? undefined),
+    [actionTypeBeingEdited]
+  );
+
+  const actionEditValidationErrors = useMemo(() => {
+    if (!actionEditDraft) {
+      return new Map<string, string>();
+    }
+
+    return actionEditorParameters.reduce((errorMap, editorParameter) => {
+      const value = getActionEditorParameterValue(
+        actionEditDraft.parameters,
+        editorParameter.parameterId,
+        editorParameter.parameter
+      );
+      const error = getActionEditorParameterError(editorParameter.parameter, value);
+      if (error) {
+        errorMap.set(editorParameter.parameterId, error);
+      }
+      return errorMap;
+    }, new Map<string, string>());
+  }, [actionEditDraft, actionEditorParameters]);
+
+  const actionEditHasErrors = actionEditValidationErrors.size > 0;
+
   const addActionToDraft = (actionTypeId: string, replaceActionId?: string) => {
     if (!triggerEditDraft || !actionTypeId.length) {
       return;
@@ -999,6 +1205,15 @@ export function TriggersPage() {
                     }
                   : action
               ),
+            }
+          : previous
+      );
+
+      setActionEditDraft((previous) =>
+        previous?.actionId === replaceActionId
+          ? {
+              ...previous,
+              parameters: nextParameters,
             }
           : previous
       );
@@ -1175,7 +1390,52 @@ export function TriggersPage() {
 
     setActionEditDraft({
       actionId,
+      parameters: JSON.parse(
+        JSON.stringify((action.parameters ?? {}) as Record<string, unknown>)
+      ) as Record<string, unknown>,
     });
+  };
+
+  const setActionEditorParameter = (
+    parameterId: string,
+    parameter: ActionEditorParameter["parameter"],
+    rawValue: string | boolean
+  ) => {
+    setActionEditDraft((previous) =>
+      previous
+        ? {
+            ...previous,
+            parameters: {
+              ...previous.parameters,
+              [parameterId]: parseActionEditorParameterValue(parameter, rawValue),
+            },
+          }
+        : previous
+    );
+  };
+
+  const submitActionEdit = () => {
+    if (!actionEditDraft || actionEditHasErrors) {
+      return;
+    }
+
+    setTriggerEditDraft((previous) =>
+      previous
+        ? {
+            ...previous,
+            actions: previous.actions.map((action) =>
+              action.id === actionEditDraft.actionId
+                ? {
+                    ...action,
+                    parameters: actionEditDraft.parameters,
+                  }
+                : action
+            ),
+          }
+        : previous
+    );
+
+    setActionEditDraft(null);
   };
 
   const submitTriggerEdit = async () => {
@@ -2043,16 +2303,143 @@ export function TriggersPage() {
 
       {actionEditDraft && triggerEditDraft && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-md border bg-background p-4 space-y-3">
-            <div className="font-semibold">Edit Action</div>
-            <div className="text-sm opacity-70">
-              Action-specific settings editor is coming soon. This placeholder modal will be replaced
-              with the full action configuration UI.
+          <div className="w-full max-w-3xl rounded-md border bg-background p-4 space-y-4 max-h-[90vh] overflow-auto">
+            <div className="font-semibold text-lg">Edit Action</div>
+
+            <div className="space-y-2">
+              <div className="text-xs uppercase tracking-wide opacity-70">Current Effect</div>
+              <div className="flex items-center gap-2">
+                <div className="font-medium text-xl">
+                  {actionTypeBeingEdited?.name ?? actionBeingEdited?.actionType ?? "Unknown Action"}
+                </div>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => openActionSelector("change", actionEditDraft.actionId)}
+                >
+                  Change
+                </Button>
+              </div>
+              {!!actionTypeBeingEdited?.description && (
+                <div className="text-sm opacity-70">{actionTypeBeingEdited.description}</div>
+              )}
+            </div>
+
+            <div className="space-y-4 rounded-md border bg-secondary/30 p-3">
+              {actionEditorParameters.length === 0 ? (
+                <div className="text-sm opacity-70">This action has no editable settings.</div>
+              ) : (
+                actionEditorParameters.map((editorParameter) => {
+                  const currentValue = getActionEditorParameterValue(
+                    actionEditDraft.parameters,
+                    editorParameter.parameterId,
+                    editorParameter.parameter
+                  );
+                  const errorMessage = actionEditValidationErrors.get(editorParameter.parameterId);
+                  const labelText = editorParameter.parameter.title ?? editorParameter.parameterId;
+
+                  return (
+                    <div className="space-y-2" key={editorParameter.parameterId}>
+                      <div className="text-sm font-medium">{labelText}</div>
+
+                      {editorParameter.parameter.type === "boolean" ? (
+                        <label className="flex items-center gap-2 text-sm">
+                          <input
+                            type="checkbox"
+                            checked={Boolean(currentValue)}
+                            onChange={(event) =>
+                              setActionEditorParameter(
+                                editorParameter.parameterId,
+                                editorParameter.parameter,
+                                event.target.checked
+                              )
+                            }
+                          />
+                          Enabled
+                        </label>
+                      ) : editorParameter.parameter.type === "enum" ? (
+                        <select
+                          className={themedSelectClassName}
+                          value={String(currentValue ?? "")}
+                          onChange={(event) =>
+                            setActionEditorParameter(
+                              editorParameter.parameterId,
+                              editorParameter.parameter,
+                              event.target.value
+                            )
+                          }
+                        >
+                          {editorParameter.parameter.options?.map((option) => (
+                            <option
+                              className={themedOptionClassName}
+                              key={`${editorParameter.parameterId}-${String(option.value)}`}
+                              value={String(option.value)}
+                            >
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                      ) : editorParameter.parameter.type === "number" ? (
+                        <Input
+                          type="number"
+                          value={String(currentValue ?? "")}
+                          placeholder={editorParameter.parameter.placeholder}
+                          min={editorParameter.parameter.validation?.min}
+                          max={editorParameter.parameter.validation?.max}
+                          onChange={(event) =>
+                            setActionEditorParameter(
+                              editorParameter.parameterId,
+                              editorParameter.parameter,
+                              event.target.value
+                            )
+                          }
+                        />
+                      ) : editorParameter.parameter.useTextArea ? (
+                        <textarea
+                          className="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground bg-background border-input flex min-h-20 w-full min-w-0 rounded-md border px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
+                          value={String(currentValue ?? "")}
+                          placeholder={editorParameter.parameter.placeholder}
+                          onChange={(event) =>
+                            setActionEditorParameter(
+                              editorParameter.parameterId,
+                              editorParameter.parameter,
+                              event.target.value
+                            )
+                          }
+                        />
+                      ) : (
+                        <Input
+                          value={String(currentValue ?? "")}
+                          placeholder={editorParameter.parameter.placeholder}
+                          onChange={(event) =>
+                            setActionEditorParameter(
+                              editorParameter.parameterId,
+                              editorParameter.parameter,
+                              event.target.value
+                            )
+                          }
+                        />
+                      )}
+
+                      {!!editorParameter.parameter.description && (
+                        <div className="text-xs opacity-70">{editorParameter.parameter.description}</div>
+                      )}
+                      {!!editorParameter.parameter.tip && (
+                        <div className="text-xs opacity-70">{editorParameter.parameter.tip}</div>
+                      )}
+                      {!!errorMessage && <div className="text-xs text-destructive">{errorMessage}</div>}
+                    </div>
+                  );
+                })
+              )}
             </div>
 
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setActionEditDraft(null)}>
-                Close
+                Cancel
+              </Button>
+              <Button onClick={submitActionEdit} disabled={actionEditHasErrors}>
+                Save
               </Button>
             </div>
           </div>

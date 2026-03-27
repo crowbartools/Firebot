@@ -9,12 +9,18 @@ import {
 import { RealTimeGateway } from "real-time/real-time.gateway";
 import { TRIGGER_SOURCE_DEFINITIONS } from "./trigger-source-definitions";
 import { v4 as uuid } from "uuid";
+import { WorkflowEngine } from "workflows/workflow.engine";
+import { Logger } from "@nestjs/common";
 
 @Injectable()
 export class TriggersService {
+    private readonly logger = new Logger(TriggersService.name);
+    private activeTriggerIndexBySourceEvent: Map<string, TriggerConfig[]> | null = null;
+
     constructor(
         private readonly triggersConfigsStore: TriggersConfigsStore,
-        private readonly realTimeGateway: RealTimeGateway
+        private readonly realTimeGateway: RealTimeGateway,
+        private readonly workflowEngine: WorkflowEngine
     ) { }
 
     getAllTriggerData(): TriggerConfigsSettings {
@@ -345,8 +351,79 @@ export class TriggersService {
     }
 
     private broadcastTriggersUpdate() {
+        this.invalidateActiveTriggerIndex();
         this.realTimeGateway.broadcast("triggers:update", {
             updatedAt: Date.now(),
+        });
+    }
+
+    private invalidateActiveTriggerIndex(): void {
+        this.activeTriggerIndexBySourceEvent = null;
+    }
+
+    private getActiveTriggersForSourceEvent(
+        sourceId: string,
+        eventId: string
+    ): TriggerConfig[] {
+        if (!this.activeTriggerIndexBySourceEvent) {
+            this.activeTriggerIndexBySourceEvent = this.buildActiveTriggerIndex();
+        }
+
+        return this.activeTriggerIndexBySourceEvent.get(`${sourceId}:${eventId}`) ?? [];
+    }
+
+    private buildActiveTriggerIndex(): Map<string, TriggerConfig[]> {
+        const index = new Map<string, TriggerConfig[]>();
+
+        const { mainTriggers, groups } = this.triggersConfigsStore.getRoot();
+        const activeGroupedTriggers = groups
+            .filter((group: TriggerGroup) => group.active)
+            .flatMap((group: TriggerGroup) => group.triggers);
+
+        const activeTriggers = [...mainTriggers, ...activeGroupedTriggers].filter(
+            (trigger) => trigger.active
+        );
+
+        for (const trigger of activeTriggers) {
+            const key = `${trigger.sourceId}:${trigger.eventId}`;
+            const list = index.get(key) ?? [];
+            list.push(trigger);
+            index.set(key, list);
+        }
+
+        return index;
+    }
+
+    async fireTriggersBySourceEvent(
+        sourceId: string,
+        eventId: string,
+        metadata?: Record<string, unknown>
+    ): Promise<void> {
+        const activeTriggers = this.getActiveTriggersForSourceEvent(sourceId, eventId);
+
+        for (const trigger of activeTriggers) {
+            try {
+                await this.fireTrigger(trigger, metadata);
+            } catch (err) {
+                const message = err instanceof Error ? err.message : String(err);
+                this.logger.error(
+                    `Failed to fire trigger ${trigger.id} (${trigger.name ?? "Unnamed Trigger"}): ${message}`
+                );
+            }
+        }
+    }
+
+    async fireTrigger(
+        trigger: TriggerConfig,
+        metadata?: Record<string, unknown>
+    ): Promise<void> {
+        if (!trigger.actionWorkflow) {
+            return;
+        }
+
+        await this.workflowEngine.runWorkflow({
+            actionTriggerType: "event-trigger",
+            workflow: trigger.actionWorkflow,
         });
     }
 }
