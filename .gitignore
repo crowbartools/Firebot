@@ -89,3 +89,5 @@ out
 secrets.json
 .env
 *.env
+.env.local
+.env.*.local
