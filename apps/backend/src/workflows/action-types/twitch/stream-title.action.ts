@@ -8,7 +8,6 @@ import {
 } from "firebot-types";
 import { twitchApiClient } from "streaming-platform/platforms/twitch/twitch-api-client";
 import { twitchAccountAuthProvider } from "streaming-platform/platforms/twitch/twitch-auth";
-import { getStringParam } from "workflows/action-types/action-parameter.utils";
 
 type StreamTitleActionParams = {
     stream: {
@@ -42,7 +41,8 @@ export class StreamTitleActionType
     };
 
     async execute(context: ExecuteActionContext): Promise<void> {
-        const title = getStringParam(context.parameters, "title").trim();
+        const titleRaw = context.parameters["title"];
+        const title = (typeof titleRaw === "string" ? titleRaw : String(titleRaw ?? "")).trim();
         const streamerId = twitchAccountAuthProvider.streamerAccount?.userId;
         const client = twitchApiClient.streamerClient;
 

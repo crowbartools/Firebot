@@ -1,14 +1,4 @@
 import { TriggerEventBridge } from "./trigger-event-bridge.types";
-import { ChatItem, StreamingPlatform } from "firebot-types";
-
-type PlatformChatItemPayload = {
-    platform: StreamingPlatform;
-    data: ChatItem;
-};
-
-type PlatformConnectionPayload = {
-    platform: StreamingPlatform;
-};
 
 const twitchChatMessageBridge: TriggerEventBridge = {
     id: "twitch-chat-message",
@@ -16,19 +6,11 @@ const twitchChatMessageBridge: TriggerEventBridge = {
     sourceId: "twitch",
     eventId: "chat-message",
     shouldHandle: (payload) => {
-        const chatPayload = payload as PlatformChatItemPayload;
+        const chatPayload = payload as {
+            platform?: { id?: string };
+            data?: { type?: string };
+        };
         return chatPayload?.platform?.id === "twitch" && chatPayload?.data?.type === "message";
-    },
-    toMetadata: (payload) => {
-        const chatPayload = payload as PlatformChatItemPayload;
-        return chatPayload.data.type === "message"
-            ? {
-                platformId: chatPayload.platform.id,
-                chatMessage: chatPayload.data.chatMessage,
-            }
-            : {
-                platformId: chatPayload.platform.id,
-            };
     },
 };
 
@@ -38,23 +20,17 @@ const twitchConnectedBridge: TriggerEventBridge = {
     sourceId: "firebot",
     eventId: "chat-connected",
     shouldHandle: (payload) => {
-        const connectionPayload = payload as PlatformConnectionPayload;
+        const connectionPayload = payload as { platform?: { id?: string } };
         return connectionPayload?.platform?.id === "twitch";
-    },
-    toMetadata: (payload) => {
-        const connectionPayload = payload as PlatformConnectionPayload;
-        return {
-            platformId: connectionPayload.platform.id,
-        };
     },
 };
 
-export const TRIGGER_EVENT_BRIDGES: TriggerEventBridge[] = [
+const triggerEventBridges: TriggerEventBridge[] = [
     twitchChatMessageBridge,
     twitchConnectedBridge,
 ];
 
-export const TRIGGER_EVENT_BRIDGES_BY_EMITTER = TRIGGER_EVENT_BRIDGES.reduce(
+export const TRIGGER_EVENT_BRIDGES_BY_EMITTER = triggerEventBridges.reduce(
     (grouped, bridge) => {
         const existing = grouped.get(bridge.emitterEvent) ?? [];
         existing.push(bridge);

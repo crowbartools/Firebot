@@ -20,7 +20,7 @@ export class TriggerListenerService implements OnModuleInit, OnModuleDestroy {
     onModuleInit(): void {
         for (const [emitterEvent, bridges] of TRIGGER_EVENT_BRIDGES_BY_EMITTER.entries()) {
             const handler = (payload: unknown) => {
-                void this.dispatchEmitterEvent(emitterEvent, bridges, payload);
+                void this.dispatchEmitterEvent(bridges, payload);
             };
 
             this.eventEmitter.on(emitterEvent, handler);
@@ -36,16 +36,11 @@ export class TriggerListenerService implements OnModuleInit, OnModuleDestroy {
     }
 
     private async dispatchEmitterEvent(
-        emitterEvent: string,
         bridges: TriggerEventBridge[],
         payload: unknown
     ): Promise<void> {
         for (const bridge of bridges) {
             await this.handleBridgeEvent(bridge, payload);
-        }
-
-        if (bridges.length === 0) {
-            this.logger.warn(`No bridges registered for emitter event '${emitterEvent}'`);
         }
     }
 
@@ -58,11 +53,9 @@ export class TriggerListenerService implements OnModuleInit, OnModuleDestroy {
                 return;
             }
 
-            const metadata = bridge.toMetadata?.(payload);
             await this.triggersService.fireTriggersBySourceEvent(
                 bridge.sourceId,
-                bridge.eventId,
-                metadata
+                bridge.eventId
             );
         } catch (err) {
             const message = err instanceof Error ? err.message : String(err);

@@ -396,14 +396,13 @@ export class TriggersService {
 
     async fireTriggersBySourceEvent(
         sourceId: string,
-        eventId: string,
-        metadata?: Record<string, unknown>
+        eventId: string
     ): Promise<void> {
         const activeTriggers = this.getActiveTriggersForSourceEvent(sourceId, eventId);
 
         for (const trigger of activeTriggers) {
             try {
-                await this.fireTrigger(trigger, metadata);
+                await this.fireTrigger(trigger);
             } catch (err) {
                 const message = err instanceof Error ? err.message : String(err);
                 this.logger.error(
@@ -413,10 +412,7 @@ export class TriggersService {
         }
     }
 
-    async fireTrigger(
-        trigger: TriggerConfig,
-        metadata?: Record<string, unknown>
-    ): Promise<void> {
+    private async fireTrigger(trigger: TriggerConfig): Promise<void> {
         if (!trigger.actionWorkflow) {
             return;
         }
