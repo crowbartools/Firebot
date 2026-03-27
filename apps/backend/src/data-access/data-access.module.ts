@@ -10,11 +10,13 @@ import { ProfileSettingsStore } from "data-access/stores/profile-settings.store"
 import { StreamingPlatformLoginsStore } from "data-access/stores/streaming-platform-logins.store";
 import { StreamingPlatformModule } from "../streaming-platform/streaming-platform.module";
 import { CommandConfigsStore } from "./stores/command-configs.store";
+import { EventsConfigsStore } from "./stores/events-configs.store";
 
 const profileStores = [
   ProfileSettingsStore,
   StreamingPlatformLoginsStore,
   CommandConfigsStore,
+  EventsConfigsStore,
 ];
 
 @Global()
@@ -39,4 +41,4 @@ const profileStores = [
   exports: [...profileStores, LoginService],
   imports: [StreamingPlatformModule],
 })
-export class DataAccessModule extends ConfigurableModuleClass {}
+export class DataAccessModule extends ConfigurableModuleClass { }

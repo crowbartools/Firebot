@@ -14,6 +14,7 @@ import { ConnectionModule } from "connection/connection.module";
 import { CommandsModule } from "commands/commands.module";
 import { WorkflowsModule } from "workflows/workflows.module";
 import { EventEmitterModule } from "@nestjs/event-emitter";
+import { EventsModule } from "events/events.module";
 
 @Module({
   imports: [
@@ -46,8 +47,9 @@ import { EventEmitterModule } from "@nestjs/event-emitter";
     ConnectionModule,
     WorkflowsModule,
     CommandsModule,
+    EventsModule,
   ],
   controllers: [ExampleController],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }

@@ -6,6 +6,14 @@ export class BaseDataStore<Settings> implements DataStore<Settings> {
   private db!: JsonDB;
   private settings!: Settings;
 
+  private cloneValue<T>(value: T): T {
+    if (value === undefined || value === null) {
+      return value;
+    }
+
+    return JSON.parse(JSON.stringify(value)) as T;
+  }
+
   constructor(
     private filePath: string,
     private readonly defaultSettings: Settings
@@ -14,11 +22,11 @@ export class BaseDataStore<Settings> implements DataStore<Settings> {
   }
 
   get<K extends keyof Settings>(key: K): Settings[K] {
-    return JSON.parse(JSON.stringify(this.settings[key] ?? this.defaultSettings[key]));
+    return this.cloneValue(this.settings[key] ?? this.defaultSettings[key]);
   }
 
   getRoot(): Settings {
-    return JSON.parse(JSON.stringify(this.settings ?? this.defaultSettings));
+    return this.cloneValue(this.settings ?? this.defaultSettings);
   }
 
   set<K extends keyof Settings, V extends Settings[K]>(key: K, value: V): void {
