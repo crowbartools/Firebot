@@ -1,16 +1,16 @@
 import { Injectable } from "@nestjs/common";
 import { ModuleRef } from "@nestjs/core";
+import { TriggerConfigsSettings } from "firebot-types";
 import { ProfileService } from "../profile.service";
 import { BaseProfileStore } from "./base-profile-store";
-import { EventConfigsSettings } from "firebot-types";
 
 @Injectable()
-export class EventsConfigsStore extends BaseProfileStore<EventConfigsSettings> {
+export class TriggersConfigsStore extends BaseProfileStore<TriggerConfigsSettings> {
     constructor(profileService: ProfileService, moduleRef: ModuleRef) {
         super(
-            "events",
+            "triggers",
             {
-                mainEvents: [],
+                mainTriggers: [],
                 groups: [],
                 sortTags: [],
             },

@@ -10,13 +10,13 @@ import { ProfileSettingsStore } from "data-access/stores/profile-settings.store"
 import { StreamingPlatformLoginsStore } from "data-access/stores/streaming-platform-logins.store";
 import { StreamingPlatformModule } from "../streaming-platform/streaming-platform.module";
 import { CommandConfigsStore } from "./stores/command-configs.store";
-import { EventsConfigsStore } from "./stores/events-configs.store";
+import { TriggersConfigsStore } from "./stores/triggers-configs.store";
 
 const profileStores = [
   ProfileSettingsStore,
   StreamingPlatformLoginsStore,
   CommandConfigsStore,
-  EventsConfigsStore,
+  TriggersConfigsStore,
 ];
 
 @Global()

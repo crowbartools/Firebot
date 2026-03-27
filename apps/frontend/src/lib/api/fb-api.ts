@@ -7,7 +7,7 @@ import { AuthProviderApi } from "@/lib/api/resources/auth-provider";
 import { ConnectionApi } from "./resources/connection";
 import { WorkflowsApi } from "./resources/workflows";
 import { CommandsApi } from "./resources/commands";
-import { EventsApi } from "./resources/events";
+import { TriggersApi } from "./resources/triggers";
 
 export class FbApi {
   private readonly api = axios.create({
@@ -22,5 +22,5 @@ export class FbApi {
   public readonly connection = new ConnectionApi(this.api);
   public readonly workflows = new WorkflowsApi(this.api);
   public readonly commands = new CommandsApi(this.api);
-  public readonly events = new EventsApi(this.api);
+  public readonly triggers = new TriggersApi(this.api);
 }

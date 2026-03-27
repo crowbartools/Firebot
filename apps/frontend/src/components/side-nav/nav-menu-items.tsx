@@ -45,8 +45,8 @@ export const menuItems: Record<string, MenuItem[]> = {
     {
       icon: <Copy data-slot="icon" />,
       iconClassName: "",
-      title: "Events",
-      route: "/events",
+      title: "Triggers",
+      route: "/triggers",
     },
     {
       icon: <Timer data-slot="icon" />,

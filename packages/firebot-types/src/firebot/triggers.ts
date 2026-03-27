@@ -1,27 +1,27 @@
 import { FirebotActionWorkflow } from "../actions";
 
-export interface EventFilter {
+export interface TriggerFilter {
     id?: string;
     type: string;
     comparisonType?: string;
     value?: unknown;
 }
 
-export interface EventSourceEventDefinition {
+export interface TriggerSourceEventDefinition {
     id: string;
     name: string;
     description?: string;
     supportsManualMetadata?: boolean;
 }
 
-export interface EventSourceDefinition {
+export interface TriggerSourceDefinition {
     id: string;
     name: string;
     description?: string;
-    events: EventSourceEventDefinition[];
+    events: TriggerSourceEventDefinition[];
 }
 
-export interface EventConfig {
+export interface TriggerConfig {
     id: string;
     name?: string;
     description?: string;
@@ -29,19 +29,19 @@ export interface EventConfig {
     eventId: string;
     active: boolean;
     manualMetadata?: Record<string, unknown>;
-    filters?: EventFilter[];
+    filters?: TriggerFilter[];
     actionWorkflow: FirebotActionWorkflow;
 }
 
-export interface EventGroup {
+export interface TriggerGroup {
     id: string;
     name: string;
     active: boolean;
-    events: EventConfig[];
+    triggers: TriggerConfig[];
 }
 
-export interface EventConfigsSettings {
-    mainEvents: EventConfig[];
-    groups: EventGroup[];
+export interface TriggerConfigsSettings {
+    mainTriggers: TriggerConfig[];
+    groups: TriggerGroup[];
     sortTags: string[];
 }
