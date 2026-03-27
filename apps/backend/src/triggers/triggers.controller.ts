@@ -19,6 +19,26 @@ export class TriggersController {
         return this.triggersService.getAllActiveTriggers();
     }
 
+    @Get("sources")
+    getTriggerSourceDefinitions() {
+        return this.triggersService.getTriggerSourceDefinitions();
+    }
+
+    @Get("tags")
+    getAllTags() {
+        return this.triggersService.getAllTags();
+    }
+
+    @Post("tags")
+    createTag(@Body() body: { tag: string }) {
+        return this.triggersService.createTag(body.tag);
+    }
+
+    @Delete("tags/:tag")
+    deleteTag(@Param("tag") tag: string) {
+        return this.triggersService.deleteTag(decodeURIComponent(tag));
+    }
+
     @Post("main")
     createMainTrigger(@Body() trigger: Omit<TriggerConfig, "id">) {
         return this.triggersService.createMainTrigger(trigger);
@@ -35,6 +55,14 @@ export class TriggersController {
     @Delete("main/:triggerId")
     deleteMainTrigger(@Param("triggerId") triggerId: string) {
         return this.triggersService.deleteMainTrigger(triggerId);
+    }
+
+    @Post("main/:triggerId/reorder")
+    reorderMainTrigger(
+        @Param("triggerId") triggerId: string,
+        @Body() body: { targetIndex: number }
+    ) {
+        return this.triggersService.reorderMainTrigger(triggerId, body.targetIndex);
     }
 
     @Post("groups")
@@ -82,5 +110,18 @@ export class TriggersController {
         @Param("triggerId") triggerId: string
     ) {
         return this.triggersService.deleteGroupTrigger(groupId, triggerId);
+    }
+
+    @Post("groups/:groupId/triggers/:triggerId/reorder")
+    reorderGroupTrigger(
+        @Param("groupId") groupId: string,
+        @Param("triggerId") triggerId: string,
+        @Body() body: { targetIndex: number }
+    ) {
+        return this.triggersService.reorderGroupTrigger(
+            groupId,
+            triggerId,
+            body.targetIndex
+        );
     }
 }

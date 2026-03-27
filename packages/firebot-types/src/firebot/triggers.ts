@@ -27,6 +27,7 @@ export interface TriggerConfig {
     description?: string;
     sourceId: string;
     eventId: string;
+    tags?: string[];
     active: boolean;
     manualMetadata?: Record<string, unknown>;
     filters?: TriggerFilter[];
