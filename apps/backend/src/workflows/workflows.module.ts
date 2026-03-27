@@ -7,8 +7,9 @@ import { SendChatActionType } from "./action-types/send-chat.action";
 import { WorkflowEngine } from "./workflow.engine";
 import { StreamingPlatformModule } from "streaming-platform/streaming-platform.module";
 import { PlaySoundActionType } from "./action-types/play-sound.action";
+import { StreamTitleActionType } from "./action-types/twitch/stream-title.action";
 
-const actionTypes = [SendChatActionType, PlaySoundActionType];
+const actionTypes = [SendChatActionType, PlaySoundActionType, StreamTitleActionType];
 
 @Module({
   imports: [StreamingPlatformModule],

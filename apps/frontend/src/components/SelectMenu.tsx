@@ -29,7 +29,7 @@ export const SelectMenu = <V = string>({ label, items, selected, setSelected }: 
               </Listbox.Label>
             )}
             <div className="relative mt-1">
-              <Listbox.Button className="relative w-full cursor-default rounded-md border border-border bg-background py-2 pl-3 pr-10 text-left shadow-xs focus:border-firebot-aero focus:outline-hidden focus:ring-1 focus:ring-firebot-aero sm:text-sm min-w-[10rem]">
+              <Listbox.Button className="relative w-full cursor-default rounded-md border border-input bg-background py-2 pl-3 pr-10 text-left text-foreground shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] sm:text-sm min-w-[10rem]">
                 <span className="block truncate text-foreground">
                   {selectedItem?.name ?? "Select one"}
                 </span>
@@ -48,14 +48,14 @@ export const SelectMenu = <V = string>({ label, items, selected, setSelected }: 
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
               >
-                <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-secondary py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-hidden sm:text-sm">
+                <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border bg-popover py-1 text-base text-popover-foreground shadow-md focus:outline-hidden sm:text-sm">
                   {items.map((item) => (
                     <Listbox.Option
                       key={item.value as string}
                       className={({ active }) =>
                         clsx(
                           active
-                            ? "text-white bg-firebot-honolulu"
+                            ? "bg-accent text-accent-foreground"
                             : "text-foreground",
                           "relative cursor-default select-none py-2 pl-3 pr-9"
                         )
@@ -76,7 +76,7 @@ export const SelectMenu = <V = string>({ label, items, selected, setSelected }: 
                           {selected ? (
                             <span
                               className={clsx(
-                                active ? "text-white" : "text-firebot-aero",
+                                active ? "text-accent-foreground" : "text-primary",
                                 "absolute inset-y-0 right-0 flex items-center pr-4"
                               )}
                             >
