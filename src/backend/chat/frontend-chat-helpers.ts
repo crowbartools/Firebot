@@ -1,9 +1,49 @@
-import type { FirebotChatMessage } from "../../types";
+import type { FirebotChatMessage, OverlayWidgetConfig } from "../../types";
+import type { ChatWidgetSettings, ChatWidgetState } from "../overlay-widgets/builtin-types/chat/chat";
 import overlayWidgetsManager from "../overlay-widgets/overlay-widgets-manager";
 import overlayWidgetConfigManager from "../overlay-widgets/overlay-widget-config-manager";
 import frontendCommunicator from "../common/frontend-communicator";
+import logger from "../logwrapper";
 
 class FirebotFrontendChatHelpers {
+    private _pendingMessageCache: Record<string, string[]> = { };
+
+    private sendChatMessageToChatWidget(chatWidget: OverlayWidgetConfig<ChatWidgetSettings, ChatWidgetState>, chatMessage: FirebotChatMessage): void {
+        if (chatWidget.settings.delayMessages === true) {
+            if (this._pendingMessageCache[chatWidget.id].some(m => m === chatMessage.id)) {
+                // Remove it from the pending list so we know we've taken care of it
+                this._pendingMessageCache[chatWidget.id] = this._pendingMessageCache[chatWidget.id]
+                    .filter(m => m !== chatMessage.id);
+            } else {
+                logger.info(`Chat message ${chatMessage.id} not in pending cache for widget ${chatWidget.id}; ignoring`);
+                return;
+            }
+        }
+
+        const existingChatMessages = chatWidget.state?.chatMessages ?? [];
+        overlayWidgetConfigManager.setWidgetStateById(chatWidget.id, {
+            chatMessages: [...existingChatMessages.slice(-99), chatMessage]
+        });
+
+        void overlayWidgetsManager.sendWidgetEventToOverlay(
+            "message",
+            chatWidget,
+            {
+                messageName: "chat-message",
+                messageData: {
+                    chatMessage
+                }
+            }
+        );
+
+        const messageTimeout = chatWidget.settings.messageTimeout;
+        if (chatWidget.settings.autoRemoveMessages === true && messageTimeout != null && messageTimeout > 0) {
+            setTimeout(() => {
+                this.deleteMessageFromChatWidget(chatWidget, chatMessage.id, true);
+            }, messageTimeout * 1000);
+        }
+    }
+
     sendChatMessageToFrontend(chatMessage: FirebotChatMessage): void {
         frontendCommunicator.send("twitch:chat:message", chatMessage);
 
@@ -17,58 +57,62 @@ class FirebotFrontendChatHelpers {
 
         chatMessage.timestamp = new Date().getTime();
 
-        const chatWidgets = overlayWidgetConfigManager.getConfigsOfType("firebot:chat");
+        const chatWidgets = overlayWidgetConfigManager.getConfigsOfType<OverlayWidgetConfig<ChatWidgetSettings, ChatWidgetState>>("firebot:chat");
 
         for (const chatWidget of chatWidgets) {
-            const existingChatMessages = (chatWidget.state?.chatMessages ?? []) as FirebotChatMessage[];
-            overlayWidgetConfigManager.setWidgetStateById(chatWidget.id, {
-                chatMessages: [...existingChatMessages.slice(-49), chatMessage]
-            });
+            if (chatWidget.settings.delayMessages === true && chatWidget.settings.messageDelay) {
+                this._pendingMessageCache[chatWidget.id] ??= [];
 
-            void overlayWidgetsManager.sendWidgetEventToOverlay(
-                "message",
-                chatWidget,
-                {
-                    messageName: "chat-message",
-                    messageData: {
-                        chatMessage
-                    }
-                }
-            );
+                this._pendingMessageCache[chatWidget.id].push(chatMessage.id);
+
+                setTimeout(() => {
+                    this.sendChatMessageToChatWidget(chatWidget, chatMessage);
+                }, chatWidget.settings.messageDelay * 1000);
+            } else {
+                this.sendChatMessageToChatWidget(chatWidget, chatMessage);
+            }
         }
     }
 
-    deleteMessageFromFrontend(messageId: string): void {
+    private deleteMessageFromChatWidget(chatWidget: OverlayWidgetConfig<ChatWidgetSettings, ChatWidgetState>, messageId: string, animate = false): void {
+        this._pendingMessageCache[chatWidget.id] = (this._pendingMessageCache[chatWidget.id] ?? [])
+            .filter(m => m !== messageId) ?? [];
+
+        const chatMessages = (chatWidget.state?.chatMessages ?? [])
+            .filter(m => m.id !== messageId);
+
+        overlayWidgetConfigManager.setWidgetStateById(chatWidget.id, {
+            chatMessages: chatMessages
+        });
+
+        void overlayWidgetsManager.sendWidgetEventToOverlay(
+            "message",
+            chatWidget,
+            {
+                messageName: "delete-message",
+                messageData: {
+                    messageId,
+                    animate
+                }
+            }
+        );
+    }
+
+    deleteMessageFromFrontend(messageId: string, animate = false): void {
         frontendCommunicator.send("twitch:chat:message:deleted", messageId);
 
-        const chatWidgets = overlayWidgetConfigManager.getConfigsOfType("firebot:chat");
+        const chatWidgets = overlayWidgetConfigManager.getConfigsOfType<OverlayWidgetConfig<ChatWidgetSettings, ChatWidgetState>>("firebot:chat");
         for (const chatWidget of chatWidgets) {
-            const chatMessages = ((chatWidget.state?.chatMessages ?? []) as FirebotChatMessage[])
-                .filter(m => m.id !== messageId);
-
-            overlayWidgetConfigManager.setWidgetStateById(chatWidget.id, {
-                chatMessages: chatMessages
-            });
-
-            void overlayWidgetsManager.sendWidgetEventToOverlay(
-                "message",
-                chatWidget,
-                {
-                    messageName: "delete-message",
-                    messageData: {
-                        messageId
-                    }
-                }
-            );
+            this.deleteMessageFromChatWidget(chatWidget, messageId, animate);
         }
     }
 
     deleteUserMessagesFromFrontend(username: string) {
         frontendCommunicator.send("twitch:chat:user:delete-messages", username);
 
-        const chatWidgets = overlayWidgetConfigManager.getConfigsOfType("firebot:chat");
+        const chatWidgets = overlayWidgetConfigManager.getConfigsOfType<OverlayWidgetConfig<ChatWidgetSettings, ChatWidgetState>>("firebot:chat");
         for (const chatWidget of chatWidgets) {
-            const chatMessages = ((chatWidget.state?.chatMessages ?? []) as FirebotChatMessage[])
+            const chatMessages = (chatWidget.state?.chatMessages ?? [])
                 .filter(m => m.username !== username);
 
             overlayWidgetConfigManager.setWidgetStateById(chatWidget.id, {
@@ -91,7 +135,7 @@ class FirebotFrontendChatHelpers {
     clearChatFeed(moderatorName: string): void {
         frontendCommunicator.send("twitch:chat:clear-feed", moderatorName);
 
-        const chatWidgets = overlayWidgetConfigManager.getConfigsOfType("firebot:chat");
+        const chatWidgets = overlayWidgetConfigManager.getConfigsOfType<OverlayWidgetConfig<ChatWidgetSettings, ChatWidgetState>>("firebot:chat");
         for (const chatWidget of chatWidgets) {
             overlayWidgetConfigManager.setWidgetStateById(chatWidget.id, {
                 chatMessages: []

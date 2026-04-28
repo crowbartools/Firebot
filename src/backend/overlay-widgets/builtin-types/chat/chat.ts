@@ -7,7 +7,7 @@ import type {
     Animation
 } from "../../../../types";
 
-type Settings = {
+export type ChatWidgetSettings = {
     showTimestamps?: boolean;
     showAvatars?: boolean;
     showBadges?: boolean;
@@ -19,15 +19,21 @@ type Settings = {
     actionDisplayFormat: "modern" | "classic";
     highlightStyle?: "normal" | "highlighted";
     highlightColor?: string;
+    hiddenUsers: string[];
+    delayMessages?: boolean;
+    messageDelay?: number;
     horizontalAlignment: "left" | "right";
     verticalAlignment: "top" | "bottom";
     spaceBetweenMessages?: number;
     newMessageEntryAnimation: Animation;
+    autoRemoveMessages?: boolean;
+    messageTimeout?: number;
+    messageExitAnimation?: Animation;
     usernameFontOptions: FontOptions;
     messageFontOptions: FontOptions;
 };
 
-type State = {
+export type ChatWidgetState = {
     chatMessages: Array<FirebotChatMessage>;
 };
 
@@ -37,13 +43,14 @@ type ChatMessageMessageData = {
 
 type DeleteMessageMessageData = {
     messageId: string;
+    animate: boolean;
 };
 
 type DeleteUserMessagesMessageData = {
     username: string;
 };
 
-export const chat: OverlayWidgetType<Settings, State> = {
+export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
     id: "firebot:chat",
     name: "Chat",
     description: "A basic chat feed for the overlay",
@@ -193,6 +200,38 @@ export const chat: OverlayWidgetType<Settings, State> = {
             }
         },
         {
+            name: "hiddenUsers",
+            title: "Hidden Users",
+            description: "List of usernames whose messages will not be displayed in the chat widget",
+            type: "editable-list",
+            default: [],
+            settings: {
+                useTextArea: false,
+                sortable: true,
+                addLabel: "Add Username",
+                editLabel: "Edit Username",
+                noneAddedText: "No users hidden in chat widget"
+            }
+        },
+        {
+            name: "delayMessages",
+            title: "Add Message Delay",
+            description: "Adds a delay between when a message arrives and when it is sent to the widget. Useful for moderation.",
+            type: "boolean",
+            default: false
+        },
+        {
+            name: "messageDelay",
+            title: "Message Delay",
+            description: "How long (in seconds) to wait before sending a chat message to the widget",
+            type: "number",
+            default: 0,
+            showIf: {
+                delayMessages: true
+            },
+            showBottomHr: true
+        },
+        {
             name: "horizontalAlignment",
             title: "Horizontal Alignment",
             description: "Horizontal alignment of the chat messages within the widget area.",
@@ -235,8 +274,34 @@ export const chat: OverlayWidgetType<Settings, State> = {
             title: "New Message Entry Animation",
             description: "Animation to use when new messages arrive",
             type: "animation-select",
-            animationType: "enter",
-            showBottomHr: true
+            animationType: "enter"
+        },
+        {
+            name: "autoRemoveMessages",
+            title: "Automatically Remove Messages",
+            description: "Removes messages from the chat widget after a specified amount of time",
+            type: "boolean",
+            default: false
+        },
+        {
+            name: "messageTimeout",
+            title: "Message Timeout",
+            description: "Amount of time (in seconds) to automatically remove chat messages from the widget",
+            type: "number",
+            default: 10,
+            showIf: {
+                autoRemoveMessages: true
+            }
+        },
+        {
+            name: "messageExitAnimation",
+            title: "Message Exit Animation",
+            description: "Animation to use when messages are automatically removed from the widget",
+            type: "animation-select",
+            animationType: "exit",
+            showIf: {
+                autoRemoveMessages: true
+            }
         },
         {
             name: "usernameFontOptions",
@@ -423,7 +488,7 @@ export const chat: OverlayWidgetType<Settings, State> = {
         ]
     },
     overlayExtension: {
-        eventHandler: (event: WidgetOverlayEvent<Settings, State>, utils: IOverlayWidgetEventUtils) => {
+        eventHandler: (event: WidgetOverlayEvent<ChatWidgetSettings, ChatWidgetState>, utils: IOverlayWidgetEventUtils) => {
             const generateAnnouncementBarStyle = (
                 announcementColor: FirebotChatMessage["announcementColor"],
                 horizontalAlignment: typeof event["data"]["widgetConfig"]["settings"]["horizontalAlignment"]
@@ -477,6 +542,13 @@ export const chat: OverlayWidgetType<Settings, State> = {
                 if (chatMessage.autoModStatus === "pending"
                         || chatMessage.autoModStatus === "denied"
                         || chatMessage.autoModStatus === "expired") {
+                    return;
+                }
+
+                // Check the ignore list
+                if (config.settings.hiddenUsers?.some(u =>
+                    u.toLowerCase() === chatMessage.username.toLowerCase() || u.toLowerCase() === chatMessage.userDisplayName?.toLowerCase()
+                )) {
                     return;
                 }
 
@@ -873,11 +945,11 @@ export const chat: OverlayWidgetType<Settings, State> = {
                                         if (animationClass != null && animationClass !== "" && animationClass !== "none") {
                                             const duration = animationDuration ? `${animationDuration}s` : undefined;
                                             // @ts-ignore
-                                            $(`[data-message-id="${chatMessage.id}"]`).animateCss(animationClass, duration);
+                                            $(`.chat-${event.data.widgetConfig.id}`).find(`[data-message-id="${chatMessage.id}"]`).animateCss(animationClass, duration);
                                         }
 
                                         // Trim excess
-                                        while (chatContainer.childElementCount > 50) {
+                                        while (chatContainer.childElementCount > 100) {
                                             chatContainer.removeChild(chatContainer.firstElementChild);
                                         }
                                     }
@@ -888,11 +960,29 @@ export const chat: OverlayWidgetType<Settings, State> = {
                         case "delete-message":
                             {
                                 const messageId = (event.data.messageData as DeleteMessageMessageData).messageId;
+                                const animate = (event.data.messageData as DeleteMessageMessageData).animate;
 
                                 try {
                                     const messageToRemove = document.querySelector(`[data-message-id="${messageId}"]`);
                                     const chatContainer = document.getElementsByClassName(`chat-${event.data.widgetConfig.id}`)[0];
-                                    chatContainer.removeChild(messageToRemove);
+
+                                    if (messageToRemove) {
+                                        if (animate === true) {
+                                            const animationClass = event.data.widgetConfig.settings.messageExitAnimation?.class;
+                                            const animationDuration = event.data.widgetConfig.settings.messageExitAnimation?.duration;
+
+                                            if (animationClass != null && animationClass !== "" && animationClass !== "none") {
+                                                const duration = animationDuration ? `${animationDuration}s` : undefined;
+
+                                                // @ts-ignore
+                                                $(`.chat-${event.data.widgetConfig.id}`).find(`[data-message-id="${messageId}"]`).animateCss(animationClass, duration, null, null, () => {
+                                                    chatContainer.removeChild(messageToRemove);
+                                                });
+                                            }
+                                        } else {
+                                            chatContainer.removeChild(messageToRemove);
+                                        }
+                                    }
                                 } catch { }
                             }
                             break;
