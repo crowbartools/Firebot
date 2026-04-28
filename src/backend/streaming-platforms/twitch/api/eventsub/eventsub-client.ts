@@ -4,6 +4,7 @@ import { EventSubWsListener } from "@twurple/eventsub-ws";
 import type { SavedChannelReward } from "../../../../../types";
 
 import { AccountAccess } from "../../../../common/account-access";
+import { FirebotFrontendChatHelpers } from "../../../../chat/frontend-chat-helpers";
 import { SharedChatCache } from "../../chat/shared-chat-cache";
 import { TwitchEventHandlers } from "../../events";
 import { TwitchApi } from "..";
@@ -13,7 +14,6 @@ import chatHelpers from "../../../../chat/chat-helpers";
 import rewardManager from "../../../../channel-rewards/channel-reward-manager";
 import twitchStreamInfoPoll from "../../stream-info-manager";
 import viewerDatabase from "../../../../viewers/viewer-database";
-import frontendCommunicator from "../../../../common/frontend-communicator";
 import logger from "../../../../logwrapper";
 import {
     getChannelRewardImageUrl,
@@ -76,8 +76,6 @@ class TwitchEventSubClient {
                     );
                     break;
                 }
-                case "combo":
-                    break;
                 case "power_up": {
                     const totalBits = (await TwitchApi.bits.getChannelBitsLeaderboard(1, "all", new Date(), event.userId))[0]?.amount ?? 0;
                     switch (event.powerUp.type) {
@@ -124,21 +122,21 @@ class TwitchEventSubClient {
         // AutoMod message hold v2
         const autoModMessageHoldSub = this._eventSubListener.onAutoModMessageHoldV2(streamer.userId, streamer.userId, async (event) => {
             const firebotChatMessage = await chatHelpers.buildViewerFirebotChatMessageFromAutoModMessage(event);
-            frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
+            FirebotFrontendChatHelpers.sendChatMessageToFrontend(firebotChatMessage);
         });
         this._subscriptions.push(autoModMessageHoldSub);
 
         // AutoMod message update v2
         const autoModMessageUpdateSub = this._eventSubListener.onAutoModMessageUpdateV2(streamer.userId, streamer.userId, (event) => {
-            frontendCommunicator.send("twitch:chat:automod-update", {
-                messageId: event.messageId,
-                newStatus: event.status,
-                resolverName: event.moderatorName,
-                resolverId: event.moderatorId,
-                flaggedPhrases: event.reason === "automod"
+            FirebotFrontendChatHelpers.updateMessageAutomodStatus(
+                event.messageId,
+                event.status,
+                event.moderatorName,
+                event.moderatorId,
+                event.reason === "automod"
                     ? event.autoMod?.boundaries?.map(b => b.text) ?? []
                     : event.blockedTerms?.map(b => b.text) ?? []
-            });
+            );
         });
         this._subscriptions.push(autoModMessageUpdateSub);
 
@@ -567,7 +565,7 @@ class TwitchEventSubClient {
                 );
             }
 
-            frontendCommunicator.send("twitch:chat:user:delete-messages", event.userName);
+            FirebotFrontendChatHelpers.deleteUserMessagesFromFrontend(event.userName);
         });
         this._subscriptions.push(banSubscription);
 
@@ -672,7 +670,7 @@ class TwitchEventSubClient {
         const channelModerateSubscription = this._eventSubListener.onChannelModerate(streamer.userId, streamer.userId, (event) => {
             switch (event.moderationAction) {
                 case "clear":
-                    frontendCommunicator.send("twitch:chat:clear-feed", event.moderatorName);
+                    FirebotFrontendChatHelpers.clearChatFeed(event.moderatorName);
                     TwitchEventHandlers.chat.triggerChatCleared(event.moderatorName, event.moderatorId);
                     break;
                 case "mod":
@@ -724,7 +722,7 @@ class TwitchEventSubClient {
                         event.messageText,
                         event.messageId
                     );
-                    frontendCommunicator.send("twitch:chat:message:deleted", event.messageId);
+                    FirebotFrontendChatHelpers.deleteMessageFromFrontend(event.messageId);
                     break;
 
                 // Outbound Raid Starting

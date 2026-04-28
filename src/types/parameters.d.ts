@@ -1,4 +1,5 @@
 import type { EffectList } from "./effects";
+import type { Animation } from "./overlay-widgets";
 
 export type BaseParameter = {
     /**
@@ -215,13 +216,14 @@ export type FontOptions = {
     size: number;
     weight: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
     italic: boolean;
-    color: string;
+    color?: string;
 };
 
 export type FontOptionsParameter = BaseParameter & {
     type: "font-options";
     default: FontOptions;
     allowAlpha?: boolean;
+    hideColor?: boolean;
 };
 
 export type RadioCardsParameter<V = string> = BaseParameter & {
@@ -261,6 +263,12 @@ export type SortTagSelectParameter = BaseParameter & {
     default?: never;
 };
 
+export type AnimationSelectParameter = BaseParameter & {
+    type: "animation-select";
+    animationType: "enter" | "exit" | "inbetween";
+    default?: Animation;
+};
+
 export type UnknownParameter = BaseParameter & {
     [key: string]: unknown;
 };
@@ -288,7 +296,8 @@ type FirebotParameter =
     | RadioCardsParameter
     | CodeMirrorParameter
     | CounterSelectParameter
-    | SortTagSelectParameter;
+    | SortTagSelectParameter
+    | AnimationSelectParameter;
 
 export type ParametersConfig<P> = {
     [K in keyof P]: (P[K] extends string
@@ -323,7 +332,9 @@ export type ParametersConfig<P> = {
                                     : P[K] extends EffectList
                                         ? EffectListParameter
                                         : P[K] extends FontOptions
-                                            ? FontOptionsParameter : FirebotParameter) & { value?: P[K] };
+                                            ? FontOptionsParameter
+                                            : P[K] extends Animation
+                                                ? AnimationSelectParameter : FirebotParameter) & { value?: P[K] };
 };
 
 export type ParametersWithNameConfig<P> = {
@@ -359,7 +370,9 @@ export type ParametersWithNameConfig<P> = {
                                     : P[K] extends EffectList
                                         ? EffectListParameter
                                         : P[K] extends FontOptions
-                                            ? FontOptionsParameter : FirebotParameter) & { name: K, showIf?: { [K2 in keyof P]?: P[K2] | Array<P[K2]> } };
+                                            ? FontOptionsParameter
+                                            : P[K] extends Animation
+                                                ? AnimationSelectParameter : FirebotParameter) & { name: K, showIf?: { [K2 in keyof P]?: P[K2] | Array<P[K2]> } };
 };
 
 type FirebotParamCategory<ParamConfig extends Record<string, unknown>> = {

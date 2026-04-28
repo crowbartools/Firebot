@@ -70,6 +70,7 @@ export type FirebotParsedMessagePart = {
 
 export type FirebotChatMessage = {
     id: string;
+    timestamp?: number;
     username: string;
     userId: string;
     userDisplayName?: string;
