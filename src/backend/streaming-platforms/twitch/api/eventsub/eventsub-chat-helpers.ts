@@ -9,6 +9,7 @@ import {
     type EventSubAutoModMessageHoldV2Event,
     type EventSubChannelChatNotificationEvent,
     type EventSubUserWhisperMessageEvent,
+    type EventSubChannelChatAnnouncementColor,
     EventSubChannelChatAnnouncementNotificationEvent,
     EventSubChannelChatMessageEvent
 } from "@twurple/eventsub-base";
@@ -19,6 +20,7 @@ import type {
     EventSubChatMessageMentionPart,
     EventSubChatMessagePart
 } from "../twurple-private-types";
+import tinycolor from "tinycolor2";
 
 import type {
     FirebotChatMessage,
@@ -67,6 +69,7 @@ class TwitchEventSubChatHelpers {
     readonly HIGHLIGHT_MESSAGE_REWARD_ID = "highlight-message";
 
     private _badgeCache: HelixChatBadgeSet[] = [];
+    private _colorCache: Record<string, string> = { };
 
     private _getAllTwitchEmotes = false;
     private _twitchEmotes: {
@@ -524,6 +527,16 @@ class TwitchEventSubChatHelpers {
         }
     }
 
+    private cacheUserColor(userId: string, color?: string | null): string {
+            if (color?.length) {
+                this._colorCache[userId] = color;
+            } else if (this._colorCache[userId] == null) {
+                this._colorCache[userId] = tinycolor.random().toHexString();
+            }
+
+            return this._colorCache[userId];
+    }
+
     /**
      * Parses out any control characters from a chat message (like ACTION when /me is used)
      * @param rawText Raw message text
@@ -547,7 +560,7 @@ class TwitchEventSubChatHelpers {
             && event.sourceBroadcasterId !== AccountAccess.getAccounts().streamer.userId;
 
         let isAnnouncement = false;
-        let announcementColor = undefined;
+        let announcementColor: string | undefined = undefined;
 
         if (event instanceof EventSubChannelChatAnnouncementNotificationEvent) {
             isAnnouncement = true;
@@ -560,7 +573,7 @@ class TwitchEventSubChatHelpers {
             userId: event.chatterId,
             userDisplayName: event.chatterDisplayName,
             rawText: isAction ? this.getChatMessage(event.messageText) : event.messageText,
-            color: event.color,
+            color: this.cacheUserColor(event.chatterId, event.color),
             badges: this.parseChatBadges(event.badges),
             parts: [],
             roles: [],
@@ -571,7 +584,7 @@ class TwitchEventSubChatHelpers {
             action: isAction,
             isAnnouncement,
             // eslint-disable-next-line
-            announcementColor: announcementColor ? announcementColor.toUpperCase() : undefined,
+            announcementColor: (announcementColor ? announcementColor.toUpperCase() : undefined) as FirebotChatMessage["announcementColor"],
             isCheer: false,
             isReply: false,
             isHiddenFromChatFeed: false,

@@ -1,6 +1,7 @@
 import { HelixChatBadgeSet, HelixCheermoteList, HelixEmoteScale } from "@twurple/api";
 import { ChatMessage, ParsedMessageCheerPart, ParsedMessagePart, findCheermotePositions, parseChatMessage } from "@twurple/chat";
 import { EventSubAutoModMessageHoldV2Event } from "@twurple/eventsub-base";
+import tinycolor from "tinycolor2";
 
 import {
     FirebotChatMessage,
@@ -40,6 +41,7 @@ interface HelixEmoteBase {
 
 class FirebotChatHelpers {
     private _badgeCache: HelixChatBadgeSet[] = [];
+    private _colorCache: Record<string, string> = {};
 
     private _getAllTwitchEmotes = false;
     private _twitchEmotes: {
@@ -281,6 +283,16 @@ class FirebotChatHelpers {
                 this._updateAccountAvatar("bot", AccountAccess.getAccounts().bot, url);
             }
         }
+    }
+
+    private cacheUserColor(userId: string, color?: string): string {
+        if (color?.length) {
+            this._colorCache[userId] = color;
+        } else if (this._colorCache[userId] == null) {
+            this._colorCache[userId] = tinycolor.random().toHexString();
+        }
+
+        return this._colorCache[userId];
     }
 
     private _parseMessageParts(firebotChatMessage: FirebotChatMessage, parts: ParsedMessagePart[] | FirebotParsedMessagePart[]) {
@@ -600,7 +612,7 @@ class FirebotChatHelpers {
 
         firebotChatMessage.isCheer = msg.isCheer === true;
 
-        firebotChatMessage.color = msg.userInfo.color;
+        firebotChatMessage.color = this.cacheUserColor(msg.userInfo.userId, msg.userInfo.color);
 
         return firebotChatMessage;
     }
@@ -644,6 +656,7 @@ class FirebotChatHelpers {
             userDisplayName: msg.userDisplayName,
             rawText: msg.messageText,
             profilePicUrl: profilePicUrl,
+            color: this.cacheUserColor(msg.userId),
             whisper: false,
             action: false,
             tagged: false,
