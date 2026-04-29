@@ -14,21 +14,22 @@ export type ChatWidgetSettings = {
     showSharedChatMessages?: boolean;
     showSharedChatInfo?: boolean;
     showAnnouncements?: boolean;
+    delayMessages?: boolean;
+    messageDelay?: number;
+    newMessageEntryAnimation: Animation;
+    autoRemoveMessages?: boolean;
+    messageTimeout?: number;
+    messageExitAnimation?: Animation;
     messageStyle?: "compact" | "modern";
     chatOrder?: "normal" | "reversed";
     actionDisplayFormat: "modern" | "classic";
     highlightStyle?: "normal" | "highlighted";
     highlightColor?: string;
+    thirdPartyEmotes: string[];
     hiddenUsers: string[];
-    delayMessages?: boolean;
-    messageDelay?: number;
     horizontalAlignment: "left" | "right";
     verticalAlignment: "top" | "bottom";
     spaceBetweenMessages?: number;
-    newMessageEntryAnimation: Animation;
-    autoRemoveMessages?: boolean;
-    messageTimeout?: number;
-    messageExitAnimation?: Animation;
     usernameFontOptions: FontOptions;
     messageFontOptions: FontOptions;
 };
@@ -101,8 +102,58 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
             title: "Show Announcements",
             description: "Display chat announcements sent from the streamer or moderators",
             type: "boolean",
-            default: false,
-            showBottomHr: true
+            default: false
+        },
+        {
+            name: "delayMessages",
+            title: "Add Message Delay",
+            description: "Adds a delay between when a message arrives and when it is sent to the widget. Useful for moderation.",
+            type: "boolean",
+            default: false
+        },
+        {
+            name: "messageDelay",
+            title: "Message Delay",
+            description: "How long (in seconds) to wait before sending a chat message to the widget",
+            type: "number",
+            default: 0,
+            showIf: {
+                delayMessages: true
+            }
+        },
+        {
+            name: "newMessageEntryAnimation",
+            title: "New Message Entry Animation",
+            description: "Animation to use when new messages arrive",
+            type: "animation-select",
+            animationType: "enter"
+        },
+        {
+            name: "autoRemoveMessages",
+            title: "Automatically Remove Messages",
+            description: "Removes messages from the chat widget after a specified amount of time",
+            type: "boolean",
+            default: false
+        },
+        {
+            name: "messageTimeout",
+            title: "Message Timeout",
+            description: "Amount of time (in seconds) to automatically remove chat messages from the widget",
+            type: "number",
+            default: 10,
+            showIf: {
+                autoRemoveMessages: true
+            }
+        },
+        {
+            name: "messageExitAnimation",
+            title: "Message Exit Animation",
+            description: "Animation to use when messages are automatically removed from the widget",
+            type: "animation-select",
+            animationType: "exit",
+            showIf: {
+                autoRemoveMessages: true
+            }
         },
         {
             name: "messageStyle",
@@ -189,14 +240,37 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
             name: "highlightColor",
             title: "Highlighted Message Background Color",
             type: "hexcolor",
-            allowAlpha: true,
             default: "#755ebc",
+            allowAlpha: true,
             validation: {
                 required: true,
                 pattern: "^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$"
             },
             showIf: {
                 highlightStyle: "highlighted"
+            }
+        },
+        {
+            name: "thirdPartyEmotes",
+            title: "Enabled Third-Party Emote Providers",
+            description: "NOTE: Any third-party emote services enabled here must also be enabled in Dashboard settings in order to show emotes from those services.",
+            type: "multiselect",
+            default: [],
+            settings: {
+                options: [
+                    {
+                        id: "BTTV",
+                        name: "BTTV"
+                    },
+                    {
+                        id: "7TV",
+                        name: "7TV"
+                    },
+                    {
+                        id: "FFZ",
+                        name: "FFZ"
+                    }
+                ]
             }
         },
         {
@@ -214,28 +288,11 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
             }
         },
         {
-            name: "delayMessages",
-            title: "Add Message Delay",
-            description: "Adds a delay between when a message arrives and when it is sent to the widget. Useful for moderation.",
-            type: "boolean",
-            default: false
-        },
-        {
-            name: "messageDelay",
-            title: "Message Delay",
-            description: "How long (in seconds) to wait before sending a chat message to the widget",
-            type: "number",
-            default: 0,
-            showIf: {
-                delayMessages: true
-            },
-            showBottomHr: true
-        },
-        {
             name: "horizontalAlignment",
             title: "Horizontal Alignment",
             description: "Horizontal alignment of the chat messages within the widget area.",
             type: "radio-cards",
+            default: "left",
             options: [{
                 value: "left", label: "Left", iconClass: "fa-align-left"
             }, {
@@ -243,14 +300,14 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
             }],
             settings: {
                 gridColumns: 2
-            },
-            default: "left"
+            }
         },
         {
             name: "verticalAlignment",
             title: "Vertical Alignment",
             description: "Vertical alignment of the chat messages within the widget area.",
             type: "radio-cards",
+            default: "top",
             options: [{
                 value: "top", label: "Top", iconClass: "fa-arrow-to-top"
             }, {
@@ -258,9 +315,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
             }],
             settings: {
                 gridColumns: 2
-            },
-            default: "top",
-            showBottomHr: true
+            }
         },
         {
             name: "spaceBetweenMessages",
@@ -268,40 +323,6 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
             description: "How much space (in pixels) to put between messages in the feed",
             type: "number",
             default: 5
-        },
-        {
-            name: "newMessageEntryAnimation",
-            title: "New Message Entry Animation",
-            description: "Animation to use when new messages arrive",
-            type: "animation-select",
-            animationType: "enter"
-        },
-        {
-            name: "autoRemoveMessages",
-            title: "Automatically Remove Messages",
-            description: "Removes messages from the chat widget after a specified amount of time",
-            type: "boolean",
-            default: false
-        },
-        {
-            name: "messageTimeout",
-            title: "Message Timeout",
-            description: "Amount of time (in seconds) to automatically remove chat messages from the widget",
-            type: "number",
-            default: 10,
-            showIf: {
-                autoRemoveMessages: true
-            }
-        },
-        {
-            name: "messageExitAnimation",
-            title: "Message Exit Animation",
-            description: "Animation to use when messages are automatically removed from the widget",
-            type: "animation-select",
-            animationType: "exit",
-            showIf: {
-                autoRemoveMessages: true
-            }
         },
         {
             name: "usernameFontOptions",
@@ -651,8 +672,15 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                 for (const part of chatMessage.parts) {
                     switch (part.type) {
                         case "emote":
-                        case "third-party-emote":
                             chatMessagePartsHtml.push(`<img src="${part.animatedUrl ?? part.url}" alt="${part.name}">`);
+                            break;
+
+                        case "third-party-emote":
+                            if (config.settings.thirdPartyEmotes.some(e => e === part.origin)) {
+                                chatMessagePartsHtml.push(`<img src="${part.animatedUrl ?? part.url}" alt="${part.name}">`);
+                            } else {
+                                chatMessagePartsHtml.push(part.name);
+                            }
                             break;
 
                         case "cheermote":
