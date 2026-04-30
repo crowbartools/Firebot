@@ -52,9 +52,25 @@ class CrowbarRelayWebSocket extends TypedEmitter<{
             }
         });
 
+        let pingTimeout: NodeJS.Timeout;
+
+        function setPingTimeout() {
+            clearTimeout(pingTimeout);
+            pingTimeout = setTimeout(() => {
+                logger.warn("Crowbar Relay WebSocket ping timeout, reconnecting...");
+                this.ws.reconnect();
+            }, 75_000);
+        }
+
+        setPingTimeout();
+
         this.ws.addEventListener("open", () => {
             logger.info("Crowbar Relay WebSocket connected!");
             this.emit("ready");
+        });
+
+        this.ws.addEventListener("ping", () => {
+            setPingTimeout();
         });
 
         this.ws.addEventListener("error", (err) => {
@@ -62,6 +78,7 @@ class CrowbarRelayWebSocket extends TypedEmitter<{
         });
 
         this.ws.addEventListener("close", (closedEvent) => {
+            clearTimeout(pingTimeout);
             const unauthorized = closedEvent.target?._ws?._req?.res?.statusCode === 401;
             if (unauthorized) {
                 logger.error("Crowbar Relay WebSocket unauthorized!");
