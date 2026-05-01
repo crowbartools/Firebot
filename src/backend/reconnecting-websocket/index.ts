@@ -22,7 +22,7 @@ export type Options = {
     maxEnqueuedMessages?: number;
     startClosed?: boolean;
     debug?: boolean;
-    wsOptions?: ClientOptions
+    wsOptions?: ClientOptions;
 };
 
 const DEFAULT = {
@@ -46,6 +46,7 @@ export type ListenersMap = {
     message: Array<Events.WebSocketEventListenerMap['message']>;
     open: Array<Events.WebSocketEventListenerMap['open']>;
     close: Array<Events.WebSocketEventListenerMap['close']>;
+    ping: Array<Events.WebSocketEventListenerMap['ping']>;
 };
 
 export default class ReconnectingWebSocket {
@@ -54,7 +55,8 @@ export default class ReconnectingWebSocket {
         error: [],
         message: [],
         open: [],
-        close: []
+        close: [],
+        ping: []
     };
     private _retryCount = -1;
     private _uptimeTimeout: any;
@@ -243,7 +245,7 @@ export default class ReconnectingWebSocket {
             this._debug('send', data);
             this._ws.send(data as any);
         } else {
-            const {maxEnqueuedMessages = DEFAULT.maxEnqueuedMessages} = this._options;
+            const { maxEnqueuedMessages = DEFAULT.maxEnqueuedMessages } = this._options;
             if (this._messageQueue.length < maxEnqueuedMessages) {
                 this._debug('enqueue', data);
                 this._messageQueue.push(data);
@@ -360,14 +362,14 @@ export default class ReconnectingWebSocket {
         if (!isWebSocket(WebSocket)) {
             throw Error('No valid WebSocket class provided');
         }
-        this._wait()
+        void this._wait()
             .then(() => this._getNextUrl(this._url))
             .then((url) => {
                 // close could be called before creating the ws
                 if (this._closeCalled) {
                     return;
                 }
-                this._debug('connect', {url, protocols: this._protocols});
+                this._debug('connect', { url, protocols: this._protocols });
                 this._ws = new WebSocket(url, this._protocols, wsOptions);
                 this._ws.binaryType = this._binaryType as any;
                 this._connectLock = false;
@@ -416,7 +418,7 @@ export default class ReconnectingWebSocket {
 
     private _handleOpen = (event: Event) => {
         this._debug('open event');
-        const {minUptime = DEFAULT.minUptime} = this._options;
+        const { minUptime = DEFAULT.minUptime } = this._options;
 
         clearTimeout(this._connectTimeout);
         this._uptimeTimeout = setTimeout(() => this._acceptOpen(), minUptime);
@@ -455,6 +457,10 @@ export default class ReconnectingWebSocket {
         this._connect();
     };
 
+    private _handlePing = (event: Event) => {
+        this._listeners.ping.forEach(listener => this._callEventListener(event, listener));
+    };
+
     private _handleClose = (event: Events.CloseEvent) => {
         this._debug('close event');
         this._clearTimeouts();
@@ -479,6 +485,7 @@ export default class ReconnectingWebSocket {
         this._ws.removeEventListener('message', this._handleMessage as any);
         // @ts-ignore
         this._ws.removeEventListener('error', this._handleError);
+        this._ws.removeListener('ping', this._handlePing);
     }
 
     private _addListeners() {
@@ -491,6 +498,7 @@ export default class ReconnectingWebSocket {
         this._ws.addEventListener('message', this._handleMessage as any);
         // @ts-ignore
         this._ws.addEventListener('error', this._handleError);
+        this._ws.addListener('ping', this._handlePing);
     }
 
     private _clearTimeouts() {
