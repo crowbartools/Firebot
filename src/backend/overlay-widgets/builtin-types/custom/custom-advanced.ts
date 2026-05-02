@@ -115,7 +115,8 @@ if (eventName === "show") {
                 overlayWrapperElement: document.body.querySelector(".wrapper"),
                 utils: {
                     ...utils,
-                    sendMessageToFirebot: utils.sendMessageToFirebot.bind(utils)
+                    sendMessageToFirebot: utils.sendMessageToFirebot.bind(utils),
+                    stylesToString: utils.stylesToString.bind(utils)
                 }
             });
         }
