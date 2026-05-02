@@ -1,31 +1,11 @@
-import { app } from "electron";
-
-import type { ReplaceVariable } from "../../../../types/variables";
-
+import type { ReplaceVariable } from "../../../../types";
+import { FirebotPronounManager } from "../../../pronouns/pronoun-manager";
 import logger from "../../../logwrapper";
-
-const callUrl = async (url: string): Promise<Response> => {
-    try {
-        const appVersion = app.getVersion();
-        const response = await fetch(url, {
-            headers: {
-                "User-Agent": `Firebot/${appVersion}`
-            }
-        });
-
-        if (response) {
-            return response;
-        }
-    } catch (error) {
-        logger.warn(`error calling readApi url: ${url}`, (error as Error).message);
-        return null;
-    }
-};
 
 const model : ReplaceVariable = {
     definition: {
         handle: "pronouns",
-        description: "Returns the pronouns of the given user. It uses https://pronouns.alejo.io/ to get the pronouns.",
+        description: "Returns the pronouns of the given user. It uses https://pr.alejo.io/ to get the pronouns.",
         examples: [
             {
                 usage: 'pronouns[username, 0, they/them]',
@@ -47,52 +27,41 @@ const model : ReplaceVariable = {
         trigger,
         username: string,
         pronounNumber: number | string = 0,
-
         fallback : string = "they/them"
     ) => {
-
         if (typeof pronounNumber === 'string' || <unknown>pronounNumber instanceof String) {
             pronounNumber = Number(`${pronounNumber}`);
         }
 
         if (!Number.isFinite(pronounNumber)) {
-            logger.warn(`Pronoun index not a number using ${fallback}`);
+            logger.warn(`Pronoun index not a number. Using "${fallback}"`);
             return fallback;
         }
-        try {
-            const pronouns = await (await callUrl('https://pronouns.alejo.io/api/pronouns')).json();
-            let userPronounData = (await (await callUrl(`https://pronouns.alejo.io/api/users/${username}`)).json())[0];
 
-            let pronounArray = [];
-            if (userPronounData == null || userPronounData === undefined) {
-                userPronounData = { "pronoun_id": `${fallback}`.replace("/", "") };
-            }
+        const fallbackParts = (fallback ?? "").split("/");
+        let type: "subject" | "object" | "both";
 
-            let pronoun = pronouns.find(p => p.name === userPronounData.pronoun_id);
-            if (pronoun != null) {
-                pronounArray = pronoun.display.split('/');
-            } else {
-                pronoun = { "display": `${fallback}` };
-                pronounArray = fallback.split('/');
-            }
+        switch (pronounNumber) {
+            case 1:
+                type = "subject";
+                fallback = fallbackParts[0];
+                break;
 
-            if (pronounNumber === 0) {
-                return pronoun.display;
-            }
+            case 2:
+                type = "object";
+                fallback = fallbackParts[1] ?? fallbackParts[0];
+                break;
 
-            if (pronounArray.length === 1) {
-                return pronounArray[0];
-            }
-
-            if (pronounArray.length >= pronounNumber) {
-                return pronounArray[pronounNumber - 1];
-            }
-
-        } catch (err) {
-            logger.warn("error when parsing pronoun api", err);
-            return fallback;
+            default:
+                type = "both";
+                break;
         }
-        return fallback;
+
+        const pronoun = await FirebotPronounManager.getUserFriendlyPronounString(username, type);
+
+        return !!pronoun?.length
+            ? pronoun
+            : fallback;
     }
 };
 export default model;

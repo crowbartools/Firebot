@@ -7,7 +7,7 @@
     angular
         .module('firebotApp')
         .factory('chatMessagesService', function (logger, settingsService,
-            soundService, backendCommunicator, pronounsService, accountAccess, ngToast) {
+            soundService, backendCommunicator, accountAccess, ngToast) {
             const service = {};
 
             // Chat Message Queue
@@ -413,8 +413,6 @@
                         }
                     }, 5 * 60 * 1000);
                 }
-
-                pronounsService.getUserPronoun(chatMessage.username);
 
                 const now = moment();
                 chatMessage.timestamp = now;

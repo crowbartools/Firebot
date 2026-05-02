@@ -23,6 +23,10 @@ export async function whenReady() {
     const { ensureRequiredFoldersExist } = await import("../../data-tasks");
     await ensureRequiredFoldersExist();
 
+    windowManagement.updateSplashScreenStatus("Loading pronoun cache...");
+    const { FirebotPronounManager } = await import ("../../../pronouns/pronoun-manager");
+    await FirebotPronounManager.cachePronouns();
+
     // load twitch auth
     windowManagement.updateSplashScreenStatus("Loading Twitch login system...");
     await import("../../../auth/auth-manager");

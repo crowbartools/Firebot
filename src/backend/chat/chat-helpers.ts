@@ -11,6 +11,7 @@ import {
 import { FirebotAccount } from "../../types/accounts";
 
 import { AccountAccess } from "../common/account-access";
+import { FirebotPronounManager } from "../pronouns/pronoun-manager";
 import { SettingsManager } from "../common/settings-manager";
 import { SharedChatCache } from "../streaming-platforms/twitch/chat/shared-chat-cache";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
@@ -497,6 +498,7 @@ class FirebotChatHelpers {
             username: msg.userInfo.userName,
             userId: msg.userInfo.userId,
             userDisplayName: msg.userInfo.displayName,
+            pronouns: await FirebotPronounManager.getUserFriendlyPronounString(msg.userInfo.userName),
             customRewardId: msg.tags.get("custom-reward-id") || undefined,
             isHighlighted: msg.tags.get("msg-id") === "highlighted-message",
             isAnnouncement: false,
@@ -656,6 +658,7 @@ class FirebotChatHelpers {
             userDisplayName: msg.userDisplayName,
             rawText: msg.messageText,
             profilePicUrl: profilePicUrl,
+            pronouns: await FirebotPronounManager.getUserFriendlyPronounString(msg.userName),
             color: this.cacheUserColor(msg.userId),
             whisper: false,
             action: false,

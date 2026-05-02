@@ -148,9 +148,9 @@
                                     class="pronoun"
                                     uib-tooltip="Pronouns"
                                     tooltip-append-to-body="true"
-                                    ng-click="$root.openLinkExternally('https://pronouns.alejo.io/')"
-                                    ng-show="$ctrl.showPronoun && $ctrl.pronouns.pronounCache[$ctrl.message.username] != null"
-                                >{{$ctrl.pronouns.pronounCache[$ctrl.message.username]}}</span>
+                                    ng-click="$root.openLinkExternally('https://pr.alejo.io/')"
+                                    ng-show="$ctrl.showPronoun && $ctrl.message.pronouns != null"
+                                >{{ $ctrl.message.pronouns }}</span>
 
                                 <span
                                     class="rank-role-badge"
@@ -273,13 +273,10 @@
                 viewerRolesService,
                 utilityService,
                 connectionService,
-                pronounsService,
                 backendCommunicator
             ) {
 
                 const $ctrl = this;
-
-                $ctrl.pronouns = pronounsService;
 
                 $ctrl.respondedToAutoMod = false;
 

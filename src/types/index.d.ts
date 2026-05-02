@@ -18,6 +18,7 @@ export * from "./moderation";
 export * from "./modules";
 export * from "./overlay-widgets";
 export * from "./parameters";
+export * from "./pronouns";
 export * from "./quick-actions";
 export * from "./quotes";
 export * from "./ranks";

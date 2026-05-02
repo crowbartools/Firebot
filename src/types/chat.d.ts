@@ -75,6 +75,7 @@ export type FirebotChatMessage = {
     userId: string;
     userDisplayName?: string;
     profilePicUrl?: string;
+    pronouns?: string;
     isExtension?: boolean;
     roles: string[];
     badges: Array<{

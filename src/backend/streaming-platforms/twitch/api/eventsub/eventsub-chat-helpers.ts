@@ -35,6 +35,7 @@ import type {
 import type { FirebotAccount } from "../../../../../types/accounts";
 
 import { AccountAccess } from "../../../../common/account-access";
+import { FirebotPronounManager } from "../../../../pronouns/pronoun-manager";
 import { SettingsManager } from "../../../../common/settings-manager";
 import { TwitchApi } from "../";
 import viewerDatabase from "../../../../viewers/viewer-database";
@@ -528,13 +529,13 @@ class TwitchEventSubChatHelpers {
     }
 
     private cacheUserColor(userId: string, color?: string | null): string {
-            if (color?.length) {
-                this._colorCache[userId] = color;
-            } else if (this._colorCache[userId] == null) {
-                this._colorCache[userId] = tinycolor.random().toHexString();
-            }
+        if (color?.length) {
+            this._colorCache[userId] = color;
+        } else if (this._colorCache[userId] == null) {
+            this._colorCache[userId] = tinycolor.random().toHexString();
+        }
 
-            return this._colorCache[userId];
+        return this._colorCache[userId];
     }
 
     /**
@@ -572,6 +573,7 @@ class TwitchEventSubChatHelpers {
             username: event.chatterName,
             userId: event.chatterId,
             userDisplayName: event.chatterDisplayName,
+            pronouns: await FirebotPronounManager.getUserFriendlyPronounString(event.chatterName),
             rawText: isAction ? this.getChatMessage(event.messageText) : event.messageText,
             color: this.cacheUserColor(event.chatterId, event.color),
             badges: this.parseChatBadges(event.badges),
@@ -583,7 +585,7 @@ class TwitchEventSubChatHelpers {
             tagged: false,
             action: isAction,
             isAnnouncement,
-            // eslint-disable-next-line
+
             announcementColor: (announcementColor ? announcementColor.toUpperCase() : undefined) as FirebotChatMessage["announcementColor"],
             isCheer: false,
             isReply: false,
@@ -692,6 +694,7 @@ class TwitchEventSubChatHelpers {
             username: message.senderUserName,
             userId: message.senderUserId,
             userDisplayName: message.senderUserDisplayName,
+            pronouns: await FirebotPronounManager.getUserFriendlyPronounString(message.senderUserName),
             rawText: isAction ? this.getChatMessage(message.messageText) : message.messageText,
             badges: [],
             parts: [],
@@ -734,6 +737,7 @@ class TwitchEventSubChatHelpers {
             userDisplayName: event.userDisplayName,
             rawText: event.messageText,
             profilePicUrl: profilePicUrl,
+            pronouns: await FirebotPronounManager.getUserFriendlyPronounString(event.userName),
             whisper: false,
             action: false,
             tagged: false,
