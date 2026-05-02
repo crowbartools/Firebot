@@ -84,7 +84,8 @@ class RestrictionsManager extends TypedEmitter<Events> {
             await restrictionDef.predicate(triggerData, restriction, restrictionsAreInherited);
             restrictionPassed = true;
         } catch (reason) {
-            failedReason = (reason as string)?.toLowerCase();
+            failedReason = (reason instanceof Error ? reason.message : (reason as string))?.toLowerCase()
+                ?? "You don't meet the requirements.";
         }
 
         if (restriction.invertCondition) {
