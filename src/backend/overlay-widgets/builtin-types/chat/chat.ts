@@ -715,7 +715,8 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                 } else {
                     messageHtml += `<span>${chatMessagePartsHtml.join("")}</span>`;
                 }
-                messageHtml += `</span></div>`;
+
+                messageHtml += `</span></span>`;
 
                 if (chatMessage.isAnnouncement === true) {
                     if (config.settings.horizontalAlignment === "right") {
@@ -724,7 +725,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                             config.settings.horizontalAlignment
                         );
 
-                        messageHtml += `</div><div class="chat-announcement-bar-${config.id}" style="${utils.stylesToString(individualAnnouncementBarStyles)}"></div></div>`;
+                        messageHtml += `</div></div><div class="chat-announcement-bar-${config.id}" style="${utils.stylesToString(individualAnnouncementBarStyles)}"></div>`;
                     } else {
                         messageHtml += "</div></div>";
                     }
@@ -732,9 +733,11 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                     if (chatMessage.isSharedChatMessage && config.settings.showSharedChatInfo) {
                         messageHtml += "</div>";
                     }
+
+                    messageHtml += `</div>`;
                 }
 
-                messageHtml += `</span></div>`;
+                messageHtml += `</div>`;
 
                 return messageHtml;
             };
