@@ -11,6 +11,7 @@ export type ChatWidgetSettings = {
     showTimestamps?: boolean;
     showAvatars?: boolean;
     showBadges?: boolean;
+    showPronouns?: boolean;
     showSharedChatMessages?: boolean;
     showSharedChatInfo?: boolean;
     showAnnouncements?: boolean;
@@ -79,6 +80,13 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
             description: "Show chat badges (sub, bits tiers, etc.) next to usernames",
             type: "boolean",
             default: true
+        },
+        {
+            name: "showPronouns",
+            title: "Show Pronouns",
+            description: "Show chatter pronouns (provided by [https://pr.alejo.io/](https://pr.alejo.io/))",
+            type: "boolean",
+            default: false
         },
         {
             name: "showSharedChatMessages",
@@ -391,6 +399,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                 userId: "0",
                 userDisplayName: "zunderscore",
                 profilePicUrl: "https://static-cdn.jtvnw.net/jtv_user_pictures/4fe04c1f-8390-4ded-bcb0-cae9b1d7cb9c-profile_image-70x70.png",
+                pronouns: "He/Him",
                 color: "#0066FF",
                 rawText: "Wow, this IS really neat! zunder2Wow",
                 badges: [
@@ -423,6 +432,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                 userId: "0",
                 userDisplayName: "ebiggz",
                 profilePicUrl: "https://static-cdn.jtvnw.net/jtv_user_pictures/5545fe76-a341-4ffb-bc79-7ca8075588a1-profile_image-70x70.png",
+                pronouns: "He/Him",
                 color: "#00d1ff",
                 rawText: "Yo, what's going on over there?",
                 badges: [
@@ -451,6 +461,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                 userId: "0",
                 userDisplayName: "zunderscore",
                 profilePicUrl: "https://static-cdn.jtvnw.net/jtv_user_pictures/4fe04c1f-8390-4ded-bcb0-cae9b1d7cb9c-profile_image-70x70.png",
+                pronouns: "He/Him",
                 color: "#0066FF",
                 rawText: "Super cool stuff!",
                 badges: [
@@ -657,6 +668,10 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                     messageHtml += `<span class="chat-badge-container-${config.id}">${badgesHtml.join("")}</span>`;
                 }
 
+                if (config.settings.showPronouns === true && !!chatMessage.pronouns?.length) {
+                    messageHtml += `<span class="chat-pronouns-${config.id}">${chatMessage.pronouns}</span>`;
+                }
+
                 const individualUsernameStyles: Record<string, string> = {
                     "color": chatMessage.color
                 };
@@ -844,6 +859,17 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                     "height": usernameFontSize
                 };
 
+                const pronounStyles: Record<string, string> = {
+                    "border": `solid calc(${messageFontSize} * 0.05) ${config.settings?.messageFontOptions?.color || "#FFFFFF"}`,
+                    "border-radius": `calc(${messageFontSize} * 0.25)`,
+                    "font-family": (config.settings?.messageFontOptions?.family ? `"${config.settings?.messageFontOptions?.family}"` : "Inter, sans-serif"),
+                    "font-size": `calc(${messageFontSize} * 0.75)`,
+                    "font-weight": config.settings?.messageFontOptions?.weight?.toString() || "400",
+                    "font-style": config.settings?.messageFontOptions?.italic ? "italic" : "normal",
+                    "padding": `calc(${messageFontSize} * 0.15)`,
+                    "margin-right": "5px"
+                };
+
                 const usernameStyles: Record<string, string> = {
                     "font-family": (config.settings?.usernameFontOptions?.family ? `"${config.settings?.messageFontOptions?.family}"` : "Inter, sans-serif"),
                     "font-size": usernameFontSize,
@@ -911,6 +937,10 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
 
                         .chat-badge-${config.id} {
                             ${utils.stylesToString(badgeStyles)}
+                        }
+
+                        .chat-pronouns-${config.id} {
+                            ${utils.stylesToString(pronounStyles)}
                         }
 
                         .chat-username-${config.id} {
