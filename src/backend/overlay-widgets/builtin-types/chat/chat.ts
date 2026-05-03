@@ -569,7 +569,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
             const generateChatMessageHtml = (
                 chatMessage: FirebotChatMessage,
                 config: typeof event["data"]["widgetConfig"]
-            ): string => {
+            ): string | undefined => {
                 // Ignore AutoModded messages that aren't approved
                 if (chatMessage.autoModStatus === "pending"
                         || chatMessage.autoModStatus === "denied"
@@ -594,24 +594,23 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                     return;
                 }
 
-                const messageContainerStyle: Record<string, string> = { };
+                const rootMessageElem = document.createElement("div");
+                rootMessageElem.setAttribute("data-message-id", chatMessage.id);
+                rootMessageElem.setAttribute("data-username", chatMessage.username);
+
+                let messageHeaderText = "";
 
                 if (chatMessage.isAnnouncement === true) {
+                    const messageContainerStyle: Record<string, string> = { };
                     messageContainerStyle["display"] = "flex";
                     messageContainerStyle["flex-direction"] = "row";
-                }
 
-                let messageHtml = `
-                <div
-                    data-message-id="${chatMessage.id}"
-                    data-username="${chatMessage.username}"
-                    style="${utils.stylesToString(messageContainerStyle)}">`;
+                    rootMessageElem.setAttribute("style", utils.stylesToString(messageContainerStyle));
 
-                if (chatMessage.isAnnouncement === true) {
-                    let header = "Announcement";
+                    messageHeaderText = "Announcement";
 
                     if (chatMessage.isSharedChatMessage) {
-                        header += `, sent from ${chatMessage.sharedChatRoomDisplayName}'s chat`;
+                        messageHeaderText += `, sent from ${chatMessage.sharedChatRoomDisplayName}'s chat`;
                     }
 
                     if (config.settings.horizontalAlignment === "left") {
@@ -620,27 +619,36 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                             config.settings.horizontalAlignment
                         );
 
-                        messageHtml += `
-                                <div class="chat-announcement-bar-${config.id}" style="${utils.stylesToString(individualAnnouncementBarStyles)}"></div>
-                                <div class="chat-message-container-${config.id}">
-                                    <div class="chat-message-header-${config.id}">${header}</div>`;
-                    } else {
-                        messageHtml += `
-                                <div class="chat-message-container-${config.id}">
-                                    <div class="chat-message-header-${config.id}">${header}</div>`;
+                        const announcementBarElem = document.createElement("div");
+                        announcementBarElem.classList.add(`chat-announcement-bar-${config.id}`);
+                        announcementBarElem.setAttribute("style", utils.stylesToString(individualAnnouncementBarStyles));
+
+                        rootMessageElem.appendChild(announcementBarElem);
                     }
                 } else {
                     if (chatMessage.isSharedChatMessage && config.settings.showSharedChatInfo) {
-                        messageHtml += `
-                                <div class="chat-message-container-${config.id}">
-                                    <div class="chat-message-header-${config.id}">Sent from ${chatMessage.sharedChatRoomDisplayName}'s chat</div>`;
+                        messageHeaderText = `Sent from ${chatMessage.sharedChatRoomDisplayName}'s chat`;
                     }
                 }
 
-                messageHtml += `<div class="chat-message-content-container-${config.id}"><span>`;
+                const messageContainerElem = document.createElement("div");
+                messageContainerElem.classList.add(`chat-message-container-${config.id}`);
 
-                let timestampString: string;
-                if (config.settings.showTimestamps === true) {
+                if (messageHeaderText.length > 0) {
+                    const messageHeaderElem = document.createElement("div");
+                    messageHeaderElem.classList.add(`chat-message-header-${config.id}`);
+                    messageHeaderElem.innerText = messageHeaderText;
+
+                    messageContainerElem.appendChild(messageHeaderElem);
+                }
+
+                const messageContentContainerElem = document.createElement("div");
+                messageContentContainerElem.classList.add(`chat-message-content-container-${config.id}`);
+
+                const messageInfoElem = document.createElement("span");
+
+                let timestampString: string | undefined = undefined;
+                if (config.settings.showTimestamps === true && chatMessage.timestamp) {
                     const timestampAsDate = new Date(chatMessage.timestamp);
                     const hours = timestampAsDate.getHours() % 12 === 0
                         ? "12"
@@ -650,119 +658,178 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                     timestampString = `[${hours}:${minutes}]`;
                 }
 
-                if (timestampString?.length && config.settings.messageStyle === "compact") {
-                    messageHtml += `<span class="chat-message-${config.id}">${timestampString} </span>`;
+                if (!!timestampString?.length && config.settings.messageStyle === "compact") {
+                    const timestampSpan = document.createElement("span");
+                    timestampSpan.classList.add(`chat-message-${config.id}`);
+                    timestampSpan.innerText = `${timestampString} `;
+
+                    messageInfoElem.appendChild(timestampSpan);
                 }
 
                 if (config.settings.showAvatars === true) {
-                    messageHtml += `<img class="chat-avatar-${config.id}" src="${chatMessage.profilePicUrl}" alt="avatar" />`;
+                    const avatarElem = document.createElement("img");
+                    avatarElem.classList.add(`chat-avatar-${config.id}`);
+                    avatarElem.src = chatMessage.profilePicUrl!;
+                    avatarElem.alt = "avatar";
+
+                    messageInfoElem.appendChild(avatarElem);
                 }
 
                 if (config.settings.showBadges === true && chatMessage.badges?.length) {
-                    const badgesHtml: Array<string> = [];
+                    const badgeContainerElem = document.createElement("span");
+                    badgeContainerElem.classList.add(`chat-badge-container-${config.id}`);
 
                     for (const badge of chatMessage.badges) {
-                        badgesHtml.push(`<img class="chat-badge-${config.id}" src="${badge.url}" alt="${badge.title}" />`);
+                        const badgeElem = document.createElement("img");
+                        badgeElem.classList.add(`chat-badge-${config.id}`);
+                        badgeElem.src = badge.url;
+                        badgeElem.alt = badge.title;
+
+                        badgeContainerElem.appendChild(badgeElem);
                     }
 
-                    messageHtml += `<span class="chat-badge-container-${config.id}">${badgesHtml.join("")}</span>`;
+                    messageInfoElem.appendChild(badgeContainerElem);
                 }
 
                 if (config.settings.showPronouns === true && !!chatMessage.pronouns?.length) {
-                    messageHtml += `<span class="chat-pronouns-${config.id}">${chatMessage.pronouns}</span>`;
+                    const pronounElem = document.createElement("span");
+                    pronounElem.classList.add(`chat-pronouns-${config.id}`);
+                    pronounElem.innerText = chatMessage.pronouns;
+
+                    messageInfoElem.appendChild(pronounElem);
                 }
 
                 const individualUsernameStyles: Record<string, string> = {
-                    "color": chatMessage.color
+                    "color": `${chatMessage.color}`
                 };
 
-                messageHtml += `<span class="chat-username-${config.id}" style="${utils.stylesToString(individualUsernameStyles)}">${chatMessage.userDisplayName ?? chatMessage.username}</span>`;
+                const usernameElem = document.createElement("span");
+                usernameElem.classList.add(`chat-username-${config.id}`);
+                usernameElem.setAttribute("style", utils.stylesToString(individualUsernameStyles));
+                usernameElem.innerText = chatMessage.userDisplayName ?? chatMessage.username;
 
-                if (timestampString?.length && config.settings.messageStyle === "modern") {
-                    messageHtml += `<span class="chat-message-${config.id}"> ${timestampString}</span>`;
+                messageInfoElem.appendChild(usernameElem);
+
+                if (!!timestampString?.length && config.settings.messageStyle === "modern") {
+                    const timestampSpan = document.createElement("span");
+                    timestampSpan.classList.add(`chat-message-${config.id}`);
+                    timestampSpan.innerText = ` ${timestampString}`;
+
+                    messageInfoElem.appendChild(timestampSpan);
                 }
 
-                const chatMessagePartsHtml: string[] = [];
+                messageContentContainerElem.appendChild(messageInfoElem);
 
-                for (const part of chatMessage.parts) {
-                    switch (part.type) {
-                        case "emote":
-                            chatMessagePartsHtml.push(`<img src="${part.animatedUrl ?? part.url}" alt="${part.name}">`);
-                            break;
+                const messageTextElem = document.createElement("span");
+                messageTextElem.classList.add(`chat-message-${config.id}`);
 
-                        case "third-party-emote":
-                            if (config.settings.thirdPartyEmotes.some(e => e === part.origin)) {
-                                chatMessagePartsHtml.push(`<img src="${part.animatedUrl ?? part.url}" alt="${part.name}">`);
-                            } else {
-                                chatMessagePartsHtml.push(part.name);
-                            }
-                            break;
-
-                        case "cheermote":
-                            chatMessagePartsHtml.push(`<img src="${part.animatedUrl ?? part.url}" alt="${part.name}"><strong style="color: ${part.color}">${part.amount}</strong>`);
-                            break;
-
-                        case "link":
-                            chatMessagePartsHtml.push(part.url);
-                            break;
-
-                        default:
-                            chatMessagePartsHtml.push(part.text);
-                    }
-                }
-
-                messageHtml += "</span><span>";
+                let messageText: string;
 
                 if (chatMessage.action === true) {
                     const individualActionStyles: Record<string, string> = { };
 
                     if (config.settings.actionDisplayFormat === "classic") {
-                        individualActionStyles["color"] = chatMessage.color;
+                        individualActionStyles["color"] = chatMessage.color!;
                     }
 
-                    messageHtml += `<span class="chat-message-${config.id} chat-action-${config.id}" style="${utils.stylesToString(individualActionStyles)}">${config.settings.messageStyle === "modern" ? "" : "&nbsp;"}`;
+                    messageTextElem.classList.add(`chat-action-${config.id}`);
+                    messageTextElem.setAttribute("style", utils.stylesToString(individualActionStyles));
+
+                    messageText = config.settings.messageStyle === "modern" ? "" : " ";
                 } else {
-                    messageHtml += `<span class="chat-message-${config.id}">${config.settings.messageStyle === "modern" ? "" : ": "}`;
+                    messageText = config.settings.messageStyle === "modern" ? "" : ": ";
                 }
 
+                if (!!messageText?.length) {
+                    messageTextElem.innerText = messageText;
+                }
+
+                const innerMessageElem = document.createElement("span");
                 if (chatMessage.isHighlighted === true && config.settings.highlightStyle === "highlighted") {
-                    messageHtml += `<span class="chat-highlighted-message-${config.id}">${chatMessagePartsHtml.join("")}</span>`;
-                } else {
-                    messageHtml += `<span>${chatMessagePartsHtml.join("")}</span>`;
+                    innerMessageElem.classList.add(`chat-highlighted-message-${config.id}`);
                 }
 
-                messageHtml += `</span></span>`;
+                const chatMessagePartsHtml: Array<string> = [];
 
-                if (chatMessage.isAnnouncement === true) {
-                    if (config.settings.horizontalAlignment === "right") {
-                        const individualAnnouncementBarStyles = generateAnnouncementBarStyle(
-                            chatMessage.announcementColor,
-                            config.settings.horizontalAlignment
-                        );
+                for (const part of chatMessage.parts) {
+                    switch (part.type) {
+                        case "emote":
+                            {
+                                const emoteElem = document.createElement("img");
+                                emoteElem.src = (part.animatedUrl ?? part.url)!;
+                                emoteElem.alt = part.name!;
 
-                        messageHtml += `</div></div><div class="chat-announcement-bar-${config.id}" style="${utils.stylesToString(individualAnnouncementBarStyles)}"></div>`;
-                    } else {
-                        messageHtml += "</div></div>";
+                                chatMessagePartsHtml.push(emoteElem.outerHTML);
+                            }
+                            break;
+
+                        case "third-party-emote":
+                            if (config.settings.thirdPartyEmotes.some(e => e === part.origin)) {
+                                const emoteElem = document.createElement("img");
+                                emoteElem.src = (part.animatedUrl ?? part.url)!;
+                                emoteElem.alt = part.name!;
+
+                                chatMessagePartsHtml.push(emoteElem.outerHTML);
+                            } else {
+                                chatMessagePartsHtml.push(part.name!);
+                            }
+                            break;
+
+                        case "cheermote":
+                            {
+                                const cheermoteElem = document.createElement("img");
+                                cheermoteElem.src = (part.animatedUrl ?? part.url)!;
+                                cheermoteElem.alt = part.name!;
+
+                                const cheerAmountElem = document.createElement("strong");
+                                cheerAmountElem.style.color = part.color!;
+                                cheerAmountElem.innerText = `${part.amount}`;
+
+                                chatMessagePartsHtml.push(cheermoteElem.outerHTML);
+                                chatMessagePartsHtml.push(cheerAmountElem.outerHTML);
+                            }
+                            break;
+
+                        case "link":
+                            chatMessagePartsHtml.push(part.url!);
+                            break;
+
+                        default:
+                            chatMessagePartsHtml.push(part.text!);
                     }
-                } else {
-                    if (chatMessage.isSharedChatMessage && config.settings.showSharedChatInfo) {
-                        messageHtml += "</div>";
-                    }
-
-                    messageHtml += `</div>`;
                 }
 
-                messageHtml += `</div>`;
+                innerMessageElem.innerHTML = chatMessagePartsHtml.join("");
 
-                return messageHtml;
+                messageTextElem.appendChild(innerMessageElem);
+
+                messageContentContainerElem.appendChild(messageTextElem);
+                messageContainerElem.appendChild(messageContentContainerElem);
+
+                rootMessageElem.appendChild(messageContainerElem);
+
+                if (chatMessage.isAnnouncement === true && config.settings.horizontalAlignment === "right") {
+                    const individualAnnouncementBarStyles = generateAnnouncementBarStyle(
+                        chatMessage.announcementColor,
+                        config.settings.horizontalAlignment
+                    );
+
+                    const announcementBarElem = document.createElement("div");
+                    announcementBarElem.classList.add(`chat-announcement-bar-${config.id}`);
+                    announcementBarElem.setAttribute("style", utils.stylesToString(individualAnnouncementBarStyles));
+
+                    rootMessageElem.appendChild(announcementBarElem);
+                }
+
+                return rootMessageElem.outerHTML;
             };
 
             const generateWidgetHtml = (config: typeof event["data"]["widgetConfig"]) => {
-                const usernameFontSize = (config.settings?.usernameFontOptions?.size ? `${config.settings.messageFontOptions.size}px` : "12px");
+                const usernameFontSize = (config.settings?.usernameFontOptions?.size ? `${config.settings.usernameFontOptions.size}px` : "12px");
                 const messageFontSize = (config.settings?.messageFontOptions?.size ? `${config.settings.messageFontOptions.size}px` : "12px");
 
                 let height = "auto";
-                let maxHeight = "100%";
+                let maxHeight: string | undefined = "100%";
                 let justifyContent = "end";
                 let anchorToBottom = false;
 
@@ -780,7 +847,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                             case "top":
                             default:
                                 height = "auto";
-                                maxHeight = null;
+                                maxHeight = undefined;
                                 justifyContent = "start";
                                 break;
                         }
@@ -871,7 +938,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                 };
 
                 const usernameStyles: Record<string, string> = {
-                    "font-family": (config.settings?.usernameFontOptions?.family ? `"${config.settings?.messageFontOptions?.family}"` : "Inter, sans-serif"),
+                    "font-family": (config.settings?.usernameFontOptions?.family ? `"${config.settings?.usernameFontOptions?.family}"` : "Inter, sans-serif"),
                     "font-size": usernameFontSize,
                     "font-weight": config.settings?.usernameFontOptions?.weight?.toString() || "700",
                     "font-style": config.settings?.usernameFontOptions?.italic ? "italic" : "normal"
@@ -886,7 +953,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                 };
 
                 const highlightedMessageStyles: Record<string, string> = {
-                    "background-color": config.settings.highlightColor
+                    "background-color": `${config.settings.highlightColor}`
                 };
 
                 const actionStyles: Record<string, string> = {
@@ -1011,7 +1078,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
 
                                         // Trim excess
                                         while (chatContainer.childElementCount > 100) {
-                                            chatContainer.removeChild(chatContainer.firstElementChild);
+                                            chatContainer.removeChild(chatContainer.firstElementChild!);
                                         }
                                     }
                                 } catch { }
