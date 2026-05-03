@@ -771,7 +771,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
 
                                 chatMessagePartsHtml.push(emoteElem.outerHTML);
                             } else {
-                                chatMessagePartsHtml.push(part.name!);
+                                chatMessagePartsHtml.push(part.name);
                             }
                             break;
 
@@ -791,11 +791,11 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                             break;
 
                         case "link":
-                            chatMessagePartsHtml.push(part.url!);
+                            chatMessagePartsHtml.push(part.url);
                             break;
 
                         default:
-                            chatMessagePartsHtml.push(part.text!);
+                            chatMessagePartsHtml.push(part.text);
                     }
                 }
 
@@ -1078,7 +1078,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
 
                                         // Trim excess
                                         while (chatContainer.childElementCount > 100) {
-                                            chatContainer.removeChild(chatContainer.firstElementChild!);
+                                            chatContainer.removeChild(chatContainer.firstElementChild);
                                         }
                                     }
                                 } catch { }
