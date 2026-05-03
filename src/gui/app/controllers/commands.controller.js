@@ -191,8 +191,9 @@
                             tooltip-append-to-body="true"
                         >{{data.trigger}}</span>
                         <tooltip
-                            ng-if="data.triggerIsRegex"
-                            text="'Description: ' + data.regexDescription"
+                            ng-if="showTooltip(data)"
+                            type="info"
+                            text="getTooltip(data)"
                         ></tooltip>
                         <span
                             class="muted ml-2"
@@ -203,7 +204,27 @@
                         >
                             <i class="fas fa-eye-slash"></i>
                         </span>
-                    `
+                    `,
+                    cellController: ($scope) => {
+                        $scope.showTooltip = (command) => {
+                            return !!command.description?.length
+                                || (command.triggerIsRegex && !!command.regexDescription?.length);
+                        };
+
+                        $scope.getTooltip = (command) => {
+                            const tooltipParts = [];
+
+                            if (!!command.description?.length) {
+                                tooltipParts.push(command.description);
+                            }
+
+                            if (command.triggerIsRegex && !!command.regexDescription?.length) {
+                                tooltipParts.push(`RegEx Description: ${command.regexDescription}`);
+                            }
+
+                            return tooltipParts.join("<br/><br/>");
+                        };
+                    }
                 },
                 {
                     name: "COOLDOWNS",
