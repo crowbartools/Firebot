@@ -13,7 +13,7 @@ export type ChatWidgetSettings = {
     showBadges?: boolean;
     showPronouns?: boolean;
     showSharedChatMessages?: boolean;
-    showSharedChatInfo?: boolean;
+    sharedChatInfoStyle?: "none" | "avatar" | "banner";
     showAnnouncements?: boolean;
     delayMessages?: boolean;
     messageDelay?: number;
@@ -96,11 +96,34 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
             default: false
         },
         {
-            name: "showSharedChatInfo",
-            title: "Show Shared Chat Info",
-            description: "Display info about the channel a chat message was sent in during a shared chat session in the chat feed",
-            type: "boolean",
-            default: true,
+            name: "sharedChatInfoStyle",
+            title: "Shared Chat Info Style",
+            description: "Optionally display info about the channel a chat message was sent in during a shared chat session",
+            type: "radio-cards",
+            default: "none",
+            options: [
+                {
+                    value: "none",
+                    label: "None",
+                    description: "Don't show any info about the shared chat source channel",
+                    iconClass: "fa-times"
+                },
+                {
+                    value: "avatar",
+                    label: "Avatar",
+                    description: "Show the avatar for the source channel next to the message",
+                    iconClass: "fa-user-circle"
+                },
+                {
+                    value: "banner",
+                    label: "Banner",
+                    description: `Show a banner above the message (e.g. "Sent from Firebot's chat")`,
+                    iconClass: "fa-grip-lines"
+                }
+            ],
+            settings: {
+                gridColumns: 3
+            },
             showIf: {
                 showSharedChatMessages: true
             }
@@ -390,6 +413,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                 whisper: false,
                 tagged: false,
                 isSharedChatMessage: false,
+                sharedChatRoomProfilePicUrl: "https://static-cdn.jtvnw.net/jtv_user_pictures/4fe04c1f-8390-4ded-bcb0-cae9b1d7cb9c-profile_image-70x70.png",
                 roles: []
             },
             {
@@ -423,6 +447,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                 whisper: false,
                 tagged: false,
                 isSharedChatMessage: false,
+                sharedChatRoomProfilePicUrl: "https://static-cdn.jtvnw.net/jtv_user_pictures/4fe04c1f-8390-4ded-bcb0-cae9b1d7cb9c-profile_image-70x70.png",
                 roles: []
             },
             {
@@ -452,6 +477,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                 tagged: false,
                 isSharedChatMessage: true,
                 sharedChatRoomDisplayName: "ebiggz",
+                sharedChatRoomProfilePicUrl: "https://static-cdn.jtvnw.net/jtv_user_pictures/5545fe76-a341-4ffb-bc79-7ca8075588a1-profile_image-70x70.png",
                 roles: []
             },
             {
@@ -480,6 +506,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                 whisper: false,
                 tagged: false,
                 isSharedChatMessage: false,
+                sharedChatRoomProfilePicUrl: "https://static-cdn.jtvnw.net/jtv_user_pictures/4fe04c1f-8390-4ded-bcb0-cae9b1d7cb9c-profile_image-70x70.png",
                 isHighlighted: true,
                 roles: []
             },
@@ -515,6 +542,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                 whisper: false,
                 tagged: false,
                 isSharedChatMessage: false,
+                sharedChatRoomProfilePicUrl: "https://static-cdn.jtvnw.net/jtv_user_pictures/4fe04c1f-8390-4ded-bcb0-cae9b1d7cb9c-profile_image-70x70.png",
                 roles: []
             }
         ]
@@ -522,8 +550,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
     overlayExtension: {
         eventHandler: (event: WidgetOverlayEvent<ChatWidgetSettings, ChatWidgetState>, utils: IOverlayWidgetEventUtils) => {
             const generateAnnouncementBarStyle = (
-                announcementColor: FirebotChatMessage["announcementColor"],
-                horizontalAlignment: typeof event["data"]["widgetConfig"]["settings"]["horizontalAlignment"]
+                announcementColor: FirebotChatMessage["announcementColor"]
             ): Record<string, string> => {
                 let announcementBackgroundColor: string;
 
@@ -552,16 +579,6 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                 const individualAnnouncementBarStyles: Record<string, string> = {
                     "background": announcementBackgroundColor
                 };
-
-                switch (horizontalAlignment) {
-                    case "right":
-                        individualAnnouncementBarStyles["margin-left"] = "10px";
-                        break;
-
-                    default:
-                        individualAnnouncementBarStyles["margin-right"] = "10px";
-                        break;
-                }
 
                 return individualAnnouncementBarStyles;
             };
@@ -595,38 +612,44 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                 }
 
                 const rootMessageElem = document.createElement("div");
+                rootMessageElem.classList.add(`chat-message-root-container-${config.id}`);
                 rootMessageElem.setAttribute("data-message-id", chatMessage.id);
                 rootMessageElem.setAttribute("data-username", chatMessage.username);
 
                 let messageHeaderText = "";
 
+                const showSharedChatAvatar = config.settings.sharedChatInfoStyle === "avatar"
+                    && chatMessage.sharedChatRoomProfilePicUrl;
+
+                if (showSharedChatAvatar) {
+                    const sharedChatAvatarContainerElem = document.createElement("div");
+
+                    const sharedChatAvatarElem = document.createElement("img");
+                    sharedChatAvatarElem.classList.add(`chat-avatar-${config.id}`);
+                    sharedChatAvatarElem.src = chatMessage.sharedChatRoomProfilePicUrl!;
+
+                    sharedChatAvatarContainerElem.appendChild(sharedChatAvatarElem);
+                    rootMessageElem.appendChild(sharedChatAvatarContainerElem);
+                }
+
                 if (chatMessage.isAnnouncement === true) {
-                    const messageContainerStyle: Record<string, string> = { };
-                    messageContainerStyle["display"] = "flex";
-                    messageContainerStyle["flex-direction"] = "row";
-
-                    rootMessageElem.setAttribute("style", utils.stylesToString(messageContainerStyle));
-
                     messageHeaderText = "Announcement";
 
-                    if (chatMessage.isSharedChatMessage) {
+                    if (chatMessage.isSharedChatMessage && config.settings.sharedChatInfoStyle === "banner") {
                         messageHeaderText += `, sent from ${chatMessage.sharedChatRoomDisplayName}'s chat`;
                     }
 
-                    if (config.settings.horizontalAlignment === "left") {
-                        const individualAnnouncementBarStyles = generateAnnouncementBarStyle(
-                            chatMessage.announcementColor,
-                            config.settings.horizontalAlignment
-                        );
+                    const individualAnnouncementBarStyles = generateAnnouncementBarStyle(
+                        chatMessage.announcementColor
+                    );
 
-                        const announcementBarElem = document.createElement("div");
-                        announcementBarElem.classList.add(`chat-announcement-bar-${config.id}`);
-                        announcementBarElem.setAttribute("style", utils.stylesToString(individualAnnouncementBarStyles));
+                    const announcementBarElem = document.createElement("div");
+                    announcementBarElem.classList.add(`chat-announcement-bar-${config.id}`);
+                    announcementBarElem.setAttribute("style", utils.stylesToString(individualAnnouncementBarStyles));
 
-                        rootMessageElem.appendChild(announcementBarElem);
-                    }
+                    rootMessageElem.appendChild(announcementBarElem);
                 } else {
-                    if (chatMessage.isSharedChatMessage && config.settings.showSharedChatInfo) {
+                    if (chatMessage.isSharedChatMessage && config.settings.sharedChatInfoStyle === "banner") {
                         messageHeaderText = `Sent from ${chatMessage.sharedChatRoomDisplayName}'s chat`;
                     }
                 }
@@ -808,19 +831,6 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
 
                 rootMessageElem.appendChild(messageContainerElem);
 
-                if (chatMessage.isAnnouncement === true && config.settings.horizontalAlignment === "right") {
-                    const individualAnnouncementBarStyles = generateAnnouncementBarStyle(
-                        chatMessage.announcementColor,
-                        config.settings.horizontalAlignment
-                    );
-
-                    const announcementBarElem = document.createElement("div");
-                    announcementBarElem.classList.add(`chat-announcement-bar-${config.id}`);
-                    announcementBarElem.setAttribute("style", utils.stylesToString(individualAnnouncementBarStyles));
-
-                    rootMessageElem.appendChild(announcementBarElem);
-                }
-
                 return rootMessageElem.outerHTML;
             };
 
@@ -888,6 +898,14 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                     chatContainerStyles["position"] = "absolute";
                     chatContainerStyles["bottom"] = "0";
                 }
+
+                const messageRootContainerStyles: Record<string, string> = {
+                    "display": "flex",
+                    "gap": "10px",
+                    "flex-direction": config.settings.horizontalAlignment === "right"
+                        ? "row-reverse"
+                        : "row"
+                };
 
                 const announcementBarStyles: Record<string, string> = {
                     "width": "10px"
@@ -972,6 +990,10 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
 
                         .chat-${config.id} > div + div {
                             ${config.settings.chatOrder === "reversed" ? "margin-bottom" : "margin-top"}: ${config.settings.spaceBetweenMessages ?? 5}px;
+                        }
+
+                        .chat-message-root-container-${config.id} {
+                            ${utils.stylesToString(messageRootContainerStyles)}
                         }
 
                         .chat-announcement-bar-${config.id} {
