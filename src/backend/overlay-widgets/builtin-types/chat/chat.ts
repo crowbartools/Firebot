@@ -1128,6 +1128,8 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                                                 $(`.chat-${event.data.widgetConfig.id}`).find(`[data-message-id="${messageId}"]`).animateCss(animationClass, duration, null, null, () => {
                                                     chatContainer.removeChild(messageToRemove);
                                                 });
+                                            } else {
+                                                chatContainer.removeChild(messageToRemove);
                                             }
                                         } else {
                                             chatContainer.removeChild(messageToRemove);
