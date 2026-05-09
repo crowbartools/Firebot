@@ -45,7 +45,11 @@
     <script src="https://www.youtube.com/iframe_api"></script>
 
     <% for(let jsDep of dependencies.js) { %>
-        <script src="<%-jsDep%>"></script>
+        <% if (jsDep.module) { %>
+            <script type="module" src="<%-jsDep.url%>"></script>
+        <% } else { %>
+            <script src="<%-jsDep.url%>"></script>
+        <% } %>
     <% } %>
 
     <script>
