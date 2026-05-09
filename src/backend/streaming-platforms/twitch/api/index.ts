@@ -32,6 +32,7 @@ import { AccountAccess } from "../../../common/account-access";
 import { SettingsManager } from "../../../common/settings-manager";
 import frontendCommunicator from "../../../common/frontend-communicator";
 import logger from "../../../logwrapper";
+import { TwitchPowerUpsApi } from "./resource/power-ups";
 
 class TwitchApi {
     private _streamerClient: UserContextApiClient;
@@ -188,6 +189,11 @@ class TwitchApi {
     private _bits: TwitchBitsApi;
     get bits() {
         return this._bits ??= new TwitchBitsApi(this);
+    }
+
+    private _powerUps: TwitchPowerUpsApi;
+    get powerUps() {
+        return this._powerUps ??= new TwitchPowerUpsApi(this);
     }
 
     private _categories: TwitchCategoriesApi;

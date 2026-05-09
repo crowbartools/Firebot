@@ -16,10 +16,11 @@ import twitchStreamInfoPoll from "../../stream-info-manager";
 import viewerDatabase from "../../../../viewers/viewer-database";
 import logger from "../../../../logwrapper";
 import {
-    getChannelRewardImageUrl,
+    getChannelRewardOrPowerUpImageUrl,
     mapEventSubRewardToTwitchData,
     mapSharedChatParticipants
 } from "./eventsub-helpers";
+import { EventSubPowerUpRedemptionAddSubscription } from "./custom-subscriptions/power-up-redemption-add-subscription";
 
 class TwitchEventSubClient {
     private _eventSubListener: EventSubWsListener;
@@ -227,7 +228,7 @@ class TwitchEventSubClient {
                 return;
             }
 
-            const imageUrl = getChannelRewardImageUrl(reward.twitchData);
+            const imageUrl = getChannelRewardOrPowerUpImageUrl(reward.twitchData);
 
             TwitchEventHandlers.rewardRedemption.handleRewardRedemption(
                 event.id,
@@ -269,7 +270,7 @@ class TwitchEventSubClient {
                 return;
             }
 
-            const imageUrl = getChannelRewardImageUrl(reward.twitchData);
+            const imageUrl = getChannelRewardOrPowerUpImageUrl(reward.twitchData);
 
             TwitchEventHandlers.rewardRedemption.handleRewardUpdated(
                 event.id,
@@ -290,6 +291,44 @@ class TwitchEventSubClient {
             }
         });
         this._subscriptions.push(customRewardRedemptionUpdateSubscription);
+
+        // Custom Power-Up Redemption Add
+        // @ts-ignore
+        const customPowerUpRedemptionSubscription = this._eventSubListener._genericSubscribe(
+            EventSubPowerUpRedemptionAddSubscription,
+            async (event) => {
+                if (!event.custom_power_up.id) {
+                    return;
+                }
+
+                const powerUp = await TwitchApi.powerUps.getCustomPowerUpById(event.custom_power_up.id);
+
+                if (!powerUp) {
+                    logger.debug(`Received a custom power-up redemption for an unknown power-up. Power-Up ID: ${event.custom_power_up.id}`, event);
+                    return;
+                }
+
+                const imageUrl = getChannelRewardOrPowerUpImageUrl(powerUp);
+
+                TwitchEventHandlers.bits.handleCustomPowerUpRedemption(
+                    event.id,
+                    event.status,
+                    event.user_input,
+                    event.user_id,
+                    event.user_login,
+                    event.user_name,
+                    powerUp.id,
+                    powerUp.title,
+                    powerUp.prompt,
+                    powerUp.bits,
+                    imageUrl
+                );
+
+            },
+            this._eventSubListener,
+            streamer.userId
+        );
+        this._subscriptions.push(customPowerUpRedemptionSubscription);
 
         // Incoming Raid
         const incomingRaidSubscription = this._eventSubListener.onChannelRaidTo(streamer.userId, (event) => {

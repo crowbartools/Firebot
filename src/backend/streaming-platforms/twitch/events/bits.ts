@@ -1,4 +1,5 @@
 import { EventManager } from "../../../events/event-manager";
+import frontendCommunicator from "../../../common/frontend-communicator";
 
 export function triggerCheer(
     username: string,
@@ -92,4 +93,53 @@ export function triggerPowerupGigantifyEmote(
         emoteName,
         emoteUrl
     });
+}
+
+export function handleCustomPowerUpRedemption(
+    redemptionId: string,
+    status: string,
+    messageText: string,
+    userId: string,
+    username: string,
+    userDisplayName: string,
+    powerUpId: string,
+    powerUpTitle: string,
+    powerUpPrompt: string,
+    powerUpBits: number,
+    powerUpImageUrl: string
+): void {
+    // frontendCommunicator.send("twitch:chat:rewardredemption", {
+    //     id: redemptionId,
+    //     status,
+    //     messageText,
+    //     user: {
+    //         id: userId,
+    //         username,
+    //         displayName: userDisplayName
+    //     },
+    //     powerUp: {
+    //         id: powerUpId,
+    //         name: powerUpTitle,
+    //         bits: powerUpBits,
+    //         imageUrl: powerUpImageUrl ?? "https://static-cdn.jtvnw.net/custom-reward-images/default-4.png"
+    //     }
+    // });
+
+    setTimeout(() => {
+        const redemptionMeta = {
+            username,
+            userId,
+            userDisplayName,
+            messageText,
+            args: (messageText ?? "").split(" "),
+            redemptionId,
+            powerUpId,
+            powerUpImage: powerUpImageUrl,
+            powerUpName: powerUpTitle,
+            powerUpDescription: powerUpPrompt,
+            powerUpBits
+        };
+
+        void void EventManager.triggerEvent("twitch", "custom-power-up-redemption", redemptionMeta);
+    }, 100);
 }

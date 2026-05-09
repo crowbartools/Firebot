@@ -654,6 +654,36 @@ export const TwitchEventSource: EventSource = {
             }
         },
         {
+            id: "custom-power-up-redemption",
+            name: "Custom Power-Up Redemption",
+            description: "When someone redeems a custom power-up",
+            cached: true,
+            cacheMetaKey: "username",
+            cacheTtlInSecs: 1,
+            manualMetadata: {
+                username: "firebot",
+                userDisplayName: "Firebot",
+                userId: "",
+                powerUpName: "Test Power-Up",
+                powerUpDescription: "Example Power-Up Description",
+                powerUpImage: "https://static-cdn.jtvnw.net/custom-reward-images/default-4.png",
+                powerUpBits: 100,
+                messageText: "Test message"
+            },
+            activityFeed: {
+                icon: "fad fa-circle",
+                getMessage: (eventData) => {
+                    const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
+                    return `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }** redeemed **${eventData.powerUpName}**${
+                        eventData.messageText && !!eventData.messageText.length ? `: *${escape(eventData.messageText)}*` : ""
+                    }`;
+                },
+                excludeFromChatFeed: true
+            }
+        },
+        {
             id: "channel-reward-redemption",
             name: "Channel Reward Redemption",
             description: "When someone redeems a CUSTOM channel reward",
