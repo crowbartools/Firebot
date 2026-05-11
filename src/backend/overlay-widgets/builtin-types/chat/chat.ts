@@ -8,29 +8,29 @@ import type {
 } from "../../../../types";
 
 export type ChatWidgetSettings = {
-    showTimestamps?: boolean;
-    showAvatars?: boolean;
-    showBadges?: boolean;
-    showPronouns?: boolean;
-    showSharedChatMessages?: boolean;
+    showTimestamps: boolean;
+    showAvatars: boolean;
+    showBadges: boolean;
+    showPronouns: boolean;
+    showSharedChatMessages: boolean;
     sharedChatInfoStyle?: "none" | "avatar" | "banner";
-    showAnnouncements?: boolean;
-    delayMessages?: boolean;
+    showAnnouncements: boolean;
+    delayMessages: boolean;
     messageDelay?: number;
     newMessageEntryAnimation: Animation;
-    autoRemoveMessages?: boolean;
+    autoRemoveMessages: boolean;
     messageTimeout?: number;
     messageExitAnimation?: Animation;
-    messageStyle?: "compact" | "modern";
-    chatOrder?: "normal" | "reversed";
+    messageStyle: "compact" | "modern";
+    chatOrder: "normal" | "reversed";
     actionDisplayFormat: "modern" | "classic";
-    highlightStyle?: "normal" | "highlighted";
+    highlightStyle: "normal" | "highlighted";
     highlightColor?: string;
     thirdPartyEmotes: string[];
     hiddenUsers: string[];
     horizontalAlignment: "left" | "right";
     verticalAlignment: "top" | "bottom";
-    spaceBetweenMessages?: number;
+    spaceBetweenMessages: number;
     usernameFontOptions: FontOptions;
     messageFontOptions: FontOptions;
 };
@@ -39,16 +39,16 @@ export type ChatWidgetState = {
     chatMessages: Array<FirebotChatMessage>;
 };
 
-type ChatMessageMessageData = {
+export type ChatMessageMessageData = {
     chatMessage: FirebotChatMessage;
 };
 
-type DeleteMessageMessageData = {
+export type DeleteMessageMessageData = {
     messageId: string;
     animate: boolean;
 };
 
-type DeleteUserMessagesMessageData = {
+export type DeleteUserMessagesMessageData = {
     username: string;
 };
 
@@ -698,7 +698,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                     messageInfoElem.appendChild(avatarElem);
                 }
 
-                if (config.settings.showBadges === true && chatMessage.badges?.length) {
+                if (config.settings.showBadges === true && !!chatMessage.badges?.length) {
                     const badgeContainerElem = document.createElement("span");
                     badgeContainerElem.classList.add(`chat-badge-container-${config.id}`);
 
@@ -890,7 +890,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                     "text-align": config.settings.horizontalAlignment
                 };
 
-                if (maxHeight?.length) {
+                if (!!maxHeight?.length) {
                     chatContainerStyles["max-height"] = maxHeight;
                 }
 
@@ -1057,7 +1057,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                 for (const chatMessage of config.state?.chatMessages ?? []) {
                     const messageHtml = generateChatMessageHtml(chatMessage, config);
 
-                    if (messageHtml?.length) {
+                    if (!!messageHtml?.length) {
                         messageDivs.push(messageHtml);
                     }
                 }
