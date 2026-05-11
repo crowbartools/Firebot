@@ -951,6 +951,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                     "font-size": `calc(${messageFontSize} * 0.75)`,
                     "font-weight": config.settings?.messageFontOptions?.weight?.toString() || "400",
                     "font-style": config.settings?.messageFontOptions?.italic ? "italic" : "normal",
+                    "color": config.settings?.messageFontOptions?.color || "#FFFFFF",
                     "padding": `calc(${messageFontSize} * 0.15)`,
                     "margin-right": "5px"
                 };
