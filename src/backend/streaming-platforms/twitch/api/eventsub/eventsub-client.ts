@@ -7,6 +7,7 @@ import { AccountAccess } from "../../../../common/account-access";
 import { FirebotFrontendChatHelpers } from "../../../../chat/frontend-chat-helpers";
 import { SharedChatCache } from "../../chat/shared-chat-cache";
 import { TwitchEventHandlers } from "../../events";
+import { TwitchEventSubChatHelpers } from "./eventsub-chat-helpers";
 import { TwitchApi } from "..";
 import channelRewardManager from "../../../../channel-rewards/channel-reward-manager";
 import twitchRolesManager from "../../../../roles/twitch-roles-manager";
@@ -872,6 +873,10 @@ class TwitchEventSubClient {
                         event.streakCount,
                         event.channelPointsAwarded,
                         event.messageText ?? ""
+                    );
+
+                    FirebotFrontendChatHelpers.sendChatMessageToFrontend(
+                        await TwitchEventSubChatHelpers.buildChatMessageFromChatEvent(event)
                     );
                     break;
 

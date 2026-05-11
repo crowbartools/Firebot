@@ -9,7 +9,6 @@ import {
     type EventSubAutoModMessageHoldV2Event,
     type EventSubChannelChatNotificationEvent,
     type EventSubUserWhisperMessageEvent,
-    type EventSubChannelChatAnnouncementColor,
     EventSubChannelChatAnnouncementNotificationEvent,
     EventSubChannelChatMessageEvent
 } from "@twurple/eventsub-base";
@@ -798,4 +797,4 @@ class TwitchEventSubChatHelpers {
 
 const chatHelpers = new TwitchEventSubChatHelpers();
 
-export = chatHelpers;
+export { chatHelpers as TwitchEventSubChatHelpers };
