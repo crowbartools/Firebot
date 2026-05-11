@@ -864,6 +864,17 @@ class TwitchEventSubClient {
                     await viewerDatabase.calculateAutoRanks(event.chatterId);
                     break;
 
+                case "watch_streak":
+                    TwitchEventHandlers.watchStreak.triggerWatchStreak(
+                        event.chatterName,
+                        event.chatterId,
+                        event.chatterDisplayName,
+                        event.streakCount,
+                        event.channelPointsAwarded,
+                        event.messageText ?? ""
+                    );
+                    break;
+
                 default:
                     logger.debug(`Unknown EventSub chat notification type: ${event.type}. Metadata:`, event);
                     break;
