@@ -80,7 +80,11 @@
             font-family-style="{{customFontFamilyStyle}}"
           />
           <reward-redemption
-            ng-if="chatItem.type === 'redemption'"
+            ng-if="chatItem.type === 'reward-redemption'"
+            redemption="chatItem.data"
+          />
+          <power-up-redemption
+            ng-if="chatItem.type === 'power-up-redemption'"
             redemption="chatItem.data"
           />
           <chat-alert

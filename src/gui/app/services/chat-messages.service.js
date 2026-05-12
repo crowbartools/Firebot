@@ -323,7 +323,29 @@
 
                 service.chatQueue.push({
                     id: randomUUID(),
-                    type: "redemption",
+                    type: "reward-redemption",
+                    data: redemption
+                });
+            });
+
+            backendCommunicator.on("twitch:chat:powerupredemption", (redemption) => {
+                if (service.chatQueue && service.chatQueue.length > 0) {
+                    const lastQueueItem = service.chatQueue[service.chatQueue.length - 1];
+                    if (!lastQueueItem.powerUpMatched &&
+                            lastQueueItem.type === "message" &&
+                            // not sure if customRewardId is the right field to be checking against here until we have access to the feature
+                            lastQueueItem.data.customRewardId != null &&
+                            lastQueueItem.data.customRewardId === redemption.powerUp.id &&
+                            lastQueueItem.data.userId === redemption.user.id) {
+                        lastQueueItem.powerUpMatched = true;
+                        lastQueueItem.data.powerUp = redemption.powerUp;
+                        return;
+                    }
+                }
+
+                service.chatQueue.push({
+                    id: randomUUID(),
+                    type: "power-up-redemption",
                     data: redemption
                 });
             });

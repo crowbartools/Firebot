@@ -1,4 +1,5 @@
 import { EventManager } from "../../../events/event-manager";
+import powerUpsManager from "../../../power-ups/power-ups-manager";
 import frontendCommunicator from "../../../common/frontend-communicator";
 
 export function triggerCheer(
@@ -108,22 +109,24 @@ export function handleCustomPowerUpRedemption(
     powerUpBits: number,
     powerUpImageUrl: string
 ): void {
-    // frontendCommunicator.send("twitch:chat:rewardredemption", {
-    //     id: redemptionId,
-    //     status,
-    //     messageText,
-    //     user: {
-    //         id: userId,
-    //         username,
-    //         displayName: userDisplayName
-    //     },
-    //     powerUp: {
-    //         id: powerUpId,
-    //         name: powerUpTitle,
-    //         bits: powerUpBits,
-    //         imageUrl: powerUpImageUrl ?? "https://static-cdn.jtvnw.net/custom-reward-images/default-4.png"
-    //     }
-    // });
+    frontendCommunicator.send("twitch:chat:twitch:chat:powerupredemption", {
+        id: redemptionId,
+        status,
+        messageText,
+        user: {
+            id: userId,
+            username,
+            displayName: userDisplayName
+        },
+        powerUp: {
+            id: powerUpId,
+            name: powerUpTitle,
+            bits: powerUpBits,
+            imageUrl:
+                powerUpImageUrl ??
+                "https://static-cdn.jtvnw.net/twilight-static-assets/Default-Power-up-Line-Lightshade-112x112.png"
+        }
+    });
 
     setTimeout(() => {
         const redemptionMeta = {
@@ -140,6 +143,17 @@ export function handleCustomPowerUpRedemption(
             powerUpBits
         };
 
-        void void EventManager.triggerEvent("twitch", "custom-power-up-redemption", redemptionMeta);
+        void void EventManager.triggerEvent("twitch", "power-up-redemption", redemptionMeta);
+
+        void powerUpsManager.triggerPowerUp(powerUpId, {
+            username,
+            userId,
+            userDisplayName,
+            messageText,
+            powerUpId,
+            powerUpImage: powerUpImageUrl,
+            powerUpName: powerUpTitle,
+            bits: powerUpBits
+        });
     }, 100);
 }

@@ -1,82 +1,82 @@
 {
-  "MAIN": {
-    "MANAGE_LOGINS": "Manage Logins",
-    "LOADING": "Loading..."
-  },
-  "SIDEBAR": {
-    "CHAT": {
-      "CHAT": "Chat",
-      "COMMANDS": "Commands",
-      "CHAT_FEED": "Dashboard"
+    "MAIN": {
+        "MANAGE_LOGINS": "Manage Logins",
+        "LOADING": "Loading..."
     },
-    "OTHER": {
-      "OTHER": "Other",
-      "EVENTS": "Events",
-      "PRESET_EFFECT_LISTS": "Preset Effect Lists",
-      "EFFECT_QUEUES": "Effect Queues",
-      "TIME_BASED": "Time-Based",
-      "HOTKEYS": "Hotkeys",
-      "CHANNELREWARDS": "Channel Rewards",
-      "COUNTERS": "Counters"
+    "SIDEBAR": {
+        "CHAT": {
+            "CHAT": "Chat",
+            "COMMANDS": "Commands",
+            "CHAT_FEED": "Dashboard"
+        },
+        "OTHER": {
+            "OTHER": "Other",
+            "EVENTS": "Events",
+            "PRESET_EFFECT_LISTS": "Preset Effect Lists",
+            "EFFECT_QUEUES": "Effect Queues",
+            "TIME_BASED": "Time-Based",
+            "HOTKEYS": "Hotkeys",
+            "POWERUPSANDREWARDS": "Power-ups & Rewards",
+            "COUNTERS": "Counters"
+        },
+        "MANAGEMENT": {
+            "MANAGEMENT": "Management",
+            "VIEWER_GROUPS": "Viewer Groups",
+            "VIEWER_ROLES": "Roles & Ranks",
+            "MODERATION": "Moderation",
+            "VIEWERS": "Viewers",
+            "SETTINGS": "Settings",
+            "UPDATES": "Updates",
+            "CURRENCY": "Currency",
+            "QUOTES": "Quotes"
+        },
+        "CONNECTIONS": {
+            "CONNECTIONS": "Connections",
+            "TOGGLE": "Click to toggle connections",
+            "OPEN_CONNECTION_PANNEL": "Open Connection Panel"
+        },
+        "ABOUT": "About"
     },
-    "MANAGEMENT": {
-      "MANAGEMENT": "Management",
-      "VIEWER_GROUPS": "Viewer Groups",
-      "VIEWER_ROLES": "Roles & Ranks",
-      "MODERATION": "Moderation",
-      "VIEWERS": "Viewers",
-      "SETTINGS": "Settings",
-      "UPDATES": "Updates",
-      "CURRENCY": "Currency",
-      "QUOTES": "Quotes"
+    "BUTTONS": {
+        "BUTTONS": "Buttons",
+        "CHANGE_BOARD": {
+            "CHANGE_BOARD": "Change Board",
+            "ADD_NEW_BOARD": "Add New Board",
+            "DELETE_BOARD": "Delete Board",
+            "RESYNC_BOARD": "Resync Board"
+        },
+        "MIXER_STUDIO": "Mixer Studio",
+        "SCENES": "Scenes",
+        "EDIT": "Edit",
+        "SEARCH_CONTROLS": "Search controls",
+        "LOADING_BOARDS": "Loading boards...",
+        "ADD_FIRST_BOARD": "Add First Board",
+        "COULD_NOT_AUTOSELECT": "We couldn't auto select a board but don't worry, you have boards saved! Click the dropdown above and select a board.",
+        "ID": "ID",
+        "NAME": "Name",
+        "COST": "Cost"
     },
-    "CONNECTIONS": {
-      "CONNECTIONS": "Connections",
-      "TOGGLE": "Click to toggle connections",
-      "OPEN_CONNECTION_PANNEL": "Open Connection Panel"
+    "LIVE_EVENTS": {
+        "EVENTS": "Events",
+        "EVENT_GROUPS": "Event Groups",
+        "CHANGE_GROUP": "Change Group",
+        "CHANGE_EVENT_GROUP": {
+            "CHANGE_BOARD": "Change Event Group",
+            "ADD_NEW_EVENT_GROUP": "Add New Event Group",
+            "EDIT_EVENT_GROUP": "Edit Event Group",
+            "DELETE_EVENT_GROUP": "Delete Event Group"
+        },
+        "EDIT": "Edit",
+        "SEARCH_EVENTS": "Search events",
+        "ADD_NEW_EVENT": "Add New Event",
+        "ADD_FIRST_EVENT_GROUP": "Add First Event Group",
+        "COULD_NOT_AUTOSELECT": "We could not auto select a live event group. Click the dropdown and select one!",
+        "ID": "ID",
+        "NAME": "Name",
+        "TYPE": "Type"
     },
-    "ABOUT": "About"
-  },
-  "BUTTONS": {
-    "BUTTONS": "Buttons",
-    "CHANGE_BOARD": {
-      "CHANGE_BOARD": "Change Board",
-      "ADD_NEW_BOARD": "Add New Board",
-      "DELETE_BOARD": "Delete Board",
-      "RESYNC_BOARD": "Resync Board"
-    },
-    "MIXER_STUDIO": "Mixer Studio",
-    "SCENES": "Scenes",
-    "EDIT": "Edit",
-    "SEARCH_CONTROLS": "Search controls",
-    "LOADING_BOARDS": "Loading boards...",
-    "ADD_FIRST_BOARD": "Add First Board",
-    "COULD_NOT_AUTOSELECT": "We couldn't auto select a board but don't worry, you have boards saved! Click the dropdown above and select a board.",
-    "ID": "ID",
-    "NAME": "Name",
-    "COST": "Cost"
-  },
-  "LIVE_EVENTS": {
-    "EVENTS": "Events",
-    "EVENT_GROUPS": "Event Groups",
-    "CHANGE_GROUP": "Change Group",
-    "CHANGE_EVENT_GROUP": {
-      "CHANGE_BOARD": "Change Event Group",
-      "ADD_NEW_EVENT_GROUP": "Add New Event Group",
-      "EDIT_EVENT_GROUP": "Edit Event Group",
-      "DELETE_EVENT_GROUP": "Delete Event Group"
-    },
-    "EDIT": "Edit",
-    "SEARCH_EVENTS": "Search events",
-    "ADD_NEW_EVENT": "Add New Event",
-    "ADD_FIRST_EVENT_GROUP": "Add First Event Group",
-    "COULD_NOT_AUTOSELECT": "We could not auto select a live event group. Click the dropdown and select one!",
-    "ID": "ID",
-    "NAME": "Name",
-    "TYPE": "Type"
-  },
-  "NEW": "New",
-  "CONNECTED": "Connected",
-  "DISCONNECTED": "Disconnected",
-  "RUNNING_NOT_CONNECTED": "Ready, but nothing is connected at this time."
+    "NEW": "New",
+    "CONNECTED": "Connected",
+    "DISCONNECTED": "Disconnected",
+    "RUNNING_NOT_CONNECTED": "Ready, but nothing is connected at this time."
 }

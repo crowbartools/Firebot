@@ -265,9 +265,7 @@ export const TwitchEventSource: EventSource = {
                 getMessage: (eventData) => {
                     return `**${eventData.isAnonymous ? "An Anonymous Gifter" : eventData.gifterUsername}** gifted a ${
                         eventData.giftDuration > 1 ? ` **${eventData.giftDuration} month** ` : ""
-                    } **Tier ${eventData.subPlan.replace("000", "")}** sub to **${
-                        eventData.gifteeUsername
-                    }**`;
+                    } **Tier ${eventData.subPlan.replace("000", "")}** sub to **${eventData.gifteeUsername}**`;
                 }
             }
         },
@@ -427,7 +425,7 @@ export const TwitchEventSource: EventSource = {
         {
             id: "bits-powerup-message-effect",
             name: "Power-up: Message Effects",
-            description: "When a viewer uses the \"Message Effects\" Power-up in your channel.",
+            description: 'When a viewer uses the "Message Effects" Power-up in your channel.',
             cached: false,
             manualMetadata: {
                 username: "firebot",
@@ -441,7 +439,8 @@ export const TwitchEventSource: EventSource = {
                 icon: "fad fa-diamond",
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
-                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""
+                    return `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
                     }** used a Message Effects Power-up for **${eventData.bits}** bits`;
                 }
             }
@@ -449,7 +448,7 @@ export const TwitchEventSource: EventSource = {
         {
             id: "bits-powerup-celebration",
             name: "Power-up: On-Screen Celebration",
-            description: "When a viewer uses the \"On-Screen Celebration\" Power-up in your channel.",
+            description: 'When a viewer uses the "On-Screen Celebration" Power-up in your channel.',
             cached: false,
             manualMetadata: {
                 username: "firebot",
@@ -462,7 +461,8 @@ export const TwitchEventSource: EventSource = {
                 icon: "fad fa-diamond",
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
-                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""
+                    return `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
                     }** used a Celebration Power-up for **${eventData.bits}** bits`;
                 }
             }
@@ -470,7 +470,7 @@ export const TwitchEventSource: EventSource = {
         {
             id: "bits-powerup-gigantified-emote",
             name: "Power-up: Gigantify an Emote",
-            description: "When a viewer uses the \"Gigantify an Emote\" Power-up in your channel.",
+            description: 'When a viewer uses the "Gigantify an Emote" Power-up in your channel.',
             cached: false,
             manualMetadata: {
                 username: "firebot",
@@ -486,7 +486,8 @@ export const TwitchEventSource: EventSource = {
                 icon: "fad fa-diamond",
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
-                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""
+                    return `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
                     }** gigantified the **${eventData.emoteName}** emote for **${eventData.bits}** bits`;
                 }
             }
@@ -654,8 +655,8 @@ export const TwitchEventSource: EventSource = {
             }
         },
         {
-            id: "custom-power-up-redemption",
-            name: "Custom Power-Up Redemption",
+            id: "power-up-redemption",
+            name: "Power-up Redemption",
             description: "When someone redeems a custom power-up",
             cached: true,
             cacheMetaKey: "username",
@@ -664,8 +665,8 @@ export const TwitchEventSource: EventSource = {
                 username: "firebot",
                 userDisplayName: "Firebot",
                 userId: "",
-                powerUpName: "Test Power-Up",
-                powerUpDescription: "Example Power-Up Description",
+                powerUpName: "Test Power-up",
+                powerUpDescription: "Example Power-up Description",
                 powerUpImage: "https://static-cdn.jtvnw.net/custom-reward-images/default-4.png",
                 powerUpBits: 100,
                 messageText: "Test message"
@@ -677,7 +678,9 @@ export const TwitchEventSource: EventSource = {
                     return `**${eventData.userDisplayName}${
                         showUserIdName ? ` (${eventData.username})` : ""
                     }** redeemed **${eventData.powerUpName}**${
-                        eventData.messageText && !!eventData.messageText.length ? `: *${escape(eventData.messageText)}*` : ""
+                        eventData.messageText && !!eventData.messageText.length
+                            ? `: *${escape(eventData.messageText)}*`
+                            : ""
                     }`;
                 },
                 excludeFromChatFeed: true
@@ -706,7 +709,9 @@ export const TwitchEventSource: EventSource = {
                     return `**${eventData.userDisplayName}${
                         showUserIdName ? ` (${eventData.username})` : ""
                     }** redeemed **${eventData.rewardName}**${
-                        eventData.messageText && !!eventData.messageText.length ? `: *${escape(eventData.messageText)}*` : ""
+                        eventData.messageText && !!eventData.messageText.length
+                            ? `: *${escape(eventData.messageText)}*`
+                            : ""
                     }`;
                 },
                 excludeFromChatFeed: true
@@ -735,7 +740,9 @@ export const TwitchEventSource: EventSource = {
                     return `**${eventData.userDisplayName}${
                         showUserIdName ? ` (${eventData.username})` : ""
                     }**'s redemption of **${eventData.rewardName}** was approved. ${
-                        eventData.messageText && !!eventData.messageText.length ? `*${escape(eventData.messageText)}*` : ""
+                        eventData.messageText && !!eventData.messageText.length
+                            ? `*${escape(eventData.messageText)}*`
+                            : ""
                     }`;
                 }
             }
@@ -763,7 +770,9 @@ export const TwitchEventSource: EventSource = {
                     return `**${eventData.userDisplayName}${
                         showUserIdName ? ` (${eventData.username})` : ""
                     }**'s redemption of **${eventData.rewardName}** was rejected. ${
-                        eventData.messageText && !!eventData.messageText.length ? `*${escape(eventData.messageText)}*` : ""
+                        eventData.messageText && !!eventData.messageText.length
+                            ? `*${escape(eventData.messageText)}*`
+                            : ""
                     }`;
                 }
             }
@@ -771,7 +780,7 @@ export const TwitchEventSource: EventSource = {
         {
             id: "channel-reward-redemption-single-message-bypass-sub-mode",
             name: "Channel Reward Redemption: Send a Message in Sub-Only Mode",
-            description: "When someone redeems \"Send a Message in Sub-Only Mode\" to post a message in your channel",
+            description: 'When someone redeems "Send a Message in Sub-Only Mode" to post a message in your channel',
             cached: false,
             manualMetadata: {
                 username: "firebot",
@@ -795,7 +804,7 @@ export const TwitchEventSource: EventSource = {
         {
             id: "channel-reward-redemption-send-highlighted-message",
             name: "Channel Reward Redemption: Highlight My Message",
-            description: "When someone redeems \"Highlight My Message\" in your channel",
+            description: 'When someone redeems "Highlight My Message" in your channel',
             cached: false,
             manualMetadata: {
                 username: "firebot",
@@ -820,7 +829,7 @@ export const TwitchEventSource: EventSource = {
         {
             id: "channel-reward-redemption-random-sub-emote-unlock",
             name: "Channel Reward Redemption: Unlock a Random Sub Emote",
-            description: "When someone redeems \"Unlock a Random Sub Emote\" to unlock an emote in your channel",
+            description: 'When someone redeems "Unlock a Random Sub Emote" to unlock an emote in your channel',
             cached: false,
             manualMetadata: {
                 username: "firebot",
@@ -845,7 +854,7 @@ export const TwitchEventSource: EventSource = {
         {
             id: "channel-reward-redemption-chosen-sub-emote-unlock",
             name: "Channel Reward Redemption: Choose an Emote to Unlock",
-            description: "When someone redeems \"Choose an Emote to Unlock\" to unlock an emote in your channel",
+            description: 'When someone redeems "Choose an Emote to Unlock" to unlock an emote in your channel',
             cached: false,
             manualMetadata: {
                 username: "firebot",
@@ -870,7 +879,7 @@ export const TwitchEventSource: EventSource = {
         {
             id: "channel-reward-redemption-chosen-modified-sub-emote-unlock",
             name: "Channel Reward Redemption: Modify a Single Emote",
-            description: "When someone redeems \"Modify a Single Emote\" to modify and unlock an emote in your channel",
+            description: 'When someone redeems "Modify a Single Emote" to modify and unlock an emote in your channel',
             cached: false,
             manualMetadata: {
                 username: "firebot",
@@ -969,7 +978,8 @@ export const TwitchEventSource: EventSource = {
                         { id: "c0113c14-144e-475c-9647-a65f9177665d", title: "Test Choice 1" },
                         { id: "6d86797a-d88a-4fc2-b4f6-1895afdc503e", title: "Test Choice 2" },
                         { id: "791bc06c-c4d5-4c74-b950-8596c04dbb0d", title: "Test Choice 3" }
-                    ] },
+                    ]
+                },
                 title: "Test Poll Name"
             },
             activityFeed: {
@@ -988,10 +998,26 @@ export const TwitchEventSource: EventSource = {
                 choices: {
                     type: "poll-choice-list",
                     value: [
-                        { id: "c0113c14-144e-475c-9647-a65f9177665d", title: "Test Choice 1", totalVotes: 120, channelPointsVotes: 60 },
-                        { id: "6d86797a-d88a-4fc2-b4f6-1895afdc503e", title: "Test Choice 2", totalVotes: 140, channelPointsVotes: 40 },
-                        { id: "791bc06c-c4d5-4c74-b950-8596c04dbb0d", title: "Test Choice 3", totalVotes: 80, channelPointsVotes: 70 }
-                    ] },
+                        {
+                            id: "c0113c14-144e-475c-9647-a65f9177665d",
+                            title: "Test Choice 1",
+                            totalVotes: 120,
+                            channelPointsVotes: 60
+                        },
+                        {
+                            id: "6d86797a-d88a-4fc2-b4f6-1895afdc503e",
+                            title: "Test Choice 2",
+                            totalVotes: 140,
+                            channelPointsVotes: 40
+                        },
+                        {
+                            id: "791bc06c-c4d5-4c74-b950-8596c04dbb0d",
+                            title: "Test Choice 3",
+                            totalVotes: 80,
+                            channelPointsVotes: 70
+                        }
+                    ]
+                },
                 title: "Test Poll Name",
                 winningChoiceName: "Test Choice 2",
                 winningChoiceVotes: 140
@@ -1012,10 +1038,26 @@ export const TwitchEventSource: EventSource = {
                 choices: {
                     type: "poll-choice-list",
                     value: [
-                        { id: "c0113c14-144e-475c-9647-a65f9177665d", title: "Test Choice 1", totalVotes: 125, channelPointsVotes: 62 },
-                        { id: "6d86797a-d88a-4fc2-b4f6-1895afdc503e", title: "Test Choice 2", totalVotes: 145, channelPointsVotes: 42 },
-                        { id: "791bc06c-c4d5-4c74-b950-8596c04dbb0d", title: "Test Choice 3", totalVotes: 85, channelPointsVotes: 72 }
-                    ] },
+                        {
+                            id: "c0113c14-144e-475c-9647-a65f9177665d",
+                            title: "Test Choice 1",
+                            totalVotes: 125,
+                            channelPointsVotes: 62
+                        },
+                        {
+                            id: "6d86797a-d88a-4fc2-b4f6-1895afdc503e",
+                            title: "Test Choice 2",
+                            totalVotes: 145,
+                            channelPointsVotes: 42
+                        },
+                        {
+                            id: "791bc06c-c4d5-4c74-b950-8596c04dbb0d",
+                            title: "Test Choice 3",
+                            totalVotes: 85,
+                            channelPointsVotes: 72
+                        }
+                    ]
+                },
                 title: "Test Poll Name",
                 winningChoiceName: "Test Choice 2",
                 winningChoiceVotes: 145

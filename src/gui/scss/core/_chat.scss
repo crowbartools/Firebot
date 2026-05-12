@@ -23,6 +23,7 @@
         background: $chat-message-alternate-bg;
     }
 }
+.power-up-redemption,
 .reward-redemption {
     img {
         width: 25px;
@@ -63,16 +64,16 @@
             background: rgb(31, 105, 255);
         }
         &.BLUE {
-            background: linear-gradient(#00d6d6,#9146ff);
+            background: linear-gradient(#00d6d6, #9146ff);
         }
         &.GREEN {
-            background: linear-gradient(#00db84,#57bee6);
+            background: linear-gradient(#00db84, #57bee6);
         }
         &.ORANGE {
-            background: linear-gradient(#ffb31a,#e0e000);
+            background: linear-gradient(#ffb31a, #e0e000);
         }
         &.PURPLE {
-            background: linear-gradient(#9146ff,#ff75e6);
+            background: linear-gradient(#9146ff, #ff75e6);
         }
     }
 
@@ -95,9 +96,10 @@
             color: #00db84;
         }
         .pending {
-            color: #ffb31a
+            color: #ffb31a;
         }
-        .denied, .expired {
+        .denied,
+        .expired {
             color: #ff4662;
         }
     }
@@ -248,7 +250,7 @@
     }
 }
 
-.gigantify :last-child>.chatEmoticon {
+.gigantify :last-child > .chatEmoticon {
     display: block !important;
     height: 8rem !important;
 }
@@ -482,7 +484,7 @@
         align-items: center;
         justify-content: space-between;
         padding: 0 10px;
-        flex-shrink: 0
+        flex-shrink: 0;
     }
     .thread-close-btn {
         background: none;
@@ -722,7 +724,7 @@
         border-radius: 7px;
         margin: 0 5px 3px;
         &.acknowledged {
-            color: rgba($content-text-color, .15);
+            color: rgba($content-text-color, 0.15);
         }
     }
 }

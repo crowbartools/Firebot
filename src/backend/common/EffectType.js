@@ -10,6 +10,7 @@ const Trigger = {
     SCHEDULED_TASK: "scheduled_task",
     COUNTER: "counter",
     CHANNEL_REWARD: "channel_reward",
+    POWER_UP: "power_up",
     MANUAL: "manual"
 };
 
