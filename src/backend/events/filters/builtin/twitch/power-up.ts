@@ -8,11 +8,11 @@ const filter = createPresetFilter({
     eventMetaKey: "powerUpId",
     allowIsNot: true,
     presetValues: async (backendCommunicator: any) => {
-        const powerUps = await backendCommunicator.fireEventAsync("get-power-ups");
+        const powerUps = await backendCommunicator.fireEventAsync("power-ups:get-all");
         return powerUps.map(p => ({ value: p.id, display: p.twitchData.title }));
     },
     valueIsStillValid: async (filterSettings, backendCommunicator: any) => {
-        const powerUps = await backendCommunicator.fireEventAsync("get-power-ups");
+        const powerUps = await backendCommunicator.fireEventAsync("power-ups:get-all");
         return powerUps.some(p => p.id === filterSettings.value);
     }
 });

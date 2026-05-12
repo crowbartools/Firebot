@@ -14,7 +14,7 @@
             $scope.powerUpsService = powerUpsService;
 
             $scope.canUseChannelRewards = () => accountAccess.accounts["streamer"].loggedIn
-                && (channelRewardsService.userIsEligible || powerUpsService.userIsEligible);
+                && (channelRewardsService.userIsEligible);
 
             // triggering twitch sync for both features
             channelRewardsService.syncChannelRewards();

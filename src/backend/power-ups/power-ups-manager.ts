@@ -16,27 +16,24 @@ import logger from "../logwrapper";
 
 class PowerUpsManager {
     powerUps: Record<string, SavedPowerUp> = {};
-    private _eligible = false;
 
     constructor() {
-        frontendCommunicator.on("get-power-ups", () => Object.values(this.powerUps));
-        frontendCommunicator.onAsync("get-power-ups", async () => Object.values(this.powerUps));
+        frontendCommunicator.on("power-ups:get-all", () => Object.values(this.powerUps));
+        frontendCommunicator.onAsync("power-ups:get-all", async () => Object.values(this.powerUps));
 
-        frontendCommunicator.on("get-power-ups-eligibility", () => this._eligible);
-
-        frontendCommunicator.onAsync("save-power-up", async (powerUp: SavedPowerUp) => this.savePowerUp(powerUp));
+        frontendCommunicator.onAsync("power-ups:save", async (powerUp: SavedPowerUp) => this.savePowerUp(powerUp));
 
         frontendCommunicator.onAsync(
-            "save-all-power-ups",
+            "power-ups:save-all",
             async (powerUps: SavedPowerUp[]) => await this.saveAllPowerUps(powerUps)
         );
 
-        frontendCommunicator.onAsync("sync-power-ups", async (): Promise<SavedPowerUp[]> => {
+        frontendCommunicator.onAsync("power-ups:sync", async (): Promise<SavedPowerUp[]> => {
             await this.loadPowerUps();
             return Object.values(this.powerUps);
         });
 
-        frontendCommunicator.on("manually-trigger-power-up", (powerUpId: string) => {
+        frontendCommunicator.on("power-ups:manually-trigger", (powerUpId: string) => {
             const savedPowerUp = this.powerUps[powerUpId];
 
             if (savedPowerUp == null) {
@@ -80,10 +77,6 @@ class PowerUpsManager {
             if (twitchPowerUps == null) {
                 logger.error("Twitch power-ups returned null!");
                 this.powerUps = powerUpsData;
-
-                this._eligible = false;
-                frontendCommunicator.send("power-ups-eligibility-changed", false);
-
                 return;
             }
 
@@ -116,9 +109,7 @@ class PowerUpsManager {
 
             logger.debug(`Loaded power-ups.`);
 
-            frontendCommunicator.send("power-ups-updated", Object.values(this.powerUps));
-            this._eligible = true;
-            frontendCommunicator.send("power-ups-eligibility-changed", true);
+            frontendCommunicator.send("power-ups:updated-all", Object.values(this.powerUps));
         } catch (err) {
             logger.warn(`There was an error reading power-ups file.`, err);
         }
@@ -146,7 +137,7 @@ class PowerUpsManager {
             logger.debug(`Saved power-up ${powerUp.id} to file.`);
 
             if (emitUpdateEvent) {
-                frontendCommunicator.send("power-up-updated", powerUp);
+                frontendCommunicator.send("power-ups:updated", powerUp);
             }
 
             return powerUp;

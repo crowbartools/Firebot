@@ -10,8 +10,6 @@
 
             service.powerUps = [];
 
-            service.userIsEligible = false;
-
             service.selectedSortTag = null;
 
             service.searchQuery = "";
@@ -26,12 +24,11 @@
             }
 
             service.loadPowerUps = () => {
-                service.powerUps = backendCommunicator.fireEventSync("get-power-ups");
-                service.userIsEligible = backendCommunicator.fireEventSync("get-power-ups-eligibility");
+                service.powerUps = backendCommunicator.fireEventSync("power-ups:get-all");
             };
 
             service.savePowerUp = (powerUp) => {
-                return $q.when(backendCommunicator.fireEventAsync("save-power-up", powerUp))
+                return $q.when(backendCommunicator.fireEventAsync("power-ups:save", powerUp))
                     .then((savedPowerUp) => {
                         if (savedPowerUp) {
                             updatePowerUp(savedPowerUp);
@@ -43,7 +40,7 @@
 
             service.saveAllPowerUps = (powerUps) => {
                 service.powerUps = powerUps;
-                backendCommunicator.fireEvent("save-all-power-ups", powerUps);
+                backendCommunicator.fireEvent("power-ups:save-all", powerUps);
             };
 
             service.showEditPowerUpModal = (powerUp) => {
@@ -58,7 +55,7 @@
             };
 
             service.manuallyTriggerPowerUp = (itemId) => {
-                backendCommunicator.fireEvent("manually-trigger-power-up", itemId);
+                backendCommunicator.fireEvent("power-ups:manually-trigger", itemId);
             };
 
             let currentlySyncing = false;
@@ -69,7 +66,7 @@
 
                 currentlySyncing = true;
 
-                $q.when(backendCommunicator.fireEventAsync("sync-power-ups"))
+                $q.when(backendCommunicator.fireEventAsync("power-ups:sync"))
                     .then((powerUps) => {
                         if (powerUps) {
                             service.powerUps = powerUps;
@@ -78,15 +75,11 @@
                     });
             };
 
-            backendCommunicator.on("power-ups-updated", (powerUps) => {
+            backendCommunicator.on("power-ups:updated-all", (powerUps) => {
                 service.powerUps = powerUps;
             });
 
-            backendCommunicator.on("power-ups-eligibility-changed", (eligible) => {
-                service.userIsEligible = eligible;
-            });
-
-            backendCommunicator.on("power-up-updated", (powerUp) => {
+            backendCommunicator.on("power-ups:updated", (powerUp) => {
                 updatePowerUp(powerUp);
             });
 
