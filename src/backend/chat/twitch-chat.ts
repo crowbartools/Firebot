@@ -123,10 +123,7 @@ class TwitchChat extends EventEmitter {
             // While connected, we can just react to changes via chat messages/EventSub events
             await twitchRolesManager.loadVips();
             await twitchRolesManager.loadModerators();
-
-            if (!twitchRolesManager.getSubscribers().length) {
-                await twitchRolesManager.loadSubscribers();
-            }
+            await twitchRolesManager.loadSubscribers();
 
             // Load the current Shared Chat session
             await SharedChatCache.loadSessionFromTwitch();

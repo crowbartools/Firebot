@@ -98,6 +98,33 @@ class TwitchRolesManager extends TypedEmitter<Events> {
         return this._subscribers;
     }
 
+    addSubscriberToSubscribersList(userId: string, username: string, displayName: string, tier: string): void {
+        const subTier = this.getRoleForSubTier(tier);
+        const existing = this._subscribers.find(s => s.id === userId);
+
+        if (existing == null) {
+            this._subscribers.push({ id: userId, username, displayName, subTier });
+            this.emit("viewer-role-updated", userId, "sub", "added");
+            this.emit("viewer-role-updated", userId, subTier, "added");
+            return;
+        }
+
+        const previousTier = existing.subTier;
+        existing.subTier = subTier;
+
+        if (previousTier === subTier) {
+            return;
+        }
+
+        this.emit("viewer-role-updated", userId, previousTier, "removed");
+        this.emit("viewer-role-updated", userId, subTier, "added");
+    }
+
+    removeSubscriberFromSubscribersList(userId: string): void {
+        this._subscribers = this._subscribers.filter(s => s.id !== userId);
+        this.emit("viewer-role-updated", userId, "sub", "removed");
+    }
+
     private getRoleForSubTier(tier: string): string {
         let role = "";
         switch (tier) {
