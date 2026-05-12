@@ -25,7 +25,7 @@
                             <strong style="font-size: 18px; margin-left: 5px;">{{$ctrl.powerUp.twitchData.bits}} Bits</strong>
                         </div>
 
-                        <p class="help-block" style="text-align: center;" ng-if="$ctrl.powerUp.twitchData.prompt">
+                        <p class="help-block" style="text-align: center; color: #b1adad;" ng-if="$ctrl.powerUp.twitchData.prompt">
                             {{$ctrl.powerUp.twitchData.prompt}}
                         </p>
 
