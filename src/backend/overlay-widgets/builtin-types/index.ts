@@ -8,6 +8,7 @@ import { currentDateTime } from "./current-date-time/current-date-time";
 import { countdownToDate } from "./countdown-to-date/countdown-to-date";
 import { image } from "./image/image";
 import { chat } from "./chat/chat";
+import { chatAdvanced } from "./chat/chat-advanced";
 
 export default [
     progressbar,
@@ -19,5 +20,6 @@ export default [
     currentDateTime,
     text,
     image,
-    chat
+    chat,
+    chatAdvanced
 ];

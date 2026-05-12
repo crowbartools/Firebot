@@ -1,6 +1,6 @@
 {
     "name": "firebotv5",
-    "version": "5.65.5",
+    "version": "5.66.0",
     "description": "Powerful all-in-one bot for Twitch streamers.",
     "main": "build/main.js",
     "scripts": {
@@ -35,7 +35,7 @@
         "@types/unzipper": "^0.10.11",
         "@types/yargs-parser": "^21.0.3",
         "@typescript-eslint/parser": "^8.46.0",
-        "electron": "^39.2.4",
+        "electron": "^42.0.1",
         "electron-installer-dmg": "^5.0.1",
         "electron-winstaller": "^5.4.0",
         "eslint": "^9.37.0",
@@ -54,10 +54,8 @@
     "dependencies": {
         "@aws-sdk/client-polly": "^3.26.0",
         "@seald-io/nedb": "^4.0.4",
-        "@twurple/api": "^8.0.3",
-        "@twurple/auth": "^8.0.3",
-        "@twurple/chat": "^8.0.3",
-        "@twurple/eventsub-ws": "^8.0.3",
+        "@twurple/chat": "^8.1.4",
+        "@twurple/eventsub-ws": "^8.1.4",
         "@types/tinycolor2": "^1.4.6",
         "@zunderscore/elgato-light-control": "^1.2.0",
         "angular": "^1.8.0",

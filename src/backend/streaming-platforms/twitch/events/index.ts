@@ -25,6 +25,7 @@ import * as sub from "./sub";
 import * as viewerArrived from "./viewer-arrived";
 import * as viewerBanned from "./viewer-banned";
 import * as viewerTimeout from "./viewer-timeout";
+import * as watchStreak from "./watch-streak";
 import * as whisper from "./whisper";
 
 export const TwitchEventHandlers = {
@@ -49,6 +50,7 @@ export const TwitchEventHandlers = {
     viewerArrived,
     viewerBanned,
     viewerTimeout,
+    watchStreak,
     whisper
 };
 
@@ -1558,6 +1560,26 @@ export const TwitchEventSource: EventSource = {
                     return `**${friendlyDuration}** **${
                         eventData.isAdBreakScheduled ? "scheduled" : "manual"
                     }** ad break ended`;
+                }
+            }
+        },
+        {
+            id: "watch-streak",
+            name: "Watch Streak",
+            description: "When a viewer hits a milestone for consecutive number of your streams watched.",
+            cached: false,
+            manualMetadata: {
+                username: "firebot",
+                userId: "",
+                userDisplayName: "Firebot",
+                streakCount: 5,
+                channelPointsAwarded: 450,
+                streakMessage: "I've been here the whole time!"
+            },
+            activityFeed: {
+                icon: "fad fa-fire",
+                getMessage: (eventData) => {
+                    return `**${eventData.userDisplayName}** reached a **${eventData.streakCount}-stream streak**`;
                 }
             }
         }
