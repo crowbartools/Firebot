@@ -47,21 +47,23 @@ export class EventSubPowerUpRedemptionAddSubscription extends EventSubSubscripti
     }
 
     protected async _subscribe(): Promise<HelixEventSubSubscription> {
-        return await this._client._apiClient.asUser(
-            this._broadcasterId,
-            async ctx =>
-                await ctx.eventSub.createSubscription(
-                    "channel.custom_power_up_redemption.add",
-                    "beta",
-                    {
+        return this._client._config.managed
+            ? await this._client._config.apiClient.asUser(
+                this._broadcasterId,
+                async ctx =>
+                    await ctx.eventSub.createSubscription(
+                        "channel.custom_power_up_redemption.add",
+                        "beta",
+                        {
                         // eslint-disable-next-line camelcase
-                        broadcaster_user_id: this._broadcasterId
-                    },
-                    await this._getTransportOptions(),
-                    this._broadcasterId,
-                    ["bits:read"],
-                    true
-                )
-        );
+                            broadcaster_user_id: this._broadcasterId
+                        },
+                        await this._getTransportOptions(),
+                        this._broadcasterId,
+                        ["bits:read"],
+                        true
+                    )
+            )
+            : undefined;
     }
 }
