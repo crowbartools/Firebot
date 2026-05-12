@@ -1,5 +1,6 @@
 import type { FirebotChatMessage, OverlayWidgetConfig } from "../../types";
 import type { ChatWidgetSettings, ChatWidgetState } from "../overlay-widgets/builtin-types/chat/chat";
+import type { AdvancedChatWidgetSettings } from "../overlay-widgets/builtin-types/chat/chat-advanced";
 import overlayWidgetsManager from "../overlay-widgets/overlay-widgets-manager";
 import overlayWidgetConfigManager from "../overlay-widgets/overlay-widget-config-manager";
 import frontendCommunicator from "../common/frontend-communicator";
@@ -8,7 +9,10 @@ import logger from "../logwrapper";
 class FirebotFrontendChatHelpers {
     private _pendingMessageCache: Record<string, string[]> = { };
 
-    private sendChatMessageToChatWidget(chatWidget: OverlayWidgetConfig<ChatWidgetSettings, ChatWidgetState>, chatMessage: FirebotChatMessage): void {
+    private sendChatMessageToChatWidget(
+        chatWidget: OverlayWidgetConfig<ChatWidgetSettings | AdvancedChatWidgetSettings, ChatWidgetState>,
+        chatMessage: FirebotChatMessage
+    ): void {
         if (chatWidget.settings.delayMessages === true) {
             if (this._pendingMessageCache[chatWidget.id].some(m => m === chatMessage.id)) {
                 // Remove it from the pending list so we know we've taken care of it
@@ -58,8 +62,9 @@ class FirebotFrontendChatHelpers {
         chatMessage.timestamp = new Date().getTime();
 
         const chatWidgets = overlayWidgetConfigManager.getConfigsOfType<OverlayWidgetConfig<ChatWidgetSettings, ChatWidgetState>>("firebot:chat");
+        const advancedChatWidgets = overlayWidgetConfigManager.getConfigsOfType<OverlayWidgetConfig<AdvancedChatWidgetSettings, ChatWidgetState>>("firebot:chat-advanced");
 
-        for (const chatWidget of chatWidgets) {
+        for (const chatWidget of [...chatWidgets, ...advancedChatWidgets]) {
             if (chatWidget.settings.delayMessages === true && chatWidget.settings.messageDelay) {
                 this._pendingMessageCache[chatWidget.id] ??= [];
 
@@ -74,7 +79,11 @@ class FirebotFrontendChatHelpers {
         }
     }
 
-    private deleteMessageFromChatWidget(chatWidget: OverlayWidgetConfig<ChatWidgetSettings, ChatWidgetState>, messageId: string, animate = false): void {
+    private deleteMessageFromChatWidget(
+        chatWidget: OverlayWidgetConfig<ChatWidgetSettings | AdvancedChatWidgetSettings, ChatWidgetState>,
+        messageId: string,
+        animate = false
+    ): void {
         this._pendingMessageCache[chatWidget.id] = (this._pendingMessageCache[chatWidget.id] ?? [])
             .filter(m => m !== messageId) ?? [];
 
@@ -102,7 +111,9 @@ class FirebotFrontendChatHelpers {
         frontendCommunicator.send("twitch:chat:message:deleted", messageId);
 
         const chatWidgets = overlayWidgetConfigManager.getConfigsOfType<OverlayWidgetConfig<ChatWidgetSettings, ChatWidgetState>>("firebot:chat");
-        for (const chatWidget of chatWidgets) {
+        const advancedChatWidgets = overlayWidgetConfigManager.getConfigsOfType<OverlayWidgetConfig<AdvancedChatWidgetSettings, ChatWidgetState>>("firebot:chat-advanced");
+
+        for (const chatWidget of [...chatWidgets, ...advancedChatWidgets]) {
             this.deleteMessageFromChatWidget(chatWidget, messageId, animate);
         }
     }
@@ -111,7 +122,9 @@ class FirebotFrontendChatHelpers {
         frontendCommunicator.send("twitch:chat:user:delete-messages", username);
 
         const chatWidgets = overlayWidgetConfigManager.getConfigsOfType<OverlayWidgetConfig<ChatWidgetSettings, ChatWidgetState>>("firebot:chat");
-        for (const chatWidget of chatWidgets) {
+        const advancedChatWidgets = overlayWidgetConfigManager.getConfigsOfType<OverlayWidgetConfig<AdvancedChatWidgetSettings, ChatWidgetState>>("firebot:chat-advanced");
+
+        for (const chatWidget of [...chatWidgets, ...advancedChatWidgets]) {
             const chatMessages = (chatWidget.state?.chatMessages ?? [])
                 .filter(m => m.username !== username);
 
@@ -136,7 +149,9 @@ class FirebotFrontendChatHelpers {
         frontendCommunicator.send("twitch:chat:clear-feed", moderatorName);
 
         const chatWidgets = overlayWidgetConfigManager.getConfigsOfType<OverlayWidgetConfig<ChatWidgetSettings, ChatWidgetState>>("firebot:chat");
-        for (const chatWidget of chatWidgets) {
+        const advancedChatWidgets = overlayWidgetConfigManager.getConfigsOfType<OverlayWidgetConfig<AdvancedChatWidgetSettings, ChatWidgetState>>("firebot:chat-advanced");
+
+        for (const chatWidget of [...chatWidgets, ...advancedChatWidgets]) {
             overlayWidgetConfigManager.setWidgetStateById(chatWidget.id, {
                 chatMessages: []
             });
