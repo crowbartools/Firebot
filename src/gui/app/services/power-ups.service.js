@@ -46,6 +46,7 @@
             service.showEditPowerUpModal = (powerUp) => {
                 utilityService.showModal({
                     component: "editPowerUp",
+                    breadcrumbName: "Edit Power-Up",
                     windowClass: "no-padding-modal",
                     resolveObj: {
                         powerUp: () => powerUp
