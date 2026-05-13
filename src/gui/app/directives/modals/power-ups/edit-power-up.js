@@ -36,19 +36,6 @@
                     </div>
 
                     <div style="padding-left: 15px; padding-right: 15px;">
-                        <div class="mt-10">
-                            <h3 class="mb-2">
-                                Restrictions
-                                <span class="muted pl-1 text-xl" style="font-family: 'Quicksand';">(Permissions, currency costs, and more)</span>
-                            </h3>
-                            <restrictions-list
-                                restriction-data="$ctrl.powerUp.restrictionData"
-                                trigger="power_up"
-                                trigger-meta="{}"
-                            >
-                            </restrictions-list>
-                        </div>
-
                         <effect-list
                             effects="$ctrl.powerUp.effects"
                             trigger="power_up"

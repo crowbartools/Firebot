@@ -8,7 +8,6 @@ import { CustomPowerUp } from "../streaming-platforms/twitch/api/resource/power-
 import { AccountAccess } from "../common/account-access";
 import { ActiveUserHandler } from "../chat/active-user-handler";
 import { ProfileManager } from "../common/profile-manager";
-import { RestrictionsManager } from "../restrictions/restriction-manager";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 import effectRunner from "../common/effect-runner";
 import frontendCommunicator from "../common/frontend-communicator";
@@ -222,44 +221,6 @@ class PowerUpsManager {
         }
         if (savedPowerUp == null || savedPowerUp.effects == null || savedPowerUp.effects.list == null) {
             return;
-        }
-
-        const restrictionData = savedPowerUp.restrictionData;
-        if (restrictionData) {
-            logger.debug("Power-up has restrictions...checking them.");
-            const triggerData: Trigger = {
-                type: "power_up",
-                metadata
-            };
-
-            try {
-                await RestrictionsManager.runRestrictionPredicates(triggerData, savedPowerUp.restrictionData);
-                logger.debug("Restrictions passed!");
-            } catch (restrictionReason) {
-                let reason: string;
-                if (Array.isArray(restrictionReason)) {
-                    reason = restrictionReason.join(", ");
-                } else {
-                    reason = restrictionReason as string;
-                }
-
-                logger.debug(
-                    `${metadata.username} could not use Power-up '${savedPowerUp.twitchData.title}' because: ${reason}`
-                );
-                if (restrictionData.sendFailMessage || restrictionData.sendFailMessage == null) {
-                    const restrictionMessage = restrictionData.useCustomFailMessage
-                        ? restrictionData.failMessage
-                        : "Sorry @{user}, you cannot use this power-up because: {reason}";
-
-                    await TwitchApi.chat.sendChatMessage(
-                        restrictionMessage.replaceAll("{user}", metadata.username).replaceAll("{reason}", reason),
-                        null,
-                        true
-                    );
-                }
-
-                return false;
-            }
         }
 
         return this.triggerPowerUpEffects(metadata, savedPowerUp.effects, manual);
