@@ -2,8 +2,8 @@ import { createPresetFilter } from "../../filter-factory";
 
 const filter = createPresetFilter({
     id: "firebot:power-up",
-    name: "Power-up",
-    description: "Filter to a Custom Power-up",
+    name: "Power-Up",
+    description: "Filter to a Custom Power-Up",
     events: [{ eventSourceId: "twitch", eventId: "power-up-redemption" }],
     eventMetaKey: "powerUpId",
     allowIsNot: true,

@@ -426,8 +426,8 @@ export const TwitchEventSource: EventSource = {
         },
         {
             id: "bits-powerup-message-effect",
-            name: "Power-up: Message Effects",
-            description: 'When a viewer uses the "Message Effects" Power-up in your channel.',
+            name: "Power-Up: Message Effects",
+            description: 'When a viewer uses the "Message Effects" Power-Up in your channel.',
             cached: false,
             manualMetadata: {
                 username: "firebot",
@@ -443,14 +443,14 @@ export const TwitchEventSource: EventSource = {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
                     return `**${eventData.userDisplayName}${
                         showUserIdName ? ` (${eventData.username})` : ""
-                    }** used a Message Effects Power-up for **${eventData.bits}** bits`;
+                    }** used a Message Effects Power-Up for **${eventData.bits}** bits`;
                 }
             }
         },
         {
             id: "bits-powerup-celebration",
-            name: "Power-up: On-Screen Celebration",
-            description: 'When a viewer uses the "On-Screen Celebration" Power-up in your channel.',
+            name: "Power-Up: On-Screen Celebration",
+            description: 'When a viewer uses the "On-Screen Celebration" Power-Up in your channel.',
             cached: false,
             manualMetadata: {
                 username: "firebot",
@@ -465,14 +465,14 @@ export const TwitchEventSource: EventSource = {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
                     return `**${eventData.userDisplayName}${
                         showUserIdName ? ` (${eventData.username})` : ""
-                    }** used a Celebration Power-up for **${eventData.bits}** bits`;
+                    }** used a Celebration Power-Up for **${eventData.bits}** bits`;
                 }
             }
         },
         {
             id: "bits-powerup-gigantified-emote",
-            name: "Power-up: Gigantify an Emote",
-            description: 'When a viewer uses the "Gigantify an Emote" Power-up in your channel.',
+            name: "Power-Up: Gigantify an Emote",
+            description: 'When a viewer uses the "Gigantify an Emote" Power-Up in your channel.',
             cached: false,
             manualMetadata: {
                 username: "firebot",
@@ -658,8 +658,8 @@ export const TwitchEventSource: EventSource = {
         },
         {
             id: "power-up-redemption",
-            name: "Power-up Redemption",
-            description: "When someone redeems a custom power-up",
+            name: "Custom Power-Up Redemption",
+            description: "When someone redeems a Custom Power-Up",
             cached: true,
             cacheMetaKey: "username",
             cacheTtlInSecs: 1,
@@ -667,8 +667,8 @@ export const TwitchEventSource: EventSource = {
                 username: "firebot",
                 userDisplayName: "Firebot",
                 userId: "",
-                powerUpName: "Test Power-up",
-                powerUpDescription: "Example Power-up Description",
+                powerUpName: "Test Power-Up",
+                powerUpDescription: "Example Power-Up Description",
                 powerUpImage: "https://static-cdn.jtvnw.net/custom-reward-images/default-4.png",
                 powerUpCost: 100,
                 messageText: "Test message"

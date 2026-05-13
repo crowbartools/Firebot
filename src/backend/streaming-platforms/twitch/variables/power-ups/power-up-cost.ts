@@ -5,11 +5,11 @@ import { TwitchApi } from "../../api";
 const model: ReplaceVariable = {
     definition: {
         handle: "powerUpCost",
-        description: "The bit cost of the power-up",
+        description: "The bit cost of the Power-Up",
         examples: [
             {
                 usage: "powerUpCost[powerUpName]",
-                description: "The bit cost of the given power-up. Name must be exact!"
+                description: "The bit cost of the given Power-Up. Name must be exact!"
             }
         ],
         categories: ["common"],
