@@ -18,6 +18,7 @@ const filter = createTextFilter({
         { eventSourceId: "twitch", eventId: "viewer-arrived" },
         { eventSourceId: "twitch", eventId: "community-subs-gifted" },
         { eventSourceId: "twitch", eventId: "channel-reward-redemption" },
+        { eventSourceId: "twitch", eventId: "power-up-redemption" },
         { eventSourceId: "twitch", eventId: "viewer-arrived" },
         { eventSourceId: "twitch", eventId: "chat-message" },
         { eventSourceId: "twitch", eventId: "announcement" },

@@ -1,10 +1,59 @@
 <firebot-tabs
   ng-if="canUseChannelRewards()"
-  ng-init="$ctrl.activeTab = 'rewards'"
+  ng-init="$ctrl.activeTab = 'powerups'"
   active="$ctrl.activeTab"
   type="underlined"
   page-tabs="true"
 >
+  <firebot-tab name="powerups" label="Power-ups">
+    <firebot-item-table
+      items="powerUpsService.powerUps"
+      on-items-update="onPowerUpsUpdated(items)"
+      headers="powerUpHeaders"
+      sort-tag-context="power ups"
+      orderable="true"
+      add-new-button-text="Manage Power-ups"
+      add-new-button-icon="fas fa-external-link"
+      on-add-new-clicked="openTwitchPowerUpsPage()"
+      context-menu-options="powerUpMenuOptions(item)"
+      no-data-message="No power-ups found. Power-ups must be created on Twitch."
+      none-found-message="No power-ups found."
+      search-placeholder="Search power-ups"
+      test-button="true"
+      on-test-button-clicked="powerUpsService.manuallyTriggerPowerUp(itemId)"
+      status-field="twitchData.isEnabled"
+    >
+      <fb-item-table-toolbar>
+        <button class="btn btn-default" uib-tooltip="Twitch Sync" tooltip-append-to-body="true" ng-click="powerUpsService.syncPowerUps()">
+          <i class="fas fa-sync"></i>
+        </button>
+      </fb-item-table-toolbar>
+      <fb-item-table-footer>
+        <div class="p-6" style="display: flex; align-items: center">
+          <div style="flex-shrink: 0; display: flex; align-items: center">
+            <span>Power-up Limit
+              <tooltip text="'Twitch limits channels to 50 total power-ups.'" />
+            </span>
+            <span class="my-0 mx-4" style="font-size: 20px;">
+              {{powerUpsService.powerUps.length}} / 50
+            </span>
+          </div>
+          <div style="width: 100%">
+            <div style="
+                width: 100%;
+                background: #24262a;
+                height: 8px;
+                border-radius: 8px;
+                overflow: hidden;
+              ">
+              <div style="height: 100%; background: #2aa2c0"
+                ng-style="{ width: ((powerUpsService.powerUps.length / 50) * 100) + '%' }"></div>
+            </div>
+          </div>
+        </div>
+      </fb-item-table-footer>
+    </firebot-item-table>
+  </firebot-tab>
   <firebot-tab name="rewards" label="Channel Rewards">
     <firebot-item-table
       items="channelRewardsService.channelRewards"
@@ -64,5 +113,5 @@
   ng-if="!canUseChannelRewards()"
   style="height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 80px;"
 >
-  <div>In order to use Channel Rewards, please login with an eligible account.</div>
+  <div>In order to use Power-ups &amp; Channel Rewards, please login with an eligible account.</div>
 </div>

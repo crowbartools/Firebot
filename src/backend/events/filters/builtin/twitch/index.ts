@@ -10,6 +10,7 @@ import goldenKappaTrain from "./golden-kappa-train";
 import isAnonymous from "./is-anonymous";
 import lifetimeGiftCount from "./lifetime-gift-count";
 import message from "./message";
+import powerUp from "./power-up";
 import raidViewerCount from "./raid-viewer-count";
 import reward from "./reward";
 import rewardName from "./reward-name";
@@ -34,6 +35,7 @@ export default [
     isAnonymous,
     lifetimeGiftCount,
     message,
+    powerUp,
     raidViewerCount,
     rewardName,
     reward,
