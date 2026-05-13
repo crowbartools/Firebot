@@ -1,4 +1,6 @@
 import { EventManager } from "../../../events/event-manager";
+import powerUpsManager from "../../../power-ups/power-ups-manager";
+import frontendCommunicator from "../../../common/frontend-communicator";
 
 export function triggerCheer(
     username: string,
@@ -92,4 +94,66 @@ export function triggerPowerupGigantifyEmote(
         emoteName,
         emoteUrl
     });
+}
+
+export function handleCustomPowerUpRedemption(
+    redemptionId: string,
+    status: string,
+    messageText: string,
+    userId: string,
+    username: string,
+    userDisplayName: string,
+    powerUpId: string,
+    powerUpTitle: string,
+    powerUpPrompt: string,
+    powerUpCost: number,
+    powerUpImageUrl: string
+): void {
+    frontendCommunicator.send("twitch:chat:twitch:chat:powerupredemption", {
+        id: redemptionId,
+        status,
+        messageText,
+        user: {
+            id: userId,
+            username,
+            displayName: userDisplayName
+        },
+        powerUp: {
+            id: powerUpId,
+            name: powerUpTitle,
+            bits: powerUpCost,
+            imageUrl:
+                powerUpImageUrl ??
+                "https://static-cdn.jtvnw.net/twilight-static-assets/Default-Power-up-Line-Lightshade-112x112.png"
+        }
+    });
+
+    setTimeout(() => {
+        const redemptionMeta = {
+            username,
+            userId,
+            userDisplayName,
+            messageText,
+            args: (messageText ?? "").split(" "),
+            redemptionId,
+            powerUpId,
+            powerUpImage: powerUpImageUrl,
+            powerUpName: powerUpTitle,
+            powerUpDescription: powerUpPrompt,
+            powerUpCost
+        };
+
+        void void EventManager.triggerEvent("twitch", "power-up-redemption", redemptionMeta);
+
+        void powerUpsManager.triggerPowerUp(powerUpId, {
+            username,
+            userId,
+            userDisplayName,
+            messageText,
+            powerUpId,
+            powerUpImage: powerUpImageUrl,
+            powerUpName: powerUpTitle,
+            bits: powerUpCost
+        });
+    }, 100);
 }

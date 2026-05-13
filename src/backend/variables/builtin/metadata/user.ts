@@ -7,6 +7,7 @@ triggers["manual"] = true;
 triggers["custom_script"] = true;
 triggers["preset"] = true;
 triggers["channel_reward"] = true;
+triggers["power_up"] = true;
 
 const model : ReplaceVariable = {
     definition: {
