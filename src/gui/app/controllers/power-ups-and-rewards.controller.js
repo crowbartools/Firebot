@@ -104,10 +104,6 @@
                     sortable: true,
                     cellTemplate: `{{data.twitchData.bits}}`,
                     cellController: () => { }
-                },
-                {
-                    cellTemplate: `<span class="paused-dot" style="margin-right: 5px" ng-class="{'paused': data.twitchData.isPaused, 'unpaused': !data.twitchData.isPaused}"></span>{{data.twitchData.isPaused ? 'Paused' : 'Unpaused' }}`,
-                    cellController: () => { }
                 }
             ];
 
