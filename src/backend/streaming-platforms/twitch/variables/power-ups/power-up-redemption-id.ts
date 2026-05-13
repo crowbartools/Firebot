@@ -9,7 +9,7 @@ triggers["manual"] = true;
 const model: ReplaceVariable = {
     definition: {
         handle: "powerUpRedemptionId",
-        description: "The ID of the Power-Up redemption",
+        description: "The ID of the power-up redemption",
         triggers: triggers,
         categories: ["common", "trigger based"],
         possibleDataOutput: ["text"]

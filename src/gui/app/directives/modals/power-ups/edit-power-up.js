@@ -7,7 +7,7 @@
                 <scroll-sentinel element-class="edit-power-up-header"></scroll-sentinel>
                 <div class="modal-header sticky-header edit-power-up-header">
                     <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
-                    <h4 class="modal-title">Edit Power-Up</h4>
+                    <h4 class="modal-title">Edit Power-up</h4>
                 </div>
                 <div class="modal-body" style="padding-top: 15px;">
                     <div style="display: flex; flex-direction: column; padding-left: 15px; padding-right: 15px;">
@@ -31,7 +31,7 @@
 
                         <div class="alert alert-info" style="margin-top: 10px;">
                             <i class="fas fa-info-circle" style="margin-right: 6px;"></i>
-                            Power-Ups are created on Twitch and cannot be edited from Firebot. You can however set up effects to run when this Power-Up is redeemed.
+                            Power-ups are created on Twitch and cannot be edited from Firebot. You can however set up effects to run when this Power-up is redeemed.
                         </div>
                     </div>
 
@@ -96,7 +96,7 @@
                         if (successful) {
                             $ctrl.dismiss();
                         } else {
-                            ngToast.create("Failed to save Power-Up. Please try again or view logs for details.");
+                            ngToast.create("Failed to save power-up. Please try again or view logs for details.");
                         }
                     });
                 };

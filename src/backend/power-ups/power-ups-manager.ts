@@ -44,7 +44,7 @@ class PowerUpsManager {
             void this.triggerPowerUp(
                 powerUpId,
                 {
-                    messageText: "Testing Power-Up",
+                    messageText: "Testing power-up",
                     powerUpId: savedPowerUp.id,
                     bits: savedPowerUp.twitchData.bits,
                     powerUpImage: savedPowerUp.twitchData.image
@@ -249,7 +249,7 @@ class PowerUpsManager {
                 if (restrictionData.sendFailMessage || restrictionData.sendFailMessage == null) {
                     const restrictionMessage = restrictionData.useCustomFailMessage
                         ? restrictionData.failMessage
-                        : "Sorry @{user}, you cannot use this Power-Up because: {reason}";
+                        : "Sorry @{user}, you cannot use this power-up because: {reason}";
 
                     await TwitchApi.chat.sendChatMessage(
                         restrictionMessage.replaceAll("{user}", metadata.username).replaceAll("{reason}", reason),

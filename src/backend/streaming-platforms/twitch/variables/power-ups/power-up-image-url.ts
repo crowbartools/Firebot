@@ -9,7 +9,7 @@ const model: ReplaceVariable = {
         examples: [
             {
                 usage: "powerUpImageUrl[powerUpName]",
-                description: "The image URL of the given Power-Up. Name must be exact!"
+                description: "The image URL of the given power-up. Name must be exact!"
             }
         ],
         categories: ["common"],
@@ -23,12 +23,12 @@ const model: ReplaceVariable = {
 
         const powerUpId = powerUpsManager.getPowerUpIdByName(powerUpName);
         if (powerUpId == null) {
-            return "[Can't find Power-Up by name]";
+            return "[Can't find power-up by name]";
         }
 
         const powerUp = await TwitchApi.powerUps.getCustomPowerUpById(powerUpId);
         if (powerUp == null) {
-            return "[No Power-Up found]";
+            return "[No power-up found]";
         }
 
         return powerUp.image?.url4x ?? powerUp.defaultImage.url4x;
