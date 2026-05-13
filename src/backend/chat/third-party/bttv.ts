@@ -21,7 +21,7 @@ export class BTTVEmoteProvider extends ThirdPartyEmoteProvider<BTTVEmotesRespons
 
     private emoteMapper(response: BTTVEmotesResponse): ThirdPartyEmote[] {
         return response?.map(e => ({
-            url: `https://cdn.betterttv.net/emote/${e.id}/1x`,
+            url: `https://cdn.betterttv.net/emote/${e.id}/3x`,
             code: e.code,
             animated: e.imageType && e.imageType.toLowerCase() === "gif",
             origin: this.providerName
