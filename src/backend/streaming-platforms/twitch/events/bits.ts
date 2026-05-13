@@ -106,7 +106,7 @@ export function handleCustomPowerUpRedemption(
     powerUpId: string,
     powerUpTitle: string,
     powerUpPrompt: string,
-    powerUpBits: number,
+    powerUpCost: number,
     powerUpImageUrl: string
 ): void {
     frontendCommunicator.send("twitch:chat:twitch:chat:powerupredemption", {
@@ -121,7 +121,7 @@ export function handleCustomPowerUpRedemption(
         powerUp: {
             id: powerUpId,
             name: powerUpTitle,
-            bits: powerUpBits,
+            bits: powerUpCost,
             imageUrl:
                 powerUpImageUrl ??
                 "https://static-cdn.jtvnw.net/twilight-static-assets/Default-Power-up-Line-Lightshade-112x112.png"
@@ -140,7 +140,7 @@ export function handleCustomPowerUpRedemption(
             powerUpImage: powerUpImageUrl,
             powerUpName: powerUpTitle,
             powerUpDescription: powerUpPrompt,
-            powerUpBits
+            powerUpCost
         };
 
         void void EventManager.triggerEvent("twitch", "power-up-redemption", redemptionMeta);
@@ -153,7 +153,7 @@ export function handleCustomPowerUpRedemption(
             powerUpId,
             powerUpImage: powerUpImageUrl,
             powerUpName: powerUpTitle,
-            bits: powerUpBits
+            bits: powerUpCost
         });
     }, 100);
 }

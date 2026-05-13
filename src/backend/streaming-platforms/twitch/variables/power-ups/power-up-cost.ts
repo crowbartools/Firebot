@@ -4,11 +4,11 @@ import { TwitchApi } from "../../api";
 
 const model: ReplaceVariable = {
     definition: {
-        handle: "powerUpBits",
+        handle: "powerUpCost",
         description: "The bit cost of the power-up",
         examples: [
             {
-                usage: "powerUpBits[powerUpName]",
+                usage: "powerUpCost[powerUpName]",
                 description: "The bit cost of the given power-up. Name must be exact!"
             }
         ],
@@ -19,8 +19,8 @@ const model: ReplaceVariable = {
         if (!powerUpName) {
             const data = trigger.metadata.eventData ? trigger.metadata.eventData : trigger.metadata;
             const bits =
-                (data as { powerUpBits?: number, bits?: number }).powerUpBits ??
-                (data as { powerUpBits?: number, bits?: number }).bits;
+                (data as { powerUpCost?: number, bits?: number }).powerUpCost ??
+                (data as { powerUpCost?: number, bits?: number }).bits;
             return bits ?? -1;
         }
 

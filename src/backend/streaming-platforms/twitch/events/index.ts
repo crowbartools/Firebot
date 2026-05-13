@@ -670,7 +670,7 @@ export const TwitchEventSource: EventSource = {
                 powerUpName: "Test Power-up",
                 powerUpDescription: "Example Power-up Description",
                 powerUpImage: "https://static-cdn.jtvnw.net/custom-reward-images/default-4.png",
-                powerUpBits: 100,
+                powerUpCost: 100,
                 messageText: "Test message"
             },
             activityFeed: {
