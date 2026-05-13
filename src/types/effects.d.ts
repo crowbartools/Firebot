@@ -48,7 +48,7 @@ export type OverlayExtension<OverlayData = unknown> = {
     dependencies?: {
         globalStyles?: string;
         css?: string[];
-        js?: string[];
+        js?: Array<string | { module: boolean, url: string }>;
     };
     event: {
         name: string;
