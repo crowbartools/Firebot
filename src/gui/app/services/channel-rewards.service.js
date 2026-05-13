@@ -56,6 +56,7 @@
 
             service.showAddOrEditRewardModal = (reward) => {
                 utilityService.showModal({
+                    breadcrumbName: reward ? "Edit Channel Reward" : "Add Channel Reward",
                     component: "addOrEditChannelReward",
                     windowClass: "no-padding-modal",
                     resolveObj: {
