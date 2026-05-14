@@ -433,10 +433,6 @@ class ChannelRewardManager {
     }
 
     async refreshChannelRewardRedemptions(): Promise<void> {
-        if (AccountAccess.getAccounts().streamer.broadcasterType === "") {
-            return;
-        }
-
         this._channelRewardRedemptions = await TwitchApi.channelRewards.getOpenChannelRewardRedemptions();
 
         frontendCommunicator.send("channel-reward-redemptions-updated", this.getChannelRewardRedemptions());
