@@ -636,7 +636,7 @@ export const TwitchEventSource: EventSource = {
             manualMetadata: {
                 username: "alca",
                 userDisplayName: "Alca",
-                userId: "",
+                userId: "7676884",
                 timeoutDuration: "1",
                 moderator: "Firebot",
                 modReason: "They were naughty"
