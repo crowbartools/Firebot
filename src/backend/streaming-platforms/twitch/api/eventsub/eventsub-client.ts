@@ -1001,6 +1001,13 @@ class TwitchEventSubClient {
                             event.channelPointsAwarded,
                             event.messageText ?? ""
                         );
+
+                        // Pass any message the viewer sent with the streak to the frontend
+                        if (!!event.messageText?.length) {
+                            FirebotFrontendChatHelpers.sendChatMessageToFrontend(
+                                await TwitchEventSubChatHelpers.buildChatMessageFromChatEvent(event)
+                            );
+                        }
                         break;
 
                     default:
