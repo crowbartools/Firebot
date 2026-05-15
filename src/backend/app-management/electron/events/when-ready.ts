@@ -55,8 +55,7 @@ export async function whenReady() {
 
     windowManagement.updateSplashScreenStatus("Refreshing Twitch account data...");
 
-    // Loading these first so that the refresh caches the account avatar URLs
-    const _chatHelpers = await import("../../../chat/chat-helpers");
+    // Loading this first so that the refresh caches the account avatar URLs
     const _eventSubChatHelpers = await import("../../../streaming-platforms/twitch/api/eventsub/eventsub-chat-helpers");
 
     const { TwitchApi } = await import("../../../streaming-platforms/twitch/api");

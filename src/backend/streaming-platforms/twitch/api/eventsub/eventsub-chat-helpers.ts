@@ -37,6 +37,8 @@ import { AccountAccess } from "../../../../common/account-access";
 import { FirebotPronounManager } from "../../../../pronouns/pronoun-manager";
 import { SettingsManager } from "../../../../common/settings-manager";
 import { TwitchApi } from "../";
+import rankManager from "../../../../ranks/rank-manager";
+import roleManager from "../../../../roles/custom-roles-manager";
 import viewerDatabase from "../../../../viewers/viewer-database";
 import frontendCommunicator from "../../../../common/frontend-communicator";
 import logger from "../../../../logwrapper";
@@ -47,7 +49,7 @@ import { BTTVEmoteProvider } from "../../../../chat/third-party/bttv";
 import { FFZEmoteProvider } from "../../../../chat/third-party/ffz";
 import { SevenTVEmoteProvider } from "../../../../chat/third-party/7tv";
 
-interface ChatBadge {
+export interface ChatBadge {
     title: string;
     url: string;
 }
@@ -114,6 +116,22 @@ class TwitchEventSubChatHelpers {
                 this.setUserProfilePicUrl(userId, url);
             }
         );
+    }
+
+    get badges() {
+        return this._badgeCache;
+    }
+
+    get twitchEmotes() {
+        return this._twitchEmotes;
+    }
+
+    get thirdPartyEmotes() {
+        return this._thirdPartyEmotes;
+    }
+
+    get twitchCheermotes() {
+        return this._twitchCheermotes;
     }
 
     async cacheBadges(): Promise<void> {
@@ -527,7 +545,7 @@ class TwitchEventSubChatHelpers {
         }
     }
 
-    private cacheUserColor(userId: string, color?: string | null): string {
+    cacheUserColor(userId: string, color?: string | null): string {
         if (color?.length) {
             this._colorCache[userId] = color;
         } else if (this._colorCache[userId] == null) {
@@ -641,6 +659,8 @@ class TwitchEventSubChatHelpers {
             chatMessage.roles.push("vip");
         }
 
+        await this.enrichMessageWithRanksAndRoles(chatMessage);
+
         return chatMessage;
     }
 
@@ -723,6 +743,8 @@ class TwitchEventSubChatHelpers {
         //const messageParts = this.parseMessageParts(chatMessage, message.messageParts);
         //chatMessage.parts = messageParts;
 
+        await this.enrichMessageWithRanksAndRoles(chatMessage);
+
         return chatMessage;
     }
 
@@ -791,7 +813,25 @@ class TwitchEventSubChatHelpers {
 
         chatMessage.parts = parts;
 
+        await this.enrichMessageWithRanksAndRoles(chatMessage);
+
         return chatMessage;
+    }
+
+    async enrichMessageWithRanksAndRoles(firebotChatMessage: FirebotChatMessage) {
+        const viewer = await viewerDatabase.getViewerById(firebotChatMessage.userId);
+        firebotChatMessage.viewerRanks = Object.entries(viewer?.ranks || {}).reduce((obj, [ladderId, rankId]) => {
+            const ladder = rankManager.getItem(ladderId);
+            if (ladder && ladder.settings.showBadgeInChat && rankId) {
+                obj[ladder.name] = ladder.ranks.find(r => r.id === rankId)?.name || "Unknown";
+            }
+            return obj;
+        }, {} as Record<string, string>);
+
+        const customRoles = roleManager.getAllCustomRolesForViewer(firebotChatMessage.userId);
+        firebotChatMessage.viewerCustomRoles = customRoles
+            .filter(r => r.showBadgeInChat)
+            .map(r => r.name);
     }
 }
 
