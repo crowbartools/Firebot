@@ -107,6 +107,10 @@ class FirebotPronounManager {
                     return primaryPronoun.object;
 
                 default:
+                    if (primaryPronoun.singular === true && secondaryPronoun == null) {
+                        return primaryPronoun.subject;
+                    }
+
                     return `${primaryPronoun.subject}/${secondaryPronoun ? secondaryPronoun.subject : primaryPronoun.object}`;
             }
         }
