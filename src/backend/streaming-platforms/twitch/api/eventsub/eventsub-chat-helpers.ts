@@ -9,6 +9,7 @@ import {
     type EventSubAutoModMessageHoldV2Event,
     type EventSubChannelChatNotificationEvent,
     type EventSubUserWhisperMessageEvent,
+    EventSubChannelBitsUseEvent,
     EventSubChannelChatAnnouncementNotificationEvent,
     EventSubChannelChatMessageEvent
 } from "@twurple/eventsub-base";
@@ -832,6 +833,20 @@ class TwitchEventSubChatHelpers {
         firebotChatMessage.viewerCustomRoles = customRoles
             .filter(r => r.showBadgeInChat)
             .map(r => r.name);
+    }
+
+    sanitizeCheerMessage(event: EventSubChannelBitsUseEvent): string {
+        const cheerMessageParts: string[] = [];
+
+        for (const part of event.messageParts) {
+            if (part.type === "cheermote") {
+                continue;
+            }
+
+            cheerMessageParts.push(part.text.trim());
+        }
+
+        return cheerMessageParts.join(" ");
     }
 }
 

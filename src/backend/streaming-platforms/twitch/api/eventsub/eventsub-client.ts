@@ -72,7 +72,7 @@ class TwitchEventSubClient {
                         event.userDisplayName,
                         event.bits,
                         totalBits,
-                        event.messageText ?? ""
+                        TwitchEventSubChatHelpers.sanitizeCheerMessage(event)
                     );
                     break;
                 }

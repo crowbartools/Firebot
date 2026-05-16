@@ -13,10 +13,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: ["text"]
     },
     evaluator: (trigger: Trigger) => {
-        const cheerMessage = <string>(trigger.metadata.eventData.cheerMessage || "");
-        return cheerMessage
-            .replace(/[a-zA-Z]+\d+( |\b)/g, "")
-            .trim();
+        return trigger.metadata.eventData.cheerMessage || "";
     }
 };
 
