@@ -549,6 +549,12 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
     },
     overlayExtension: {
         eventHandler: (event: WidgetOverlayEvent<ChatWidgetSettings, ChatWidgetState>, utils: IOverlayWidgetEventUtils) => {
+            const escapeHtml = (text: string): string => {
+                const elem = document.createElement("div");
+                elem.innerText = text;
+                return elem.innerHTML;
+            };
+
             const generateAnnouncementBarStyle = (
                 announcementColor: FirebotChatMessage["announcementColor"]
             ): Record<string, string> => {
@@ -814,11 +820,11 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                             break;
 
                         case "link":
-                            chatMessagePartsHtml.push(part.url);
+                            chatMessagePartsHtml.push(escapeHtml(part.url));
                             break;
 
                         default:
-                            chatMessagePartsHtml.push(part.text);
+                            chatMessagePartsHtml.push(escapeHtml(part.text));
                     }
                 }
 
