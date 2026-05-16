@@ -23,6 +23,10 @@ export abstract class ApiResourceBase<T extends ListenerSignature<T> = unknown> 
         return this._apiBase.moderationClient;
     }
 
+    protected get moderatorId(): string {
+        return this._apiBase.moderatorId;
+    }
+
     protected get logger() {
         return this._apiBase.logger;
     }

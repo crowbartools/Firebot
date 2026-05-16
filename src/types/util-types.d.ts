@@ -33,3 +33,15 @@ export type SnakeCased<T> = T extends Date
         : T extends object
             ? { [K in keyof T as K extends string ? CamelToSnake<K> : K]: SnakeCased<T[K]> }
             : T;
+
+type SnakeToCamel<S extends string> = S extends `${infer H}_${infer T}`
+    ? `${H}${Capitalize<SnakeToCamel<T>>}`
+    : S;
+
+export type CamelCased<T> = T extends Date
+    ? string
+    : T extends Array<infer U>
+        ? Array<CamelCased<U>>
+        : T extends object
+            ? { [K in keyof T as K extends string ? SnakeToCamel<K> : K]: CamelCased<T[K]> }
+            : T;

@@ -169,6 +169,13 @@ class TwitchApi {
             : this.streamerClient;
     }
 
+    get moderatorId(): string {
+        const modUser = SettingsManager.getSetting("DefaultModerationUser");
+        return modUser === "bot" && this.accounts.bot.loggedIn === true
+            ? this.accounts.bot.userId
+            : this.accounts.streamer.userId;
+    }
+
     get accounts() {
         return AccountAccess.getAccounts();
     }
