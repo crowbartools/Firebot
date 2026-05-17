@@ -463,12 +463,6 @@ The same fields in the default message template are available here, plus these a
     },
     overlayExtension: {
         eventHandler: (event: WidgetOverlayEvent<AdvancedChatWidgetSettings, ChatWidgetState>, utils: IOverlayWidgetEventUtils) => {
-            const escapeHtml = (text: string): string => {
-                const elem = document.createElement("div");
-                elem.innerText = text;
-                return elem.innerHTML;
-            };
-
             const generateChatMessageHtml = (
                 chatMessage: FirebotChatMessage,
                 config: typeof event["data"]["widgetConfig"]
@@ -592,11 +586,11 @@ The same fields in the default message template are available here, plus these a
                             break;
 
                         case "link":
-                            chatMessagePartsHtml.push(escapeHtml(part.url));
+                            chatMessagePartsHtml.push(part.url);
                             break;
 
                         default:
-                            chatMessagePartsHtml.push(escapeHtml(part.text));
+                            chatMessagePartsHtml.push(part.text);
                     }
                 }
 
