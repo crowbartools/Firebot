@@ -461,6 +461,20 @@ The same fields in the default message template are available here, plus these a
             }
         ]
     },
+    uiActions: [
+        {
+            id: "clear",
+            label: "Clear Chat Widget",
+            icon: "fa-minus-circle",
+            click: () => {
+                return {
+                    newState: {
+                        chatMessages: null
+                    }
+                };
+            }
+        }
+    ],
     overlayExtension: {
         eventHandler: (event: WidgetOverlayEvent<AdvancedChatWidgetSettings, ChatWidgetState>, utils: IOverlayWidgetEventUtils) => {
             const generateChatMessageHtml = (
@@ -712,13 +726,6 @@ The same fields in the default message template are available here, plus these a
                                 }
                             } catch { }
                             break;
-
-                        case "clear-chat":
-                            try {
-                                const chatContainer = document.getElementsByClassName(`chat-${event.data.widgetConfig.id}`)[0];
-                                chatContainer.innerHTML = "";
-                            } catch { }
-                            break;
                     }
                     break;
 
@@ -727,7 +734,10 @@ The same fields in the default message template are available here, plus these a
                     break;
 
                 case "state-update":
-                    // We don't really care about state here. We only care about state on reloads, which are handled above.
+                    // If we've set the chat message state to null, we're clearing the widget
+                    if (event.data.widgetConfig.state?.chatMessages == null) {
+                        utils.updateWidgetContent(generateWidgetHtml(event.data.widgetConfig));
+                    }
                     break;
 
                 default:

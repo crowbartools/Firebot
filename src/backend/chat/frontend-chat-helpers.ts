@@ -45,7 +45,7 @@ class FirebotFrontendChatHelpers {
         });
 
         const existingChatMessages = chatWidget.state?.chatMessages ?? [];
-        overlayWidgetConfigManager.setWidgetStateById(chatWidget.id, {
+        overlayWidgetConfigManager.setWidgetStateById<ChatWidgetState>(chatWidget.id, {
             chatMessages: [...existingChatMessages.slice(-99), frontendChatMessage]
         });
 
@@ -110,7 +110,7 @@ class FirebotFrontendChatHelpers {
         const chatMessages = (chatWidget.state?.chatMessages ?? [])
             .filter(m => m.id !== messageId);
 
-        overlayWidgetConfigManager.setWidgetStateById(chatWidget.id, {
+        overlayWidgetConfigManager.setWidgetStateById<ChatWidgetState>(chatWidget.id, {
             chatMessages: chatMessages
         });
 
@@ -148,7 +148,7 @@ class FirebotFrontendChatHelpers {
             const chatMessages = (chatWidget.state?.chatMessages ?? [])
                 .filter(m => m.username !== username);
 
-            overlayWidgetConfigManager.setWidgetStateById(chatWidget.id, {
+            overlayWidgetConfigManager.setWidgetStateById<ChatWidgetState>(chatWidget.id, {
                 chatMessages: chatMessages
             });
 
@@ -172,17 +172,9 @@ class FirebotFrontendChatHelpers {
         const advancedChatWidgets = overlayWidgetConfigManager.getConfigsOfType<OverlayWidgetConfig<AdvancedChatWidgetSettings, ChatWidgetState>>("firebot:chat-advanced");
 
         for (const chatWidget of [...chatWidgets, ...advancedChatWidgets]) {
-            overlayWidgetConfigManager.setWidgetStateById(chatWidget.id, {
-                chatMessages: []
+            overlayWidgetConfigManager.setWidgetStateById<ChatWidgetState>(chatWidget.id, {
+                chatMessages: null
             });
-
-            void overlayWidgetsManager.sendWidgetEventToOverlay(
-                "message",
-                chatWidget,
-                {
-                    messageName: "clear-chat"
-                }
-            );
         }
     }
 
