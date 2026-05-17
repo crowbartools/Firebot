@@ -102,7 +102,6 @@ function buildModules(scriptManifest) {
     return {
         spawn: require("child_process").spawn,
         childProcess: require("child_process"),
-        fs: require("fs-extra"),
         path: require("path"),
         JsonDb: require("node-json-db").JsonDB,
         moment: require("moment"),
