@@ -15,7 +15,8 @@ const effect: EffectType<{
         description: "Run a random effect from a list of effects",
         icon: "fad fa-random",
         categories: ["advanced", "scripting"],
-        hidden: true
+        hidden: true,
+        deprecated: true
     },
     optionsTemplate: `
         <eos-container>

@@ -13,7 +13,8 @@ const effect: EffectType<{
         icon: "fad fa-list-ol",
         categories: ["advanced", "scripting"],
         dependencies: [],
-        hidden: true
+        hidden: true,
+        deprecated: true
     },
     optionsTemplate: `
     <eos-container>

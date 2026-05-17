@@ -100,6 +100,7 @@ export type EffectDefinition<EffectModel = unknown> = {
     icon: string;
     categories: EffectCategory[];
     hidden?: boolean | Func<boolean>;
+    deprecated?: boolean;
     triggers?: TriggerType[] | TriggersObject;
     dependencies?: EffectDependencies | Array<"chat">;
     showWhenDependenciesNotMet?: boolean;
