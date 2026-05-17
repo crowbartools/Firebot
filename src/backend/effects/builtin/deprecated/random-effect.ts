@@ -1,6 +1,6 @@
-import type { EffectList, EffectType } from "../../../types/effects";
+import type { EffectList, EffectType } from "../../../../types/effects";
 
-import effectRunner from "../../common/effect-runner";
+import effectRunner from "../../../common/effect-runner";
 
 const effect: EffectType<{
     effectList: EffectList;

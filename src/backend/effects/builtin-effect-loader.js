@@ -44,7 +44,6 @@ exports.loadEffects = () => {
         'play-sound',
         'play-video', // No migration needed.
         'overlay-alert',
-        'random-effect',
         'random-reddit-image',
         'remove-user-metadata',
         'reset-timer',
@@ -52,7 +51,6 @@ exports.loadEffects = () => {
         'run-command',
         'run-program',
         'send-custom-websocket-event',
-        'sequential-effect',
         'set-output',
         'set-user-metadata',
         'shoutout',
@@ -80,7 +78,11 @@ exports.loadEffects = () => {
         'overlay-widgets/update-progress-bar',
         'overlay-widgets/update-dynamic-countdown',
         'overlay-widgets/set-custom-widget-state',
-        'overlay-widgets/send-message-to-custom-widget'
+        'overlay-widgets/send-message-to-custom-widget',
+
+        // Deprecated (no remove date)
+        'deprecated/random-effect',
+        'deprecated/sequential-effect',
     ].forEach((filename) => {
         const definition = require(`./builtin/${filename}`);
         EffectManager.registerEffect(definition);

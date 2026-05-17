@@ -1,5 +1,5 @@
-import type { EffectList, EffectType } from "../../../types/effects";
-import effectRunner from "../../common/effect-runner";
+import type { EffectList, EffectType } from "../../../../types/effects";
+import effectRunner from "../../../common/effect-runner";
 
 const effect: EffectType<{
     id: string;
