@@ -1,9 +1,9 @@
 "use strict";
 
-const { SettingsManager } = require("../../common/settings-manager");
-const webServer = require("../../../server/http-server-manager");
-const logger = require("../../logwrapper");
-const mediaProcessor = require("../../common/handlers/mediaProcessor");
+const { SettingsManager } = require("../../../common/settings-manager");
+const webServer = require("../../../../server/http-server-manager");
+const logger = require("../../../logwrapper");
+const mediaProcessor = require("../../../common/handlers/mediaProcessor");
 
 /**
  * The Show Text effect
@@ -14,11 +14,13 @@ const showText = {
    */
     definition: {
         id: "firebot:showtext",
-        name: "Show Text",
+        name: "Show Text (DEPRECATED)",
         description: "Shows specified text in the overlay.",
         icon: "fad fa-text",
         categories: ["common", "overlay"],
-        dependencies: []
+        dependencies: [],
+        hidden: true,
+        deprecated: true
     },
     /**
    * Global settings that will be available in the Settings tab
@@ -29,6 +31,12 @@ const showText = {
    * You can alternatively supply a url to a html file via optionTemplateUrl
    */
     optionsTemplate: `
+    <eos-container>
+        <div class="effect-info alert alert-warning">
+            WARNING: This version of the <strong>Show Text</strong> effect has been deprecated and will be removed in a future update. Either create a new <strong>Show Text</strong> effect, or if you want advanced HTML capability, create a new <strong>Show HTML</strong> effect.
+        </div>
+    </eos-container>
+
     <eos-container header="Text">
         <div ng-class="editorClass" replace-variables on-variable-insert="onVariableInsert(text)" menu-position="bottom">
             <summernote on-editor-ready="editorReady(editor)" ng-model="effect.text" config="editorOptions" editor="editor" editable="editable"></summernote>

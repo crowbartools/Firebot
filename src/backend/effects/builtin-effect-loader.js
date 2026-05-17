@@ -80,6 +80,9 @@ exports.loadEffects = () => {
         'overlay-widgets/set-custom-widget-state',
         'overlay-widgets/send-message-to-custom-widget',
 
+        // Deprecated - remove after min 90 days post-release
+        'deprecated/show-text',
+
         // Deprecated (no remove date)
         'deprecated/random-effect',
         'deprecated/sequential-effect',

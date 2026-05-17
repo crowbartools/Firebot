@@ -69,6 +69,7 @@ export type OverlayPosition = {
         left: number;
         right: number;
     };
+    zIndex?: number;
 };
 
 export type OverlayRotation = {
