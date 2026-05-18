@@ -1,5 +1,7 @@
 "use strict";
 
+const escapeHTML = require("escape-html");
+const { ReplaceVariableManager } = require("../../../variables/replace-variable-manager");
 const { SettingsManager } = require("../../../common/settings-manager");
 const webServer = require("../../../../server/http-server-manager");
 const logger = require("../../../logwrapper");
@@ -20,7 +22,8 @@ const showText = {
         categories: ["common", "overlay"],
         dependencies: [],
         hidden: true,
-        deprecated: true
+        deprecated: true,
+        keysExemptFromAutoVariableReplacement: ["text"]
     },
     /**
    * Global settings that will be available in the Settings tab
@@ -243,6 +246,15 @@ const showText = {
 
         // What should this do when triggered.
         const effect = event.effect;
+
+        effect.text = await ReplaceVariableManager.populateStringWithTriggerData(
+            effect.text,
+            {
+                ...event.trigger,
+                effectOutputs: event.outputs
+            },
+            token => escapeHTML(token)
+        );
 
         //data transfer object
         const dto = {
