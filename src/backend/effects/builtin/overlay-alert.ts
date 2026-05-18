@@ -4,6 +4,7 @@
 
 import fs from "fs/promises";
 import path from "path";
+import escapeHTML from "escape-html";
 
 import type { EffectType, FirebotAudioDevice } from "../../../types";
 
@@ -664,10 +665,14 @@ const effect: EffectType<OverlayAlertEffect> = {
                 );
             }
 
-            effect.text = await ReplaceVariableManager.populateStringWithTriggerData(effect.text, {
-                ...event.trigger,
-                effectOutputs: event.outputs
-            });
+            effect.text = await ReplaceVariableManager.populateStringWithTriggerData(
+                effect.text,
+                {
+                    ...event.trigger,
+                    effectOutputs: event.outputs
+                },
+                (token: string) => escapeHTML(token)
+            );
         }
 
         const data: OverlayData = {
