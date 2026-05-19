@@ -1,7 +1,7 @@
 import { EventManager } from "../../../events/event-manager";
 import powerUpsManager from "../../../power-ups/power-ups-manager";
 import frontendCommunicator from "../../../common/frontend-communicator";
-import { EventSubChannelBitsUseMessagePart } from "@twurple/eventsub-base/lib/events/EventSubChannelBitsUseEvent.external";
+import { EventSubChannelBitsUseMessagePart } from "../api/twurple-private-types";
 
 export function triggerCheer(
     username: string,

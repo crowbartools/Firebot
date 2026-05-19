@@ -1,5 +1,5 @@
 import type { ReplaceVariable, Trigger, TriggersObject } from "../../../../../types/variables";
-import { EventSubChannelBitsUseMessagePart } from "@twurple/eventsub-base/lib/events/EventSubChannelBitsUseEvent.external";
+import { EventSubChannelBitsUseMessagePart } from "../../api/twurple-private-types";
 
 const triggers: TriggersObject = {};
 triggers["event"] = ["twitch:cheer", "twitch:bits-powerup-message-effect", "twitch:bits-powerup-gigantified-emote"];
