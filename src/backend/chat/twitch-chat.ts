@@ -6,7 +6,7 @@ import { ActiveUserHandler } from "./active-user-handler";
 import { FirebotDeviceAuthProvider } from "../auth/firebot-device-auth-provider";
 import { SharedChatCache } from "../streaming-platforms/twitch/chat/shared-chat-cache";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
-import chatHelpers from "./chat-helpers";
+import { TwitchEventSubChatHelpers } from "../streaming-platforms/twitch/api/eventsub/eventsub-chat-helpers";
 import chatRolesManager from "../roles/chat-roles-manager";
 import twitchRolesManager from "../roles/twitch-roles-manager";
 import chatterPoll from "../streaming-platforms/twitch/chatter-poll";
@@ -112,7 +112,7 @@ class TwitchChat extends EventEmitter {
              * This is just to cache badges/emotes/cheermotes
              * Fire and forget this so we can get everything else setup
             */
-            void chatHelpers.cacheChatAssets();
+            void TwitchEventSubChatHelpers.cacheChatAssets();
 
             // Attempt to reload the known bot list in case it failed on start
             await chatRolesManager.cacheViewerListBots();

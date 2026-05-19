@@ -2,19 +2,23 @@
 (function () {
     angular
         .module("firebotApp")
-        .controller("channelRewardsController", function (
+        .controller("powerUpsAndRewardsController", function (
             $scope,
+            $rootScope,
             channelRewardsService,
+            powerUpsService,
             utilityService,
             accountAccess
         ) {
             $scope.channelRewardsService = channelRewardsService;
+            $scope.powerUpsService = powerUpsService;
 
             $scope.canUseChannelRewards = () => accountAccess.accounts["streamer"].loggedIn
-                && channelRewardsService.userIsEligible;
+                && (channelRewardsService.userIsEligible);
 
-            // triggering twitch sync
+            // triggering twitch sync for both features
             channelRewardsService.syncChannelRewards();
+            powerUpsService.syncPowerUps();
 
             $scope.saveChannelReward = (reward) => {
                 channelRewardsService.saveChannelReward(reward);
@@ -22,6 +26,15 @@
 
             $scope.onRewardsUpdated = (items) => {
                 channelRewardsService.saveAllRewards(items);
+            };
+
+            $scope.onPowerUpsUpdated = (items) => {
+                powerUpsService.saveAllPowerUps(items);
+            };
+
+            $scope.openTwitchPowerUpsPage = () => {
+                const username = accountAccess.accounts["streamer"].username;
+                $rootScope.openLinkExternally(`https://dashboard.twitch.tv/u/${username}/viewer-rewards/channel-points/rewards`);
             };
 
             $scope.rewardHeaders = [
@@ -57,6 +70,39 @@
                 },
                 {
                     cellTemplate: `<span class="paused-dot" style="margin-right: 5px" ng-class="{'paused': data.twitchData.isPaused, 'unpaused': !data.twitchData.isPaused}"></span>{{data.twitchData.isPaused ? 'Paused' : 'Unpaused' }}`,
+                    cellController: () => { }
+                }
+            ];
+
+            $scope.powerUpHeaders = [
+                {
+                    headerStyles: {
+                        'width': '50px'
+                    },
+                    cellTemplate: `
+                        <div style="width: 30px; height: 30px; border-radius: 5px; padding: 5px; background-color: {{data.twitchData.backgroundColor}};">
+                            <img ng-src="{{data.twitchData.image ? data.twitchData.image.url1x : data.twitchData.defaultImage.url1x}}"  style="width: 100%;filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.50));"/>
+                        </div>
+                    `,
+                    cellController: () => { }
+                },
+                {
+                    name: "NAME",
+                    icon: "fa-user",
+                    headerStyles: {
+                        'min-width': '125px'
+                    },
+                    dataField: "twitchData.title",
+                    sortable: true,
+                    cellTemplate: `{{data.twitchData.title}}`,
+                    cellController: () => { }
+                },
+                {
+                    name: "BITS",
+                    icon: "fa-bolt",
+                    dataField: "twitchData.bits",
+                    sortable: true,
+                    cellTemplate: `{{data.twitchData.bits}}`,
                     cellController: () => { }
                 }
             ];
@@ -118,6 +164,17 @@
                 ];
 
                 return options;
+            };
+
+            $scope.powerUpMenuOptions = (item) => {
+                return [
+                    {
+                        html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit Effects</a>`,
+                        click: function () {
+                            powerUpsService.showEditPowerUpModal(item);
+                        }
+                    }
+                ];
             };
         });
 }());

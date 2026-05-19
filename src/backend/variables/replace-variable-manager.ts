@@ -223,21 +223,26 @@ class ReplaceVariableManager extends EventEmitter {
         }, new Map<string, RegisteredVariable>());
     }
 
-    async populateStringWithTriggerData(string = "", trigger: Trigger) {
+    async populateStringWithTriggerData(
+        string = "",
+        trigger: Trigger,
+        postProcessVariable: (value: string) => string = undefined
+    ) {
         if (trigger == null || string === "") {
             return string;
         }
 
         const triggerId = getEventIdFromTriggerData(trigger);
 
-        return await this.evaluateText(string, trigger, { type: trigger.type, id: triggerId });
+        return await this.evaluateText(string, trigger, { type: trigger.type, id: triggerId }, undefined, postProcessVariable);
     };
 
     async evaluateText(
         input: string,
         metadata: Record<string, unknown>,
         trigger: TriggerWithId,
-        onlyValidate = false
+        onlyValidate = false,
+        postProcessVariable: (value: string) => string = undefined
     ): Promise<string> {
         if (input.toString().includes("$")) {
             // eslint-disable-next-line
@@ -251,7 +256,8 @@ class ReplaceVariableManager extends EventEmitter {
                     variable: EvaluatedRegisteredVariable
                 ) => this.preeval(options, variable),
                 lookups: this.registeredLookupHandlers,
-                onlyValidate: !!onlyValidate
+                onlyValidate: !!onlyValidate,
+                postProcessVariable
             }) as string;
         }
         return input;

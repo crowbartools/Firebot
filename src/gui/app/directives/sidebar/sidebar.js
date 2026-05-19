@@ -21,7 +21,7 @@
                             <nav-link page="Commands" name="{{'SIDEBAR.CHAT.COMMANDS' | translate }}" icon="fa-exclamation"></nav-link>
                             <nav-link page="Events" name="{{'SIDEBAR.OTHER.EVENTS' | translate }}" icon="fa-list"></nav-link>
                             <nav-link page="Timers" name="{{'SIDEBAR.OTHER.TIME_BASED' | translate }}" icon="fa-stopwatch"></nav-link>
-                            <nav-link page="Channel Rewards" name="{{'SIDEBAR.OTHER.CHANNELREWARDS' | translate }}" icon="fa-gifts"></nav-link>
+                            <nav-link page="Power-ups And Rewards" name="{{'SIDEBAR.OTHER.POWERUPSANDREWARDS' | translate }}" icon="fa-gifts"></nav-link>
                             <nav-link page="Preset Effect Lists" name="{{ 'SIDEBAR.OTHER.PRESET_EFFECT_LISTS' | translate }}" icon="fa-magic"></nav-link>
                             <nav-link page="Hotkeys" name="{{'SIDEBAR.OTHER.HOTKEYS' | translate }}" icon="fa-keyboard"></nav-link>
                             <nav-link page="Counters" name="{{'SIDEBAR.OTHER.COUNTERS' | translate }}" icon="fa-tally"></nav-link>

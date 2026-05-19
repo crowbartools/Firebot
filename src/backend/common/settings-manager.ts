@@ -60,7 +60,7 @@ class SettingsManager extends EventEmitter {
     private handleCorruptSettingsFile() {
         logger.warn("settings.json file appears to be corrupt. Resetting file...");
 
-        const settingsPath = this.getLoggedInProfilePath("settings.json");
+        const settingsPath = path.join(dataAccess.getUserDataPath(), this.getLoggedInProfilePath("settings.json"));
         fs.writeFileSync(settingsPath, JSON.stringify({
             settings: {
                 firstTimeUse: false

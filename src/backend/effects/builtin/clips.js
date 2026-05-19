@@ -35,7 +35,29 @@ const clip = {
     },
     globalSettings: {},
     optionsTemplate: `
-        <eos-container>
+        <eos-container header="Creation Options">
+            <firebot-input
+                input-title="Clip Duration (secs)"
+                title-tooltip="Duration must be between 5 and 60 seconds."
+                model="effect.clipDuration"
+                placeholder-text="Enter Value"
+                menu-position="under"
+            />
+            <firebot-checkbox
+                label="Set custom clip title"
+                model="effect.useCustomTitle"
+                style="margin-top: 15px"
+            />
+            <firebot-input
+                ng-show="effect.useCustomTitle === true"
+                input-title="Title"
+                model="effect.title"
+                placeholder-text="Enter Value"
+                menu-position="under"
+            />
+        </eos-container>
+
+        <eos-container header="After Clip is Created" pad-top="true">
             <div style="padding-top:15px">
                 <label class="control-fb control--checkbox"> Post clip link in chat
                     <input type="checkbox" ng-model="effect.postLink">
@@ -136,12 +158,22 @@ const clip = {
             }
         };
 
+        if ($scope.effect.clipDuration == null || $scope.effect.clipDuration.length === 0) {
+            $scope.effect.clipDuration = 30;
+        }
+
+        if ($scope.effect.useCustomTitle == null) {
+            $scope.effect.useCustomTitle = false;
+        }
+
         if ($scope.effect.options == null) {
             $scope.effect.options = { };
         }
+
         if ($scope.effect.embedColor == null) {
             $scope.effect.embedColor = "#21b9ed";
         }
+
         if ($scope.effect.wait == null) {
             $scope.effect.wait = true;
         }
@@ -160,10 +192,6 @@ const clip = {
                 $scope.effect.width = "";
             }
         };
-
-        if ($scope.effect.clipDuration == null) {
-            $scope.effect.clipDuration = 30;
-        }
 
         $scope.hasChannels = false;
         $scope.channelOptions = {};
@@ -189,6 +217,12 @@ const clip = {
     },
     optionsValidator: (effect) => {
         const errors = [];
+        if (!!effect.clipDuration?.length === false) {
+            errors.push("Please specify a clip duration.");
+        }
+        if (effect.useCustomTitle === true && !!effect.title?.length === false) {
+            errors.push("Please specify a clip title.");
+        }
         if (effect.postInDiscord && effect.discordChannelId == null) {
             errors.push("Please select Discord channel.");
         }
@@ -204,7 +238,24 @@ const clip = {
             await TwitchApi.chat.sendChatMessage("Creating clip...", null, true);
         }
 
-        const clip = await TwitchApi.clips.createClip();
+        let clipDuration = Number(effect.clipDuration);
+        if (isNaN(clipDuration) || clipDuration === 0) {
+            clipDuration = 30;
+        } else {
+            if (clipDuration < 5) {
+                clipDuration = 5;
+            }
+
+            if (clipDuration > 60) {
+                clipDuration = 60;
+            }
+        }
+
+        const title = effect.useCustomTitle === true && !!effect.title?.length
+            ? effect.title
+            : undefined;
+
+        const clip = await TwitchApi.clips.createClip(clipDuration, title);
 
         if (clip != null) {
             if (effect.postLink) {

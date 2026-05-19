@@ -13,13 +13,15 @@ export class TwitchClipsApi extends ApiResourceBase {
      * Creates a clip in the streamer's channel
      * @returns A {@linkcode HelixClip} representing the newly created clip
      */
-    async createClip(): Promise<HelixClip> {
+    async createClip(duration?: number, title?: string): Promise<HelixClip> {
         try {
             const streamerUserId: string = this.accounts.streamer.userId;
 
             // First, we actually create the clip and get the ID
             const clipId = await this.streamerClient.clips.createClip({
-                channel: streamerUserId
+                channel: streamerUserId,
+                duration,
+                title
             });
 
             // Didn't work, so no point in proceeding

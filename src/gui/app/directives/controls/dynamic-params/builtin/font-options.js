@@ -14,7 +14,7 @@
                 ng-model="$ctrl.local.family"
                 ng-click="$ctrl.onTouched()"
             />
-            <div class="pt-2">
+            <div class="pt-2" ng-if="$ctrl.schema.hideColor !== true">
                 <color-picker-input
                     model="$ctrl.local.color"
                     on-blur="$ctrl.onTouched()"
