@@ -1,4 +1,5 @@
 import type { ReplaceVariable, Trigger, TriggersObject } from "../../../../../types/variables";
+import { EventSubChannelBitsUseMessagePart } from "@twurple/eventsub-base/lib/events/EventSubChannelBitsUseEvent.external";
 
 const triggers: TriggersObject = {};
 triggers["event"] = ["twitch:cheer", "twitch:bits-powerup-message-effect", "twitch:bits-powerup-gigantified-emote"];
@@ -13,7 +14,24 @@ const model : ReplaceVariable = {
         possibleDataOutput: ["text"]
     },
     evaluator: (trigger: Trigger) => {
-        return trigger.metadata.eventData.cheerMessage || "";
+        if (trigger.metadata.eventData.cheerMessageParts == null) {
+            const cheerMessage = (trigger.metadata.eventData.cheerMessage || "") as string;
+            return cheerMessage
+                .replace(/[a-zA-Z]+\d+( |\b)/g, "")
+                .trim();
+        }
+
+        const cheerMessageParts: string[] = [];
+
+        for (const part of (trigger.metadata.eventData.cheerMessageParts as EventSubChannelBitsUseMessagePart[])) {
+            if (part.type === "cheermote") {
+                continue;
+            }
+
+            cheerMessageParts.push(part.text.trim());
+        }
+
+        return cheerMessageParts.join(" ");
     }
 };
 
