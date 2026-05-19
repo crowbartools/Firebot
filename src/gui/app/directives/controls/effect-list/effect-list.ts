@@ -173,6 +173,15 @@ type ContextMenuItemScope = {
                                         >
                                             <div>ASYNC</div>
                                         </div>
+                                        <div
+                                            ng-if="$ctrl.isEffectDeprecated(effect.type)"
+                                            uib-tooltip="This effect has been deprecated and may be removed from a future version of Firebot."
+                                            tooltip-append-to-body="true"
+                                            class="effect-deprecated-badge mr-5"
+                                            aria-label="Deprecated Effect"
+                                        >
+                                            <div>DEPRECATED</div>
+                                        </div>
                                         <button
                                             ng-if="effect.abortTimeout && effect.abortTimeout > 0"
                                             uib-tooltip="Abort Timeout"
@@ -390,6 +399,14 @@ type ContextMenuItemScope = {
 
                 return effectTypes.find(e => e.definition.id === id)?.definition?.name ?? `Unknown Effect: ${id}`;
             };
+
+            $ctrl.isEffectDeprecated = (id: string) => {
+                if (!effectTypes || effectTypes.length < 1) {
+                    return false;
+                }
+
+                return effectTypes.find(e => e.definition.id === id)?.definition?.deprecated === true;
+            }
 
             $ctrl.getEffectDefinitionById = (id: string) => {
                 if (!effectTypes || effectTypes.length < 1) {
