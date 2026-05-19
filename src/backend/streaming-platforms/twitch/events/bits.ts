@@ -1,6 +1,7 @@
 import { EventManager } from "../../../events/event-manager";
 import powerUpsManager from "../../../power-ups/power-ups-manager";
 import frontendCommunicator from "../../../common/frontend-communicator";
+import { EventSubChannelBitsUseMessagePart } from "../api/twurple-private-types";
 
 export function triggerCheer(
     username: string,
@@ -8,7 +9,8 @@ export function triggerCheer(
     userDisplayName: string,
     bits: number,
     totalBits: number,
-    cheerMessage: string
+    cheerMessage: string,
+    cheerMessageParts: EventSubChannelBitsUseMessagePart[]
 ): void {
     void EventManager.triggerEvent("twitch", "cheer", {
         username,
@@ -17,7 +19,8 @@ export function triggerCheer(
         isAnonymous: false,
         bits,
         totalBits,
-        cheerMessage
+        cheerMessage,
+        cheerMessageParts
     });
 }
 

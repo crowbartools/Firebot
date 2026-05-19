@@ -46,6 +46,8 @@ export interface EventSubChatMessageMentionPart {
 
 export type EventSubChatMessagePart = EventSubChatMessageTextPart | EventSubChatMessageCheermotePart | EventSubChatMessageEmotePart | EventSubChatMessageMentionPart;
 
+export type EventSubChannelBitsUseMessagePart = EventSubChatMessageTextPart | EventSubChatMessageCheermotePart | EventSubChatMessageEmotePart;
+
 export interface EventSubChatMessageData {
     text: string;
     fragments: EventSubChatMessagePart[];
