@@ -8,10 +8,13 @@
             channelRewardsService,
             powerUpsService,
             utilityService,
-            accountAccess
+            accountAccess,
+            settingsService
         ) {
             $scope.channelRewardsService = channelRewardsService;
             $scope.powerUpsService = powerUpsService;
+
+            $scope.activeTab = settingsService.getSetting("DefaultRewardTab");
 
             $scope.canUseChannelRewards = () => accountAccess.accounts["streamer"].loggedIn
                 && (channelRewardsService.userIsEligible);

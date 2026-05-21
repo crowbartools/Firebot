@@ -65,6 +65,7 @@ export type FirebotSettingsTypes = {
     DebugMode: boolean;
     DefaultEffectLabelsEnabled: boolean;
     DefaultModerationUser: "streamer" | "bot";
+    DefaultRewardTab: "powerups" | "rewards" | "queue";
     DefaultToAdvancedCommandMode: boolean;
     DefaultTtsVoiceId: string;
     DeleteProfile: string;
@@ -202,6 +203,7 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     DebugMode: false,
     DefaultEffectLabelsEnabled: true,
     DefaultModerationUser: "streamer",
+    DefaultRewardTab: "powerups",
     DefaultToAdvancedCommandMode: false,
     DefaultTtsVoiceId: undefined,
     DeleteProfile: undefined,
