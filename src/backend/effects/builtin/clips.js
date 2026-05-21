@@ -373,7 +373,7 @@ const clip = {
 
                     videoElement = `
                         <iframe style="border: none; ${styles}"
-                            src="${clipVideoUrl}&parent=${window.location.hostname}&autoplay=true"
+                            src="${clipVideoUrl}&parent=${window.location.hostname}&autoplay=true&muted=false"
                             height="${height || screen.height}"
                             width="${width || screen.width}"
                             frameBorder=0

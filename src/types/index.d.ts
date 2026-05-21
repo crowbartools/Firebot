@@ -8,6 +8,7 @@ export * from "./currency";
 export * from "./discord";
 export * from "./effects";
 export * from "./events";
+export * from "./expressionish";
 export * from "./games";
 export * from "./goals";
 export * from "./hotkeys";

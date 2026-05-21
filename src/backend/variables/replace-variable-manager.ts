@@ -1,14 +1,15 @@
 import EventEmitter from "events";
 import expressionish, * as expressionishErrs from "expressionish";
 import type {
-    ReplaceVariable,
+    Awaitable,
+    ExpressionishToken,
     RegisteredVariable,
-    VariableUsage,
+    ReplaceVariable,
+    Trigger,
     TriggerMeta,
     TriggerType,
-    Trigger
-} from "../../types/variables";
-import type { Awaitable } from "../../types/util-types";
+    VariableUsage
+} from "../../types";
 import { SettingsManager } from "../common/settings-manager";
 import macroManager from "./macro-manager";
 import { CustomVariableManager } from "../common/custom-variable-manager";
@@ -226,7 +227,7 @@ class ReplaceVariableManager extends EventEmitter {
     async populateStringWithTriggerData(
         string = "",
         trigger: Trigger,
-        postProcessVariable: (value: string) => string = undefined
+        postProcessVariable: (value: string, token: ExpressionishToken) => string = undefined
     ) {
         if (trigger == null || string === "") {
             return string;
@@ -242,7 +243,7 @@ class ReplaceVariableManager extends EventEmitter {
         metadata: Record<string, unknown>,
         trigger: TriggerWithId,
         onlyValidate = false,
-        postProcessVariable: (value: string) => string = undefined
+        postProcessVariable: (value: string, token: ExpressionishToken) => string = undefined
     ): Promise<string> {
         if (input.toString().includes("$")) {
             // eslint-disable-next-line
