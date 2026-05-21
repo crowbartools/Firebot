@@ -20,7 +20,7 @@ class FirebotFrontendChatHelpers {
         chatMessage: FirebotChatMessage
     ): void {
         if (chatWidget.settings.delayMessages === true) {
-            if (this._pendingMessageCache[chatWidget.id].some(m => m === chatMessage.id)) {
+            if ((this._pendingMessageCache[chatWidget.id] ?? []).some(m => m === chatMessage.id)) {
                 // Remove it from the pending list so we know we've taken care of it
                 this._pendingMessageCache[chatWidget.id] = this._pendingMessageCache[chatWidget.id]
                     .filter(m => m !== chatMessage.id);
@@ -85,16 +85,18 @@ class FirebotFrontendChatHelpers {
         const advancedChatWidgets = overlayWidgetConfigManager.getConfigsOfType<OverlayWidgetConfig<AdvancedChatWidgetSettings, ChatWidgetState>>("firebot:chat-advanced");
 
         for (const chatWidget of [...chatWidgets, ...advancedChatWidgets]) {
-            if (chatWidget.settings.delayMessages === true && chatWidget.settings.messageDelay) {
-                this._pendingMessageCache[chatWidget.id] ??= [];
+            if (!!chatWidget.active) {
+                if (chatWidget.settings.delayMessages === true && chatWidget.settings.messageDelay) {
+                    this._pendingMessageCache[chatWidget.id] ??= [];
 
-                this._pendingMessageCache[chatWidget.id].push(chatMessage.id);
+                    this._pendingMessageCache[chatWidget.id].push(chatMessage.id);
 
-                setTimeout(() => {
+                    setTimeout(() => {
+                        this.sendChatMessageToChatWidget(chatWidget, chatMessage);
+                    }, chatWidget.settings.messageDelay * 1000);
+                } else {
                     this.sendChatMessageToChatWidget(chatWidget, chatMessage);
-                }, chatWidget.settings.messageDelay * 1000);
-            } else {
-                this.sendChatMessageToChatWidget(chatWidget, chatMessage);
+                }
             }
         }
     }

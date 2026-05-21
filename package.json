@@ -1,6 +1,6 @@
 {
     "name": "firebotv5",
-    "version": "5.66.0",
+    "version": "5.66.1",
     "description": "Powerful all-in-one bot for Twitch streamers.",
     "main": "build/main.js",
     "scripts": {
@@ -91,7 +91,7 @@
         "escape-html": "^1.0.3",
         "eventsource": "^1.0.7",
         "express": "^5.1.0",
-        "expressionish": "github:SReject/expressionish#27f38753346b60c5a09d69ebe407bf70583eec2d",
+        "expressionish": "github:SReject/expressionish#2e798f91c640384b0bf0b2b4bfa589d5e7ad2a51",
         "extra-life-ts": "^0.4.0",
         "firebot-nutjs": "github:crowbartools/firebot-nutjs#f52581d4c4426cf7f4dcc2b0d26cf56777e115f8",
         "form-data": "^4.0.5",
