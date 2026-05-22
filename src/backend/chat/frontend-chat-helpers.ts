@@ -17,9 +17,10 @@ class FirebotFrontendChatHelpers {
 
     private sendChatMessageToChatWidget(
         chatWidget: OverlayWidgetConfig<ChatWidgetSettings | AdvancedChatWidgetSettings, ChatWidgetState>,
-        chatMessage: FirebotChatMessage
+        chatMessage: FirebotChatMessage,
+        delayed = false
     ): void {
-        if (chatWidget.settings.delayMessages === true) {
+        if (delayed === true) {
             if ((this._pendingMessageCache[chatWidget.id] ?? []).some(m => m === chatMessage.id)) {
                 // Remove it from the pending list so we know we've taken care of it
                 this._pendingMessageCache[chatWidget.id] = this._pendingMessageCache[chatWidget.id]
@@ -92,7 +93,7 @@ class FirebotFrontendChatHelpers {
                     this._pendingMessageCache[chatWidget.id].push(chatMessage.id);
 
                     setTimeout(() => {
-                        this.sendChatMessageToChatWidget(chatWidget, chatMessage);
+                        this.sendChatMessageToChatWidget(chatWidget, chatMessage, true);
                     }, chatWidget.settings.messageDelay * 1000);
                 } else {
                     this.sendChatMessageToChatWidget(chatWidget, chatMessage);
