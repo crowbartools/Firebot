@@ -65,6 +65,7 @@ export const TwitchEventSource: EventSource = {
             description: "When someone raids your channel.",
             cached: true,
             cacheMetaKey: "username",
+            cacheTtlInSecs: 3600,
             manualMetadata: {
                 username: "firebot",
                 userDisplayName: "Firebot",
