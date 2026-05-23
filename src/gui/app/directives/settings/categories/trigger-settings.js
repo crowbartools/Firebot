@@ -41,13 +41,10 @@
                         name="Allow Shared Chat To Trigger Commands"
                         description="Allow commands to be triggered by chat messages sent in other channels during Twitch Shared Chat"
                     >
-                        <firebot-select
-                            options="{ true: 'Yes', false: 'No' }"
-                            ng-init="allowSharedChatCommands = settings.getSetting('AllowCommandsInSharedChat')"
-                            selected="allowSharedChatCommands"
-                            on-update="settings.saveSetting('AllowCommandsInSharedChat', option === 'true')"
-                            right-justify="true"
-                            aria-label="Allow Shared Chat To Trigger Commands"
+                        <toggle-button
+                            toggle-model="settings.getSetting('AllowCommandsInSharedChat')"
+                            on-toggle="settings.saveSetting('AllowCommandsInSharedChat', !settings.getSetting('AllowCommandsInSharedChat'))"
+                            font-size="40"
                         />
                     </firebot-setting>
 
@@ -59,13 +56,10 @@
                         name="Ignore Related Gift Sub Events"
                         description="When this is enabled, Firebot will ignore individual Gift Sub events that are part of a Community Gift Sub event. This means only the Community Sub event would fire instead of the Community Sub event AND an additional Gift Sub event for every recipient."
                     >
-                        <firebot-select
-                            options="{ true: 'Yes', false: 'No' }"
-                            ng-init="ignoreSubEvents = settings.getSetting('IgnoreSubsequentSubEventsAfterCommunitySub')"
-                            selected="ignoreSubEvents"
-                            on-update="settings.saveSetting('IgnoreSubsequentSubEventsAfterCommunitySub', option === 'true')"
-                            right-justify="true"
-                            aria-label="enable or disable Ignore Related Gift Sub Events"
+                        <toggle-button
+                            toggle-model="settings.getSetting('IgnoreSubsequentSubEventsAfterCommunitySub')"
+                            on-toggle="settings.saveSetting('IgnoreSubsequentSubEventsAfterCommunitySub', !settings.getSetting('IgnoreSubsequentSubEventsAfterCommunitySub'))"
+                            font-size="40"
                         />
                     </firebot-setting>
 
