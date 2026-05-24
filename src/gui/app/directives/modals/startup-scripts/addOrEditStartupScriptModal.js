@@ -7,7 +7,7 @@
     angular.module("firebotApp")
         .component("addOrEditStartupScriptModal", {
             template: `
-            <div class="modal-header">
+            <div class="modal-header sticky-header">
                 <button type="button" class="close" ng-hide="$ctrl.scriptIsInitializing" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
                 <h4 class="modal-title">{{$ctrl.isNewScript ? "Add New" : "Edit"}} Startup Script</h4>
             </div>
@@ -26,7 +26,7 @@
                     <i>Initializing script...</i>
                 </eos-container>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer sticky-footer">
                 <button type="button" class="btn btn-link" ng-hide="$ctrl.scriptIsInitializing" ng-click="$ctrl.dismiss()">Cancel</button>
                 <button type="button" class="btn btn-primary" ng-click="$ctrl.save()" ng-disabled="$ctrl.scriptIsInitializing">{{ $ctrl.initFirst ? "Add & Configure" : "Save" }}</button>
             </div>
