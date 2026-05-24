@@ -17,7 +17,7 @@
                         <div class="flex-row-center">
                             <i class="fas fa-plug" style="margin-right: 16px; font-size: 24px; opacity: 0.7;"></i>
                             <div>
-                                <h4 class="list-group-item-heading">{{script.name}}</h4>
+                                <h4 class="list-group-item-heading"><strong>{{script.name}}</strong></h4>
                                 <p class="list-group-item-text muted">{{script.scriptName}}</p>
                             </div>
                         </div>
@@ -44,7 +44,9 @@
                 <div class="muted" style="margin-top: 10px; font-size: 11px;" ng-show="$ctrl.sss.getStartupScripts().length > 0"><b>Note</b>: Newly added/updated scripts wont take affect until Firebot is restarted.</div>
             </div>
             <div class="modal-footer sticky-footer">
-                <button type="button" class="btn btn-primary pull-left" ng-click="$ctrl.showAddOrEditStartupScriptModal();">Add New Script</button>
+                <button type="button" class="btn btn-primary" ng-click="$ctrl.showAddOrEditStartupScriptModal();" style="width: 100%">
+                    <i class="fas fa-plus" style="margin-right: 5px;"></i> Add New Script
+                </button>
             </div>
             `,
         bindings: {
