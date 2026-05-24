@@ -59,7 +59,7 @@
                 $scope.openStartupScriptsModal = function() {
                     utilityService.showModal({
                         component: "startupScriptsListModal",
-                        size: "sm",
+                        size: "md",
                         backdrop: true,
                         keyboard: true
                     });
