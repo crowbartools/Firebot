@@ -97,7 +97,7 @@ class QuoteManager {
         try {
             const result = await this.db.updateAsync(
                 { _id: '__autoid__' },
-                { $inc: { seq: number } },
+                { seq: number },
                 { upsert: true, returnUpdatedDocs: true }
             );
 
@@ -280,7 +280,7 @@ class QuoteManager {
     async getRandomQuoteContainingText(text: string): Promise<Quote> {
         try {
             const textPattern = new RegExp(`\\b${this.regExpEscape(text)}\\b`, 'i');
-            const quotes = await this.db.findAsync({ originator: { $regex: textPattern } });
+            const quotes = await this.db.findAsync({ text: { $regex: textPattern } });
 
             if (!quotes.length) {
                 return;

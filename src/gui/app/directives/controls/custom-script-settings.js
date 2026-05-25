@@ -139,9 +139,7 @@
                         const currentParameters = $scope.effect.parameters;
                         if (typeof customScript.getDefaultParameters === "function") {
                             const parameterRequest = {
-                                modules: {
-                                    request: require("request")
-                                }
+                                modules: { }
                             };
                             const parametersPromise = customScript.getDefaultParameters(
                                 parameterRequest

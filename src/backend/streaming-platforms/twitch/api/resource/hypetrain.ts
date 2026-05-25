@@ -1,4 +1,4 @@
-import { HelixHypeTrainEvent } from "@twurple/api";
+import { HelixHypeTrain } from "@twurple/api";
 import { ApiResourceBase } from './api-resource-base';
 import type { TwitchApi } from "../";
 
@@ -8,17 +8,17 @@ export class TwitchHypeTrainApi extends ApiResourceBase {
     }
 
     /**
-     * Retrieves recent Twitch channel hypetrain events for the streamer
+     * Retrieves current Twitch channel hype train for the streamer
      */
-    async getRecentHypeTrainEvents(): Promise<HelixHypeTrainEvent[]> {
+    async getCurrentHypeTrain(): Promise<HelixHypeTrain> {
         try {
             const streamerId = this.accounts.streamer.userId;
 
-            const goals = await this.streamerClient.hypeTrain.getHypeTrainEventsForBroadcaster(streamerId);
+            const status = await this.streamerClient.hypeTrain.getHypeTrainStatusForBroadcaster(streamerId);
 
-            return goals.data;
+            return status.current;
         } catch (error) {
-            this.logger.error(`Failed to get current hype train events: ${(error as Error).message}`);
+            this.logger.error(`Failed to get current hype train: ${(error as Error).message}`);
             return null;
         }
     }

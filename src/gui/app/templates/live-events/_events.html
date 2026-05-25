@@ -2,7 +2,7 @@
 <div style="min-width: 500px; height: 100%">
   <div style="height: 100%; display: flex; flex-direction: column">
     <div id="testDivFb" class="flex-row" style="height: 100%">
-      <div class="editior-column pt-6" style="flex-shrink: 0">
+      <div class="editor-column pt-6" style="flex-shrink: 0">
         <div
           class="flex-row-center jspacebetween scene-row"
           style="flex-shrink: 0"
@@ -78,7 +78,11 @@
           </div>
         </div>
 
-        <div style="height: 100%; overflow-y: auto">
+        <div
+          style="height: 100%; overflow-y: auto"
+          ui-sortable="sortableOptions"
+          ng-model="eventSets"
+        >
           <div
             class="muted ml-7"
             ng-if="es.getEventGroups().length < 1"
@@ -88,7 +92,7 @@
           </div>
 
           <div
-            ng-repeat="group in es.getEventGroups() track by group.id"
+            ng-repeat="group in es.getEventGroups() | orderBy: sortEventSets track by group.id"
             class="flex-row-center jspacebetween scene-row"
             ng-class="{'selected': es.tabIsSelected(group.id)}"
             ng-click="es.setSelectedTab(group.id)"
@@ -105,6 +109,9 @@
                 uib-tooltip="This event set is active"
                 tooltip-append-to-body="true"
               ></span>
+              <span class="event-set-drag-handle dragHandle">
+                <i class="fas fa-bars"></i>
+              </span>
               <button aria-label="Event Set Options"
                 class="noselect clickable text-3xl mx-3"
                 style="background: transparent; border: none"

@@ -5,17 +5,20 @@
             schema: '<',
             value: '<',
             onInput: '&',
-            onTouched: '&'
+            onTouched: '&',
+            enableReplaceVariables: '<?'
         },
         template: `
           <div>
             <input
                 class="form-control"
-                type="number"
+                type="{{$ctrl.enableReplaceVariables ? 'text' : 'number'}}"
                 placeholder="{{$ctrl.schema.placeholder ? $ctrl.schema.placeholder : 'Enter a number'}}"
                 ng-model="$ctrl.local"
                 ng-change="$ctrl.onInput({ value: $ctrl.local })"
                 ng-blur="$ctrl.onTouched()"
+                replace-variables="number"
+                disable-variable-menu="!$ctrl.enableReplaceVariables"
             />
           </div>
         `,

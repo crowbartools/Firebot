@@ -12,22 +12,24 @@
                         <setting-description-addon>
                             <b>Firebot must be restarted for changes to this setting to take effect.</b>
                         </setting-description-addon>
-                        <firebot-button
-                            text="{{settings.getSetting('DebugMode') ? 'Disable Debug Mode' : 'Enable Debug Mode' }}"
-                            ng-click="settings.saveSetting('DebugMode', !settings.getSetting('DebugMode'))"
+                        <toggle-button
+                            toggle-model="settings.getSetting('DebugMode')"
+                            on-toggle="settings.saveSetting('DebugMode', !settings.getSetting('DebugMode'))"
+                            font-size="40"
                         />
                     </firebot-setting>
 
                     <firebot-setting
-                        name="While Loop"
+                        name="While Loops"
                         description="Enable or disable the conditional 'While Loop' option in the Loop Effects effect."
                     >
                         <setting-description-addon>
                             <b>If you aren't careful, you can cause an infinite loop and freeze Firebot.</b>
                         </setting-description-addon>
-                        <firebot-button
-                            text="{{settings.getSetting('WhileLoopEnabled') ? 'Disable While Loops' : 'Enable While Loops' }}"
-                            ng-click="toggleWhileLoops()"
+                        <toggle-button
+                            toggle-model="settings.getSetting('WhileLoopEnabled')"
+                            on-toggle="toggleWhileLoops()"
+                            font-size="40"
                         />
                     </firebot-setting>
 
@@ -63,10 +65,11 @@
                         <setting-description-addon>
                             <b>Requires Debug Mode to also be enabled.</b>
                         </setting-description-addon>
-                        <firebot-button
-                            text="{{settings.getSetting('WebhookDebugLogs') && settings.getSetting('DebugMode') ? 'Disable Webhook Logs' : 'Enable Webhook Logs' }}"
+                        <toggle-button
+                            toggle-model="settings.getSetting('WebhookDebugLogs')"
                             disabled="!settings.getSetting('DebugMode')"
-                            ng-click="settings.saveSetting('WebhookDebugLogs', !settings.getSetting('WebhookDebugLogs'))"
+                            on-toggle="settings.saveSetting('WebhookDebugLogs', !settings.getSetting('WebhookDebugLogs'))"
+                            font-size="40"
                         />
                     </firebot-setting>
 
@@ -87,14 +90,10 @@
                         name="Allow Quote .CSV Export"
                         description="Whether or not you want the 'Export as .CSV' button available for quotes on the profile page."
                     >
-                        <firebot-select
-                            options="{ true: 'On', false: 'Off' }"
-                            ng-init="allowQuoteCsv = settings.getSetting('AllowQuoteCSVDownloads')"
-                            selected="allowQuoteCsv"
-                            on-update="settings.saveSetting('AllowQuoteCSVDownloads', option === 'true')"
-                            right-justify="true"
-                            aria-label="Choose Whether or not you want the 'Export as .CSV' button available for quotes on the profile page."
-
+                        <toggle-button
+                            toggle-model="settings.getSetting('AllowQuoteCSVDownloads')"
+                            on-toggle="settings.saveSetting('AllowQuoteCSVDownloads', !settings.getSetting('AllowQuoteCSVDownloads'))"
+                            font-size="40"
                         />
                     </firebot-setting>
 
@@ -102,13 +101,10 @@
                         name="Persist All Custom Variables"
                         description="Whether or not all custom variables should be persisted to file when Firebot closes."
                     >
-                        <firebot-select
-                            options="{ true: 'On', false: 'Off' }"
-                            ng-init="persistVariables = settings.getSetting('PersistCustomVariables')"
-                            selected="persistVariables"
-                            on-update="settings.saveSetting('PersistCustomVariables', option === 'true')"
-                            right-justify="true"
-                            aria-label="enable or disable persistent Custom Variables"
+                        <toggle-button
+                            toggle-model="settings.getSetting('PersistCustomVariables')"
+                            on-toggle="settings.saveSetting('PersistCustomVariables', !settings.getSetting('PersistCustomVariables'))"
+                            font-size="40"
                         />
                     </firebot-setting>
 
@@ -177,13 +173,29 @@
                         />
                     </firebot-setting>
 
+                    <firebot-setting
+                        name="Automatic Firebot Updates"
+                        description="Enables or disables Firebot automatic updates when a new stable release is available."
+                    >
+                        <toggle-button
+                            toggle-model="settings.getSetting('AutoUpdateLevel') !== 0"
+                            on-toggle="toggleAutoUpdates()"
+                            font-size="40"
+                            accessibility-label="(settings.getSetting('AutoUpdateLevel') !== 0 ? 'Enabled' : 'Disabled') + ' Automatic Firebot Updates'"
+                        />
+
+                        <setting-description-addon>
+                            <strong>WARNING: If you disable this option, YOU are responsible for ensuring Firebot is up to date. Outdated versions will NOT be supported via our official channels. Please see our <a href="https://github.com/crowbartools/Firebot/blob/master/.github/SUPPORT.md">support policy</a> for more information.</strong>
+                        </setting-description-addon>
+                    </firebot-setting>
+
                     <div style="margin-top: 20px">
                         <p class="muted">Looking for a setting that used to be located here? Try checking in the Tools app menu!</p>
                     </div>
 
                 </div>
           `,
-        controller: function ($scope, settingsService, utilityService, backendCommunicator, modalService) {
+        controller: function ($scope, settingsService, modalFactory, backendCommunicator, modalService) {
             $scope.settings = settingsService;
 
             $scope.toggleWhileLoops = () => {
@@ -192,7 +204,7 @@
                 if (whileLoopsEnabled) {
                     settingsService.saveSetting("WhileLoopEnabled", false);
                 } else {
-                    utilityService
+                    modalFactory
                         .showConfirmationModal({
                             title: "Enable While Loops",
                             question:
@@ -222,7 +234,7 @@
             };
 
             $scope.recalculateQuoteIds = () => {
-                utilityService
+                modalFactory
                     .showConfirmationModal({
                         title: "Recalculate Quote IDs",
                         question: `Are you sure you want to recalculate your quote IDs?`,
@@ -234,6 +246,27 @@
                             backendCommunicator.fireEvent("recalc-quote-ids");
                         }
                     });
+            };
+
+            $scope.toggleAutoUpdates = () => {
+                if (settingsService.getSetting("AutoUpdateLevel") === 0) {
+                    settingsService.saveSetting("AutoUpdateLevel", 2);
+                } else {
+                    modalFactory
+                        .showConfirmationModal({
+                            title: "Disable Automatic Updates?",
+                            question: "If you disable automatic updates, you will be responsible for updating Firebot yourself and will not receive support unless you are on a supported version. Are you sure you want to disable automatic Firebot updates?",
+                            confirmLabel: "Yes, disable",
+                            confirmBtnType: "btn-danger",
+                            cancelLabel: "No, keep enabled",
+                            cancelBtnType: "btn-default"
+                        })
+                        .then((confirmed) => {
+                            if (confirmed) {
+                                settingsService.saveSetting("AutoUpdateLevel", 0);
+                            }
+                        });
+                }
             };
         }
     });

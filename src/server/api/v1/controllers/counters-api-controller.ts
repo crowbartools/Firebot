@@ -46,8 +46,8 @@ export async function updateCounter(
     res: Response
 ): Promise<void> {
     const counterId = req.params.counterId;
-    const value = req.body.value;
-    const override = req.body.override ?? false;
+    const value = req.body?.value;
+    const override = req.body?.override ?? false;
 
     if (!(counterId.length > 0)) {
         res.status(400).send({

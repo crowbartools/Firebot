@@ -33,7 +33,7 @@ export const SteamSystemCommand: SystemCommand<{
             countryCode: {
                 type: "string",
                 title: "Country Code (Optional)",
-                tip: "A two-letter ISO-3166 country code. Examples: US, CA, SE, NO",
+                tip: "A two-letter [ISO-3166](https://wikipedia.org/wiki/List_of_ISO_3166_country_codes) country code. Examples: US, CA, SE, NO",
                 default: ""
             }
         }

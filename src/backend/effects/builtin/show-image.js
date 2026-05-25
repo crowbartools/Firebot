@@ -247,7 +247,8 @@ const showImage = {
                     filepathNew = data.url;
                 } else {
                     const token = encodeURIComponent(data.resourceToken);
-                    filepathNew = `http://${window.location.hostname}:7472/resource/${token}`;
+                    // eslint-disable-next-line no-undef
+                    filepathNew = `//${baseUrl}/resource/${token}`;
                 }
 
                 // NEW WAY EXAMPLE:

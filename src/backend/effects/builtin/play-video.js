@@ -658,7 +658,8 @@ const playVideo = {
                 const loop = data.loop;
 
                 const token = encodeURIComponent(data.resourceToken);
-                const filepathNew = `http://${window.location.hostname}:7472/resource/${token}`;
+                // eslint-disable-next-line no-undef
+                const filepathNew = `//${baseUrl}/resource/${token}`;
 
                 // Generate UUID to use as id
 

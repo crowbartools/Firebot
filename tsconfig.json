@@ -16,7 +16,7 @@
         "paths": {
             "*": ["node_modules/*"]
         },
-        "target": "ES2022"
+        "target": "es2023"
     },
     "include": ["src/**/*"]
 }

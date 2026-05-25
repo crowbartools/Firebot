@@ -10,10 +10,18 @@
             bindings: {},
             template: `
        <div class="notifications-wrapper">
-          <div aria-label="Notification Center" uib-popover-template="$ctrl.templateUrl" popover-placement="bottom-right" popover-trigger="'outsideClick'" popover-append-to-body="true" popover-class="notification-popover">
-            <i class="far fa-bell clickable noti-bell-icon" style="cursor:pointer;"></i>
-          </div>
-          <div ng-if="$ctrl.unreadCount() > 0" class="notification-badge noselect animated bounceIn">{{getBadgeText()}}</div>
+          <button
+            class="app-bar-icon-btn"
+            aria-label="Notification Center"
+            uib-popover-template="$ctrl.templateUrl"
+            popover-placement="bottom-right"
+            popover-trigger="'outsideClick'"
+            popover-append-to-body="true"
+            popover-class="notification-popover"
+          >
+            <i class="far fa-bell"></i>
+            <span ng-if="$ctrl.unreadCount() > 0" class="notification-badge noselect animated bounceIn"></span>
+          </button>
        </div>
 
        <script type="text/ng-template" id="notificationCenterPopupTemplate.html">
@@ -93,16 +101,6 @@
 
                 $scope.deleteNotification = notificationService.deleteNotification;
 
-                $scope.getBadgeText = () => {
-                    const unreadCount = notificationService.getUnreadCount();
-
-                    if (unreadCount > 9) {
-                        return '9+';
-                    } else if (unreadCount < 0) {
-                        return "!";
-                    }
-                    return unreadCount.toString();
-                };
 
                 $scope.getIconTypeText = function(type) {
                     const NotificationType = notificationService.NotificationType;

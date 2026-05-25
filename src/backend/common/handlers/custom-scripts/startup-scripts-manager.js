@@ -98,6 +98,10 @@ function getStartupScriptData(startupScriptDataId) {
     return startupScripts[startupScriptDataId];
 }
 
+function getLoadedStartupScripts() {
+    return { ...startupScripts };
+}
+
 /**
  * Turns startup script data into valid Custom Script effects and runs them
  */
@@ -124,3 +128,4 @@ frontendCommunicator.on("deleteStartupScriptData", (startupScriptDataId) => {
 exports.runStartupScripts = runStartupScripts;
 exports.loadStartupConfig = loadStartupConfig;
 exports.getStartupScriptData = getStartupScriptData;
+exports.getLoadedStartupScripts = getLoadedStartupScripts;

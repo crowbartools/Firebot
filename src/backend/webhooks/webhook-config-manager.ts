@@ -10,7 +10,12 @@ import logger from "../logwrapper";
 import { maskPII } from "../utils";
 
 type ExtraEvents = {
-    "webhook-received": (data: { config: WebhookConfig, payload: unknown, headers: Record<string, string> }) => void;
+    "webhook-received": (data: { 
+        config: WebhookConfig,
+        payload: unknown, 
+        rawPayload?: string, 
+        headers: Record<string, string> 
+    }) => void;
 };
 
 class WebhookConfigManager extends JsonDbManager<WebhookConfig, ExtraEvents> {
@@ -37,7 +42,12 @@ class WebhookConfigManager extends JsonDbManager<WebhookConfig, ExtraEvents> {
                 logger.debug("Webhook received:", maskPII(msg.data));
             }
 
-            const data = msg.data as { webhookId: string, payload: unknown, headers: Record<string, string> };
+            const data = msg.data as { 
+                webhookId: string, 
+                payload: unknown, 
+                rawPayload?: string, 
+                headers: Record<string, string> 
+            };
 
             const webhookConfig = this.getItem(data.webhookId);
             if (!webhookConfig) {
@@ -55,6 +65,7 @@ class WebhookConfigManager extends JsonDbManager<WebhookConfig, ExtraEvents> {
             this.emit("webhook-received", {
                 config: webhookConfig,
                 payload,
+                rawPayload: data.rawPayload,
                 headers: data.headers ?? {}
             });
 
@@ -62,6 +73,7 @@ class WebhookConfigManager extends JsonDbManager<WebhookConfig, ExtraEvents> {
                 webhookId: webhookConfig.id,
                 webhookName: webhookConfig.name,
                 webhookPayload: payload,
+                webhookRawPayload: data.rawPayload,
                 webhookHeaders: data.headers ?? {}
             });
 

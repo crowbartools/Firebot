@@ -1,14 +1,15 @@
 import EventEmitter from "events";
 import expressionish, * as expressionishErrs from "expressionish";
 import type {
-    ReplaceVariable,
+    Awaitable,
+    ExpressionishToken,
     RegisteredVariable,
-    VariableUsage,
+    ReplaceVariable,
+    Trigger,
     TriggerMeta,
     TriggerType,
-    Trigger
-} from "../../types/variables";
-import type { Awaitable } from "../../types/util-types";
+    VariableUsage
+} from "../../types";
 import { SettingsManager } from "../common/settings-manager";
 import macroManager from "./macro-manager";
 import { CustomVariableManager } from "../common/custom-variable-manager";
@@ -223,21 +224,26 @@ class ReplaceVariableManager extends EventEmitter {
         }, new Map<string, RegisteredVariable>());
     }
 
-    async populateStringWithTriggerData(string = "", trigger: Trigger) {
+    async populateStringWithTriggerData(
+        string = "",
+        trigger: Trigger,
+        postProcessVariable: (value: string, token: ExpressionishToken) => string = undefined
+    ) {
         if (trigger == null || string === "") {
             return string;
         }
 
         const triggerId = getEventIdFromTriggerData(trigger);
 
-        return await this.evaluateText(string, trigger, { type: trigger.type, id: triggerId });
+        return await this.evaluateText(string, trigger, { type: trigger.type, id: triggerId }, undefined, postProcessVariable);
     };
 
     async evaluateText(
         input: string,
         metadata: Record<string, unknown>,
         trigger: TriggerWithId,
-        onlyValidate = false
+        onlyValidate = false,
+        postProcessVariable: (value: string, token: ExpressionishToken) => string = undefined
     ): Promise<string> {
         if (input.toString().includes("$")) {
             // eslint-disable-next-line
@@ -251,7 +257,8 @@ class ReplaceVariableManager extends EventEmitter {
                     variable: EvaluatedRegisteredVariable
                 ) => this.preeval(options, variable),
                 lookups: this.registeredLookupHandlers,
-                onlyValidate: !!onlyValidate
+                onlyValidate: !!onlyValidate,
+                postProcessVariable
             }) as string;
         }
         return input;

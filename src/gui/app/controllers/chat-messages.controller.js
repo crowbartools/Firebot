@@ -143,6 +143,7 @@
 
             $scope.onReplyClicked = function(threadOrReplyMessageId) {
                 $scope.setThreadDetails(threadOrReplyMessageId);
+                focusMessageInput();
             };
 
             $scope.chatFeedIsEnabled = function() {

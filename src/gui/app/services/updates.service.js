@@ -29,6 +29,10 @@
 
             service.hasReleaseData = false;
 
+            service.willAutoUpdate = false;
+
+            service.newBetaAvailable = false;
+
             service.updateIsAvailable = function() {
                 return service.hasCheckedForUpdates ? (service.updateData?.updateIsAvailable || service.majorUpdate != null) : false;
             };
@@ -85,6 +89,7 @@
                             if (!foundMajorRelease && (updateType === UpdateType.MAJOR || updateType === UpdateType.MAJOR_PRERELEASE)) {
                                 foundMajorRelease = true;
                                 if (settingsService.getSetting("NotifyOnBeta")) {
+                                    service.newBetaAvailable = true;
                                     service.majorUpdate = {
                                         gitName: release.name,
                                         gitVersion: release.tag_name,
@@ -98,6 +103,9 @@
                                 (updateType === UpdateType.PRERELEASE && settingsService.getSetting("NotifyOnBeta"))) {
                                 latestRelease = release;
                                 latestUpdateType = updateType;
+                                if (updateType === UpdateType.PRERELEASE) {
+                                    service.newBetaAvailable = true;
+                                }
                                 break;
                             }
                         }
@@ -120,6 +128,7 @@
 
                                 // Check if we should auto update based on the users setting
                                 if (shouldAutoUpdate(autoUpdateLevel, latestUpdateType)) {
+                                    service.willAutoUpdate = true;
                                     utilityService.showDownloadModal();
                                     backendCommunicator.send("downloadUpdate");
                                 }

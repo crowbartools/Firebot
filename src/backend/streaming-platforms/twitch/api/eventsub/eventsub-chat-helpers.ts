@@ -19,6 +19,7 @@ import type {
     EventSubChatMessageMentionPart,
     EventSubChatMessagePart
 } from "../twurple-private-types";
+import tinycolor from "tinycolor2";
 
 import type {
     FirebotChatMessage,
@@ -33,8 +34,11 @@ import type {
 import type { FirebotAccount } from "../../../../../types/accounts";
 
 import { AccountAccess } from "../../../../common/account-access";
+import { FirebotPronounManager } from "../../../../pronouns/pronoun-manager";
 import { SettingsManager } from "../../../../common/settings-manager";
 import { TwitchApi } from "../";
+import rankManager from "../../../../ranks/rank-manager";
+import roleManager from "../../../../roles/custom-roles-manager";
 import viewerDatabase from "../../../../viewers/viewer-database";
 import frontendCommunicator from "../../../../common/frontend-communicator";
 import logger from "../../../../logwrapper";
@@ -45,7 +49,7 @@ import { BTTVEmoteProvider } from "../../../../chat/third-party/bttv";
 import { FFZEmoteProvider } from "../../../../chat/third-party/ffz";
 import { SevenTVEmoteProvider } from "../../../../chat/third-party/7tv";
 
-interface ChatBadge {
+export interface ChatBadge {
     title: string;
     url: string;
 }
@@ -67,6 +71,7 @@ class TwitchEventSubChatHelpers {
     readonly HIGHLIGHT_MESSAGE_REWARD_ID = "highlight-message";
 
     private _badgeCache: HelixChatBadgeSet[] = [];
+    private _colorCache: Record<string, string> = { };
 
     private _getAllTwitchEmotes = false;
     private _twitchEmotes: {
@@ -111,6 +116,22 @@ class TwitchEventSubChatHelpers {
                 this.setUserProfilePicUrl(userId, url);
             }
         );
+    }
+
+    get badges() {
+        return this._badgeCache;
+    }
+
+    get twitchEmotes() {
+        return this._twitchEmotes;
+    }
+
+    get thirdPartyEmotes() {
+        return this._thirdPartyEmotes;
+    }
+
+    get twitchCheermotes() {
+        return this._twitchCheermotes;
     }
 
     async cacheBadges(): Promise<void> {
@@ -524,6 +545,16 @@ class TwitchEventSubChatHelpers {
         }
     }
 
+    cacheUserColor(userId: string, color?: string | null): string {
+        if (color?.length) {
+            this._colorCache[userId] = color;
+        } else if (this._colorCache[userId] == null) {
+            this._colorCache[userId] = tinycolor.random().toHexString();
+        }
+
+        return this._colorCache[userId];
+    }
+
     /**
      * Parses out any control characters from a chat message (like ACTION when /me is used)
      * @param rawText Raw message text
@@ -547,15 +578,11 @@ class TwitchEventSubChatHelpers {
             && event.sourceBroadcasterId !== AccountAccess.getAccounts().streamer.userId;
 
         let isAnnouncement = false;
-        let announcementColor = undefined;
-        let chatColor = event.color;
+        let announcementColor: string | undefined = undefined;
+
         if (event instanceof EventSubChannelChatAnnouncementNotificationEvent) {
             isAnnouncement = true;
-            announcementColor = event.color;
-
-            // FIX: See https://github.com/twurple/twurple/issues/646
-            const userColor = await TwitchApi.streamerClient.chat.getColorForUser(event.chatterId);
-            chatColor = userColor ?? chatColor;
+            announcementColor = event.announcementColor;
         }
 
         const chatMessage: FirebotChatMessage = {
@@ -563,8 +590,9 @@ class TwitchEventSubChatHelpers {
             username: event.chatterName,
             userId: event.chatterId,
             userDisplayName: event.chatterDisplayName,
+            pronouns: await FirebotPronounManager.getUserFriendlyPronounString(event.chatterName),
             rawText: isAction ? this.getChatMessage(event.messageText) : event.messageText,
-            color: chatColor,
+            color: this.cacheUserColor(event.chatterId, event.color),
             badges: this.parseChatBadges(event.badges),
             parts: [],
             roles: [],
@@ -574,8 +602,8 @@ class TwitchEventSubChatHelpers {
             tagged: false,
             action: isAction,
             isAnnouncement,
-            // eslint-disable-next-line
-            announcementColor: announcementColor ? announcementColor.toUpperCase() : undefined,
+
+            announcementColor: (announcementColor ? announcementColor.toUpperCase() : undefined) as FirebotChatMessage["announcementColor"],
             isCheer: false,
             isReply: false,
             isHiddenFromChatFeed: false,
@@ -601,7 +629,7 @@ class TwitchEventSubChatHelpers {
         chatMessage.parts = messageParts;
 
         chatMessage.isFounder = chatMessage.badges.some(b => b.title === "founder");
-        chatMessage.isMod = chatMessage.badges.some(b => b.title === "moderator");
+        chatMessage.isMod = chatMessage.badges.some(b => b.title === "moderator" || b.title === "lead_moderator");
         chatMessage.isVip = chatMessage.badges.some(b => b.title === "vip");
         chatMessage.isSubscriber = chatMessage.isFounder ||
             chatMessage.badges.some(b => b.title === "subscriber");
@@ -630,6 +658,8 @@ class TwitchEventSubChatHelpers {
         if (chatMessage.isVip) {
             chatMessage.roles.push("vip");
         }
+
+        await this.enrichMessageWithRanksAndRoles(chatMessage);
 
         return chatMessage;
     }
@@ -683,6 +713,7 @@ class TwitchEventSubChatHelpers {
             username: message.senderUserName,
             userId: message.senderUserId,
             userDisplayName: message.senderUserDisplayName,
+            pronouns: await FirebotPronounManager.getUserFriendlyPronounString(message.senderUserName),
             rawText: isAction ? this.getChatMessage(message.messageText) : message.messageText,
             badges: [],
             parts: [],
@@ -712,6 +743,8 @@ class TwitchEventSubChatHelpers {
         //const messageParts = this.parseMessageParts(chatMessage, message.messageParts);
         //chatMessage.parts = messageParts;
 
+        await this.enrichMessageWithRanksAndRoles(chatMessage);
+
         return chatMessage;
     }
 
@@ -725,6 +758,7 @@ class TwitchEventSubChatHelpers {
             userDisplayName: event.userDisplayName,
             rawText: event.messageText,
             profilePicUrl: profilePicUrl,
+            pronouns: await FirebotPronounManager.getUserFriendlyPronounString(event.userName),
             whisper: false,
             action: false,
             tagged: false,
@@ -779,10 +813,28 @@ class TwitchEventSubChatHelpers {
 
         chatMessage.parts = parts;
 
+        await this.enrichMessageWithRanksAndRoles(chatMessage);
+
         return chatMessage;
+    }
+
+    async enrichMessageWithRanksAndRoles(firebotChatMessage: FirebotChatMessage) {
+        const viewer = await viewerDatabase.getViewerById(firebotChatMessage.userId);
+        firebotChatMessage.viewerRanks = Object.entries(viewer?.ranks || {}).reduce((obj, [ladderId, rankId]) => {
+            const ladder = rankManager.getItem(ladderId);
+            if (ladder && ladder.settings.showBadgeInChat && rankId) {
+                obj[ladder.name] = ladder.ranks.find(r => r.id === rankId)?.name || "Unknown";
+            }
+            return obj;
+        }, {} as Record<string, string>);
+
+        const customRoles = roleManager.getAllCustomRolesForViewer(firebotChatMessage.userId);
+        firebotChatMessage.viewerCustomRoles = customRoles
+            .filter(r => r.showBadgeInChat)
+            .map(r => r.name);
     }
 }
 
 const chatHelpers = new TwitchEventSubChatHelpers();
 
-export = chatHelpers;
+export { chatHelpers as TwitchEventSubChatHelpers };

@@ -192,6 +192,20 @@
                             accessibility-label="(settings.getSetting('OpenStreamPreviewOnLaunch') ? 'Enabled' : 'Disabled') + ' Stream Preview on Launch'"
                         />
                     </firebot-setting>
+
+                    <firebot-setting
+                        name="Default Reward Tab"
+                        description="Sets the default tab when switching to the Power-Ups and Rewards page."
+                    >
+                        <firebot-select
+                            options="{ powerups: 'Power-ups', rewards: 'Channel Rewards', queue: 'Request Queue' }"
+                            ng-init="defaultRewardTab = settings.getSetting('DefaultRewardTab')"
+                            selected="defaultRewardTab"
+                            on-update="settings.saveSetting('DefaultRewardTab', option)"
+                            right-justify="true"
+                            aria-label="Sets the default tab when switching to the Power-Ups and Rewards page."
+                        />
+                    </firebot-setting>
                 </div>
           `,
         controller: function ($rootScope, $scope, soundService, settingsService, $q) {
@@ -206,7 +220,9 @@
             ];
 
             $q.when(soundService.getOutputDevices()).then((deviceList) => {
-                $scope.audioOutputDevices = $scope.audioOutputDevices.concat(deviceList);
+                $scope.audioOutputDevices = $scope.audioOutputDevices.concat(
+                    deviceList.toSorted((a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: "base" }))
+                );
             });
 
             $scope.setActiveChatUserTimeout = (value) => {

@@ -6,7 +6,6 @@ const { getRandomInt } = require("../../utils");
 const logger = require("../../logwrapper");
 const { ReplaceVariableManager } = require("../../variables/replace-variable-manager");
 const webServer = require("../../../server/http-server-manager");
-const frontendCommunicator = require("../frontend-communicator");
 
 function getRandomPresetLocation() {
     const presetPositions = [
@@ -23,40 +22,6 @@ function getRandomPresetLocation() {
 
     const randomIndex = getRandomInt(0, presetPositions.length - 1);
     return presetPositions[randomIndex];
-}
-
-// Sound Processor
-// This takes info passed from the controls router and sends it back to the render process in order to play media.
-function soundProcessor(effect) {
-    const data = {
-        filepath: effect.file,
-        volume: effect.volume
-    };
-
-    let selectedOutputDevice = effect.audioOutputDevice;
-    if (
-        selectedOutputDevice == null ||
-    selectedOutputDevice.label === "App Default"
-    ) {
-        selectedOutputDevice = SettingsManager.getSetting("AudioOutputDevice");
-    }
-    data.audioOutputDevice = selectedOutputDevice;
-
-    if (selectedOutputDevice.deviceId === "overlay") {
-        const resourceToken = ResourceTokenManager.storeResourcePath(effect.file, 30);
-        data.resourceToken = resourceToken;
-    }
-
-    if (SettingsManager.getSetting("UseOverlayInstances")) {
-        if (effect.overlayInstance != null) {
-            if (SettingsManager.getSetting("OverlayInstances").includes(effect.overlayInstance)) {
-                data.overlayInstance = effect.overlayInstance;
-            }
-        }
-    }
-
-    // Send data back to media.js in the gui.
-    frontendCommunicator.send("playsound", data);
 }
 
 // Image Processor
@@ -237,7 +202,6 @@ async function showText(effect, trigger) {
 }
 
 // Export Functions
-exports.sound = soundProcessor;
 exports.image = imageProcessor;
 exports.video = videoProcessor;
 exports.text = showText;

@@ -29,7 +29,7 @@ const model : ReplaceVariable = {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let evaluation : any;
         try {
-            evaluation = evaluate(subject);
+            evaluation = evaluate(subject.toString());
         } catch (err) {
             logger.warn("error parsing math expression", (err as Error).message);
             evaluation = -1;

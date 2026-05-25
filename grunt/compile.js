@@ -78,7 +78,7 @@ module.exports = function (grunt) {
                             x: 320, y: 240,
                             type: 'file',
                             path: config.installInstructionsPath,
-                            name: 'Install Instructions'
+                            name: 'Install Instructions.txt'
                         }]
                         : [])
                 ];
@@ -144,7 +144,8 @@ module.exports = function (grunt) {
                 name: `firebot-v${version}-macos-x64`,
                 title: "Firebot Installer",
                 icon: macDmgIcon,
-                background: macDmgBg
+                background: macDmgBg,
+                installInstructionsPath: path.resolve(__dirname, '../macos-x64-install-instructions.txt')
             },
             arm64: {
                 appPath: macArmPathIn,

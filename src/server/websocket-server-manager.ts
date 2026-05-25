@@ -235,6 +235,14 @@ class WebSocketServerManager extends EventEmitter {
         }
     }
 
+    getNumberOfOverlayClients(): number {
+        if (this.server == null) {
+            return 0;
+        }
+
+        return [...this.server.clients].filter(client => client.type === "overlay").length;
+    }
+
     registerCustomWebSocketListener(pluginName: string, callback: CustomWebSocketHandler["callback"]): boolean {
         if (this.customHandlers.findIndex(p => p.pluginName.toLowerCase() === pluginName.toLowerCase()) === -1) {
             this.customHandlers.push({

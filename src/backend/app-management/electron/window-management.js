@@ -15,6 +15,8 @@ const logger = require("../../logwrapper");
 
 const EventEmitter = require("events");
 
+const { copyDebugInfoToClipboard } = require("../../common/debug-info");
+
 /**
  * Firebot's main window
  * Keeps a global reference of the window object, if you don't, the window will
@@ -195,6 +197,12 @@ async function createAppMenu() {
     const dataAccess = require("../../common/data-access");
 
     const overlayInstances = SettingsManager.getSetting("OverlayInstances");
+
+    /**
+     * Steps to get new icon images:
+     * - Select icon from https://pictogrammers.com/library/mdi/
+     * - Do an Advanced PNG Export with 48x48 size and a white foreground
+     */
 
     /**
      * @type {Electron.MenuItemConstructorOptions[]}
@@ -470,6 +478,16 @@ async function createAppMenu() {
                         shell.openExternal("https://firebot.app/testimonial-submission");
                     },
                     icon: await createIconImage("../../../gui/images/icons/mdi/account-heart-outline.png")
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    label: 'Copy Debug Info...',
+                    click: () => {
+                        copyDebugInfoToClipboard();
+                    },
+                    icon: await createIconImage("../../../gui/images/icons/mdi/bug-outline.png")
                 },
                 {
                     type: 'separator'

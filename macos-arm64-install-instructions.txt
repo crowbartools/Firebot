@@ -1,3 +1,5 @@
+Since Firebot is not notarized by Apple, macOS Gatekeeper will block it on first launch. Follow these steps to allow it to run:
+
 1. Drag Firebot into the Applications folder
 2. Open the Terminal app and run the following command (copy/paste and hit enter):
 xattr -c /Applications/Firebot.app

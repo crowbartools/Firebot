@@ -10,7 +10,8 @@
             trigger: "@?",
             triggerMeta: "<?",
             modalId: "@?",
-            hideTitleAndDescription: "<?"
+            hideTitleAndDescription: "<?",
+            enableReplaceVariables: "<?"
         },
         require: { ngModelCtrl: 'ngModel' },
         template: `
@@ -90,6 +91,7 @@
                         on-touched="$ctrl._onTouched()"
                         context="$ctrl.context"
                         name="{{$ctrl.name}}"
+                        enable-replace-variables="$ctrl.enableReplaceVariables"
                     >
                     </${def.tag}>`
                     : `<div class="fb-param-unsupported">Unsupported type: ${$ctrl.schema && $ctrl.schema.type}</div>`;

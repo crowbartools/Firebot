@@ -105,9 +105,12 @@ function triggerEffect(effect, trigger, outputs, manualAbortSignal, listAbortSig
             return reject(signal.reason);
         }
 
-        signal.addEventListener("abort", () => {
+        function onAbort() {
             reject(signal.reason);
-        });
+            signal.removeEventListener("abort", onAbort);
+        }
+
+        signal.addEventListener("abort", onAbort);
 
         const sendDataToOverlay = (data, overlayInstance) => {
             const overlayEventName = effectDef.overlayExtension?.event?.name;
@@ -132,6 +135,8 @@ function triggerEffect(effect, trigger, outputs, manualAbortSignal, listAbortSig
             }
         } catch (error) {
             return reject(error);
+        } finally {
+            signal.removeEventListener("abort", onAbort);
         }
     });
 }
@@ -222,7 +227,7 @@ function runEffects(runEffectsContext) {
             abortController: effectListAbortController
         });
 
-        effectListAbortController.signal.addEventListener("abort", () => {
+        function onAbort() {
             const { message, bubbleStop } = effectListAbortController.signal.reason ?? {};
 
             logger.info(`Effect list ${runEffectsContext.effects.id} was aborted. Reason: ${message}`);
@@ -238,7 +243,10 @@ function runEffects(runEffectsContext) {
                 stopEffectExecution: !!bubbleStop,
                 outputs: runEffectsContext.outputs ?? {}
             });
-        });
+            effectListAbortController.signal.removeEventListener("abort", onAbort);
+        }
+
+        effectListAbortController.signal.addEventListener("abort", onAbort);
 
         /**
          * @type {Promise<void>[]}
@@ -247,6 +255,7 @@ function runEffects(runEffectsContext) {
 
         for (const effect of effects) {
             if (effectListAbortController.signal.aborted) {
+                effectListAbortController.signal.removeEventListener("abort", onAbort);
                 return;
             }
 
@@ -284,6 +293,8 @@ function runEffects(runEffectsContext) {
                         runEffectsContext.executionId
                     );
 
+                    effectListAbortController.signal.removeEventListener("abort", onAbort);
+
                     return resolve({
                         success: true,
                         stopEffectExecution: response.bubbleStop,
@@ -308,6 +319,8 @@ function runEffects(runEffectsContext) {
             runEffectsContext.effects.id,
             runEffectsContext.executionId
         );
+
+        effectListAbortController.signal.removeEventListener("abort", onAbort);
 
         return resolve({
             success: true,

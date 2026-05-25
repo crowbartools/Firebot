@@ -12,6 +12,7 @@ import {
     OBS_REPLAY_BUFFER_SAVED_EVENT_ID,
     OBS_SCENE_CHANGED_EVENT_ID,
     OBS_SCENE_ITEM_ENABLE_STATE_CHANGED_EVENT_ID,
+    OBS_SCENE_ITEM_LIST_REINDEXED_EVENT_ID,
     OBS_SCENE_TRANSITION_ENDED_EVENT_ID,
     OBS_SCENE_TRANSITION_STARTED_EVENT_ID,
     OBS_STREAM_STARTED_EVENT_ID,
@@ -30,7 +31,8 @@ import {
     OBS_INPUT_AUDIO_MONITOR_TYPE_CHANGED_EVENT_ID,
     OBS_INPUT_AUDIO_TRACKS_CHANGED_EVENT_ID,
     OBS_CONNECTED_EVENT_ID,
-    OBS_DISCONNECTED_EVENT_ID
+    OBS_DISCONNECTED_EVENT_ID,
+    OBS_EXITING_EVENT_ID
 } from "./constants";
 import logger from "../../../logwrapper";
 
@@ -402,6 +404,14 @@ async function setupRemoteListeners() {
         );
     });
 
+    obs.on("ExitStarted", () => {
+        eventManager?.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_EXITING_EVENT_ID,
+            { }
+        );
+    });
+
     obs.on("CurrentSceneCollectionChanged", async () => {
         await refreshGroupsAndScenes();
     });
@@ -519,6 +529,14 @@ async function setupRemoteListeners() {
                 groupInfos[gidx].scenes[sidx].itemId = gis.id;
             }
         });
+
+        eventManager.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_SCENE_ITEM_LIST_REINDEXED_EVENT_ID,
+            {
+                sceneName
+            }
+        );
     });
 
     obs.on("StudioModeStateChanged", async ({ studioModeEnabled }) => {

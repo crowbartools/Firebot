@@ -3,7 +3,6 @@ import frontendCommunicator from "../../../common/frontend-communicator";
 import logger from "../../../logwrapper";
 
 export async function whenReady() {
-
     logger.debug("...Applying IPC events");
     const { setupIpcEvents } = await import("./ipc-events");
     setupIpcEvents();
@@ -22,6 +21,10 @@ export async function whenReady() {
     // Ensure required folders are created
     const { ensureRequiredFoldersExist } = await import("../../data-tasks");
     await ensureRequiredFoldersExist();
+
+    windowManagement.updateSplashScreenStatus("Loading pronoun cache...");
+    const { FirebotPronounManager } = await import("../../../pronouns/pronoun-manager");
+    await FirebotPronounManager.cachePronouns();
 
     // load twitch auth
     windowManagement.updateSplashScreenStatus("Loading Twitch login system...");
@@ -52,8 +55,7 @@ export async function whenReady() {
 
     windowManagement.updateSplashScreenStatus("Refreshing Twitch account data...");
 
-    // Loading these first so that the refresh caches the account avatar URLs
-    const _chatHelpers = await import("../../../chat/chat-helpers");
+    // Loading this first so that the refresh caches the account avatar URLs
     const _eventSubChatHelpers = await import("../../../streaming-platforms/twitch/api/eventsub/eventsub-chat-helpers");
 
     const { TwitchApi } = await import("../../../streaming-platforms/twitch/api");
@@ -267,6 +269,10 @@ export async function whenReady() {
     const channelRewardManager = (await import("../../../channel-rewards/channel-reward-manager")).default;
     await channelRewardManager.loadChannelRewards();
 
+    windowManagement.updateSplashScreenStatus("Loading power-ups...");
+    const powerUpsManager = (await import("../../../power-ups/power-ups-manager")).default;
+    await powerUpsManager.loadPowerUps();
+
     // load activity feed manager
     await import("../../../events/activity-feed-manager");
 
@@ -287,7 +293,8 @@ export async function whenReady() {
     // start crowbar relay websocket
     await import("../../../crowbar-relay/crowbar-relay-websocket");
 
-    const countdownManager = (await import("../../../overlay-widgets/builtin-types/countdown/countdown-manager")).default;
+    const countdownManager = (await import("../../../overlay-widgets/builtin-types/countdown/countdown-manager"))
+        .default;
     countdownManager.startTimer();
 
     logger.debug("...loading main window");
@@ -295,11 +302,7 @@ export async function whenReady() {
     await windowManagement.createMainWindow();
 
     // Receive log messages from frontend
-    frontendCommunicator.on("logging", (data: {
-        level: string;
-        message: string;
-        meta?: unknown[];
-    }) => {
+    frontendCommunicator.on("logging", (data: { level: string, message: string, meta?: unknown[] }) => {
         logger.log(data.level, data.message, ...(data.meta ?? []));
     });
-};
+}

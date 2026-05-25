@@ -24,11 +24,11 @@ class ScriptWebhookManager extends EventEmitter {
         this.scriptName = scriptName;
         this.setMaxListeners(0);
 
-        webhookManager.on("webhook-received", ({ config, payload, headers }) => {
-            if (config.scriptId !== this.scriptName) {
+        webhookManager.on("webhook-received", (data) => {
+            if (data.config.scriptId !== this.scriptName) {
                 return;
             }
-            this.emit("webhook-received", { config, payload, headers });
+            this.emit("webhook-received", data);
         });
     }
 
@@ -95,34 +95,13 @@ class ScriptWebhookManager extends EventEmitter {
 const { AccountAccess } = require("../../account-access");
 
 function buildModules(scriptManifest) {
-    const streamerName = AccountAccess.getAccounts().streamer.username || "Unknown Streamer";
-    const appVersion = app.getVersion();
-
-    const request = require("request");
-
-    const customRequest = request.defaults({
-        headers: {
-            "User-Agent": `Firebot/${appVersion};CustomScript/${scriptManifest.name}/${scriptManifest.version};User/${streamerName}`
-        }
-    });
-
-    // safe guard: enforce our user-agent
-    customRequest.init = function init(options) {
-        if (options != null && options.headers != null) {
-            delete options.headers["User-Agent"];
-        }
-        customRequest.prototype.init.call(this, options);
-    };
-
     const notificationManager = require("../../../notifications/notification-manager").NotificationManager;
 
     const scriptNameNormalized = scriptManifest.name.replace(/[#%&{}\\<>*?/$!'":@`|=\s-]+/g, "-").toLowerCase();
 
     return {
-        request: customRequest,
         spawn: require("child_process").spawn,
         childProcess: require("child_process"),
-        fs: require("fs-extra"),
         path: require("path"),
         JsonDb: require("node-json-db").JsonDB,
         moment: require("moment"),

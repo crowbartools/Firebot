@@ -9,6 +9,51 @@
 
             $scope.es = eventsService;
 
+            $scope.getEventSets = () => {
+                $scope.eventSets = eventsService.getEventGroups()
+                    .sort((a, b) => {
+                        return eventsService.eventSetSettings[a.id]?.position - eventsService.eventSetSettings[b.id]?.position;
+                    });
+            };
+            $scope.getEventSets();
+
+            backendCommunicator.on("event-access:event-set-saved",
+                () => $scope.getEventSets()
+            );
+
+            backendCommunicator.on("event-access:all-event-sets-saved",
+                () => $scope.getEventSets()
+            );
+
+            backendCommunicator.on("event-access:event-set-deleted",
+                () => $scope.getEventSets()
+            );
+
+            backendCommunicator.on("event-access:event-set-settings-updated",
+                () => $scope.getEventSets()
+            );
+
+            $scope.sortableOptions = {
+                handle: ".dragHandle",
+                'ui-floating': false,
+                stop: () => {
+                    $scope.saveEventSetSettings();
+                }
+            };
+
+            $scope.sortEventSets = (eventSet) => {
+                return eventsService.eventSetSettings[eventSet.id]?.position;
+            };
+
+            $scope.saveEventSetSettings = () => {
+                $scope.eventSets.forEach((set, index) => {
+                    eventsService.eventSetSettings[set.id].position = index;
+                });
+
+                eventsService.saveEventSetSettings();
+                $scope.getEventSets();
+            };
+
             const sources = backendCommunicator.fireEventSync("events:get-all-event-sources");
 
             function friendlyEventTypeName(sourceId, eventId) {

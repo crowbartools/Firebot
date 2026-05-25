@@ -40,7 +40,7 @@ const shoutoutStyles = `
         border-radius: 100%;
         background: black;
         object-fit: cover;
-        border: 0.3vw solid rgba(255, 255, 255, 0.2);
+        border: none;
         box-shadow: 0 0 0 0.15vw rgba(0, 0, 0, 0.3),
                     0 0 2vw rgba(255, 255, 255, 0.1) inset;
     }
@@ -357,8 +357,8 @@ const effect = {
                 const boxArtId = `box-art-${uniqueId}`;
 
                 const shoutoutElement = `
-                <div>
-                    <div id="${wrapperId}" class="firebot-shoutout-wrapper" style="background: linear-gradient(135deg, ${data.bgColor1} 0%, ${data.bgColor2} 100%); transform: scale(${scale});${data.zIndex ? ` position: relative; z-index: ${data.zIndex};` : ''}">
+                <div style="scale: ${scale};">
+                    <div id="${wrapperId}" class="firebot-shoutout-wrapper" style="background: linear-gradient(135deg, ${data.bgColor1} 0%, ${data.bgColor2} 100%);${data.zIndex ? ` position: relative; z-index: ${data.zIndex};` : ''}">
 
                         <div style="position:relative;">
                             <div id="${avatarWrapperId}" class="firebot-shoutout-avatar-wrapper firebot-shoutout-padding">

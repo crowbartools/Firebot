@@ -4,7 +4,7 @@ import type { HelixChatChatter } from "@twurple/api";
 
 import { SettingsManager } from "../common/settings-manager";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
-import chatHelpers from "./chat-helpers";
+import { TwitchEventSubChatHelpers } from "../streaming-platforms/twitch/api/eventsub/eventsub-chat-helpers";
 import chatRolesManager from "../roles/chat-roles-manager";
 import viewerDatabase from "../viewers/viewer-database";
 import frontendCommunicator from "../common/frontend-communicator";
@@ -33,6 +33,7 @@ type ChatUser = {
     isMod?: boolean;
     isVip?: boolean;
     online?: boolean;
+    badges?: Map<string, string>;
 };
 
 type Events = {
@@ -201,7 +202,7 @@ class ActiveUserHandler extends TypedEmitter<Events> {
                     disableViewerList: false
                 };
 
-                chatHelpers.setUserProfilePicUrl(twitchUser.id, twitchUser.profilePictureUrl);
+                TwitchEventSubChatHelpers.setUserProfilePicUrl(twitchUser.id, twitchUser.profilePictureUrl);
 
                 await viewerDatabase.addNewViewerFromChat(userDetails, true);
 
@@ -238,10 +239,10 @@ class ActiveUserHandler extends TypedEmitter<Events> {
             twitchRoles: [
                 ...(chatUser.isBroadcaster ? ['broadcaster'] : []),
                 ...(chatUser.isFounder || chatUser.isSubscriber ? ['sub'] : []),
-                ...(chatUser.isMod ? ['mod'] : []),
+                ...(chatUser.isMod || chatUser.badges?.has("lead_moderator") ? ['mod'] : []),
                 ...(chatUser.isVip ? ['vip'] : [])
             ],
-            profilePicUrl: (await chatHelpers.getUserProfilePicUrl(chatUser.userId)),
+            profilePicUrl: (await TwitchEventSubChatHelpers.getUserProfilePicUrl(chatUser.userId)),
             disableViewerList: !!user?.disableViewerList
         };
 

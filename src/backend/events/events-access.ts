@@ -1,9 +1,13 @@
 import { join } from "path";
 
-import type { EventGroup, EventSettings } from "../../types/events";
-import type { SortTag } from "../../types/sort-tags";
+import type {
+    EventGroup,
+    EventSettings,
+    SortTag
+} from "../../types";
 
 import { ProfileManager } from "../common/profile-manager";
+import { SettingsManager } from "../common/settings-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import logger from "../logwrapper";
 
@@ -90,6 +94,10 @@ class EventsAccess {
             this._groups[group.id] = group;
             eventsDb.push(`/groups/${group.id}`, group);
             logger.debug(`Saved event group '${group.id}'.`);
+
+            this.rebuildSettings();
+
+            frontendCommunicator.send("event-access:event-set-saved", this._groups[group.id]);
         } catch (err) {
             logger.warn(`Unable to save event group '${group.id}'.`, err);
         }
@@ -104,9 +112,49 @@ class EventsAccess {
             this._groups = groupsToSave;
             eventsDb.push("/groups", groupsToSave);
             logger.debug(`Saved all groups.`);
+
+            this.rebuildSettings();
+
+            frontendCommunicator.send("event-access:all-event-sets-saved", this._groups);
         } catch (err) {
             logger.warn(`Unable to save groups.`, err);
         }
+    }
+
+    private rebuildSettings() {
+        const settings = SettingsManager.getSetting("EventSetSettings");
+
+        // Remove stale items
+        const settingsKeys = Object.keys(settings);
+        for (const set of settingsKeys) {
+            if (!this._groups[set]) {
+                delete settings[set];
+            }
+        }
+
+        // Renumber
+        const totalSettings = Object.keys(settings).length;
+        const sortedSettings = Object.keys(settings)
+            .map(key => ({
+                id: key,
+                position: settings[key].position
+            }))
+            .sort((a, b) => a.position - b.position);
+        for (let i = 0; i < totalSettings; i++) {
+            settings[sortedSettings[i].id].position = i;
+        }
+
+        // Add missing items
+        for (const item of Object.values(this._groups)) {
+            if (!settings[item.id]) {
+                settings[item.id] = {
+                    position: Object.keys(settings).length
+                };
+            }
+        }
+
+        SettingsManager.saveSetting("EventSetSettings", settings);
+        frontendCommunicator.send("event-access:event-set-settings-updated", settings);
     }
 
     removeEventFromGroups(eventId: string): void {
@@ -162,6 +210,8 @@ class EventsAccess {
                 this._sortTags = eventsData.sortTags;
             }
 
+            this.rebuildSettings();
+
             logger.debug(`Loaded event data.`);
         } catch (err) {
             logger.warn(`There was an error reading events data file.`, err);
@@ -177,6 +227,10 @@ class EventsAccess {
             eventsDb.delete(`/groups/${groupId}`);
             delete this._groups[groupId];
             logger.debug(`Deleted event group '${groupId}'.`);
+
+            this.rebuildSettings();
+
+            frontendCommunicator.send("event-access:event-set-deleted", groupId);
         } catch (err) {
             logger.warn(`Unable to delete event group '${groupId}'.`, err);
         }

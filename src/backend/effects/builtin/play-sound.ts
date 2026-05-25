@@ -141,7 +141,7 @@ const model: EffectType<{
             folder: effect.folder,
             volume: effect.volume,
             overlayInstance: effect.overlayInstance,
-            audioOutputDeviceId: effect.audioOutputDevice?.deviceId,
+            audioOutputDevice: effect.audioOutputDevice,
             waitForSound: effect.waitForSound
         });
     },
@@ -158,9 +158,7 @@ const model: EffectType<{
             onOverlayEvent: (event) => {
                 const data = event;
                 const token = encodeURIComponent(data.resourceToken);
-                const resourcePath = `http://${
-                    window.location.hostname
-                }:7472/resource/${token}`;
+                const resourcePath = `//${baseUrl}/resource/${token}`;
 
                 // Generate UUID to use as class name.
 

@@ -31,6 +31,7 @@ export type FirebotSettingsTypes = {
     BackupIgnoreResources: boolean;
     BackupKeepAll: boolean;
     BackupLocation: string;
+    BackupLocationReset: boolean;
     BackupOnceADay: boolean;
     BackupOnExit: boolean;
     ChatAlternateBackgrounds: boolean;
@@ -64,9 +65,13 @@ export type FirebotSettingsTypes = {
     DebugMode: boolean;
     DefaultEffectLabelsEnabled: boolean;
     DefaultModerationUser: "streamer" | "bot";
+    DefaultRewardTab: "powerups" | "rewards" | "queue";
     DefaultToAdvancedCommandMode: boolean;
     DefaultTtsVoiceId: string;
     DeleteProfile: string;
+    EventSetSettings: Record<string, {
+        position: number;
+    }>;
     EventSettings: object; // Pretty sure this is no longer used
     FirstTimeUse: boolean;
     ForceOverlayEffectsToContinueOnRefresh: boolean;
@@ -126,6 +131,7 @@ export const FirebotGlobalSettings: Partial<Record<keyof FirebotSettingsTypes, b
     BackupIgnoreResources: true,
     BackupKeepAll: true,
     BackupLocation: true,
+    BackupLocationReset: true,
     BackupOnceADay: true,
     BackupOnExit: true,
     DebugMode: true,
@@ -163,6 +169,7 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     BackupIgnoreResources: true,
     BackupKeepAll: false,
     BackupLocation: undefined,
+    BackupLocationReset: false,
     BackupOnceADay: true,
     BackupOnExit: true,
     ChatAlternateBackgrounds: true,
@@ -196,9 +203,11 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     DebugMode: false,
     DefaultEffectLabelsEnabled: true,
     DefaultModerationUser: "streamer",
+    DefaultRewardTab: "powerups",
     DefaultToAdvancedCommandMode: false,
     DefaultTtsVoiceId: undefined,
     DeleteProfile: undefined,
+    EventSetSettings: {},
     EventSettings: {},
     FirstTimeUse: true,
     ForceOverlayEffectsToContinueOnRefresh: true,

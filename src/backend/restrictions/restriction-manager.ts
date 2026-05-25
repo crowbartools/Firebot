@@ -84,7 +84,8 @@ class RestrictionsManager extends TypedEmitter<Events> {
             await restrictionDef.predicate(triggerData, restriction, restrictionsAreInherited);
             restrictionPassed = true;
         } catch (reason) {
-            failedReason = (reason as string)?.toLowerCase();
+            failedReason = (reason instanceof Error ? reason.message : (reason as string))?.toLowerCase()
+                ?? "You don't meet the requirements.";
         }
 
         if (restriction.invertCondition) {
@@ -147,7 +148,7 @@ class RestrictionsManager extends TypedEmitter<Events> {
             }
             return Promise.resolve();
 
-        } else if (restrictionData.mode === "all") {
+        } else if (restrictionData.mode === "all" || restrictionData.mode == null) {
             const predicatePromises = [];
             for (const restriction of restrictions) {
                 const restrictionDef = this.getRestrictionById(restriction.type);
@@ -165,6 +166,8 @@ class RestrictionsManager extends TypedEmitter<Events> {
                 }
             });
         }
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors, @typescript-eslint/restrict-template-expressions
+        return Promise.reject(`Invalid restriction mode '${restrictionData.mode}'`);
     }
 }
 
