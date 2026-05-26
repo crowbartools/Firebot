@@ -22,6 +22,7 @@ import subMonths from "./sub-months";
 import subType from "./sub-type";
 import treasureTrain from "./treasure-train";
 import username from "./username";
+import watchStreakCount from "./watch-streak-count";
 
 export default [
     bitsBadgeTier,
@@ -47,5 +48,6 @@ export default [
     subMonths,
     subType,
     treasureTrain,
-    username
+    username,
+    watchStreakCount
 ];

@@ -56,6 +56,7 @@ export type FirebotSettingsTypes = {
     ChatTimestamps: boolean;
     ClearChatFeedMode: "never" | "onlyStreamer" | "always";
     ClearCustomScriptCache: boolean;
+    ConnectOnLaunch: boolean;
     CopiedOverlayVersion: string;
     DashboardLayout: {
         dashboardViewerList: string;
@@ -194,6 +195,7 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     ChatTimestamps: true,
     ClearChatFeedMode: "onlyStreamer",
     ClearCustomScriptCache: false,
+    ConnectOnLaunch: false,
     CopiedOverlayVersion: "",
     DashboardLayout: {
         dashboardViewerList: "225px",
