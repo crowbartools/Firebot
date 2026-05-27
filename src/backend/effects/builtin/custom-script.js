@@ -1,17 +1,10 @@
 "use strict";
 
 const logger = require("../../logwrapper");
-const customScriptRunner = require("../../common/handlers/custom-scripts/custom-script-runner");
 const { EffectCategory } = require('../../../shared/effect-constants');
 const frontendCommunicator = require("../../common/frontend-communicator");
 
-/**
- * The custom var effect
- */
-const fileWriter = {
-    /**
-   * The definition of the Effect
-   */
+const effect = {
     definition: {
         id: "firebot:customscript",
         name: "Run Custom Script",
@@ -26,16 +19,10 @@ const fileWriter = {
             modal-id="modalId"
             trigger="trigger"
             trigger-meta="triggerMeta"
-            allow-startup="isStartup"
+            script-type="script"
         />
     `,
-    optionsController: ($scope) => {
-
-        $scope.isStartup = $scope.trigger === "event"
-            && $scope.triggerMeta != null
-            && $scope.triggerMeta.triggerId === "firebot:firebot-started";
-
-    },
+    optionsController: () => {},
     optionsValidator: () => {
         const errors = [];
         return errors;
@@ -48,10 +35,25 @@ const fileWriter = {
 
             logger.debug("Processing script...");
 
-            customScriptRunner
-                .runScript(event.effect, event.trigger)
+            const scriptManager = require("../../custom-scripts/script-manager").default;
+
+            scriptManager
+                .runEffectScript(event.effect, event.trigger)
                 .then((result) => {
-                    resolve(result != null ? result : true);
+                    if (result == null) {
+                        return resolve(true);
+                    }
+                    if (result.success === false) {
+                        if (result.error) {
+                            frontendCommunicator.send('error', `Oops! There was an error processing the custom script. Error: ${result.error}`);
+                        }
+                        return resolve(false);
+                    }
+                    // Forward execution flow-control flags if present
+                    if (result.execution != null) {
+                        return resolve(result.execution);
+                    }
+                    resolve(true);
                 })
                 .catch((err) => {
                     frontendCommunicator.send('error', `Oops! There was an error processing the custom script. Error: ${err.message}`);
@@ -63,4 +65,4 @@ const fileWriter = {
     }
 };
 
-module.exports = fileWriter;
+module.exports = effect;

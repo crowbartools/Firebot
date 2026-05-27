@@ -153,6 +153,31 @@ class IntegrationManager extends EventEmitter {
         return true;
     }
 
+    unregisterIntegration(integrationId) {
+        const existing = this._integrations.some(i => i.definition.id === integrationId);
+        if (!existing) {
+            logger.warn(`Could not unregister integration '${integrationId}'. Integration does not exist.`);
+            return;
+        }
+
+        const integration = this.getIntegrationById(integrationId);
+        try {
+            integration?.integration?.removeAllListeners?.();
+            if (typeof integration?.integration?.disconnect === "function") {
+                integration.integration.disconnect();
+            }
+        } catch (error) {
+            logger.warn(`Error while disconnecting integration '${integrationId}' during unregister.`, error);
+        }
+
+        this._integrations = this._integrations.filter(i => i.definition.id !== integrationId);
+
+        logger.debug(`Unregistered Integration ${integrationId}`);
+
+        this.emit("integrationUnregistered", integrationId);
+        frontendCommunicator.send("integrationsUpdated");
+    }
+
     getAllIntegrationDefinitions() {
         return this._integrations
             .map(i => i.definition)

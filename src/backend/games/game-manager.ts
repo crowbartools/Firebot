@@ -78,6 +78,29 @@ class GameManager {
     }
 
     /**
+     * Unregister a Firebot game. If the game was active, its onUnload handler is invoked.
+     * @param gameId The id of the game to unregister
+     */
+    unregisterGame(gameId: string) {
+        const game = this._registeredGames.find(g => g.id === gameId);
+        if (game == null) {
+            return;
+        }
+
+        if (game.active && typeof game.onUnload === "function") {
+            try {
+                game.onUnload(this.buildGameSettings(game, this._allGamesSettings[game.id]));
+            } catch (error) {
+                logger.error(`Error invoking onUnload for game ${gameId} during unregister`, error);
+            }
+        }
+
+        this._registeredGames = this._registeredGames.filter(g => g.id !== gameId);
+
+        logger.debug(`Unregistered game ${gameId}`);
+    }
+
+    /**
      * Gets the settings for a game
      * @param gameId - The ID of the game
      * @returns The game settings

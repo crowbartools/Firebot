@@ -4,52 +4,104 @@
 
     angular
         .module("firebotApp")
-        .factory("pluginsService", function(backendCommunicator) {
+        .factory("pluginsService", function(backendCommunicator, $q) {
             const service = {};
 
+            // Array of InstalledPlugin: { config, details }
             let installedPlugins = [];
 
             service.loadPlugins = function() {
-                backendCommunicator
-                    .fireEventAsync("script-manager:get-installed-plugins")
-                    .then((plugins) => {
-                        if (plugins != null) {
-                            installedPlugins = plugins;
-                        }
-                    });
+                return $q.when(
+                    backendCommunicator.fireEventAsync("script-manager:get-installed-plugins")
+                ).then((plugins) => {
+                    installedPlugins = Array.isArray(plugins) ? plugins : [];
+                    return installedPlugins;
+                });
             };
 
-            service.getPluginConfigs = function() {
-                return Object.values(installedPlugins);
+            service.reloadPlugins = service.loadPlugins;
+
+            service.getInstalledPlugins = function() {
+                return installedPlugins;
             };
 
-            service.getPluginConfig = function(pluginConfigId) {
-                return installedPlugins[pluginConfigId];
+            service.getPluginById = function(id) {
+                return installedPlugins.find(p => p.config && p.config.id === id);
             };
 
             service.savePluginConfig = function(pluginConfig) {
-                if (!pluginConfig) {
-                    return;
+                if (!pluginConfig || !pluginConfig.id) {
+                    return $q.resolve(false);
                 }
-
-                installedPlugins[pluginConfig.id] = pluginConfig;
-
-                backendCommunicator.fireEvent("plugin-manager:save-config",
-                    pluginConfig);
+                return $q.when(
+                    backendCommunicator.fireEventAsync("plugin-manager:save-config", pluginConfig)
+                ).then(() => service.loadPlugins());
             };
 
-            service.deletePluginConfig = function(pluginConfigId) {
-                if (!pluginConfigId) {
-                    return;
+            service.deletePlugin = function(pluginId) {
+                if (!pluginId) {
+                    return $q.resolve(false);
                 }
-
-                delete installedPlugins[pluginConfigId];
-
-                backendCommunicator.fireEvent("plugin-manager:delete",
-                    pluginConfigId);
+                return $q.when(
+                    backendCommunicator.fireEventAsync("plugin-manager:delete", pluginId)
+                ).then(() => service.loadPlugins());
             };
 
+            service.setPluginEnabled = function(pluginId, enabled) {
+                if (!pluginId) {
+                    return $q.resolve(false);
+                }
+                return $q.when(
+                    backendCommunicator.fireEventAsync("plugin-manager:set-enabled", {
+                        id: pluginId,
+                        enabled: enabled === true
+                    })
+                ).then(() => service.loadPlugins());
+            };
 
+            /**
+             * Validate + copy a .js file from disk into the user's scripts folder.
+             * Returns { success, fileName?, scriptType?, details?, error?, conflict? }
+             */
+            service.installPluginFromFile = function(filePath, overwrite = false) {
+                return $q.when(
+                    backendCommunicator.fireEventAsync("plugin-manager:install-from-file", {
+                        filePath,
+                        overwrite: overwrite === true
+                    })
+                );
+            };
+
+            /**
+             * Replace the script file for an existing plugin with a new one chosen
+             * from disk. The previous plugin's onUnload is fired and its require
+             * cache is cleared before the new file is loaded.
+             * Returns { success, fileName?, scriptType?, details?, error?, conflict? }
+             */
+            service.updatePluginFromFile = function(pluginId, filePath, overwrite = false) {
+                return $q.when(
+                    backendCommunicator.fireEventAsync("plugin-manager:update-from-file", {
+                        pluginId,
+                        filePath,
+                        overwrite: overwrite === true
+                    })
+                );
+            };
+
+            service.cancelInstall = function(fileName) {
+                if (!fileName) {
+                    return $q.resolve();
+                }
+                return $q.when(
+                    backendCommunicator.fireEventAsync("plugin-manager:cancel-install", { fileName })
+                );
+            };
+
+            service.getScriptDetails = function(fileName, expectedScriptType) {
+                return $q.when(
+                    backendCommunicator.fireEventAsync("script-manager:get-script-details", { fileName, expectedScriptType })
+                );
+            };
 
             return service;
         });

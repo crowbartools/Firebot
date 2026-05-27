@@ -6,6 +6,7 @@ import logger from "../logwrapper";
 
 type Events = {
     "restriction-registered": (restriction: RestrictionType) => void;
+    "restriction-unregistered": (restrictionId: string) => void;
 };
 
 class RestrictionsManager extends TypedEmitter<Events> {
@@ -30,6 +31,25 @@ class RestrictionsManager extends TypedEmitter<Events> {
         logger.debug(`Registered Restriction ${restriction.definition.id}`);
 
         this.emit("restriction-registered", restriction);
+    }
+
+    unregisterRestriction(restrictionId: string): void {
+        const existing = this._registeredRestrictions.some(
+            r => r.definition.id === restrictionId
+        );
+
+        if (!existing) {
+            logger.warn(`Could not unregister restriction '${restrictionId}'. Restriction does not exist.`);
+            return;
+        }
+
+        this._registeredRestrictions = this._registeredRestrictions.filter(
+            r => r.definition.id !== restrictionId
+        );
+
+        logger.debug(`Unregistered Restriction ${restrictionId}`);
+
+        this.emit("restriction-unregistered", restrictionId);
     }
 
     getRestrictionById(restrictionId: string): RestrictionType {

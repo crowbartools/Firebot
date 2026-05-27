@@ -44,8 +44,8 @@
                     template: "<overlay-settings />"
                 },
                 {
-                    name: "Plugins",
-                    description: "Configure and manage your installed plugins.",
+                    name: "Plugins & Scripts",
+                    description: "Install plugins and manage script execution settings.",
                     icon: "fa-puzzle-piece",
                     template: "<scripts-settings />"
                 },

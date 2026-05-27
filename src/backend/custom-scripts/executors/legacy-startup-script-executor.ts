@@ -1,7 +1,15 @@
-import { ScriptBase, LegacyCustomScript, InstalledPluginConfig, LegacyScriptReturnObject, ScriptDetails, FirebotParameterArray, ParametersConfig, ParametersWithNameConfig } from "../../../types";
+import {
+    ScriptBase,
+    LegacyCustomScript,
+    InstalledPluginConfig,
+    LegacyScriptReturnObject,
+    ScriptDetails,
+    FirebotParameterArray
+} from "../../../types";
 import { IPluginExecutor, ScriptExecutionResult } from "./script-executor.interface";
 import { buildRunRequest } from "../../common/handlers/custom-scripts/custom-script-helpers";
 import { wait } from "../../utils";
+import logger from "../../logwrapper";
 
 export class LegacyStartUpScript extends IPluginExecutor {
     constructor() {
@@ -19,15 +27,17 @@ export class LegacyStartUpScript extends IPluginExecutor {
 
         const manifest = await script.getScriptManifest();
 
-        if (manifest == null) {
+        if (manifest == null || !manifest.startupOnly) {
             return false;
         }
 
         return true;
     }
 
-    async executePlugin(script: ScriptBase | LegacyCustomScript, config: InstalledPluginConfig<{ legacyParams: Record<string, unknown> }>): Promise<ScriptExecutionResult> {
-        // this is mainly for type checking
+    async executePlugin(
+        script: ScriptBase | LegacyCustomScript,
+        config: InstalledPluginConfig
+    ): Promise<ScriptExecutionResult> {
         if (!this.isLegacyScript(script)) {
             return {
                 success: false,
@@ -35,7 +45,6 @@ export class LegacyStartUpScript extends IPluginExecutor {
             };
         }
 
-        // Verify the script contains the "run" function
         if (typeof script.run !== "function") {
             return {
                 success: false,
@@ -44,24 +53,17 @@ export class LegacyStartUpScript extends IPluginExecutor {
         }
 
         const manifest = await script.getScriptManifest();
-
-        const parametersDefinition = script.getDefaultParameters?.() ?? {};
-
-        const parameters = Object.entries(parametersDefinition).reduce((acc, [key, value]) => {
-            acc[key] = config.parameters?.legacyParams?.[key] ?? value?.default;
-            return acc;
-        }, {} as Record<string, unknown>);
-
+        const parameters = this.buildParameters(script, config);
         const runRequest = buildRunRequest(manifest, parameters, {});
 
-        // wait for script to finish for a maximum of 10 secs
         let response: LegacyScriptReturnObject | undefined = undefined;
         try {
             response = (await Promise.race([
-                Promise.resolve(script.run(runRequest as any)),
+                Promise.resolve(script.run(runRequest as never)),
                 wait(10 * 1000)
             ])) as LegacyScriptReturnObject | undefined;
         } catch (error) {
+            logger.error(`Error while running legacy script '${config.fileName}'`, error);
             return {
                 success: false,
                 error: `Error while running script '${config.fileName}'`
@@ -69,9 +71,7 @@ export class LegacyStartUpScript extends IPluginExecutor {
         }
 
         if (response == null || typeof response !== "object") {
-            return {
-                success: true
-            };
+            return { success: true };
         }
 
         if (!response.success) {
@@ -81,9 +81,7 @@ export class LegacyStartUpScript extends IPluginExecutor {
             };
         }
 
-        return {
-            success: true
-        };
+        return { success: true };
     }
 
     async unloadPlugin(script: ScriptBase | LegacyCustomScript) {
@@ -91,32 +89,46 @@ export class LegacyStartUpScript extends IPluginExecutor {
             return;
         }
 
-        if (script.stop != null && typeof script.stop === "function") {
-            await script.stop();
+        if (typeof script.stop === "function") {
+            try {
+                await Promise.resolve(script.stop());
+            } catch (error) {
+                logger.error("Error when attempting to stop legacy custom script", error);
+            }
+        }
+    }
+
+    async updateParameters(
+        script: ScriptBase | LegacyCustomScript,
+        config: InstalledPluginConfig
+    ): Promise<void> {
+        if (!this.isLegacyScript(script)) {
+            return;
+        }
+
+        if (typeof script.parametersUpdated === "function") {
+            try {
+                await Promise.resolve(script.parametersUpdated(this.buildParameters(script, config)));
+            } catch (error) {
+                logger.error("Error when calling parametersUpdated on legacy script", error);
+            }
         }
     }
 
     async getScriptDetails(
         script: ScriptBase | LegacyCustomScript
     ): Promise<ScriptDetails> {
-        // this is mainly for type checking
         if (!this.isLegacyScript(script)) {
             return null;
         }
 
         const manifest = await script.getScriptManifest();
-
         const parametersObject = script.getDefaultParameters?.() ?? {};
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const parametersArray: FirebotParameterArray<Record<string, unknown>> = Object.entries(parametersObject).map(([key, value]) => {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-            return {
-                ...value,
-                name: key
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            } as any;
-        });
+        const parametersArray = Object.entries(parametersObject).map(([key, value]) => ({
+            ...value,
+            name: key
+        })) as unknown as FirebotParameterArray<Record<string, unknown>>;
 
         return {
             manifest: {
@@ -129,6 +141,25 @@ export class LegacyStartUpScript extends IPluginExecutor {
             },
             parametersSchema: parametersArray
         };
+    }
+
+    private buildParameters(
+        script: LegacyCustomScript,
+        config: InstalledPluginConfig
+    ): Record<string, unknown> {
+        const parametersDefinition = script.getDefaultParameters?.() ?? {};
+
+        return Object.entries(parametersDefinition).reduce<Record<string, unknown>>(
+            (acc, [key, value]) => {
+                if (config.parameters && Object.prototype.hasOwnProperty.call(config.parameters, key)) {
+                    acc[key] = config.parameters[key];
+                } else {
+                    acc[key] = value?.default;
+                }
+                return acc;
+            },
+            {}
+        );
     }
 
     private isLegacyScript(script: ScriptBase | LegacyCustomScript): script is LegacyCustomScript {

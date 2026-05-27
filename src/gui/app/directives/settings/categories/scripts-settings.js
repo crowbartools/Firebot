@@ -8,63 +8,397 @@
             template: `
                 <div>
 
-                    <firebot-setting
-                        name="Custom Scripts"
-                        description="Firebot supports custom scripts! You must opt-in to use this feature as it is potentially dangerous. Please only run scripts from sources you trust."
+                    <div
+                        style="display:flex; align-items:stretch; border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); margin-bottom: 8px;"
                     >
-                        <setting-description-addon>
-                            <div style="margin-top: 10px;">Want to write your own scripts? Learn how <a
-                                class="clickable"
-                                ng-click="openLink('https://github.com/crowbartools/Firebot/wiki/Writing-Custom-Scripts')"
-                            >here</a
-                            >.</div>
-                        </setting-description-addon>
-                        <toggle-button
-                            toggle-model="settings.getSetting('RunCustomScripts')"
-                            on-toggle="settings.saveSetting('RunCustomScripts', !settings.getSetting('RunCustomScripts'))"
-                            font-size="40"
-                        />
-                    </firebot-setting>
+                        <div
+                            ng-style="{ background: isScriptingEnabled() ? '#48a14d' : '#d99211' }"
+                            style="width: 5px; flex-shrink: 0;"
+                        ></div>
+                        <div style="display:flex; align-items:center; padding: 16px 20px; gap: 16px; flex-grow: 1; min-width: 0;">
+                            <div
+                                ng-style="{ background: isScriptingEnabled() ? 'rgba(72,161,77,0.18)' : 'rgba(217,146,17,0.18)', color: isScriptingEnabled() ? '#48a14d' : '#d99211' }"
+                                style="width: 44px; height: 44px; border-radius: 50%; display:flex; align-items:center; justify-content:center; flex-shrink: 0;"
+                            >
+                                <i
+                                    ng-class="isScriptingEnabled() ? 'fas fa-check' : 'fas fa-times'"
+                                    style="font-size: 20px;"
+                                ></i>
+                            </div>
+                            <div style="flex-grow: 1; min-width: 0;">
+                                <div style="font-weight: 600; font-size: 15px;" ng-if="isScriptingEnabled()">
+                                    Plugins &amp; Scripts are enabled
+                                </div>
+                                <div style="font-weight: 600; font-size: 15px;" ng-if="!isScriptingEnabled()">
+                                    Plugins &amp; Scripts are disabled
+                                </div>
+                                <div class="muted" style="font-size: 13px; margin-top: 2px;" ng-if="isScriptingEnabled()">
+                                    Firebot will load installed plugins on startup and allow the Run Custom Script effect to execute.
+                                </div>
+                                <div class="muted" style="font-size: 13px; margin-top: 2px;" ng-if="!isScriptingEnabled()">
+                                    Installed plugins won't load and the Run Custom Script effect will be skipped. Only enable this if you trust the scripts you install.
+                                </div>
+                            </div>
+                            <div style="flex-shrink: 0;">
+                                <firebot-button
+                                    ng-if="isScriptingEnabled()"
+                                    text="Disable"
+                                    type="default"
+                                    ng-click="setScriptingEnabled(false)"
+                                />
+                                <firebot-button
+                                    ng-if="!isScriptingEnabled()"
+                                    text="Enable"
+                                    type="default"
+                                    ng-click="setScriptingEnabled(true)"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="muted" style="font-size: 12px; padding: 0 4px 20px;">
+                        Want to write your own scripts? Learn how <a
+                            class="clickable"
+                            ng-click="openLink('https://github.com/crowbartools/Firebot/wiki/Writing-Custom-Scripts')"
+                        >here</a>.
+                    </div>
 
-                    <firebot-setting
-                        name="Startup Scripts"
-                        description="Startup Scripts are custom scripts that run when Firebot starts. Scripts which add new effects, variables, event types, etc should be loaded here."
-                    >
-                        <firebot-button
-                            text="Manage Startup Scripts"
-                            disabled="!settings.getSetting('RunCustomScripts')"
-                            ng-click="openStartupScriptsModal()"
-                        />
-                    </firebot-setting>
+                    <div>
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 10px;">
+                            <div>
+                                <h3 style="margin: 0;">Plugins</h3>
+                                <div class="muted" style="font-size: 13px;">Plugins are scripts loaded at startup that can register new effects, variables, events, and more.</div>
+                            </div>
+                            <div>
+                                <firebot-button
+                                    text="Install Plugin"
+                                    type="primary"
+                                    icon="fa-plus"
+                                    ng-click="installPlugin()"
+                                    disabled="!settings.getSetting('RunCustomScripts')"
+                                />
+                            </div>
+                        </div>
 
-                    <firebot-setting
-                        name="Clear Custom Script Cache"
-                        description="Whether or not you want custom scripts to be cleared from memory before they are executed. Enabling this helps when actively developing a custom script, otherwise Firebot wont reflect changes to your script until restarted. Everyday users should leave this disabled."
-                    >
-                        <toggle-button
-                            toggle-model="settings.getSetting('ClearCustomScriptCache')"
-                            on-toggle="settings.saveSetting('ClearCustomScriptCache', !settings.getSetting('ClearCustomScriptCache'))"
-                            disabled="!settings.getSetting('RunCustomScripts')"
-                            font-size="40"
-                        />
-                    </firebot-setting>
+                        <div ng-if="getPlugins().length === 0" class="muted" style="padding: 30px 20px; border: 1px dashed rgba(255,255,255,0.1); border-radius: 8px; text-align:center;">
+                            No plugins installed. Click <b>Install Plugin</b> to add one.
+                        </div>
 
+                        <div ng-if="getPlugins().length > 0" style="display: flex; flex-direction: column; gap: 10px;">
+                            <div
+                                ng-repeat="plugin in getPlugins() track by plugin.config.id"
+                                style="display: flex; align-items: flex-start; gap: 14px; padding: 14px 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; min-width: 0;"
+                            >
+                                <div
+                                    ng-style="getPluginIconContainerStyle(plugin)"
+                                    style="width: 42px; height: 42px; border-radius: 8px; display:flex; align-items:center; justify-content:center; flex-shrink: 0;"
+                                >
+                                    <i ng-class="getPluginIconClass(plugin)" style="font-size: 18px;"></i>
+                                </div>
+
+                                <div style="flex-grow: 1; min-width: 0;">
+                                    <div style="display:flex; align-items:baseline; gap: 8px; flex-wrap: wrap;">
+                                        <span style="font-weight: 600; font-size: 15px; word-break: break-word;">
+                                            {{plugin.details.manifest.name || plugin.config.fileName}}
+                                        </span>
+                                        <span
+                                            class="muted"
+                                            style="font-size: 11px; padding: 1px 6px; border-radius: 4px; background: rgba(255,255,255,0.06);"
+                                            ng-if="plugin.details.manifest.version"
+                                        >v{{plugin.details.manifest.version}}</span>
+                                        <span
+                                            class="muted"
+                                            style="font-size: 12px;"
+                                            ng-if="plugin.details.manifest.author"
+                                        >by {{plugin.details.manifest.author}}</span>
+                                        <span
+                                            ng-if="plugin.config.enabled === false"
+                                            style="font-size: 11px; padding: 1px 8px; border-radius: 10px; background: rgba(217,146,17,0.18); color: #d99211;"
+                                        >Disabled</span>
+                                    </div>
+                                    <div
+                                        class="muted"
+                                        style="font-size: 13px; margin-top: 4px; line-height: 1.4; overflow-wrap: anywhere;"
+                                        ng-if="plugin.details.manifest.description"
+                                    >
+                                        {{plugin.details.manifest.description}}
+                                    </div>
+                                </div>
+
+                                <div style="display:flex; align-items:center; gap: 6px; flex-shrink: 0;">
+                                    <firebot-button
+                                        text="Configure"
+                                        type="default"
+                                        size="small"
+                                        ng-click="configurePlugin(plugin)"
+                                    />
+                                    <button
+                                        aria-label="Open Plugin Menu"
+                                        class="noselect clickable plugin-card-menu-btn"
+                                        context-menu="pluginMenuOptions(plugin)"
+                                        context-menu-on="click"
+                                        context-menu-class="angular-context-menu"
+                                        context-menu-orientation="left"
+                                        uib-tooltip="More options"
+                                        tooltip-append-to-body="true"
+                                        style="background: transparent; border: none; padding: 4px 10px; font-size: 18px; line-height: 1;"
+                                    >
+                                        <i class="fal fa-ellipsis-v"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
           `,
-            controller: function($rootScope, $scope, settingsService, utilityService) {
+            controller: function($rootScope, $scope, settingsService, utilityService,
+                pluginsService, backendCommunicator, ngToast, $q) {
                 $scope.openLink = $rootScope.openLinkExternally;
                 $scope.settings = settingsService;
 
-                $scope.openStartupScriptsModal = function() {
+                pluginsService.loadPlugins();
+
+                $scope.isScriptingEnabled = function() {
+                    return !!settingsService.getSetting('RunCustomScripts');
+                };
+
+                $scope.setScriptingEnabled = function(enabled) {
+                    settingsService.saveSetting('RunCustomScripts', !!enabled);
+                };
+
+                $scope.getPlugins = function() {
+                    return pluginsService.getInstalledPlugins();
+                };
+
+                const DEFAULT_PLUGIN_ICON_COLOR = "#53afff";
+                const DEFAULT_PLUGIN_ICON_CLASS = "fas fa-puzzle-piece";
+
+                function hexToRgb(hex) {
+                    if (!hex || typeof hex !== "string") {
+                        return null;
+                    }
+                    let value = hex.trim().replace(/^#/, "");
+                    if (value.length === 3) {
+                        value = value.split("").map(c => c + c).join("");
+                    }
+                    if (value.length !== 6 || /[^0-9a-fA-F]/.test(value)) {
+                        return null;
+                    }
+                    const num = parseInt(value, 16);
+                    return {
+                        r: (num >> 16) & 255,
+                        g: (num >> 8) & 255,
+                        b: num & 255
+                    };
+                }
+
+                function colorToBackground(color, opacity) {
+                    const rgb = hexToRgb(color);
+                    if (rgb) {
+                        return `rgba(${rgb.r},${rgb.g},${rgb.b},${opacity})`;
+                    }
+                    // Fallback: let the browser handle named/other formats via a translucent overlay isn't possible,
+                    // so just return the color as-is (no opacity applied).
+                    return color;
+                }
+
+                $scope.getPluginIconClass = function(plugin) {
+                    const manifestIcon = plugin && plugin.details && plugin.details.manifest && plugin.details.manifest.icon;
+                    if (manifestIcon && typeof manifestIcon === "string" && manifestIcon.startsWith("fa-")) {
+                        return `fas ${manifestIcon}`;
+                    }
+                    return DEFAULT_PLUGIN_ICON_CLASS;
+                };
+
+                $scope.getPluginIconContainerStyle = function(plugin) {
+                    const manifestColor = plugin && plugin.details && plugin.details.manifest && plugin.details.manifest.color;
+                    const color = (manifestColor && typeof manifestColor === "string") ? manifestColor : DEFAULT_PLUGIN_ICON_COLOR;
+                    return {
+                        color: color,
+                        background: colorToBackground(color, 0.15)
+                    };
+                };
+
+                $scope.togglePluginEnabled = function(plugin) {
+                    const next = !(plugin.config.enabled !== false);
+                    plugin.config.enabled = next;
+                    pluginsService.setPluginEnabled(plugin.config.id, next);
+                };
+
+                $scope.configurePlugin = function(plugin) {
                     utilityService.showModal({
-                        component: "startupScriptsListModal",
+                        component: "configurePluginModal",
                         size: "md",
                         backdrop: true,
-                        keyboard: true
+                        keyboard: true,
+                        resolveObj: {
+                            plugin: () => angular.copy(plugin),
+                            isNewInstall: () => false
+                        },
+                        closeCallback: () => pluginsService.loadPlugins()
                     });
                 };
 
+                $scope.removePlugin = function(plugin) {
+                    utilityService.showConfirmationModal({
+                        title: "Remove Plugin",
+                        question: `Are you sure you want to remove "${plugin.details.manifest.name || plugin.config.fileName}"?`,
+                        confirmLabel: "Remove",
+                        confirmBtnType: "btn-danger"
+                    }).then((confirmed) => {
+                        if (confirmed) {
+                            pluginsService.deletePlugin(plugin.config.id);
+                        }
+                    });
+                };
+
+                $scope.pluginMenuOptions = function(plugin) {
+                    const isEnabled = plugin.config.enabled !== false;
+                    return [
+                        {
+                            html: `<a href><i class="far ${isEnabled ? 'fa-toggle-off' : 'fa-toggle-on'}" style="margin-right: 10px;"></i> ${isEnabled ? 'Disable' : 'Enable'}</a>`,
+                            click: () => {
+                                $scope.togglePluginEnabled(plugin);
+                            }
+                        },
+                        {
+                            html: `<a href><i class="far fa-sync" style="margin-right: 10px;"></i> Update</a>`,
+                            click: () => {
+                                $scope.updatePlugin(plugin);
+                            }
+                        },
+                        {
+                            html: `<a href style="color: #d9534f;"><i class="far fa-trash" style="margin-right: 10px;"></i> Remove</a>`,
+                            click: () => {
+                                $scope.removePlugin(plugin);
+                            }
+                        }
+                    ];
+                };
+
+                function openConfigureModalForInstall(details, fileName) {
+                    const { randomUUID } = require("crypto");
+                    const skeleton = {
+                        config: {
+                            id: randomUUID(),
+                            fileName: fileName,
+                            enabled: true,
+                            parameters: {}
+                        },
+                        details: details
+                    };
+
+                    utilityService.showModal({
+                        component: "configurePluginModal",
+                        size: "md",
+                        backdrop: "static",
+                        keyboard: false,
+                        resolveObj: {
+                            plugin: () => skeleton,
+                            isNewInstall: () => true
+                        },
+                        closeCallback: (result) => {
+                            if (!result || !result.saved) {
+                                // user cancelled - clean up the copied file
+                                pluginsService.cancelInstall(fileName);
+                            }
+                            pluginsService.loadPlugins();
+                        }
+                    });
+                }
+
+                function doInstall(filePath, overwrite) {
+                    return $q.when(pluginsService.installPluginFromFile(filePath, overwrite))
+                        .then((result) => {
+                            if (!result) {
+                                ngToast.create("Plugin install failed.");
+                                return;
+                            }
+                            if (result.conflict) {
+                                utilityService.showConfirmationModal({
+                                    title: "Script File Already Exists",
+                                    question: `${result.error} Overwrite it?`,
+                                    confirmLabel: "Overwrite",
+                                    confirmBtnType: "btn-warning"
+                                }).then((confirmed) => {
+                                    if (confirmed) {
+                                        doInstall(filePath, true);
+                                    }
+                                });
+                                return;
+                            }
+                            if (result.success === false) {
+                                utilityService.showErrorModal(result.error || "Failed to install plugin.");
+                                return;
+                            }
+                            openConfigureModalForInstall(result.details, result.fileName);
+                        });
+                }
+
+                $scope.installPlugin = function() {
+                    $q.when(backendCommunicator.fireEventAsync("open-file-browser", {
+                        options: {
+                            title: "Select Plugin Script",
+                            buttonLabel: "Select",
+                            filters: [{ name: "JavaScript", extensions: ["js"] }]
+                        }
+                    })).then((response) => {
+                        if (!response || !response.path) {
+                            return;
+                        }
+                        doInstall(response.path, false);
+                    });
+                };
+
+                function doUpdate(plugin, filePath, overwrite) {
+                    return $q.when(pluginsService.updatePluginFromFile(plugin.config.id, filePath, overwrite))
+                        .then((result) => {
+                            if (!result) {
+                                ngToast.create("Plugin update failed.");
+                                return;
+                            }
+                            if (result.conflict) {
+                                utilityService.showConfirmationModal({
+                                    title: "Script File Already Exists",
+                                    question: `${result.error} Overwrite it?`,
+                                    confirmLabel: "Overwrite",
+                                    confirmBtnType: "btn-warning"
+                                }).then((confirmed) => {
+                                    if (confirmed) {
+                                        doUpdate(plugin, filePath, true);
+                                    }
+                                });
+                                return;
+                            }
+                            if (result.success === false) {
+                                utilityService.showErrorModal(result.error || "Failed to update plugin.");
+                                return;
+                            }
+                            pluginsService.loadPlugins();
+                            ngToast.create({
+                                className: "success",
+                                content: `Plugin '${plugin.details && plugin.details.name ? plugin.details.name : plugin.config.fileName}' updated.`
+                            });
+                        });
+                }
+
+                $scope.updatePlugin = function(plugin) {
+                    if (!plugin || !plugin.config) {
+                        return;
+                    }
+                    $q.when(backendCommunicator.fireEventAsync("open-file-browser", {
+                        options: {
+                            title: "Select New Plugin Script",
+                            buttonLabel: "Select",
+                            filters: [{ name: "JavaScript", extensions: ["js"] }]
+                        }
+                    })).then((response) => {
+                        if (!response || !response.path) {
+                            return;
+                        }
+                        doUpdate(plugin, response.path, false);
+                    });
+                };
             }
         });
 }());

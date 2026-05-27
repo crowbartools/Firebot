@@ -132,7 +132,7 @@
         hotkeyService,
         gamesService,
         presetEffectListsService,
-        startupScriptsService,
+        pluginsService,
         effectQueuesService,
         timerService,
         scheduledTaskService,
@@ -178,7 +178,7 @@
 
         presetEffectListsService.loadPresetEffectLists();
 
-        startupScriptsService.loadStartupScripts();
+        pluginsService.loadPlugins();
 
         effectQueuesService.loadEffectQueues();
 

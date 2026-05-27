@@ -7,7 +7,7 @@ import ConnectionManager from "./connection-manager";
 import { AccountAccess } from "./account-access";
 import HttpServerManager from "../../server/http-server-manager";
 import WebsocketServerManager from "../../server/websocket-server-manager";
-import startupScriptsManager from "../common/handlers/custom-scripts/startup-scripts-manager";
+import scriptManager from "../custom-scripts/script-manager";
 import { isConnected } from "../integrations/builtin/obs/obs-remote";
 
 function getOsName(platform: NodeJS.Platform): string {
@@ -44,7 +44,7 @@ async function getDebugInfoString(): Promise<string> {
     const httpServerStatus = HttpServerManager.isDefaultServerStarted ? "Running" : "Stopped";
     const websocketClients = WebsocketServerManager.getNumberOfOverlayClients();
 
-    const startupScripts = Object.values(startupScriptsManager.getLoadedStartupScripts());
+    const startupScripts = await scriptManager.getInstalledPlugins();
 
     return [
         "Firebot Debug Info",
@@ -66,7 +66,7 @@ async function getDebugInfoString(): Promise<string> {
         'Plugins:',
         startupScripts.length === 0
             ? "  - None"
-            : startupScripts.map(script => `  - ${script.name}`).join("\n")
+            : startupScripts.map(p => `  - ${p.details.manifest.name}`).join("\n")
     ].join("\n");
 }
 

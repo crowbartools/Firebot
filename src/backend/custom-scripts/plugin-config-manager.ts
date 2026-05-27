@@ -42,10 +42,10 @@ class PluginConfigManager extends JsonDbManager<InstalledPluginConfig> {
                         fileName: script.scriptName,
                         enabled: true,
                         legacyImport: true,
-                        parameters: Object.entries(script.parameters ?? {}).reduce((acc, [paramKey, param]) => {
+                        parameters: Object.entries(script.parameters ?? {}).reduce<Record<string, unknown>>((acc, [paramKey, param]) => {
                             acc[paramKey] = param?.value;
                             return acc;
-                        }, { })
+                        }, {})
                     });
                 } catch (error) {
                     logger.error(`Failed to migrate start up script ${script.id}: ${error}`);
@@ -67,12 +67,32 @@ frontendCommunicator.onAsync("plugin-manager:get-all-configs", async () =>
     manager.getAllItems()
 );
 
-frontendCommunicator.onAsync("plugin-manager:save-config", async (pluginConfig: InstalledPluginConfig) =>
-    manager.saveItem(pluginConfig)
-);
+frontendCommunicator.onAsync("plugin-manager:save-config", async (pluginConfig: InstalledPluginConfig) => {
+    const saved = manager.saveItem(pluginConfig);
+    try {
+        // lazy require to avoid circular import with script-manager
 
-frontendCommunicator.on("plugin-manager:delete", (pluginConfigId: string) =>
-    manager.deleteItem(pluginConfigId)
-);
+        const scriptManager = require("./script-manager").default;
+        await scriptManager.reloadPluginConfig(pluginConfig);
+    } catch (error) {
+        logger.error("Error reloading plugin after config save", error);
+    }
+    return saved;
+});
+
+frontendCommunicator.onAsync("plugin-manager:delete", async (pluginConfigId: string) => {
+    const existing = manager.getItem(pluginConfigId);
+    manager.deleteItem(pluginConfigId);
+    if (existing) {
+        try {
+
+            const scriptManager = require("./script-manager").default;
+            await scriptManager.onPluginConfigDeleted(existing);
+        } catch (error) {
+            logger.error("Error during plugin uninstall cleanup", error);
+        }
+    }
+    return true;
+});
 
 export { manager as PluginConfigManager };

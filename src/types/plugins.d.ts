@@ -61,6 +61,9 @@ export interface Manifest {
     minimumFirebotVersion?: ManifestFirebotVersion;
     maximumFirebotVersion?: ManifestFirebotVersion;
 
+    icon?: `fa-${string}`;
+    color?: string;
+
     type: ScriptType;
 }
 
