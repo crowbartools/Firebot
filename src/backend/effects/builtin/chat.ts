@@ -1,5 +1,6 @@
-import { EffectType } from '../../../types/effects';
-import { TwitchApi } from '../../streaming-platforms/twitch/api';
+import { EffectType } from "../../../types";
+import { TwitchApi } from "../../streaming-platforms/twitch/api";
+import logger from "../../logwrapper";
 
 const effect: EffectType<{
     chatter: string;
@@ -7,6 +8,9 @@ const effect: EffectType<{
     me: boolean;
     whisper: string;
     sendAsReply: boolean;
+    pin: boolean;
+    pinUntilEndOfStream: boolean;
+    pinDuration?: string;
 }> = {
     definition: {
         id: "firebot:chat",
@@ -62,6 +66,29 @@ const effect: EffectType<{
         </div>
     </eos-container>
 
+    <eos-container header="Pin Message" pad-top="true" ng-hide="effect.whisper">
+        <div style="display: flex; flex-direction: row; width: 100%; margin: 0 0 10px 0; align-items: center;">
+            <firebot-checkbox
+                label="Pin message"
+                tooltip="Pin message to the top of chat"
+                model="effect.pin"
+                style="margin: 0px 15px 0px 0px"
+            />
+            <firebot-checkbox
+                ng-show="effect.pin === true"
+                label="Pin until end of stream"
+                model="effect.pinUntilEndOfStream"
+                style="margin: 0px 15px 0px 0px"
+            />
+        </div>
+        <firebot-input
+            ng-show="effect.pin === true && effect.pinUntilEndOfStream !== true"
+            model="effect.pinDuration"
+            input-title="Duration (in secs)"
+            placeholder-text="Enter duration"
+        />
+    </eos-container>
+
     `,
     optionsController: ($scope) => {
         $scope.showWhisperInput = $scope.effect.whisper != null && $scope.effect.whisper !== '';
@@ -70,6 +97,12 @@ const effect: EffectType<{
         const errors: string[] = [];
         if (effect.message == null || effect.message === "") {
             errors.push("Chat message can't be blank.");
+        }
+        if (effect.pin === true
+            && effect.pinUntilEndOfStream !== true
+            && !effect.pinDuration?.length
+        ) {
+            errors.push("Must choose pin duration");
         }
         return errors;
     },
@@ -92,7 +125,35 @@ const effect: EffectType<{
             const user = await TwitchApi.users.getUserByName(effect.whisper);
             await TwitchApi.whispers.sendWhisper(user.id, effect.message, sendAsBot);
         } else {
-            await TwitchApi.chat.sendChatMessage(effect.message, effect.sendAsReply ? messageId : null, sendAsBot);
+            const sendResult = await TwitchApi.chat.sendChatMessage(effect.message, effect.sendAsReply ? messageId : null, sendAsBot);
+
+            if (effect.pin === true) {
+                if (sendResult.success === true) {
+                    if (sendResult.isSlashCommand !== true) {
+                        let pinDuration: number = undefined;
+
+                        if (effect.pinUntilEndOfStream !== true
+                            && !!effect.pinDuration?.length
+                        ) {
+                            pinDuration = Number(effect.pinDuration);
+
+                            if (isNaN(pinDuration)) {
+                                pinDuration = undefined;
+                            } else if (pinDuration < 30) {
+                                pinDuration = 30;
+                            } else if (pinDuration > 1800) {
+                                pinDuration = 1800;
+                            }
+                        }
+
+                        await TwitchApi.chat.pinChatMessage(sendResult.messageId, pinDuration);
+                    } else {
+                        logger.warn("Chat message not pinned due to being processed as slash command");
+                    }
+                } else {
+                    logger.warn("Message failed to send. Unable to pin.");
+                }
+            }
         }
 
         return true;

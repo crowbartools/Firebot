@@ -25,6 +25,13 @@ interface ChatMessageRequest {
     replyToMessageId?: string;
 }
 
+interface SendChatMessageResult {
+    success: boolean;
+    isSlashCommand: boolean;
+    messageId?: string;
+    error?: string;
+}
+
 export type TwitchPinnedChatMessage = {
     messageId: string;
     broadcasterId: string;
@@ -83,11 +90,16 @@ export class TwitchChatApi extends ApiResourceBase {
      * @param replyToMessageId The ID of the message this should be replying to. Leave as null for non replies.
      * @param sendAsBot If the chat message should be sent as the bot or not.
      * If this is set to `false` or the bot account is not logged in, the chat message will be sent as the streamer.
-     * @returns `true` if sending the chat message was successful or `false` if it failed
      */
-    async sendChatMessage(message: string, replyToMessageId: string = null, sendAsBot = false): Promise<boolean> {
+    async sendChatMessage(message: string, replyToMessageId: string = null, sendAsBot = false): Promise<SendChatMessageResult> {
+        const sendChatMessageResult: SendChatMessageResult = {
+            success: false,
+            isSlashCommand: false
+        };
+
         if (!message?.length) {
-            return false;
+            sendChatMessageResult.error = "No message specified";
+            return sendChatMessageResult;
         }
 
         try {
@@ -118,7 +130,9 @@ export class TwitchChatApi extends ApiResourceBase {
                     });
                 }
 
-                return slashCommandResult;
+                sendChatMessageResult.success = slashCommandResult;
+                sendChatMessageResult.isSlashCommand = true;
+                return sendChatMessageResult;
             }
 
             if (slashCommandValidationResult != null
@@ -146,16 +160,20 @@ export class TwitchChatApi extends ApiResourceBase {
 
                 if (result.isSent !== true) {
                     this.logger.error(`Twitch dropped chat message. Reason: ${result.dropReasonMessage}`);
-                    return false;
+                    return sendChatMessageResult;
                 }
             }
 
-            return result.isSent;
+            sendChatMessageResult.success = result.isSent;
+            sendChatMessageResult.messageId = result.id;
+            sendChatMessageResult.error = result.dropReasonMessage;
+            return sendChatMessageResult;
         } catch (error) {
             this.logger.error(`Unable to send ${sendAsBot === true ? "bot" : "steamer"} chat message`, error);
+            sendChatMessageResult.error = ((error as Error).message ?? error) as string;
         }
 
-        return false;
+        return sendChatMessageResult;
     }
 
     /**
