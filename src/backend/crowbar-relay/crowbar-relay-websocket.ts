@@ -74,7 +74,7 @@ class CrowbarRelayWebSocket extends TypedEmitter<{
         });
 
         this.ws.addEventListener("error", (err) => {
-            logger.error("Crowbar Relay WebSocket errored", err);
+            logger.error("Crowbar Relay WebSocket errored", err.message);
         });
 
         this.ws.addEventListener("close", (closedEvent) => {

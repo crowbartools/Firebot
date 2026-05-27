@@ -28,13 +28,10 @@
                         >
                             <a href ng-click="showEditOverlayInstancesModal()">Edit Instances</a>
                         </span>
-                        <firebot-select
-                            options="{ true: 'On', false: 'Off' }"
-                            ng-init="overlayInstances = settings.getSetting('UseOverlayInstances')"
-                            selected="overlayInstances"
-                            on-update="settings.saveSetting('UseOverlayInstances', option === 'true')"
-                            right-justify="true"
-                            aria-label="enable or disable Overlay Instances"
+                        <toggle-button
+                            toggle-model="settings.getSetting('UseOverlayInstances')"
+                            on-toggle="settings.saveSetting('UseOverlayInstances', !settings.getSetting('UseOverlayInstances'))"
+                            font-size="40"
                         />
                     </firebot-setting>
 

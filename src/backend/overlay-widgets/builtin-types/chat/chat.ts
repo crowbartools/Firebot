@@ -547,14 +547,22 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
             }
         ]
     },
+    uiActions: [
+        {
+            id: "clear",
+            label: "Clear Chat Widget",
+            icon: "fa-minus-circle",
+            click: () => {
+                return {
+                    newState: {
+                        chatMessages: null
+                    }
+                };
+            }
+        }
+    ],
     overlayExtension: {
         eventHandler: (event: WidgetOverlayEvent<ChatWidgetSettings, ChatWidgetState>, utils: IOverlayWidgetEventUtils) => {
-            const escapeHtml = (text: string): string => {
-                const elem = document.createElement("div");
-                elem.innerText = text;
-                return elem.innerHTML;
-            };
-
             const generateAnnouncementBarStyle = (
                 announcementColor: FirebotChatMessage["announcementColor"]
             ): Record<string, string> => {
@@ -820,11 +828,11 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                             break;
 
                         case "link":
-                            chatMessagePartsHtml.push(escapeHtml(part.url));
+                            chatMessagePartsHtml.push(part.url);
                             break;
 
                         default:
-                            chatMessagePartsHtml.push(escapeHtml(part.text));
+                            chatMessagePartsHtml.push(part.text);
                     }
                 }
 
@@ -1102,6 +1110,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                                         if (animationClass != null && animationClass !== "" && animationClass !== "none") {
                                             const duration = animationDuration ? `${animationDuration}s` : undefined;
                                             // @ts-ignore
+                                            // eslint-disable-next-line
                                             $(`.chat-${event.data.widgetConfig.id}`).find(`[data-message-id="${chatMessage.id}"]`).animateCss(animationClass, duration);
                                         }
 
@@ -1132,6 +1141,7 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                                                 const duration = animationDuration ? `${animationDuration}s` : undefined;
 
                                                 // @ts-ignore
+                                                // eslint-disable-next-line
                                                 $(`.chat-${event.data.widgetConfig.id}`).find(`[data-message-id="${messageId}"]`).animateCss(animationClass, duration, null, null, () => {
                                                     chatContainer.removeChild(messageToRemove);
                                                 });
@@ -1155,13 +1165,6 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                                 }
                             } catch { }
                             break;
-
-                        case "clear-chat":
-                            try {
-                                const chatContainer = document.getElementsByClassName(`chat-${event.data.widgetConfig.id}`)[0];
-                                chatContainer.innerHTML = "";
-                            } catch { }
-                            break;
                     }
                     break;
 
@@ -1170,7 +1173,10 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
                     break;
 
                 case "state-update":
-                    // We don't really care about state here. We only care about state on reloads, which are handled above.
+                    // If we've set the chat message state to null, we're clearing the widget
+                    if (event.data.widgetConfig.state?.chatMessages == null) {
+                        utils.updateWidgetContent(generateWidgetHtml(event.data.widgetConfig));
+                    }
                     break;
 
                 default:

@@ -72,7 +72,8 @@ class TwitchEventSubClient {
                         event.userDisplayName,
                         event.bits,
                         totalBits,
-                        event.messageText ?? ""
+                        event.messageText ?? "",
+                        event.messageParts
                     );
                     break;
                 }
