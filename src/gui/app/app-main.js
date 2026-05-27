@@ -522,6 +522,10 @@
             modalFactory.showInfoModal("Your previous backup location could not be found. Backup location has been reset to default. You can change it in Settings > Backups.");
             settingsService.deleteSetting("BackupLocationReset");
         }
+
+        if (settingsService.getSetting("ConnectOnLaunch") === true) {
+            connectionService.connectSidebarControlledServices();
+        }
     });
 
     // This adds a filter that we can use for ng-repeat, useful when we want to paginate something
