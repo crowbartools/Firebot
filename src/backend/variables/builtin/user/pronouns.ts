@@ -29,6 +29,10 @@ const model : ReplaceVariable = {
         pronounNumber: number | string = 0,
         fallback : string = "they/them"
     ) => {
+        if (!username?.length) {
+            username = trigger.metadata.username;
+        }
+
         if (typeof pronounNumber === 'string' || <unknown>pronounNumber instanceof String) {
             pronounNumber = Number(`${pronounNumber}`);
         }
@@ -57,7 +61,7 @@ const model : ReplaceVariable = {
                 break;
         }
 
-        const pronoun = await FirebotPronounManager.getUserFriendlyPronounString(username, type);
+        const pronoun = await FirebotPronounManager.getUserFriendlyPronounString(username, fallback, type);
 
         return !!pronoun?.length
             ? pronoun
