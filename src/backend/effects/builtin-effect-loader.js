@@ -41,6 +41,7 @@ exports.loadEffects = () => {
         'moderator-purge',
         'moderator-timeout',
         'pause-resume-effect-queue',
+        'pin-chat-message',
         'play-sound',
         'play-video', // No migration needed.
         'overlay-alert',
@@ -69,6 +70,7 @@ exports.loadEffects = () => {
         'toggle-scheduled-task',
         'toggle-timer',
         'trigger-manual-effect-queue',
+        'unpin-chat-message',
         'update-channel-reward',
         'update-counter',
         'update-role',
@@ -85,7 +87,7 @@ exports.loadEffects = () => {
 
         // Deprecated (no remove date)
         'deprecated/random-effect',
-        'deprecated/sequential-effect',
+        'deprecated/sequential-effect'
     ].forEach((filename) => {
         const definition = require(`./builtin/${filename}`);
         EffectManager.registerEffect(definition);
