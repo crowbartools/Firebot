@@ -64,6 +64,10 @@ export class TwitchChatApi extends ApiResourceBase {
         frontendCommunicator.onAsync("delete-message", async (messageId: string) => {
             return await this.deleteChatMessage(messageId);
         });
+
+        frontendCommunicator.onAsync("chat:pin-message", async (messageId: string) => {
+            return await this.pinChatMessage(messageId);
+        });
     }
 
     /**

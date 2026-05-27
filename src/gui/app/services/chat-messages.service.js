@@ -307,6 +307,10 @@
                 service.hideMessageInChatFeed(data.messageId);
             });
 
+            service.pinMessage = async (messageId) => {
+                await backendCommunicator.fireEventAsync("chat:pin-message", messageId);
+            };
+
             backendCommunicator.on("twitch:chat:rewardredemption", (redemption) => {
                 if (service.chatQueue && service.chatQueue.length > 0) {
                     const lastQueueItem = service.chatQueue[service.chatQueue.length - 1];
