@@ -64,7 +64,7 @@ throw new Error(
             name: '@crowbartools/firebot-types',
             version: rootPkg.version,
             description:
-                'Type definitions and script API for Firebot custom scripts and plugins.',
+                'Type definitions and script API for Firebot plugins and custom scripts.',
             main: 'index.js',
             types: 'index.d.ts',
             exports: {
@@ -106,32 +106,42 @@ This package is **type-only**. At runtime the \`@crowbartools/firebot-types\` mo
 npm i -D @crowbartools/firebot-types
 \`\`\`
 
-A \`@types/node\` peer dependency is required (the script API uses \`Buffer\` / \`BufferEncoding\`).
+A \`@types/node\` peer dependency is required.
 
 ## Usage
 
 The default export is the runtime API object provided by Firebot. Named types are re-exported from the package root and can be imported alongside the default in a single statement.
 
 \`\`\`ts
-import firebot, { Plugin, EffectScript, Manifest } from "@crowbartools/firebot-types";
+import firebot, { Plugin } from "@crowbartools/firebot-types";
 
-export const manifest: Manifest = {
+type Params = {
+    message: string;
+}
+
+const plugin: Plugin<Params> = {
+  manifest: {
     name: "My Plugin",
     version: "1.0.0",
     author: "you",
     description: "Example",
     type: "plugin"
-};
-
-export function onLoad() {
-    firebot.logger.info(\`Running on Firebot \${firebot.version}\`);
+  },
+  parametersSchema: [
+    {
+      name: "message",
+      type: "string",
+      default: "Hello World!",
+      title: "Hello!",
+      description: "Message",
+    }
+  ],
+  onLoad: (context) => {
+    firebot.logger.info(\`\${context.parameters.message} (\${firebot.version})\`);
+  }
 }
-\`\`\`
 
-Deep imports for less common types are also supported:
-
-\`\`\`ts
-import type { EffectHelperService } from "@crowbartools/firebot-types/types/ui/effect-helper-service";
+export default plugin;
 \`\`\`
 
 CommonJS style works too (requires \`esModuleInterop\` in your tsconfig):
