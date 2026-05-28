@@ -717,13 +717,13 @@ class ScriptManager {
             parent?: NodeJS.Module,
             isMain?: boolean
         ): unknown {
-            if (request !== "firebot") {
+            if (request !== "@crowbartools/firebot-types") {
                 return originalLoad.call(this, request, parent, isMain);
             }
 
             const parentPath = parent?.filename ? path.resolve(parent.filename) : null;
             if (!parentPath || !parentPath.startsWith(scriptsFolder + path.sep)) {
-                // require("firebot") from something other than a custom script - deny.
+                // require("@crowbartools/firebot-types") from something other than a custom script - deny.
                 return {};
             }
 
@@ -740,7 +740,12 @@ class ScriptManager {
                 return {};
             }
 
-            return instance.api;
+            // Expose the API so it works with both named and default imports
+            return {
+                __esModule: true,
+                ...instance.api,
+                default: instance.api
+            };
         };
     }
 

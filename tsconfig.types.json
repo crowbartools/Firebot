@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "moduleResolution": "node",
+        "module": "CommonJS",
+        "target": "es2020",
+        "strict": false,
+        "noImplicitAny": false,
+        "outDir": "dist/types/types",
+        "rootDir": "src/types"
+    },
+    "include": ["src/types/**/*.ts"],
+    "exclude": ["src/types/**/*.d.ts"]
+}

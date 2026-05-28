@@ -1,4 +1,5 @@
 import type { EffectInstance } from "../effects";
+import type { TriggerType } from "../triggers";
 
 export type ObjectCopyHelper = {
     copyEffects: (effects: EffectInstance[]) => void;

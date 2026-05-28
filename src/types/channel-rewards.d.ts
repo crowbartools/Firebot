@@ -1,6 +1,43 @@
-import type { CustomReward } from "../backend/streaming-platforms/twitch/api/resource/channel-rewards";
 import type { EffectList } from "./effects";
 import type { RestrictionData } from "./restrictions";
+
+export interface CustomRewardImageSet {
+    url1x: string;
+    url2x: string;
+    url4x: string;
+}
+
+export interface CustomReward {
+    broadcasterId: string;
+    broadcasterLogin: string;
+    broadcasterName: string;
+    id: string;
+    title: string;
+    prompt: string;
+    cost: number;
+    image?: CustomRewardImageSet;
+    defaultImage: CustomRewardImageSet;
+    backgroundColor: string;
+    isEnabled: boolean;
+    isUserInputRequired: boolean;
+    maxPerStreamSetting: {
+        isEnabled: boolean;
+        maxPerStream: number;
+    };
+    maxPerUserPerStreamSetting: {
+        isEnabled: boolean;
+        maxPerUserPerStream: number;
+    };
+    globalCooldownSetting: {
+        isEnabled: boolean;
+        globalCooldownSeconds: number;
+    };
+    isPaused: boolean;
+    isInStock: boolean;
+    shouldRedemptionsSkipRequestQueue: boolean;
+    redemptionsRedeemedCurrentStream?: number;
+    cooldownExpiresAt?: Date;
+}
 
 export type SavedChannelReward = {
     id: string;

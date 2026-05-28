@@ -1,6 +1,25 @@
-import type { ComparisonType } from "../shared/filter-constants";
 import type { EffectList } from "./effects";
 import type { Awaitable } from "./util-types";
+
+export type ComparisonType =
+    | "is"
+    | "is not"
+    | "greater than"
+    | "greater than or equal to"
+    | "less than"
+    | "less than or equal to"
+    | "include"
+    | "doesn't include"
+    | "contains"
+    | "doesn't contain"
+    | "doesn't start with"
+    | "starts with"
+    | "doesn't end with"
+    | "ends with"
+    | "matches regex"
+    | "doesn't matches regex"
+    | "matches regex (case insensitive)"
+    | "doesn't match regex (case insensitive)";
 
 export type EventDefinition = {
     id: string;

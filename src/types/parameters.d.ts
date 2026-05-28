@@ -384,7 +384,7 @@ type FirebotParamCategory<ParamConfig extends Record<string, unknown>> = {
     settings: ParametersConfig<ParamConfig>;
 };
 
-export type FirebotParams = Record<string, Record<string, unknown>>;
+export type FirebotParams = Record<string, unknown>;
 
 export type FirebotParameterCategories<Config extends FirebotParams> = {
     [Category in keyof Config]: FirebotParamCategory<Config[Category]>;

@@ -1,14 +1,18 @@
+/// <reference types="node" />
+
 // Public contract types for the Firebot Script API.
 //
-// Everything a custom script can touch via `require("firebot")`
+// Everything a custom script can touch via `require("@crowbartools/firebot-types")`
 // should be defined here
 
-import type winston from "winston";
+export type ScriptLogMethod = (message: string, ...meta: unknown[]) => void;
 
-export type ScriptLoggerApi = Pick<
-    winston.LoggerInstance,
-    "debug" | "info" | "warn" | "error"
->;
+export interface ScriptLoggerApi {
+    debug: ScriptLogMethod;
+    info: ScriptLogMethod;
+    warn: ScriptLogMethod;
+    error: ScriptLogMethod;
+}
 
 export interface ScriptWebhook {
     id: string;

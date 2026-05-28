@@ -4,13 +4,13 @@ import type { FileFilter, Awaitable } from "./util-types";
 export interface LoadRequest {
     appId: string;
     filepath: string;
-};
+}
 
 export interface LoadResult<T = unknown[]> {
     success: boolean;
     data?: T;
     error?: string;
-};
+}
 
 export type ParsedQuotes = {
     quotes: Quote[];
@@ -38,7 +38,7 @@ type CustomImporterSettings = {
 };
 
 export type ThirdPartyImporter<
-    Settings extends CustomImporterSettings = unknown,
+    Settings extends CustomImporterSettings = CustomImporterSettings,
     ViewerType = unknown
 > = {
     id: string;
