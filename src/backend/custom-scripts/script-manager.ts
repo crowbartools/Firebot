@@ -2,7 +2,6 @@ import {
     InstalledPlugin,
     InstalledPluginConfig,
     LegacyCustomScript,
-    Plugin,
     ScriptBase,
     ScriptContext,
     ScriptDetails,
@@ -10,7 +9,8 @@ import {
     Trigger
 } from "../../types";
 import path from "path";
-import { promises as fsp, existsSync } from "fs";
+import { promises as fsp, existsSync, readFileSync } from "fs";
+import Module from "module";
 
 import { ProfileManager } from "../common/profile-manager";
 import logger from "../logwrapper";
@@ -32,6 +32,13 @@ import { buildScriptApi } from "./script-api-factory";
 
 type LoadedScript = ScriptBase | LegacyCustomScript;
 type AnyPluginExecutor = IPluginExecutor;
+
+interface IsolatedModule {
+    filename: string;
+    paths: string[];
+    exports: unknown;
+    _compile(src: string, filename: string): void;
+}
 
 interface ActivePluginEntry {
     script: LoadedScript;
@@ -68,7 +75,7 @@ class ScriptManager {
         this.installRequireInterceptor();
     }
 
-    // ----- Plugin lifecycle -----
+    // #region Plugin lifecycle
 
     async startPlugin(pluginConfig: InstalledPluginConfig, installing?: boolean): Promise<void> {
         if (pluginConfig.enabled === false) {
@@ -203,7 +210,9 @@ class ScriptManager {
         await this.reloadPluginConfig(config);
     }
 
-    // ----- Details & install -----
+    // #endregion
+
+    // #region Plugin installation
 
     async getInstalledPlugins(): Promise<InstalledPlugin[]> {
         const pluginConfigs = PluginConfigManager.getAllItems();
@@ -211,12 +220,13 @@ class ScriptManager {
 
         for (const pluginConfig of pluginConfigs) {
             const scriptFilePath = this.getScriptFilePath(pluginConfig.fileName);
-            const script = this.loadScript(scriptFilePath);
+            // Use the isolated loader so inspecting a plugin (e.g. for the list UI)
+            // cannot disturb the cached module a running plugin is holding.
+            const script = this.loadScriptIsolated(scriptFilePath);
 
             if (!script || !this.scriptCanBePlugin(script)) {
                 if (script) {
                     logger.warn(`Script ${pluginConfig.fileName} is not a valid plugin.`);
-                    delete require.cache[require.resolve(scriptFilePath)];
                 }
                 continue;
             }
@@ -249,7 +259,8 @@ class ScriptManager {
             return { success: false, error: "Script file does not exist" };
         }
 
-        const script = this.loadScript(scriptFilePath);
+
+        const script = this.loadScriptIsolated(scriptFilePath);
         if (!script) {
             return { success: false, error: "Could not load script" };
         }
@@ -279,7 +290,6 @@ class ScriptManager {
             }
         }
 
-        delete require.cache[require.resolve(scriptFilePath)];
         return { success: false, error: "Script does not match any known custom-script format" };
     }
 
@@ -311,7 +321,6 @@ class ScriptManager {
             return { success: false, error: `A script named '${fileName}' already exists in the scripts folder.`, conflict: true };
         }
 
-        // Pre-validate by attempting to require it from a temp location is overkill;
         // copy then load, and if it doesn't validate, remove the copy.
         try {
             await fsp.mkdir(destFolder, { recursive: true });
@@ -509,8 +518,9 @@ class ScriptManager {
         return details;
     }
 
-    // ----- Effect Script execution (Run Custom Script effect) -----
+    // #endregion
 
+    // #region Effect script execution
     async runEffectScript(
         effectData: {
             scriptName: string;
@@ -587,7 +597,9 @@ class ScriptManager {
         }
     }
 
-    // ----- Internals -----
+    // #endregion
+
+    // #region Internals
 
     private getScriptFilePath(fileName: string): string {
         const scriptsFolder = ProfileManager.getPathInProfile("/scripts");
@@ -652,16 +664,42 @@ class ScriptManager {
         }
     }
 
+    /**
+     * Hack to load a script without ever registering it in `require.cache`.
+     *
+     * Used for read-only inspection (manifest / parameter schema lookup) so that
+     * loading a fresh copy of a script does not evict or replace the cached module
+     * a currently-running plugin is holding a reference to.
+     */
+    private loadScriptIsolated(scriptFilePath: string): LoadedScript | null {
+        try {
+            const src = readFileSync(scriptFilePath, "utf8");
+            const ModuleCtor = Module as unknown as {
+                new (id: string, parent?: NodeJS.Module): IsolatedModule;
+                _nodeModulePaths(p: string): string[];
+            };
+            const isolatedModule = new ModuleCtor(scriptFilePath, module);
+            isolatedModule.filename = scriptFilePath;
+            isolatedModule.paths = ModuleCtor._nodeModulePaths(path.dirname(scriptFilePath));
+            isolatedModule._compile(src, scriptFilePath);
+            return isolatedModule.exports as LoadedScript;
+        } catch (error) {
+            frontendCommunicator.send("error", `Error loading the script '${scriptFilePath}' \n\n ${error}`);
+            logger.error(error);
+            return null;
+        }
+    }
+
     private scriptCanBePlugin(s: LoadedScript): boolean {
         const manifest = (s as ScriptBase).manifest;
         // Plugin if: new-spec with type === "plugin", OR legacy (no manifest field at all)
         return manifest == null || manifest.type === "plugin";
     }
+
+    // #endregion
 }
 
 const scriptManager = new ScriptManager();
-
-// ----- Frontend channels -----
 
 frontendCommunicator.onAsync("script-manager:get-installed-plugins", async () => {
     return await scriptManager.getInstalledPlugins();
@@ -723,9 +761,6 @@ frontendCommunicator.onAsync(
         return true;
     }
 );
-
-// PluginConfigManager will call into the scriptManager when configs are saved/deleted.
-// Expose the singleton via a getter on PluginConfigManager-like surface by importing the manager.
 
 export default scriptManager;
 export { ScriptManager };
