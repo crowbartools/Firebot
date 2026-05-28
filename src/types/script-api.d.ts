@@ -1,7 +1,6 @@
 /// <reference types="node" />
 
 // Public contract types for the Firebot Script API.
-//
 // Everything a custom script can touch via `require("@crowbartools/firebot-types")`
 // should be defined here
 
@@ -45,42 +44,35 @@ export interface ScriptWebhooksApi {
     onReceived(handler: ScriptWebhookEventHandler): () => void;
 }
 
-export interface ScriptFsDirEntry {
-    /** File or directory name */
-    name: string;
-    /** Path relative to the script's data dir */
-    relativePath: string;
-    isFile: boolean;
-    isDirectory: boolean;
-}
+/**
+ * Simple per-script storage scoped to the script's data directory.
+ * Provides helpers for storing/loading JSON values
+ * plus generic file read/write for anything else.
+ */
+export interface ScriptStorageApi {
+    /** Absolute path to this script's data directory. */
+    readonly path: string;
 
-export interface ScriptFsApi {
-    /** Absolute path to this script's data directory. Read-only. */
-    readonly dataDir: string;
+    /** Save a value as JSON under the given key. The key becomes the filename with a `.json` extension. */
+    setJson(key: string, value: unknown): Promise<void>;
+    /**
+     * Load a JSON value previously saved with `setJson`. Returns `null` if
+     * nothing has been stored under this key.
+     */
+    getJson<T = unknown>(key: string): Promise<T | null>;
+    /** Delete the JSON value stored under the given key. No-op if missing. */
+    deleteJson(key: string): Promise<void>;
 
-    /** Resolve a sandboxed relative path to an absolute one. Throws on escape. */
-    resolve(relativePath: string): string;
-
-    exists(relativePath: string): Promise<boolean>;
-
-    readText(relativePath: string, encoding?: BufferEncoding): Promise<string>;
-    writeText(relativePath: string, contents: string, encoding?: BufferEncoding): Promise<void>;
-
-    readBytes(relativePath: string): Promise<Buffer>;
-    writeBytes(relativePath: string, contents: Buffer | Uint8Array): Promise<void>;
-
-    /** Read JSON. Returns `null` if the file doesn't exist. */
-    readJson(relativePath: string): Promise<unknown>;
-    /** Write JSON pretty-printed with 2-space indent. */
-    writeJson(relativePath: string, value: unknown): Promise<void>;
-
-    /** Create a directory (and any missing parents). */
-    mkdir(relativePath: string): Promise<void>;
-    /** Delete a file or directory recursively. No-op if it doesn't exist. */
-    remove(relativePath: string): Promise<void>;
-
-    /** List immediate children of a directory (defaults to the data dir root). */
-    list(relativePath?: string): Promise<ScriptFsDirEntry[]>;
+    /** Check whether a file exists in the data directory. */
+    fileExists(name: string): Promise<boolean>;
+    /** Read a file's raw bytes. Returns `null` if it doesn't exist. */
+    readFile(name: string): Promise<Buffer | null>;
+    /** Read a file as text. Returns `null` if it doesn't exist. */
+    readTextFile(name: string, encoding?: BufferEncoding): Promise<string | null>;
+    /** Write contents to a file, creating any missing parent directories. */
+    writeFile(name: string, contents: string | Buffer | Uint8Array): Promise<void>;
+    /** Delete a file. No-op if it doesn't exist. */
+    deleteFile(name: string): Promise<void>;
 }
 
 export interface FirebotScriptApi {
@@ -90,6 +82,6 @@ export interface FirebotScriptApi {
     logger: ScriptLoggerApi;
     /** Webhooks owned by this script. */
     webhooks: ScriptWebhooksApi;
-    /** Sandboxed filesystem rooted at this script's data directory. */
-    fs: ScriptFsApi;
+    /** Simple persistent storage rooted at this script's data directory. */
+    storage: ScriptStorageApi;
 }
