@@ -1,4 +1,4 @@
-import { ScriptBase, LegacyCustomScript, ScriptContext, ScriptDetails, EffectList, RunEffectsContext, Trigger } from "../../../types";
+import { ScriptBase, LegacyCustomScript, ScriptContext, ScriptDetails, EffectList, RunEffectsContext, Trigger, EffectScript } from "../../../types";
 import {
     IEffectScriptExecutor,
     EffectScriptExecutionResult
@@ -8,9 +8,6 @@ import { wait, simpleClone } from "../../utils";
 import { randomUUID } from "crypto";
 import * as effectRunner from "../../common/effect-runner";
 
-type EffectScript = ScriptBase & {
-    run: (context: ScriptContext) => unknown;
-};
 
 /**
  * Executor for new-spec EffectScripts (manifest.type === "script")
