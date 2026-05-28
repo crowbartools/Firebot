@@ -614,8 +614,6 @@ async function createMainWindow() {
             splashscreenWindow.destroy();
         }
 
-        // const startupScriptsManager = require("../../common/handlers/custom-scripts/startup-scripts-manager");
-        // await startupScriptsManager.runStartupScripts();
         const scriptRunner = require("../../custom-scripts/script-manager").default;
         await scriptRunner.startPlugins();
 
