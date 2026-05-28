@@ -19,8 +19,7 @@ import logger from "../../logwrapper";
 import { wait } from "../../utils";
 
 /**
- * Executor for the legacy "Run Custom Script" effect data shape, where parameters
- * are stored as { [name]: { value, type, ... } }.
+ * Executor for legacy effect scripts (run function with no manifest or startupOnly !== true)
  */
 export class LegacyEffectScriptExecutor extends IEffectScriptExecutor {
     constructor() {
@@ -79,7 +78,7 @@ export class LegacyEffectScriptExecutor extends IEffectScriptExecutor {
         const manifest = await script.getScriptManifest();
 
         // The legacy "Run Custom Script" effect stores params as { [name]: { value, type, ... } }.
-        // New saved effects may also store them flat (from the new schema-aware UI), so support both.
+        // Newly saved effects will store them flat (from the new schema-aware UI), so support both.
         const rawParams = (context.parameters ?? {});
         const looksLegacyShape = Object.values(rawParams).some(
             v => v != null && typeof v === "object" && Object.prototype.hasOwnProperty.call(v, "value")

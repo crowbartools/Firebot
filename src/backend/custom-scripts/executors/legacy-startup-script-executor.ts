@@ -11,6 +11,9 @@ import { buildRunRequest } from "../../common/handlers/custom-scripts/custom-scr
 import { wait } from "../../utils";
 import logger from "../../logwrapper";
 
+/**
+ * Executor for legacy startup scripts (scripts that export a getScriptManifest function that returns an object with startupOnly: true)
+ */
 export class LegacyStartUpScript extends IPluginExecutor {
     constructor() {
         super();

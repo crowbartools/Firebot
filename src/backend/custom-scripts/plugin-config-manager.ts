@@ -5,7 +5,7 @@ import { ProfileManager } from "../common/profile-manager.js";
 import logger from "../logwrapper.js";
 
 /**
- * Manages installed plugins (formerly known as "start up scripts")
+ * Manages installed plugins (previously known as "start up scripts")
  */
 class PluginConfigManager extends JsonDbManager<InstalledPluginConfig> {
     constructor() {
@@ -25,12 +25,15 @@ class PluginConfigManager extends JsonDbManager<InstalledPluginConfig> {
         const startUpScriptsDb = ProfileManager
             .getJsonDbInProfile("startup-scripts-config");
 
-        const startupScriptsData: Record<string, {
+
+        type StartUpScriptData = Record<string, {
             id: string;
             name: string;
             scriptName: string;
             parameters?: Record<string, { value: string }>;
-        }> | undefined = startUpScriptsDb.getData("/");
+        }>;
+
+        const startupScriptsData: StartUpScriptData | undefined = startUpScriptsDb.getData("/") as unknown as StartUpScriptData;
 
         logger.info("Migrating start up scripts to plugins");
 
@@ -53,9 +56,11 @@ class PluginConfigManager extends JsonDbManager<InstalledPluginConfig> {
             }
         }
 
-        logger.info("Deleting start up scripts database");
+        // eslint-disable-next-line no-warning-comments
+        // TODO: in a future version we can uncomment the following to clean up old start up script data after migration has been out for a while
 
-        ProfileManager.deletePathInProfile("startup-scripts-config.json");
+        // logger.info("Deleting start up scripts database");
+        // ProfileManager.deletePathInProfile("startup-scripts-config.json");
 
         logger.info("Start up scripts migration complete");
     }
@@ -63,36 +68,19 @@ class PluginConfigManager extends JsonDbManager<InstalledPluginConfig> {
 
 const manager = new PluginConfigManager();
 
+// eslint-disable-next-line @typescript-eslint/require-await
 frontendCommunicator.onAsync("plugin-manager:get-all-configs", async () =>
     manager.getAllItems()
 );
 
+// eslint-disable-next-line @typescript-eslint/require-await
 frontendCommunicator.onAsync("plugin-manager:save-config", async (pluginConfig: InstalledPluginConfig) => {
-    const saved = manager.saveItem(pluginConfig);
-    try {
-        // lazy require to avoid circular import with script-manager
-
-        const scriptManager = require("./script-manager").default;
-        await scriptManager.reloadPluginConfig(pluginConfig);
-    } catch (error) {
-        logger.error("Error reloading plugin after config save", error);
-    }
-    return saved;
+    return manager.saveItem(pluginConfig);
 });
 
+// eslint-disable-next-line @typescript-eslint/require-await
 frontendCommunicator.onAsync("plugin-manager:delete", async (pluginConfigId: string) => {
-    const existing = manager.getItem(pluginConfigId);
-    manager.deleteItem(pluginConfigId);
-    if (existing) {
-        try {
-
-            const scriptManager = require("./script-manager").default;
-            await scriptManager.onPluginConfigDeleted(existing);
-        } catch (error) {
-            logger.error("Error during plugin uninstall cleanup", error);
-        }
-    }
-    return true;
+    return manager.deleteItem(pluginConfigId);
 });
 
 export { manager as PluginConfigManager };

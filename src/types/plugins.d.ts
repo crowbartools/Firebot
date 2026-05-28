@@ -1,17 +1,16 @@
-import { Integration } from "@crowbartools/firebot-custom-scripts-types";
 import { Effect, EffectList, EffectType } from "./effects";
 import { Trigger } from "./triggers";
 import { Awaitable } from "./util-types";
 import { ReplaceVariable } from "./variables";
 import { EventFilter } from "./events";
-import { RestrictionType } from "@crowbartools/firebot-custom-scripts-types/types/restrictions";
 import { SystemCommand } from "./commands";
+import { RestrictionType } from "./restrictions";
 import { FirebotParams, FirebotParameterArray } from "./parameters";
-import { FirebotGame } from "src/backend/games/game-manager";
-import winston from "winston";
-import { FrontendCommunicatorModule } from "./script-modules";
-import EffectManager from "../backend/effects/effectManager";
-import ReplaceVariableManager from "../backend/variables/replace-variable-manager";
+import { FirebotGame } from "./games";
+import { Integration } from "./integrations";
+// import { FrontendCommunicatorModule } from "./script-modules";
+// import EffectManager from "../backend/effects/effectManager";
+// import ReplaceVariableManager from "../backend/variables/replace-variable-manager";
 
 type GenericParameters = Record<string, unknown>;
 
@@ -23,14 +22,14 @@ export type InstalledPluginConfig<Params extends GenericParameters = GenericPara
     parameters: Params;
 };
 
-type ScriptContext = {
+export type ScriptContext = {
     trigger?: Trigger;
     parameters: Record<string, unknown>;
 };
 
 type DynamicArray<T> = Array<T | ((context: ScriptContext) => Awaitable<T>)>;
 
-type ScriptType = "script" | "plugin";
+export type ScriptType = "script" | "plugin";
 
 interface ManifestDescription {
     short: string;
@@ -75,7 +74,7 @@ type EffectScriptResult = {
 };
 
 
-interface ScriptBase<Params extends FirebotParams = Record<string, unknown>> {
+export interface ScriptBase<Params extends FirebotParams = Record<string, unknown>> {
     manifest: Manifest;
 
     parametersSchema?: FirebotParameterArray<Params>;
@@ -86,13 +85,13 @@ interface ScriptBase<Params extends FirebotParams = Record<string, unknown>> {
 }
 
 // Supplants the "Run Script" effect script functionality
-interface EffectScript<Params extends FirebotParams = Record<string, unknown>> extends ScriptBase<Params> {
+export interface EffectScript<Params extends FirebotParams = Record<string, unknown>> extends ScriptBase<Params> {
     run: (context: ScriptContext) => Awaitable<void | EffectScriptResult>;
 }
 
 // Supplants the "Start up" script functionality
-interface Plugin<Params extends FirebotParams = Record<string, unknown>> extends ScriptBase<Params> {
-    // Note: Atleast one is required: onLoad or registers.*
+export interface Plugin<Params extends FirebotParams = Record<string, unknown>> extends ScriptBase<Params> {
+    // Note: At least one is required: onLoad or registers.*
     // if not met, the script will not be loaded and it should be logged the script does nothing
 
     // Automatically handles registration with appropriate managers for definitions
@@ -134,6 +133,7 @@ export type InstalledPlugin = {
 type LegacyScriptParameters = Record<
     string,
     {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         type: any;
         title?: string;
         description?: string;
@@ -148,7 +148,7 @@ type LegacyScriptParameters = Record<
     }
 >;
 
-type LegacyScriptReturnObject = {
+export type LegacyScriptReturnObject = {
     success: boolean;
     errorMessage?: string;
     effects: unknown[] | { id: string, list: unknown[] };
@@ -198,10 +198,5 @@ export type LegacyCustomScript = {
     stop?: () => Awaitable<void>;
 };
 
-export type FirebotScriptApi = {
-    version: string;
-    logger: winston.LoggerInstance;
-    frontend: FrontendCommunicatorModule;
-    effects: EffectManager;
-    replaceVariables: ReplaceVariableManager;
-};
+export type FirebotScriptApi = import("./script-api").FirebotScriptApi;
+export type { ScriptLoggerApi, ScriptWebhooksApi, ScriptWebhook, ScriptWebhookEvent } from "./script-api";

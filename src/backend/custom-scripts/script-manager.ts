@@ -2,6 +2,7 @@ import {
     InstalledPlugin,
     InstalledPluginConfig,
     LegacyCustomScript,
+    Manifest,
     ScriptBase,
     ScriptContext,
     ScriptDetails,
@@ -26,9 +27,13 @@ import {
     EffectScriptExecutionResult,
     IEffectScriptExecutor,
     IPluginExecutor,
-    PluginRegistrations
+    PluginRegistrations,
+    ScriptExecutionResult
 } from "./executors/script-executor.interface";
-import { buildScriptApi } from "./script-api-factory";
+import { buildScriptApi, createScriptApiContext } from "./script-api";
+import type { ScriptApiContext, ScriptApiContextSource } from "./script-api";
+import type { DisposeBag } from "./script-api/internal/dispose-bag";
+import type { FirebotScriptApi } from "../../types/script-api";
 
 type LoadedScript = ScriptBase | LegacyCustomScript;
 type AnyPluginExecutor = IPluginExecutor;
@@ -46,6 +51,14 @@ interface ActivePluginEntry {
     executor: AnyPluginExecutor;
     registrations: PluginRegistrations;
     fileName: string;
+    apiInstance: ScriptApiInstance;
+}
+
+interface ScriptApiInstance {
+    context: ScriptApiContext;
+    disposeBag: DisposeBag;
+    api: FirebotScriptApi;
+    setManifest(manifest: Manifest | undefined): void;
 }
 
 type GetScriptDetailsResult = {
@@ -60,6 +73,12 @@ type GetScriptDetailsResult = {
 
 class ScriptManager {
     private activePlugins: Record<string, ActivePluginEntry> = {};
+    private activePluginsByFileName: Map<string, ActivePluginEntry> = new Map();
+
+    private pendingApiInstances: Map<string, ScriptApiInstance> = new Map();
+    private effectScriptApiInstances: Map<string, ScriptApiInstance> = new Map();
+
+    private requireInterceptorInstalled = false;
 
     private pluginExecutors: IPluginExecutor[] = [
         new PluginExecutor(),
@@ -88,13 +107,23 @@ class ScriptManager {
         }
 
         const scriptFilePath = this.getScriptFilePath(pluginConfig.fileName);
+
+        const apiInstance = this.createApiInstance({ kind: "plugin", config: pluginConfig });
+        this.pendingApiInstances.set(pluginConfig.fileName, apiInstance);
+
         const script = this.loadScript(scriptFilePath);
         if (!script) {
+            await apiInstance.disposeBag.drain();
+            this.pendingApiInstances.delete(pluginConfig.fileName);
             return;
         }
 
-        if (!this.scriptCanBePlugin(script)) {
+        apiInstance.setManifest((script as ScriptBase | undefined)?.manifest);
+
+        if (!(await this.scriptCanBePlugin(script))) {
             logger.warn(`Script ${pluginConfig.fileName} is not a valid plugin.`);
+            await apiInstance.disposeBag.drain();
+            this.pendingApiInstances.delete(pluginConfig.fileName);
             delete require.cache[require.resolve(scriptFilePath)];
             return;
         }
@@ -102,11 +131,13 @@ class ScriptManager {
         const executor = await this.findPluginExecutor(script);
         if (!executor) {
             logger.warn(`No plugin executor found for ${pluginConfig.fileName}.`);
+            await apiInstance.disposeBag.drain();
+            this.pendingApiInstances.delete(pluginConfig.fileName);
             delete require.cache[require.resolve(scriptFilePath)];
             return;
         }
 
-        let result;
+        let result: ScriptExecutionResult;
         try {
             result = await executor.executePlugin(script, pluginConfig, installing);
         } catch (error) {
@@ -119,11 +150,16 @@ class ScriptManager {
                 config: pluginConfig,
                 executor,
                 registrations: result.registrations ?? {},
-                fileName: pluginConfig.fileName
+                fileName: pluginConfig.fileName,
+                apiInstance
             };
+            this.activePluginsByFileName.set(pluginConfig.fileName, this.activePlugins[pluginConfig.id]);
+            this.pendingApiInstances.delete(pluginConfig.fileName);
             logger.info(`Started plugin ${pluginConfig.fileName}`);
         } else {
             logger.warn(`Could not start plugin ${pluginConfig.fileName}: ${result.error}`);
+            await apiInstance.disposeBag.drain();
+            this.pendingApiInstances.delete(pluginConfig.fileName);
             delete require.cache[require.resolve(scriptFilePath)];
         }
     }
@@ -158,7 +194,10 @@ class ScriptManager {
             logger.warn(`Could not clear require cache for plugin ${active.fileName}`, error);
         }
 
+        await active.apiInstance.disposeBag.drain();
+
         delete this.activePlugins[pluginId];
+        this.activePluginsByFileName.delete(active.fileName);
         logger.info(`Stopped plugin ${active.fileName}`);
     }
 
@@ -166,6 +205,9 @@ class ScriptManager {
         logger.info("Stopping all plugins...");
         for (const id of Object.keys(this.activePlugins)) {
             await this.stopPlugin(id, false);
+        }
+        for (const fileName of Array.from(this.effectScriptApiInstances.keys())) {
+            await this.disposeEffectScriptApi(fileName);
         }
         logger.info("Stopped all plugins");
     }
@@ -224,7 +266,7 @@ class ScriptManager {
             // cannot disturb the cached module a running plugin is holding.
             const script = this.loadScriptIsolated(scriptFilePath);
 
-            if (!script || !this.scriptCanBePlugin(script)) {
+            if (!script || !(await this.scriptCanBePlugin(script))) {
                 if (script) {
                     logger.warn(`Script ${pluginConfig.fileName} is not a valid plugin.`);
                 }
@@ -547,8 +589,24 @@ class ScriptManager {
             return { success: false, error: "Script file not found" };
         }
 
+        const willReloadModule = SettingsManager.getSetting("ClearCustomScriptCache")
+            || !require.cache[require.resolve(scriptFilePath)];
+        if (willReloadModule) {
+            await this.disposeEffectScriptApi(scriptName);
+        }
+
+        let pendingApi: ScriptApiInstance | undefined;
+        if (!this.effectScriptApiInstances.has(scriptName)) {
+            pendingApi = this.createApiInstance({ kind: "effect-script", fileName: scriptName });
+            this.pendingApiInstances.set(scriptName, pendingApi);
+        }
+
         const script = this.loadScript(scriptFilePath);
         if (!script) {
+            if (pendingApi) {
+                await pendingApi.disposeBag.drain();
+                this.pendingApiInstances.delete(scriptName);
+            }
             return { success: false, error: "Could not load script" };
         }
 
@@ -561,11 +619,28 @@ class ScriptManager {
         }
 
         if (!chosen) {
+            if (pendingApi) {
+                await pendingApi.disposeBag.drain();
+                this.pendingApiInstances.delete(scriptName);
+            }
             frontendCommunicator.send(
                 "error",
                 `Error running '${scriptName}', script does not contain an exported 'run' function or valid manifest.`
             );
             return { success: false, error: "No effect executor matched" };
+        }
+
+        if (pendingApi) {
+            this.pendingApiInstances.delete(scriptName);
+            if (chosen instanceof EffectScriptExecutor) {
+                // New-spec: keep the API and populate its manifest.
+                pendingApi.setManifest((script as ScriptBase).manifest);
+                this.effectScriptApiInstances.set(scriptName, pendingApi);
+            } else {
+                // Legacy effect script: uses the old runRequest.modules shim
+                // and never sees the new API.
+                await pendingApi.disposeBag.drain();
+            }
         }
 
         // For legacy run-script the manifest may declare startupOnly; honor that.
@@ -597,6 +672,15 @@ class ScriptManager {
         }
     }
 
+    private async disposeEffectScriptApi(fileName: string): Promise<void> {
+        const existing = this.effectScriptApiInstances.get(fileName);
+        if (!existing) {
+            return;
+        }
+        this.effectScriptApiInstances.delete(fileName);
+        await existing.disposeBag.drain();
+    }
+
     // #endregion
 
     // #region Internals
@@ -616,37 +700,58 @@ class ScriptManager {
     }
 
     private installRequireInterceptor() {
+        if (this.requireInterceptorInstalled) {
+            return;
+        }
+        this.requireInterceptorInstalled = true;
+
         const scriptsFolder = path.resolve(ProfileManager.getPathInProfile("/scripts"));
 
-        const nodeModule = require("module");
+        type LoadFn = (request: string, parent?: NodeJS.Module, isMain?: boolean) => unknown;
+        const nodeModule = Module as unknown as { _load: LoadFn };
         const originalLoad = nodeModule._load;
-        nodeModule._load = function load(
+
+        const manager = this;
+        nodeModule._load = function patchedLoad(
             request: string,
-            parent?: { filename?: string, exports: ScriptBase | LegacyCustomScript },
+            parent?: NodeJS.Module,
             isMain?: boolean
-        ) {
+        ): unknown {
             if (request !== "firebot") {
-                // eslint-disable-next-line prefer-rest-params
-                return originalLoad.apply(this, arguments);
+                return originalLoad.call(this, request, parent, isMain);
             }
 
             const parentPath = parent?.filename ? path.resolve(parent.filename) : null;
             if (!parentPath || !parentPath.startsWith(scriptsFolder + path.sep)) {
-                // require("firebot") from something other than a user script — deny.
+                // require("firebot") from something other than a custom script - deny.
                 return {};
             }
 
             const fileName = path.basename(parentPath);
 
-            // Try to resolve a manifest for the requesting script. During first-
-            // load it may not be available yet; that's fine — buildScriptApi
-            // tolerates undefined.
-            const activeEntry = Object.values(scriptManager["activePlugins"])
-                .find(e => e.fileName === fileName);
-            const manifest = (activeEntry?.script as ScriptBase | undefined)?.manifest
-                ?? (parent?.exports as ScriptBase | undefined)?.manifest;
+            const instance = manager.activePluginsByFileName.get(fileName)?.apiInstance
+                ?? manager.pendingApiInstances.get(fileName)
+                ?? manager.effectScriptApiInstances.get(fileName);
 
-            return buildScriptApi(manifest);
+            if (!instance) {
+                // If we don't have an instance, this is likely an
+                // isolated inspection load (loadScriptIsolated) or some other
+                // out-of-band require
+                return {};
+            }
+
+            return instance.api;
+        };
+    }
+
+    private createApiInstance(source: ScriptApiContextSource): ScriptApiInstance {
+        const handle = createScriptApiContext(source);
+        const api = buildScriptApi(handle.context);
+        return {
+            context: handle.context,
+            disposeBag: handle.disposeBag,
+            api,
+            setManifest: handle.setManifest
         };
     }
 
@@ -656,7 +761,7 @@ class ScriptManager {
                 delete require.cache[require.resolve(scriptFilePath)];
             }
 
-            return require(scriptFilePath);
+            return require(scriptFilePath) as LoadedScript;
         } catch (error) {
             frontendCommunicator.send("error", `Error loading the script '${scriptFilePath}' \n\n ${error}`);
             logger.error(error);
@@ -665,11 +770,11 @@ class ScriptManager {
     }
 
     /**
-     * Hack to load a script without ever registering it in `require.cache`.
+     * Hack to load a script without registering it in `require.cache`.
      *
      * Used for read-only inspection (manifest / parameter schema lookup) so that
      * loading a fresh copy of a script does not evict or replace the cached module
-     * a currently-running plugin is holding a reference to.
+     * of a currently-running plugin is holding a reference to.
      */
     private loadScriptIsolated(scriptFilePath: string): LoadedScript | null {
         try {
@@ -690,10 +795,13 @@ class ScriptManager {
         }
     }
 
-    private scriptCanBePlugin(s: LoadedScript): boolean {
-        const manifest = (s as ScriptBase).manifest;
-        // Plugin if: new-spec with type === "plugin", OR legacy (no manifest field at all)
-        return manifest == null || manifest.type === "plugin";
+    private async scriptCanBePlugin(s: LoadedScript): Promise<boolean> {
+        for (const executor of this.pluginExecutors) {
+            if (await executor.canHandle(s)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // #endregion
@@ -761,6 +869,14 @@ frontendCommunicator.onAsync(
         return true;
     }
 );
+
+PluginConfigManager.on("updated-item", async (config) => {
+    await scriptManager.reloadPluginConfig(config);
+});
+
+PluginConfigManager.on("deleted-item", async (config) => {
+    await scriptManager.onPluginConfigDeleted(config);
+});
 
 export default scriptManager;
 export { ScriptManager };

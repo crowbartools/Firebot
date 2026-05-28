@@ -13,8 +13,7 @@ type EffectScript = ScriptBase & {
 };
 
 /**
- * Executor for new-spec EffectScripts (manifest.type === "script").
- * Receives a flat parameters object and may return effects to execute.
+ * Executor for new-spec EffectScripts (manifest.type === "script")
  */
 export class EffectScriptExecutor extends IEffectScriptExecutor {
     constructor() {
@@ -25,7 +24,7 @@ export class EffectScriptExecutor extends IEffectScriptExecutor {
         return this.isEffectScript(script);
     }
 
-    async getScriptDetails(script: ScriptBase | LegacyCustomScript): Promise<ScriptDetails | null> {
+    getScriptDetails(script: ScriptBase | LegacyCustomScript): ScriptDetails | null {
         if (!this.isEffectScript(script)) {
             return null;
         }
@@ -70,6 +69,7 @@ export class EffectScriptExecutor extends IEffectScriptExecutor {
         }
 
         if (result.effects != null) {
+            // eslint-disable-next-line @typescript-eslint/no-use-before-define
             const execution = await runEffectsResult(result.effects, context, result.onEffectsDone);
             return { success: true, execution };
         }

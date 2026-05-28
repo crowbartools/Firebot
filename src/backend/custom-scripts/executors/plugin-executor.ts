@@ -19,10 +19,11 @@ import { CommandManager } from "../../chat/commands/command-manager";
 import { RestrictionsManager } from "../../restrictions/restriction-manager";
 import { GameManager } from "../../games/game-manager";
 import logger from "../../logwrapper";
+import IntegrationManager from "../../integrations/integration-manager";
 
-
-const integrationManager = require("../../integrations/integration-manager");
-
+/**
+ * Executor for new-spec Plugins (manifest.type === "plugin")
+ */
 export class PluginExecutor extends IPluginExecutor {
     constructor() {
         super();
@@ -32,7 +33,7 @@ export class PluginExecutor extends IPluginExecutor {
         return this.isPlugin(script);
     }
 
-    async getScriptDetails(script: ScriptBase | LegacyCustomScript): Promise<ScriptDetails> {
+    getScriptDetails(script: ScriptBase | LegacyCustomScript): ScriptDetails | null {
         if (!this.isPlugin(script)) {
             return null;
         }
@@ -69,7 +70,7 @@ export class PluginExecutor extends IPluginExecutor {
             await script.onLoad?.(context, isInstalling);
         } catch (error) {
             // best-effort rollback of anything we did register
-            await this.runUnregistrations(registrations);
+            this.runUnregistrations(registrations);
             return {
                 success: false,
                 error: (error as Error)?.message ?? "Error while loading plugin"
@@ -93,7 +94,7 @@ export class PluginExecutor extends IPluginExecutor {
         }
 
         if (registrations) {
-            await this.runUnregistrations(registrations);
+            this.runUnregistrations(registrations);
         }
 
         const context: ScriptContext = {
@@ -215,7 +216,7 @@ export class PluginExecutor extends IPluginExecutor {
                 const def = await resolve(entry);
                 const id = def?.definition?.id;
                 if (id) {
-                    integrationManager.registerIntegration(def);
+                    IntegrationManager.registerIntegration(def);
                     registrations.integrationIds.push(id);
                 }
             }
@@ -233,7 +234,7 @@ export class PluginExecutor extends IPluginExecutor {
         }
     }
 
-    private async runUnregistrations(registrations: PluginRegistrations) {
+    private runUnregistrations(registrations: PluginRegistrations) {
         for (const id of registrations.effectIds ?? []) {
             try {
                 EffectManager.unregisterEffect(id);
@@ -278,7 +279,7 @@ export class PluginExecutor extends IPluginExecutor {
         }
         for (const id of registrations.integrationIds ?? []) {
             try {
-                integrationManager.unregisterIntegration(id);
+                IntegrationManager.unregisterIntegration(id);
             } catch (e) {
                 logger.warn(`Failed to unregister integration ${id}`, e);
             }
@@ -295,14 +296,11 @@ export class PluginExecutor extends IPluginExecutor {
     private buildParameters(script: Plugin, config: InstalledPluginConfig): Record<string, unknown> {
         const schema = script.parametersSchema ?? [];
         return schema.reduce<Record<string, unknown>>((acc, param) => {
-            const name = (param as { name: string }).name;
-            const hasConfigured =
-                config.parameters &&
-                Object.prototype.hasOwnProperty.call(config.parameters, name);
-            if (hasConfigured) {
+            const name = param.name;
+            if (config.parameters && Object.hasOwn(config.parameters, name)) {
                 acc[name] = config.parameters[name];
-            } else if ((param as { default?: unknown }).default != null) {
-                acc[name] = (param as { default?: unknown }).default;
+            } else if (param.default != null) {
+                acc[name] = param.default;
             }
             return acc;
         }, {});
