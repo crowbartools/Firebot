@@ -1,17 +1,15 @@
 import type { Manifest, InstalledPluginConfig } from "../../../types/plugins";
 import logger from "../../logwrapper";
+import { registerScriptLogName, unregisterScriptLogName } from "../../script-log-names";
 import { DisposeBag, DisposeFn } from "./internal/dispose-bag";
 import { normalizeName } from "./internal/name-normalizer";
 import { resolveScriptDataDir } from "./internal/script-data-dir";
 
 /**
- * The per-script context handed to every namespace factory. Closures over this
- * object are how shims learn _which_ script is calling them, so resources can be
- * scoped (webhooks, notifications, data dirs) and logs can be tagged.
+ * The per-script context handed to every namespace factory.
  *
- * `manifest` is intentionally mutable on the manager side — it is populated
- * after the script is first loaded. Shim methods should read `ctx.manifest`
- * lazily (inside method bodies), never at factory time.
+ * `manifest` is populated after the script is first loaded. Shim methods should read `ctx.manifest`
+ * lazily (inside method bodies) instead of at factory time.
  */
 export interface ScriptApiContext {
     /** If a plugin, the installed config id.  */
@@ -63,6 +61,9 @@ export function createScriptApiContext(source: ScriptApiContextSource): ScriptAp
     const scriptDataDir = resolveScriptDataDir(scriptId);
     let manifest: Manifest | undefined;
 
+    registerScriptLogName(scriptId, fileName);
+    disposeBag.add(() => unregisterScriptLogName(scriptId));
+
     const context: ScriptApiContext = {
         pluginId,
         fileName,
@@ -83,6 +84,7 @@ export function createScriptApiContext(source: ScriptApiContextSource): ScriptAp
         disposeBag,
         setManifest(next) {
             manifest = next;
+            registerScriptLogName(scriptId, next?.name ?? fileName);
         }
     };
 }
