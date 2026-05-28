@@ -175,10 +175,6 @@ export async function whenReady() {
     const overlayWidgetConfigManager = (await import("../../../overlay-widgets/overlay-widget-config-manager")).default;
     overlayWidgetConfigManager.loadItems();
 
-    // windowManagement.updateSplashScreenStatus("Loading startup script data...");
-    // const startupScriptsManager = await import("../../../common/handlers/custom-scripts/startup-scripts-manager");
-    // startupScriptsManager.loadStartupConfig();
-
     windowManagement.updateSplashScreenStatus("Loading plugins...");
     const { PluginConfigManager } = await import("../../../custom-scripts/plugin-config-manager");
     PluginConfigManager.loadItems();
