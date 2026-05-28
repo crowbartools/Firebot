@@ -98,7 +98,7 @@ throw new Error(
 
 Type definitions and the script API contract for [Firebot](https://firebot.app) custom scripts and plugins.
 
-This package is **type-only**. At runtime the \`@crowbartools/firebot-types\` module is provided by the Firebot host application via a \`require()\` interceptor — installing this package in a standalone Node project and importing it will throw.
+This package is **type-only**. At runtime the \`@crowbartools/firebot-types\` module is provided by the Firebot host application via a \`require()\` interceptor (installing this package in a standalone Node project and importing it will throw).
 
 ## Install
 
