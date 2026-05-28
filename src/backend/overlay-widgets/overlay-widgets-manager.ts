@@ -1,4 +1,4 @@
-import { OverlayWidgetConfig, OverlayWidgetType, WidgetEventHandler, WidgetEventResult, WidgetUIAction } from "../../types/overlay-widgets";
+import { OverlayWidgetConfig, OverlayWidgetType, WidgetEventHandler, WidgetEventResult, WidgetUIAction, WidgetOverlayEvent } from "../../types/overlay-widgets";
 import { TypedEmitter } from "tiny-typed-emitter";
 import frontendCommunicator from "../common/frontend-communicator";
 import overlayWidgetConfigManager from "./overlay-widget-config-manager";

@@ -4,7 +4,9 @@
 // Everything a custom script can touch via `require("@crowbartools/firebot-types")`
 // should be defined here
 
-import type { EventSource, TriggeredEvent } from "./events";
+import type { TriggeredEvent } from "./events";
+import type { RunEffectsContext } from "./effects";
+import type { TwitchApi } from "../backend/streaming-platforms/twitch/api";
 
 export type ScriptLogMethod = (message: string, ...meta: unknown[]) => void;
 
@@ -94,14 +96,29 @@ export interface ScriptEventsApi {
         eventId: string,
         meta?: Record<string, unknown>
     ): Promise<void>;
+}
+
+export interface ScriptEffectsApi {
+    /**
+     * Register an existing effect to be available for an event.
+     * Useful for surfacing built-in effects on script provided events.
+     */
+    addEventToEffect(effectId: string, eventSourceId: string, eventId: string): void;
+
+    /** Reverse of `addEventToEffect`. */
+    removeEventFromEffect(effectId: string, eventSourceId: string, eventId: string): void;
 
     /**
-     * Register an event source.
+     * Run an effect list. Respects the list's run mode and effect queue, if any.
+     * Resolves once the effects have been run (queued lists resolve
+     * immediately).
      */
-    registerSource(source: EventSource): void;
+    processEffects(context: RunEffectsContext): Promise<unknown>;
+}
 
-    /** Unregister an event source */
-    unregisterSource(sourceId: string): void;
+export interface ScriptTwitchApi {
+    /** The full Twitch API surface. See {@linkcode TwitchApi}. */
+    api: typeof TwitchApi;
 }
 
 export interface FirebotScriptApi {
@@ -115,4 +132,8 @@ export interface FirebotScriptApi {
     storage: ScriptStorageApi;
     /** Subscribe to and trigger Firebot events + register event sources. */
     events: ScriptEventsApi;
+    /** Run effect lists. */
+    effects: ScriptEffectsApi;
+    /** Access to Firebot's Twitch API wrappers (Helix, chat, auth, etc). */
+    twitch: ScriptTwitchApi;
 }

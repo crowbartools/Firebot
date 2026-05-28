@@ -27,6 +27,12 @@ module.exports = function (grunt) {
         shell: {
             'tsc-types': {
                 command: 'tsc -p tsconfig.types.json'
+            },
+            'tsc-publish-deps': {
+                // Emits .d.ts for the backend/shared trees so cross-tree
+                // imports from src/types/*.d.ts (e.g. backend TwitchApi) resolve
+                // inside the published package
+                command: 'tsc -p tsconfig.publish-deps.json || true'
             }
         }
     });
@@ -79,7 +85,16 @@ throw new Error(
                     types: './types/*.d.ts'
                 }
             },
-            files: ['index.js', 'index.d.ts', 'types/**/*.d.ts', 'README.md', 'LICENSE'],
+            files: [
+                'index.js',
+                'index.d.ts',
+                'types/**/*.d.ts',
+                'backend/**/*.d.ts',
+                'server/**/*.d.ts',
+                'shared/**/*.d.ts',
+                'README.md',
+                'LICENSE'
+            ],
             keywords: ['firebot', 'twitch', 'types', 'script', 'plugin'],
             repository: {
                 type: 'git',
@@ -91,6 +106,9 @@ throw new Error(
             license: rootPkg.license,
             peerDependencies: {
                 '@types/node': '*'
+            },
+            publishConfig: {
+                access: "public"
             }
         };
 
@@ -172,6 +190,7 @@ The version of this package tracks the Firebot version that produced it.
 
     grunt.registerTask('publish-types', [
         'publish-types:clean',
+        'shell:tsc-publish-deps',
         'shell:tsc-types',
         'publish-types:copy-dts',
         'publish-types:write-shims'

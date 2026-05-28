@@ -2,7 +2,7 @@ import type {
     ScriptEventHandler,
     ScriptEventsApi
 } from "../../../../types/script-api";
-import type { EventSource, TriggeredEvent } from "../../../../types/events";
+import type { TriggeredEvent } from "../../../../types/events";
 import { defineScriptApiNamespace } from "../internal/define-namespace";
 
 import { EventManager } from "../../../events/event-manager";
@@ -38,14 +38,6 @@ export const createEventsApi = defineScriptApiNamespace<ScriptEventsApi>((ctx) =
 
         trigger(sourceId, eventId, meta) {
             return EventManager.triggerEvent(sourceId, eventId, meta ?? null);
-        },
-
-        registerSource(source: EventSource) {
-            return EventManager.registerEventSource(source);
-        },
-
-        unregisterSource(sourceId) {
-            return EventManager.unregisterEventSource(sourceId);
         }
     };
 });
