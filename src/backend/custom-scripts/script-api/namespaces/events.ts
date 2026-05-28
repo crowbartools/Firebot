@@ -1,0 +1,51 @@
+import type {
+    ScriptEventHandler,
+    ScriptEventsApi
+} from "../../../../types/script-api";
+import type { EventSource, TriggeredEvent } from "../../../../types/events";
+import { defineScriptApiNamespace } from "../internal/define-namespace";
+
+import { EventManager } from "../../../events/event-manager";
+
+
+export const createEventsApi = defineScriptApiNamespace<ScriptEventsApi>((ctx) => {
+    const handlers = new Set<ScriptEventHandler>();
+
+    const onEventTriggered = (event: TriggeredEvent) => {
+        if (handlers.size === 0) {
+            return;
+        }
+        for (const handler of handlers) {
+            try {
+                handler(event);
+            } catch (error) {
+                ctx.logger.warn("event handler threw", error);
+            }
+        }
+    };
+
+    EventManager.on("event-triggered", onEventTriggered);
+    ctx.onDispose(() => {
+        EventManager.off("event-triggered", onEventTriggered);
+        handlers.clear();
+    });
+
+    return {
+        onTriggered(handler) {
+            handlers.add(handler);
+            return () => handlers.delete(handler);
+        },
+
+        trigger(sourceId, eventId, meta) {
+            return EventManager.triggerEvent(sourceId, eventId, meta ?? null);
+        },
+
+        registerSource(source: EventSource) {
+            return EventManager.registerEventSource(source);
+        },
+
+        unregisterSource(sourceId) {
+            return EventManager.unregisterEventSource(sourceId);
+        }
+    };
+});

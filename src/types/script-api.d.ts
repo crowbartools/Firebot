@@ -4,6 +4,8 @@
 // Everything a custom script can touch via `require("@crowbartools/firebot-types")`
 // should be defined here
 
+import type { EventSource, TriggeredEvent } from "./events";
+
 export type ScriptLogMethod = (message: string, ...meta: unknown[]) => void;
 
 export interface ScriptLoggerApi {
@@ -75,6 +77,33 @@ export interface ScriptStorageApi {
     deleteFile(name: string): Promise<void>;
 }
 
+export type ScriptEventHandler = (event: TriggeredEvent) => void;
+
+export interface ScriptEventsApi {
+    /**
+     * Subscribe to all Firebot events as they trigger. Returns an `unsubscribe`
+     * function.
+     */
+    onTriggered(handler: ScriptEventHandler): () => void;
+
+    /**
+     * Manually trigger a Firebot event.
+     */
+    trigger(
+        sourceId: string,
+        eventId: string,
+        meta?: Record<string, unknown>
+    ): Promise<void>;
+
+    /**
+     * Register an event source.
+     */
+    registerSource(source: EventSource): void;
+
+    /** Unregister an event source */
+    unregisterSource(sourceId: string): void;
+}
+
 export interface FirebotScriptApi {
     /** Running Firebot version, e.g. `"5.65.0"`. */
     version: string;
@@ -84,4 +113,6 @@ export interface FirebotScriptApi {
     webhooks: ScriptWebhooksApi;
     /** Simple persistent storage rooted at this script's data directory. */
     storage: ScriptStorageApi;
+    /** Subscribe to and trigger Firebot events + register event sources. */
+    events: ScriptEventsApi;
 }

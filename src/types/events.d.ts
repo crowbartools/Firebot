@@ -99,3 +99,11 @@ export type EventGroup = {
     events: EventSettings[];
     active?: boolean;
 };
+
+export type TriggeredEvent = {
+    event: EventDefinition;
+    source: EventSource;
+    meta: Record<string, unknown>;
+    isManual: boolean;
+    isRetrigger: boolean;
+};

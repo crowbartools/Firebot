@@ -6,6 +6,7 @@ import type { ScriptApiContext } from "./context";
 import { createLoggerApi } from "./namespaces/logger";
 import { createWebhooksApi } from "./namespaces/webhooks";
 import { createStorageApi } from "./namespaces/storage";
+import { createEventsApi } from "./namespaces/events";
 
 /**
  * Composition root for the Firebot Script API
@@ -15,7 +16,8 @@ export function buildScriptApi(ctx: ScriptApiContext): FirebotScriptApi {
         version: app.getVersion(),
         logger: createLoggerApi(ctx),
         webhooks: createWebhooksApi(ctx),
-        storage: createStorageApi(ctx)
+        storage: createStorageApi(ctx),
+        events: createEventsApi(ctx)
     };
 }
 
