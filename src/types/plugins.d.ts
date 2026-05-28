@@ -8,10 +8,6 @@ import { RestrictionType } from "./restrictions";
 import { FirebotParams, FirebotParameterArray } from "./parameters";
 import { FirebotGame } from "./games";
 import { Integration } from "./integrations";
-// import { FrontendCommunicatorModule } from "./script-modules";
-// import EffectManager from "../backend/effects/effectManager";
-// import ReplaceVariableManager from "../backend/variables/replace-variable-manager";
-
 type GenericParameters = Record<string, unknown>;
 
 export type InstalledPluginConfig<Params extends GenericParameters = GenericParameters> = {

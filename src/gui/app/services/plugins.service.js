@@ -59,8 +59,7 @@
             };
 
             /**
-             * Validate + copy a .js file from disk into the user's scripts folder.
-             * Returns { success, fileName?, scriptType?, details?, error?, conflict? }
+             * Validate + copy a .js file from disk into the user's scripts folder
              */
             service.installPluginFromFile = function(filePath, overwrite = false) {
                 return $q.when(

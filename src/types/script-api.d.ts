@@ -1,7 +1,7 @@
 // Public contract types for the Firebot Script API.
 //
-// Everything a custom script can touch via `require("firebot")` should be
-// defined here
+// Everything a custom script can touch via `require("firebot")`
+// should be defined here
 
 import type winston from "winston";
 
