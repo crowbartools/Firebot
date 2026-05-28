@@ -7,7 +7,6 @@
         .factory("pluginsService", function(backendCommunicator, $q) {
             const service = {};
 
-            // Array of InstalledPlugin: { config, details }
             let installedPlugins = [];
 
             service.loadPlugins = function() {
@@ -72,12 +71,6 @@
                 );
             };
 
-            /**
-             * Replace the script file for an existing plugin with a new one chosen
-             * from disk. The previous plugin's onUnload is fired and its require
-             * cache is cleared before the new file is loaded.
-             * Returns { success, fileName?, scriptType?, details?, error?, conflict? }
-             */
             service.updatePluginFromFile = function(pluginId, filePath, overwrite = false) {
                 return $q.when(
                     backendCommunicator.fireEventAsync("plugin-manager:update-from-file", {

@@ -58,7 +58,7 @@
                     <div class="muted" style="font-size: 12px; padding: 0 4px 20px;">
                         Want to write your own scripts? Learn how <a
                             class="clickable"
-                            ng-click="openLink('https://github.com/crowbartools/Firebot/wiki/Writing-Custom-Scripts')"
+                            ng-click="openLink('https://docs.firebot.app/v5/dev/scripts')"
                         >here</a>.
                     </div>
 
@@ -197,8 +197,6 @@
                     if (rgb) {
                         return `rgba(${rgb.r},${rgb.g},${rgb.b},${opacity})`;
                     }
-                    // Fallback: let the browser handle named/other formats via a translucent overlay isn't possible,
-                    // so just return the color as-is (no opacity applied).
                     return color;
                 }
 
