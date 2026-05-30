@@ -83,6 +83,7 @@ export type FirebotSettingsTypes = {
     LegacySortTagsImported: boolean;
     LoggedInProfile: string;
     MaxBackupCount: number | "All";
+    MigratedLegacyStartUpScriptsToPlugins: boolean;
     MinimizeToTray: boolean;
     NotifyOnBeta: boolean;
     OpenEffectQueueMonitorOnLaunch: boolean;
@@ -220,6 +221,7 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     LastBackupDate: undefined,
     LoggedInProfile: undefined,
     MaxBackupCount: 25,
+    MigratedLegacyStartUpScriptsToPlugins: false,
     MinimizeToTray: false,
     NotifyOnBeta: false,
     OpenEffectQueueMonitorOnLaunch: false,

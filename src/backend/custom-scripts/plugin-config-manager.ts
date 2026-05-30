@@ -2,6 +2,7 @@ import { InstalledPluginConfig } from "../../types/plugins.js";
 import frontendCommunicator from "../common/frontend-communicator.js";
 import JsonDbManager from "../database/json-db-manager.js";
 import { ProfileManager } from "../common/profile-manager.js";
+import { SettingsManager } from "../common/settings-manager.js";
 import logger from "../logwrapper.js";
 
 /**
@@ -18,7 +19,13 @@ class PluginConfigManager extends JsonDbManager<InstalledPluginConfig> {
     }
 
     migrateLegacyStartUpScriptsToPlugins() {
+        const hasMigrated = SettingsManager.getSetting("MigratedLegacyStartUpScriptsToPlugins");
+        if (hasMigrated) {
+            return;
+        }
+
         if (!ProfileManager.profileDataPathExistsSync("startup-scripts-config.json")) {
+            SettingsManager.saveSetting("MigratedLegacyStartUpScriptsToPlugins", true);
             return;
         }
 
@@ -61,6 +68,8 @@ class PluginConfigManager extends JsonDbManager<InstalledPluginConfig> {
 
         // logger.info("Deleting start up scripts database");
         // ProfileManager.deletePathInProfile("startup-scripts-config.json");
+
+        SettingsManager.saveSetting("MigratedLegacyStartUpScriptsToPlugins", true);
 
         logger.info("Start up scripts migration complete");
     }
