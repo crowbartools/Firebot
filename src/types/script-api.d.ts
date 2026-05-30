@@ -121,6 +121,14 @@ export interface ScriptTwitchApi {
     api: typeof TwitchApi;
 }
 
+/**
+ * Access to this plugin's saved parameter values (the settings configured by
+ * the user)
+ */
+export interface ScriptParametersApi {
+    getAll<T extends Record<string, unknown> = Record<string, unknown>>(): T;
+}
+
 export interface ScriptFrontendCommunicatorApi {
     /** Send a synchronous event to the frontend. */
     send<ExpectedArg = unknown>(eventName: string, data?: ExpectedArg): void;
@@ -168,6 +176,8 @@ export interface FirebotScriptApi {
     effects: ScriptEffectsApi;
     /** Access to Firebot's Twitch API wrappers (Helix, chat, auth, etc). */
     twitch: ScriptTwitchApi;
+    /** This plugin's saved parameter values. */
+    parameters: ScriptParametersApi;
     /** Two-way messaging between the script and the frontend. */
     frontendCommunicator: ScriptFrontendCommunicatorApi;
 }

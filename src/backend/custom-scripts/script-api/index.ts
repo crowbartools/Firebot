@@ -9,6 +9,7 @@ import { createStorageApi } from "./namespaces/storage";
 import { createEventsApi } from "./namespaces/events";
 import { createEffectsApi } from "./namespaces/effects";
 import { createTwitchApi } from "./namespaces/twitch";
+import { createParametersApi } from "./namespaces/parameters";
 import { createFrontendCommunicatorApi } from "./namespaces/frontend-communicator";
 
 /**
@@ -23,6 +24,7 @@ export function buildScriptApi(ctx: ScriptApiContext): FirebotScriptApi {
         events: createEventsApi(ctx),
         effects: createEffectsApi(ctx),
         twitch: createTwitchApi(ctx),
+        parameters: createParametersApi(ctx),
         frontendCommunicator: createFrontendCommunicatorApi(ctx)
     };
 }
