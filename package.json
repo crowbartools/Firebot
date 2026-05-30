@@ -7,6 +7,7 @@
         "start": "grunt prep && electron . --dev",
         "setup": "npm ci && npm rebuild",
         "build": "grunt build",
+        "build:types": "grunt publish-types",
         "lint": "grunt lint"
     },
     "repository": "https://github.com/crowbartools/Firebot",

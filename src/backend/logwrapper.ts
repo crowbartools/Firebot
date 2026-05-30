@@ -7,6 +7,7 @@ import os from "os";
 import fs from "fs";
 import { getPathInUserData, getJsonDbInUserData } from "./common/data-access";
 import frontendCommunicator from "./common/frontend-communicator";
+import { getScriptLogName } from "./script-log-names";
 
 const DATE_FORMAT = "YYYY-MM-DD HH:mm:ss.SSS";
 const LOG_FOLDER = getPathInUserData("/logs");
@@ -62,10 +63,14 @@ class FrontendTransport extends Transport {
 function getLogFormat(addMetadataToMessage = true) {
     return format.combine(
         format.timestamp({ format: DATE_FORMAT }),
-        format.printf(
-        // eslint-disable-next-line @typescript-eslint/no-base-to-string, @typescript-eslint/restrict-template-expressions
-            info => `[${info.timestamp}] [${info.level.toUpperCase()}] ${info.message}${addMetadataToMessage === true ? formatMetadata(info) : ""}`
-        )
+        format.printf((info) => {
+            const scriptId = typeof info.script === "string" ? info.script : null;
+            const scriptTag = scriptId
+                ? ` [Script: ${getScriptLogName(scriptId) ?? scriptId}]`
+                : "";
+            // eslint-disable-next-line @typescript-eslint/no-base-to-string, @typescript-eslint/restrict-template-expressions
+            return `[${info.timestamp}] [${info.level.toUpperCase()}]${scriptTag} ${info.message}${addMetadataToMessage === true ? formatMetadata(info) : ""}`;
+        })
     );
 }
 

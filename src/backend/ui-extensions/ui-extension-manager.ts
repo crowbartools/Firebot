@@ -1,4 +1,4 @@
-import type { UIExtension } from "./extension-types";
+import type { UIExtension } from "../../types";
 import frontendCommunicator from "../common/frontend-communicator";
 
 class UIExtensionManager {

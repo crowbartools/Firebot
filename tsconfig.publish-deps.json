@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "skipLibCheck": true,
+        "moduleResolution": "node",
+        "module": "CommonJS",
+        "target": "es2023",
+        "strict": false,
+        "noImplicitAny": false,
+        "experimentalDecorators": true,
+        "downlevelIteration": true,
+        "baseUrl": ".",
+        "paths": {
+            "*": ["node_modules/*"]
+        },
+        "outDir": "dist/types",
+        "rootDir": "./src"
+    },
+    "include": ["src/backend/**/*.ts"],
+    "exclude": ["src/**/*.d.ts", "src/main.ts"]
+}

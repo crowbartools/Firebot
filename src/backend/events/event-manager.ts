@@ -3,7 +3,8 @@ import { TypedEmitter } from "tiny-typed-emitter";
 import type {
     EventManagerModule,
     EventDefinition,
-    EventSource
+    EventSource,
+    TriggeredEvent
 } from "../../types";
 
 import { AccountAccess } from "../common/account-access";
@@ -24,13 +25,7 @@ type RegisteredEventSource = Omit<EventSource, "events"> & {
 class EventManager extends TypedEmitter<{
     "eventSourceRegistered": (source: RegisteredEventSource) => void;
     "eventSourceUnregistered": (id: string) => void;
-    "event-triggered": (event: {
-        event: EventDefinition;
-        source: EventSource;
-        meta: Record<string, unknown>;
-        isManual: boolean;
-        isRetrigger: boolean;
-    }) => void;
+    "event-triggered": (event: TriggeredEvent) => void;
 }> implements EventManagerModule {
     private _registeredEventSources: RegisteredEventSource[] = [];
 

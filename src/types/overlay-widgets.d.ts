@@ -219,7 +219,7 @@ export interface IOverlayWidgetEventUtils {
      * @param generateWidgetHtml Function that generates the HTML for the widget based on its current configuration.
      * @param updateOnMessage If true, the widget HTML will be updated when a "message" event is received. Default is false.
      */
-    handleOverlayEvent(generateWidgetHtml: (widgetConfig: WidgetOverlayEvent["data"]["widgetConfig"]) => string, updateOnMessage = false): void;
+    handleOverlayEvent(generateWidgetHtml: (widgetConfig: WidgetOverlayEvent["data"]["widgetConfig"]) => string, updateOnMessage?: boolean): void;
     getWidgetPositionStyle(position?: Position): string;
     getWidgetContainerElement(): HTMLElement | null;
     initializeWidget(

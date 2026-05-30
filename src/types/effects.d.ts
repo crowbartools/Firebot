@@ -29,7 +29,7 @@ export type EffectTriggerResponse = {
         bubbleStop: boolean;
     };
     outputs?: {
-        [x as string]: unknown;
+        [x: string]: unknown;
     };
 };
 
