@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { EffectInstance, EffectList, EffectType } from "./effects";
 import { Trigger } from "./triggers";
 import { Awaitable } from "./util-types";
@@ -112,22 +113,24 @@ export interface EffectScript<Params extends FirebotParams = FirebotParams> exte
 
 // Supplants the "Start up" script functionality
 export interface Plugin<Params extends FirebotParams = FirebotParams> extends ScriptBase<Params> {
-    // Note: At least one is required: onLoad or registers.*
-    // if not met, the script will not be loaded and it should be logged the script does nothing
-
-    // Automatically handles registration with appropriate managers for definitions
-    // when the script is unloaded, definitions will automagically be unregistered
+    /**
+     * Automatically handles registration with appropriate managers for definitions
+     * when the script is unloaded, definitions will automagically be unregistered.
+     *
+     * Array entries can be direct definitions or functions that return definitions
+     * (or promises of definitions) for dynamic registration based on context (e.g. parameter values).
+     */
     registers?: {
 
         // If value within array is a function, call said function to get definition
         // If definition is or evaluates to promise, await promise
-        effects?: DynamicArray<EffectType>;
+        effects?: DynamicArray<EffectType<any, any>>;
         eventSources?: DynamicArray<EventSource>;
         variables?: DynamicArray<ReplaceVariable>;
-        integrations?: DynamicArray<Integration>;
+        integrations?: DynamicArray<Integration<any>>;
         filters?: DynamicArray<EventFilter>;
-        restrictions?: DynamicArray<RestrictionType>;
-        systemCommands?: DynamicArray<SystemCommand>;
+        restrictions?: DynamicArray<RestrictionType<any>>;
+        systemCommands?: DynamicArray<SystemCommand<any>>;
         games?: DynamicArray<FirebotGame>;
         uiExtensions?: DynamicArray<UIExtension>;
     };
@@ -154,7 +157,7 @@ export type InstalledPlugin = {
 type LegacyScriptParameters = Record<
     string,
     {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         type: any;
         title?: string;
         description?: string;
