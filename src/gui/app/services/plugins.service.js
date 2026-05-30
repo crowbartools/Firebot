@@ -37,6 +37,18 @@
                 ).then(() => service.loadPlugins());
             };
 
+            /**
+             * Saves the config and waits for the plugin to (re)load on the backend before resolving
+             */
+            service.reloadPlugin = function(pluginConfig) {
+                if (!pluginConfig || !pluginConfig.id) {
+                    return $q.resolve(false);
+                }
+                return $q.when(
+                    backendCommunicator.fireEventAsync("plugin-manager:reload", pluginConfig)
+                ).then(() => service.loadPlugins());
+            };
+
             service.deletePlugin = function(pluginId) {
                 if (!pluginId) {
                     return $q.resolve(false);

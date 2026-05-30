@@ -77,6 +77,8 @@ class ScriptManager {
     private pendingApiInstances: Map<string, ScriptApiInstance> = new Map();
     private effectScriptApiInstances: Map<string, ScriptApiInstance> = new Map();
 
+    private startingPlugins: Map<string, Promise<void>> = new Map();
+
     private requireInterceptorInstalled = false;
 
     private pluginExecutors: IPluginExecutor[] = [
@@ -100,6 +102,21 @@ class ScriptManager {
             return;
         }
 
+        // guard against double loading the same plugin
+        const existingStart = this.startingPlugins.get(pluginConfig.id);
+        if (existingStart != null) {
+            return existingStart;
+        }
+
+        const startPromise = this.doStartPlugin(pluginConfig, installing)
+            .finally(() => {
+                this.startingPlugins.delete(pluginConfig.id);
+            });
+        this.startingPlugins.set(pluginConfig.id, startPromise);
+        return startPromise;
+    }
+
+    private async doStartPlugin(pluginConfig: InstalledPluginConfig, installing?: boolean): Promise<void> {
         if (this.activePlugins[pluginConfig.id]) {
             logger.warn(`Plugin ${pluginConfig.fileName} is already loaded.`);
             return;
