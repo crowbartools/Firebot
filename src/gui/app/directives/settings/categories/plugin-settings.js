@@ -4,7 +4,7 @@
 
     angular
         .module("firebotApp")
-        .component("scriptsSettings", {
+        .component("pluginSettings", {
             template: `
                 <div>
 
@@ -85,7 +85,7 @@
 
                         <div ng-if="getPlugins().length > 0" style="display: flex; flex-direction: column; gap: 10px;">
                             <div
-                                ng-repeat="plugin in getPlugins() track by plugin.config.id"
+                                ng-repeat="plugin in getPlugins() | orderBy:getPluginName track by plugin.config.id"
                                 style="display: flex; align-items: flex-start; gap: 14px; padding: 14px 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; min-width: 0;"
                             >
                                 <div
@@ -98,7 +98,7 @@
                                 <div style="flex-grow: 1; min-width: 0;">
                                     <div style="display:flex; align-items:baseline; gap: 8px; flex-wrap: wrap;">
                                         <span style="font-weight: 600; font-size: 15px; word-break: break-word;">
-                                            {{plugin.details.manifest.name || plugin.config.fileName}}
+                                            {{getPluginName(plugin)}}
                                         </span>
                                         <span
                                             class="muted"
@@ -157,6 +157,10 @@
                 $scope.settings = settingsService;
 
                 pluginsService.loadPlugins();
+
+                $scope.getPluginName = (plugin) => {
+                    return plugin.details.manifest.name || plugin.config.fileName;
+                };
 
                 $scope.isScriptingEnabled = function() {
                     return !!settingsService.getSetting('RunCustomScripts');

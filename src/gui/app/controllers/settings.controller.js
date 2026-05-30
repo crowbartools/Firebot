@@ -47,7 +47,7 @@
                     name: "Plugins & Scripts",
                     description: "Install plugins and manage script execution settings.",
                     icon: "fa-puzzle-piece",
-                    template: "<scripts-settings />"
+                    template: "<plugin-settings />"
                 },
                 {
                     name: "Integrations",
