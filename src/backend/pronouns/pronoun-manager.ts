@@ -51,9 +51,9 @@ class FirebotPronounManager {
         }
     }
 
-    async getUserPronouns(username: string, fallback: string = "they/them"): Promise<UserPronoun | undefined> {
+    async getUserPronouns(username: string, fallback: string = undefined): Promise<UserPronoun | undefined> {
         if (!!username?.length) {
-            const cachedPronouns =  this._userPronounCache.get<UserPronoun>(username);
+            const cachedPronouns = this._userPronounCache.get<UserPronoun>(username);
 
             if (cachedPronouns) {
                 return cachedPronouns;
@@ -87,7 +87,7 @@ class FirebotPronounManager {
             : undefined;
     };
 
-    async getUserFriendlyPronounString(username: string, fallback: string = "they/them", type: "subject" | "object" | "both" = "both") {
+    async getUserFriendlyPronounString(username: string, fallback: string = undefined, type: "subject" | "object" | "both" = "both") {
         const pronouns = await this.getUserPronouns(username, fallback);
 
         if (pronouns) {
