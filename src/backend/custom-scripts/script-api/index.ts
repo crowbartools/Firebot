@@ -9,6 +9,7 @@ import { createStorageApi } from "./namespaces/storage";
 import { createEventsApi } from "./namespaces/events";
 import { createEffectsApi } from "./namespaces/effects";
 import { createTwitchApi } from "./namespaces/twitch";
+import { createFrontendCommunicatorApi } from "./namespaces/frontend-communicator";
 
 /**
  * Composition root for the Firebot Script API
@@ -21,7 +22,8 @@ export function buildScriptApi(ctx: ScriptApiContext): FirebotScriptApi {
         storage: createStorageApi(ctx),
         events: createEventsApi(ctx),
         effects: createEffectsApi(ctx),
-        twitch: createTwitchApi(ctx)
+        twitch: createTwitchApi(ctx),
+        frontendCommunicator: createFrontendCommunicatorApi(ctx)
     };
 }
 

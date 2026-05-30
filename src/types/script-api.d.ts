@@ -121,6 +121,38 @@ export interface ScriptTwitchApi {
     api: typeof TwitchApi;
 }
 
+export interface ScriptFrontendCommunicatorApi {
+    /** Send a synchronous event to the frontend. */
+    send<ExpectedArg = unknown>(eventName: string, data?: ExpectedArg): void;
+
+    /**
+     * Send an asynchronous event to the frontend and await the reply it sends
+     * back.
+     */
+    fireEventAsync<ReturnPayload = void, ExpectedArg = unknown>(
+        eventName: string,
+        data?: ExpectedArg
+    ): Promise<ReturnPayload>;
+
+    /**
+     * Handle a synchronous event triggered by the frontend. Returns an
+     * `unsubscribe` function.
+     */
+    on<ExpectedArgs extends Array<unknown> = [], ReturnPayload = void>(
+        eventName: string,
+        callback: (...args: ExpectedArgs) => ReturnPayload
+    ): () => void;
+
+    /**
+     * Handle an asynchronous event triggered by the frontend. Returns an
+     * `unsubscribe` function.
+     */
+    onAsync<ExpectedArgs extends Array<unknown> = [], ReturnPayload = void>(
+        eventName: string,
+        callback: (...args: ExpectedArgs) => Promise<ReturnPayload>
+    ): () => void;
+}
+
 export interface FirebotScriptApi {
     /** Running Firebot version, e.g. `"5.65.0"`. */
     version: string;
@@ -136,4 +168,6 @@ export interface FirebotScriptApi {
     effects: ScriptEffectsApi;
     /** Access to Firebot's Twitch API wrappers (Helix, chat, auth, etc). */
     twitch: ScriptTwitchApi;
+    /** Two-way messaging between the script and the frontend. */
+    frontendCommunicator: ScriptFrontendCommunicatorApi;
 }
