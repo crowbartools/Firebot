@@ -152,7 +152,7 @@
                 </div>
           `,
             controller: function($rootScope, $scope, settingsService, utilityService,
-                pluginsService, backendCommunicator, ngToast, $q) {
+                pluginsService, backendCommunicator, ngToast, $q, profileManager) {
                 $scope.openLink = $rootScope.openLinkExternally;
                 $scope.settings = settingsService;
 
@@ -339,6 +339,7 @@
 
                 $scope.installPlugin = function() {
                     $q.when(backendCommunicator.fireEventAsync("open-file-browser", {
+                        currentPath: profileManager.getPathInProfile("/scripts"),
                         options: {
                             title: "Select Plugin Script",
                             buttonLabel: "Select",
@@ -389,6 +390,7 @@
                         return;
                     }
                     $q.when(backendCommunicator.fireEventAsync("open-file-browser", {
+                        currentPath: profileManager.getPathInProfile("/scripts"),
                         options: {
                             title: "Select New Plugin Script",
                             buttonLabel: "Select",
