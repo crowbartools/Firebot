@@ -7,7 +7,8 @@
         "start": "grunt prep && electron . --dev",
         "setup": "npm ci && npm rebuild",
         "build": "grunt build",
-        "lint": "grunt lint"
+        "lint": "grunt lint",
+        "test": "jest"
     },
     "repository": "https://github.com/crowbartools/Firebot",
     "keywords": [
@@ -47,6 +48,7 @@
         "grunt-include-source": "^1.1.0",
         "grunt-sass": "^3.1.0",
         "grunt-shell": "^4.0.0",
+        "jest": "^30.4.2",
         "sass": "^1.69.7",
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.45.0"
