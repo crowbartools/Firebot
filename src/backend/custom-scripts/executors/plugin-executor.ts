@@ -9,7 +9,7 @@ import {
 import {
     IPluginExecutor,
     PluginRegistrations,
-    ScriptExecutionResult
+    PluginExecutionResult
 } from "./script-executor.interface";
 import { EffectManager } from "../../effects/effect-manager";
 import { ReplaceVariableManager } from "../../variables/replace-variable-manager";
@@ -20,6 +20,7 @@ import { RestrictionsManager } from "../../restrictions/restriction-manager";
 import { GameManager } from "../../games/game-manager";
 import logger from "../../logwrapper";
 import IntegrationManager from "../../integrations/integration-manager";
+import UIExtensionManager from "../../ui-extensions/ui-extension-manager";
 
 /**
  * Executor for new-spec Plugins (manifest.type === "plugin")
@@ -48,7 +49,7 @@ export class PluginExecutor extends IPluginExecutor {
         script: ScriptBase | LegacyCustomScript,
         config: InstalledPluginConfig,
         isInstalling?: boolean
-    ): Promise<ScriptExecutionResult> {
+    ): Promise<PluginExecutionResult> {
         if (!this.isPlugin(script)) {
             return {
                 success: false,
@@ -232,6 +233,17 @@ export class PluginExecutor extends IPluginExecutor {
                 }
             }
         }
+
+        if (Array.isArray(r.uiExtensions)) {
+            registrations.uiExtensionIds = [];
+            for (const entry of r.uiExtensions) {
+                const def = await resolve(entry);
+                if (def?.id) {
+                    UIExtensionManager.registerUIExtension(def);
+                    registrations.uiExtensionIds.push(def.id);
+                }
+            }
+        }
     }
 
     private runUnregistrations(registrations: PluginRegistrations) {
@@ -291,6 +303,7 @@ export class PluginExecutor extends IPluginExecutor {
                 logger.warn(`Failed to unregister game ${id}`, e);
             }
         }
+        // UI Extensions can't be dynamically unregistered. Users will need to restart Firebot to fully remove.
     }
 
     private buildParameters(script: Plugin, config: InstalledPluginConfig): Record<string, unknown> {

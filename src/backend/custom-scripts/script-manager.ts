@@ -28,7 +28,7 @@ import {
     IEffectScriptExecutor,
     IPluginExecutor,
     PluginRegistrations,
-    ScriptExecutionResult
+    PluginExecutionResult
 } from "./executors/script-executor.interface";
 import { buildScriptApi, createScriptApiContext } from "./script-api";
 import type { ScriptApiContext, ScriptApiContextSource } from "./script-api";
@@ -137,9 +137,9 @@ class ScriptManager {
             return;
         }
 
-        let result: ScriptExecutionResult;
+        let result: PluginExecutionResult;
         try {
-            result = await executor.executePlugin(script, pluginConfig, installing);
+            await executor.executePlugin(script, pluginConfig, installing);
         } catch (error) {
             result = { success: false as const, error: (error as Error)?.message ?? "Unknown error" };
         }

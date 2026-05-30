@@ -31,6 +31,7 @@ export * from "./sort-tags";
 export * from "./timers";
 export * from "./triggers";
 export * from "./ui";
+export * from "./ui-extensions";
 export * from "./util-types";
 export * from "./variable-macros";
 export * from "./variables";

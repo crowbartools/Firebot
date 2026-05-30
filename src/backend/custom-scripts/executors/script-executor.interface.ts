@@ -15,10 +15,6 @@ abstract class IBaseScriptExecutor {
     ): Awaitable<ScriptDetails | null>;
 }
 
-/**
- * Bookkeeping of items a plugin registered with various managers so they
- * can be cleanly unregistered on unload.
- */
 export interface PluginRegistrations {
     effectIds?: string[];
     variableHandles?: string[];
@@ -28,9 +24,10 @@ export interface PluginRegistrations {
     restrictionIds?: string[];
     integrationIds?: string[];
     gameIds?: string[];
+    uiExtensionIds?: string[];
 }
 
-export type ScriptExecutionResult =
+export type PluginExecutionResult =
     | {
         success: true;
         registrations?: PluginRegistrations;
@@ -45,7 +42,7 @@ export abstract class IPluginExecutor extends IBaseScriptExecutor {
         script: ScriptBase | LegacyCustomScript,
         config: InstalledPluginConfig,
         isInstalling?: boolean
-    ): Awaitable<ScriptExecutionResult>;
+    ): Awaitable<PluginExecutionResult>;
 
     abstract unloadPlugin(
         script: ScriptBase | LegacyCustomScript,

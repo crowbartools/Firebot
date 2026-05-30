@@ -6,7 +6,7 @@ import {
     ScriptDetails,
     FirebotParameterArray
 } from "../../../types";
-import { IPluginExecutor, ScriptExecutionResult } from "./script-executor.interface";
+import { IPluginExecutor, PluginExecutionResult } from "./script-executor.interface";
 import { buildRunRequest } from "../../common/handlers/custom-scripts/custom-script-helpers";
 import { wait } from "../../utils";
 import logger from "../../logwrapper";
@@ -40,7 +40,7 @@ export class LegacyStartUpScript extends IPluginExecutor {
     async executePlugin(
         script: ScriptBase | LegacyCustomScript,
         config: InstalledPluginConfig
-    ): Promise<ScriptExecutionResult> {
+    ): Promise<PluginExecutionResult> {
         if (!this.isLegacyScript(script)) {
             return {
                 success: false,

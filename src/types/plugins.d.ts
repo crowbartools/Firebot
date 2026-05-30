@@ -8,6 +8,7 @@ import { RestrictionType } from "./restrictions";
 import { FirebotParams, FirebotParameterArray } from "./parameters";
 import { FirebotGame } from "./games";
 import { Integration } from "./integrations";
+import { UIExtension } from "./ui-extensions";
 
 type NoResult = Awaitable<void>;
 
@@ -102,12 +103,12 @@ export interface Plugin<Params extends FirebotParams = FirebotParams> extends Sc
         effects?: DynamicArray<EffectType>;
         eventSources?: DynamicArray<EventSource>;
         variables?: DynamicArray<ReplaceVariable>;
-        // endpoints?: DynamicArray<HttpEndpoint>;
         integrations?: DynamicArray<Integration>;
         filters?: DynamicArray<EventFilter>;
         restrictions?: DynamicArray<RestrictionType>;
         systemCommands?: DynamicArray<SystemCommand>;
         games?: DynamicArray<FirebotGame>;
+        uiExtensions?: DynamicArray<UIExtension>;
     };
 
     // Called when the script is loaded
