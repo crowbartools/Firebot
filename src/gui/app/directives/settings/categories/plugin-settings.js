@@ -279,14 +279,18 @@
                 };
 
                 $scope.removePlugin = function(plugin) {
-                    utilityService.showConfirmationModal({
-                        title: "Remove Plugin",
-                        question: `Are you sure you want to remove "${plugin.details.manifest.name || plugin.config.fileName}"?`,
-                        confirmLabel: "Remove",
-                        confirmBtnType: "btn-danger"
-                    }).then((confirmed) => {
-                        if (confirmed) {
-                            pluginsService.deletePlugin(plugin.config.id);
+                    utilityService.showModal({
+                        component: "removePluginModal",
+                        size: "sm",
+                        backdrop: true,
+                        keyboard: true,
+                        resolveObj: {
+                            pluginName: () => plugin.details.manifest.name || plugin.config.fileName
+                        },
+                        closeCallback: (response) => {
+                            if (response && response.confirmed) {
+                                pluginsService.deletePlugin(plugin.config.id, response.deleteScriptFile);
+                            }
                         }
                     });
                 };

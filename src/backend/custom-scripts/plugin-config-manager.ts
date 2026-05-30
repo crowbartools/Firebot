@@ -87,9 +87,4 @@ frontendCommunicator.onAsync("plugin-manager:save-config", async (pluginConfig: 
     return manager.saveItem(pluginConfig);
 });
 
-// eslint-disable-next-line @typescript-eslint/require-await
-frontendCommunicator.onAsync("plugin-manager:delete", async (pluginConfigId: string) => {
-    return manager.deleteItem(pluginConfigId);
-});
-
 export { manager as PluginConfigManager };

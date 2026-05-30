@@ -406,6 +406,13 @@ class ScriptManager {
         const destFolder = ProfileManager.getPathInProfile("/scripts");
         const destPath = path.resolve(destFolder, fileName);
 
+        // If the selected file is already inside the scripts folder,
+        // there's nothing to do - just validate and return details.
+        const sourceIsInScriptsFolder = path.resolve(sourcePath) === destPath;
+        if (sourceIsInScriptsFolder) {
+            return this.getScriptDetailsByFileName(fileName);
+        }
+
         if (existsSync(destPath) && !overwrite) {
             return { success: false, error: `A script named '${fileName}' already exists in the scripts folder.`, conflict: true };
         }
@@ -456,31 +463,53 @@ class ScriptManager {
 
     /**
      * Called by PluginConfigManager when a config is deleted, so we can stop the
-     * plugin and remove the underlying script file if no other config references it.
+     * plugin.
      */
     async onPluginConfigDeleted(pluginConfig: InstalledPluginConfig): Promise<void> {
         await this.stopPlugin(pluginConfig.id, true);
+    }
 
+    async deleteScriptFileIfUnreferenced(fileName: string): Promise<void> {
         const stillReferenced = PluginConfigManager
             .getAllItems()
-            .some(c => c.fileName === pluginConfig.fileName);
-        if (!stillReferenced) {
-            const filePath = this.getScriptFilePath(pluginConfig.fileName);
-            try {
-                if (existsSync(filePath)) {
-                    await fsp.unlink(filePath);
-                }
-            } catch (error) {
-                logger.warn(`Failed to delete script file for ${pluginConfig.fileName}`, error);
+            .some(c => c.fileName === fileName);
+        if (stillReferenced) {
+            return;
+        }
+        const filePath = this.getScriptFilePath(fileName);
+        try {
+            if (existsSync(filePath)) {
+                await fsp.unlink(filePath);
             }
+        } catch (error) {
+            logger.warn(`Failed to delete script file for ${fileName}`, error);
         }
     }
 
     /**
+     * Remove an installed plugin. Stops the plugin and deletes its config, and
+     * optionally deletes the underlying script file from the scripts folder.
+     */
+    async deletePlugin(pluginId: string, deleteScriptFile = false): Promise<boolean> {
+        const config = PluginConfigManager.getItem(pluginId);
+        if (config == null) {
+            return false;
+        }
+
+        const { fileName } = config;
+        await this.stopPlugin(pluginId, true);
+        PluginConfigManager.deleteItem(pluginId);
+
+        if (deleteScriptFile) {
+            await this.deleteScriptFileIfUnreferenced(fileName);
+        }
+
+        return true;
+    }
+
+    /**
      * Replace the underlying script file for an existing plugin config with a new file
-     * chosen on disk. Fires `onUnload` for the previous version, clears its require cache,
-     * swaps the file (deleting the old one when the name changes), then re-starts the
-     * plugin so the new code is picked up dynamically.
+     * chosen on disk.
      */
     async updatePluginFromPath(
         pluginId: string,
@@ -923,6 +952,15 @@ frontendCommunicator.onAsync(
     async (config: InstalledPluginConfig) => {
         await scriptManager.reloadPluginConfig(config);
         return true;
+    }
+);
+
+frontendCommunicator.onAsync(
+    "plugin-manager:delete",
+    async (data: string | { id: string, deleteScriptFile?: boolean }) => {
+        const id = typeof data === "string" ? data : data?.id;
+        const deleteScriptFile = typeof data !== "string" && data?.deleteScriptFile === true;
+        return scriptManager.deletePlugin(id, deleteScriptFile);
     }
 );
 

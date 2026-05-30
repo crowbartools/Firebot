@@ -49,12 +49,15 @@
                 ).then(() => service.loadPlugins());
             };
 
-            service.deletePlugin = function(pluginId) {
+            service.deletePlugin = function(pluginId, deleteScriptFile = false) {
                 if (!pluginId) {
                     return $q.resolve(false);
                 }
                 return $q.when(
-                    backendCommunicator.fireEventAsync("plugin-manager:delete", pluginId)
+                    backendCommunicator.fireEventAsync("plugin-manager:delete", {
+                        id: pluginId,
+                        deleteScriptFile: deleteScriptFile === true
+                    })
                 ).then(() => service.loadPlugins());
             };
 
