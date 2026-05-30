@@ -213,4 +213,10 @@ router.route("/queues/:queueId/clear")
     .get(queues.clearQueue)
     .post(queues.clearQueue);
 
+// Plugins
+import * as plugins from "./controllers/plugins-api-controller";
+
+router.route("/plugins/restart")
+    .post(plugins.restartPlugin);
+
 export = router;

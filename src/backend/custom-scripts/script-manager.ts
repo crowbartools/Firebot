@@ -73,7 +73,6 @@ type GetScriptDetailsResult = {
 
 class ScriptManager {
     private activePlugins: Record<string, ActivePluginEntry> = {};
-    private activePluginsByFileName: Map<string, ActivePluginEntry> = new Map();
 
     private pendingApiInstances: Map<string, ScriptApiInstance> = new Map();
     private effectScriptApiInstances: Map<string, ScriptApiInstance> = new Map();
@@ -103,6 +102,13 @@ class ScriptManager {
 
         if (this.activePlugins[pluginConfig.id]) {
             logger.warn(`Plugin ${pluginConfig.fileName} is already loaded.`);
+            return;
+        }
+
+        // Guard against two different plugin configs pointing at the same script file
+        const existingForFile = this.getActivePluginByFileName(pluginConfig.fileName);
+        if (existingForFile) {
+            logger.warn(`Cannot start plugin ${pluginConfig.fileName}: another plugin (${existingForFile.config.id}) is already running from the same script file.`);
             return;
         }
 
@@ -139,7 +145,7 @@ class ScriptManager {
 
         let result: PluginExecutionResult;
         try {
-            await executor.executePlugin(script, pluginConfig, installing);
+            result = await executor.executePlugin(script, pluginConfig, installing);
         } catch (error) {
             result = { success: false as const, error: (error as Error)?.message ?? "Unknown error" };
         }
@@ -153,7 +159,6 @@ class ScriptManager {
                 fileName: pluginConfig.fileName,
                 apiInstance
             };
-            this.activePluginsByFileName.set(pluginConfig.fileName, this.activePlugins[pluginConfig.id]);
             this.pendingApiInstances.delete(pluginConfig.fileName);
             logger.info(`Started plugin ${pluginConfig.fileName}`);
         } else {
@@ -197,8 +202,33 @@ class ScriptManager {
         await active.apiInstance.disposeBag.drain();
 
         delete this.activePlugins[pluginId];
-        this.activePluginsByFileName.delete(active.fileName);
         logger.info(`Stopped plugin ${active.fileName}`);
+    }
+
+    /**
+     * Convenience helper for hot-reloading. Finds an active plugin by its script file
+     * name and restarts it (stop then start). Does nothing if no active plugin matches.
+     */
+    async restartPluginByFileName(fileName: string): Promise<void> {
+        if (!fileName) {
+            return;
+        }
+
+        const active = this.getActivePluginByFileName(fileName);
+        if (!active) {
+            return;
+        }
+
+        const { id } = active.config;
+
+        await this.stopPlugin(id, false);
+
+        const config = PluginConfigManager.getItem(id);
+        if (!config) {
+            return;
+        }
+
+        await this.startPlugin(config, false);
     }
 
     async stopAllPlugins(): Promise<void> {
@@ -219,7 +249,7 @@ class ScriptManager {
     async reloadPluginConfig(pluginConfig: InstalledPluginConfig): Promise<void> {
         const active = this.activePlugins[pluginConfig.id];
 
-        // Disabled now → stop if running
+        // Disabled now -> stop if running
         if (pluginConfig.enabled === false) {
             if (active) {
                 await this.stopPlugin(pluginConfig.id, false);
@@ -227,13 +257,13 @@ class ScriptManager {
             return;
         }
 
-        // Enabled, not yet running → start
+        // Enabled, not yet running -> start
         if (!active) {
             await this.startPlugin(pluginConfig, false);
             return;
         }
 
-        // Enabled, already running → update config + notify
+        // Enabled, already running -> update config + notify
         active.config = pluginConfig;
         try {
             await active.executor.updateParameters?.(active.script, pluginConfig);
@@ -690,6 +720,10 @@ class ScriptManager {
         return path.resolve(scriptsFolder, fileName);
     }
 
+    private getActivePluginByFileName(fileName: string): ActivePluginEntry | undefined {
+        return Object.values(this.activePlugins).find(entry => entry.fileName === fileName);
+    }
+
     private async findPluginExecutor(script: LoadedScript): Promise<IPluginExecutor | undefined> {
         for (const executor of this.pluginExecutors) {
             if (await executor.canHandle(script)) {
@@ -729,7 +763,7 @@ class ScriptManager {
 
             const fileName = path.basename(parentPath);
 
-            const instance = manager.activePluginsByFileName.get(fileName)?.apiInstance
+            const instance = manager.getActivePluginByFileName(fileName)?.apiInstance
                 ?? manager.pendingApiInstances.get(fileName)
                 ?? manager.effectScriptApiInstances.get(fileName);
 
