@@ -48,19 +48,34 @@ export interface Manifest {
     author: string;
     description: string | ManifestDescription;
 
-    keywords?: string[];
+    // keywords?: string[];
 
+    /**
+     * A link to the plugin's source code repository
+     */
     repo?: string;
 
-    // Note: autofilled if repo is assumed github and not specified
+    /**
+     * A link to the plugin's website
+     * If the repo is on GitHub and the website is not specified, it will default to the GitHub repo URL.
+     */
     website?: string;
-    report?: string;
-    source?: string;
+    /**
+     * A link to the plugin's issue tracker or support server (e.g. Discord).
+     * If the repo is on GitHub and support is not specified, it will default to the GitHub issues URL.
+     */
+    support?: string;
 
     minimumFirebotVersion?: ManifestFirebotVersion;
     maximumFirebotVersion?: ManifestFirebotVersion;
 
+    /**
+     * A FontAwesome icon name shown in the UI (eg. "fa-cogs").
+     */
     icon?: `fa-${string}`;
+    /**
+     * A hex color code (eg. "#FF0000") used for the icon.
+     */
     color?: string;
 
     type: ScriptType;

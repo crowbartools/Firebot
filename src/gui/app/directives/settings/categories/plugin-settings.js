@@ -122,6 +122,38 @@
                                     >
                                         {{plugin.details.manifest.description}}
                                     </div>
+                                    <div
+                                        ng-if="hasPluginLinks(plugin)"
+                                        style="display:flex; align-items:center; flex-wrap: wrap; gap: 8px; margin-top: 8px;"
+                                    >
+                                        <a
+                                            ng-if="plugin.details.manifest.repo"
+                                            class="clickable plugin-link-pill"
+                                            ng-click="openLink(plugin.details.manifest.repo)"
+                                            uib-tooltip="{{plugin.details.manifest.repo}}"
+                                            tooltip-append-to-body="true"
+                                        >
+                                            <i class="fab fa-github"></i> Source
+                                        </a>
+                                        <a
+                                            ng-if="plugin.details.manifest.website"
+                                            class="clickable plugin-link-pill"
+                                            ng-click="openLink(plugin.details.manifest.website)"
+                                            uib-tooltip="{{plugin.details.manifest.website}}"
+                                            tooltip-append-to-body="true"
+                                        >
+                                            <i class="fas fa-globe"></i> Website
+                                        </a>
+                                        <a
+                                            ng-if="plugin.details.manifest.support"
+                                            class="clickable plugin-link-pill"
+                                            ng-click="openLink(plugin.details.manifest.support)"
+                                            uib-tooltip="{{plugin.details.manifest.support}}"
+                                            tooltip-append-to-body="true"
+                                        >
+                                            <i class="fas fa-life-ring"></i> Support
+                                        </a>
+                                    </div>
                                 </div>
 
                                 <div style="display:flex; align-items:center; gap: 6px; flex-shrink: 0;">
@@ -172,6 +204,11 @@
 
                 $scope.getPlugins = function() {
                     return pluginsService.getInstalledPlugins();
+                };
+
+                $scope.hasPluginLinks = function(plugin) {
+                    const manifest = (plugin && plugin.details && plugin.details.manifest) || {};
+                    return !!(manifest.repo || manifest.website || manifest.support);
                 };
 
                 const DEFAULT_PLUGIN_ICON_COLOR = "#53afff";

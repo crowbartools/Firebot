@@ -13,16 +13,45 @@
                     <div style="font-weight:bold;font-size: 24px;">{{$ctrl.plugin.details.manifest.name || $ctrl.plugin.config.fileName}}</div>
                 </h4>
             </div>
-            <div class="modal-body">
-                <div ng-if="$ctrl.plugin.details.manifest" style="margin-bottom: 15px;">
+            <div class="modal-body px-0">
+                <div ng-if="$ctrl.plugin.details.manifest" class="px-6 mb-6">
                     <div style="font-size: 13px;" ng-if="$ctrl.plugin.details.manifest.version">
                         v{{$ctrl.plugin.details.manifest.version}}<span ng-if="$ctrl.plugin.details.manifest.author"> &middot; by {{$ctrl.plugin.details.manifest.author}}</span>
                     </div>
                     <div ng-if="$ctrl.plugin.details.manifest.description" class="muted" style="margin-top: 4px;">
                         {{$ctrl.plugin.details.manifest.description}}
                     </div>
-                    <div ng-if="$ctrl.plugin.details.manifest.website" style="margin-top: 4px;">
-                        <a class="clickable" ng-click="$ctrl.openWebsite()">{{$ctrl.plugin.details.manifest.website}}</a>
+                    <div
+                        ng-if="$ctrl.hasLinks()"
+                        style="display:flex; align-items:center; flex-wrap: wrap; gap: 8px; margin-top: 8px;"
+                    >
+                        <a
+                            ng-if="$ctrl.plugin.details.manifest.repo"
+                            class="clickable plugin-link-pill"
+                            ng-click="$ctrl.openLink($ctrl.plugin.details.manifest.repo)"
+                            uib-tooltip="{{$ctrl.plugin.details.manifest.repo}}"
+                            tooltip-append-to-body="true"
+                        >
+                            <i class="fab fa-github"></i> Source
+                        </a>
+                        <a
+                            ng-if="$ctrl.plugin.details.manifest.website"
+                            class="clickable plugin-link-pill"
+                            ng-click="$ctrl.openLink($ctrl.plugin.details.manifest.website)"
+                            uib-tooltip="{{$ctrl.plugin.details.manifest.website}}"
+                            tooltip-append-to-body="true"
+                        >
+                            <i class="fas fa-globe"></i> Website
+                        </a>
+                        <a
+                            ng-if="$ctrl.plugin.details.manifest.support"
+                            class="clickable plugin-link-pill"
+                            ng-click="$ctrl.openLink($ctrl.plugin.details.manifest.support)"
+                            uib-tooltip="{{$ctrl.plugin.details.manifest.support}}"
+                            tooltip-append-to-body="true"
+                        >
+                            <i class="fas fa-life-ring"></i> Support
+                        </a>
                     </div>
                 </div>
 
@@ -81,9 +110,14 @@
                     return Array.isArray($ctrl.parameters) && $ctrl.parameters.length > 0;
                 };
 
-                $ctrl.openWebsite = function() {
-                    if ($ctrl.plugin.details.manifest.website) {
-                        $rootScope.openLinkExternally($ctrl.plugin.details.manifest.website);
+                $ctrl.hasLinks = function() {
+                    const manifest = ($ctrl.plugin && $ctrl.plugin.details && $ctrl.plugin.details.manifest) || {};
+                    return !!(manifest.repo || manifest.website || manifest.support);
+                };
+
+                $ctrl.openLink = function(url) {
+                    if (url) {
+                        $rootScope.openLinkExternally(url);
                     }
                 };
 

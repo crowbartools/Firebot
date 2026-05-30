@@ -21,6 +21,7 @@ import { GameManager } from "../../games/game-manager";
 import logger from "../../logwrapper";
 import IntegrationManager from "../../integrations/integration-manager";
 import UIExtensionManager from "../../ui-extensions/ui-extension-manager";
+import { resolvePluginManifestLinks } from "../plugin-manifest-utils";
 
 /**
  * Executor for new-spec Plugins (manifest.type === "plugin")
@@ -40,7 +41,7 @@ export class PluginExecutor extends IPluginExecutor {
         }
 
         return {
-            manifest: script.manifest,
+            manifest: resolvePluginManifestLinks(script.manifest),
             parametersSchema: script.parametersSchema
         };
     }
