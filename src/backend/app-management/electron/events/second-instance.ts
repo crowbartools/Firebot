@@ -10,7 +10,7 @@ export async function secondInstance(event: Event, argv: string[]) {
     try {
         logger.debug("Second instance detected, focusing main window.");
 
-        const mainWindow = globalThis.mainWindow as BrowserWindow;
+        const mainWindow = globalThis.renderWindow as BrowserWindow;
         if (mainWindow) {
             if (!mainWindow.isVisible()) {
                 mainWindow.show();
