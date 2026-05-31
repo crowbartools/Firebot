@@ -99,51 +99,121 @@
                         break;
 
                     case "commands":
-                        $translate("SIDEBAR.CHAT.COMMANDS").then((tabName) => {
+                        $translate("SIDEBAR.TRIGGERS.COMMANDS").then((tabName) => {
                             service.setTab("commands", tabName);
                             $location.path("/commands");
                         });
                         break;
 
                     case "events":
-                        $translate("SIDEBAR.OTHER.EVENTS").then((tabName) => {
+                        $translate("SIDEBAR.TRIGGERS.EVENTS").then((tabName) => {
                             service.setTab("events", tabName);
                             $location.path("/events");
                         });
                         break;
 
                     case "time-based":
-                        $translate("SIDEBAR.OTHER.TIME_BASED").then((tabName) => {
+                        $translate("SIDEBAR.TRIGGERS.TIME_BASED").then((tabName) => {
                             service.setTab("timers", tabName);
                             $location.path("/timers");
                         });
                         break;
 
                     case "power-ups-and-rewards":
-                        $translate("SIDEBAR.OTHER.POWERUPSANDREWARDS").then((tabName) => {
-                            service.setTab("power-ups & rewards", tabName);
+                        $translate("SIDEBAR.TRIGGERS.POWERUPS_AND_REWARDS").then((tabName) => {
+                            service.setTab("power-ups and rewards", tabName);
                             $location.path("/power-ups-and-rewards");
                         });
                         break;
 
                     case "preset-effect-lists":
-                        $translate("SIDEBAR.OTHER.PRESET_EFFECT_LISTS").then((tabName) => {
+                        $translate("SIDEBAR.TRIGGERS.PRESET_EFFECT_LISTS").then((tabName) => {
                             service.setTab("preset effect lists", tabName);
                             $location.path("/preset-effect-lists");
                         });
                         break;
 
                     case "hotkeys":
-                        $translate("SIDEBAR.OTHER.HOTKEYS").then((tabName) => {
+                        $translate("SIDEBAR.TRIGGERS.HOTKEYS").then((tabName) => {
                             service.setTab("hotkeys", tabName);
                             $location.path("/hotkeys");
                         });
                         break;
 
                     case "counters":
-                        $translate("SIDEBAR.OTHER.COUNTERS").then((tabName) => {
+                        $translate("SIDEBAR.TRIGGERS.COUNTERS").then((tabName) => {
                             service.setTab("counters", tabName);
                             $location.path("/counters");
+                        });
+                        break;
+
+                    case "overlay-widgets":
+                        $translate("SIDEBAR.TRIGGERS.OVERLAY_WIDGETS").then((tabName) => {
+                            service.setTab("overlay widgets", tabName);
+                            $location.path("/overlay-widgets");
+                        });
+                        break;
+
+                    case "effect-queues":
+                        $translate("SIDEBAR.MANAGEMENT.EFFECT_QUEUES").then((tabName) => {
+                            service.setTab("effect queues", tabName);
+                            $location.path("/effect-queues");
+                        });
+                        break;
+
+                    case "variable-macros":
+                        $translate("SIDEBAR.MANAGEMENT.VARIABLE_MACROS").then((tabName) => {
+                            service.setTab("variable macros", tabName);
+                            $location.path("/variable-macros");
+                        });
+                        break;
+
+                    case "quotes":
+                        $translate("SIDEBAR.MANAGEMENT.QUOTES").then((tabName) => {
+                            service.setTab("quotes", tabName);
+                            $location.path("/quotes");
+                        });
+                        break;
+
+                    case "games":
+                        $translate("SIDEBAR.MANAGEMENT.GAMES").then((tabName) => {
+                            service.setTab("games", tabName);
+                            $location.path("/games");
+                        });
+                        break;
+
+                    case "currency":
+                        $translate("SIDEBAR.MANAGEMENT.CURRENCY").then((tabName) => {
+                            service.setTab("currency", tabName);
+                            $location.path("/currency");
+                        });
+                        break;
+
+                    case "roles-and-ranks":
+                        $translate("SIDEBAR.MANAGEMENT.VIEWER_ROLES").then((tabName) => {
+                            service.setTab("roles and ranks", tabName);
+                            $location.path("/roles-and-ranks");
+                        });
+                        break;
+
+                    case "viewers":
+                        $translate("SIDEBAR.MANAGEMENT.VIEWERS").then((tabName) => {
+                            service.setTab("viewers", tabName);
+                            $location.path("/viewers");
+                        });
+                        break;
+
+                    case "moderation":
+                        $translate("SIDEBAR.MANAGEMENT.MODERATION").then((tabName) => {
+                            service.setTab("moderation", tabName);
+                            $location.path("/moderation");
+                        });
+                        break;
+
+                    case "settings":
+                        $translate("SIDEBAR.MANAGEMENT.SETTINGS").then((tabName) => {
+                            service.setTab("settings", tabName);
+                            $location.path("/settings");
                         });
                         break;
 
@@ -162,11 +232,6 @@
         function($routeProvider) {
             $routeProvider
 
-                .when("/roles-and-ranks", {
-                    templateUrl: "./templates/_roles-and-ranks.html",
-                    controller: "rolesAndRanksController"
-                })
-
                 .when("/", {
                     templateUrl: "./templates/chat/_chat-messages.html",
                     controller: "chatMessagesController"
@@ -182,9 +247,39 @@
                     controller: "commandsController"
                 })
 
+                .when("/events", {
+                    templateUrl: "./templates/live-events/_events.html",
+                    controller: "eventsController"
+                })
+
+                .when("/timers", {
+                    templateUrl: "./templates/_timers.html",
+                    controller: "timersController"
+                })
+
+                .when("/power-ups-and-rewards", {
+                    templateUrl: "./templates/_power-ups-and-rewards.html",
+                    controller: "powerUpsAndRewardsController"
+                })
+
                 .when("/preset-effect-lists", {
                     templateUrl: "./templates/_preset-effect-lists.html",
                     controller: "presetEffectListsController"
+                })
+
+                .when("/hotkeys", {
+                    templateUrl: "./templates/_hotkeys.html",
+                    controller: "hotkeysController"
+                })
+
+                .when("/counters", {
+                    templateUrl: "./templates/_counters.html",
+                    controller: "countersController"
+                })
+
+                .when("/overlay-widgets", {
+                    templateUrl: "./templates/_overlay-widgets.html",
+                    controller: "overlayWidgetsController"
                 })
 
                 .when("/effect-queues", {
@@ -192,9 +287,34 @@
                     controller: "effectQueuesController"
                 })
 
-                .when("/power-ups-and-rewards", {
-                    templateUrl: "./templates/_power-ups-and-rewards.html",
-                    controller: "powerUpsAndRewardsController"
+                .when("/variable-macros", {
+                    templateUrl: "./templates/_variable-macros.html",
+                    controller: "variableMacrosController"
+                })
+
+                .when("/quotes", {
+                    templateUrl: "./templates/_quotes.html",
+                    controller: "quotesController"
+                })
+
+                .when("/games", {
+                    templateUrl: "./templates/_games.html",
+                    controller: "gamesController"
+                })
+
+                .when("/currency", {
+                    templateUrl: "./templates/_currency.html",
+                    controller: "currencyController"
+                })
+
+                .when("/roles-and-ranks", {
+                    templateUrl: "./templates/_roles-and-ranks.html",
+                    controller: "rolesAndRanksController"
+                })
+
+                .when("/viewers", {
+                    templateUrl: "./templates/viewers/_viewers.html",
+                    controller: "viewersController"
                 })
 
                 .when("/moderation", {
@@ -205,56 +325,6 @@
                 .when("/settings", {
                     templateUrl: "./templates/_settings.html",
                     controller: "settingsController"
-                })
-
-                .when("/events", {
-                    templateUrl: "./templates/live-events/_events.html",
-                    controller: "eventsController"
-                })
-
-                .when("/hotkeys", {
-                    templateUrl: "./templates/_hotkeys.html",
-                    controller: "hotkeysController"
-                })
-
-                .when("/currency", {
-                    templateUrl: "./templates/_currency.html",
-                    controller: "currencyController"
-                })
-
-                .when("/timers", {
-                    templateUrl: "./templates/_timers.html",
-                    controller: "timersController"
-                })
-
-                .when("/viewers", {
-                    templateUrl: "./templates/viewers/_viewers.html",
-                    controller: "viewersController"
-                })
-
-                .when("/quotes", {
-                    templateUrl: "./templates/_quotes.html",
-                    controller: "quotesController"
-                })
-
-                .when("/counters", {
-                    templateUrl: "./templates/_counters.html",
-                    controller: "countersController"
-                })
-
-                .when("/games", {
-                    templateUrl: "./templates/_games.html",
-                    controller: "gamesController"
-                })
-
-                .when("/variable-macros", {
-                    templateUrl: "./templates/_variable-macros.html",
-                    controller: "variableMacrosController"
-                })
-
-                .when("/overlay-widgets", {
-                    templateUrl: "./templates/_overlay-widgets.html",
-                    controller: "overlayWidgetsController"
                 })
 
                 .when("/extension/:extensionId/:pageId", {
