@@ -130,6 +130,7 @@
         settingsService,
         countersService,
         hotkeyService,
+        controlDeckService,
         gamesService,
         presetEffectListsService,
         pluginsService,
@@ -173,6 +174,8 @@
         countersService.loadCounters();
 
         hotkeyService.loadHotkeys();
+
+        controlDeckService.loadDecks();
 
         gamesService.loadGames();
 

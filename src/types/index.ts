@@ -3,6 +3,7 @@ export * from "./auth";
 export * from "./channel-rewards";
 export * from "./chat";
 export * from "./commands";
+export * from "./control-deck";
 export * from "./counters";
 export * from "./currency";
 export * from "./discord";

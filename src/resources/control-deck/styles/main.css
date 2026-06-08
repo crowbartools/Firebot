@@ -1,0 +1,344 @@
+:root {
+    --bg: #16181c;
+    --surface: #202329;
+    --surface-2: #2c3035;
+    --text: #f3f4f6;
+    --text-dim: #9aa0a6;
+    --accent: #2c92ff;
+    --danger: #e0526a;
+    --good: #41c98a;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    /* overflow: hidden; */
+    /* overscroll-behavior: none; */
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+#app {
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+}
+
+[v-cloak] {
+    display: none;
+}
+
+.centered-message {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--text-dim);
+    padding: 24px;
+}
+
+.deck-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.deck-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.deck-title {
+    flex: 1;
+    font-weight: 700;
+    font-size: 1.05rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.header-btn {
+    background: var(--surface-2);
+    color: var(--text);
+    border: none;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.conn-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--danger);
+    flex: 0 0 auto;
+}
+
+.conn-indicator.connected {
+    background: var(--good);
+}
+
+.wake-indicator {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    height: 36px;
+    padding: 0 9px;
+    border: none;
+    border-radius: 8px;
+    background: var(--surface-2);
+    color: var(--text-dim);
+    cursor: pointer;
+}
+
+.wake-indicator.active {
+    color: var(--good);
+}
+
+/* Page selector (in header) */
+.page-select-wrap {
+    position: relative;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    max-width: 45%;
+}
+
+.page-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--surface-2);
+    color: var(--text);
+    border: none;
+    border-radius: 8px;
+    height: 40px;
+    padding: 0 30px 0 14px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    max-width: 100%;
+    text-overflow: ellipsis;
+}
+
+.page-select:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 0;
+}
+
+.page-select-caret {
+    position: absolute;
+    right: 11px;
+    color: var(--text-dim);
+    pointer-events: none;
+}
+
+.lucide-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+}
+
+.lucide-icon svg {
+    display: block;
+}
+
+/* Grid */
+.grid-viewport {
+    flex: 1;
+    display: flex;
+    padding: 12px;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.grid-sizer {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    container-type: size;
+}
+
+.control-grid {
+    display: grid;
+    gap: 10px;
+    aspect-ratio: var(--cd-cols) / var(--cd-rows);
+    max-width: 100%;
+    width: min(100%, calc(100cqh * var(--cd-cols) / var(--cd-rows)));
+}
+
+.deck-control {
+    border: none;
+    border-radius: 14px;
+    color: var(--text);
+    cursor: pointer;
+    padding: 6px;
+    overflow: hidden;
+    transition: transform 0.06s ease, filter 0.06s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    min-width: 0;
+    min-height: 0;
+}
+
+.deck-control:active {
+    transform: scale(0.94);
+    filter: brightness(1.25);
+}
+
+.deck-control.folder {
+    border: 2px dashed rgba(255, 255, 255, 0.18);
+}
+
+.deck-control-inner {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.deck-control-icon {
+    max-width: 64px;
+    max-height: 64px;
+    width: 50%;
+    height: auto;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+.deck-control-folder-glyph {
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.deck-control-glyph {
+    display: inline-flex;
+    line-height: 0;
+}
+
+.deck-control-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    word-break: break-word;
+    max-height: 2.6em;
+    overflow: hidden;
+}
+
+/* Deck picker */
+.deck-picker {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    gap: 18px;
+    overflow-y: auto;
+}
+
+.deck-picker-title {
+    text-align: center;
+    margin: 12px 0;
+}
+
+.deck-picker-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 480px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.deck-picker-item {
+    background: var(--surface-2);
+    color: var(--text);
+    border: none;
+    border-radius: 12px;
+    padding: 18px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+}
+
+.deck-picker-item:active {
+    filter: brightness(1.2);
+}
+
+.pin-prompt {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.pin-card {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 28px;
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+}
+
+.pin-subtitle {
+    color: var(--text-dim);
+    margin-top: 4px;
+}
+
+.pin-input {
+    width: 100%;
+    margin-top: 16px;
+    padding: 14px;
+    font-size: 1.3rem;
+    text-align: center;
+    letter-spacing: 0.3em;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: var(--surface-2);
+    color: var(--text);
+}
+
+.pin-error {
+    color: var(--danger);
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+.pin-submit {
+    width: 100%;
+    margin-top: 16px;
+    padding: 14px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 10px;
+    background: var(--accent);
+    color: #fff;
+    cursor: pointer;
+}

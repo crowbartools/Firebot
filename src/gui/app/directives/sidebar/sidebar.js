@@ -23,6 +23,7 @@
                             <nav-link page="Timers" name="{{'SIDEBAR.TRIGGERS.TIME_BASED' | translate }}" icon="fa-stopwatch"></nav-link>
                             <nav-link page="Power-ups And Rewards" name="{{'SIDEBAR.TRIGGERS.POWERUPS_AND_REWARDS' | translate }}" icon="fa-gifts"></nav-link>
                             <nav-link page="Preset Effect Lists" name="{{ 'SIDEBAR.TRIGGERS.PRESET_EFFECT_LISTS' | translate }}" icon="fa-magic"></nav-link>
+                            <nav-link page="Control Deck" name="{{'SIDEBAR.TRIGGERS.CONTROL_DECK' | translate }}" icon="fa-grip-horizontal"></nav-link>
                             <nav-link page="Hotkeys" name="{{'SIDEBAR.TRIGGERS.HOTKEYS' | translate }}" icon="fa-keyboard"></nav-link>
                             <nav-link page="Counters" name="{{'SIDEBAR.TRIGGERS.COUNTERS' | translate }}" icon="fa-tally"></nav-link>
                             <nav-link page="Overlay Widgets" name="{{'SIDEBAR.TRIGGERS.OVERLAY_WIDGETS' | translate }}" icon="fa-layer-plus"></nav-link>

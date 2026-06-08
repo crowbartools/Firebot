@@ -13,6 +13,7 @@ export type TriggerType =
     | "counter"
     | "preset"
     | "quick_action"
+    | "control_deck"
     | "manual"
     | "channel_reward"
     | "power_up"

@@ -167,6 +167,10 @@ export async function whenReady() {
     const { QuickActionManager } = await import("../../../quick-actions/quick-action-manager");
     QuickActionManager.loadItems();
 
+    windowManagement.updateSplashScreenStatus("Loading control decks...");
+    const { ControlDeckManager } = await import("../../../control-deck/control-deck-manager");
+    ControlDeckManager.loadItems();
+
     windowManagement.updateSplashScreenStatus("Loading webhooks...");
     const webhookConfigManager = (await import("../../../webhooks/webhook-config-manager")).default;
     webhookConfigManager.loadItems();

@@ -1,4 +1,4 @@
-import { EventEmitter } from "events";
+import { TypedEmitter } from "tiny-typed-emitter";
 import { JsonDB } from "node-json-db";
 import fs from "fs";
 import path from "path";
@@ -79,6 +79,9 @@ const FirebotSettingsDefaults: FirebotSettingsTypes = {
     ClearChatFeedMode: "onlyStreamer",
     ClearCustomScriptCache: false,
     ConnectOnLaunch: false,
+    ControlDeckEnabled: false,
+    ControlDeckPin: undefined,
+    ControlDeckOrientationMode: "dynamic",
     CopiedOverlayVersion: "",
     DashboardLayout: {
         dashboardViewerList: "225px",
@@ -153,6 +156,9 @@ const FirebotSettingsPaths: Partial<Record<keyof FirebotSettingsTypes, string>> 
     ChatShowSevenTvEmotes: "/settings/chat/emotes/seventv",
     ChatTaggedNotificationSound: "/settings/chat/tagged/sound",
     ChatTaggedNotificationVolume: "/settings/chat/tagged/volume",
+    ControlDeckEnabled: "/settings/controlDeck/enabled",
+    ControlDeckPin: "/settings/controlDeck/pin",
+    ControlDeckOrientationMode: "/settings/controlDeck/orientationMode",
     DashboardLayout: "/settings/dashboard/layout",
     DeleteProfile: "/profiles/deleteProfile",
     LoggedInProfile: "/profiles/loggedInProfile",
@@ -162,7 +168,20 @@ const FirebotSettingsPaths: Partial<Record<keyof FirebotSettingsTypes, string>> 
     ViewerListPageSize: "/settings/viewerListDatabase/pageSize"
 };
 
-class SettingsManager extends EventEmitter {
+// this.emit(`settings:setting-updated:${settingName}`, data);
+
+type Events = {
+    [settingName in keyof FirebotSettingsTypes as `settings:setting-updated:${settingName}`]: (data: FirebotSettingsTypes[settingName]) => void;
+} & {
+    [settingName in keyof FirebotSettingsTypes as `settings:setting-deleted:${settingName}`]: () => void;
+};
+
+// type Events = {
+//     "user:online": (userDetails: UserDetails) => void;
+//     "user:offline": (userId: string) => void;
+// };
+
+class SettingsManager extends TypedEmitter<Events> {
     private logger = LoggerCache.getLogger("Settings");
     settingsCache: Partial<Record<keyof FirebotSettingsTypes, unknown>> = {};
 
@@ -381,7 +400,8 @@ class SettingsManager extends EventEmitter {
         }
 
         frontendCommunicator.send(`settings:setting-updated:${settingName}`, data);
-        this.emit(`settings:setting-updated:${settingName}`, data);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        this.emit(`settings:setting-updated:${settingName}` as any, data);
     }
 
     /**
@@ -397,7 +417,8 @@ class SettingsManager extends EventEmitter {
         }
 
         frontendCommunicator.send(`settings:setting-updated:${settingName}`, null);
-        this.emit(`settings:setting-deleted:${settingName}`);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        this.emit(`settings:setting-deleted:${settingName}` as any);
     }
 
     /**

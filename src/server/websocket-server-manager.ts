@@ -107,6 +107,21 @@ class WebSocketServerManager extends EventEmitter {
 
                                     break;
                                 }
+                                case "control-deck-connected": {
+                                    if (ws.type != null) {
+                                        sendError(ws, message.id, "socket already subscribed");
+                                        break;
+                                    }
+
+                                    clearTimeout(ws.registrationTimeout);
+                                    ws.type = "control-deck";
+
+                                    this.logger.info(`Websocket Control Deck Connection from ${req.socket.remoteAddress}`);
+
+                                    sendResponse(ws, message.id);
+
+                                    break;
+                                }
                                 case "plugin": {
                                     const pluginName = (message as InvokePluginMessage).pluginName;
                                     if (pluginName == null || pluginName === "") {
@@ -202,6 +217,32 @@ class WebSocketServerManager extends EventEmitter {
 
     refreshAllOverlays() {
         this.sendToOverlay("OVERLAY:REFRESH", { global: true });
+    }
+
+    sendToControlDecks(eventName: string, data: unknown = null) {
+        if (this.server == null || eventName == null) {
+            return;
+        }
+
+        const message: EventMessage = {
+            type: "event",
+            name: eventName,
+            data
+        };
+
+        const dataRaw = JSON.stringify(message);
+
+        this.server.clients.forEach((client) => {
+            if (client.readyState !== 1 || client.type !== "control-deck") {
+                return;
+            }
+
+            client.send(dataRaw, (err) => {
+                if (err) {
+                    this.logger.error(err.message);
+                }
+            });
+        });
     }
 
     triggerEvent(eventType: string, payload: unknown) {

@@ -51,7 +51,8 @@
         "grunt-shell": "^4.0.0",
         "sass": "^1.69.7",
         "typescript": "^5.9.3",
-        "typescript-eslint": "^8.45.0"
+        "typescript-eslint": "^8.45.0",
+        "vue": "^3.5.35"
     },
     "dependencies": {
         "@aws-sdk/client-polly": "^3.26.0",
@@ -100,6 +101,7 @@
         "fuse.js": "^7.1.0",
         "glob": "^10.3.10",
         "he": "^1.2.0",
+        "lucide": "^1.17.0",
         "luxon": "^3.7.2",
         "marked": "^13.0.3",
         "mathjs": "^14.8.1",
@@ -111,6 +113,7 @@
         "node-json-db": "^1.4.1",
         "node-xlsx": "^0.24.0",
         "obs-websocket-js": "^5.0.6",
+        "qrcode": "^1.5.4",
         "roll": "^1.2.0",
         "sanitize-filename": "^1.6.3",
         "socket.io-client": "^2.3.0",

@@ -57,6 +57,9 @@ export type FirebotSettingsTypes = {
     ClearChatFeedMode: "never" | "onlyStreamer" | "always";
     ClearCustomScriptCache: boolean;
     ConnectOnLaunch: boolean;
+    ControlDeckEnabled: boolean;
+    ControlDeckPin?: string;
+    ControlDeckOrientationMode: "dynamic" | "fixed";
     CopiedOverlayVersion: string;
     DashboardLayout: {
         dashboardViewerList: string;

@@ -221,4 +221,19 @@ import * as plugins from "./controllers/plugins-api-controller";
 router.route("/plugins/restart")
     .post(plugins.restartPlugin);
 
+// Control Deck
+import * as controlDeck from "./controllers/control-deck-api-controller";
+
+router.route("/control-deck/settings")
+    .get(controlDeck.getControlDeckSettings);
+
+router.route("/control-deck/decks")
+    .get(controlDeck.pinMiddleware, controlDeck.getDecks);
+
+router.route("/control-deck/decks/:deckId")
+    .get(controlDeck.pinMiddleware, controlDeck.getDeck);
+
+router.route("/control-deck/decks/:deckId/controls/:controlId/press")
+    .post(controlDeck.pinMiddleware, controlDeck.pressControl);
+
 export = router;

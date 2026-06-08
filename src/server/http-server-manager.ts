@@ -216,6 +216,9 @@ class HttpServerManager extends EventEmitter {
                 .send({ status: "error", message: `${req.originalUrl} not found` });
         });
 
+        // Control Deck hosted page
+        app.use("/control-deck", express.static(path.join(cwd, "./resources/control-deck/")));
+
         app.get("/plugins", (_, res) => {
             const registeredPlugins = Object.keys(this.registeredPlugins).map((p) => {
                 return {
@@ -307,6 +310,10 @@ class HttpServerManager extends EventEmitter {
      */
     refreshOverlayInstance(overlayInstance?: string) {
         WebSocketServerManager.sendToOverlay("OVERLAY:REFRESH", undefined, overlayInstance);
+    }
+
+    sendToControlDecks(eventName: string, data: unknown = null) {
+        WebSocketServerManager.sendToControlDecks(eventName, data);
     }
 
     triggerCustomWebSocketEvent(eventType: string, payload: object) {

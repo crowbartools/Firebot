@@ -58,6 +58,7 @@
                     "settings",
                     "counters",
                     "hotkeys",
+                    "control deck",
                     "effect queues",
                     "currency",
                     "quotes",
@@ -81,6 +82,7 @@
                     "power-ups and rewards",
                     "roles and ranks",
                     "preset effect lists",
+                    "control deck",
                     "variable macros",
                     "counters",
                     "effect queues",
@@ -137,6 +139,13 @@
                         $translate("SIDEBAR.TRIGGERS.HOTKEYS").then((tabName) => {
                             service.setTab("hotkeys", tabName);
                             $location.path("/hotkeys");
+                        });
+                        break;
+
+                    case "control-deck":
+                        $translate("SIDEBAR.TRIGGERS.CONTROL_DECK").then((tabName) => {
+                            service.setTab("control deck", tabName);
+                            $location.path("/control-deck");
                         });
                         break;
 
@@ -270,6 +279,11 @@
                 .when("/hotkeys", {
                     templateUrl: "./templates/_hotkeys.html",
                     controller: "hotkeysController"
+                })
+
+                .when("/control-deck", {
+                    templateUrl: "./templates/_control-deck.html",
+                    controller: "controlDeckController"
                 })
 
                 .when("/counters", {
