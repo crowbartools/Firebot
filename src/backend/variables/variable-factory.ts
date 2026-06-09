@@ -1,14 +1,4 @@
-import type { ReplaceVariable } from "../../types/variables";
-
-export type VariableConfig = {
-    handle: string;
-    description: string;
-    events: string[];
-    eventMetaKey: string;
-    usage?: string;
-    defaultValue?: unknown;
-    type: ReplaceVariable["definition"]["possibleDataOutput"][number] | ReplaceVariable["definition"]["possibleDataOutput"];
-};
+import type { ReplaceVariable, VariableConfig } from "../../types/variables";
 
 export function createEventDataVariable({
     events,

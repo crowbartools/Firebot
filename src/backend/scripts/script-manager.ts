@@ -12,6 +12,7 @@ import {
 import path from "path";
 import { promises as fsp, existsSync, readFileSync } from "fs";
 import Module from "module";
+import { randomUUID } from "crypto";
 
 import { ProfileManager } from "../common/profile-manager";
 import { LoggerCache } from "../logger-cache";
@@ -132,13 +133,14 @@ class ScriptManager {
 
         const scriptFilePath = this.getScriptFilePath(pluginConfig.fileName);
 
+
         const detailsResult = await this.getScriptDetailsByFileName(pluginConfig.fileName, "plugin");
         if (detailsResult.success === false) {
             logger.warn(`Could not get details for plugin ${pluginConfig.fileName}: ${detailsResult.error}`);
             return;
         }
 
-        const apiInstance = this.createApiInstance({ kind: "plugin", config: pluginConfig, manifest: detailsResult.details.manifest });
+        const apiInstance = this.createApiInstance({ kind: "plugin", config: pluginConfig, manifest: detailsResult.details.manifest, isInspecting: false });
         this.pendingApiInstances.set(pluginConfig.fileName, apiInstance);
 
         const script = this.loadScript(scriptFilePath);
@@ -348,19 +350,15 @@ class ScriptManager {
         return installedPlugins;
     }
 
-    /**
-     * Loads a script file (without persisting a config) and returns its details for
-     * the install / edit UI.
-     */
-    async getScriptDetailsByFileName(fileName: string, expectedScriptType?: ScriptType): Promise<GetScriptDetailsResult> {
+    private async doGetScriptDetailsByFileName(fileName: string, expectedScriptType?: ScriptType): Promise<GetScriptDetailsResult> {
         const scriptFilePath = this.getScriptFilePath(fileName);
         if (!existsSync(scriptFilePath)) {
             return { success: false, error: "Script file does not exist" };
         }
 
-
         const script = this.loadScriptIsolated(scriptFilePath);
         if (!script) {
+            await this.disposeEffectScriptApi(fileName);
             return { success: false, error: "Could not load script" };
         }
 
@@ -368,10 +366,12 @@ class ScriptManager {
         for (const executor of this.pluginExecutors) {
             if (await executor.canHandle(script)) {
                 if (expectedScriptType && expectedScriptType !== "plugin") {
+                    await this.disposeEffectScriptApi(fileName);
                     return { success: false, error: `Only ${expectedScriptType}'s are allowed.` };
                 }
                 const details = await executor.getScriptDetails(script);
                 if (details) {
+                    await this.disposeEffectScriptApi(fileName);
                     return { success: true, fileName, scriptType: "plugin", details };
                 }
             }
@@ -380,16 +380,53 @@ class ScriptManager {
         for (const executor of this.effectScriptExecutors) {
             if (await executor.canHandle(script)) {
                 if (expectedScriptType && expectedScriptType !== "script") {
+                    await this.disposeEffectScriptApi(fileName);
                     return { success: false, error: `Only ${expectedScriptType}'s are allowed.` };
                 }
                 const details = await executor.getScriptDetails(script);
                 if (details) {
+                    await this.disposeEffectScriptApi(fileName);
                     return { success: true, fileName, scriptType: "script", details };
                 }
             }
         }
 
+        await this.disposeEffectScriptApi(fileName);
         return { success: false, error: "Script does not match any known script format" };
+
+    }
+
+    /**
+     * Loads a script file (without persisting a config) and returns its details for
+     * the install / edit UI.
+     */
+    async getScriptDetailsByFileName(fileName: string, expectedScriptType?: ScriptType): Promise<GetScriptDetailsResult> {
+        /**
+         * Create a temporary API instance for this script
+         */
+        const scriptType = expectedScriptType === "plugin" ? "plugin" : expectedScriptType === "script" ? "effect-script" : "plugin";
+        const contextSource: ScriptApiContextSource = scriptType === "plugin" ? {
+            kind: "plugin",
+            config: { fileName, id: randomUUID(), parameters: {} },
+            manifest: { author: "Unknown", name: fileName, version: "0.0.0", description: "", type: "plugin" },
+            isInspecting: true
+        } : {
+            kind: "effect-script",
+            fileName,
+            manifest: { author: "Unknown", name: fileName, version: "0.0.0", description: "", type: "script" },
+            isInspecting: true
+        };
+
+        const apiInstance = this.createApiInstance(contextSource);
+
+        this.pendingApiInstances.set(fileName, apiInstance);
+
+        const result = await this.doGetScriptDetailsByFileName(fileName, expectedScriptType);
+
+        this.pendingApiInstances.delete(fileName);
+        await apiInstance.disposeBag.drain();
+
+        return result;
     }
 
     /**
@@ -693,7 +730,7 @@ class ScriptManager {
 
         let pendingApi: ScriptApiInstance | undefined;
         if (!this.effectScriptApiInstances.has(scriptName)) {
-            pendingApi = this.createApiInstance({ kind: "effect-script", fileName: scriptName, manifest: detailsResult.details.manifest });
+            pendingApi = this.createApiInstance({ kind: "effect-script", fileName: scriptName, manifest: detailsResult.details.manifest, isInspecting: false });
             this.pendingApiInstances.set(scriptName, pendingApi);
         }
 

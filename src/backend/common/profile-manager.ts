@@ -77,12 +77,12 @@ class ProfileManager {
         }
     }
 
-    createNewProfile(profileId: string = undefined, restart = true): void {
+    createNewProfile(profileId: string, restart = true): void {
         const globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
         let activeProfiles = [];
 
         if (profileId == null || profileId === "") {
-            profileId = "Main";
+            profileId = "Main Profile";
         } else {
             profileId = sanitizeFileName(profileId);
         }
@@ -145,7 +145,7 @@ class ProfileManager {
             this.logInProfile(activeProfiles[0], restartIfNotLoggedIn);
         } else {
             // We don't have any profiles at all. Let's make one.
-            this.createNewProfile(null, restartIfNotLoggedIn);
+            this.createNewProfile("Main Profile", restartIfNotLoggedIn);
         }
 
         if (restartIfNotLoggedIn !== true) {

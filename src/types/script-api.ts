@@ -12,8 +12,7 @@ import type { FirebotAccount } from "./accounts";
 import type { FirebotSettingsTypes } from "./settings";
 import type { InstalledPlugin } from "./plugins";
 import type { PluginWebhook } from "./webhooks";
-import { ReplaceVariable } from "./variables";
-import type { VariableConfig } from "../backend/variables/variable-factory";
+import type { ReplaceVariable, VariableConfig } from "./variables";
 import type { FilterConfig, PresetFilterConfig, TextFilterConfig } from "../backend/events/filters/filter-factory";
 
 export type ScriptLogMethod = (message: string, ...meta: unknown[]) => void;

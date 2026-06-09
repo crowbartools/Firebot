@@ -69,3 +69,13 @@ export type PluginAdditionalVariableEvents = {
     handle: string;
     events: Array<EventSourceAndId>;
 };
+
+export type VariableConfig = {
+    handle: string;
+    description: string;
+    events: string[];
+    eventMetaKey: string;
+    usage?: string;
+    defaultValue?: unknown;
+    type: ReplaceVariable["definition"]["possibleDataOutput"][number] | ReplaceVariable["definition"]["possibleDataOutput"];
+};

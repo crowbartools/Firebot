@@ -38,6 +38,9 @@ export interface ScriptApiContext {
     /** Winston child logger pre-tagged with `{ script: scriptId }`. */
     readonly logger: typeof logger;
 
+    /** True when script is being inspected (e.g. during early detail / manifest retrieval). */
+    readonly isInspecting: boolean;
+
     /** Register a teardown callback fired when the plugin is unloaded. */
     onDispose(fn: DisposeFn): void;
 }
@@ -48,8 +51,8 @@ export interface ScriptApiContextHandle {
 }
 
 export type ScriptApiContextSource =
-    | { kind: "plugin", config: InstalledPluginConfig, manifest: Manifest }
-    | { kind: "effect-script", fileName: string, manifest: Manifest };
+    | { kind: "plugin", config: InstalledPluginConfig, manifest: Manifest, isInspecting: boolean }
+    | { kind: "effect-script", fileName: string, manifest: Manifest, isInspecting: boolean };
 
 export function createScriptApiContext(source: ScriptApiContextSource): ScriptApiContextHandle {
     const fileName = source.kind === "plugin" ? source.config.fileName : source.fileName;
@@ -79,6 +82,7 @@ export function createScriptApiContext(source: ScriptApiContextSource): ScriptAp
         },
         scriptDataDir,
         logger: logger.child({ module: "Plugin", script: scriptId }),
+        isInspecting: source.isInspecting,
         onDispose: fn => disposeBag.add(fn)
     };
 

@@ -235,6 +235,33 @@ class SettingsManager extends TypedEmitter<Events> {
         }));
     }
 
+    private handleCorruptGlobalSettingsFile() {
+        this.logger.warn("global-settings.json file appears to be corrupt. Resetting file...");
+
+        const globalSettingsPath = path.join(dataAccess.getUserDataPath(), "global-settings.json");
+        const profilesRoot = path.join(dataAccess.getUserDataPath(), "profiles");
+        const profileDirs = fs.readdirSync(profilesRoot)
+            .filter(f => fs.statSync(path.join(profilesRoot, f)).isDirectory());
+
+        let loggedInProfile = profileDirs[0] ?? "";
+        for (const dir of profileDirs) {
+            const normalizedDir = dir.toLowerCase();
+            if (normalizedDir === "main profile"
+                || normalizedDir.startsWith("main")
+            ) {
+                loggedInProfile = dir;
+                break;
+            }
+        }
+
+        fs.writeFileSync(globalSettingsPath, JSON.stringify({
+            profiles: {
+                activeProfiles: profileDirs,
+                loggedInProfile
+            }
+        }, null, 4));
+    }
+
     private migrateUserSettingsToGlobal() {
         // Iterate through all the global settings
         Object.keys(FirebotGlobalSettings).forEach((setting: keyof FirebotSettingsTypes) => {
@@ -308,6 +335,7 @@ class SettingsManager extends TypedEmitter<Events> {
             }
             if ((err as Error).name === "DatabaseError") {
                 this.logger.error(`Failed to read "${settingPath}" in global settings file. File may be corrupt.`, err?.inner?.message ?? err.stack);
+                this.handleCorruptGlobalSettingsFile();
             } else if ((err as Error).name !== "DataError") {
                 this.logger.warn(err);
             }
