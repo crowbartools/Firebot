@@ -82,12 +82,78 @@
                     </div>
                 </div>
 
+                <firebot-form-group ng-if="$ctrl.control.type === 'button'" name="control-inputs" label="Inputs">
+                    <p class="help-block">Inputs are shown when this button is pressed on a device. Effects can access the values via $controlDeckInput[name].</p>
+                    <div ng-repeat="input in $ctrl.control.inputs track by $index" style="margin-bottom:3px;">
+                        <div class="expandable-item"
+                            style="justify-content: space-between;"
+                            ng-click="input._expanded = !input._expanded"
+                            ng-class="{'expanded': input._expanded}">
+
+                            <div style="padding-left: 15px;font-family: 'Quicksand';font-size: 16px;">{{input.name || 'New Input'}}</div>
+
+                            <div style="display: flex; align-items: center;">
+                                <div ng-show="!input._expanded" style="opacity: 0.6; margin-right: 20px; max-width: 200px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
+                                    {{$ctrl.inputTypeOptions[input.type]}}
+                                </div>
+                                <div style="width:30px;">
+                                    <i class="fas" ng-class="{'fa-chevron-right': !input._expanded, 'fa-chevron-down': input._expanded}"></i>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div uib-collapse="!input._expanded" class="expandable-item-expanded">
+                            <div style="padding: 15px 20px 10px 20px;">
+                                <div class="form-group" style="margin-bottom:10px;">
+                                    <label class="control-label">Name</label>
+                                    <firebot-input
+                                        model="input.name"
+                                        placeholder-text="Enter unique name"
+                                        disable-variables="true"
+                                    />
+                                </div>
+                                <div class="form-group" style="margin-bottom:10px;">
+                                    <label class="control-label">Description <span class="muted">(optional)</span></label>
+                                    <firebot-input
+                                        model="input.description"
+                                        placeholder-text="Shown to the user in the prompt"
+                                        disable-variables="true"
+                                    />
+                                </div>
+                                <div class="form-group" style="margin-bottom:10px;">
+                                    <label class="control-label">Type</label>
+                                    <div>
+                                        <dropdown-select
+                                            options="$ctrl.inputTypeOptions"
+                                            selected="input.type"
+                                            on-update="$ctrl.inputTypeChanged(input)"
+                                        ></dropdown-select>
+                                    </div>
+                                </div>
+                                <div ng-if="input.type === 'preset'" class="form-group" style="margin-bottom:10px;">
+                                    <label class="control-label">Options</label>
+                                    <editable-list
+                                        model="input.options"
+                                        settings="{ addLabel: 'Add Option', editLabel: 'Edit Option', noneAddedText: 'No options added', sortable: true }"
+                                    ></editable-list>
+                                </div>
+                                <div style="padding-top: 10px">
+                                    <button class="btn btn-danger" ng-click="$ctrl.removeInput($index)" aria-label="Delete input"><i class="far fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-default btn-sm" ng-click="$ctrl.addInput()">
+                        <i class="far fa-plus mr-1"></i> Add Input
+                    </button>
+                </firebot-form-group>
+
                 <div ng-if="$ctrl.control.type === 'button'" style="margin-top:20px;">
                     <effect-list
                         header="What should this control do?"
                         effects="$ctrl.control.effectList"
                         trigger="control_deck"
-                        trigger-meta="{ rootEffects: $ctrl.control.effectList }"
+                        trigger-meta="{ rootEffects: $ctrl.control.effectList, controlInputs: $ctrl.control.inputs }"
                         update="$ctrl.effectListUpdated(effects)"
                         modalId="{{$ctrl.modalId}}"
                     ></effect-list>
@@ -125,6 +191,39 @@
             $ctrl.imageSourceOptions = {
                 url: { text: "URL" },
                 local: { text: "Local" }
+            };
+
+            $ctrl.inputTypeOptions = {
+                "text": "Text",
+                "number": "Number",
+                "toggle": "Toggle Switch",
+                "preset": "Preset Values"
+            };
+
+            $ctrl.addInput = () => {
+                if ($ctrl.control.inputs == null) {
+                    $ctrl.control.inputs = [];
+                }
+                $ctrl.control.inputs.push({
+                    type: "text",
+                    name: "",
+                    description: "",
+                    _expanded: true
+                });
+            };
+
+            $ctrl.removeInput = (index) => {
+                $ctrl.control.inputs.splice(index, 1);
+            };
+
+            $ctrl.inputTypeChanged = (input) => {
+                if (input.type === "preset") {
+                    if (input.options == null) {
+                        input.options = [];
+                    }
+                } else {
+                    delete input.options;
+                }
             };
 
             $scope.$watch("$ctrl.control.icon.type", (newType, oldType) => {
@@ -168,6 +267,31 @@
                 if ($ctrl.control.name == null || $ctrl.control.name.trim() === "") {
                     ngToast.create("Please provide a name for the control.");
                     return;
+                }
+
+                if ($ctrl.control.type === "button" && $ctrl.control.inputs?.length) {
+                    const seenNames = {};
+                    for (const input of $ctrl.control.inputs) {
+                        const name = (input.name || "").trim();
+                        if (name === "") {
+                            ngToast.create("Every input must have a name.");
+                            return;
+                        }
+                        const nameKey = name.toLowerCase();
+                        if (seenNames[nameKey]) {
+                            ngToast.create(`Input names must be unique ("${name}" is used more than once).`);
+                            return;
+                        }
+                        seenNames[nameKey] = true;
+                        input.name = name;
+                        if (input.type === "preset" && !(input.options?.length)) {
+                            ngToast.create(`Preset input "${name}" must have at least one option.`);
+                            return;
+                        }
+                    }
+                    for (const input of $ctrl.control.inputs) {
+                        delete input._expanded;
+                    }
                 }
 
                 $ctrl.close({

@@ -9,6 +9,7 @@ import type {
     ControlDeckControlPosition,
     ControlDeckControlSize,
     ControlDeckControlView,
+    ControlDeckControlInput,
     ControlDeckResolvedIcon,
     ControlDeckView,
     ControlDeckPage
@@ -20,7 +21,7 @@ export type ControlPosition = ControlDeckControlPosition;
 
 export type ControlSize = ControlDeckControlSize;
 
-export type { ControlDeckControlView, ControlDeckResolvedIcon, ControlDeckView, ControlDeckPage };
+export type { ControlDeckControlView, ControlDeckControlInput, ControlDeckResolvedIcon, ControlDeckView, ControlDeckPage };
 
 export interface DeckSummary {
     id: string;
@@ -41,4 +42,7 @@ export interface PlacedControl {
     w: number;
     h: number;
 }
+
+/** Values from input prompt, keyed by input name. */
+export type ControlInputValues = Record<string, string | number | boolean>;
 

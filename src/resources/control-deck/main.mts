@@ -3,6 +3,7 @@ import { createApp, defineComponent, ref, computed, onMounted } from "vue";
 import { deckControl } from "./modules/deck-control.mjs";
 import { deckPicker } from "./modules/deck-picker.mjs";
 import { pinPrompt } from "./modules/pin-prompt.mjs";
+import { inputPrompt } from "./modules/input-prompt.mjs";
 import { lucideIcon } from "./modules/lucide-icon.mjs";
 import {
     ApiError,
@@ -19,6 +20,7 @@ import type {
     ControlDeckControlView,
     ControlDeckView,
     ControlDeckPage,
+    ControlInputValues,
     DeckSummary,
     GridDims,
     PlacedControl
@@ -329,9 +331,18 @@ const rootComponent = defineComponent({
                 });
                 return;
             }
+            // Prompt for inputs before sending the press
+            if (control.inputs?.length) {
+                inputPromptControl.value = control;
+                return;
+            }
+            await sendPress(control);
+        }
+
+        async function sendPress(control: ControlDeckControlView, inputValues?: ControlInputValues): Promise<void> {
             try {
                 if (currentDeckId.value) {
-                    await apiPressControl(currentDeckId.value, control.id);
+                    await apiPressControl(currentDeckId.value, control.id, inputValues);
                     const autoReturnFolder = folderStack.value[folderStack.value.length - 1]?.autoReturn;
                     if (autoReturnFolder) {
                         setTimeout(() => {
@@ -344,6 +355,20 @@ const rootComponent = defineComponent({
                     needsPin.value = true;
                 }
             }
+        }
+
+        const inputPromptControl = ref<ControlDeckControlView | null>(null);
+
+        async function submitControlInputs(inputValues: ControlInputValues): Promise<void> {
+            const control = inputPromptControl.value;
+            inputPromptControl.value = null;
+            if (control) {
+                await sendPress(control, inputValues);
+            }
+        }
+
+        function cancelControlInputs(): void {
+            inputPromptControl.value = null;
         }
 
         function handleWsEvent(name: string, data: unknown): void {
@@ -446,6 +471,9 @@ const rootComponent = defineComponent({
             selectPage,
             goBack,
             pressControl,
+            inputPromptControl,
+            submitControlInputs,
+            cancelControlInputs,
             toggleWakeLockState
         };
     }
@@ -457,6 +485,7 @@ app
     .component("DeckControl", deckControl)
     .component("DeckPicker", deckPicker)
     .component("PinPrompt", pinPrompt)
+    .component("InputPrompt", inputPrompt)
     .component("LucideIcon", lucideIcon);
 
 app.mount("#app");

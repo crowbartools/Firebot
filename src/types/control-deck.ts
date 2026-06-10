@@ -40,6 +40,42 @@ export type ControlDeckEmojiIcon = {
 
 export type ControlDeckIcon = ControlDeckImageIcon | ControlDeckGlyphIcon | ControlDeckEmojiIcon | ControlDeckNoneIcon;
 
+export type ControlDeckInputType = "text" | "number" | "toggle" | "preset";
+
+type ControlDeckInputBase = {
+    /** Unique name of the input, used to access the value in effects */
+    name: string;
+    description?: string;
+};
+
+export type ControlDeckTextInput = ControlDeckInputBase & {
+    type: "text";
+};
+
+export type ControlDeckNumberInput = ControlDeckInputBase & {
+    type: "number";
+};
+
+export type ControlDeckToggleInput = ControlDeckInputBase & {
+    type: "toggle";
+};
+
+export type ControlDeckPresetInput = ControlDeckInputBase & {
+    type: "preset";
+    options: string[];
+};
+
+export type ControlDeckUserInput = ControlDeckInputBase & {
+    type: "user";
+};
+
+export type ControlDeckControlInput =
+    | ControlDeckTextInput
+    | ControlDeckNumberInput
+    | ControlDeckToggleInput
+    | ControlDeckPresetInput
+    | ControlDeckUserInput;
+
 export type ControlDeckControlPosition = {
     col: number;
     row: number;
@@ -69,6 +105,12 @@ export type ControlDeckControl = {
     size?: ControlDeckControlSize;
     /** Effects to run when the control is pressed. Only used when type is "button" */
     effectList?: EffectList;
+    /**
+     * Inputs the user is prompted for when the control is pressed on the hosted
+     * page. The provided values are sent with the press and are available to
+     * effects via $controlDeckInput
+     */
+    inputs?: ControlDeckControlInput[];
     /**
      * Whether a folder control should automatically return to the parent page after a button within it is pressed. Only used when type is "folder".
      */

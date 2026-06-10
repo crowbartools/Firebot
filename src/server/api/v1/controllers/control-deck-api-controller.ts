@@ -57,6 +57,7 @@ function mapControlDeckDeckView(deck: ControlDeck): ControlDeckView {
             position: control.position,
             size: control.size,
             autoReturn: control.autoReturn,
+            inputs: control.inputs,
             icon
         };
     });
@@ -141,7 +142,18 @@ export function pressControl(
         return;
     }
 
-    const success = ControlDeckManager.triggerControl(req.params.deckId, req.params.controlId);
+    // Only accept a flat object of primitive input values
+    const inputValues: Record<string, string | number | boolean> = {};
+    const rawInputValues = (req.body as { inputValues?: unknown })?.inputValues;
+    if (rawInputValues != null && typeof rawInputValues === "object" && !Array.isArray(rawInputValues)) {
+        for (const [key, value] of Object.entries(rawInputValues as Record<string, unknown>)) {
+            if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+                inputValues[key] = value;
+            }
+        }
+    }
+
+    const success = ControlDeckManager.triggerControl(req.params.deckId, req.params.controlId, inputValues);
     if (!success) {
         res.status(404).json({ status: "error", message: "Control not found or has no effects" });
         return;

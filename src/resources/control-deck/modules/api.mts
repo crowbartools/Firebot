@@ -1,6 +1,6 @@
 // Lightweight API + WebSocket helpers for the hosted Control Deck page.
 
-import type { ControlDeckSettings, ControlDeckView, DeckSummary } from "./types.mjs";
+import type { ControlDeckSettings, ControlDeckView, ControlInputValues, DeckSummary } from "./types.mjs";
 
 const PIN_STORAGE_KEY = "firebot-control-deck-pin";
 
@@ -69,12 +69,13 @@ export async function fetchDeck(deckId: string): Promise<ControlDeckView> {
     return res.json() as Promise<ControlDeckView>;
 }
 
-export async function pressControl(deckId: string, controlId: string): Promise<boolean> {
+export async function pressControl(deckId: string, controlId: string, inputValues?: ControlInputValues): Promise<boolean> {
     const res = await fetch(
         `/api/v1/control-deck/decks/${encodeURIComponent(deckId)}/controls/${encodeURIComponent(controlId)}/press`,
         {
             method: "POST",
-            headers: { ...authHeaders(), "Content-Type": "application/json" }
+            headers: { ...authHeaders(), "Content-Type": "application/json" },
+            body: JSON.stringify({ inputValues: inputValues ?? {} })
         }
     );
     if (res.status === 401) {

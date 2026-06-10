@@ -92,6 +92,16 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Input prompt for controls with inputs -->
+            <input-prompt
+                v-if="inputPromptControl"
+                :key="inputPromptControl.id"
+                :control-name="inputPromptControl.name"
+                :inputs="inputPromptControl.inputs"
+                @submit="submitControlInputs"
+                @cancel="cancelControlInputs"
+            ></input-prompt>
         </div>
     </div>
 </body>

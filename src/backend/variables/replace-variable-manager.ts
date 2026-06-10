@@ -476,4 +476,12 @@ manager.registerLookupHandler("!", name => ({
     }
 }));
 
+// Deck Control Input shorthand
+manager.registerLookupHandler("@", name => ({
+    evaluator: (trigger) => {
+        const value = (trigger.metadata?.inputValues || {})[name] as string;
+        return value == null ? null : value;
+    }
+}));
+
 export { manager as ReplaceVariableManager };

@@ -317,6 +317,7 @@
             $ctrl.addControl = (col, row) => {
                 modalService.showModal({
                     component: "addOrEditControlDeckControlModal",
+                    breadcrumbName: "Add Control",
                     size: "md",
                     closeCallback: (response) => {
                         if (response && response.control) {
@@ -397,6 +398,7 @@
             $ctrl.editControl = (control) => {
                 modalService.showModal({
                     component: "addOrEditControlDeckControlModal",
+                    breadcrumbName: "Edit Control",
                     size: "md",
                     resolveObj: {
                         control: () => control

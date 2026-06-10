@@ -81,7 +81,7 @@ class ControlDeckManager extends JsonDbManager<ControlDeck> {
         return deck.controls?.find(c => c.id === controlId) ?? null;
     }
 
-    triggerControl(deckId: string, controlId: string): boolean {
+    triggerControl(deckId: string, controlId: string, inputValues?: Record<string, string | number | boolean>): boolean {
         const control = this.getControl(deckId, controlId);
 
         if (control == null || control.type !== "button" || control.effectList == null) {
@@ -98,7 +98,8 @@ class ControlDeckManager extends JsonDbManager<ControlDeck> {
                     deckId: deckId,
                     deckName: deck?.name,
                     controlId: control.id,
-                    controlName: control.name
+                    controlName: control.name,
+                    inputValues: inputValues ?? {}
                 }
             } as Trigger,
             effects: control.effectList

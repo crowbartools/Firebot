@@ -348,3 +348,136 @@ body {
     color: #fff;
     cursor: pointer;
 }
+
+/* Input prompt */
+.input-prompt-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 100;
+}
+
+.input-prompt-card {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 22px;
+    width: 100%;
+    max-width: 420px;
+    max-height: 85vh;
+    max-height: 85dvh;
+    overflow-y: auto;
+}
+
+.input-prompt-title {
+    margin: 0 0 14px 0;
+    font-size: 1.15rem;
+}
+
+.input-field {
+    margin-bottom: 16px;
+}
+
+.input-field-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.input-field-desc {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin: 0 0 6px 0;
+}
+
+.input-field-control {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: var(--surface-2);
+    color: var(--text);
+}
+
+select.input-field-control {
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+.input-select-wrap {
+    position: relative;
+}
+
+/* Toggle switch */
+.input-toggle {
+    position: relative;
+    width: 56px;
+    height: 32px;
+    border: none;
+    border-radius: 999px;
+    background: var(--surface-2);
+    cursor: pointer;
+    transition: background 0.15s ease;
+    padding: 0;
+}
+
+.input-toggle.on {
+    background: var(--good);
+}
+
+.input-toggle-knob {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.15s ease;
+}
+
+.input-toggle.on .input-toggle-knob {
+    transform: translateX(24px);
+}
+
+.input-prompt-error {
+    color: var(--danger);
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.input-prompt-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.input-prompt-btn {
+    flex: 1;
+    padding: 13px;
+    font-size: 1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.input-prompt-btn.cancel {
+    background: var(--surface-2);
+    color: var(--text);
+}
+
+.input-prompt-btn.confirm {
+    background: var(--accent);
+    color: #fff;
+}
+
+.input-prompt-btn.confirm:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}

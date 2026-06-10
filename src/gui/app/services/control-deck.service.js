@@ -40,6 +40,7 @@
 
             service.showAddEditDeckModal = (deck) => {
                 modalService.showModal({
+                    breadcrumbName: deck ? "Edit Deck" : "Add Deck",
                     component: "addOrEditControlDeckModal",
                     size: "lg",
                     resolveObj: {
