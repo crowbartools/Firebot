@@ -37,7 +37,7 @@
         "@types/unzipper": "^0.10.11",
         "@types/yargs-parser": "^21.0.3",
         "@typescript-eslint/parser": "^8.46.0",
-        "electron": "^42.0.1",
+        "electron": "^42.4.0",
         "electron-installer-dmg": "^5.0.1",
         "electron-winstaller": "^5.4.0",
         "eslint": "^9.37.0",

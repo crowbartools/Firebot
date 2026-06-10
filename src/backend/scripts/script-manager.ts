@@ -22,11 +22,9 @@ import { PluginConfigManager } from "./plugin-config-manager";
 
 import { PluginExecutor } from "./executors/plugin-executor";
 import { LegacyStartUpScript } from "./executors/legacy-startup-script-executor";
-import { EffectScriptExecutor } from "./executors/effect-script-executor";
 import { LegacyEffectScriptExecutor } from "./executors/legacy-effect-script-executor";
 import {
     EffectScriptExecutionResult,
-    IEffectScriptExecutor,
     IPluginExecutor,
     PluginRegistrations,
     PluginExecutionResult
@@ -79,7 +77,6 @@ class ScriptManager {
     private activePlugins: Record<string, ActivePluginEntry> = {};
 
     private pendingApiInstances: Map<string, ScriptApiInstance> = new Map();
-    private effectScriptApiInstances: Map<string, ScriptApiInstance> = new Map();
 
     private requireInterceptorInstalled = false;
 
@@ -88,10 +85,7 @@ class ScriptManager {
         new LegacyStartUpScript()
     ];
 
-    private effectScriptExecutors: IEffectScriptExecutor[] = [
-        new EffectScriptExecutor(),
-        new LegacyEffectScriptExecutor()
-    ];
+    private legacyEffectScriptExecutor = new LegacyEffectScriptExecutor();
 
     constructor() {
         this.installRequireInterceptor();
@@ -263,9 +257,6 @@ class ScriptManager {
         for (const id of Object.keys(this.activePlugins)) {
             await this.stopPlugin(id, false);
         }
-        for (const fileName of Array.from(this.effectScriptApiInstances.keys())) {
-            await this.disposeEffectScriptApi(fileName);
-        }
         logger.info("Stopped all plugins");
     }
 
@@ -358,7 +349,6 @@ class ScriptManager {
 
         const script = this.loadScriptIsolated(scriptFilePath);
         if (!script) {
-            await this.disposeEffectScriptApi(fileName);
             return { success: false, error: "Could not load script" };
         }
 
@@ -366,34 +356,27 @@ class ScriptManager {
         for (const executor of this.pluginExecutors) {
             if (await executor.canHandle(script)) {
                 if (expectedScriptType && expectedScriptType !== "plugin") {
-                    await this.disposeEffectScriptApi(fileName);
-                    return { success: false, error: `Only ${expectedScriptType}'s are allowed.` };
+                    return { success: false, error: `Only ${expectedScriptType}s are allowed.` };
                 }
                 const details = await executor.getScriptDetails(script);
                 if (details) {
-                    await this.disposeEffectScriptApi(fileName);
                     return { success: true, fileName, scriptType: "plugin", details };
                 }
             }
         }
 
-        for (const executor of this.effectScriptExecutors) {
-            if (await executor.canHandle(script)) {
-                if (expectedScriptType && expectedScriptType !== "script") {
-                    await this.disposeEffectScriptApi(fileName);
-                    return { success: false, error: `Only ${expectedScriptType}'s are allowed.` };
-                }
-                const details = await executor.getScriptDetails(script);
-                if (details) {
-                    await this.disposeEffectScriptApi(fileName);
-                    return { success: true, fileName, scriptType: "script", details };
-                }
+        // Check if script is legacy effect script
+        if (await this.legacyEffectScriptExecutor.canHandle(script)) {
+            if (expectedScriptType && expectedScriptType !== "script") {
+                return { success: false, error: `Only ${expectedScriptType}s are allowed.` };
+            }
+            const details = await this.legacyEffectScriptExecutor.getScriptDetails(script);
+            if (details) {
+                return { success: true, fileName, scriptType: "script", details };
             }
         }
 
-        await this.disposeEffectScriptApi(fileName);
         return { success: false, error: "Script does not match any known script format" };
-
     }
 
     /**
@@ -722,57 +705,19 @@ class ScriptManager {
             return { success: false, error: "Could not load script details" };
         }
 
-        const willReloadModule = SettingsManager.getSetting("ClearCustomScriptCache")
-            || !require.cache[require.resolve(scriptFilePath)];
-        if (willReloadModule) {
-            await this.disposeEffectScriptApi(scriptName);
-        }
-
-        let pendingApi: ScriptApiInstance | undefined;
-        if (!this.effectScriptApiInstances.has(scriptName)) {
-            pendingApi = this.createApiInstance({ kind: "effect-script", fileName: scriptName, manifest: detailsResult.details.manifest, isInspecting: false });
-            this.pendingApiInstances.set(scriptName, pendingApi);
-        }
-
         const script = this.loadScript(scriptFilePath);
         if (!script) {
-            if (pendingApi) {
-                await pendingApi.disposeBag.drain();
-                this.pendingApiInstances.delete(scriptName);
-            }
             return { success: false, error: "Could not load script" };
         }
 
-        let chosen: IEffectScriptExecutor | undefined;
-        for (const executor of this.effectScriptExecutors) {
-            if (await executor.canHandle(script)) {
-                chosen = executor;
-                break;
-            }
-        }
+        const chosen = await this.legacyEffectScriptExecutor.canHandle(script);
 
         if (!chosen) {
-            if (pendingApi) {
-                await pendingApi.disposeBag.drain();
-                this.pendingApiInstances.delete(scriptName);
-            }
             frontendCommunicator.send(
                 "error",
                 `Error running '${scriptName}', script does not contain an exported 'run' function or valid manifest.`
             );
             return { success: false, error: "No effect executor matched" };
-        }
-
-        if (pendingApi) {
-            this.pendingApiInstances.delete(scriptName);
-            if (chosen instanceof EffectScriptExecutor) {
-                // New-spec: keep the API and populate its manifest.
-                this.effectScriptApiInstances.set(scriptName, pendingApi);
-            } else {
-                // Legacy effect script: uses the old runRequest.modules shim
-                // and never sees the new API.
-                await pendingApi.disposeBag.drain();
-            }
         }
 
         // For legacy run-script the manifest may declare startupOnly; honor that.
@@ -797,20 +742,11 @@ class ScriptManager {
         };
 
         try {
-            return await chosen.executeScript(script, context);
+            return await this.legacyEffectScriptExecutor.executeScript(script, context);
         } catch (error) {
             logger.error(`Error running script '${scriptName}'`, error);
             return { success: false, error: (error as Error)?.message ?? "Error running script" };
         }
-    }
-
-    private async disposeEffectScriptApi(fileName: string): Promise<void> {
-        const existing = this.effectScriptApiInstances.get(fileName);
-        if (!existing) {
-            return;
-        }
-        this.effectScriptApiInstances.delete(fileName);
-        await existing.disposeBag.drain();
     }
 
     // #endregion
@@ -866,8 +802,7 @@ class ScriptManager {
             const fileName = path.basename(parentPath);
 
             const instance = manager.getActivePluginByFileName(fileName)?.apiInstance
-                ?? manager.pendingApiInstances.get(fileName)
-                ?? manager.effectScriptApiInstances.get(fileName);
+                ?? manager.pendingApiInstances.get(fileName);
 
             if (!instance) {
                 // If we don't have an instance, this is likely an

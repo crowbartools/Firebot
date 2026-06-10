@@ -2,7 +2,6 @@ import {
     InstalledPluginConfig,
     LegacyCustomScript,
     ScriptBase,
-    ScriptContext,
     Awaitable,
     ScriptDetails,
     AdditionalVariableEvent,
@@ -78,10 +77,3 @@ export type EffectScriptExecutionResult =
         success: false;
         error: string;
     };
-
-export abstract class IEffectScriptExecutor extends IBaseScriptExecutor {
-    abstract executeScript(
-        script: ScriptBase | LegacyCustomScript,
-        context: ScriptContext
-    ): Awaitable<EffectScriptExecutionResult>;
-}

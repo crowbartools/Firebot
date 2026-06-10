@@ -52,12 +52,28 @@
         <% } %>
     <% } %>
 
-    <script>
+    <script type="module">
         const queryParams = new URLSearchParams(window.location.search);
         if (queryParams.has("instance") && queryParams.get("instance") !== "") {
             document.title = `Firebot Overlay (${queryParams.get("instance")})`;
         } else {
             document.title = "Firebot Overlay (Default)";
+        }
+
+        // Wait here in case the page reloads but scripts failed
+        while (typeof effectEvents === "undefined") {
+            const overlayPort = window.location.port || (window.location.protocol === 'https:' ? 443 : 80);
+            const baseUrl = `${window.location.hostname}${(overlayPort ? `:${overlayPort}` : '')}`;
+
+            try {
+                const response = await fetch(`//${baseUrl}/api/v1/status`);
+    
+                if (response.ok) {
+                    location.reload();
+                }
+            } catch { }
+
+            await new Promise(resolve => setTimeout(resolve, 500));
         }
 
         <% for(let effectEvent of effectEvents) {%>
