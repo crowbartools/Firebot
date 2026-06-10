@@ -1,9 +1,3 @@
-// Shared types for the hosted Control Deck Vue app.
-//
-// The deck/control shapes are owned by the backend (the HTTP server produces
-// them), so we reuse them here. Type-only imports are erased at compile time,
-// so there is no runtime coupling to backend code.
-
 import type {
     ControlDeckGrid,
     ControlDeckControlPosition,

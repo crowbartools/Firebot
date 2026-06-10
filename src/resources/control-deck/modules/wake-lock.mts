@@ -1,10 +1,3 @@
-// Keeps the device screen awake using the vendored NoSleep.js UMD build.
-//
-// NoSleep requires a user gesture to start (browsers won't let a page hold a
-// wake lock without interaction), so `enable()` must be called from within a
-// click/touch handler. We auto-arm on the first interaction and also expose a
-// manual toggle for the header indicator.
-
 interface NoSleepInstance {
     enable: () => Promise<void> | void;
     disable: () => void;
@@ -62,8 +55,8 @@ export function disableWakeLock(): void {
 }
 
 /**
- * Arms the wake lock on the first user interaction (required by browsers) and
- * invokes `onChange` whenever the active state changes. Returns a cleanup fn.
+ * Activates the wake lock on the first user interaction (required by browsers) and
+ * calls `onChange` whenever the active state changes. Returns a cleanup fn.
  */
 export function setupWakeLock(onChange: (active: boolean) => void): () => void {
     let armed = false;
