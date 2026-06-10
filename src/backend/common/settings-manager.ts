@@ -170,18 +170,11 @@ const FirebotSettingsPaths: Partial<Record<keyof FirebotSettingsTypes, string>> 
     ViewerListPageSize: "/settings/viewerListDatabase/pageSize"
 };
 
-// this.emit(`settings:setting-updated:${settingName}`, data);
-
 type Events = {
     [settingName in keyof FirebotSettingsTypes as `settings:setting-updated:${settingName}`]: (data: FirebotSettingsTypes[settingName]) => void;
 } & {
     [settingName in keyof FirebotSettingsTypes as `settings:setting-deleted:${settingName}`]: () => void;
 };
-
-// type Events = {
-//     "user:online": (userDetails: UserDetails) => void;
-//     "user:offline": (userId: string) => void;
-// };
 
 class SettingsManager extends TypedEmitter<Events> {
     private logger = LoggerCache.getLogger("Settings");
