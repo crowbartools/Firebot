@@ -6,7 +6,7 @@ import { pinPrompt } from "./modules/pin-prompt.mjs";
 import { lucideIcon } from "./modules/lucide-icon.mjs";
 import {
     ApiError,
-    fetchAuthState,
+    fetchControlDeckSettings,
     fetchDecks,
     fetchDeck,
     pressControl as apiPressControl,
@@ -42,9 +42,11 @@ const rootComponent = defineComponent({
         const connected = ref(false);
         const needsPin = ref(false);
         const disabled = ref(false);
+        const initializing = ref(true);
         const pinError = ref("");
         const wakeLockActive = ref(false);
-        const orientationMode = ref<"fixed" | "dynamic">("fixed");
+        const orientationMode = ref<"fixed" | "dynamic">("dynamic");
+        const defaultDeckId = ref<string | null>(null);
         const viewportLandscape = ref(window.innerWidth >= window.innerHeight);
 
         const grid = computed<GridDims>(() => {
@@ -284,6 +286,8 @@ const rootComponent = defineComponent({
             const requested = deckParam();
             if (requested) {
                 await selectDeck(requested);
+            } else if (defaultDeckId.value) {
+                await selectDeck(defaultDeckId.value);
             }
         }
 
@@ -356,12 +360,24 @@ const rootComponent = defineComponent({
                 }
                 void loadDecks().catch(() => { /* ignore */ });
             } else if (name === "control-deck:settings-updated") {
-                const settings = data as { enabled?: boolean, orientationMode?: "fixed" | "dynamic" } | null;
-                if (settings && settings.enabled === false) {
-                    disabled.value = true;
+                const settings = data as { enabled?: boolean, orientationMode?: "fixed" | "dynamic", defaultDeckId?: string } | null;
+                if(settings != null) {
+                    if (settings.enabled === false) {
+                        disabled.value = true;
+                    }
+                    if (settings.orientationMode != null) {
+                        orientationMode.value = settings.orientationMode;
+                    }
+                    if (settings.defaultDeckId != null) {
+                        defaultDeckId.value = settings.defaultDeckId;
+                    }
                 }
-                if (settings && settings.orientationMode != null) {
-                    orientationMode.value = settings.orientationMode;
+            } else if (name === "control-deck:set-active-deck") {
+                const { deckId, pageId } = data as { deckId: string, pageId?: string };
+                if (deckId) {
+                    currentDeckId.value = deckId;
+                    currentPageId.value = pageId ?? null;
+                    void refreshCurrentDeck();
                 }
             }
         }
@@ -378,12 +394,14 @@ const rootComponent = defineComponent({
             window.addEventListener("orientationchange", updateOrientation);
 
             try {
-                const auth = await fetchAuthState();
-                disabled.value = auth.enabled === false;
-                orientationMode.value = auth.orientationMode ?? "fixed";
+                const settings = await fetchControlDeckSettings();
+                disabled.value = settings.enabled === false;
+                orientationMode.value = settings.orientationMode ?? "dynamic";
+                defaultDeckId.value = settings.defaultDeckId ?? null;
 
-                if (auth.pinRequired && !getStoredPin()) {
+                if (settings.pinRequired && !getStoredPin()) {
                     needsPin.value = true;
+                    initializing.value = false;
                     return;
                 }
 
@@ -395,6 +413,8 @@ const rootComponent = defineComponent({
                 }
             }
 
+            initializing.value = false;
+
             connectWebSocket({
                 onEvent: (name, data) => handleWsEvent(name, data),
                 onStatus: (status) => {
@@ -404,6 +424,7 @@ const rootComponent = defineComponent({
         });
 
         return {
+            initializing,
             decks,
             currentDeckId,
             currentDeck,

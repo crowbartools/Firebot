@@ -13,7 +13,7 @@ export const deckPicker = defineComponent({
     },
     template: /* html */`
         <div class="deck-picker">
-            <h1 class="deck-picker-title">Control Deck</h1>
+            <h1 class="deck-picker-title">Control Decks</h1>
             <div v-if="decks.length === 0" class="centered-message">
                 <p>No control decks have been created yet.</p>
             </div>

@@ -60,6 +60,7 @@ export type FirebotSettingsTypes = {
     ControlDeckEnabled: boolean;
     ControlDeckPin?: string;
     ControlDeckOrientationMode: "dynamic" | "fixed";
+    ControlDeckDefaultDeckId?: string | null;
     CopiedOverlayVersion: string;
     DashboardLayout: {
         dashboardViewerList: string;

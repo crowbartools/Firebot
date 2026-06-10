@@ -3,7 +3,7 @@
 (function() {
     angular
         .module("firebotApp")
-        .factory("controlDeckService", function(backendCommunicator, modalService, utilityService) {
+        .factory("controlDeckService", function(backendCommunicator, modalService, modalFactory) {
             const service = {};
 
             service.decks = [];
@@ -55,8 +55,15 @@
                 });
             };
 
+            service.showQRCodeModal = () => {
+                modalService.showModal({
+                    component: "controlDeckQrCodeModal",
+                    size: "sm"
+                });
+            };
+
             service.confirmDeleteDeck = (deck) => {
-                utilityService
+                modalFactory
                     .showConfirmationModal({
                         title: "Delete Control Deck",
                         question: `Are you sure you want to delete the Control Deck "${deck.name}"?`,

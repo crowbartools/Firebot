@@ -12,6 +12,7 @@
                 onAddControl: "&",
                 onEditControl: "&",
                 onDeleteControl: "&",
+                onPasteControl: "&",
                 onOpenFolder: "&",
                 onMoveControl: "&",
                 onResizeControl: "&"
@@ -29,25 +30,82 @@
                         draggable="{{cell.control && !cell.pinned ? 'true' : 'false'}}"
                         ng-click="$ctrl.cellClicked(cell)"
                     >
-                        <div ng-if="!cell.control" class="cd-cell-add"><i class="fas fa-plus"></i></div>
+                        <div ng-if="!cell.control" class="cd-cell-add">
+                            <i class="fas fa-plus muted"></i>
+                            <div class="cd-cell-actions">
+                                <span
+                                    uib-dropdown
+                                    dropdown-append-to-body
+                                    ng-click="$event.stopPropagation()"
+                                >
+                                    <span
+                                        class="cd-action"
+                                        uib-tooltip="Options"
+                                        tooltip-append-to-body="true"
+                                        uib-dropdown-toggle
+                                    >
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </span>
+                                    <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                                        <li role="menuitem" ng-class="{'disabled': !$ctrl.hasCopiedControl()}"><a href ng-disabled="!$ctrl.hasCopiedControl()" ng-click="$ctrl.paste(cell)"><i class="far fa-paste mr-2 text-center" style="width: 20px;"></i> Paste control</a></li>
+                                    </ul>
+                                </span>
+                            </div>
+                        </div>
                         <div ng-if="cell.control" class="cd-cell-content">
                             <img ng-if="cell.control._previewIcon.kind === 'image'" class="cd-cell-icon" ng-src="{{cell.control._previewIcon.url}}" />
                             <lucide-icon ng-if="cell.control._previewIcon.kind === 'glyph'" class="cd-cell-glyph" name="{{cell.control._previewIcon.name}}" color="{{cell.control._previewIcon.color}}" size="28"></lucide-icon>
                             <i ng-if="cell.control._previewIcon.kind === 'none' && cell.control.type === 'folder'" class="fas fa-folder cd-cell-folder-glyph"></i>
                             <div class="cd-cell-name">{{cell.control.name}}</div>
-                            <div ng-if="!cell.pinned" class="cd-cell-actions">
-                                <span ng-if="cell.control.type === 'folder'" class="cd-action" uib-tooltip="Open" tooltip-append-to-body="true" ng-click="$ctrl.openFolder($event, cell.control)"><i class="fas fa-folder-open"></i></span>
-                                <span class="cd-action" uib-tooltip="Edit" tooltip-append-to-body="true" ng-click="$ctrl.edit($event, cell.control)"><i class="fas fa-pen"></i></span>
-                                <span class="cd-action cd-action-danger" uib-tooltip="Delete" tooltip-append-to-body="true" ng-click="$ctrl.delete($event, cell.control)"><i class="fas fa-trash-alt"></i></span>
+                            <div class="cd-cell-actions">
+                                <span ng-if="!cell.pinned && cell.control.type === 'folder'" class="cd-action" uib-tooltip="Open" tooltip-append-to-body="true" ng-click="$ctrl.openFolder($event, cell.control)"><i class="fas fa-folder-open"></i></span>
+                                <span ng-if="!cell.pinned" class="cd-action" uib-tooltip="Edit" tooltip-append-to-body="true" ng-click="$ctrl.edit($event, cell.control)"><i class="fas fa-pen"></i></span>
+                                <span
+                                    ng-if="!cell.pinned"
+                                    uib-dropdown
+                                    dropdown-append-to-body
+                                    ng-click="$event.stopPropagation()"
+                                >
+                                    <span
+                                        class="cd-action"
+                                        uib-tooltip="Options"
+                                        tooltip-append-to-body="true"
+                                        uib-dropdown-toggle
+                                    >
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </span>
+                                    <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                                        <li role="menuitem"><a href ng-click="$ctrl.copy(cell.control)"><i class="far fa-copy mr-2 text-center" style="width: 20px;"></i> Copy</a></li>
+                                        <li role="menuitem"><a href ng-click="$ctrl.delete(cell.control)" style="color: #fb7373;"><i class="far fa-trash-alt mr-2 text-center" style="width: 20px;"></i> Delete</a></li>
+                                    </ul>
+                                </span>
+                                <span
+                                    ng-if="cell.pinned"
+                                    uib-dropdown
+                                    dropdown-append-to-body
+                                    ng-click="$event.stopPropagation()"
+                                >
+                                    <span
+                                        class="cd-action"
+                                        uib-tooltip="Options"
+                                        tooltip-append-to-body="true"
+                                        uib-dropdown-toggle
+                                    >
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </span>
+                                    <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                                        <li role="menuitem" ng-class="{'disabled': !$ctrl.hasCopiedControl()}"><a href ng-disabled="!$ctrl.hasCopiedControl()" ng-click="$ctrl.paste(cell)"><i class="far fa-paste mr-2 text-center" style="width: 20px;"></i> Paste control</a></li>
+                                    </ul>
+                                </span>
                             </div>
                             <span ng-if="!cell.pinned" class="cd-resize-handle" uib-tooltip="Drag to resize" tooltip-append-to-body="true"></span>
-                            <div ng-if="cell.pinned" class="cd-pinned-badge" uib-tooltip="Pinned control — click to override on this page" tooltip-append-to-body="true"><i class="fas fa-thumbtack"></i></div>
+                            <div ng-if="cell.pinned" class="cd-pinned-badge" uib-tooltip="Pinned control - click to override on this page" tooltip-append-to-body="true"><i class="fas fa-thumbtack"></i></div>
                             <div ng-if="cell.pinned" class="cd-pinned-add"><i class="fas fa-plus"></i></div>
                         </div>
                     </div>
                 </div>
             `,
-            controller: function($element, $scope) {
+            controller: function($element, $scope, controlDeckCopyHelper, ngToast) {
                 const $ctrl = this;
 
                 $ctrl.cells = [];
@@ -75,7 +133,6 @@
                     } else if (icon.type === "glyph") {
                         control._previewIcon = { kind: "glyph", name: icon.name, color: icon.color };
                     } else if (icon.type === "image" && icon.path) {
-                        // Electron can render local file paths directly in the editor preview
                         const url = icon.source === "url"
                             ? icon.path
                             : (icon.path.startsWith("file://") ? icon.path : `file://${icon.path}`);
@@ -213,14 +270,29 @@
                     $ctrl.onEditControl({ control });
                 };
 
-                $ctrl.delete = ($event, control) => {
-                    $event.stopPropagation();
+                $ctrl.delete = (control) => {
                     $ctrl.onDeleteControl({ control });
                 };
 
                 $ctrl.openFolder = ($event, control) => {
                     $event.stopPropagation();
                     $ctrl.onOpenFolder({ control });
+                };
+
+                $ctrl.copy = (control) => {
+                    controlDeckCopyHelper.copyControl(control, ($ctrl.deck?.controls || []));
+                    ngToast.success("Control copied to clipboard");
+                };
+
+                $ctrl.hasCopiedControl = () => {
+                    return controlDeckCopyHelper.hasCopiedControl();
+                };
+
+                $ctrl.paste = (cell) => {
+                    if (!$ctrl.hasCopiedControl()) {
+                        return;
+                    }
+                    $ctrl.onPasteControl({ col: cell.col, row: cell.row });
                 };
 
                 // Native HTML5 drag-and-drop (move) + pointer-based resize handle

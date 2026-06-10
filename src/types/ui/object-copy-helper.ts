@@ -6,4 +6,5 @@ export type ObjectCopyHelper = {
     getCopiedEffects: (trigger: TriggerType, triggerMeta: unknown) => Promise<EffectInstance[]>;
     hasCopiedEffects: () => boolean;
     cloneEffect: (effect: EffectInstance) => EffectInstance;
+    copyAndReplaceIds<T>(obj: T): T;
 };

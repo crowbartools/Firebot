@@ -27,19 +27,18 @@ export interface DeckSummary {
     name: string;
 }
 
-export interface AuthState {
+export interface ControlDeckSettings {
     enabled: boolean;
     pinRequired: boolean;
     orientationMode?: "fixed" | "dynamic";
+    defaultDeckId?: string | null;
 }
 
 export interface PlacedControl {
     control: ControlDeckControlView;
     col: number;
     row: number;
-    /** Effective column span (after fit/shrink resolution) */
     w: number;
-    /** Effective row span (after fit/shrink resolution) */
     h: number;
 }
 

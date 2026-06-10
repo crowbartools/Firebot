@@ -122,7 +122,10 @@
                 local: { text: "Local" }
             };
 
-            $scope.$watch("$ctrl.control.icon.type", (newType) => {
+            $scope.$watch("$ctrl.control.icon.type", (newType, oldType) => {
+                if (newType === oldType) {
+                    return;
+                }
                 if (newType === "none") {
                     $ctrl.control.icon = { type: "none" };
                 } else if (newType === "glyph") {

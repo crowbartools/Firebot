@@ -10,9 +10,21 @@
     search-placeholder="Search control decks"
 >
     <fb-item-table-toolbar>
-        <button class="btn btn-default" ng-click="controlDeckService.showSettingsModal()">
-        <i class="far fa-cog mr-2"></i> Settings
-    </button>
+        <div class="flex">
+            <firebot-button
+                text="Settings"
+                ng-click="controlDeckService.showSettingsModal()"
+                icon="far fa-cog"
+            />
+            <div class="ml-4">
+                <firebot-button
+                    type="default-outlined"
+                    ng-click="controlDeckService.showQRCodeModal()"
+                    icon="far fa-qrcode"
+                    tooltip="Show QR code to connect mobile devices"
+                />
+            </div>
+        </div>
     </fb-item-table-toolbar>
 </firebot-item-table>
 <div

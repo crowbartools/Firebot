@@ -38,7 +38,13 @@ export const deckControl = defineComponent({
                     :color="control.icon.color"
                     :size="44"
                 ></lucide-icon>
-                <div v-else-if="isFolder" class="deck-control-folder-glyph">&#128193;</div>
+                <lucide-icon
+                    v-else-if="isFolder"
+                    class="deck-control-glyph"
+                    name="folder"
+                    color="white"
+                    :size="44"
+                ></lucide-icon>
                 <div class="deck-control-name">{{ control.name }}</div>
             </div>
         </button>

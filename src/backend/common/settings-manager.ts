@@ -82,6 +82,7 @@ const FirebotSettingsDefaults: FirebotSettingsTypes = {
     ControlDeckEnabled: false,
     ControlDeckPin: undefined,
     ControlDeckOrientationMode: "dynamic",
+    ControlDeckDefaultDeckId: null,
     CopiedOverlayVersion: "",
     DashboardLayout: {
         dashboardViewerList: "225px",
@@ -159,6 +160,7 @@ const FirebotSettingsPaths: Partial<Record<keyof FirebotSettingsTypes, string>> 
     ControlDeckEnabled: "/settings/controlDeck/enabled",
     ControlDeckPin: "/settings/controlDeck/pin",
     ControlDeckOrientationMode: "/settings/controlDeck/orientationMode",
+    ControlDeckDefaultDeckId: "/settings/controlDeck/defaultDeckId",
     DashboardLayout: "/settings/dashboard/layout",
     DeleteProfile: "/profiles/deleteProfile",
     LoggedInProfile: "/profiles/loggedInProfile",

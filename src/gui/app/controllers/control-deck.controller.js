@@ -27,6 +27,20 @@
                     icon: "fa-hashtag",
                     dataField: "controls",
                     cellTemplate: `{{data.controls.length}} control{{data.controls.length === 1 ? '' : 's'}}`
+                },
+                {
+                    cellTemplate: `<span ng-if="isDefault" uib-tooltip="This will be the initial deck shown when opening the Control Deck on a device" append-tooltip-to-body="true"><span class="paused-dot unpaused" style="margin-right: 5px"></span> Default</span>`,
+                    cellController: ($scope, settingsService) => {
+                        $scope.isDefault = false;
+
+                        function checkIfDefault() {
+                            $scope.isDefault = $scope.data.id === settingsService.getSetting("ControlDeckDefaultDeckId");
+                        }
+
+                        checkIfDefault();
+
+                        $scope.$watch(() => settingsService.getSetting("ControlDeckDefaultDeckId"), checkIfDefault);
+                    }
                 }
             ];
 
@@ -37,6 +51,13 @@
                         click: () => {
                             controlDeckService.showAddEditDeckModal(item);
                         }
+                    },
+                    {
+                        html: `<a href><i class="far fa-star mr-2 text-center" style="width: 20px;"></i> Set as Default</a>`,
+                        click: () => {
+                            settingsService.saveSetting("ControlDeckDefaultDeckId", item.id);
+                        },
+                        enabled: item.id !== settingsService.getSetting("ControlDeckDefaultDeckId")
                     },
                     {
                         html: `<a href style="color: #fb7373;"><i class="far fa-trash-alt text-center mr-2" style="width: 20px;"></i> Delete</a>`,

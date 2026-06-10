@@ -24,9 +24,13 @@
 
 <body>
     <div id="app" v-cloak>
+        <div v-if="initializing" class="centered-message">
+            <h2>Loading Control Deck...</h2>
+        </div>
+
         <!-- PIN prompt -->
         <pin-prompt
-            v-if="needsPin"
+            v-else-if="needsPin"
             :error="pinError"
             @submit="submitPin"
         ></pin-prompt>
@@ -62,7 +66,7 @@
                     </select>
                     <lucide-icon class="page-select-caret" name="chevron-down" :size="16"></lucide-icon>
                 </div>
-                <button
+                <!-- <button
                     class="wake-indicator"
                     :class="{ active: wakeLockActive }"
                     @click="toggleWakeLockState"
@@ -71,7 +75,7 @@
                 >
                     <lucide-icon name="bed-double" :size="18"></lucide-icon>
                     <lucide-icon :name="wakeLockActive ? 'lock' : 'lock-open'" :size="14"></lucide-icon>
-                </button>
+                </button> -->
                 <div class="conn-indicator" :class="{ connected: connected }" :title="connected ? 'Connected' : 'Disconnected'"></div>
             </header>
 

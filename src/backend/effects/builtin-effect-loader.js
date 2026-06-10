@@ -51,6 +51,8 @@ exports.loadEffects = () => {
         'run-command',
         'run-program',
         'send-custom-websocket-event',
+        'set-active-control-deck',
+        'set-default-control-deck',
         'set-output',
         'set-user-metadata',
         'shoutout',
@@ -85,7 +87,7 @@ exports.loadEffects = () => {
 
         // Deprecated (no remove date)
         'deprecated/random-effect',
-        'deprecated/sequential-effect',
+        'deprecated/sequential-effect'
     ].forEach((filename) => {
         const definition = require(`./builtin/${filename}`);
         EffectManager.registerEffect(definition);

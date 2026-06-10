@@ -1,6 +1,6 @@
 // Lightweight API + WebSocket helpers for the hosted Control Deck page.
 
-import type { AuthState, ControlDeckView, DeckSummary } from "./types.mjs";
+import type { ControlDeckSettings, ControlDeckView, DeckSummary } from "./types.mjs";
 
 const PIN_STORAGE_KEY = "firebot-control-deck-pin";
 
@@ -39,12 +39,12 @@ function authHeaders(): Record<string, string> {
     return pin ? { "x-control-deck-pin": pin } : {};
 }
 
-export async function fetchAuthState(): Promise<AuthState> {
+export async function fetchControlDeckSettings(): Promise<ControlDeckSettings> {
     const res = await fetch("/api/v1/control-deck/settings");
     if (!res.ok) {
         throw new ApiError(`auth-required failed: ${res.status}`, res.status);
     }
-    return res.json() as Promise<AuthState>;
+    return res.json() as Promise<ControlDeckSettings>;
 }
 
 export async function fetchDecks(): Promise<DeckSummary[]> {

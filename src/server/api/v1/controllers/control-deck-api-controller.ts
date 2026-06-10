@@ -72,10 +72,12 @@ export function getControlDeckSettings(
     const enabled = SettingsManager.getSetting("ControlDeckEnabled");
     const pin = SettingsManager.getSetting("ControlDeckPin");
     const orientationMode = SettingsManager.getSetting("ControlDeckOrientationMode") ?? "dynamic";
+    const defaultDeckId = SettingsManager.getSetting("ControlDeckDefaultDeckId") ?? null;
     res.json({
         enabled: enabled === true,
         pinRequired: pin != null && pin !== "",
-        orientationMode: orientationMode
+        orientationMode: orientationMode,
+        defaultDeckId
     });
 }
 

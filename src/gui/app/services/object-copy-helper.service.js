@@ -69,13 +69,13 @@
 
             service.hasObjectCopied = key => copiedObjectsCache[key] != null;
 
-            service.getCopiedObject = (key) => {
+            service.getCopiedObject = (key, replaceIds = true) => {
                 const object = copiedObjectsCache[key];
                 if (!object) {
                     return null;
                 }
 
-                return service.copyAndReplaceIds(object);
+                return replaceIds ? service.copyAndReplaceIds(object) : JSON.parse(angular.toJson(object));
             };
 
             service.cloneEffect = (effect) => {

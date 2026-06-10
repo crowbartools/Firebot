@@ -35,16 +35,20 @@ class ControlDeckManager extends JsonDbManager<ControlDeck> {
             const enabled = SettingsManager.getSetting("ControlDeckEnabled");
             const pin = SettingsManager.getSetting("ControlDeckPin");
             const orientationMode = SettingsManager.getSetting("ControlDeckOrientationMode");
+            const defaultDeckId = SettingsManager.getSetting("ControlDeckDefaultDeckId");
             this.broadcastToControlDecks("control-deck:settings-updated", {
                 enabled: enabled === true,
                 pinRequired: pin != null && pin !== "",
-                orientationMode: orientationMode
+                orientationMode: orientationMode,
+                defaultDeckId: defaultDeckId ?? null
             });
         };
 
         SettingsManager.on("settings:setting-updated:ControlDeckEnabled", sendSettingsToControlDecks);
         SettingsManager.on("settings:setting-updated:ControlDeckPin", sendSettingsToControlDecks);
         SettingsManager.on("settings:setting-updated:ControlDeckOrientationMode", sendSettingsToControlDecks);
+        SettingsManager.on("settings:setting-updated:ControlDeckDefaultDeckId", sendSettingsToControlDecks);
+
     }
 
     saveDeck(deck: ControlDeck, notify = true): ControlDeck {
