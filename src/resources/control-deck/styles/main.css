@@ -240,6 +240,12 @@ body {
     line-height: 0;
 }
 
+.deck-control-emoji {
+    font-size: 2.6rem;
+    line-height: 1;
+    pointer-events: none;
+}
+
 .deck-control-name {
     font-size: 0.85rem;
     font-weight: 600;

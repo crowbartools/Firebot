@@ -38,6 +38,10 @@ export const deckControl = defineComponent({
                     :color="control.icon.color"
                     :size="44"
                 ></lucide-icon>
+                <span
+                    v-else-if="control.icon && control.icon.type === 'emoji'"
+                    class="deck-control-emoji"
+                >{{ control.icon.emoji }}</span>
                 <lucide-icon
                     v-else-if="isFolder"
                     class="deck-control-glyph"

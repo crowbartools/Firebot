@@ -35,6 +35,8 @@ function mapControlDeckDeckView(deck: ControlDeck): ControlDeckView {
         if (srcIcon != null) {
             if (srcIcon.type === "glyph") {
                 icon = { type: "glyph", name: srcIcon.name, color: srcIcon.color };
+            } else if (srcIcon.type === "emoji" && srcIcon.emoji != null && srcIcon.emoji !== "") {
+                icon = { type: "emoji", emoji: srcIcon.emoji };
             } else if (srcIcon.type === "image" && srcIcon.path != null && srcIcon.path !== "") {
                 if (srcIcon.source === "url") {
                     icon = { type: "image", url: srcIcon.path };

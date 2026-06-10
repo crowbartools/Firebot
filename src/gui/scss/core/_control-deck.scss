@@ -11,6 +11,15 @@
     }
 }
 
+.emoji-glyph {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    line-height: 1;
+    width: 22px;
+}
+
 .cd-page-bar {
     display: flex;
     align-items: center;
@@ -233,6 +242,12 @@
     .cd-cell-glyph {
         display: inline-flex;
         line-height: 0;
+        pointer-events: none;
+    }
+
+    .cd-cell-emoji {
+        font-size: 26px;
+        line-height: 1;
         pointer-events: none;
     }
 

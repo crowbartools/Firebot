@@ -29,7 +29,7 @@
                         <firebot-radio-cards
                             options="$ctrl.iconOptions"
                             ng-model="$ctrl.control.icon.type"
-                            grid-columns="3"
+                            grid-columns="4"
                         />
 
                         <div ng-if="$ctrl.control.icon.type === 'image'" style="margin-top:10px;">
@@ -60,6 +60,10 @@
                             <div style="margin-top:10px;">
                                 <color-picker-input label="Glyph Color" model="$ctrl.control.icon.color" show-clear="true"></color-picker-input>
                             </div>
+                        </div>
+
+                        <div ng-if="$ctrl.control.icon.type === 'emoji'" style="margin-top:10px;">
+                            <emoji-picker model="$ctrl.control.icon.emoji"></emoji-picker>
                         </div>
                    </div>
                 </firebot-form-group>
@@ -114,6 +118,7 @@
             $ctrl.iconOptions = [
                 { value: "none", label: "None", iconClass: "fa-ban" },
                 { value: "glyph", label: "Glyph", iconClass: "fa-icons" },
+                { value: "emoji", label: "Emoji", iconClass: "fa-smile" },
                 { value: "image", label: "Image", iconClass: "fa-image" }
             ];
 
@@ -130,6 +135,8 @@
                     $ctrl.control.icon = { type: "none" };
                 } else if (newType === "glyph") {
                     $ctrl.control.icon = { type: "glyph", name: undefined, color: undefined };
+                } else if (newType === "emoji") {
+                    $ctrl.control.icon = { type: "emoji", emoji: undefined };
                 } else if (newType === "image") {
                     $ctrl.control.icon = { type: "image", source: "url", path: "" };
                 }

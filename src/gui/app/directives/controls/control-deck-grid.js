@@ -55,6 +55,7 @@
                         <div ng-if="cell.control" class="cd-cell-content">
                             <img ng-if="cell.control._previewIcon.kind === 'image'" class="cd-cell-icon" ng-src="{{cell.control._previewIcon.url}}" />
                             <lucide-icon ng-if="cell.control._previewIcon.kind === 'glyph'" class="cd-cell-glyph" name="{{cell.control._previewIcon.name}}" color="{{cell.control._previewIcon.color}}" size="28"></lucide-icon>
+                            <span ng-if="cell.control._previewIcon.kind === 'emoji'" class="cd-cell-emoji">{{cell.control._previewIcon.emoji}}</span>
                             <i ng-if="cell.control._previewIcon.kind === 'none' && cell.control.type === 'folder'" class="fas fa-folder cd-cell-folder-glyph"></i>
                             <div class="cd-cell-name">{{cell.control.name}}</div>
                             <div class="cd-cell-actions">
@@ -132,6 +133,8 @@
                         control._previewIcon = { kind: "none" };
                     } else if (icon.type === "glyph") {
                         control._previewIcon = { kind: "glyph", name: icon.name, color: icon.color };
+                    } else if (icon.type === "emoji") {
+                        control._previewIcon = { kind: "emoji", emoji: icon.emoji };
                     } else if (icon.type === "image" && icon.path) {
                         const url = icon.source === "url"
                             ? icon.path

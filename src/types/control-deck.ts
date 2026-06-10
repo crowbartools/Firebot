@@ -30,8 +30,15 @@ export type ControlDeckNoneIcon = {
     type: "none";
 };
 
+/** An emoji icon referenced by its unicode character. */
+export type ControlDeckEmojiIcon = {
+    type: "emoji";
+    /** The emoji character (eg "🔥") */
+    emoji: string;
+};
 
-export type ControlDeckIcon = ControlDeckImageIcon | ControlDeckGlyphIcon | ControlDeckNoneIcon;
+
+export type ControlDeckIcon = ControlDeckImageIcon | ControlDeckGlyphIcon | ControlDeckEmojiIcon | ControlDeckNoneIcon;
 
 export type ControlDeckControlPosition = {
     col: number;
@@ -103,7 +110,8 @@ export type ControlDeckSettings = {
 
 export type ControlDeckResolvedIcon =
     | { type: "image", url: string }
-    | { type: "glyph", name: string, color?: string };
+    | { type: "glyph", name: string, color?: string }
+    | { type: "emoji", emoji: string };
 
 /**
  * A control as projected to the hosted Control Deck page. Server-only fields
