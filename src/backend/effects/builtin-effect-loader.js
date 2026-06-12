@@ -41,7 +41,6 @@ exports.loadEffects = () => {
         'moderator-purge',
         'moderator-timeout',
         'pause-resume-effect-queue',
-        'pin-chat-message',
         'play-sound',
         'play-video', // No migration needed.
         'overlay-alert',
@@ -72,7 +71,6 @@ exports.loadEffects = () => {
         'toggle-scheduled-task',
         'toggle-timer',
         'trigger-manual-effect-queue',
-        'unpin-chat-message',
         'update-channel-reward',
         'update-counter',
         'update-role',
@@ -117,7 +115,11 @@ exports.loadEffects = () => {
         'create-prediction',
         'lock-prediction',
         'resolve-prediction',
-        'update-vip-role'
+
+        'update-vip-role',
+
+        'pin-chat-message',
+        'unpin-chat-message'
     ].forEach((filename) => {
         const definition = require(`../streaming-platforms/twitch/effects/${filename}`);
         EffectManager.registerEffect(definition);

@@ -1,6 +1,8 @@
-import type { EffectType } from "../../../types";
-import { TwitchApi } from "../../streaming-platforms/twitch/api";
-import logger from "../../logwrapper";
+import type { EffectType } from "../../../../types";
+import { TwitchApi } from "../api";
+import { LoggerCache } from "../../../logger-cache";
+
+const logger = LoggerCache.getLogger("Effects");
 
 const effect: EffectType = {
     definition: {

@@ -1,5 +1,5 @@
-import type { EffectType } from "../../../types";
-import { TwitchApi } from "../../streaming-platforms/twitch/api";
+import type { EffectType } from "../../../../types";
+import { TwitchApi } from "../api";
 
 const effect: EffectType<{
     pinUntilEndOfStream: boolean;
