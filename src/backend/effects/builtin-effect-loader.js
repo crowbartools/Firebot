@@ -119,6 +119,7 @@ exports.loadEffects = () => {
         'update-vip-role',
 
         'pin-chat-message',
+        'update-pinned-chat-message',
         'unpin-chat-message'
     ].forEach((filename) => {
         const definition = require(`../streaming-platforms/twitch/effects/${filename}`);

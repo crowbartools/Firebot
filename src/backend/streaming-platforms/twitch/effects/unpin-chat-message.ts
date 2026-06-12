@@ -25,6 +25,7 @@ const effect: EffectType = {
             await TwitchApi.chat.unpinChatMessage(pinnedMessage.messageId);
         } else {
             logger.warn("No pinned message to unpin");
+            return false;
         }
 
         return true;
