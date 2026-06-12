@@ -6,7 +6,7 @@ const { ProfileManager } = require("../common/profile-manager");
 const { SettingsManager } = require('../common/settings-manager');
 const authManager = require("../auth/auth-manager");
 const frontendCommunicator = require('../common/frontend-communicator');
-const logger = require("../logwrapper");
+const logger = require("../logger-cache").LoggerCache.getLogger("Integration");
 const { setValuesForFrontEnd, buildSaveDataFromSettingValues } = require("../common/firebot-setting-helpers");
 
 /**@extends {NodeJS.EventEmitter} */
@@ -151,6 +151,31 @@ class IntegrationManager extends EventEmitter {
             return false;
         }
         return true;
+    }
+
+    unregisterIntegration(integrationId) {
+        const existing = this._integrations.some(i => i.definition.id === integrationId);
+        if (!existing) {
+            logger.warn(`Could not unregister integration '${integrationId}'. Integration does not exist.`);
+            return;
+        }
+
+        const integration = this.getIntegrationById(integrationId);
+        try {
+            integration?.integration?.removeAllListeners?.();
+            if (typeof integration?.integration?.disconnect === "function") {
+                integration.integration.disconnect();
+            }
+        } catch (error) {
+            logger.warn(`Error while disconnecting integration '${integrationId}' during unregister.`, error);
+        }
+
+        this._integrations = this._integrations.filter(i => i.definition.id !== integrationId);
+
+        logger.debug(`Unregistered Integration ${integrationId}`);
+
+        this.emit("integrationUnregistered", integrationId);
+        frontendCommunicator.send("integrationsUpdated");
     }
 
     getAllIntegrationDefinitions() {

@@ -3,10 +3,10 @@ import { DynamicCountdownWidgetConfig, State as CountdownState } from "./countdo
 import { EventManager } from "../../../events/event-manager";
 import effectRunner from "../../../common/effect-runner";
 import { Trigger } from "../../../../types/triggers";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
 
 class CountdownManager {
-
+    private logger = LoggerCache.getLogger("Overlay Widgets");
     private intervalId: NodeJS.Timeout | null = null;
 
     startTimer() {
@@ -15,7 +15,7 @@ class CountdownManager {
             this.doTick();
         }, 1000);
 
-        logger.debug("Countdown timer started");
+        this.logger.debug("Countdown timer started");
     }
 
     private doTick() {
@@ -99,7 +99,7 @@ class CountdownManager {
         };
 
         effectRunner.processEffects(processEffectsRequest).catch((reason) => {
-            logger.error(`Error when running effects: ${reason}`);
+            this.logger.error(`Error when running effects: ${reason}`);
         });
     }
 }

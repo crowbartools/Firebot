@@ -1,6 +1,6 @@
 "use strict";
 
-/** @import { ChatModerationSettings, ModerationTerm, ModerationImportRequest } from "../../../types/moderation" */
+/** @import { ChatModerationSettings, ModerationTerm, ModerationImportRequest } from "../../../types" */
 
 (function() {
     angular

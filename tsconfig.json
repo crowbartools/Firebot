@@ -18,5 +18,11 @@
         },
         "target": "es2023"
     },
-    "include": ["src/**/*"]
+    "include": ["src/**/*"],
+    "exclude": [
+        "node_modules",
+        "build",
+        "dist",
+        "src/resources/control-deck/lib"
+    ]
 }

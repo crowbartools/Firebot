@@ -1,7 +1,10 @@
 import moment from "moment";
 
-import type { SystemCommand } from "../../../../types/commands";
-import type { RoleNumberParameterValue, RolePercentageParameterValue } from "../../../../types/parameters";
+import type {
+    RoleNumberParameterValue,
+    RolePercentageParameterValue,
+    SystemCommand
+} from "../../../../types";
 
 import { GameManager } from "../../game-manager";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
@@ -11,9 +14,11 @@ import currencyManager from "../../../currency/currency-manager";
 import customRolesManager from "../../../roles/custom-roles-manager";
 import teamRolesManager from "../../../roles/team-roles-manager";
 import twitchRolesManager from "../../../../shared/twitch-roles";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
 import { commafy, humanizeTime } from "../../../utils";
 import heistRunner from "./heist-runner";
+
+const logger = LoggerCache.getLogger("Games");
 
 const HEIST_COMMAND_ID = "firebot:heist";
 

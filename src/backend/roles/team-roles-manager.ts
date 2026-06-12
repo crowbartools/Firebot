@@ -1,4 +1,5 @@
-import type { FirebotRole } from "../../types/roles";
+import type { FirebotRole } from "../../types";
+
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 import frontendCommunicator from "../common/frontend-communicator";
 

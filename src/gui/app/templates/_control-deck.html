@@ -1,0 +1,42 @@
+<firebot-item-table
+    ng-if="controlDeckEnabled()"
+    items="controlDeckService.decks"
+    headers="headers"
+    add-new-button-text="New Deck"
+    on-add-new-clicked="controlDeckService.showAddEditDeckModal()"
+    context-menu-options="deckOptions(item)"
+    no-data-message="No control decks yet. Create one to get started!"
+    none-found-message="No control decks found."
+    search-placeholder="Search control decks"
+>
+    <fb-item-table-toolbar>
+        <div class="flex">
+            <firebot-button
+                text="Settings"
+                ng-click="controlDeckService.showSettingsModal()"
+                icon="far fa-cog"
+            />
+            <div class="ml-4">
+                <firebot-button
+                    type="default-outlined"
+                    ng-click="controlDeckService.showQRCodeModal()"
+                    icon="far fa-qrcode"
+                    tooltip="Show QR code to connect mobile devices"
+                />
+            </div>
+        </div>
+    </fb-item-table-toolbar>
+</firebot-item-table>
+<div
+    ng-if="!controlDeckEnabled()"
+    class="flex flex-column items-center justify-center gap-4 p-4 h-full"
+>
+    <i class="fal fa-grip-horizontal text-7xl"></i>
+    <h2 class="text-5xl m-0 font-black">Control Deck</h2>
+    <p class="text-center px-96">Turn any phone, tablet, or browser into a wireless control deck for Firebot. Trigger effects and control your stream from a grid of customizable buttons. Enable it to get started.</p>
+    <firebot-button
+        text="Enable"
+        type="primary"
+        ng-click="enableControlDeck()"
+    />
+</div>

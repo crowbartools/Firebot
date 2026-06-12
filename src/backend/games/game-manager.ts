@@ -1,9 +1,15 @@
-import type { FirebotGame, GameDefinition, GameSettings } from "../../types/games";
+import type {
+    FirebotGame,
+    GameDefinition,
+    GameSettings
+} from "../../types";
+
 import { ProfileManager } from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 
 class GameManager {
+    private logger = LoggerCache.getLogger("Games");
     private _registeredGames: FirebotGame[] = [];
     private _allGamesSettings: Record<string, GameSettings> = {};
 
@@ -74,7 +80,30 @@ class GameManager {
 
         this._registeredGames.push(game);
 
-        logger.debug(`Registered game ${game.id}`);
+        this.logger.debug(`Registered game ${game.id}`);
+    }
+
+    /**
+     * Unregister a Firebot game. If the game was active, its onUnload handler is invoked.
+     * @param gameId The id of the game to unregister
+     */
+    unregisterGame(gameId: string) {
+        const game = this._registeredGames.find(g => g.id === gameId);
+        if (game == null) {
+            return;
+        }
+
+        if (game.active && typeof game.onUnload === "function") {
+            try {
+                game.onUnload(this.buildGameSettings(game, this._allGamesSettings[game.id]));
+            } catch (error) {
+                this.logger.error(`Error invoking onUnload for game ${gameId} during unregister`, error);
+            }
+        }
+
+        this._registeredGames = this._registeredGames.filter(g => g.id !== gameId);
+
+        this.logger.debug(`Unregistered game ${gameId}`);
     }
 
     /**

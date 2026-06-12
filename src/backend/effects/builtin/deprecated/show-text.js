@@ -1,10 +1,11 @@
 "use strict";
 
 const escapeHTML = require("escape-html");
+
+const { HttpServerManager } = require("../../../../server/http-server-manager");
 const { ReplaceVariableManager } = require("../../../variables/replace-variable-manager");
 const { SettingsManager } = require("../../../common/settings-manager");
-const webServer = require("../../../../server/http-server-manager");
-const logger = require("../../../logwrapper");
+const logger = require("../../../logger-cache").LoggerCache.getLogger("Effects");
 const mediaProcessor = require("../../../common/handlers/mediaProcessor");
 
 /**
@@ -326,7 +327,7 @@ const showText = {
             dto.align = "center";
         }
 
-        webServer.sendToOverlay("text", dto);
+        HttpServerManager.sendToOverlay("text", dto);
         return true;
     },
     /**

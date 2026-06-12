@@ -1,4 +1,4 @@
-import type { Trigger } from "../../types/triggers";
+import type { Trigger } from "../../types";
 
 /**
  * Gets the full event ID from the associated trigger

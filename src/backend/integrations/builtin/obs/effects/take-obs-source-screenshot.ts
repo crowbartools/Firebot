@@ -1,8 +1,14 @@
-import { EffectType } from "../../../../../types/effects";
-import {CustomEmbed, EmbedType} from "../../../../../types/discord";
-import {getCurrentSceneName, OBSSource, OBSSourceScreenshotSettings, takeSourceScreenshot} from "../obs-remote";
-import logger from "../../../../logwrapper";
+import type {
+    EffectType,
+    DiscordCustomEmbed,
+    DiscordEmbedType
+} from "../../../../../types";
+
+import { getCurrentSceneName, OBSSource, OBSSourceScreenshotSettings, takeSourceScreenshot } from "../obs-remote";
+import { LoggerCache } from "../../../../logger-cache";
 import * as screenshotHelpers from "../../../../common/screenshot-helpers";
+
+const logger = LoggerCache.getLogger("Integration: OBS");
 
 export const TakeOBSSourceScreenshotEffectType: EffectType<{
     source: string;
@@ -24,9 +30,9 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
     quality: number;
     useActiveScene: boolean;
     includeEmbed?: boolean;
-    embedType?: EmbedType;
+    embedType?: DiscordEmbedType;
     embedColor?: string;
-    customEmbed: CustomEmbed;
+    customEmbed: DiscordCustomEmbed;
 } & screenshotHelpers.ScreenshotEffectData> = {
     definition: {
         id: "firebot:obs-source-screenshot",

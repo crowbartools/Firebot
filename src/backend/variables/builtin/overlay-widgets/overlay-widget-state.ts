@@ -1,7 +1,9 @@
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
 import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 import overlayWidgetConfigManager from "../../../overlay-widgets/overlay-widget-config-manager";
+
+const logger = LoggerCache.getLogger("Variables");
 
 const model: ReplaceVariable = {
     definition: {

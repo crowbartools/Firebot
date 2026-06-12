@@ -1,8 +1,8 @@
 "use strict";
 
 (function() {
-    /** @typedef {import("../../../types/ranks").RankLadder} RankLadder */
-    /** @typedef {import("../../../types/ranks").Rank} Rank */
+    /** @typedef {import("../../../types").RankLadder} RankLadder */
+    /** @typedef {import("../../../types").Rank} Rank */
 
     angular
         .module("firebotApp")

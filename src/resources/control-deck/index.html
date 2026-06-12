@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <title>Control Deck</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="./images/apple-touch-icon.png">
+    <link rel="icon" type="image/x-icon" href="./images/favicon.ico">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <link rel="stylesheet" href="./styles/main.css" />
+    <script src="./lib/lucide.min.js"></script>
+    <script src="./lib/NoSleep.min.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "vue": "./lib/vue.esm-browser.prod.js"
+            }
+        }
+    </script>
+    <script type="module" src="./main.mjs"></script>
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <div v-if="initializing" class="centered-message">
+            <h2>Loading Control Deck...</h2>
+        </div>
+
+        <!-- PIN prompt -->
+        <pin-prompt
+            v-else-if="needsPin"
+            :error="pinError"
+            @submit="submitPin"
+        ></pin-prompt>
+
+        <!-- Disabled notice -->
+        <div v-else-if="disabled" class="centered-message">
+            <h2>Control Deck is disabled</h2>
+            <p>Enable it in Firebot</p>
+        </div>
+
+        <!-- Deck picker -->
+        <deck-picker
+            v-else-if="!currentDeckId"
+            :decks="decks"
+            @select="selectDeck"
+        ></deck-picker>
+
+        <!-- Deck view -->
+        <div v-else class="deck-view">
+            <header class="deck-header">
+                <button class="header-btn" @click="goBack">
+                    <lucide-icon :name="folderStack.length ? 'arrow-left' : 'menu'" :size="22"></lucide-icon>
+                </button>
+                <div class="deck-title">{{ currentDeck?.name }}<span v-if="currentFolder"> / {{ currentFolder.name }}</span></div>
+                <div class="page-select-wrap" v-if="pages.length > 1">
+                    <select
+                        class="page-select"
+                        :value="currentPageId"
+                        @change="selectPage($event.target.value)"
+                        aria-label="Select page"
+                    >
+                        <option v-for="page in pages" :key="page.id" :value="page.id">{{ page.name }}</option>
+                    </select>
+                    <lucide-icon class="page-select-caret" name="chevron-down" :size="16"></lucide-icon>
+                </div>
+                <!-- <button
+                    class="wake-indicator"
+                    :class="{ active: wakeLockActive }"
+                    @click="toggleWakeLockState"
+                    :title="wakeLockActive ? 'Screen will stay awake (tap to disable)' : 'Screen may sleep (tap to keep awake)'"
+                    aria-label="Toggle keep screen awake"
+                >
+                    <lucide-icon name="bed-double" :size="18"></lucide-icon>
+                    <lucide-icon :name="wakeLockActive ? 'lock' : 'lock-open'" :size="14"></lucide-icon>
+                </button> -->
+                <div class="conn-indicator" :class="{ connected: connected }" :title="connected ? 'Connected' : 'Disconnected'"></div>
+            </header>
+
+            <div class="grid-viewport">
+                <div class="grid-sizer">
+                    <div class="control-grid" :style="gridStyle">
+                        <deck-control
+                            v-for="cell in placedControls"
+                            :key="cell.control.id"
+                            :control="cell.control"
+                            :type-component="controlTypeRegistry[cell.control.type] ? controlTypeRegistry[cell.control.type].component : null"
+                            :style="{ gridColumn: cell.col + ' / span ' + cell.w, gridRow: cell.row + ' / span ' + cell.h }"
+                            @interact="handleControlInteract(cell.control, $event)"
+                        ></deck-control>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input prompt for controls with inputs -->
+            <input-prompt
+                v-if="inputPromptControl"
+                :key="inputPromptControl.id"
+                :control-name="inputPromptControl.name"
+                :inputs="inputPromptControl.inputs"
+                @submit="submitControlInputs"
+                @cancel="cancelControlInputs"
+            ></input-prompt>
+        </div>
+    </div>
+</body>
+
+</html>

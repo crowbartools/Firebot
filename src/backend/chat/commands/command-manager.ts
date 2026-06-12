@@ -3,12 +3,12 @@ import { JsonDB } from "node-json-db";
 import { DateTime } from "luxon";
 import { randomUUID } from "crypto";
 
-import { CommandDefinition, SystemCommand, SystemCommandDefinition } from "../../../types/commands";
+import type { CommandDefinition, SystemCommand, SystemCommandDefinition } from "../../../types";
 
 import { AccountAccess } from "../../common/account-access";
 import { ProfileManager } from "../../common/profile-manager";
 import frontendCommunicator from "../../common/frontend-communicator";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
 import { deepClone } from "../../utils";
 
 type Events = {
@@ -32,6 +32,7 @@ interface CommandCache {
  * The class for the manager object that maintains Firebot system/custom chat commands
  */
 class CommandManager extends TypedEmitter<Events> {
+    private logger = LoggerCache.getLogger("Commands");
     private _registeredSysCommands: SystemCommand[] = [];
     private _commandCache: CommandCache = {
         systemCommandOverrides: {},
@@ -42,27 +43,27 @@ class CommandManager extends TypedEmitter<Events> {
         super();
 
         frontendCommunicator.on("get-all-system-commands", () => {
-            logger.info("got 'get all cmds' request");
+            this.logger.info("got 'get all cmds' request");
             return this.getSystemCommands();
         });
 
         frontendCommunicator.on("get-all-system-command-definitions", () => {
-            logger.info("got 'get all cmd defs' request");
+            this.logger.info("got 'get all cmd defs' request");
             return this.getAllSystemCommandDefinitions();
         });
 
         frontendCommunicator.on("get-system-command", (commandId: string) => {
-            logger.info("got 'get cmd' request", commandId);
+            this.logger.info("got 'get cmd' request", commandId);
             return this.getSystemCommandById(commandId);
         });
 
         frontendCommunicator.on("save-system-command-override", (sysCommand: SystemCommandDefinition) => {
-            logger.info("got 'save sys cmd' request");
+            this.logger.info("got 'save sys cmd' request");
             this.saveSystemCommandOverride(sysCommand);
         });
 
         frontendCommunicator.on("remove-system-command-override", (id: string) => {
-            logger.info("got 'remove sys cmd' request");
+            this.logger.info("got 'remove sys cmd' request");
             this.removeSystemCommandOverride(id);
         });
 
@@ -131,7 +132,7 @@ class CommandManager extends TypedEmitter<Events> {
 
         this.emit("created-item", command);
 
-        logger.debug(`Registered Sys Command ${command.definition.id}`);
+        this.logger.debug(`Registered Sys Command ${command.definition.id}`);
 
         this.emit("systemCommandRegistered", command);
     }
@@ -147,7 +148,7 @@ class CommandManager extends TypedEmitter<Events> {
 
         this.emit("deleted-item", command);
         this.emit("systemCommandUnRegistered", id);
-        logger.debug(`Unregistered Sys Command ${id}`);
+        this.logger.debug(`Unregistered Sys Command ${id}`);
     }
 
     /**
@@ -427,7 +428,7 @@ class CommandManager extends TypedEmitter<Events> {
      * @param command The `CommandDefinition` for the custom command to import
      */
     saveImportedCustomCommand(command: CommandDefinition): void {
-        logger.debug(`Saving imported command: ${command.trigger}`);
+        this.logger.debug(`Saving imported command: ${command.trigger}`);
 
         if (command.id == null || command.id === "") {
             command.createdBy = "Imported";
@@ -475,7 +476,7 @@ class CommandManager extends TypedEmitter<Events> {
             commandDb.delete(`/customCommands/${id}`);
             this.emit("deleted-item", command);
         } catch (err) {
-            logger.warn("error when deleting command", (err as Error).message);
+            this.logger.warn("error when deleting command", (err as Error).message);
         }
 
         this._commandCache.customCommands = this._commandCache.customCommands.filter(c => c.id !== id);
@@ -518,7 +519,7 @@ class CommandManager extends TypedEmitter<Events> {
                 });
             }
 
-            logger.info("Updated Command cache.");
+            this.logger.info("Updated Command cache.");
         }
     }
 

@@ -1,13 +1,16 @@
-import { FirebotChatMessage } from "../../../types/chat";
-import { CommandDefinition, UserCommand } from "../../../types/commands";
-import { Trigger } from "../../../types/triggers";
+import type {
+    CommandDefinition,
+    FirebotChatMessage,
+    Trigger,
+    UserCommand
+} from "../../../types";
 
 import { AccountAccess } from "../../common/account-access";
 import { CommandManager } from "./command-manager";
 import effectRunner from "../../common/effect-runner";
 import chatHelpers from "../chat-helpers";
 import frontendCommunicator from "../../common/frontend-communicator";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
 
 interface TriggerWithArgs {
     trigger: string;
@@ -15,6 +18,8 @@ interface TriggerWithArgs {
 }
 
 class CommandRunner {
+    private logger = LoggerCache.getLogger("Commands");
+
     private parseCommandTriggerAndArgs(trigger: string, rawMessage: string, scanWholeMessage = false, treatQuotedTextAsSingleArg = false): TriggerWithArgs {
         let args: string[] = [];
 
@@ -131,7 +136,7 @@ class CommandRunner {
         }
 
         return effectRunner.processEffects(processEffectsRequest).catch((reason) => {
-            logger.error(`error when running effects: ${reason}`);
+            this.logger.error(`error when running effects: ${reason}`);
         });
     }
 
@@ -149,10 +154,10 @@ class CommandRunner {
             commandSender = AccountAccess.getAccounts().streamer.username;
         }
 
-        logger.info(`Checking command type... ${command.type}`);
+        this.logger.info(`Checking command type... ${command.type}`);
 
         if (command.type === "system") {
-            logger.info("Executing system command");
+            this.logger.info("Executing system command");
             //get system command from manager
             const cmdDef = CommandManager.getSystemCommandById(command.id);
 
@@ -175,7 +180,7 @@ class CommandRunner {
             });
         }
         if (command.effects) {
-            logger.info("Executing command effects");
+            this.logger.info("Executing command effects");
             void this.execute(command, userCmd, firebotChatMessage, isManual);
         }
     }
@@ -183,7 +188,7 @@ class CommandRunner {
     triggerCustomCommand(id: string, isManual = true): void {
         const command = CommandManager.getCustomCommandById(id);
         if (command != null) {
-            logger.debug("firing command manually", command);
+            this.logger.debug("firing command manually", command);
             const commandSender = AccountAccess.getAccounts().streamer.username,
                 userCmd = this.buildUserCommand(command, null, commandSender);
             this.fireCommand(command, userCmd, null, commandSender, isManual);

@@ -8,7 +8,7 @@ import { TwitchEventSubChatHelpers } from "../streaming-platforms/twitch/api/eve
 import chatRolesManager from "../roles/chat-roles-manager";
 import viewerDatabase from "../viewers/viewer-database";
 import frontendCommunicator from "../common/frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 import { getRandomInt } from "../utils";
 
 type User = {
@@ -42,6 +42,8 @@ type Events = {
 };
 
 class ActiveUserHandler extends TypedEmitter<Events> {
+    private logger = LoggerCache.getLogger("Chat");
+
     private readonly DEFAULT_ACTIVE_TIMEOUT = 300; // 5 mins
     private readonly ONLINE_TIMEOUT = 450; // 7.50 mins
 
@@ -149,10 +151,10 @@ class ActiveUserHandler extends TypedEmitter<Events> {
     private async updateUserOnlineStatus(userDetails: UserDetails, updateDb = false) {
         const userOnline: ChatUser = this._onlineUsers.get(userDetails.id);
         if (userOnline && userOnline.online === true) {
-            logger.debug(`Updating user ${userDetails.displayName}'s "online" ttl to ${this.ONLINE_TIMEOUT} secs`);
+            this.logger.debug(`Updating user ${userDetails.displayName}'s "online" ttl to ${this.ONLINE_TIMEOUT} secs`);
             this._onlineUsers.ttl(userDetails.id, this.ONLINE_TIMEOUT);
         } else {
-            logger.debug(`Marking user ${userDetails.displayName} as online with ttl of ${this.ONLINE_TIMEOUT} secs`);
+            this.logger.debug(`Marking user ${userDetails.displayName} as online with ttl of ${this.ONLINE_TIMEOUT} secs`);
             this._onlineUsers.set(userDetails.id, {
                 username: userDetails.username,
                 displayName: userDetails.displayName,
@@ -187,7 +189,7 @@ class ActiveUserHandler extends TypedEmitter<Events> {
                 const twitchUser = await TwitchApi.users.getUserById(viewer.userId);
 
                 if (twitchUser == null) {
-                    logger.warn(`Could not find Twitch user with ID '${viewer.userId}'`);
+                    this.logger.warn(`Could not find Twitch user with ID '${viewer.userId}'`);
                     return;
                 }
 
@@ -219,7 +221,7 @@ class ActiveUserHandler extends TypedEmitter<Events> {
                 await this.updateUserOnlineStatus(userDetails, true);
             }
         } catch (error) {
-            logger.error(`Failed to set ${viewer.userDisplayName} as online`, error);
+            this.logger.error(`Failed to set ${viewer.userDisplayName} as online`, error);
         }
     }
 
@@ -262,13 +264,13 @@ class ActiveUserHandler extends TypedEmitter<Events> {
 
         const userActive = this._activeUsers.get(userDetails.id);
         if (!userActive) {
-            logger.debug(`Marking user ${userDetails.displayName} as active with ttl of ${ttl} secs`, ttl);
+            this.logger.debug(`Marking user ${userDetails.displayName} as active with ttl of ${ttl} secs`, ttl);
             this._activeUsers.set(userDetails.id, userDetails.username, ttl);
             this._activeUsers.set(userDetails.username, userDetails.id, ttl);
             frontendCommunicator.send("twitch:chat:user-active", userDetails.id);
         } else {
         // user is still active reset ttl
-            logger.debug(`Updating user ${userDetails.displayName}'s "active" ttl to ${ttl} secs`, ttl);
+            this.logger.debug(`Updating user ${userDetails.displayName}'s "active" ttl to ${ttl} secs`, ttl);
             this._activeUsers.ttl(userDetails.id, ttl);
             this._activeUsers.ttl(userDetails.username, ttl);
             frontendCommunicator.send("twitch:chat:user-active", userDetails.id);

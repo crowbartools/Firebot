@@ -4,8 +4,8 @@
 
     const { randomUUID } = require("crypto");
 
-    /** @typedef {import("../../../../../types/overlay-widgets").OverlayWidgetType} OverlayWidgetType */
-    /** @typedef {import("../../../../../types/overlay-widgets").OverlayWidgetConfig} OverlayWidgetConfig */
+    /** @typedef {import("../../../../../types").OverlayWidgetType} OverlayWidgetType */
+    /** @typedef {import("../../../../../types").OverlayWidgetConfig} OverlayWidgetConfig */
 
     angular.module("firebotApp")
         .component("addOrEditOverlayWidgetModal", {

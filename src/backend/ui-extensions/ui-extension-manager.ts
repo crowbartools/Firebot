@@ -1,4 +1,4 @@
-import type { UIExtension } from "./extension-types";
+import type { UIExtension } from "../../types";
 import frontendCommunicator from "../common/frontend-communicator";
 
 class UIExtensionManager {
@@ -8,7 +8,7 @@ class UIExtensionManager {
 
     registerUIExtension(extension: UIExtension): void {
         if (this._extensions.find(ext => ext.id === extension.id)) {
-            throw new Error(`Extension with id ${extension.id} already registered`);
+            throw new Error(`UI Extension with id ${extension.id} already registered`);
         }
 
         this._extensions.push(extension);

@@ -1,7 +1,9 @@
-import { SystemCommand } from "../../../../types/commands";
-import logger from "../../../logwrapper";
+import type { SystemCommand } from "../../../../types";
+import { LoggerCache } from "../../../logger-cache";
 import { humanizeTime } from "../../../utils";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
+
+const logger = LoggerCache.getLogger("Commands");
 
 /**
  * The `!marker` command

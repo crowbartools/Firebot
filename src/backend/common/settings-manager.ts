@@ -1,21 +1,182 @@
-import { EventEmitter } from "events";
+import { TypedEmitter } from "tiny-typed-emitter";
 import { JsonDB } from "node-json-db";
 import fs from "fs";
 import path from "path";
 
-import {
-    FirebotAutoUpdateLevel,
-    FirebotGlobalSettings,
-    FirebotSettingsDefaults,
-    FirebotSettingsPaths,
-    FirebotSettingsTypes
-} from "../../types/settings";
+import type { FirebotAutoUpdateLevel, FirebotSettingsTypes } from "../../types";
 
 import * as dataAccess from "./data-access";
 import frontendCommunicator from "./frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 
-class SettingsManager extends EventEmitter {
+const FirebotGlobalSettings: Partial<Record<keyof FirebotSettingsTypes, boolean>> = {
+    ActiveProfiles: true,
+    BackupBeforeUpdates: true,
+    BackupIgnoreResources: true,
+    BackupKeepAll: true,
+    BackupLocation: true,
+    BackupLocationReset: true,
+    BackupOnceADay: true,
+    BackupOnExit: true,
+    DebugMode: true,
+    DeleteProfile: true,
+    LastBackupDate: true,
+    LoggedInProfile: true,
+    MaxBackupCount: true
+};
+
+const FirebotSettingsDefaults: FirebotSettingsTypes = {
+    ActiveChatUserListTimeout: 5,
+    ActiveProfiles: [],
+    AllowChatCreatedCommandsToRunEffects: false,
+    AllowCommandsInSharedChat: false,
+    AllowQuoteCSVDownloads: true,
+    AllowedActivityEvents: [
+        "twitch:raid",
+        "twitch:raid-sent-off",
+        "twitch:follow",
+        "twitch:sub",
+        "twitch:subs-gifted",
+        "twitch:community-subs-gifted",
+        "twitch:cheer",
+        "streamlabs:donation",
+        "streamlabs:eldonation",
+        'extralife:donation',
+        "tipeeestream:donation",
+        "streamelements:donation",
+        "twitch:channel-reward-redemption"
+    ],
+    AudioOutputDevice: { label: "System Default", deviceId: "default" },
+    AutoFlagBots: true,
+    AutoUpdateLevel: 2,
+    BackupBeforeUpdates: true,
+    BackupIgnoreResources: true,
+    BackupKeepAll: false,
+    BackupLocation: undefined,
+    BackupLocationReset: false,
+    BackupOnceADay: true,
+    BackupOnExit: true,
+    ChatAlternateBackgrounds: true,
+    ChatAvatars: true,
+    ChatCompactMode: false,
+    ChatCustomFontFamily: "Open Sans",
+    ChatCustomFontFamilyEnabled: false,
+    ChatCustomFontSize: 17,
+    ChatCustomFontSizeEnabled: false,
+    ChatGetAllEmotes: false,
+    ChatHideBotAccountMessages: false,
+    ChatHideDeletedMessages: false,
+    ChatHideWhispers: false,
+    ChatPronouns: true,
+    ChatReverseOrder: false,
+    ChatShowBttvEmotes: true,
+    ChatShowFfzEmotes: true,
+    ChatShowSevenTvEmotes: true,
+    ChatShowSharedChatInfo: true,
+    ChatTaggedNotificationSound: { name: "None" },
+    ChatTaggedNotificationVolume: 5,
+    ChatTimestamps: true,
+    ClearChatFeedMode: "onlyStreamer",
+    ConnectOnLaunch: false,
+    ControlDeckEnabled: false,
+    ControlDeckPin: undefined,
+    ControlDeckOrientationMode: "dynamic",
+    ControlDeckDefaultDeckId: null,
+    CopiedOverlayVersion: "",
+    DashboardLayout: {
+        dashboardViewerList: "225px",
+        dashboardChatWindow: "100%",
+        dashboardActivityFeed: "275px"
+    },
+    DebugMode: false,
+    DefaultEffectLabelsEnabled: true,
+    DefaultModerationUser: "streamer",
+    DefaultRewardTab: "powerups",
+    DefaultToAdvancedCommandMode: false,
+    DefaultTtsVoiceId: undefined,
+    DeleteProfile: undefined,
+    EventSetSettings: {},
+    EventSettings: {},
+    FirstTimeUse: true,
+    ForceOverlayEffectsToContinueOnRefresh: true,
+    GlobalValues: [],
+    IgnoreSubsequentSubEventsAfterCommunitySub: true,
+    JustUpdated: false,
+    LegacySortTagsImported: false,
+    LastBackupDate: undefined,
+    LoggedInProfile: undefined,
+    MaxBackupCount: 25,
+    MigratedLegacyStartUpScriptsToPlugins: false,
+    MinimizeToTray: false,
+    NotifyOnBeta: false,
+    OpenEffectQueueMonitorOnLaunch: false,
+    OpenStreamPreviewOnLaunch: false,
+    OverlayInstances: [],
+    OverlayResolution: {
+        width: 1280,
+        height: 720
+    },
+    PersistCustomVariables: false,
+    PresetRecursionLimit: true,
+    QuickActions: {},
+    RunCustomScripts: false,
+    SeenAdvancedCommandModePopup: false,
+    ShowActivityFeed: true,
+    ShowActivityFeedEventsInChat: false,
+    ShowAdBreakIndicator: true,
+    ShowChatViewerList: true,
+    ShowHypeTrainIndicator: true,
+    ShowUptimeStat: true,
+    ShowViewerCountStat: true,
+    SidebarControlledServices: ["chat"],
+    SidebarExpanded: true,
+    SoundsEnabled: "On",
+    StreamerExemptFromCooldowns: false,
+    Theme: "Obsidian",
+    TriggerUpcomingAdBreakMinutes: 0,
+    TtsVoiceRate: 1,
+    TtsVoiceVolume: 0.5,
+    UseExperimentalTwitchClipUrlResolver: true,
+    UseOverlayInstances: false,
+    ViewerDB: true,
+    ViewerListPageSize: 10,
+    WebhookDebugLogs: false,
+    WebOnlineCheckin: false,
+    WebServerPort: 7472,
+    WhileLoopEnabled: false,
+    WysiwygBackground: "white"
+};
+
+/** Anything in `SettingsTypes` not listed here will resolve to "/settings/settingName" (e.g. "/settings/autoFlagBots") */
+const FirebotSettingsPaths: Partial<Record<keyof FirebotSettingsTypes, string>> = {
+    ActiveChatUserListTimeout: "/settings/activeChatUsers/inactiveTimer",
+    ActiveProfiles: "/profiles/activeProfiles",
+    ChatShowBttvEmotes: "/settings/chat/emotes/bttv",
+    ChatShowFfzEmotes: "/settings/chat/emotes/ffz",
+    ChatShowSevenTvEmotes: "/settings/chat/emotes/seventv",
+    ChatTaggedNotificationSound: "/settings/chat/tagged/sound",
+    ChatTaggedNotificationVolume: "/settings/chat/tagged/volume",
+    ControlDeckEnabled: "/settings/controlDeck/enabled",
+    ControlDeckPin: "/settings/controlDeck/pin",
+    ControlDeckOrientationMode: "/settings/controlDeck/orientationMode",
+    ControlDeckDefaultDeckId: "/settings/controlDeck/defaultDeckId",
+    DashboardLayout: "/settings/dashboard/layout",
+    DeleteProfile: "/profiles/deleteProfile",
+    LoggedInProfile: "/profiles/loggedInProfile",
+    ShowActivityFeed: "/settings/activityFeed",
+    ShowChatViewerList: "/settings/chatUsersList",
+    SoundsEnabled: "/settings/sounds",
+    ViewerListPageSize: "/settings/viewerListDatabase/pageSize"
+};
+
+type Events = {
+    [settingName in keyof FirebotSettingsTypes as `settings:setting-updated:${settingName}`]: (data: FirebotSettingsTypes[settingName]) => void;
+} & {
+    [settingName in keyof FirebotSettingsTypes as `settings:setting-deleted:${settingName}`]: () => void;
+};
+
+class SettingsManager extends TypedEmitter<Events> {
+    private logger = LoggerCache.getLogger("Settings");
     settingsCache: Partial<Record<keyof FirebotSettingsTypes, unknown>> = {};
 
     constructor() {
@@ -58,7 +219,7 @@ class SettingsManager extends EventEmitter {
     }
 
     private handleCorruptSettingsFile() {
-        logger.warn("settings.json file appears to be corrupt. Resetting file...");
+        this.logger.warn("settings.json file appears to be corrupt. Resetting file...");
 
         const settingsPath = path.join(dataAccess.getUserDataPath(), this.getLoggedInProfilePath("settings.json"));
         fs.writeFileSync(settingsPath, JSON.stringify({
@@ -66,6 +227,33 @@ class SettingsManager extends EventEmitter {
                 firstTimeUse: false
             }
         }));
+    }
+
+    private handleCorruptGlobalSettingsFile() {
+        this.logger.warn("global-settings.json file appears to be corrupt. Resetting file...");
+
+        const globalSettingsPath = path.join(dataAccess.getUserDataPath(), "global-settings.json");
+        const profilesRoot = path.join(dataAccess.getUserDataPath(), "profiles");
+        const profileDirs = fs.readdirSync(profilesRoot)
+            .filter(f => fs.statSync(path.join(profilesRoot, f)).isDirectory());
+
+        let loggedInProfile = profileDirs[0] ?? "";
+        for (const dir of profileDirs) {
+            const normalizedDir = dir.toLowerCase();
+            if (normalizedDir === "main profile"
+                || normalizedDir.startsWith("main")
+            ) {
+                loggedInProfile = dir;
+                break;
+            }
+        }
+
+        fs.writeFileSync(globalSettingsPath, JSON.stringify({
+            profiles: {
+                activeProfiles: profileDirs,
+                loggedInProfile
+            }
+        }, null, 4));
     }
 
     private migrateUserSettingsToGlobal() {
@@ -116,7 +304,7 @@ class SettingsManager extends EventEmitter {
                 this.settingsCache[settingPath] = defaultValue;
             }
             if (err.name !== "DataError") {
-                logger.warn(err);
+                this.logger.warn(err);
                 if (
                     err.name === "DatabaseError" &&
                 err["inner"] instanceof SyntaxError &&
@@ -140,9 +328,10 @@ class SettingsManager extends EventEmitter {
                 this.settingsCache[settingPath] = defaultValue;
             }
             if ((err as Error).name === "DatabaseError") {
-                logger.error(`Failed to read "${settingPath}" in global settings file. File may be corrupt.`, err?.inner?.message ?? err.stack);
+                this.logger.error(`Failed to read "${settingPath}" in global settings file. File may be corrupt.`, err?.inner?.message ?? err.stack);
+                this.handleCorruptGlobalSettingsFile();
             } else if ((err as Error).name !== "DataError") {
-                logger.warn(err);
+                this.logger.warn(err);
             }
         }
         return this.settingsCache[settingPath] as T;
@@ -154,7 +343,7 @@ class SettingsManager extends EventEmitter {
             this.settingsCache[settingPath] = data;
             frontendCommunicator.send("settings:setting-updated", { settingPath, data });
         } catch (err) {
-            logger.debug((err as Error).message);
+            this.logger.debug((err as Error).message);
         }
     }
 
@@ -164,7 +353,7 @@ class SettingsManager extends EventEmitter {
             this.settingsCache[settingPath] = data;
             frontendCommunicator.send("settings:setting-updated", { settingPath, data });
         } catch (err) {
-            logger.debug((err as Error).message);
+            this.logger.debug((err as Error).message);
         }
     }
 
@@ -233,7 +422,8 @@ class SettingsManager extends EventEmitter {
         }
 
         frontendCommunicator.send(`settings:setting-updated:${settingName}`, data);
-        this.emit(`settings:setting-updated:${settingName}`, data);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        this.emit(`settings:setting-updated:${settingName}` as any, data);
     }
 
     /**
@@ -249,7 +439,8 @@ class SettingsManager extends EventEmitter {
         }
 
         frontendCommunicator.send(`settings:setting-updated:${settingName}`, null);
-        this.emit(`settings:setting-deleted:${settingName}`);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        this.emit(`settings:setting-deleted:${settingName}` as any);
     }
 
     /**
@@ -294,12 +485,6 @@ class SettingsManager extends EventEmitter {
 
     /** @deprecated Use `saveSetting("CopiedOverlayVersion", value)` instead */
     setOverlayVersion = (value: string) => this.saveSetting("CopiedOverlayVersion", value);
-
-    /** @deprecated Use `getSetting("ClearCustomScriptCache")` instead */
-    getClearCustomScriptCache = () => this.getSetting("ClearCustomScriptCache");
-
-    /** @deprecated Use `saveSetting("ClearCustomScriptCache", value)` instead */
-    setClearCustomScriptCache = (value: boolean) => this.saveSetting("ClearCustomScriptCache", value);
 
     /** @deprecated Use `getSetting("RunCustomScripts")` instead */
     isCustomScriptsEnabled = () => this.getSetting("RunCustomScripts");

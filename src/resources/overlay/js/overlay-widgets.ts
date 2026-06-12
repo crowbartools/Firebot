@@ -1,9 +1,9 @@
-type WidgetOverlayEvent = import("../../../types/overlay-widgets").WidgetOverlayEvent;
-type Position = import("../../../types/overlay-widgets").Position;
-type OverlayAnimation = import("../../../types/overlay-widgets").Animation;
-type IOverlayWidgetEventUtils = import("../../../types/overlay-widgets").IOverlayWidgetEventUtils;
-type IOverlayWidgetInitUtils = import("../../../types/overlay-widgets").IOverlayWidgetInitUtils;
-type FontOptions = import("../../../types/parameters").FontOptions;
+type WidgetOverlayEvent = import("../../../types").WidgetOverlayEvent;
+type Position = import("../../../types").Position;
+type OverlayAnimation = import("../../../types").Animation;
+type IOverlayWidgetEventUtils = import("../../../types").IOverlayWidgetEventUtils;
+type IOverlayWidgetInitUtils = import("../../../types").IOverlayWidgetInitUtils;
+type FontOptions = import("../../../types").FontOptions;
 
 // @ts-ignore
 widgetEvents = new EventEmitter();

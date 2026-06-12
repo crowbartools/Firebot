@@ -1,4 +1,4 @@
-import { EffectQueueConfig } from "../../../types/effects";
+import type { EffectQueueConfig } from "../../../types";
 
 import JsonDbManager from "../../database/json-db-manager";
 import effectQueueRunner from "./effect-queue-runner";
@@ -7,7 +7,7 @@ import { simpleClone } from "../../utils";
 
 class EffectQueueConfigManager extends JsonDbManager<EffectQueueConfig> {
     constructor() {
-        super("Effect Queue", "/effects/effectqueues");
+        super("Effect Queue", "/effects/effectqueues", "Effect Queues");
 
         frontendCommunicator.on("effect-queues:get-effect-queues",
             () => this.getAllItems()

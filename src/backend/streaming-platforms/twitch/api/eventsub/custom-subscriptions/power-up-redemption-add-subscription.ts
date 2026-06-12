@@ -53,7 +53,7 @@ export class EventSubPowerUpRedemptionAddSubscription extends EventSubSubscripti
                 async ctx =>
                     await ctx.eventSub.createSubscription(
                         "channel.custom_power_up_redemption.add",
-                        "beta",
+                        "1",
                         {
                         // eslint-disable-next-line camelcase
                             broadcaster_user_id: this._broadcasterId

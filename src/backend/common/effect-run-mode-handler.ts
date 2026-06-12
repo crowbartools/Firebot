@@ -1,7 +1,9 @@
 import { EffectInstance, EffectList } from "../../types";
 import { EffectManager } from "../effects/effect-manager";
 import { containsAll, getRandomInt, shuffleArray } from "../utils";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
+
+const logger = LoggerCache.getLogger("Effects");
 
 interface CacheEntry {
     /**

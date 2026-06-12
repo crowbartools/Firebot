@@ -13,7 +13,7 @@ import { EventManager } from "../../../events/event-manager";
 import { FilterManager } from "../../../events/filters/filter-manager";
 import { ReplaceVariableManager } from "../../../variables/replace-variable-manager";
 import frontendCommunicator from "../../../common/frontend-communicator";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
 
 import { initRemote } from "./obs-remote";
 import { setupFrontendListeners } from "./communicator";
@@ -75,6 +75,8 @@ import { InputAudioTracksVariable } from "./variables/input-audio-tracks";
 import { InputAudioMonitorTypeVariable } from "./variables/input-audio-monitor-type";
 import { GroupItemIdVariable } from "./variables/group-item-id";
 import { GroupNameVariable } from "./variables/group-name";
+
+const logger = LoggerCache.getLogger("Integration: OBS");
 
 type ObsSettings = {
     websocketSettings: {

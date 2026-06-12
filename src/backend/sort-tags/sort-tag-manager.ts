@@ -1,15 +1,16 @@
-import type { SortTag } from "../../types/sort-tags";
+import type { SortTag } from "../../types";
 
 import { SettingsManager } from "../common/settings-manager";
 import { ProfileManager } from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 
 interface SortTagCache {
     [context: string]: SortTag[];
 }
 
 class SortTagManager {
+    private logger = LoggerCache.getLogger("Sort Tags");
     sortTags: SortTagCache = { };
 
     constructor() {
@@ -27,7 +28,7 @@ class SortTagManager {
     }
 
     loadSortTags() {
-        logger.debug("Attempting to load tags");
+        this.logger.debug("Attempting to load tags");
 
         try {
             const sortTagsData = this.getSortTagsDb().getData("/") as SortTagCache;
@@ -36,9 +37,9 @@ class SortTagManager {
                 this.sortTags = sortTagsData;
             }
 
-            logger.debug(`Loaded tags.`);
+            this.logger.debug(`Loaded tags.`);
         } catch (err) {
-            logger.warn(`There was an error reading tags file.`, err);
+            this.logger.warn(`There was an error reading tags file.`, err);
         }
 
         this.getLegacyEventAndCommandTags();
@@ -103,9 +104,9 @@ class SortTagManager {
             this.getSortTagsDb().push("/", this.sortTags);
 
             frontendCommunicator.send("sort-tags:updated-sort-tags", this.sortTags);
-            logger.debug("Saved tags");
+            this.logger.debug("Saved tags");
         } catch (error) {
-            logger.warn("There was an error saving tags", error);
+            this.logger.warn("There was an error saving tags", error);
         }
     }
 }

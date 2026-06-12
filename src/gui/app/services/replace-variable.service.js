@@ -7,7 +7,7 @@
             const service = {};
 
             /**
-             * @type {Array<import("../../../types/variables").ReplaceVariable['definition']>}
+             * @type {Array<import("../../../types").ReplaceVariable['definition']>}
              */
             service.allVariables = backendCommunicator.fireEventSync("variables:get-replace-variable-definitions");
 

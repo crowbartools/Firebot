@@ -1,8 +1,10 @@
 import { randomUUID } from "crypto";
 
-import type { SystemCommand } from "../../../../types/commands";
-import type { EffectInstance } from "../../../../types/effects";
-import type { Restriction } from "../../../../types/restrictions";
+import type {
+    EffectInstance,
+    Restriction,
+    SystemCommand
+} from "../../../../types";
 
 import { CommandManager } from "../command-manager";
 import { SettingsManager } from "../../../common/settings-manager";

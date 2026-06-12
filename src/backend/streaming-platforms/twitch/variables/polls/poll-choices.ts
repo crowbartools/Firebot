@@ -1,5 +1,7 @@
 import type { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
-import logger from "../../../../logwrapper";
+import { LoggerCache } from "../../../../logger-cache";
+
+const logger = LoggerCache.getLogger("Effects");
 
 const triggers: TriggersObject = {};
 triggers["event"] = [

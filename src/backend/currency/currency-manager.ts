@@ -1,9 +1,7 @@
 import { DateTime, Duration } from "luxon";
 
-import { FirebotViewer } from "../../types/viewers";
-import { Currency } from "../../types/currency";
+import type { Currency, FirebotViewer } from "../../types";
 
-import logger from "../logwrapper";
 import { commafy } from "../utils";
 import currencyAccess from "./currency-access";
 import viewerDatabase from "../viewers/viewer-database";
@@ -17,6 +15,7 @@ import firebotRolesManager from "../roles/firebot-roles-manager";
 import teamRolesManager from "../roles/team-roles-manager";
 import twitchRolesManager from "../../shared/twitch-roles";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
+import { LoggerCache } from "../logger-cache";
 
 interface GiveCurrencyRequest {
     currencyId: string;
@@ -28,6 +27,8 @@ interface GiveCurrencyRequest {
 }
 
 class CurrencyManager {
+    private logger = LoggerCache.getLogger("Currency");
+
     private _currencyInterval: NodeJS.Timeout;
 
     constructor() {
@@ -35,7 +36,7 @@ class CurrencyManager {
             if (currencyAccess.isViewerDBOn() !== true) {
                 return;
             }
-            logger.info(`Creating a new currency with id ${currency.id}`);
+            this.logger.info(`Creating a new currency with id ${currency.id}`);
             await this.addCurrencyToAllViewers(currency.id, 0);
         });
 
@@ -43,7 +44,7 @@ class CurrencyManager {
             if (currencyAccess.isViewerDBOn() !== true) {
                 return;
             }
-            logger.info(`Deleting currency with id ${currency.id}`);
+            this.logger.info(`Deleting currency with id ${currency.id}`);
             await this.deleteCurrencyById(currency.id);
         });
 
@@ -57,7 +58,7 @@ class CurrencyManager {
         }: GiveCurrencyRequest) => {
             const currency = currencyAccess.getCurrencyById(currencyId);
             if (currency == null) {
-                logger.error("Couldn't find currency to give or remove");
+                this.logger.error("Couldn't find currency to give or remove");
                 return;
             }
 
@@ -88,7 +89,7 @@ class CurrencyManager {
             if (currencyAccess.isViewerDBOn() !== true) {
                 return;
             }
-            logger.info(`Purging currency with id ${currencyId}`);
+            this.logger.info(`Purging currency with id ${currencyId}`);
             await this.purgeCurrencyById(currencyId);
         });
     }
@@ -121,14 +122,14 @@ class CurrencyManager {
 
         switch (adjustType) {
             case "set":
-                logger.debug(`Currency: Setting ${viewer.username} currency ${currencyId} to: ${value}.`);
+                this.logger.debug(`Currency: Setting ${viewer.username} currency ${currencyId} to: ${value}.`);
                 newViewerValue = value;
                 break;
             default:
                 if (value === 0) {
                     return;
                 }
-                logger.debug(`Currency: Adjusting ${value} currency to ${viewer.username}. ${currencyId}`);
+                this.logger.debug(`Currency: Adjusting ${value} currency to ${viewer.username}. ${currencyId}`);
                 newViewerValue = (viewer.currency[currencyId] + value);
         }
 
@@ -165,7 +166,7 @@ class CurrencyManager {
             });
             await viewerDatabase.calculateAutoRanks(viewer._id, "currency");
         } catch (error) {
-            logger.error("Currency: Error setting currency on viewer.", error);
+            this.logger.error("Currency: Error setting currency on viewer.", error);
         }
     }
 
@@ -184,7 +185,7 @@ class CurrencyManager {
 
             await db.updateAsync({}, { $set: updateDoc }, { multi: true });
         } catch (error) {
-            logger.error("Error purging currency to all viewers", error);
+            this.logger.error("Error purging currency to all viewers", error);
         }
     }
 
@@ -205,7 +206,7 @@ class CurrencyManager {
                 await db.updateAsync({ _id: viewer._id }, { $set: viewer }, {});
             }
         } catch (error) {
-            logger.error("Error purging currency to all viewers", error);
+            this.logger.error("Error purging currency to all viewers", error);
         }
     }
 
@@ -218,11 +219,11 @@ class CurrencyManager {
             .plus(Duration.fromObject({ seconds: 1 }));
         const diff = nextMinute.diff(currentTime, "seconds").seconds;
 
-        logger.debug(`Currency timer will start in ${diff} seconds`);
+        this.logger.debug(`Currency timer will start in ${diff} seconds`);
 
         setTimeout(() => {
             this.stopTimer();
-            logger.debug("Starting currency timer.");
+            this.logger.debug("Starting currency timer.");
             //start timer, fire interval every minute.
             this._currencyInterval = setInterval(async () => {
                 await this.applyCurrency();
@@ -232,7 +233,7 @@ class CurrencyManager {
 
     // This will stop our currency timers.
     stopTimer(): void {
-        logger.debug("Clearing previous currency intervals");
+        this.logger.debug("Clearing previous currency intervals");
         if (this._currencyInterval != null) {
             clearInterval(this._currencyInterval);
             this._currencyInterval = null;
@@ -241,7 +242,7 @@ class CurrencyManager {
 
     // This is run when the interval fires for currencies.
     async applyCurrency(): Promise<void> {
-        logger.debug("Running currency timer...");
+        this.logger.debug("Running currency timer...");
 
         const currencyData = currencyAccess.getCurrencies();
         const currencies = Object.values(currencyData);
@@ -261,17 +262,17 @@ class CurrencyManager {
             const chatConnected = twitchChat.chatIsConnected;
             if (intervalMod === 0 && currency.active && chatConnected) {
                 // do payout
-                logger.info(`Currency: Paying out ${basePayout} ${currency.name}.`);
+                this.logger.info(`Currency: Paying out ${basePayout} ${currency.name}.`);
 
                 await this.processCurrencyTimer(currency, basePayout);
             } else if (!chatConnected) {
-                logger.debug(`Currency: Not connected to chat, so ${currency.name} will not pay out.`);
+                this.logger.debug(`Currency: Not connected to chat, so ${currency.name} will not pay out.`);
             } else if (!currency.active) {
-                logger.debug(`Currency: ${currency.name} is not active, so it will not pay out.`);
+                this.logger.debug(`Currency: ${currency.name} is not active, so it will not pay out.`);
             } else if (intervalMod !== 0) {
-                logger.debug(`Currency: ${currency.name} is not ready to pay out yet.`);
+                this.logger.debug(`Currency: ${currency.name} is not ready to pay out yet.`);
             } else {
-                logger.error(`Currency: Something weird happened and ${currency.name} couldn't pay out.`);
+                this.logger.error(`Currency: Something weird happened and ${currency.name} couldn't pay out.`);
             }
         }
     }
@@ -281,7 +282,7 @@ class CurrencyManager {
             // Add base payout to everyone.
             await this.addCurrencyToOnlineViewers(currency.id, basePayout);
         } catch (error) {
-            logger.error('Error while processing currency timer. Could not add currency to all online viewers.', error);
+            this.logger.error('Error while processing currency timer. Could not add currency to all online viewers.', error);
             return;
         }
 
@@ -292,7 +293,7 @@ class CurrencyManager {
                 await this.addCurrencyToViewerGroupOnlineViewers([bonusKey], currency.id, bonusObject[bonusKey]);
             }
         } catch (error) {
-            logger.error('Error while processing currency timer. Could not add bonus currency to a role.', error);
+            this.logger.error('Error while processing currency timer. Could not add bonus currency to a role.', error);
         }
     }
 
@@ -391,9 +392,9 @@ class CurrencyManager {
             .map(u => u._id);
 
         // Log it.
-        logger.debug(`Paying out ${value} currency (${currencyId}) for online viewers:`);
-        logger.debug("role ids", roleIds);
-        logger.debug("user ids", userIdsInRoles);
+        this.logger.debug(`Paying out ${value} currency (${currencyId}) for online viewers:`);
+        this.logger.debug("role ids", roleIds);
+        this.logger.debug("user ids", userIdsInRoles);
 
 
         if (!userIdsInRoles.length) {
@@ -502,7 +503,7 @@ class CurrencyManager {
         try {
             await db.updateAsync({}, { $set: updateDoc }, { multi: true });
         } catch (error) {
-            logger.error("Error adding currency to all viewers", error);
+            this.logger.error("Error adding currency to all viewers", error);
         }
     }
 
@@ -568,7 +569,7 @@ class CurrencyManager {
 
             return rank;
         } catch (error) {
-            logger.error("Error getting viewer currency rank: ", error);
+            this.logger.error("Error getting viewer currency rank: ", error);
             return 0;
         }
     }
@@ -594,7 +595,7 @@ class CurrencyManager {
 
             return !!viewers.length ? viewers[0] : null;
         } catch (error) {
-            logger.error("Error getting top currency holders: ", error);
+            this.logger.error("Error getting top currency holders: ", error);
             return;
         }
     }
@@ -624,7 +625,7 @@ class CurrencyManager {
 
             return viewers || [];
         } catch (error) {
-            logger.error("Error getting top currency holders: ", error);
+            this.logger.error("Error getting top currency holders: ", error);
             return [];
         }
     }

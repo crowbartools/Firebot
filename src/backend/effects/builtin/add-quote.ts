@@ -1,5 +1,7 @@
 import moment from "moment";
-import { EffectType } from "../../../types/effects";
+
+import type { EffectType } from "../../../types";
+
 import { QuoteManager } from "../../quotes/quote-manager";
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
 

@@ -1,4 +1,5 @@
-import { FontAwesomeIcon } from "../../types/icons";
+import type { FontAwesomeIcon } from "../../types";
+
 import frontendCommunicator from "./frontend-communicator";
 
 enum FontAwesomeStyle {

@@ -1,7 +1,7 @@
 "use strict";
 
 (function() {
-    /** @typedef {import("../../../types/webhooks").WebhookConfig} WebhookConfig */
+    /** @typedef {import("../../../types").WebhookConfig} WebhookConfig */
 
     angular
         .module("firebotApp")

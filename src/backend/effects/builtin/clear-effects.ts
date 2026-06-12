@@ -1,9 +1,10 @@
+import { EffectType } from "../../../types";
+
+import { HttpServerManager } from "../../../server/http-server-manager";
 import { SettingsManager } from "../../common/settings-manager";
 import effectQueueRunner from "../../effects/queues/effect-queue-runner";
-import webServer from "../../../server/http-server-manager";
 import frontendCommunicator from "../../common/frontend-communicator";
 import { abortAllEffectLists } from "../../common/effect-abort-helpers";
-import { EffectType } from "../../../types/effects";
 
 const effect: EffectType<{
     overlay: boolean;
@@ -147,15 +148,15 @@ const effect: EffectType<{
         if (effect.overlay) {
             if (SettingsManager.getSetting("UseOverlayInstances") && effect.overlayInstance != null) {
                 if (effect.overlayInstance === "all") {
-                    webServer.refreshAllOverlays();
+                    HttpServerManager.refreshAllOverlays();
                     return true;
                 }
 
-                webServer.refreshOverlayInstance(effect.overlayInstance);
+                HttpServerManager.refreshOverlayInstance(effect.overlayInstance);
                 return true;
             }
 
-            webServer.refreshOverlayInstance();
+            HttpServerManager.refreshOverlayInstance();
         }
 
         if (effect.activeEffectLists) {

@@ -3,8 +3,10 @@ import { OverlayWidgetType, OverlayWidgetConfig, IOverlayWidgetEventUtils } from
 import { WidgetOverlayEvent } from "../../../../types/overlay-widgets";
 import { Duration } from "luxon";
 import frontendCommunicator from "../../../common/frontend-communicator";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
 import type { EffectList } from "../../../../types/effects";
+
+const logger = LoggerCache.getLogger("Overlay Widgets");
 
 export type Settings = {
     fontOptions: FontOptions;

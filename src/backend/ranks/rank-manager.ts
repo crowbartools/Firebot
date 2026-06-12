@@ -1,11 +1,12 @@
-import type { RankLadder, Rank } from "../../types/ranks";
+import type { RankLadder, Rank } from "../../types";
+
 import JsonDbManager from "../database/json-db-manager";
 import { RankLadderHelper } from "./rank-ladder-helper";
 import frontendCommunicator from "../common/frontend-communicator";
 
 class RankManager extends JsonDbManager<RankLadder> {
     constructor() {
-        super("Ranks", "/ranks");
+        super("Rank", "/ranks", "Ranks");
     }
 
     getRankFromLadder(ladder: RankLadder, rankId: string): Rank | undefined {

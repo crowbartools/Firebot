@@ -1,6 +1,6 @@
 "use strict";
 
-/** @import { SortTag } from "../../../types/sort-tags" */
+/** @import { SortTag } from "../../../types" */
 
 (function() {
 

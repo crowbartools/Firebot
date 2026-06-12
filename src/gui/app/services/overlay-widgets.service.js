@@ -1,8 +1,8 @@
 "use strict";
 
 (function() {
-    /** @typedef {import("../../../types/overlay-widgets").OverlayWidgetType} OverlayWidgetType */
-    /** @typedef {import("../../../types/overlay-widgets").OverlayWidgetConfig} OverlayWidgetConfig */
+    /** @typedef {import("../../../types").OverlayWidgetType} OverlayWidgetType */
+    /** @typedef {import("../../../types").OverlayWidgetConfig} OverlayWidgetConfig */
 
     angular
         .module("firebotApp")
@@ -62,6 +62,10 @@
                 if (overlayWidgetType) {
                     service.overlayWidgetTypes.push(overlayWidgetType);
                 }
+            });
+
+            backendCommunicator.on("overlay-widgets:type-unregistered", ({ id }) => {
+                service.overlayWidgetTypes = service.overlayWidgetTypes.filter(t => t.id !== id);
             });
 
             backendCommunicator.on("overlay-widgets:state-display-updated", ({ widgetId, stateDisplay }) => {

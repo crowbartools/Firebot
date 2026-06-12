@@ -6,9 +6,15 @@ import type {
     HelixUpdateChatSettingsParams,
     HelixUserEmote
 } from "@twurple/api";
-import type { SharedChatParticipant, SnakeCased, CamelCased } from '../../../../../types';
-import type { TwitchApi } from "../";
+
+import type {
+    CamelCased,
+    SharedChatParticipant,
+    SnakeCased
+} from "../../../../../types";
 import type { EventSubChatMessageData } from "../twurple-private-types";
+import type { TwitchApi } from "../";
+
 import { ApiResourceBase } from "./api-resource-base";
 import { TwitchSlashCommandHandler } from "../../chat/twitch-slash-command-handler";
 import frontendCommunicator from '../../../../common/frontend-communicator';

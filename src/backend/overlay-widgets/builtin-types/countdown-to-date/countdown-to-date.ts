@@ -2,7 +2,9 @@ import { DateTime, Duration, DurationLikeObject } from "luxon";
 import { FontOptions, EffectList, OverlayWidgetType, IOverlayWidgetEventUtils, WidgetOverlayEvent, Trigger } from "../../../../types";
 import NodeCache from "node-cache";
 import effectRunner from "../../../common/effect-runner";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
+
+const logger = LoggerCache.getLogger("Overlay Widgets");
 
 type Settings = {
     targetDateTime: string;

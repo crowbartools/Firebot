@@ -4,12 +4,14 @@ import type {
     EffectQueueConfig,
     QueueState,
     RunEffectsContext
-} from "../../../types/effects";
+} from "../../../types";
 
 import { EffectQueue } from "./effect-queue";
 import { EffectManager } from "../effect-manager";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
 import { simpleClone } from "../../utils";
+
+const logger = LoggerCache.getLogger("Effects");
 
 type Events = {
     "length-updated": (queueData: { id: string, length: number }) => void;

@@ -2,15 +2,18 @@ import { TypedEmitter } from "tiny-typed-emitter";
 import { JsonDB } from "node-json-db";
 import path from "path";
 
-import type { BasicViewer } from "../../types/viewers";
-import type { CustomRole, LegacyCustomRole } from "../../types/roles";
+import type {
+    BasicViewer,
+    CustomRole,
+    LegacyCustomRole
+} from "../../types";
 
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 import { ProfileManager } from "../common/profile-manager";
 import { AccountAccess } from "../common/account-access";
 import twitchRoleManager from "../../shared/twitch-roles";
 import frontendCommunicator from "../common/frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 import { findIndexIgnoreCase } from "../utils";
 
 type Events = {
@@ -23,6 +26,7 @@ type Events = {
 const ROLES_FOLDER = "roles";
 
 class CustomRolesManager extends TypedEmitter<Events> {
+    private logger = LoggerCache.getLogger("Roles");
     private _customRoles: Record<string, CustomRole> = {};
 
     constructor() {
@@ -48,7 +52,7 @@ class CustomRolesManager extends TypedEmitter<Events> {
     async migrateLegacyCustomRoles(): Promise<void> {
         // Check for legacy custom roles file
         if (ProfileManager.profileDataPathExistsSync(path.join(ROLES_FOLDER, "customroles.json"))) {
-            logger.info("Legacy custom roles file detected. Starting migration.");
+            this.logger.info("Legacy custom roles file detected. Starting migration.");
 
             try {
                 const legacyCustomRolesDb = ProfileManager.getJsonDbInProfile(path.join(ROLES_FOLDER, "customroles"));
@@ -56,7 +60,7 @@ class CustomRolesManager extends TypedEmitter<Events> {
 
                 if (Object.keys(legacyCustomRoles).length > 0) {
                     if (AccountAccess.getAccounts().streamer?.loggedIn !== true) {
-                        logger.warn("Unable to migrate legacy custom roles. Streamer account is not logged in. Please login and restart Firebot.");
+                        this.logger.warn("Unable to migrate legacy custom roles. Streamer account is not logged in. Please login and restart Firebot.");
                         return;
                     }
 
@@ -65,18 +69,18 @@ class CustomRolesManager extends TypedEmitter<Events> {
                     }
                 }
 
-                logger.info("Deleting legacy custom roles database");
+                this.logger.info("Deleting legacy custom roles database");
                 ProfileManager.deletePathInProfile(path.join(ROLES_FOLDER, "customroles.json"));
 
-                logger.info("Legacy custom role migration complete");
+                this.logger.info("Legacy custom role migration complete");
             } catch (error) {
-                logger.error("Unexpected error during legacy custom role migration", error);
+                this.logger.error("Unexpected error during legacy custom role migration", error);
             }
         }
     }
 
     async importLegacyCustomRole(legacyRole: LegacyCustomRole) {
-        logger.info(`Migrating legacy custom role ${legacyRole.name}`);
+        this.logger.info(`Migrating legacy custom role ${legacyRole.name}`);
 
         const newCustomRole: CustomRole = {
             id: legacyRole.id,
@@ -132,11 +136,11 @@ class CustomRolesManager extends TypedEmitter<Events> {
         }
 
         if (failedMigration.length > 0) {
-            logger.warn(`Could not migrate the following viewers in legacy custom role ${newCustomRole.name}: ${failedMigration.join(", ")}`);
+            this.logger.warn(`Could not migrate the following viewers in legacy custom role ${newCustomRole.name}: ${failedMigration.join(", ")}`);
         }
 
         this.saveCustomRole(newCustomRole);
-        logger.info(`Finished migrating legacy custom role ${newCustomRole.name}`);
+        this.logger.info(`Finished migrating legacy custom role ${newCustomRole.name}`);
     }
 
     async importCustomRole(role: LegacyCustomRole | CustomRole) {
@@ -158,7 +162,7 @@ class CustomRolesManager extends TypedEmitter<Events> {
     async loadCustomRoles(): Promise<void> {
         await this.migrateLegacyCustomRoles();
 
-        logger.debug("Attempting to load custom roles");
+        this.logger.debug("Attempting to load custom roles");
 
         const rolesDb = this.getCustomRolesDb();
 
@@ -169,19 +173,19 @@ class CustomRolesManager extends TypedEmitter<Events> {
                 this._customRoles = customRolesData;
             }
 
-            logger.debug("Loaded custom roles");
+            this.logger.debug("Loaded custom roles");
 
             await this.refreshCustomRolesUserData();
         } catch (error) {
-            logger.warn("There was an error reading custom roles data file", error);
+            this.logger.warn("There was an error reading custom roles data file", error);
         }
     }
 
     async refreshCustomRolesUserData(): Promise<void> {
-        logger.debug("Refreshing custom role user data");
+        this.logger.debug("Refreshing custom role user data");
 
         for (const customRole of Object.values(this._customRoles ?? {})) {
-            logger.debug(`Updating custom role ${customRole.name}`);
+            this.logger.debug(`Updating custom role ${customRole.name}`);
 
             const userIds = customRole.viewers.map(v => v.id);
             const users = await TwitchApi.users.getUsersByIds(userIds);
@@ -196,7 +200,7 @@ class CustomRolesManager extends TypedEmitter<Events> {
             }
 
             this.saveCustomRole(customRole);
-            logger.debug(`Custom role ${customRole.name} updated`);
+            this.logger.debug(`Custom role ${customRole.name} updated`);
         }
     }
 
@@ -206,7 +210,7 @@ class CustomRolesManager extends TypedEmitter<Events> {
         }
 
         if (role.viewers?.length && !role.viewers[0].id) {
-            logger.error(`Cannot save custom role as it is in an older format`, role);
+            this.logger.error(`Cannot save custom role as it is in an older format`, role);
             return;
         }
 
@@ -233,9 +237,9 @@ class CustomRolesManager extends TypedEmitter<Events> {
 
             this.emit(eventType, role);
 
-            logger.debug(`Saved role ${role.id} to file.`);
+            this.logger.debug(`Saved role ${role.id} to file.`);
         } catch (error) {
-            logger.warn("There was an error saving a role.", error);
+            this.logger.warn("There was an error saving a role.", error);
         }
     }
 
@@ -339,9 +343,9 @@ class CustomRolesManager extends TypedEmitter<Events> {
 
             this.emit("deleted-item", role);
 
-            logger.debug(`Deleted role: ${roleId}`);
+            this.logger.debug(`Deleted role: ${roleId}`);
         } catch (error) {
-            logger.warn("There was an error deleting a role.", error);
+            this.logger.warn("There was an error deleting a role.", error);
         }
     }
 

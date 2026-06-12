@@ -1,9 +1,11 @@
 import moment from "moment";
 import NodeCache from "node-cache";
 
-import type { SystemCommand } from "../../../../types/commands";
-import type { FirebotChatMessage } from "../../../../types/chat";
-import type { RoleNumberParameterValue } from "../../../../types/parameters";
+import type {
+    FirebotChatMessage,
+    RoleNumberParameterValue,
+    SystemCommand
+} from "../../../../types";
 
 import { CommandManager } from "../../../chat/commands/command-manager";
 import { GameManager } from "../../game-manager";
@@ -14,10 +16,12 @@ import customRolesManager from "../../../roles/custom-roles-manager";
 import teamRolesManager from "../../../roles/team-roles-manager";
 import twitchListeners from "../../../chat/chat-listeners/twitch-chat-listeners";
 import twitchRolesManager from "../../../../shared/twitch-roles";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
 import { commafy, humanizeTime } from "../../../utils";
 
 import triviaHelper from "./trivia-helper";
+
+const logger = LoggerCache.getLogger("Games");
 
 interface TriviaQuestion {
     username: string;

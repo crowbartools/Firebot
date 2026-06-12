@@ -1,7 +1,7 @@
 "use strict";
 
 (function() {
-    /** @typedef {import("../../../types/variable-macros").VariableMacro} VariableMacro */
+    /** @typedef {import("../../../types").VariableMacro} VariableMacro */
 
     const VALID_MACRO_NAME_REGEX = /^[a-z][a-z0-9]*$/i;
 

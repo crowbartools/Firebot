@@ -1,12 +1,16 @@
 import fs from "fs/promises";
 import path from "path";
+
 import type { FirebotAudioDevice } from "../../../types";
+
+import { HttpServerManager } from "../../../server/http-server-manager";
 import { ResourceTokenManager } from "../../resource-token-manager";
 import { SettingsManager } from "../settings-manager";
-import webServer from "../../../server/http-server-manager";
 import frontendCommunicator from "../frontend-communicator";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
 import { wait, convertByteArrayJsonToByteArray } from "../../utils";
+
+const logger = LoggerCache.getLogger("Sounds");
 
 export type SoundType = "url" | "rawData" | "folderRandom" | "local";
 
@@ -87,7 +91,7 @@ export async function playSound(soundData: {
         }
 
         // send event to the overlay
-        webServer.sendToOverlay("sound", data);
+        HttpServerManager.sendToOverlay("sound", data);
     } else {
         data.filepath = data.filepath?.replaceAll("%", "%25").replaceAll("#", "%23");
         frontendCommunicator.send("playsound", data);
@@ -105,7 +109,7 @@ export async function playSound(soundData: {
                 let returnNow = false;
                 const overlayInstance = soundData.overlayInstance ?? "Default";
 
-                webServer.on("overlay-connected", (instance) => {
+                HttpServerManager.on("overlay-connected", (instance) => {
                     if (instance === overlayInstance) {
                         returnNow = true;
                     }

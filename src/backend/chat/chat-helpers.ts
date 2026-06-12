@@ -16,7 +16,7 @@ import { AccountAccess } from "../common/account-access";
 import { FirebotPronounManager } from "../pronouns/pronoun-manager";
 import { SharedChatCache } from "../streaming-platforms/twitch/chat/shared-chat-cache";
 import { type ChatBadge, TwitchEventSubChatHelpers } from "../streaming-platforms/twitch/api/eventsub/eventsub-chat-helpers";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 import { getUrlRegex } from "../utils";
 
 interface ExtensionBadge {
@@ -25,6 +25,8 @@ interface ExtensionBadge {
 }
 
 class FirebotChatHelpers {
+    private logger = LoggerCache.getLogger("Chat");
+
     private readonly URL_REGEX = getUrlRegex(false);
 
     parseCheermote(part: ParsedMessageCheerPart | FirebotParsedMessagePart): FirebotCheermoteInstance {
@@ -172,7 +174,7 @@ class FirebotChatHelpers {
                     url: setVersion.getImageUrl(2)
                 });
             } catch (err) {
-                logger.debug(`Failed to find badge ${setName} v:${version}`, err);
+                this.logger.debug(`Failed to find badge ${setName} v:${version}`, err);
             }
         }
 

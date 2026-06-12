@@ -1,6 +1,8 @@
-import logger from "../../../../logwrapper";
+import { LoggerCache } from "../../../../logger-cache";
 import { EffectType } from "../../../../../types/effects";
 import { OBSSource, setColorSourceSettings } from "../obs-remote";
+
+const logger = LoggerCache.getLogger("Integration: OBS");
 
 export const SetOBSColorSourceColorEffectType: EffectType<{
     colorSourceName: string;

@@ -1,5 +1,6 @@
-import { EffectType } from '../../../types/effects';
-import frontendCommunicator from '../../common/frontend-communicator';
+import type { EffectType } from "../../../types";
+
+import frontendCommunicator from "../../common/frontend-communicator";
 
 const effect: EffectType<{
     message: string;

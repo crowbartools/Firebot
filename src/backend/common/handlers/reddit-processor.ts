@@ -1,5 +1,7 @@
 import frontendCommunicator from "../frontend-communicator";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
+
+const logger = LoggerCache.getLogger("Reddit Processor");
 
 interface RedditPost {
     data: {

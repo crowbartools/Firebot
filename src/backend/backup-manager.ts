@@ -8,7 +8,7 @@ import archiver from "archiver";
 import { SettingsManager } from "./common/settings-manager";
 import * as dataAccess from "./common/data-access";
 import frontendCommunicator from "./common/frontend-communicator";
-import logger from "./logwrapper";
+import { LoggerCache } from "./logger-cache";
 import { emptyFolder, wait } from "./utils";
 
 interface ZipEntry {
@@ -32,6 +32,7 @@ export type FirebotBackup = {
 
 class BackupManager {
     private _backupFolderPath: string = undefined;
+    private logger = LoggerCache.getLogger("Backups");
 
     constructor() {
         this.updateBackupFolderPath();
@@ -51,7 +52,7 @@ class BackupManager {
         frontendCommunicator.on("backups:start-backup", async (manualActivation: boolean) => {
             await this.startBackup(manualActivation);
 
-            logger.info("backup complete");
+            this.logger.info("backup complete");
 
             frontendCommunicator.send("backups:backup-complete", manualActivation);
         });
@@ -65,7 +66,7 @@ class BackupManager {
                 await fsp.unlink(backupFilePath);
                 return true;
             } catch (error) {
-                logger.error("Error deleting backup", error);
+                this.logger.error("Error deleting backup", error);
                 return false;
             }
         });
@@ -120,7 +121,7 @@ class BackupManager {
                 neverDelete: fileName.includes("NODELETE")
             };
         } catch (error) {
-            logger.error(`Error reading backup file ${fileName}`, error);
+            this.logger.error(`Error reading backup file ${fileName}`, error);
             return undefined;
         }
     }
@@ -165,14 +166,14 @@ class BackupManager {
             fileNames.splice(0, maxBackups);
 
             for (const f of fileNames) {
-                logger.info(`Deleting old backup: ${f}`);
+                this.logger.info(`Deleting old backup: ${f}`);
                 await fsp.unlink(path.join(this._backupFolderPath, f));
             }
         }
     }
 
     async startBackup(manualActivation = false) {
-        logger.info(`Backup manualActivation: ${manualActivation}`);
+        this.logger.info(`Backup manualActivation: ${manualActivation}`);
         let finished = false;
 
         const version = app.getVersion(),
@@ -184,7 +185,7 @@ class BackupManager {
         }.${fileExtension}`;
 
         if (!fs.existsSync(this._backupFolderPath)) {
-            logger.warn(`Backup path ${this._backupFolderPath} does not exist. Resetting to default.`);
+            this.logger.warn(`Backup path ${this._backupFolderPath} does not exist. Resetting to default.`);
             SettingsManager.deleteSetting("BackupLocation");
             this.updateBackupFolderPath();
             SettingsManager.saveSetting("BackupLocationReset", true);
@@ -202,7 +203,7 @@ class BackupManager {
         archive.on("warning", (err) => {
             finished = true;
             if (err.code === "ENOENT") {
-                logger.warn("Error during backup: ", err);
+                this.logger.warn("Error during backup: ", err);
             } else {
                 if (manualActivation) {
                     frontendCommunicator.send(
@@ -225,7 +226,7 @@ class BackupManager {
         const ignoreResources = SettingsManager.getSetting("BackupIgnoreResources");
 
         if (ignoreResources && !manualActivation) {
-            logger.info("Ignoring overlay-resources folder");
+            this.logger.info("Ignoring overlay-resources folder");
             varIgnoreInArchive.push("overlay-resources/**");
         }
 
@@ -245,7 +246,7 @@ class BackupManager {
 
             await this.cleanUpOldBackups();
         } catch (error) {
-            logger.error("Error finalizing backup archive", error);
+            this.logger.error("Error finalizing backup archive", error);
         }
     }
 
@@ -262,11 +263,11 @@ class BackupManager {
           lastBackupDate.getFullYear() === todayDate.getFullYear();
 
             if (!isSameDay) {
-                logger.info("Doing once a day backup");
+                this.logger.info("Doing once a day backup");
                 try {
                     await this.startBackup();
                 } catch (error) {
-                    logger.error("Error during once a day backup", error);
+                    this.logger.error("Error during once a day backup", error);
                 }
             }
         }
@@ -293,7 +294,7 @@ class BackupManager {
         try {
             await emptyFolder(RESTORE_FOLDER_PATH);
         } catch (error) {
-            logger.warn("Error clearing backup restore folder", error);
+            this.logger.warn("Error clearing backup restore folder", error);
         }
 
         // Extract the backup zip to the /restore folder
@@ -303,7 +304,7 @@ class BackupManager {
         try {
             await emptyFolder(PROFILES_FOLDER_PATH);
         } catch (error) {
-            logger.warn("Error clearing profiles folder", error);
+            this.logger.warn("Error clearing profiles folder", error);
             return {
                 success: false,
                 reason: "Failed to clear profiles folder."
@@ -313,7 +314,7 @@ class BackupManager {
         try {
             await this.copyRestoreFilesToUserData();
         } catch (error) {
-            logger.error("Failed to copy backup data", error);
+            this.logger.error("Failed to copy backup data", error);
             return {
                 success: false,
                 reason: "Failed to copy restore files to user data."
@@ -354,19 +355,19 @@ class BackupManager {
 
     private async copyRestoreFilesToUserData() {
         await fsp.cp(RESTORE_FOLDER_PATH, USER_DATA_FOLDER_PATH, { recursive: true, force: true });
-        logger.info("Copied backup data");
+        this.logger.info("Copied backup data");
     }
 
     private async moveBackupFolder(newPath: string): Promise<boolean> {
         let success = false;
 
         try {
-            logger.info(`Moving backup files to ${newPath}`);
+            this.logger.info(`Moving backup files to ${newPath}`);
 
             // Test that we can access the new path
             await fsp.access(newPath);
 
-            logger.info("Copying old backup files to new location");
+            this.logger.info("Copying old backup files to new location");
 
             // Don't do it recursively
             const backupFiles = await fsp.readdir(this._backupFolderPath);
@@ -379,13 +380,13 @@ class BackupManager {
                 }
             }
 
-            logger.info("Saving new backup location setting");
+            this.logger.info("Saving new backup location setting");
             SettingsManager.saveSetting("BackupLocation", newPath);
 
-            logger.info("Backup folder moved successfully");
+            this.logger.info("Backup folder moved successfully");
             success = true;
         } catch (error) {
-            logger.error(`Error moving backup folder to ${newPath}`, error);
+            this.logger.error(`Error moving backup folder to ${newPath}`, error);
         }
 
         frontendCommunicator.send("backups:move-backup-folder-completed", success);

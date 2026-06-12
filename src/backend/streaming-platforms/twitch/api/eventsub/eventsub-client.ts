@@ -15,7 +15,7 @@ import chatHelpers from "../../../../chat/chat-helpers";
 import rewardManager from "../../../../channel-rewards/channel-reward-manager";
 import twitchStreamInfoPoll from "../../stream-info-manager";
 import viewerDatabase from "../../../../viewers/viewer-database";
-import logger from "../../../../logwrapper";
+import { LoggerCache } from "../../../../logger-cache";
 import {
     getChannelRewardOrPowerUpImageUrl,
     mapEventSubRewardToTwitchData,
@@ -24,6 +24,8 @@ import {
 import { EventSubPowerUpRedemptionAddSubscription } from "./custom-subscriptions/power-up-redemption-add-subscription";
 
 class TwitchEventSubClient {
+    private logger = LoggerCache.getLogger("Twitch EventSub");
+
     private _eventSubListener: EventSubWsListener;
     private _subscriptions: Array<EventSubSubscription> = [];
 
@@ -244,7 +246,7 @@ class TwitchEventSubClient {
             (event) => {
                 const reward = channelRewardManager.getChannelReward(event.rewardId);
                 if (!reward) {
-                    logger.debug(
+                    this.logger.debug(
                         `Received a reward redemption for a reward that does not exist locally. Reward: ${event.rewardTitle}`,
                         event
                     );
@@ -287,7 +289,7 @@ class TwitchEventSubClient {
             (event) => {
                 const reward = channelRewardManager.getChannelReward(event.rewardId);
                 if (!reward) {
-                    logger.debug(
+                    this.logger.debug(
                         `Received a reward redemption update for a reward that does not exist locally. Reward: ${event.rewardTitle}`,
                         event
                     );
@@ -295,7 +297,7 @@ class TwitchEventSubClient {
                 }
 
                 if (reward.twitchData.shouldRedemptionsSkipRequestQueue) {
-                    logger.debug(
+                    this.logger.debug(
                         `Received a reward redemption update for a reward that should skip the request queue. Reward: ${event.rewardTitle}`,
                         event
                     );
@@ -337,7 +339,7 @@ class TwitchEventSubClient {
                 const powerUp = await TwitchApi.powerUps.getCustomPowerUpById(event.custom_power_up.id);
 
                 if (!powerUp) {
-                    logger.debug(
+                    this.logger.debug(
                         `Received a custom power-up redemption for an unknown power-up. Power-up ID: ${event.custom_power_up.id}`,
                         event
                     );
@@ -1012,7 +1014,7 @@ class TwitchEventSubClient {
                         break;
 
                     default:
-                        logger.debug(`Unknown EventSub chat notification type: ${event.type}. Metadata:`, event);
+                        this.logger.debug(`Unknown EventSub chat notification type: ${event.type}. Metadata:`, event);
                         break;
                 }
             }
@@ -1023,7 +1025,7 @@ class TwitchEventSubClient {
     createClient(): void {
         this.disconnectEventSub();
 
-        logger.info("Connecting to Twitch EventSub...");
+        this.logger.info("Connecting to Twitch EventSub...");
 
         try {
             this._eventSubListener = new EventSubWsListener({
@@ -1034,9 +1036,9 @@ class TwitchEventSubClient {
 
             this.createSubscriptions();
 
-            logger.info("Connected to the Twitch EventSub!");
+            this.logger.info("Connected to the Twitch EventSub!");
         } catch (error) {
-            logger.error("Failed to connect to Twitch EventSub", error);
+            this.logger.error("Failed to connect to Twitch EventSub", error);
             return;
         }
     }
@@ -1057,10 +1059,10 @@ class TwitchEventSubClient {
         try {
             if (this._eventSubListener) {
                 this._eventSubListener.stop();
-                logger.info("Disconnected from EventSub.");
+                this.logger.info("Disconnected from EventSub.");
             }
         } catch (error) {
-            logger.debug("Error disconnecting EventSub", error);
+            this.logger.debug("Error disconnecting EventSub", error);
         }
     }
 }

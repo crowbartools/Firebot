@@ -1,4 +1,5 @@
-import { SystemQuickAction } from "../../../types/quick-actions";
+import type { SystemQuickAction } from "../../../types";
+
 import windowManagement from "../../app-management/electron/window-management";
 
 const StreamPreviewQuickAction: SystemQuickAction = {

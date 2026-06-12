@@ -130,9 +130,10 @@
         settingsService,
         countersService,
         hotkeyService,
+        controlDeckService,
         gamesService,
         presetEffectListsService,
-        startupScriptsService,
+        pluginsService,
         effectQueuesService,
         timerService,
         scheduledTaskService,
@@ -174,11 +175,14 @@
 
         hotkeyService.loadHotkeys();
 
+        controlDeckService.loadDecks();
+        controlDeckService.loadControlTypes();
+
         gamesService.loadGames();
 
         presetEffectListsService.loadPresetEffectLists();
 
-        startupScriptsService.loadStartupScripts();
+        pluginsService.loadPlugins();
 
         effectQueuesService.loadEffectQueues();
 

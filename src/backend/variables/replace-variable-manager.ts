@@ -14,7 +14,7 @@ import { SettingsManager } from "../common/settings-manager";
 import macroManager from "./macro-manager";
 import { CustomVariableManager } from "../common/custom-variable-manager";
 import frontendCommunicator from "../common/frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 import { getEventIdFromTriggerData } from "../utils";
 
 type Evaluator = {
@@ -45,6 +45,7 @@ type VariableError = {
 };
 
 class ReplaceVariableManager extends EventEmitter {
+    private logger = LoggerCache.getLogger("Variables");
     private registeredVariableHandlers: Map<string, RegisteredVariable> = new Map();
     private variableAndAliasHandlers: Map<string, RegisteredVariable> = new Map();
     private registeredLookupHandlers: Map<
@@ -61,7 +62,7 @@ class ReplaceVariableManager extends EventEmitter {
         super();
 
         frontendCommunicator.on("variables:get-replace-variable-definitions", () => {
-            logger.debug("got 'get all vars' request");
+            this.logger.debug("got 'get all vars' request");
             return Array.from(this.getVariableHandlers().values())
                 .map(v => v.definition)
                 .filter(v => !v.hidden);
@@ -72,14 +73,14 @@ class ReplaceVariableManager extends EventEmitter {
                 data: Record<string, unknown>;
                 trigger: Trigger;
             }) => {
-            logger.debug("got 'variables:validate-variables' request");
+            this.logger.debug("got 'variables:validate-variables' request");
             const { data, trigger } = eventData;
 
             let errors: VariableError[] = [];
             try {
                 errors = await this.findAndValidateVariables(data, trigger);
             } catch (err) {
-                logger.error("Unable to validate variables.", err);
+                this.logger.error("Unable to validate variables.", err);
             }
 
             return errors;
@@ -91,14 +92,14 @@ class ReplaceVariableManager extends EventEmitter {
                 triggerType: TriggerType;
                 triggerMeta: Record<string, unknown>;
             }) => {
-            logger.debug("got 'get-variable-suggestions' request");
+            this.logger.debug("got 'get-variable-suggestions' request");
             const { variableHandle, triggerType, triggerMeta } = eventData;
             const suggestions = await this.getSuggestionsForVariable(variableHandle, triggerType, triggerMeta);
             return suggestions;
         });
 
         frontendCommunicator.on("variables:get-additional-variable-events", () => {
-            logger.debug("got 'get-additional-variable-events' request");
+            this.logger.debug("got 'get-additional-variable-events' request");
             return this.additionalVariableEvents;
         });
     }
@@ -157,7 +158,7 @@ class ReplaceVariableManager extends EventEmitter {
 
         this.variableAndAliasHandlers = this.generateVariableAndAliasHandlers();
 
-        logger.debug(`Registered replace variable ${variable.definition.handle}`);
+        this.logger.debug(`Registered replace variable ${variable.definition.handle}`);
 
         this.emit("replaceVariableRegistered", variable);
 
@@ -166,14 +167,14 @@ class ReplaceVariableManager extends EventEmitter {
 
     unregisterReplaceVariable(handle: string): void {
         if (!this.registeredVariableHandlers.has(handle)) {
-            logger.warn(`A variable with the handle ${handle} does not exist.`);
+            this.logger.warn(`A variable with the handle ${handle} does not exist.`);
             return;
         }
 
         this.registeredVariableHandlers.delete(handle);
         this.variableAndAliasHandlers = this.generateVariableAndAliasHandlers();
 
-        logger.debug(`Unregistered replace variable ${handle}`);
+        this.logger.debug(`Unregistered replace variable ${handle}`);
 
         this.emit("replaceVariableUnregistered", handle);
 
@@ -276,7 +277,7 @@ class ReplaceVariableManager extends EventEmitter {
                     try {
                         replacedValue = await this.evaluateText(value, trigger, { type: trigger.type, id: triggerId });
                     } catch (err) {
-                        logger.warn(`Unable to parse variables for value: '${value}'`, err);
+                        this.logger.warn(`Unable to parse variables for value: '${value}'`, err);
                     }
                     data[key] = replacedValue;
                 }
@@ -316,7 +317,7 @@ class ReplaceVariableManager extends EventEmitter {
                         // eslint-disable-next-line
                         if (error instanceof expressionishErrs.ExpressionArgumentsError) {
                             errors.push(error as VariableError);
-                            logger.debug(`Found variable error when validating`, err);
+                            this.logger.debug(`Found variable error when validating`, err);
                         // eslint-disable-next-line
                         } else if (error instanceof expressionishErrs.ExpressionError) {
                             errors.push({
@@ -327,9 +328,9 @@ class ReplaceVariableManager extends EventEmitter {
                                 character: err.character,
                                 rawText: err.rawText
                             });
-                            logger.debug(`Found variable error when validating`, err);
+                            this.logger.debug(`Found variable error when validating`, err);
                         } else {
-                            logger.error(`Unknown error when validating variables for string: '${value}'`, err);
+                            this.logger.error(`Unknown error when validating variables for string: '${value}'`, err);
                         }
                     }
                 }
@@ -345,7 +346,7 @@ class ReplaceVariableManager extends EventEmitter {
     addEventToVariable(variableHandle: string, eventSourceId: string, eventId: string): void {
         if (this.getVariablesForEvent(eventSourceId, eventId).some(f => f.handle === variableHandle)
             || this.additionalVariableEvents[variableHandle]?.some(e => e.eventSourceId === eventSourceId && e.eventId === eventId)) {
-            logger.warn(`Variable ${variableHandle} already setup for event ${eventSourceId}:${eventId}`);
+            this.logger.warn(`Variable ${variableHandle} already setup for event ${eventSourceId}:${eventId}`);
             return;
         }
 
@@ -355,7 +356,7 @@ class ReplaceVariableManager extends EventEmitter {
 
         this.additionalVariableEvents[variableHandle] = additionalEvents;
 
-        logger.debug(`Added event ${eventSourceId}:${eventId} to variable ${variableHandle}`);
+        this.logger.debug(`Added event ${eventSourceId}:${eventId} to variable ${variableHandle}`);
 
         frontendCommunicator.send("additional-variable-events-updated", this.additionalVariableEvents);
     }
@@ -364,14 +365,14 @@ class ReplaceVariableManager extends EventEmitter {
         let additionalEvents = this.additionalVariableEvents[variableHandle] ?? [];
 
         if (!additionalEvents.some(e => e.eventSourceId === eventSourceId && e.eventId === eventId)) {
-            logger.warn(`Variable ${variableHandle} does not have a plugin registration for event ${eventSourceId}:${eventId}`);
+            this.logger.warn(`Variable ${variableHandle} does not have a plugin registration for event ${eventSourceId}:${eventId}`);
             return;
         }
 
-        additionalEvents = additionalEvents.filter(e => e.eventSourceId !== eventSourceId && e.eventId !== eventId);
+        additionalEvents = additionalEvents.filter(e => !(e.eventSourceId === eventSourceId && e.eventId === eventId));
         this.additionalVariableEvents[variableHandle] = additionalEvents;
 
-        logger.debug(`Removed event ${eventSourceId}:${eventId} from variable ${variableHandle}`);
+        this.logger.debug(`Removed event ${eventSourceId}:${eventId} from variable ${variableHandle}`);
 
         frontendCommunicator.send("additional-variable-events-updated", this.additionalVariableEvents);
     }
@@ -383,7 +384,7 @@ class ReplaceVariableManager extends EventEmitter {
             try {
                 return variable.getSuggestions(triggerType, triggerMeta);
             } catch (err) {
-                logger.error("Error occurred while getting variable suggestions.", err);
+                this.logger.error("Error occurred while getting variable suggestions.", err);
                 return [];
             }
         }
@@ -472,6 +473,14 @@ manager.registerLookupHandler("!", name => ({
     evaluator: () => {
         const globalValues = SettingsManager.getSetting("GlobalValues") ?? [];
         return globalValues.find(v => v.name === name)?.value;
+    }
+}));
+
+// Deck Control Input shorthand
+manager.registerLookupHandler("@", name => ({
+    evaluator: (trigger) => {
+        const value = (trigger.metadata?.inputValues || {})[name] as string;
+        return value == null ? null : value;
     }
 }));
 

@@ -1,17 +1,18 @@
 "use strict";
 
-const { SettingsManager } = require("../../common/settings-manager");
-const { ResourceTokenManager } = require("../../resource-token-manager");
-const webServer = require("../../../server/http-server-manager");
-const mediaProcessor = require("../../common/handlers/mediaProcessor");
-const logger = require("../../logwrapper");
-const { AccountAccess } = require("../../common/account-access");
 const fs = require('fs/promises');
 const path = require("path");
+const { randomUUID } = require("crypto");
+
+const { AccountAccess } = require("../../common/account-access");
+const { HttpServerManager } = require("../../../server/http-server-manager");
+const { ResourceTokenManager } = require("../../resource-token-manager");
+const { SettingsManager } = require("../../common/settings-manager");
+const mediaProcessor = require("../../common/handlers/mediaProcessor");
+const logger = require("../../logger-cache").LoggerCache.getLogger("Effects");
 const frontendCommunicator = require('../../common/frontend-communicator');
 const { wait } = require("../../utils");
 const { parseYoutubeId } = require("../../../shared/youtube-url-parser");
-const { randomUUID } = require("crypto");
 const { resolveTwitchClipVideoUrl } = require("../../common/handlers/twitch-clip-url-resolver");
 
 /**
@@ -424,7 +425,7 @@ const playVideo = {
                 let currentDuration = 0;
                 let returnNow = false;
 
-                webServer.on("overlay-connected", (instance) => {
+                HttpServerManager.on("overlay-connected", (instance) => {
                     if (instance === overlayInstance) {
                         returnNow = true;
                     }
@@ -481,7 +482,7 @@ const playVideo = {
                 effectDuration = clipDuration;
             }
 
-            webServer.sendToOverlay("playTwitchClip", {
+            HttpServerManager.sendToOverlay("playTwitchClip", {
                 clipVideoUrl: url,
                 useIframe,
                 volume: volume,
@@ -545,31 +546,31 @@ const playVideo = {
                     function callbackAvailable({ name }) {
                         if (name === `play-video:callback:available:${resourceToken}`) {
                             clearTimeout(overlayTimeout);
-                            webServer.off("overlay-event", callbackAvailable);
+                            HttpServerManager.off("overlay-event", callbackAvailable);
                         }
                     }
 
                     function callbackDuration({ name, data }) {
                         if (name === `play-video:callback:duration:${resourceToken}`) {
-                            webServer.off("overlay-event", callbackDuration);
+                            HttpServerManager.off("overlay-event", callbackDuration);
                             waitFunction(Math.ceil(data.duration / 1000)).then(resolve);
                         }
                     }
 
                     overlayTimeout = setTimeout(() => {
-                        webServer.off("overlay-event", callbackAvailable);
-                        webServer.off("overlay-event", callbackDuration);
+                        HttpServerManager.off("overlay-event", callbackAvailable);
+                        HttpServerManager.off("overlay-event", callbackDuration);
                         reject();
                     }, 2500);
-                    webServer.on("overlay-event", callbackAvailable);
-                    webServer.on("overlay-event", callbackDuration);
+                    HttpServerManager.on("overlay-event", callbackAvailable);
+                    HttpServerManager.on("overlay-event", callbackDuration);
                 });
             } else {
                 waitPromise = waitFunction(data.videoDuration);
             }
         }
 
-        webServer.sendToOverlay("video", data);
+        HttpServerManager.sendToOverlay("video", data);
         if (effect.wait) {
             try {
                 await waitPromise;

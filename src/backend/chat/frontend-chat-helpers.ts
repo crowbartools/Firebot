@@ -10,9 +10,11 @@ import type { AdvancedChatWidgetSettings } from "../overlay-widgets/builtin-type
 import overlayWidgetsManager from "../overlay-widgets/overlay-widgets-manager";
 import overlayWidgetConfigManager from "../overlay-widgets/overlay-widget-config-manager";
 import frontendCommunicator from "../common/frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 
 class FirebotFrontendChatHelpers {
+    private logger = LoggerCache.getLogger("Chat");
+
     private _pendingMessageCache: Record<string, string[]> = { };
 
     private sendChatMessageToChatWidget(
@@ -26,7 +28,7 @@ class FirebotFrontendChatHelpers {
                 this._pendingMessageCache[chatWidget.id] = this._pendingMessageCache[chatWidget.id]
                     .filter(m => m !== chatMessage.id);
             } else {
-                logger.info(`Chat message ${chatMessage.id} not in pending cache for widget ${chatWidget.id}; ignoring`);
+                this.logger.info(`Chat message ${chatMessage.id} not in pending cache for widget ${chatWidget.id}; ignoring`);
                 return;
             }
         }

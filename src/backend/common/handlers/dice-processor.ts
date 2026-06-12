@@ -1,6 +1,8 @@
 import Roll from "roll";
+
+import type { Trigger } from "../../../types";
+
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
-import { Trigger } from "../../../types/triggers";
 
 export interface DiceEffectModel {
     dice: string;

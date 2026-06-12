@@ -1,10 +1,10 @@
 import { TypedEmitter } from "tiny-typed-emitter";
 
-import type { FirebotAccount } from "../../types/accounts";
+import type { FirebotAccount } from "../../types";
 
 import { ProfileManager } from "./profile-manager";
 import frontendCommunicator from "./frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 
 type AccountType = "streamer" | "bot";
 
@@ -23,6 +23,8 @@ type Events = {
 };
 
 class AccountAccess extends TypedEmitter<Events> {
+    private logger = LoggerCache.getLogger("Accounts");
+
     private _cache: AccountCache = {
         streamer: {
             username: "Streamer",
@@ -44,12 +46,12 @@ class AccountAccess extends TypedEmitter<Events> {
         super();
 
         frontendCommunicator.on("accounts:get-accounts", () => {
-            logger.debug("got 'get accounts' request");
+            this.logger.debug("got 'get accounts' request");
             return this._cache;
         });
 
         frontendCommunicator.on("accounts:logout-account", (accountType: AccountType) => {
-            logger.debug("got logout request for", accountType);
+            this.logger.debug("got logout request for", accountType);
             this.removeAccount(accountType);
         });
     }
@@ -96,7 +98,7 @@ class AccountAccess extends TypedEmitter<Events> {
             authDb.push(`/${accountType}`, account);
         } catch (error) {
             if ((error as Error).name === 'DatabaseError') {
-                logger.error(`Error saving ${accountType} account settings`, error);
+                this.logger.error(`Error saving ${accountType} account settings`, error);
             }
         }
     }
@@ -129,7 +131,7 @@ class AccountAccess extends TypedEmitter<Events> {
                 this._cache.bot = bot;
             }
         } catch {
-            logger.warn("Couldn't update auth cache");
+            this.logger.warn("Couldn't update auth cache");
         }
 
         if (emitUpdate) {
@@ -196,7 +198,7 @@ class AccountAccess extends TypedEmitter<Events> {
             authDb.delete(`/${accountType}`);
         } catch (error) {
             if ((error as Error).name === 'DatabaseError') {
-                logger.error(`Error removing ${accountType} account settings`, error);
+                this.logger.error(`Error removing ${accountType} account settings`, error);
             }
         }
 

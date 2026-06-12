@@ -1,4 +1,5 @@
-import type { EffectType } from "../../../types/effects";
+import type { EffectType } from "../../../types";
+
 import { EventsAccess } from "../../events/events-access";
 
 const effect: EffectType<{

@@ -1,6 +1,8 @@
 import moment from "moment";
 import type { ReplaceVariable, TriggersObject } from "../../../../types/variables";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
+
+const logger = LoggerCache.getLogger("Variables");
 
 const triggers: TriggersObject = {};
 triggers["command"] = true;

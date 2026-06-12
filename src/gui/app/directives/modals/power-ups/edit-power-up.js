@@ -60,7 +60,7 @@
                 const $ctrl = this;
 
                 /**
-                 * @type {import('../../../../../types/power-ups').SavedPowerUp}
+                 * @type {import("../../../../../types").SavedPowerUp}
                  */
                 $ctrl.powerUp = null;
 

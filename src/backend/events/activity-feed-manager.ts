@@ -2,8 +2,7 @@ import { app } from "electron";
 import moment from "moment";
 import { randomUUID } from "crypto";
 
-import type { EventDefinition } from "../../types/events";
-import type { RewardRedemptionMetadata } from "../../types/channel-rewards";
+import type { EventDefinition, RewardRedemptionMetadata } from "../../types";
 
 import { EventManager } from "./event-manager";
 import { SettingsManager } from "../common/settings-manager";

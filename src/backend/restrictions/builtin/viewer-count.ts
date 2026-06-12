@@ -3,7 +3,9 @@
 import type { RestrictionType } from "../../../types/restrictions";
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
 import { AccountAccess } from "../../common/account-access";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
+
+const logger = LoggerCache.getLogger("Restrictions");
 
 type ComparisonType = "less" | "greater" | "equal";
 

@@ -76,7 +76,8 @@
     border: 1px solid transparent;
 }
 .modal-title {
-    font-weight: 100;
+    font-family: "Inter", "Open Sans", sans-serif;
+    font-weight: 700;
     font-size: 25px;
     word-wrap: break-word;
 }
@@ -247,6 +248,7 @@
     border: 2px solid $default-btn-bg-color;
     background-color: transparent;
     color: $default-btn-text-color;
+    padding: 8px 12px;
     &:focus {
         border: 2px solid $default-btn-bg-color;
         background-color: transparent;
@@ -269,7 +271,6 @@
         color: $default-btn-text-color;
     }
 }
-
 
 .btn-default.active.focus,
 .btn-default.active:focus,

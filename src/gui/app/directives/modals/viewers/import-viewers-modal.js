@@ -203,7 +203,7 @@
                     };
 
                     $ctrl.importing = true;
-                    /** @type {import("../../../../../types/import").ImportResult} */
+                    /** @type {import("../../../../../types").ImportResult} */
                     const response = await backendCommunicator.fireEventAsync("import:import-viewers", data);
 
                     if (response.success) {

@@ -1,4 +1,5 @@
-import { EventFilter, PresetValue } from "../../../../../types/events";
+import type { EventFilter, PresetValue } from "../../../../../types";
+
 import { ComparisonType } from "../../../../../shared/filter-constants";
 
 const filter: EventFilter = {
@@ -43,7 +44,7 @@ const filter: EventFilter = {
         const { comparisonType, value } = filterSettings;
         const { eventMeta } = eventData;
         // Unique chat previously used 'r9kbeta' on PubSub; became 'uniquechat' on EventSub.
-        const ucValue = value === "r9kbeta" ? "uniquechat" : value;
+        const ucValue = (value === "r9kbeta" ? "uniquechat" : value) as string;
 
         const chatModes = eventMeta.chatMode as string;
 

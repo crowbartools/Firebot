@@ -1,6 +1,8 @@
 import type { ReplaceVariable } from "../../../../types";
 import { FirebotPronounManager } from "../../../pronouns/pronoun-manager";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
+
+const logger = LoggerCache.getLogger("Variables");
 
 const model : ReplaceVariable = {
     definition: {

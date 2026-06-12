@@ -4,7 +4,7 @@ import frontendCommunicator from "../common/frontend-communicator";
 
 class MacroManager extends JsonDbManager<VariableMacro> {
     constructor() {
-        super("Variable Macro", "/variable-macros");
+        super("Variable Macro", "/variable-macros", "Variable Macros");
     }
 
     getMacroByName(name: string) {

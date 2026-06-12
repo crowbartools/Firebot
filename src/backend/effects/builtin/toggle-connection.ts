@@ -1,4 +1,5 @@
-import type { EffectType } from "../../../types/effects";
+import type { EffectType } from "../../../types";
+
 import connectionManager from "../../common/connection-manager";
 import integrationManager from "../../integrations/integration-manager";
 

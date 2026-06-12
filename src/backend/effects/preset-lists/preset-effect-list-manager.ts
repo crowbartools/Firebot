@@ -1,11 +1,11 @@
-import { PresetEffectList } from "../../../types/effects";
+import type { PresetEffectList } from "../../../types";
 
 import JsonDbManager from "../../database/json-db-manager";
 import frontendCommunicator from "../../common/frontend-communicator";
 
 class PresetEffectListManager extends JsonDbManager<PresetEffectList> {
     constructor() {
-        super("Preset Effect List", "/effects/preset-effect-lists");
+        super("Preset Effect List", "/effects/preset-effect-lists", "Preset Effect Lists");
 
         frontendCommunicator.on("preset-effect-lists:get-preset-effect-lists",
             () => this.getAllItems()

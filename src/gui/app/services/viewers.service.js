@@ -1,6 +1,6 @@
 "use strict";
 
-/** @import { FirebotViewer } from "../../../types/viewers" */
+/** @import { FirebotViewer } from "../../../types" */
 
 (function() {
     //This handles viewer lists.

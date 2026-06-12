@@ -1,7 +1,9 @@
-import { EffectType } from "../../../types/effects";
-import { TriggersObject } from '../../../types/triggers';
+import type { EffectType, TriggersObject } from "../../../types";
+
 import frontendCommunicator from "../../common/frontend-communicator";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
+
+const logger = LoggerCache.getLogger("Effects");
 
 const triggers: TriggersObject = {};
 triggers["command"] = true;

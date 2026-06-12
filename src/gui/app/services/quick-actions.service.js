@@ -1,6 +1,6 @@
 "use strict";
 
-/** @import { QuickActionDefinition } from "../../../types/quick-actions" */
+/** @import { QuickActionDefinition } from "../../../types" */
 
 (function() {
     angular

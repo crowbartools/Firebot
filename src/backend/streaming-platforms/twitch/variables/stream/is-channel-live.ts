@@ -1,7 +1,9 @@
 import type { ReplaceVariable } from "../../../../../types/variables";
 import { TwitchApi } from "../../api";
 import twitchStreamInfoManager from "../../stream-info-manager";
-import logger from "../../../../logwrapper";
+import { LoggerCache } from "../../../../logger-cache";
+
+const logger = LoggerCache.getLogger("Effects");
 
 
 const model : ReplaceVariable = {

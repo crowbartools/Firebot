@@ -52,6 +52,8 @@ exports.loadEffects = () => {
         'run-command',
         'run-program',
         'send-custom-websocket-event',
+        'set-active-control-deck',
+        'set-default-control-deck',
         'set-output',
         'set-user-metadata',
         'shoutout',

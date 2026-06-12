@@ -3,7 +3,7 @@
 const EventEmitter = require("events");
 const { ReplaceVariableManager } = require("../../../../variables/replace-variable-manager");
 const frontendCommunicator = require("../../../../common/frontend-communicator");
-const logger = require("../../../../logwrapper");
+const logger = require("../../../../logger-cache").LoggerCache.getLogger("Conditions");
 const { simpleClone } = require("../../../../utils");
 
 class ConditionManager extends EventEmitter {

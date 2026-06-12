@@ -6,6 +6,8 @@ import { JsonDB } from "node-json-db";
 
 import argv from "./argv-parser";
 import frontendCommunicator from "./frontend-communicator";
+
+// We have to create logger children manually here because hashtag reasons
 import logger from "../logwrapper";
 
 const isDev = !app.isPackaged;
@@ -85,7 +87,7 @@ function pathExists(path: string): Promise<boolean> {
                     resolve(false);
                 } else {
                     // Some weird error happened other than the path missing.
-                    logger.error(err);
+                    logger.child({ module: "Data Access" }).error(err);
                 }
             } else {
                 resolve(true);
@@ -96,7 +98,7 @@ function pathExists(path: string): Promise<boolean> {
 
 export async function createFirebotDataDir(): Promise<void> {
     if (!await pathExists(userDataPath)) {
-        logger.info("Creating firebot-data folder...");
+        logger.child({ module: "Data Access" }).info("Creating firebot-data folder...");
         fs.mkdirSync(userDataPath);
     }
 };
@@ -117,7 +119,7 @@ export function makeDirInUserDataSync(filePath: string): boolean {
         fs.mkdirSync(joinedPath);
         return true;
     } catch (err) {
-        logger.error(`Error creating ${filePath}: ${err}`);
+        logger.child({ module: "Data Access" }).error(`Error creating ${filePath}: ${err}`);
         return false;
     }
 };
@@ -170,7 +172,7 @@ export function copyResourceToUserData(
         );
         fs.writeFileSync(destination, fs.readFileSync(source));
     } catch (error) {
-        logger.error(`Failed to copy resource ${resourceName}`, error);
+        logger.child({ module: "Data Access" }).error(`Failed to copy resource ${resourceName}`, error);
     }
 };
 

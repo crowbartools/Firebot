@@ -1,4 +1,5 @@
-import type { EffectType } from '../../../types/effects';
+import type { EffectType } from "../../../types";
+
 import frontendCommunicator from "../../common/frontend-communicator";
 
 const effect: EffectType = {

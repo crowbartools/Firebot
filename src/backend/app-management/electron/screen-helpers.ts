@@ -1,5 +1,7 @@
 import { screen, desktopCapturer } from "electron";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
+
+const logger = LoggerCache.getLogger("Core");
 
 export function getAllDisplays(): Electron.Display[] {
     return screen.getAllDisplays();

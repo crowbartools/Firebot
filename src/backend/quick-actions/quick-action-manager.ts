@@ -1,6 +1,9 @@
-import { QuickActionDefinition, SystemQuickAction } from "../../types/quick-actions";
-import { EffectList } from "../../types/effects";
-import { Trigger } from "../../types/triggers";
+import {
+    EffectList,
+    QuickActionDefinition,
+    SystemQuickAction,
+    Trigger
+} from "../../types";
 
 import JsonDbManager from "../database/json-db-manager";
 import { AccountAccess } from "../common/account-access";
@@ -24,7 +27,7 @@ class QuickActionManager extends JsonDbManager<QuickActionDefinition> {
     ];
 
     constructor() {
-        super("Custom Quick Action", "/custom-quick-actions");
+        super("Quick Action", "/custom-quick-actions", "Quick Actions");
 
         frontendCommunicator.on("quick-actions:get-quick-actions",
             () => this.getAllItems()

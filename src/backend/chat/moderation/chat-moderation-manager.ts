@@ -1,15 +1,15 @@
 import { JsonDB } from "node-json-db";
 import fsp from "fs/promises";
 
-import {
+import type {
     AllowList,
     BannedRegularExpressions,
     BannedWords,
     ChatModerationSettings,
+    FirebotChatMessage,
     ModerationImportRequest,
     ModerationUser
-} from "../../../types/moderation";
-import { FirebotChatMessage } from "../../../types/chat";
+} from "../../../types";
 
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
 import { ProfileManager } from "../../common/profile-manager";
@@ -17,10 +17,12 @@ import rolesManager from "../../roles/custom-roles-manager";
 import viewerDatabase from '../../viewers/viewer-database';
 import permitCommand from "./url-permit-command";
 import frontendCommunicator from "../../common/frontend-communicator";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
 import { getUrlRegex } from "../../utils";
 
 class ChatModerationManager {
+    private logger = LoggerCache.getLogger("Moderation");
+
     bannedWords: BannedWords = { words: [] };
     bannedRegularExpressions: BannedRegularExpressions = { regularExpressions: [] };
     allowlist: AllowList = {
@@ -163,7 +165,7 @@ class ChatModerationManager {
         try {
             contents = await fsp.readFile(filePath, { encoding: "utf8" });
         } catch (err) {
-            logger.error("Error reading file for banned words", err);
+            this.logger.error("Error reading file for banned words", err);
             return false;
         }
 
@@ -191,7 +193,7 @@ class ChatModerationManager {
             success = true;
         } catch (error) {
             if ((error as Error).name === 'DatabaseError') {
-                logger.error("Error saving banned words data", error);
+                this.logger.error("Error saving banned words data", error);
             }
         }
 
@@ -240,7 +242,7 @@ class ChatModerationManager {
             success = true;
         } catch (error) {
             if ((error as Error).name === 'DatabaseError') {
-                logger.error("Error saving banned regular expressions data", error);
+                this.logger.error("Error saving banned regular expressions data", error);
             }
         }
 
@@ -290,7 +292,7 @@ class ChatModerationManager {
         try {
             contents = await fsp.readFile(filePath, { encoding: "utf8" });
         } catch (err) {
-            logger.error("Error reading file for allowed URLs", err);
+            this.logger.error("Error reading file for allowed URLs", err);
             return false;
         }
 
@@ -318,7 +320,7 @@ class ChatModerationManager {
             success = true;
         } catch (error) {
             if ((error as Error).name === 'DatabaseError') {
-                logger.error("Error saving URL allowlist data", error);
+                this.logger.error("Error saving URL allowlist data", error);
             }
         }
 
@@ -373,7 +375,7 @@ class ChatModerationManager {
             success = true;
         } catch (error) {
             if ((error as Error).name === 'DatabaseError') {
-                logger.error("Error saving user allowlist data", error);
+                this.logger.error("Error saving user allowlist data", error);
             }
         }
 
@@ -397,7 +399,7 @@ class ChatModerationManager {
             success = true;
         } catch (error) {
             if ((error as Error).name === 'DatabaseError') {
-                logger.error("Error saving chat moderation settings", error);
+                this.logger.error("Error saving chat moderation settings", error);
             }
         }
 
@@ -428,7 +430,7 @@ class ChatModerationManager {
                 try {
                     newArray.push(new RegExp(regex, "gi"));
                 } catch (error) {
-                    logger.warn(`Unable to parse banned RegEx: ${regex}`, error);
+                    this.logger.warn(`Unable to parse banned RegEx: ${regex}`, error);
                 }
 
                 return newArray;
@@ -541,7 +543,7 @@ class ChatModerationManager {
             }
         } catch (error) {
             if ((error as Error).name === 'DatabaseError') {
-                logger.error("Error loading chat moderation data", error);
+                this.logger.error("Error loading chat moderation data", error);
             }
         }
     }
@@ -604,7 +606,7 @@ class ChatModerationManager {
             const regex = getUrlRegex();
 
             if (regex.test(message)) {
-                logger.debug("URL moderation: Found URL in message");
+                this.logger.debug("URL moderation: Found URL in message");
 
                 const settings = this.chatModerationSettings.urlModeration;
                 const userAllowed = this.getUserAllowlist().find(u => u === chatMessage.username.toLowerCase());
@@ -643,7 +645,7 @@ class ChatModerationManager {
                         if (viewerViewTime <= minimumViewTime) {
                             outputMessage = outputMessage.replaceAll("{viewTime}", minimumViewTime.toString());
 
-                            logger.debug("URL moderation: Not enough view time.");
+                            this.logger.debug("URL moderation: Not enough view time.");
                             shouldDeleteMessage = true;
                         }
                     } else {

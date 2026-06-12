@@ -1,7 +1,7 @@
 "use strict";
 
-const webServer = require("../../../server/http-server-manager");
 const { EffectCategory } = require('../../../shared/effect-constants');
+const { HttpServerManager } = require("../../../server/http-server-manager");
 const { SettingsManager } = require("../../common/settings-manager");
 
 /**
@@ -109,7 +109,7 @@ const celebration = {
         }
 
         // Send to overlay.
-        webServer.sendToOverlay("celebrate", data);
+        HttpServerManager.sendToOverlay("celebrate", data);
         return true;
     },
     /**

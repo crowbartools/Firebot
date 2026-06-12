@@ -11,7 +11,7 @@ const { createTray } = require('./tray-creation.js');
 const fileOpenHelpers = require("../file-open-helpers");
 const screenHelpers = require("./screen-helpers");
 const frontendCommunicator = require("../../common/frontend-communicator");
-const logger = require("../../logwrapper");
+const logger = require("../../logger-cache").LoggerCache.getLogger("Window Management");
 
 const EventEmitter = require("events");
 
@@ -409,6 +409,18 @@ async function createAppMenu() {
                     type: 'separator'
                 },
                 {
+                    label: "Plugin Manager",
+                    toolTip: "Install and manage Plugins & Scripts",
+                    sublabel: "Install and manage Plugins & Scripts",
+                    click: () => {
+                        frontendCommunicator.send("open-modal", {
+                            component: "pluginManagerModal",
+                            size: "lg"
+                        });
+                    },
+                    icon: await createIconImage("../../../gui/images/icons/mdi/puzzle-outline.png")
+                },
+                {
                     role: 'toggledevtools',
                     icon: await createIconImage("../../../gui/images/icons/mdi/tools.png")
                 }
@@ -614,8 +626,8 @@ async function createMainWindow() {
             splashscreenWindow.destroy();
         }
 
-        const startupScriptsManager = require("../../common/handlers/custom-scripts/startup-scripts-manager");
-        await startupScriptsManager.runStartupScripts();
+        const { PluginManager } = require("../../plugins/plugin-manager");
+        await PluginManager.startPlugins();
 
         const { EventManager } = require("../../events/event-manager");
         EventManager.triggerEvent("firebot", "firebot-started", {

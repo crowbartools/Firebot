@@ -9,7 +9,7 @@ const effectHelpers = require("../effects/effect-helpers");
 const integrationManager = require("../integrations/integration-manager");
 const twitchChat = require("../chat/twitch-chat");
 const frontendCommunicator = require("./frontend-communicator");
-const logger = require("../logwrapper");
+const logger = require("../logger-cache").LoggerCache.getLogger("Connections");
 const { wait } = require("../utils");
 
 const { ConnectionState } = require("../../shared/connection-constants");

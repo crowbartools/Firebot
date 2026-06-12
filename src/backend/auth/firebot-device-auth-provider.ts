@@ -1,13 +1,13 @@
-import { AccessToken, getExpiryDateOfAccessToken } from "@twurple/auth";
+import { type AccessToken, getExpiryDateOfAccessToken } from "@twurple/auth";
 
-import { AuthDetails, AuthProviderDefinition } from "../../types/auth";
+import type { AuthDetails, AuthProviderDefinition } from "../../types";
 
 import { AccountAccess } from "../common/account-access";
 import { DeviceAuthProvider } from "../streaming-platforms/twitch/auth/twitch-device-auth-provider";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 import { TwitchAuthProviders } from "../streaming-platforms/twitch/auth/twitch-auth";
 import frontendCommunicator from "../common/frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 
 type ValidationRequest = {
     accountType: "streamer" | "bot";
@@ -15,6 +15,8 @@ type ValidationRequest = {
 };
 
 class FirebotDeviceAuthProvider {
+    private logger = LoggerCache.getLogger("Auth");
+
     streamerProvider: DeviceAuthProvider;
     botProvider: DeviceAuthProvider;
 
@@ -23,7 +25,7 @@ class FirebotDeviceAuthProvider {
             ? AccountAccess.getAccounts().streamer
             : AccountAccess.getAccounts().bot;
 
-        logger.debug(`Persisting ${accountType} access token`);
+        this.logger.debug(`Persisting ${accountType} access token`);
 
         const auth = (account.auth ?? {}) as AuthDetails;
         auth.access_token = token.accessToken; // eslint-disable-line camelcase

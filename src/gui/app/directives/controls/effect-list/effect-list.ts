@@ -29,6 +29,10 @@ type Bindings = {
         presetListArgs?: Array<{
             name: string;
         }>;
+        controlInputs?: Array<{
+            name: string;
+            description?: string;
+        }>;
         [x: string]: unknown;
     };
     effects: EffectList;
@@ -406,7 +410,7 @@ type ContextMenuItemScope = {
                 }
 
                 return effectTypes.find(e => e.definition.id === id)?.definition?.deprecated === true;
-            }
+            };
 
             $ctrl.getEffectDefinitionById = (id: string) => {
                 if (!effectTypes || effectTypes.length < 1) {
@@ -515,7 +519,6 @@ type ContextMenuItemScope = {
 
             $ctrl.$onInit = $ctrl.$onChanges = function () {
                 $q.when(effectHelperService.getAllEffectTypes()).then((types) => {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                     effectTypes = types;
 
                     if ($ctrl.effects != null && !Array.isArray($ctrl.effects)) {
@@ -708,6 +711,23 @@ type ContextMenuItemScope = {
                                         {
                                             handle: `$presetListArg[${a.name}]`,
                                             description: "Long hand version of the preset list argument"
+                                        }
+                                    ]
+                                    : undefined
+                            };
+                        }) || [],
+                    controlInputs:
+                        $ctrl.triggerMeta?.controlInputs?.map((input) => {
+                            const canBeShorthand = stringCanBeShorthand(input.name);
+                            return {
+                                name: input.name,
+                                handle: canBeShorthand ? `$@${input.name}` : `$controlDeckInput[${input.name}]`,
+                                description: input.description,
+                                examples: canBeShorthand
+                                    ? [
+                                        {
+                                            handle: `$controlDeckInput[${input.name}]`,
+                                            description: "Long hand version of the control input"
                                         }
                                     ]
                                     : undefined

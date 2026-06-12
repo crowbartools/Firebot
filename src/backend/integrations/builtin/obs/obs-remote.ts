@@ -34,7 +34,9 @@ import {
     OBS_DISCONNECTED_EVENT_ID,
     OBS_EXITING_EVENT_ID
 } from "./constants";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
+
+const logger = LoggerCache.getLogger("Integration: OBS");
 
 type CachedGroupInfo = {
     /// The name of a group.

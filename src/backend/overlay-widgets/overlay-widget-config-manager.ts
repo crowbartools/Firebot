@@ -12,7 +12,7 @@ type ExtraEvents = {
 
 class OverlayWidgetConfigManager extends JsonDbManager<OverlayWidgetConfig, ExtraEvents> {
     constructor() {
-        super("Overlay Widgets", "/overlay-widgets");
+        super("Overlay Widget", "/overlay-widgets", "Overlay Widgets");
     }
 
     saveWidgetConfig(config: OverlayWidgetConfig, isNew = false): OverlayWidgetConfig {

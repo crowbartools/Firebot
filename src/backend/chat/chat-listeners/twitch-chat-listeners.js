@@ -10,7 +10,7 @@ const { TwitchEventHandlers } = require("../../streaming-platforms/twitch/events
 const twitchRolesManager = require("../../roles/twitch-roles-manager");
 const raidMessageChecker = require(".././moderation/raid-message-checker");
 const viewerDatabase = require("../../viewers/viewer-database");
-const logger = require("../../logwrapper");
+const logger = require("../../logger-cache").LoggerCache.getLogger("Twitch Chat");
 
 const events = require("events");
 

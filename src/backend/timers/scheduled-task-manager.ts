@@ -1,15 +1,13 @@
 import { CronJob } from "cron";
 import { DateTime } from "luxon";
 
-import type { ScheduledTask } from "../../types/timers";
-import type { Trigger } from "../../types/triggers";
+import type { ScheduledTask, Trigger } from "../../types";
 
 import JsonDbManager from "../database/json-db-manager";
 import { AccountAccess } from "../common/account-access";
 import connectionManager from "../common/connection-manager";
 import effectRunner from "../common/effect-runner";
 import frontendCommunicator from "../common/frontend-communicator";
-import logger from "../logwrapper";
 
 interface ScheduledTaskRunner {
     taskDefinition: ScheduledTask;
@@ -20,7 +18,7 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
     taskCache: Map<string, ScheduledTaskRunner> = new Map();
 
     constructor() {
-        super("ScheduledTask", "scheduled-tasks");
+        super("Scheduled Task", "scheduled-tasks", "Scheduled Tasks");
 
         frontendCommunicator.on("scheduled-tasks:get-scheduled-tasks",
             () => this.getAllItems()
@@ -40,25 +38,25 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
     }
 
     start(): void {
-        logger.info("Starting scheduled task manager...");
+        this.logger.info("Starting scheduled task manager...");
         this.getAllItems().map(t => this.taskCache.set(t.id, <ScheduledTaskRunner>{ taskDefinition: t, cronjob: this.createCronJob(t) }));
 
-        logger.info(`Found ${this.taskCache.size} scheduled task(s)`);
+        this.logger.info(`Found ${this.taskCache.size} scheduled task(s)`);
         this.taskCache.forEach((val) => {
             if (val.taskDefinition.enabled) {
                 this.startTask(val);
             }
         });
 
-        logger.info("Scheduled task manager started");
+        this.logger.info("Scheduled task manager started");
     }
 
     stop(): void {
-        logger.info("Stopping scheduled task manager...");
+        this.logger.info("Stopping scheduled task manager...");
         this.taskCache.forEach((val) => {
             this.stopTask(val, true);
         });
-        logger.info("Scheduled task manager stopped");
+        this.logger.info("Scheduled task manager stopped");
     }
 
     private createCronJob(task: ScheduledTask): CronJob {
@@ -66,11 +64,11 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
             task.schedule,
             () => {
                 if (task.onlyWhenLive && !connectionManager.streamerIsOnline()) {
-                    logger.debug(`Skipping scheduled task "${task.name}" run - stream is offline`);
+                    this.logger.debug(`Skipping scheduled task "${task.name}" run - stream is offline`);
                     return;
                 }
 
-                logger.info(`Running scheduled task "${task.name}"`);
+                this.logger.info(`Running scheduled task "${task.name}"`);
 
                 const effectsRequest = {
                     trigger: {
@@ -92,22 +90,22 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
     }
 
     private startTask(taskRunner: ScheduledTaskRunner): void {
-        logger.debug(`Starting scheduled task timer for "${taskRunner.taskDefinition.name}"...`);
+        this.logger.debug(`Starting scheduled task timer for "${taskRunner.taskDefinition.name}"...`);
 
         if (taskRunner.cronjob == null) {
             taskRunner.cronjob = this.createCronJob(taskRunner.taskDefinition);
         }
 
         if (taskRunner.cronjob.isActive) {
-            logger.debug(`Scheduled task timer for "${taskRunner.taskDefinition.name}" is already running`);
+            this.logger.debug(`Scheduled task timer for "${taskRunner.taskDefinition.name}" is already running`);
         } else {
             taskRunner.cronjob.start();
-            logger.debug(`Scheduled task timer for "${taskRunner.taskDefinition.name}" started. Next run: ${taskRunner.cronjob.nextDate().toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS)}`);
+            this.logger.debug(`Scheduled task timer for "${taskRunner.taskDefinition.name}" started. Next run: ${taskRunner.cronjob.nextDate().toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS)}`);
         }
     }
 
     private stopTask(taskRunner: ScheduledTaskRunner, removeCrontab = false): void {
-        logger.debug(`Stopping scheduled task timer for ${taskRunner.taskDefinition.name}...`);
+        this.logger.debug(`Stopping scheduled task timer for ${taskRunner.taskDefinition.name}...`);
 
         if (taskRunner.cronjob == null) {
             taskRunner.cronjob = this.createCronJob(taskRunner.taskDefinition);
@@ -115,9 +113,9 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
 
         if (taskRunner.cronjob.isActive) {
             void taskRunner.cronjob.stop();
-            logger.debug(`Scheduled task timer for "${taskRunner.taskDefinition.name}" stopped`);
+            this.logger.debug(`Scheduled task timer for "${taskRunner.taskDefinition.name}" stopped`);
         } else {
-            logger.debug(`Scheduled task timer for "${taskRunner.taskDefinition.name}" is not running`);
+            this.logger.debug(`Scheduled task timer for "${taskRunner.taskDefinition.name}" is not running`);
         }
 
         if (removeCrontab) {
@@ -130,17 +128,17 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
             const taskRunner = this.taskCache.get(task.id);
 
             if (taskRunner.cronjob.isActive) {
-                logger.debug(`Scheduled task "${task.name}" next run: ${taskRunner.cronjob.nextDate().toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS)}`);
+                this.logger.debug(`Scheduled task "${task.name}" next run: ${taskRunner.cronjob.nextDate().toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS)}`);
             } else {
-                logger.debug(`Scheduled task "${task.name}" not running.`);
+                this.logger.debug(`Scheduled task "${task.name}" not running.`);
             }
         } else {
-            logger.debug(`Scheduled task "${task.name}" not in cache.`);
+            this.logger.debug(`Scheduled task "${task.name}" not in cache.`);
         }
     }
 
     saveScheduledTask(task: ScheduledTask): ScheduledTask {
-        logger.debug(`Saving scheduled task "${task.name}"...`);
+        this.logger.debug(`Saving scheduled task "${task.name}"...`);
         const savedTask = super.saveItem(task);
 
         if (savedTask) {
@@ -167,7 +165,7 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
     }
 
     deleteScheduledTask(id: string): void {
-        logger.debug(`Deleting scheduled task ${id}...`);
+        this.logger.debug(`Deleting scheduled task ${id}...`);
 
         const task = super.getItem(id);
         if (task != null) {
@@ -178,13 +176,13 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
                     this.stopTask(taskRunner, true);
                     this.taskCache.delete(id);
                     super.deleteItem(id);
-                    logger.debug(`Scheduled task with ID ${id} deleted`);
+                    this.logger.debug(`Scheduled task with ID ${id} deleted`);
                 }
             } else {
-                logger.debug(`No scheduled task found in task cache with ID ${id}`);
+                this.logger.debug(`No scheduled task found in task cache with ID ${id}`);
             }
         } else {
-            logger.debug(`No scheduled task found with ID ${id}`);
+            this.logger.debug(`No scheduled task found with ID ${id}`);
         }
     }
 

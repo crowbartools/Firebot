@@ -8,13 +8,15 @@ import escapeHTML from "escape-html";
 
 import type { EffectType, FirebotAudioDevice } from "../../../types";
 
+import { HttpServerManager } from "../../../server/http-server-manager";
 import { ReplaceVariableManager } from "../../variables/replace-variable-manager";
 import { ResourceTokenManager } from "../../resource-token-manager";
 import { SettingsManager } from "../../common/settings-manager";
-import webServer from "../../../server/http-server-manager";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
 import { wait } from "../../utils";
 import { playSound } from "../../common/handlers/sound-handler";
+
+const logger = LoggerCache.getLogger("Effects");
 
 interface OverlayAlertEffect {
     mediaType: "image" | "video" | "none";
@@ -799,7 +801,7 @@ const effect: EffectType<OverlayAlertEffect> = {
             // }
         }
 
-        webServer.sendToOverlay("overlayalert", data);
+        HttpServerManager.sendToOverlay("overlayalert", data);
 
         // Handle sound effect
         if (effect.playSound) {

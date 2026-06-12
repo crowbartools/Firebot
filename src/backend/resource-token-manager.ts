@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import logger from "./logwrapper";
+import { LoggerCache } from "./logger-cache";
 
 interface ResourceToken {
     path: string;
@@ -7,10 +7,11 @@ interface ResourceToken {
 }
 
 class ResourceTokenManager {
+    private logger = LoggerCache.getLogger("Resource Tokens");
     tokens: Record<string, ResourceToken> = {};
 
     private deleteToken(token: string) {
-        logger.debug(`Deleting token: ${token}`);
+        this.logger.debug(`Deleting token: ${token}`);
         if (this.tokens[token] !== undefined) {
             delete this.tokens[token];
         }

@@ -1,5 +1,4 @@
-import type { EffectType } from "../../../types/effects";
-import type { CustomEmbed } from "../../../types/discord";
+import type { EffectType, DiscordCustomEmbed } from "../../../types";
 
 import { takeScreenshot } from "../../app-management/electron/screen-helpers";
 import {
@@ -24,7 +23,7 @@ const effect: EffectType<{
     embedColor: string;
     fileNamePattern: string;
     message: string;
-    customEmbed: CustomEmbed;
+    customEmbed: DiscordCustomEmbed;
     width: number;
     height: number;
     position: string;
