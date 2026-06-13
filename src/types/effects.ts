@@ -2,6 +2,7 @@ import ng from "angular";
 import type { TriggerType, TriggersObject, Trigger } from "./triggers";
 import type { Awaitable } from "./util-types";
 import { EventSourceAndId } from "./events";
+import { FirebotParameterSectionArray } from "./parameters";
 
 type Func<T> = (...args: unknown[]) => T;
 
@@ -145,7 +146,8 @@ export type EffectInstance<EffectModel = unknown> = {
 
 export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
     definition: EffectDefinition<EffectModel>;
-    optionsTemplate: string;
+    settingsSchema?: FirebotParameterSectionArray<EffectModel extends Record<string, unknown> ? EffectModel : never>;
+    optionsTemplate?: string;
     optionsController?: ($scope: EffectScope<EffectModel>, ...args: any[]) => void;
     optionsValidator?: (effect: EffectModel, $scope: EffectScope<EffectModel>) => string[];
     getDefaultLabel?: (effect: EffectModel, ...args: any[]) => Awaitable<string | undefined>;

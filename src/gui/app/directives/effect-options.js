@@ -23,7 +23,57 @@
                             return;
                         }
 
-                        const optionsTemplate = effectDef.optionsTemplate || "";
+                        let optionsTemplate = "";
+                        if (Array.isArray(effectDef.settingsSchema)) {
+                            $scope.showShowSection = function (section) {
+                                let showSection = false;
+                                for (const setting of section.settings) {
+                                    // If there's no showIf condition, we always show it
+                                    if (!setting.showIf) {
+                                        return true;
+                                    }
+
+                                    for (const [key, val] of Object.entries(setting.showIf)) {
+                                        const actualVal = $scope.effect ? $scope.effect[key] : undefined;
+                                        if (Array.isArray(val)) {
+                                            // If the value is an array, check for inclusion
+                                            if (Array.isArray(actualVal)) {
+                                                // If actualVal is also an array, check for any common elements
+                                                if (actualVal.some(v => val.includes(v))) {
+                                                    showSection = true;
+                                                    break;
+                                                }
+                                            } else if (val.includes(actualVal)) {
+                                                showSection = true;
+                                                break;
+                                            }
+                                        } else if (actualVal === val) {
+                                            showSection = true;
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                return showSection;
+                            };
+
+                            optionsTemplate = `
+                                <div ng-repeat="section in effectDef.settingsSchema">
+                                    <eos-container header="{{section.title}}" ng-show="showShowSection(section)">
+                                        <dynamic-parameters
+                                            settings-schema="section.settings"
+                                            settings="effect"
+                                            trigger="trigger"
+                                            trigger-meta="triggerMeta"
+                                            enable-replace-variables="true"
+                                        ></dynamic-parameters>
+                                    </eos-container>
+                                </div>
+                            `;
+                        } else {
+                            optionsTemplate = effectDef.optionsTemplate || "";
+                        }
+
                         const el = angular.element(
                             `<div id="child">${optionsTemplate}</div>`
                         );

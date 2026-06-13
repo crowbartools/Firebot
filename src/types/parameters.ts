@@ -33,6 +33,7 @@ export type StringParameter = BaseParameter & {
     type: "string";
     useTextArea?: boolean;
     default: string;
+    placeholder?: string;
 };
 
 export type PasswordParameter = BaseParameter & {
@@ -395,6 +396,12 @@ export type FirebotParameterCategories<Config extends Record<string, Record<stri
 
 export type FirebotParameterArray<Config extends Record<string, unknown>> = ParametersWithNameConfig<Config>[keyof Config][];
 
+export type FirebotParameterSection<Config extends Record<string, unknown>> = {
+    title: string;
+    settings: FirebotParameterArray<Config>;
+};
+
+export type FirebotParameterSectionArray<Config extends Record<string, unknown>> = FirebotParameterSection<Config>[];
 
 // export type WithValues<Categories extends FirebotParameterCategories> = {
 //     [Category in keyof Categories]: Categories[Category] & {

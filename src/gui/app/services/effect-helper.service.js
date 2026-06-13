@@ -10,6 +10,7 @@
             const mapEffectDef = function(effectDef) {
                 return {
                     definition: effectDef.definition,
+                    settingsSchema: effectDef.settingsSchema,
                     optionsTemplate: effectDef.optionsTemplate,
                     optionsController: eval(effectDef.optionsControllerRaw), // eslint-disable-line no-eval
                     optionsValidator: eval(effectDef.optionsValidatorRaw), // eslint-disable-line no-eval

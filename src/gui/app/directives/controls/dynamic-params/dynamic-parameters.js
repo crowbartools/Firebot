@@ -6,7 +6,8 @@
             settings: "=",
             trigger: "@?",
             triggerMeta: "<?",
-            modalId: "@?"
+            modalId: "@?",
+            enableReplaceVariables: "<?"
         },
         template: `
             <dynamic-parameter
@@ -18,6 +19,7 @@
                 trigger-meta="$ctrl.triggerMeta"
                 modal-id="{{$ctrl.modalId}}"
                 ng-if="$ctrl.shouldShowParameter(settingSchema)"
+                enable-replace-variables="$ctrl.enableReplaceVariables"
             >
             </dynamic-parameter>
         `,

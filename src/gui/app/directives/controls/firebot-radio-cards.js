@@ -22,8 +22,8 @@
                     ng-class="{ 'selected': $ctrl.modelValue === option.value, 'justify-center': !option.description  }"
                     ng-click="$ctrl.modelValue = option.value"
                 >
-                    <div class="fb-radio-card-icon">
-                        <i ng-if="option.iconClass" class="fal" ng-class="option.iconClass"></i>
+                    <div ng-if="option.iconClass" class="fb-radio-card-icon">
+                        <i class="fal" ng-class="option.iconClass"></i>
                     </div>
                     <div class="fb-radio-card-text-container">
                         <div class="fb-radio-card-title">{{option.label}} <tooltip ng-if="option.tooltip" text="option.tooltip"></tooltip></div>

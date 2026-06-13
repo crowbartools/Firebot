@@ -228,6 +228,7 @@ class EffectManager extends TypedEmitter<{
 
         return {
             definition: definition,
+            settingsSchema: e.settingsSchema,
             optionsTemplate: e.optionsTemplate,
             optionsControllerRaw: e.optionsController
                 ? e.optionsController.toString()
