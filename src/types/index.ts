@@ -11,6 +11,7 @@ export * from "./effects";
 export * from "./events";
 export * from "./expressionish";
 export * from "./games";
+export * from "./gamepad-bindings";
 export * from "./goals";
 export * from "./hotkeys";
 export * from "./http-server";

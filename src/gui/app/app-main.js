@@ -131,6 +131,7 @@
         countersService,
         hotkeyService,
         controlDeckService,
+        gamepadService,
         gamesService,
         presetEffectListsService,
         pluginsService,
@@ -177,6 +178,9 @@
 
         controlDeckService.loadDecks();
         controlDeckService.loadControlTypes();
+
+        gamepadService.loadBindings();
+        gamepadService.startPolling();
 
         gamesService.loadGames();
 
