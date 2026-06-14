@@ -58,6 +58,7 @@
                     "settings",
                     "counters",
                     "hotkeys",
+                    "gamepad bindings",
                     "effect queues",
                     "currency",
                     "quotes",
@@ -215,6 +216,11 @@
                 .when("/hotkeys", {
                     templateUrl: "./templates/_hotkeys.html",
                     controller: "hotkeysController"
+                })
+
+                .when("/gamepad-bindings", {
+                    templateUrl: "./templates/_gamepads.html",
+                    controller: "gamepadsController"
                 })
 
                 .when("/currency", {

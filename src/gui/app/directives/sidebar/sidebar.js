@@ -24,6 +24,7 @@
                             <nav-link page="Power-ups And Rewards" name="{{'SIDEBAR.OTHER.POWERUPSANDREWARDS' | translate }}" icon="fa-gifts"></nav-link>
                             <nav-link page="Preset Effect Lists" name="{{ 'SIDEBAR.OTHER.PRESET_EFFECT_LISTS' | translate }}" icon="fa-magic"></nav-link>
                             <nav-link page="Hotkeys" name="{{'SIDEBAR.OTHER.HOTKEYS' | translate }}" icon="fa-keyboard"></nav-link>
+                            <nav-link page="Gamepad Bindings" name="Gamepad Bindings" icon="fa-gamepad"></nav-link>
                             <nav-link page="Counters" name="{{'SIDEBAR.OTHER.COUNTERS' | translate }}" icon="fa-tally"></nav-link>
                             <nav-link page="Overlay Widgets" name="Overlay Widgets" icon="fa-layer-plus"></nav-link>
 

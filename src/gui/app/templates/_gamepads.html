@@ -1,0 +1,14 @@
+<firebot-item-table
+    items="gamepadService.bindings"
+    on-items-update="onBindingsUpdated(items)"
+    headers="headers"
+    sort-tag-context="gamepad-bindings"
+    orderable="true"
+    add-new-button-text="New Binding"
+    on-add-new-clicked="gamepadService.showAddEditBindingModal()"
+    context-menu-options="bindingOptions(item)"
+    no-data-message="No gamepad bindings saved. Connect a controller and add one!"
+    none-found-message="No bindings found."
+    search-placeholder="Search bindings"
+    status-field="active"
+></firebot-item-table>

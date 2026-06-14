@@ -130,6 +130,7 @@
         settingsService,
         countersService,
         hotkeyService,
+        gamepadService,
         gamesService,
         presetEffectListsService,
         startupScriptsService,
@@ -173,6 +174,9 @@
         countersService.loadCounters();
 
         hotkeyService.loadHotkeys();
+
+        gamepadService.loadBindings();
+        gamepadService.startPolling();
 
         gamesService.loadGames();
 
