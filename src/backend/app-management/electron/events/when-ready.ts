@@ -232,9 +232,9 @@ export async function whenReady() {
     const { HotkeyManager } = await import("../../../hotkeys/hotkey-manager");
     HotkeyManager.loadItems();
 
-    windowManagement.updateSplashScreenStatus("Loading gamepad bindings...");
-    const { GamepadManager } = await import("../../../gamepads/gamepad-manager");
-    GamepadManager.loadItems();
+    windowManagement.updateSplashScreenStatus("Loading game controller bindings...");
+    const { GameControllerManager } = await import("../../../game-controllers/game-controller-manager");
+    GameControllerManager.loadItems();
 
     windowManagement.updateSplashScreenStatus("Starting currency timer...");
     const currencyManager = (await import("../../../currency/currency-manager")).default;

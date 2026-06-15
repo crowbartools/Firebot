@@ -3,47 +3,27 @@
 (function() {
     angular
         .module("firebotApp")
-        .factory("gamepadService", function($rootScope, logger, backendCommunicator, modalService) {
+        .factory("gameControllerService", function($rootScope, logger, backendCommunicator, modalService) {
             const service = {};
 
             service.bindings = [];
-
-            const BUTTON_NAMES = [
-                "A / Cross",
-                "B / Circle",
-                "X / Square",
-                "Y / Triangle",
-                "LB / L1",
-                "RB / R1",
-                "LT / L2",
-                "RT / R2",
-                "Select / Back",
-                "Start / Options",
-                "L3 (Left Stick)",
-                "R3 (Right Stick)",
-                "D-Pad Up",
-                "D-Pad Down",
-                "D-Pad Left",
-                "D-Pad Right",
-                "Home / Guide"
-            ];
 
             service.getButtonName = (buttonIndex) => {
                 if (buttonIndex == null) {
                     return "";
                 }
-                return BUTTON_NAMES[buttonIndex] ?? `Button ${buttonIndex}`;
+                return `Button ${buttonIndex + 1}`;
             };
 
             service.loadBindings = () => {
-                service.bindings = backendCommunicator.fireEventSync("gamepad:get-bindings") ?? [];
+                service.bindings = backendCommunicator.fireEventSync("game-controller:get-bindings") ?? [];
             };
 
             service.saveBinding = (binding) => {
                 if (!binding) {
                     return false;
                 }
-                const saved = backendCommunicator.fireEventSync("gamepad:save-binding", binding);
+                const saved = backendCommunicator.fireEventSync("game-controller:save-binding", binding);
                 if (saved) {
                     const index = service.bindings.findIndex(b => b.id === saved.id);
                     if (index > -1) {
@@ -60,12 +40,12 @@
                 if (bindings) {
                     service.bindings = bindings;
                 }
-                backendCommunicator.fireEvent("gamepad:save-all-bindings", service.bindings);
+                backendCommunicator.fireEvent("game-controller:save-all-bindings", service.bindings);
             };
 
             service.deleteBinding = (id) => {
                 service.bindings = service.bindings.filter(b => b.id !== id);
-                backendCommunicator.fireEvent("gamepad:delete-binding", id);
+                backendCommunicator.fireEvent("game-controller:delete-binding", id);
             };
 
             service.toggleBindingActiveState = (binding) => {
@@ -75,17 +55,17 @@
                 }
             };
 
-            service.bindingExists = (bindingId, button, gamepadIndex) => {
+            service.bindingExists = (bindingId, button, controllerIndex) => {
                 return service.bindings.some(
                     b => b.button === button &&
-                         b.gamepadIndex === gamepadIndex &&
+                         b.controllerIndex === controllerIndex &&
                          b.id !== bindingId
                 );
             };
 
             service.showAddEditBindingModal = (binding) => {
                 modalService.showModal({
-                    component: "AddOrEditGamepadBindingModal",
+                    component: "AddOrEditGameControllerBindingModal",
                     size: "mdlg",
                     keyboard: false,
                     resolveObj: {
@@ -95,7 +75,7 @@
                 });
             };
 
-            backendCommunicator.on("gamepad:all-bindings-updated", (bindings) => {
+            backendCommunicator.on("game-controller:all-bindings-updated", (bindings) => {
                 service.bindings = bindings ?? [];
             });
 
@@ -105,55 +85,55 @@
             let animFrameId = null;
             let captureCallback = null;
 
-            const pollGamepads = () => {
-                const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+            const pollControllers = () => {
+                const controllers = navigator.getGamepads ? navigator.getGamepads() : [];
 
-                for (let gi = 0; gi < gamepads.length; gi++) {
-                    const gp = gamepads[gi];
-                    if (!gp) {
+                for (let ci = 0; ci < controllers.length; ci++) {
+                    const controller = controllers[ci];
+                    if (!controller) {
                         continue;
                     }
 
-                    if (!prevButtonStates[gi]) {
-                        prevButtonStates[gi] = new Array(gp.buttons.length).fill(false);
+                    if (!prevButtonStates[ci]) {
+                        prevButtonStates[ci] = new Array(controller.buttons.length).fill(false);
                     }
 
-                    for (let bi = 0; bi < gp.buttons.length; bi++) {
-                        const pressed = gp.buttons[bi].pressed;
-                        const wasPressed = prevButtonStates[gi][bi];
+                    for (let bi = 0; bi < controller.buttons.length; bi++) {
+                        const pressed = controller.buttons[bi].pressed;
+                        const wasPressed = prevButtonStates[ci][bi];
 
                         if (pressed && !wasPressed) {
                             if (service.isCapturingButton) {
                                 service.isCapturingButton = false;
-                                $rootScope.$broadcast("gamepad:capture:update", {
-                                    gamepadIndex: gi,
+                                $rootScope.$broadcast("game-controller:capture:update", {
+                                    controllerIndex: ci,
                                     buttonIndex: bi
                                 });
                                 if (typeof captureCallback === "function") {
-                                    captureCallback(gi, bi);
+                                    captureCallback(ci, bi);
                                     captureCallback = null;
                                 }
                                 $rootScope.$applyAsync();
                             } else {
-                                backendCommunicator.send("gamepad:button-pressed", {
-                                    gamepadIndex: gi,
+                                backendCommunicator.send("game-controller:button-pressed", {
+                                    controllerIndex: ci,
                                     buttonIndex: bi
                                 });
                             }
                         }
 
-                        prevButtonStates[gi][bi] = pressed;
+                        prevButtonStates[ci][bi] = pressed;
                     }
                 }
 
-                animFrameId = requestAnimationFrame(pollGamepads);
+                animFrameId = requestAnimationFrame(pollControllers);
             };
 
             service.startPolling = () => {
                 if (animFrameId == null) {
                     prevButtonStates = {};
-                    animFrameId = requestAnimationFrame(pollGamepads);
-                    logger.info("Gamepad polling started");
+                    animFrameId = requestAnimationFrame(pollControllers);
+                    logger.info("Game controller polling started");
                 }
             };
 

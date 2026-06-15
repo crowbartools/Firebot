@@ -3,11 +3,11 @@
 (function() {
     angular
         .module("firebotApp")
-        .controller("gamepadsController", function($scope, gamepadService, utilityService) {
-            $scope.gamepadService = gamepadService;
+        .controller("gameControllersController", function($scope, gameControllerService, utilityService) {
+            $scope.gameControllerService = gameControllerService;
 
             $scope.onBindingsUpdated = (items) => {
-                gamepadService.saveAllBindings(items);
+                gameControllerService.saveAllBindings(items);
             };
 
             $scope.headers = [
@@ -24,7 +24,7 @@
                     dataField: "button",
                     cellTemplate: `{{getButtonName(data.button)}}`,
                     cellController: ($scope) => {
-                        $scope.getButtonName = button => gamepadService.getButtonName(button);
+                        $scope.getButtonName = button => gameControllerService.getButtonName(button);
                     }
                 }
             ];
@@ -32,25 +32,25 @@
             $scope.bindingOptions = item => [
                 {
                     html: `<a href><i class="far fa-pen mr-2 text-center" style="width: 20px;"></i> Edit</a>`,
-                    click: () => gamepadService.showAddEditBindingModal(item)
+                    click: () => gameControllerService.showAddEditBindingModal(item)
                 },
                 {
                     html: `<a href><i class="far fa-toggle-off mr-2 text-center" style="width: 20px;"></i> ${item.active ? "Disable" : "Enable"}</a>`,
-                    click: () => gamepadService.toggleBindingActiveState(item)
+                    click: () => gameControllerService.toggleBindingActiveState(item)
                 },
                 {
                     html: `<a href style="color: #fb7373;"><i class="far fa-trash-alt text-center mr-2" style="width: 20px;"></i> Delete</a>`,
                     click: () => {
                         utilityService
                             .showConfirmationModal({
-                                title: "Delete Gamepad Binding",
+                                title: "Delete Game Controller Binding",
                                 question: `Are you sure you want to delete the binding "${item.name}"?`,
                                 confirmLabel: "Delete",
                                 confirmBtnType: "btn-danger"
                             })
                             .then((confirmed) => {
                                 if (confirmed) {
-                                    gamepadService.deleteBinding(item.id);
+                                    gameControllerService.deleteBinding(item.id);
                                 }
                             });
                     }

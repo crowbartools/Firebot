@@ -43,7 +43,7 @@
         "eslint": "^9.37.0",
         "eslint-plugin-angular": "^5.0.0",
         "globals": "^16.4.0",
-        "grunt": "^1.6.1",
+        "grunt": "^1.6.2",
         "grunt-contrib-compress": "^2.0.0",
         "grunt-contrib-copy": "^1.0.0",
         "grunt-include-source": "^1.1.0",

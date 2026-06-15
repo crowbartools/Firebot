@@ -59,7 +59,7 @@
                     "counters",
                     "hotkeys",
                     "control deck",
-                    "gamepad bindings",
+                    "game controller bindings",
                     "effect queues",
                     "currency",
                     "quotes",
@@ -342,9 +342,9 @@
                     controller: "settingsController"
                 })
 
-                .when("/gamepad-bindings", {
-                    templateUrl: "./templates/_gamepads.html",
-                    controller: "gamepadsController"
+                .when("/game-controller-bindings", {
+                    templateUrl: "./templates/_game-controllers.html",
+                    controller: "gameControllersController"
                 })
 
                 .when("/extension/:extensionId/:pageId", {

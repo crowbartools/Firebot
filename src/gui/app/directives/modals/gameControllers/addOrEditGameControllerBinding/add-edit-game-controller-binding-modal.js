@@ -1,12 +1,12 @@
 "use strict";
 
 (function() {
-    angular.module("firebotApp").component("addOrEditGamepadBindingModal", {
+    angular.module("firebotApp").component("addOrEditGameControllerBindingModal", {
         template: `
             <div class="modal-header">
                 <button type="button" class="close" ng-click="$ctrl.dismiss()">&times;</button>
                 <h4 class="modal-title">
-                    {{$ctrl.isNew ? 'Add Gamepad Binding' : 'Edit Gamepad Binding'}}
+                    {{$ctrl.isNew ? 'Add Game Controller Binding' : 'Edit Game Controller Binding'}}
                 </h4>
             </div>
             <div class="modal-body">
@@ -15,10 +15,10 @@
                     <input type="text" class="form-control" ng-model="$ctrl.binding.name" placeholder="Enter name">
 
                     <h4 style="margin-top: 20px;">Button</h4>
-                    <gamepad-capture
-                        on-capture="$ctrl.onButtonCapture(gamepadIndex, buttonIndex)"
+                    <game-controller-capture
+                        on-capture="$ctrl.onButtonCapture(controllerIndex, buttonIndex)"
                         button="$ctrl.binding.button"
-                    ></gamepad-capture>
+                    ></game-controller-capture>
 
                     <div style="margin-top: 20px;">
                         <effect-list
@@ -42,7 +42,7 @@
             dismiss: "&",
             modalInstance: "<"
         },
-        controller: function(gamepadService, ngToast) {
+        controller: function(gameControllerService, ngToast) {
             const $ctrl = this;
 
             $ctrl.isNew = true;
@@ -50,7 +50,7 @@
                 name: "",
                 active: true,
                 button: null,
-                gamepadIndex: null,
+                controllerIndex: null,
                 sortTags: []
             };
 
@@ -64,9 +64,9 @@
                 }
             };
 
-            $ctrl.onButtonCapture = (gamepadIndex, buttonIndex) => {
+            $ctrl.onButtonCapture = (controllerIndex, buttonIndex) => {
                 $ctrl.binding.button = buttonIndex;
-                $ctrl.binding.gamepadIndex = gamepadIndex;
+                $ctrl.binding.controllerIndex = controllerIndex;
             };
 
             $ctrl.effectListUpdated = (effects) => {
@@ -82,12 +82,12 @@
                     ngToast.create("Please record a controller button.");
                     return;
                 }
-                if (gamepadService.bindingExists($ctrl.binding.id, $ctrl.binding.button, $ctrl.binding.gamepadIndex)) {
+                if (gameControllerService.bindingExists($ctrl.binding.id, $ctrl.binding.button, $ctrl.binding.controllerIndex)) {
                     ngToast.create("A binding for this button already exists.");
                     return;
                 }
 
-                const saved = gamepadService.saveBinding($ctrl.binding);
+                const saved = gameControllerService.saveBinding($ctrl.binding);
                 if (saved) {
                     $ctrl.close({ $value: { binding: $ctrl.binding } });
                 } else {

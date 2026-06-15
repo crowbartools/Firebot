@@ -1,11 +1,11 @@
 import type { EffectList } from "./effects";
 
-export type FirebotGamepadBinding = {
+export type FirebotGameControllerBinding = {
     id: string;
     name: string;
     active: boolean;
     button: number;
-    gamepadIndex: number | null;
+    controllerIndex: number | null;
     effects: EffectList;
     sortTags: string[];
 };
