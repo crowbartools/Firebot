@@ -36,6 +36,11 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
         if (this.overlayWidgetTypes.has(overlayWidgetType.id)) {
             throw new Error(`Overlay widget type with ID '${overlayWidgetType.id}' is already registered.`);
         }
+        const hasOverlayExtension = !!overlayWidgetType.overlayExtension;
+        const hasComponentExtension = !!overlayWidgetType.componentExtension;
+        if (hasOverlayExtension === hasComponentExtension) {
+            throw new Error(`Overlay widget type with ID '${overlayWidgetType.id}' must register exactly one of 'overlayExtension' or 'componentExtension'.`);
+        }
         this.overlayWidgetTypes.set(overlayWidgetType.id, overlayWidgetType);
         this.emit("overlay-widget-type-registered", overlayWidgetType);
         frontendCommunicator.send("overlay-widgets:type-registered", this.formatForFrontend(overlayWidgetType));
@@ -62,12 +67,29 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
 
     getOverlayExtensions() {
         return Array.from(this.overlayWidgetTypes.values())
+            .filter(w => w.overlayExtension != null)
             .map(w => ({
                 typeId: w.id,
                 dependencies: w.overlayExtension.dependencies,
                 eventHandler: w.overlayExtension.eventHandler,
                 onInitialLoad: w.overlayExtension.onInitialLoad
             }));
+    }
+
+    getOverlayComponents() {
+        return Array.from(this.overlayWidgetTypes.values())
+            .filter(w => w.componentExtension != null)
+            .map(w => ({
+                typeId: w.id,
+                dependencies: w.componentExtension.dependencies
+            }));
+    }
+
+    /**
+     * Returns the inline ESM bundle source for a component widget registered with `bundleSource`
+     */
+    getOverlayComponentSource(typeId: string): string | null {
+        return this.overlayWidgetTypes.get(typeId)?.componentExtension?.bundleSource ?? null;
     }
 
     async sendWidgetEventToOverlay<EventName extends WidgetOverlayEvent["name"]>(eventName: EventName, widgetConfig: OverlayWidgetConfig, messageInfo: EventName extends "message" ? { messageName: string, messageData?: unknown } : undefined = undefined, previewMode = false) {
@@ -121,6 +143,7 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
                     resourceTokens
                 },
                 widgetType,
+                isComponentWidget: !!widgetType.componentExtension,
                 previewMode,
                 ...messageInfo
             }
@@ -279,7 +302,8 @@ const handleLivePreviewUpdate = async (config: OverlayWidgetConfig) => {
     }
 
     // Ensure config has some state
-    config.state = type.livePreviewState ?? config.state ?? type.initialState ?? {};
+    const livePreviewState = typeof type.livePreviewState === "function" ? type.livePreviewState() : type.livePreviewState;
+    config.state = livePreviewState ?? config.state ?? type.initialState ?? {};
 
     livePreviewWidgetConfig = config;
 

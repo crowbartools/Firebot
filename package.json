@@ -40,6 +40,7 @@
         "electron": "^42.4.0",
         "electron-installer-dmg": "^5.0.1",
         "electron-winstaller": "^5.4.0",
+        "esbuild": "^0.28.1",
         "eslint": "^9.37.0",
         "eslint-plugin-angular": "^5.0.0",
         "globals": "^16.4.0",

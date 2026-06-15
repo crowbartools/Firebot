@@ -9,6 +9,8 @@ import { countdownToDate } from "./countdown-to-date/countdown-to-date";
 import { image } from "./image/image";
 import { chat } from "./chat/chat";
 import { chatAdvanced } from "./chat/chat-advanced";
+import { twitchPoll } from "./twitch-poll/twitch-poll";
+import { twitchPrediction } from "./twitch-prediction/twitch-prediction";
 
 export default [
     progressbar,
@@ -21,5 +23,7 @@ export default [
     text,
     image,
     chat,
-    chatAdvanced
+    chatAdvanced,
+    twitchPoll,
+    twitchPrediction
 ];

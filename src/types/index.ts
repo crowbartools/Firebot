@@ -23,6 +23,7 @@ export * from "./notifications";
 export * from "./overlay-widgets";
 export * from "./parameters";
 export * from "./plugins";
+export * from "./poll-predictions";
 export * from "./power-ups";
 export * from "./pronouns";
 export * from "./quick-actions";

@@ -19,6 +19,14 @@
             <style><%-globalStyle%></style>
         <% } %>
 
+        <!-- Shared Vue runtime for component widgets that want to use it -->
+        <script type="importmap">
+            {
+                "imports": {
+                    "vue": "./lib/vue.esm-browser.prod.js"
+                }
+            }
+        </script>
     </head>
     
     <body>

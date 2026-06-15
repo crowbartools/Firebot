@@ -1081,7 +1081,9 @@ export const chat: OverlayWidgetType<ChatWidgetSettings, ChatWidgetState> = {
 
             switch (event.name) {
                 case "show":
-                    utils.initializeWidget(generateWidgetHtml(event.data.widgetConfig));
+                    utils.initializeWidget(generateWidgetHtml(event.data.widgetConfig), {
+                        "overflow": "hidden"
+                    });
                     break;
 
                 case "settings-update":
