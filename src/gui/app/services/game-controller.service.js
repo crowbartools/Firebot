@@ -80,19 +80,34 @@
             });
 
             // Polling
+            // Polling is intentionally decoupled from the display refresh rate (via setTimeout rather
+            // than requestAnimationFrame) and adapts its rate based on whether a controller is actually
+            // present, so idle systems with no controller plugged in pay almost no ongoing cost.
+            const ACTIVE_POLL_INTERVAL_MS = 50; // ~20Hz, plenty for discrete button-press triggers
+            const IDLE_POLL_INTERVAL_MS = 1000; // just frequent enough to notice a newly connected controller
+
             service.isCapturingButton = false;
             let prevButtonStates = {};
-            let animFrameId = null;
+            let pollTimeoutId = null;
             let captureCallback = null;
+
+            const hasMatchingBinding = (controllerIndex, buttonIndex) => service.bindings.some(b =>
+                b.active &&
+                b.button === buttonIndex &&
+                (b.controllerIndex == null || b.controllerIndex === controllerIndex)
+            );
 
             const pollControllers = () => {
                 const controllers = navigator.getGamepads ? navigator.getGamepads() : [];
+                let anyConnected = false;
 
                 for (let ci = 0; ci < controllers.length; ci++) {
                     const controller = controllers[ci];
                     if (!controller) {
+                        delete prevButtonStates[ci];
                         continue;
                     }
+                    anyConnected = true;
 
                     if (!prevButtonStates[ci]) {
                         prevButtonStates[ci] = new Array(controller.buttons.length).fill(false);
@@ -114,7 +129,7 @@
                                     captureCallback = null;
                                 }
                                 $rootScope.$applyAsync();
-                            } else {
+                            } else if (hasMatchingBinding(ci, bi)) {
                                 backendCommunicator.send("game-controller:button-pressed", {
                                     controllerIndex: ci,
                                     buttonIndex: bi
@@ -126,13 +141,16 @@
                     }
                 }
 
-                animFrameId = requestAnimationFrame(pollControllers);
+                const nextInterval = (anyConnected || service.isCapturingButton)
+                    ? ACTIVE_POLL_INTERVAL_MS
+                    : IDLE_POLL_INTERVAL_MS;
+                pollTimeoutId = setTimeout(pollControllers, nextInterval);
             };
 
             service.startPolling = () => {
-                if (animFrameId == null) {
+                if (pollTimeoutId == null) {
                     prevButtonStates = {};
-                    animFrameId = requestAnimationFrame(pollControllers);
+                    pollTimeoutId = setTimeout(pollControllers, IDLE_POLL_INTERVAL_MS);
                     logger.info("Game controller polling started");
                 }
             };
@@ -140,6 +158,12 @@
             service.startCapture = (callback) => {
                 captureCallback = callback;
                 service.isCapturingButton = true;
+                // Poll immediately so the active-rate kicks in right away instead of
+                // waiting for the next (potentially up-to-1s-away) idle-rate tick.
+                if (pollTimeoutId != null) {
+                    clearTimeout(pollTimeoutId);
+                    pollControllers();
+                }
             };
 
             service.cancelCapture = () => {
