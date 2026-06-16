@@ -136,12 +136,15 @@ class HttpServerManager extends EventEmitter {
             const effectDefs = EffectManager.getEffectOverlayExtensions();
 
             const widgetExtensions = overlayWidgetManager.getOverlayExtensions();
+            const widgetComponents = overlayWidgetManager.getOverlayComponents();
+
+            const depSources = [...widgetExtensions, ...widgetComponents];
 
             const combinedCssDeps = [...new Set(
                 [...effectDefs
                     .filter(ed => ed.dependencies?.css?.length)
                     .map(ed => ed.dependencies.css),
-                ...widgetExtensions
+                ...depSources
                     .filter(we => we.dependencies?.css?.length)
                     .map(we => we.dependencies.css)
                 ].flat())];
@@ -155,7 +158,7 @@ class HttpServerManager extends EventEmitter {
                         }
                         return jsDep;
                     })),
-                ...widgetExtensions
+                ...depSources
                     .filter(we => we.dependencies?.js?.length)
                     .map(we => we.dependencies.js.map((jsDep) => {
                         if (typeof jsDep === "string") {
@@ -169,7 +172,7 @@ class HttpServerManager extends EventEmitter {
                 ...effectDefs
                     .filter(ed => ed.dependencies?.globalStyles?.length)
                     .map(ed => ed.dependencies.globalStyles),
-                ...widgetExtensions
+                ...depSources
                     .filter(we => we.dependencies?.globalStyles?.length)
                     .map(we => we.dependencies.globalStyles)
             ];
@@ -197,6 +200,19 @@ class HttpServerManager extends EventEmitter {
                 }
             });
         });
+
+        // Serves the inline ESM bundle source for component widgets registered with `bundleSource`
+        // (e.g. plugins that can't ship a separate bundle file). The overlay imports this URL like
+        // any other widget bundle; `vue` stays a bare import resolved by the overlay's import map.
+        app.get("/overlay/widget-components/:typeId", (req, res) => {
+            const source = overlayWidgetManager.getOverlayComponentSource(req.params.typeId);
+            if (source == null) {
+                res.status(404).send({ status: "error", message: `${req.originalUrl} not found` });
+                return;
+            }
+            res.type("application/javascript").send(source);
+        });
+
         app.use("/overlay-resources", express.static(dataAccess.getPathInUserData("/overlay-resources")));
 
         // Set up resource endpoint

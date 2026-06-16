@@ -14,6 +14,7 @@ function remFiles(scope) {
     fs.rmSync(path.join(dir, './overlay/'), { recursive: true, force: true });
     fs.rmSync(path.join(dir, './overlay.html'), { recursive: true, force: true });
     fs.rmSync(path.join(dir, './control-deck/'), { recursive: true, force: true });
+    fs.rmSync(path.join(dir, './overlay-widget-components/'), { recursive: true, force: true });
     fs.rmSync(path.join(dir, './firebot-setup-file-icon.ico'), { recursive: true, force: true });
     fs.rmSync(path.join(dir, './kbm-java/'), { recursive: true, force: true });
     fs.rmSync(path.join(dir, './ffmpeg/'), { recursive: true, force: true });
@@ -37,7 +38,9 @@ module.exports = function (grunt) {
                             '!**/*.js',
                             '**/*.min.js',
                             'resources/control-deck/**/*.js',
-                            '!**/*.scss'
+                            'resources/overlay/lib/**/*.js',
+                            '!**/*.scss',
+                            '!**/*.vue'
                         ],
                         filter: 'isFile'
                     }

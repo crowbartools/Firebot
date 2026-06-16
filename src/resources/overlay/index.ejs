@@ -19,6 +19,16 @@
             <style><%-globalStyle%></style>
         <% } %>
 
+        <!-- Shared Vue runtime, Lucide icons, and Motion for component widgets that want to use them -->
+        <script type="importmap">
+            {
+                "imports": {
+                    "vue": "./lib/vue.esm-browser.prod.js",
+                    "@lucide/vue": "./lib/lucide-vue.esm.js",
+                    "motion-v": "./lib/motion-v.esm.js"
+                }
+            }
+        </script>
     </head>
     
     <body>

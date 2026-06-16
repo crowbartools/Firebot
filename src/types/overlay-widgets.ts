@@ -109,7 +109,7 @@ export type OverlayWidgetType<
     /**
      * State that is used when the widget is shown in live preview mode.
      */
-    livePreviewState?: State;
+    livePreviewState?: State | (() => State);
 
     /**
      * Array of setting keys that reference local resource paths.
@@ -150,8 +150,10 @@ export type OverlayWidgetType<
     onOverlayMessage?: (config: OverlayWidgetConfig<Settings, State>, messageName: string, messageData?: unknown) => Awaitable<void>;
     /**
      * This code is injected into the overlay. Do not reference any variables outside this scope.
+     *
+     * A widget type must register exactly one of `overlayExtension` or `componentExtension`.
      */
-    overlayExtension: {
+    overlayExtension?: {
         dependencies?: {
             css?: string[];
             js?: Array<string | { module: boolean, url: string }>;
@@ -164,7 +166,68 @@ export type OverlayWidgetType<
          */
         onInitialLoad?: (utils: IOverlayWidgetInitUtils) => Awaitable<void>;
     };
+
+    /**
+     * Points the overlay at a prebuilt ESM bundle whose default export is an {@link OverlayWidgetComponent}.
+     * The overlay dynamically imports the bundle and keeps an instance-based lifecycle, so a framework
+     * (such as Vue) owns the widget's DOM instead.
+     *
+     * A widget type must register exactly one of `overlayExtension` or `componentExtension`.
+     */
+    componentExtension?: {
+        /**
+         * The full string source of a prebuilt ESM bundle whose default export is an
+         * {@link OverlayWidgetComponent}
+         */
+        bundleSource: string;
+        /**
+         * Note: `"vue"` is already provided globally
+         */
+        dependencies?: {
+            css?: string[];
+            js?: Array<string | { module: boolean, url: string }>;
+            globalStyles?: string;
+        };
+    };
 };
+
+/**
+ * A single mounted widget instance, returned by {@link OverlayWidgetComponent.mount}.
+ */
+export interface OverlayWidgetInstance<
+    Settings extends Record<string, unknown> = Record<string, unknown>,
+    State = Record<string, unknown>
+> {
+    /**
+     * Called on `"settings-update"` and `"state-update"` events with a fresh widget config.
+     */
+    update(config: WidgetOverlayEvent<Settings, State>["data"]["widgetConfig"]): void;
+    /**
+     * Called on `"message"` events sent from the backend (via the Send Message effect).
+     */
+    onMessage?(messageName: string, messageData?: unknown): void;
+    /**
+     * Called on `"remove"`
+     */
+    destroy(): void;
+}
+
+/**
+ * The default export of a component widget's bundle. `mount` is called once when the widget is
+ * shown and returns an {@link OverlayWidgetInstance} the overlay uses for the rest of the lifecycle.
+ */
+export interface OverlayWidgetComponent<
+    Settings extends Record<string, unknown> = Record<string, unknown>,
+    State = Record<string, unknown>
+> {
+    mount(args: {
+        /** The widget's container element, already positioned/sized by the overlay. */
+        container: HTMLElement;
+        /** The widget config at mount time (settings + initial state). */
+        config: WidgetOverlayEvent<Settings, State>["data"]["widgetConfig"];
+        utils: IOverlayWidgetEventUtils;
+    }): OverlayWidgetInstance<Settings, State> | Promise<OverlayWidgetInstance<Settings, State>>;
+}
 
 export type OverlayWidgetConfig<Settings = Record<string, unknown>, State = Record<string, unknown>> = {
     id: string;
@@ -197,6 +260,10 @@ export type WidgetOverlayEvent<Settings = Record<string, unknown>, State = Recor
             };
         };
         widgetType: Pick<OverlayWidgetType, "id" | "userCanConfigure">;
+        /**
+         * True if the event is being fired for a component widget.
+         */
+        isComponentWidget: boolean;
         previewMode: boolean;
         /**
          * For "message" events, the name of the message being sent.
@@ -220,14 +287,20 @@ export interface IOverlayWidgetEventUtils {
      * @param updateOnMessage If true, the widget HTML will be updated when a "message" event is received. Default is false.
      */
     handleOverlayEvent(generateWidgetHtml: (widgetConfig: WidgetOverlayEvent["data"]["widgetConfig"]) => string, updateOnMessage?: boolean): void;
-    getWidgetPositionStyle(position?: Position): string;
+    getWidgetPositionStyle(position?: Position, zIndex?: number, additionalStyles?: Record<string, string | number | undefined>): string;
     getWidgetContainerElement(): HTMLElement | null;
+    /**
+     * Initializes the widget by injecting the provided HTML into the widget's container element and applying any specified container styles.
+     * @param html The HTML content to inject into the widget's container element.
+     * @param additionalContainerStyles Optional styles to apply to the widget's container element.
+     */
     initializeWidget(
-        html: string
-    ): void;
+        html: string,
+        additionalContainerStyles?: Record<string, string | number | undefined>
+    ): HTMLElement | null;
     updateWidgetContent(
         newHtml: string,
-    ): void;
+    ): HTMLElement | null;
     updateWidgetPosition(): void;
     removeWidget(): void;
     stylesToString(styles: Record<string, string | number | undefined>): string;
