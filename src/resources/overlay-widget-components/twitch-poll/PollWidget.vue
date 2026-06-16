@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, onUnmounted } from "vue";
+import { Trophy } from "@lucide/vue";
+import { Motion } from "motion-v";
 import type { PollSettings, PollState } from "../../../backend/overlay-widgets/builtin-types/twitch-poll/twitch-poll.js";
 import type { Animation, ChannelPoll } from "../../../types";
 import { useWidgetAnimations } from "../_shared/widget-animation.js";
@@ -100,7 +102,22 @@ const statusLabel = computed(() => {
                     :class="{ winner: isWinner(choice) }"
                 >
                     <div class="poll-choice-row">
-                        <span class="poll-choice-title">{{ choice.title }}</span>
+                        <span class="poll-choice-title">
+                            <Motion
+                                v-if="isWinner(choice)"
+                                as="span"
+                                class="poll-winner-icon"
+                                :initial="{ scale: 0, rotate: -30 }"
+                                :animate="{ scale: 1, rotate: [0, -12, 12, -7, 7, 0] }"
+                                :transition="{
+                                    scale: { type: 'spring', stiffness: 500, damping: 12 },
+                                    rotate: { duration: 0.8, ease: 'easeInOut', repeat: Infinity, repeatDelay: 2 }
+                                }"
+                            >
+                                <Trophy />
+                            </Motion>
+                            {{ choice.title }}
+                        </span>
                         <span class="poll-choice-meta">
                             <span v-if="settings.showPercentages !== false">{{ pct(choice.totalVotes) }}%</span>
                             <span class="poll-choice-votes">{{ choice.totalVotes }}</span>
@@ -228,6 +245,20 @@ const statusLabel = computed(() => {
 
 .poll-choice.winner .poll-choice-title {
     font-weight: 700;
+}
+
+.poll-winner-icon {
+    display: inline-flex;
+    align-items: center;
+    color: #FFC83D;
+    vertical-align: -0.15em;
+    margin-right: 4px;
+    flex-shrink: 0;
+}
+
+.poll-winner-icon svg {
+    width: 1em;
+    height: 1em;
 }
 
 .poll-choice.winner .poll-bar-fill {

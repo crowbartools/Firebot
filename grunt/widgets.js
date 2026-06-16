@@ -152,7 +152,7 @@ module.exports = function (grunt) {
             format: 'esm',
             platform: 'browser',
             target: 'es2020',
-            external: ['vue'],
+            external: ['vue', '@lucide/vue', 'motion-v'],
             minify: true,
             sourcemap: false,
             logLevel: 'info',

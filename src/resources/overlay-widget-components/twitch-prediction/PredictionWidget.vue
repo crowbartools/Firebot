@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, onUnmounted } from "vue";
+import { Trophy } from "@lucide/vue";
+import { Motion } from "motion-v";
 import type { PredictionSettings, PredictionState } from "../../../backend/overlay-widgets/builtin-types/twitch-prediction/twitch-prediction.js";
 import type { Animation, ChannelPrediction } from "../../../types";
 import { useWidgetAnimations } from "../_shared/widget-animation.js";
@@ -121,6 +123,19 @@ const panelStyle = computed(() => ({
                 >
                     <div class="prediction-outcome-row">
                         <span class="prediction-outcome-title">
+                            <Motion
+                                v-if="isWinner(outcome)"
+                                as="span"
+                                class="prediction-winner-icon"
+                                :initial="{ scale: 0, rotate: -30 }"
+                                :animate="{ scale: 1, rotate: [0, -12, 12, -7, 7, 0] }"
+                                :transition="{
+                                    scale: { type: 'spring', stiffness: 500, damping: 12 },
+                                    rotate: { duration: 0.8, ease: 'easeInOut', repeat: Infinity, repeatDelay: 2 }
+                                }"
+                            >
+                                <Trophy />
+                            </Motion>
                             <span class="prediction-dot" :style="{ background: outcomeColor(outcome, index) }"></span>
                             {{ outcome.title }}
                         </span>
@@ -180,19 +195,19 @@ const panelStyle = computed(() => ({
     letter-spacing: 0.06em;
     padding: 2px 8px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.14);
+    background: rgb(145 71 255);
 }
 
 .prediction-status.locked {
-    background: rgba(255, 179, 0, 0.25);
+    background: rgba(255, 179, 0, 0.50);
 }
 
 .prediction-status.resolved {
-    background: rgba(0, 199, 172, 0.25);
+    background: rgba(0, 199, 60, 0.50);
 }
 
 .prediction-status.canceled {
-    background: rgba(255, 107, 107, 0.25);
+    background: rgba(255, 107, 107, 0.50);
 }
 
 .prediction-outcomes {
@@ -265,6 +280,18 @@ const panelStyle = computed(() => ({
 
 .prediction-outcome.winner .prediction-outcome-title {
     font-weight: 700;
+}
+
+.prediction-winner-icon {
+    display: inline-flex;
+    align-items: center;
+    color: #FFC83D;
+    flex-shrink: 0;
+}
+
+.prediction-winner-icon svg {
+    width: 1em;
+    height: 1em;
 }
 
 .prediction-outcome.winner .prediction-bar-fill {
