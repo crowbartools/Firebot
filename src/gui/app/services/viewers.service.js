@@ -1,7 +1,5 @@
 "use strict";
 
-/** @import { FirebotViewer } from "../../../types" */
-
 (function() {
     //This handles viewer lists.
 
@@ -15,57 +13,41 @@
                 return settingsService.getSetting("ViewerDB");
             };
 
-            /** @type {FirebotViewer[]} */
-            service.viewers = [];
-            let waitingForUpdate = false;
-
-            service.updateViewers = async () => {
-                if (waitingForUpdate) {
-                    return;
-                }
-
-                waitingForUpdate = true;
-
-                const viewers = await backendCommunicator.fireEventAsync("viewer-database:get-all-viewers");
-                service.viewers = viewers;
-                waitingForUpdate = false;
+            service.viewerListVersion = 0;
+            const markViewersChanged = () => {
+                service.viewerListVersion++;
             };
 
-            /** @param {FirebotViewer} viewer */
-            const createOrUpdateViewer = (viewer) => {
-                const index = service.viewers.findIndex(v => v._id === viewer._id);
+            service.refreshViewers = markViewersChanged;
 
-                if (index > -1) {
-                    service.viewers[index] = viewer;
-                } else {
-                    service.viewers.push(viewer);
-                }
+            service.getViewersPage = async ({ page, pageSize, sortField, sortReversed, search }) => {
+                const result = await backendCommunicator.fireEventAsync("viewer-database:get-viewers-page", {
+                    page,
+                    pageSize,
+                    sortField,
+                    sortReversed,
+                    search
+                });
+                return {
+                    items: result.viewers,
+                    total: result.total,
+                    totalUnfiltered: result.totalUnfiltered
+                };
             };
 
             service.updateViewer = async (userId) => {
-                const viewer = await backendCommunicator.fireEventAsync("get-firebot-viewer-data", userId);
-                createOrUpdateViewer(viewer);
+                await backendCommunicator.fireEventAsync("get-firebot-viewer-data", userId);
+                markViewersChanged();
             };
 
             service.updateBannedStatus = (username, shouldBeBanned) => {
                 backendCommunicator.fireEvent("update-user-banned-status", { username, shouldBeBanned });
             };
 
-            backendCommunicator.on("viewer-database:viewer-created", (viewer) => {
-                createOrUpdateViewer(viewer);
-            });
-
-            backendCommunicator.on("viewer-database:viewer-updated", (viewer) => {
-                createOrUpdateViewer(viewer);
-            });
-
-            backendCommunicator.on("viewer-database:viewer-deleted", (userId) => {
-                service.viewers = service.viewers.filter(v => v._id !== userId);
-            });
-
-            backendCommunicator.on("viewer-database:viewers-updated", () => {
-                service.updateViewers();
-            });
+            backendCommunicator.on("viewer-database:viewer-created", markViewersChanged);
+            backendCommunicator.on("viewer-database:viewer-updated", markViewersChanged);
+            backendCommunicator.on("viewer-database:viewer-deleted", markViewersChanged);
+            backendCommunicator.on("viewer-database:viewers-updated", markViewersChanged);
 
             // Did user see warning alert about connecting to chat first?
             service.sawWarningAlert = true;

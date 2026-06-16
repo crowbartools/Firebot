@@ -13,7 +13,10 @@
                 startingSortField: "@",
                 sortInitiallyReversed: "<",
                 noDataMessage: "@",
-                pageSize: "<"
+                pageSize: "<",
+                // optional server side fetches, callback should resolve to "{ items, total, totalUnfiltered }"
+                onFetchPage: "&?",
+                reloadToken: "<"
             },
             template: `
           <div>
@@ -27,12 +30,12 @@
                         <span ng-if="header.sortable" style="display:inline-block; width: 11px;">
                             <i ng-show="$ctrl.isOrderField(header.dataField)" class="fal" ng-class="{'fa-arrow-to-bottom': !$ctrl.order.reverse,'fa-arrow-to-top': $ctrl.order.reverse}"></i>
                         </span>
-                    </div>     
+                    </div>
                   </th>
                 </tr>
               </thead>
               <tbody>
-                  <tr ng-repeat="data in filtered = ($ctrl.tableDataSet | filter:$ctrl.query | orderBy:$ctrl.dynamicOrder:$ctrl.order.reverse) | startFrom:($ctrl.pagination.currentPage-1)*$ctrl.pagination.pageSize | limitTo:$ctrl.pagination.pageSize as visible track by $ctrl.getTrackBy(data, $index)" class="viewer-row" ng-class="{selectable: $ctrl.clickable}" 
+                  <tr ng-repeat="data in $ctrl.visibleRows track by $ctrl.getTrackBy(data, $index)" class="viewer-row" ng-class="{selectable: $ctrl.clickable}"
                       ng-click="$ctrl.clickable && $ctrl.onRowClick({ data: data })">
                       <td ng-repeat="header in $ctrl.headers track by $index" ng-style="header.cellStyles">
                         <sortable-table-cell data="data" header="header" cell-index="$index"></sortable-table-cell>
@@ -40,26 +43,49 @@
                   </tr>
               </tbody>
             </table>
-            <div ng-show="$ctrl.tableDataSet.length < 1" class="fb-table-row">
+            <div ng-show="$ctrl.loading" class="fb-table-row">
+                <span class="muted">Loading...</span>
+            </div>
+            <div ng-show="!$ctrl.loading && $ctrl.totalCount < 1" class="fb-table-row">
                 <span class="muted">{{$ctrl.noDataMessage ? $ctrl.noDataMessage : "No data available yet"}}</span>
             </div>
             <div style="display: grid;grid-template-columns: 1fr max-content 1fr;">
               <div></div>
               <div>
-                  <div ng-show="filtered.length > $ctrl.pagination.pageSize" style="text-align: center;">
-                      <ul uib-pagination total-items="filtered.length" ng-model="$ctrl.pagination.currentPage" items-per-page="$ctrl.pagination.pageSize" class="pagination-sm" max-size="3" boundary-link-numbers="true" rotate="true" style="margin-top:10px;"></ul>
+                  <div ng-show="$ctrl.filteredCount > $ctrl.pagination.pageSize" style="text-align: center;">
+                      <ul uib-pagination total-items="$ctrl.filteredCount" ng-model="$ctrl.pagination.currentPage" items-per-page="$ctrl.pagination.pageSize" class="pagination-sm" max-size="3" boundary-link-numbers="true" rotate="true" style="margin-top:10px;"></ul>
                   </div>
               </div>
               <div>
-                  <div ng-hide="$ctrl.tableDataSet.length < 1" class="muted" style="margin-top: 10px;font-size: 11px;text-align: right;">
-                      <span>Showing <strong>{{$ctrl.getRangeMin()}}</strong> - <strong>{{$ctrl.getRangeMax(filtered.length)}}</strong> of <strong>{{$ctrl.tableDataSet.length}}</strong> total</span>
+                  <div ng-hide="$ctrl.totalCount < 1" class="muted" style="margin-top: 10px;font-size: 11px;text-align: right;">
+                      <span>Showing <strong>{{$ctrl.getRangeMin()}}</strong> - <strong>{{$ctrl.getRangeMax($ctrl.filteredCount)}}</strong> of <strong>{{$ctrl.totalCount}}</strong> total</span>
                   </div>
               </div>
             </div>
           </div>
           `,
-            controller: function() {
+            controller: function($scope, $filter, $q, $attrs) {
                 const $ctrl = this;
+
+                $ctrl.serverMode = "onFetchPage" in $attrs;
+
+                $ctrl.visibleRows = [];
+                $ctrl.filteredCount = 0;
+                $ctrl.totalCount = 0;
+                $ctrl.loading = false;
+
+                $ctrl.pagination = {
+                    currentPage: 1,
+                    pageSize: 10
+                };
+
+                $ctrl.order = {
+                    field: '0',
+                    reverse: false
+                };
+
+                let fetchSeq = 0;
+                let initialized = false;
 
                 $ctrl.$onInit = () => {
                     if ($ctrl.tableDataSet == null) {
@@ -75,11 +101,76 @@
                     if ($ctrl.pageSize !== undefined && $ctrl.pageSize !== null) {
                         $ctrl.pagination.pageSize = $ctrl.pageSize;
                     }
+
+                    initialized = true;
+
+                    // Reset to the first page whenever the search query or sort changes.
+                    $scope.$watchGroup(['$ctrl.query', '$ctrl.order.field', '$ctrl.order.reverse'], (newVals, oldVals) => {
+                        if (newVals === oldVals) {
+                            return;
+                        }
+                        $ctrl.pagination.currentPage = 1;
+                    });
+
+                    $scope.$watchGroup(
+                        ['$ctrl.query', '$ctrl.order.field', '$ctrl.order.reverse', '$ctrl.pagination.currentPage', '$ctrl.pagination.pageSize'],
+                        () => $ctrl.recompute()
+                    );
+
+                    if (!$ctrl.serverMode) {
+                        $scope.$watchCollection('$ctrl.tableDataSet', () => $ctrl.recompute());
+                    }
                 };
 
-                $ctrl.pagination = {
-                    currentPage: 1,
-                    pageSize: 10
+                $ctrl.$onChanges = (changes) => {
+                    if ($ctrl.serverMode && initialized && changes.reloadToken && !changes.reloadToken.isFirstChange()) {
+                        $ctrl.recompute();
+                    }
+                };
+
+                $ctrl.recompute = () => {
+                    if ($ctrl.serverMode) {
+                        $ctrl.fetchServerPage();
+                        return;
+                    }
+
+                    let filtered = $filter('filter')($ctrl.tableDataSet || [], $ctrl.query);
+                    filtered = $filter('orderBy')(filtered, $ctrl.dynamicOrder, $ctrl.order.reverse);
+
+                    $ctrl.filteredCount = filtered.length;
+                    $ctrl.totalCount = ($ctrl.tableDataSet || []).length;
+
+                    const start = ($ctrl.pagination.currentPage - 1) * $ctrl.pagination.pageSize;
+                    $ctrl.visibleRows = filtered.slice(start, start + $ctrl.pagination.pageSize);
+                };
+
+                $ctrl.fetchServerPage = () => {
+                    const seq = ++fetchSeq;
+                    $ctrl.loading = true;
+
+                    $q.when($ctrl.onFetchPage({
+                        params: {
+                            page: $ctrl.pagination.currentPage,
+                            pageSize: $ctrl.pagination.pageSize,
+                            sortField: $ctrl.order.field,
+                            sortReversed: $ctrl.order.reverse,
+                            search: $ctrl.query
+                        }
+                    })).then((result) => {
+                        if (seq !== fetchSeq) {
+                            return;
+                        }
+                        result = result || {};
+                        $ctrl.visibleRows = result.items || [];
+                        $ctrl.filteredCount = result.total != null ? result.total : 0;
+                        $ctrl.totalCount = result.totalUnfiltered != null ? result.totalUnfiltered : $ctrl.filteredCount;
+                        $ctrl.loading = false;
+                    }).catch(() => {
+                        if (seq !== fetchSeq) {
+                            return;
+                        }
+                        $ctrl.loading = false;
+                    });
                 };
 
                 $ctrl.getTrackBy = (data, index) => {
@@ -96,11 +187,6 @@
                 $ctrl.getRangeMax = function(filteredLength) {
                     const max = $ctrl.pagination.pageSize * $ctrl.pagination.currentPage;
                     return max <= filteredLength ? max : filteredLength;
-                };
-
-                $ctrl.order = {
-                    field: '0',
-                    reverse: false
                 };
 
                 $ctrl.isOrderField = function(field) {

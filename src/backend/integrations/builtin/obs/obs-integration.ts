@@ -100,9 +100,9 @@ class ObsIntegration
     constructor(private readonly eventManager: typeof EventManager) {
         super();
 
-        frontendCommunicator.on(
+        frontendCommunicator.onAsync(
             "obs-is-configured",
-            () => this._isConfigured
+            async () => this._isConfigured
         );
     }
 

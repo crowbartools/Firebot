@@ -1,4 +1,4 @@
-import { EffectType } from "../../../../../types/effects";
+import type { EffectType } from "../../../../../types";
 import { stopStreaming } from "../obs-remote";
 
 export const StopStreamEffectType: EffectType = {
@@ -21,7 +21,7 @@ export const StopStreamEffectType: EffectType = {
         return [];
     },
     onTriggerEvent: async () => {
-        stopStreaming();
+        await stopStreaming();
         return true;
     }
 };

@@ -1,4 +1,8 @@
-import type { EffectType, DiscordCustomEmbed } from "../../../types";
+import type {
+    EffectType,
+    DiscordCustomEmbed,
+    BackendCommunicator
+} from "../../../types";
 
 import { takeScreenshot } from "../../app-management/electron/screen-helpers";
 import {
@@ -49,7 +53,9 @@ const effect: EffectType<{
     },
     optionsTemplate: `
         <eos-container header="Display">
-            <dropdown-select options="displayOptions" selected="effect.displayId"></dropdown-select>
+            <firebot-dropdown
+                options="displayOptions"
+                ng-model="effect.displayId" />
         </eos-container>
 
         <screenshot-effect-options effect="effect"></screenshot-effect-options>
@@ -60,20 +66,32 @@ const effect: EffectType<{
             </div>
         </eos-container>
     `,
-    optionsController: ($scope, backendCommunicator) => {
-        const displays = backendCommunicator.fireEventSync("getAllDisplays") as Electron.Display[];
-        const primaryDisplay = backendCommunicator.fireEventSync("getPrimaryDisplay") as Electron.Display;
+    optionsController: ($scope, backendCommunicator: BackendCommunicator) => {
+        $scope.displayOptions = [];
 
-        $scope.displayOptions = displays.reduce((acc, display, i) => {
-            const isPrimary = display.id === primaryDisplay.id;
-            acc[display.id] = `Display ${i + 1}${isPrimary ? ` (Primary)` : ''}`;
-            return acc;
-        }, {});
+        $scope.refreshDisplays = async () => {
+            const displays: Electron.Display[] = await backendCommunicator.fireEventAsync("getAllDisplays");
+            const primaryDisplay: Electron.Display = await backendCommunicator.fireEventAsync("getPrimaryDisplay");
 
-        if ($scope.effect.displayId == null ||
-            $scope.displayOptions[$scope.effect.displayId] == null) {
-            $scope.effect.displayId = displays[0].id;
-        }
+            let i = 1;
+            $scope.displayOptions = displays.map((d) => {
+                const isPrimary = d.id === primaryDisplay.id;
+                return {
+                    name: isPrimary
+                        ? `Display ${i++} (${d.label}) (Primary)`
+                        : `Display ${i++} (${d.label})`,
+                    value: d.id
+                };
+            });
+
+            if ($scope.effect.displayId == null
+            || !$scope.displayOptions.some(d => d.value === $scope.effect.displayId)
+            ) {
+                $scope.effect.displayId = displays[0].id;
+            }
+        };
+
+        $scope.refreshDisplays();
     },
     optionsValidator: (effect) => {
         const errors: string[] = [];

@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../../types/variables";
+import type { ReplaceVariable } from "../../../../../types";
 import { isStreaming } from "../obs-remote";
 
 export const IsStreamingVariable: ReplaceVariable = {

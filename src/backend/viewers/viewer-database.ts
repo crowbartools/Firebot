@@ -24,7 +24,7 @@ import roleHelpers from "../roles/role-helpers";
 import teamRolesManager from "../roles/team-roles-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import { LoggerCache } from "../logger-cache";
-import { commafy, wait } from "../utils";
+import { commafy, escapeRegExp, wait } from "../utils";
 
 interface ViewerDbChangePacket {
     userId: string;
@@ -56,6 +56,20 @@ interface ViewerPurgeOptions {
     };
 }
 
+interface ViewersPageRequest {
+    page: number;
+    pageSize: number;
+    sortField?: string;
+    sortReversed?: boolean;
+    search?: string;
+}
+
+interface ViewersPage {
+    viewers: FirebotViewer[];
+    total: number;
+    totalUnfiltered: number;
+}
+
 interface UserDetails {
     firebotData: FirebotViewer;
     twitchData: Record<string, unknown>;
@@ -70,21 +84,13 @@ class ViewerDatabase extends TypedEmitter<{
     private logger = LoggerCache.getLogger("Viewers");
 
     private _db: Datastore<FirebotViewer>;
-    private _dbCompactionInterval = 30000;
+    private _dbCompactionInterval = 60 * 60 * 1000; // 1 hour
 
     private cancelRankRecalculation = false;
     private _activeViewers: string[] = [];
 
     constructor() {
         super();
-
-        frontendCommunicator.onAsync("connect-viewer-db", async () => {
-            if (this.isViewerDBOn() !== true) {
-                return;
-            }
-            await this.connectViewerDatabase();
-            this.logger.debug("Connecting to viewer database.");
-        });
 
         frontendCommunicator.onAsync("viewer-db-change", async (data: ViewerDbChangePacket) => {
             if (this.isViewerDBOn() !== true) {
@@ -108,11 +114,8 @@ class ViewerDatabase extends TypedEmitter<{
             return await this.purgeViewers(options);
         });
 
-        frontendCommunicator.onAsync("viewer-database:get-all-viewers", async () => {
-            if (this.isViewerDBOn() !== true) {
-                return [];
-            }
-            return await this.getAllViewers();
+        frontendCommunicator.onAsync("viewer-database:get-viewers-page", async (request: ViewersPageRequest) => {
+            return await this.getViewersPage(request);
         });
 
         frontendCommunicator.onAsync("create-firebot-viewer-data", async (viewer: BasicViewer) => {
@@ -171,7 +174,7 @@ class ViewerDatabase extends TypedEmitter<{
     }
 
     async connectViewerDatabase(): Promise<void> {
-        this.logger.info('ViewerDB: Trying to connect to viewer database...');
+        this.logger.info('Trying to connect to viewer database...');
         if (this.isViewerDBOn() !== true) {
             return;
         }
@@ -181,22 +184,26 @@ class ViewerDatabase extends TypedEmitter<{
         try {
             await this._db.loadDatabaseAsync();
         } catch (error) {
-            this.logger.info("ViewerDB: Error Loading Database: ", (error as Error).message);
-            this.logger.info("ViewerDB: Failed Database Path: ", path);
+            this.logger.info("Error Loading Database: ", (error as Error).message);
+            this.logger.info("Failed Database Path: ", path);
         }
 
         // Setup our automatic compaction interval to shrink filesize.
         this._db.setAutocompactionInterval(this._dbCompactionInterval);
         setInterval(() => {
-            this.logger.debug(`ViewerDB: Compaction should be happening now. Compaction Interval: ${this._dbCompactionInterval}`);
+            this.logger.debug(`Compaction should be happening now. Compaction Interval: ${this._dbCompactionInterval / 1000} seconds`);
         }, this._dbCompactionInterval);
 
-        this.logger.info("ViewerDB: Viewer Database Loaded: ", path);
-        this.emit("viewer-database-loaded");
-    }
+        this.logger.info("Viewer Database Loaded: ", path);
 
-    disconnectViewerDatabase(): void {
-        this._db = null;
+        try {
+            await this._db.ensureIndexAsync({ fieldName: "username", unique: false });
+            await this._db.ensureIndexAsync({ fieldName: "displayName", unique: false });
+        } catch (error) {
+            this.logger.error("Error setting up viewer database indexes: ", error);
+        }
+
+        this.emit("viewer-database-loaded");
     }
 
     getViewerDb(): Datastore<FirebotViewer> {
@@ -252,7 +259,7 @@ class ViewerDatabase extends TypedEmitter<{
 
             return newViewer;
         } catch (error) {
-            this.logger.error("ViewerDB: Error adding viewer", error);
+            this.logger.error("Error adding viewer", error);
         }
     }
 
@@ -299,6 +306,38 @@ class ViewerDatabase extends TypedEmitter<{
         }
 
         return Object.values(await this._db.findAsync({}));
+    }
+
+    async getViewersPage({ page, pageSize, sortField, sortReversed, search }: ViewersPageRequest): Promise<ViewersPage> {
+        if (this.isViewerDBOn() !== true) {
+            return { viewers: [], total: 0, totalUnfiltered: 0 };
+        }
+
+        const query: Record<string, unknown> = {};
+        if (search != null && search.length > 0) {
+            const searchRegex = new RegExp(escapeRegExp(search), "i");
+            query.$or = [
+                { username: { $regex: searchRegex } },
+                { displayName: { $regex: searchRegex } }
+            ];
+        }
+
+        const sortObj = sortField ? { [sortField]: sortReversed ? -1 : 1 } : {};
+
+        try {
+            const totalUnfiltered = await this._db.countAsync({});
+            const total = query.$or ? await this._db.countAsync(query) : totalUnfiltered;
+
+            const viewers = await this._db.findAsync(query)
+                .sort(sortObj)
+                .skip(Math.max(0, (page - 1) * pageSize))
+                .limit(pageSize);
+
+            return { viewers, total, totalUnfiltered };
+        } catch (error) {
+            this.logger.error("Error getting viewers page: ", error);
+            return { viewers: [], total: 0, totalUnfiltered: 0 };
+        }
     }
 
     async getAllUsernames(): Promise<string[]> {
@@ -490,7 +529,10 @@ class ViewerDatabase extends TypedEmitter<{
 
     async getPurgeViewers(options: ViewerPurgeOptions): Promise<FirebotViewer[]> {
         try {
-            const bannedUsers = (await TwitchApi.moderation.getBannedUsers()).filter(u => u.expiryDate === null);
+            let bannedUsers: HelixBan[] = [];
+            if (options.banned.enabled) {
+                bannedUsers = (await TwitchApi.moderation.getBannedUsers()).filter(u => u.expiryDate === null);
+            }
             return await this._db.findAsync({ $where: this.getPurgeWherePredicate(options, bannedUsers) });
         } catch {
             return [];

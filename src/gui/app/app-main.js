@@ -124,7 +124,6 @@
         updatesService,
         commandsService,
         integrationService,
-        viewersService,
         chatModerationService,
         ttsService,
         settingsService,
@@ -166,8 +165,6 @@
 
         //get integrations from backend
         integrationService.updateIntegrations();
-
-        viewersService.updateViewers();
 
         chatModerationService.loadChatModerationData();
 

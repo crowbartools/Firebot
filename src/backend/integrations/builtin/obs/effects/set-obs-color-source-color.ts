@@ -1,6 +1,6 @@
+import type { EffectType, BackendCommunicator } from "../../../../../types";
+import { type OBSSource, setColorSourceSettings } from "../obs-remote";
 import { LoggerCache } from "../../../../logger-cache";
-import { EffectType } from "../../../../../types/effects";
-import { OBSSource, setColorSourceSettings } from "../obs-remote";
 
 const logger = LoggerCache.getLogger("Integration: OBS");
 
@@ -55,7 +55,7 @@ export const SetOBSColorSourceColorEffectType: EffectType<{
         <color-picker-input label="#RGBA" ng-if="!effect.customColor" model="effect.color" alpha="true" lg-input="true"></color-picker-input>
     </eos-container>
   `,
-    optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
+    optionsController: ($scope, backendCommunicator: BackendCommunicator) => {
         const rgbRegexp = /^#?[0-9a-f]{6}$/i;
         const argbRegexp = /^#?[0-9a-f]{8}$/i;
 
@@ -104,16 +104,16 @@ export const SetOBSColorSourceColorEffectType: EffectType<{
             $scope.effect.color = `#${newValue ? rgbaToArgb($scope.effect.color) : argbToRgba($scope.effect.color)}`;
         };
 
-        $scope.getColorSources = () => {
-            $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
+        $scope.getColorSources = async () => {
+            $scope.isObsConfigured = await backendCommunicator.fireEventAsync("obs-is-configured");
 
-            $q.when(
-                backendCommunicator.fireEventAsync("obs-get-color-sources")
-            ).then((colorSources: OBSSource[]) => {
+            try {
+                const colorSources: OBSSource[] = await backendCommunicator.fireEventAsync("obs-get-color-sources");
                 $scope.colorSources = colorSources;
                 $scope.selected = $scope.colorSources?.find(source => source.name === $scope.effect.colorSourceName);
-            });
+            } catch { }
         };
+
         $scope.getColorSources();
     },
     optionsValidator: (effect) => {

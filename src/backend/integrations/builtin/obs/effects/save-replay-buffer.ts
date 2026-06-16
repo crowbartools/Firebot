@@ -1,4 +1,4 @@
-import { EffectType } from "../../../../../types/effects";
+import type { EffectType } from "../../../../../types";
 import { saveReplayBuffer } from "../obs-remote";
 
 export const SaveReplayBufferEffectType: EffectType = {
@@ -21,7 +21,7 @@ export const SaveReplayBufferEffectType: EffectType = {
         return [];
     },
     onTriggerEvent: async () => {
-        saveReplayBuffer();
+        await saveReplayBuffer();
         return true;
     }
 };

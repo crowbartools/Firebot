@@ -5,12 +5,12 @@
     angular
         .module("firebotApp")
         .controller("viewersController", function(
-            $route, 
-            $scope, 
-            viewersService, 
+            $route,
+            $scope,
+            viewersService,
             currencyService,
-            utilityService, 
-            settingsService, 
+            utilityService,
+            settingsService,
             ngToast
         ) {
             $scope.isViewerDBOn = settingsService.getSetting("ViewerDB");
@@ -90,10 +90,6 @@
 
             $scope.vs = viewersService;
 
-            // Update table rows when first visiting the page.
-            if (viewersService.isViewerDbOn()) {
-                viewersService.updateViewers();
-            }
 
             $scope.viewerSearch = "";
 

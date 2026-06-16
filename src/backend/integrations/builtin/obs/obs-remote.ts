@@ -611,8 +611,7 @@ async function maintainConnection(
             });
         } catch (error) {
             if (logging) {
-                logger.debug("Failed to connect, attempting again in 10 secs.");
-                logger.debug(error);
+                logger.debug("Failed to connect, attempting again in 10 secs.", error);
             }
             reconnectTimeout = setTimeout(
                 () => maintainConnection(ip, port, password, logging),

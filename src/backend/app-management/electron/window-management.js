@@ -741,11 +741,11 @@ function updateSplashScreenStatus(newStatus) {
 
 SettingsManager.on("settings:setting-updated:OverlayInstances", createAppMenu);
 
-frontendCommunicator.on("getAllDisplays", () => {
+frontendCommunicator.onAsync("getAllDisplays", async () => {
     return screenHelpers.getAllDisplays();
 });
 
-frontendCommunicator.on("getPrimaryDisplay", () => {
+frontendCommunicator.onAsync("getPrimaryDisplay", async () => {
     return screenHelpers.getPrimaryDisplay();
 });
 
