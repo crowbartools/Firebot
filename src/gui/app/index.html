@@ -106,14 +106,26 @@
         -->
         <!-- /include -->
     </head>
-    <body ng-cloak>
-        <toast></toast>
+    <body>
+        <div class="bg-loading-wrapper">
+            <div class="bg-loading-logo">
+                <img
+                    style="width: 165px"
+                    src="../images/logo_transparent_2.png"
+                    draggable="false"
+                />
+            </div>
+            <h1 class="firebot-wordmark">Firebot</h1>
+            <div class="bg-loading-text">Loading</div>
+        </div>
 
-        <div class="loader-wrapper" ng-if="showSpinner">
+        <toast ng-cloak></toast>
+
+        <div class="loader-wrapper" ng-if="showSpinner" ng-cloak>
             <div class="loader">{{'MAIN.LOADING' | translate }}</div>
         </div>
 
-        <div class="appwrapper">
+        <div class="appwrapper" ng-cloak>
             <sidebar class="noselect"></sidebar>
 
             <div class="fb-tab-content">
