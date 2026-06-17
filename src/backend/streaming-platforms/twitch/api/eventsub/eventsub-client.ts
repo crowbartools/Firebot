@@ -22,6 +22,7 @@ import {
     mapSharedChatParticipants
 } from "./eventsub-helpers";
 import { EventSubPowerUpRedemptionAddSubscription } from "./custom-subscriptions/power-up-redemption-add-subscription";
+import { logTwurpleMessage } from "../twurple-logger";
 
 class TwitchEventSubClient {
     private logger = LoggerCache.getLogger("Twitch EventSub");
@@ -1029,7 +1030,11 @@ class TwitchEventSubClient {
 
         try {
             this._eventSubListener = new EventSubWsListener({
-                apiClient: TwitchApi.streamerClient
+                apiClient: TwitchApi.streamerClient,
+                logger: {
+                    minLevel: 3,
+                    custom: (level, message) => logTwurpleMessage(level, message)
+                }
             });
 
             this._eventSubListener.start();

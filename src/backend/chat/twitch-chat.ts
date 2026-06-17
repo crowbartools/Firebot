@@ -13,6 +13,7 @@ import chatterPoll from "../streaming-platforms/twitch/chatter-poll";
 import twitchChatListeners from "./chat-listeners/twitch-chat-listeners";
 import frontendCommunicator from "../common/frontend-communicator";
 import { LoggerCache } from "../logger-cache";
+import { logTwurpleMessage } from "../streaming-platforms/twitch/api/twurple-logger";
 
 class TwitchChat extends EventEmitter {
     private logger = LoggerCache.getLogger("Chat");
@@ -79,7 +80,11 @@ class TwitchChat extends EventEmitter {
 
             this._streamerChatClient = new ChatClient({
                 authProvider: streamerAuthProvider,
-                requestMembershipEvents: true
+                requestMembershipEvents: true,
+                logger: {
+                    minLevel: 3,
+                    custom: (level, message) => logTwurpleMessage(level, message)
+                }
             });
 
             this._streamerChatClient.irc.onRegister(() => {
@@ -160,7 +165,11 @@ class TwitchChat extends EventEmitter {
 
                     this._botChatClient = new ChatClient({
                         authProvider: FirebotDeviceAuthProvider.botProvider,
-                        requestMembershipEvents: true
+                        requestMembershipEvents: true,
+                        logger: {
+                            minLevel: 3,
+                            custom: (level, message) => logTwurpleMessage(level, message)
+                        }
                     });
 
                     this._botChatClient.onConnect(() => {

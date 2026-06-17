@@ -29,6 +29,7 @@ import { AccountAccess } from "../../../common/account-access";
 import { SettingsManager } from "../../../common/settings-manager";
 import frontendCommunicator from "../../../common/frontend-communicator";
 import { LoggerCache } from "../../../logger-cache";
+import { logTwurpleMessage } from "./twurple-logger";
 
 class TwitchApi {
     private _streamerClient: UserContextApiClient;
@@ -132,14 +133,26 @@ class TwitchApi {
 
         if (AccountAccess.getAccounts().streamer.loggedIn) {
             this._streamerClient = new UserContextApiClient(
-                { authProvider: streamerProvider },
+                {
+                    authProvider: streamerProvider,
+                    logger: {
+                        minLevel: 3,
+                        custom: (level, message) => logTwurpleMessage(level, message)
+                    }
+                },
                 AccountAccess.getAccounts().streamer.userId
             );
         }
 
         if (AccountAccess.getAccounts().bot.loggedIn) {
             this._botClient = new UserContextApiClient(
-                { authProvider: botProvider },
+                {
+                    authProvider: botProvider,
+                    logger: {
+                        minLevel: 3,
+                        custom: (level, message) => logTwurpleMessage(level, message)
+                    }
+                },
                 AccountAccess.getAccounts().bot.userId
             );
         }
