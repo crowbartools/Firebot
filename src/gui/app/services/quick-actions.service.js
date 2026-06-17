@@ -13,17 +13,10 @@
             const service = {};
 
             /** @type { Record<string, { enabled: boolean, position: number }> } */
-            service.settings = settingsService.getSetting("QuickActions", true);
+            service.settings = {};
 
             /** @type {QuickActionDefinition[]} */
             service.quickActions = [];
-            async function loadQuickActions() {
-                service.quickActions = (await backendCommunicator.fireEventAsync("quick-actions:get-quick-actions"))
-                    .sort(
-                        (a, b) => service.settings[a.id].position - service.settings[b.id].position
-                    );
-            }
-            loadQuickActions();
 
             backendCommunicator.on("quick-actions:all-quick-actions-updated", (/** @type {QuickActionDefinition[]} */ quickActions) => {
                 if (quickActions != null) {
@@ -138,6 +131,8 @@
             service.triggerQuickAction = (quickActionId) => {
                 backendCommunicator.fireEvent("quick-actions:trigger-quick-action", quickActionId);
             };
+
+            backendCommunicator.send("quick-actions:ui-service-ready");
 
             return service;
         });

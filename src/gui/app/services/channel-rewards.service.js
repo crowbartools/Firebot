@@ -24,12 +24,6 @@
                 }
             }
 
-            service.loadChannelRewards = async () => {
-                service.channelRewards = await backendCommunicator.fireEventAsync("get-channel-rewards");
-
-                service.userIsEligible = await backendCommunicator.fireEventAsync("get-channel-rewards-eligibility");
-            };
-
             service.saveChannelReward = (channelReward) => {
                 return $q.when(backendCommunicator.fireEventAsync("save-channel-reward", channelReward))
                     .then((savedReward) => {
@@ -123,18 +117,6 @@
                     });
             };
 
-            service.loadingRedemptions = false;
-            service.refreshChannelRewardRedemptions = async () => {
-                if (service.loadingRedemptions) {
-                    return;
-                }
-
-                service.loadingRedemptions = true;
-
-                await backendCommunicator.fireEventAsync("refresh-channel-reward-redemptions");
-                service.loadingRedemptions = false;
-            };
-
             service.getRewardIdsWithRedemptions = () => {
                 return Object.entries(service.redemptions)
                     .filter(([, redemptions]) => redemptions.length > 0)
@@ -156,11 +138,11 @@
                 }));
             };
 
-            backendCommunicator.on("channel-rewards-updated", (channelRewards) => {
+            backendCommunicator.on("channel-rewards:channel-rewards-updated", (channelRewards) => {
                 service.channelRewards = channelRewards;
             });
 
-            backendCommunicator.on("channel-rewards-eligibility-changed", (eligible) => {
+            backendCommunicator.on("channel-rewards:channel-rewards-eligibility-changed", (eligible) => {
                 service.userIsEligible = eligible;
             });
 
@@ -173,10 +155,11 @@
                 delete service.redemptions[channelRewardId];
             });
 
-            backendCommunicator.on("channel-reward-redemptions-updated", (redemptions) => {
-                service.loadingRedemptions = false;
+            backendCommunicator.on("channel-rewards:channel-reward-redemptions-updated", (redemptions) => {
                 service.redemptions = redemptions;
             });
+
+            backendCommunicator.send("channel-rewards:ui-service-ready");
 
             return service;
         });

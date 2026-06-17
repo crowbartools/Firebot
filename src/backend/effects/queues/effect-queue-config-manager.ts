@@ -9,6 +9,10 @@ class EffectQueueConfigManager extends JsonDbManager<EffectQueueConfig> {
     constructor() {
         super("Effect Queue", "/effects/effectqueues", "Effect Queues");
 
+        frontendCommunicator.onAsync("effect-queues:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
         frontendCommunicator.onAsync("effect-queues:get-effect-queues",
             async () => this.getAllItems()
         );
@@ -93,7 +97,8 @@ class EffectQueueConfigManager extends JsonDbManager<EffectQueueConfig> {
     }
 
     triggerUiRefresh(): void {
-        frontendCommunicator.send("all-queues", this.getAllItems());
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("effect-queues:all-queues", this.getAllItems());
     }
 
     private setQueueActiveStatus(

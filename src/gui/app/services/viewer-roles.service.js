@@ -11,26 +11,19 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
             const service = {};
 
             let customRoles = {};
-
             let teamRoles = [];
 
-            service.loadCustomRoles = async () => {
-                // Check for legacy custom roles file and alert the user if it still exists (it shouldn't by this point)
-                const hasLegacyCustomRoles = await backendCommunicator.fireEventSync("check-for-legacy-custom-roles");
-                if (hasLegacyCustomRoles === true) {
+            backendCommunicator.onAsync("custom-roles:custom-roles-updated", async (customRoleData) => {
+                if (customRoleData?.hasLegacyCustomRoles === true) {
                     utilityService.showErrorModal("Firebot ran into an issue while migrating your custom roles to the new format. Please make sure your streamer account is logged in, then restart Firebot to try again. If you continue to receive this message, please reach out for support in our Discord.");
                     return;
                 }
 
-                const roles = await backendCommunicator.fireEventAsync("get-custom-roles");
-                if (roles != null) {
-                    customRoles = roles;
-                }
-            };
-            service.loadCustomRoles();
+                customRoles = customRoleData?.roles ?? {};
+            });
 
-            backendCommunicator.onAsync("custom-roles-updated", async () => {
-                await service.loadCustomRoles();
+            backendCommunicator.onAsync("team-roles:team-roles-updated", async (roles) => {
+                teamRoles = roles ?? [];
             });
 
             service.getCustomRoles = function() {
@@ -95,11 +88,6 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
                 backendCommunicator.send("delete-custom-role", roleId);
             };
 
-            service.loadTeamRoles = async function() {
-                teamRoles = await backendCommunicator.fireEventAsync("get-team-roles");
-            };
-            service.loadTeamRoles();
-
             service.getTeamRoles = function() {
                 return teamRoles;
             };
@@ -134,11 +122,11 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
             };
 
             service.updateModRoleForUser = (username, shouldBeMod) => {
-                backendCommunicator.fireEvent("update-user-mod-status", { username, shouldBeMod });
+                backendCommunicator.send("update-user-mod-status", { username, shouldBeMod });
             };
 
             service.updateVipRoleForUser = (username, shouldBeVip) => {
-                backendCommunicator.fireEvent("update-user-vip-status", { username, shouldBeVip });
+                backendCommunicator.send("update-user-vip-status", { username, shouldBeVip });
             };
 
             service.getTwitchRoles = function() {
@@ -170,6 +158,9 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
                 const role = service.getRoleById(id);
                 return role != null;
             };
+
+            backendCommunicator.send("custom-roles:ui-service-ready");
+            backendCommunicator.send("team-roles:ui-service-ready");
 
             return service;
         });

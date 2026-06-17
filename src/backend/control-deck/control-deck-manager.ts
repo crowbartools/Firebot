@@ -16,6 +16,10 @@ class ControlDeckManager extends JsonDbManager<ControlDeck> {
     constructor() {
         super("Control Deck", "/control-deck/decks", "Control Deck");
 
+        frontendCommunicator.onAsync("control-deck:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
         frontendCommunicator.onAsync("control-deck:get-decks",
             async () => this.getAllItems()
         );
@@ -208,6 +212,7 @@ class ControlDeckManager extends JsonDbManager<ControlDeck> {
     }
 
     triggerUiRefresh(): void {
+        this.logger.debug("Triggering Deck UI refresh");
         frontendCommunicator.send("control-deck:decks-updated", this.getAllItems());
     }
 }

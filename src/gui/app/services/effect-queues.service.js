@@ -19,14 +19,7 @@
                 }
             };
 
-            service.loadEffectQueues = async () => {
-                const effectQueues = await backendCommunicator.fireEventAsync("effect-queues:get-effect-queues");
-                if (effectQueues != null) {
-                    service.effectQueues = effectQueues;
-                }
-            };
-
-            backendCommunicator.on("all-queues", (effectQueues) => {
+            backendCommunicator.on("effect-queues:all-queues", (effectQueues) => {
                 if (effectQueues != null) {
                     service.effectQueues = effectQueues;
                 }
@@ -188,6 +181,8 @@
                         });
                 });
             };
+
+            backendCommunicator.send("effect-queues:ui-service-ready");
 
             return service;
         });

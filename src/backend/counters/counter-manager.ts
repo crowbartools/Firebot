@@ -20,6 +20,10 @@ class CounterManager extends JsonDbManager<Counter> {
     constructor() {
         super("Counter", "/counters/counters", "Counters");
 
+        frontendCommunicator.onAsync("counters:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
         frontendCommunicator.onAsync("counters:get-counters",
             async () => this.getAllItems());
 
@@ -85,6 +89,7 @@ class CounterManager extends JsonDbManager<Counter> {
     }
 
     triggerUiRefresh(): void {
+        this.logger.debug("Triggering UI refresh");
         frontendCommunicator.send("counters:all-counters-updated", this.getAllItems());
     }
 

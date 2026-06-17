@@ -25,8 +25,8 @@
                 return integrations.find(i => i.id === id);
             }
 
-            service.updateIntegrations = async () => {
-                integrations = await backendCommunicator.fireEventAsync("getAllIntegrationDefinitions");
+            service.updateIntegrations = () => {
+                backendCommunicator.send("integrations:ui-service-ready");
             };
 
             service.getIntegrations = function() {
@@ -165,8 +165,8 @@
                 });
             };
 
-            backendCommunicator.on("integrationsUpdated", () => {
-                service.updateIntegrations();
+            backendCommunicator.onAsync("integrations:integrations-updated", async (integrationData) => {
+                integrations = integrationData ?? [];
             });
 
             backendCommunicator.on("integrationLinked", (integration) => {
@@ -205,6 +205,8 @@
                     status: ""
                 });
             });
+
+            backendCommunicator.send("integrations:ui-service-ready");
 
             return service;
         });

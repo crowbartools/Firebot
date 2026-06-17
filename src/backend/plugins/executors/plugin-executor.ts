@@ -254,10 +254,12 @@ export class PluginExecutor extends IPluginExecutor {
                 const def = await resolve(entry);
                 const id = def?.definition?.id;
                 if (id) {
-                    IntegrationManager.registerIntegration(def);
+                    IntegrationManager.registerIntegration(def, false);
                     registrations.integrationIds.push(id);
                 }
             }
+
+            IntegrationManager.triggerUiRefresh();
         }
 
         if (Array.isArray(r.games)) {

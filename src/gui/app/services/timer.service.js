@@ -20,13 +20,9 @@
                 updateTimer(timer);
             });
 
-            backendCommunicator.on("all-timers-updated", (timers) => {
+            backendCommunicator.onAsync("timers:all-timers-updated", async (timers) => {
                 service.timers = timers;
             });
-
-            service.loadTimers = async () => {
-                service.timers = await backendCommunicator.fireEventAsync("timers:get-timers");
-            };
 
             service.getTimers = () => service.timers;
 
@@ -106,6 +102,8 @@
                     });
                 });
             };
+
+            backendCommunicator.send("timers:ui-service-ready");
 
             return service;
         });

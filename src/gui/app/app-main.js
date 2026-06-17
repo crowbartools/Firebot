@@ -113,34 +113,33 @@
 
     app.run(function initializeApplication(
         logger,
-        quickActionsService,
-        chatMessagesService,
         activityFeedService,
-        viewerRolesService,
-        viewerRanksService,
-        connectionService,
-        notificationService,
-        $timeout,
-        updatesService,
-        commandsService,
-        integrationService,
-        chatModerationService,
-        ttsService,
-        settingsService,
-        countersService,
-        hotkeyService,
-        controlDeckService,
-        gamesService,
-        presetEffectListsService,
-        pluginsService,
-        effectQueuesService,
-        timerService,
-        scheduledTaskService,
         channelRewardsService,
+        chatMessagesService,
+        chatModerationService,
+        commandsService,
+        connectionService,
+        controlDeckService,
+        countersService,
+        effectQueuesService,
+        gamesService,
+        hotkeyService,
+        integrationService,
+        notificationService,
+        presetEffectListsService,
+        quickActionsService,
+        replaceVariableService,
+        scheduledTaskService,
+        settingsService,
+        timerService,
+        ttsService,
+        updatesService,
+        videoService,
+        viewerRanksService,
+        viewerRolesService,
+        pluginsService,
         sortTagsService,
         iconsService,
-        videoService,
-        replaceVariableService,
         variableMacroService,
         uiExtensionsService,
         webhooksService,
@@ -148,43 +147,14 @@
         dynamicParameterRegistry,
         platformService
     ) {
-        // 'chatMessagesService' and 'videoService' are included so they're instantiated on app start
+        /**
+         * Services are included here so they're instantiated on app start
+         * and get their initial data
+         */
 
         connectionService.loadProfiles();
 
-        //load viewer roles and ranks
-        viewerRolesService.loadCustomRoles();
-        viewerRanksService.loadRankLadders();
-
-        //load commands
-        commandsService.refreshCommands();
-
-        timerService.loadTimers();
-
-        scheduledTaskService.loadScheduledTasks();
-
-        //get integrations from backend
-        integrationService.updateIntegrations();
-
-        chatModerationService.loadChatModerationData();
-
-        countersService.loadCounters();
-
-        hotkeyService.loadHotkeys();
-
-        controlDeckService.loadDecks();
-        controlDeckService.loadControlTypes();
-
-        gamesService.loadGames();
-
-        presetEffectListsService.loadPresetEffectLists();
-
         pluginsService.loadPlugins();
-
-        effectQueuesService.loadEffectQueues();
-
-        channelRewardsService.loadChannelRewards();
-        channelRewardsService.refreshChannelRewardRedemptions();
 
         sortTagsService.loadSortTags();
 
@@ -197,11 +167,6 @@
         overlayWidgetsService.loadOverlayWidgetTypesAndConfigs();
 
         platformService.loadPlatform();
-
-        //start notification check
-        $timeout(() => {
-            notificationService.loadAllNotifications();
-        }, 1000);
 
         //check for updates
         if (!updatesService.hasCheckedForUpdates) {

@@ -17,10 +17,6 @@
                 }
             };
 
-            service.loadHotkeys = async () => {
-                service.hotkeys = await backendCommunicator.fireEventAsync("hotkeys:get-hotkeys");
-            };
-
             service.deleteHotkey = (hotkeyId) => {
                 service.hotkeys = service.hotkeys.filter(hk => hk.id !== hotkeyId);
                 backendCommunicator.send("hotkeys:delete-hotkey", hotkeyId);
@@ -71,7 +67,7 @@
                 });
             };
 
-            backendCommunicator.on("all-hotkeys-updated", (hotkeys) => {
+            backendCommunicator.on("hotkeys:all-hotkeys-updated", (hotkeys) => {
                 service.hotkeys = hotkeys;
             });
 
@@ -317,6 +313,8 @@
                     k => k.code === hotkeyCode && k.id !== hotkeyId
                 );
             };
+
+            backendCommunicator.send("hotkeys:ui-service-ready");
 
             return service;
         });

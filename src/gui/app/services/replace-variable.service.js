@@ -11,12 +11,11 @@
              */
             service.allVariables = [];
             service.additionalVariableEvents = {};
-            async function loadVariables() {
-                service.allVariables = await backendCommunicator.fireEventAsync("variables:get-replace-variable-definitions");
-                service.additionalVariableEvents = await backendCommunicator.fireEventAsync("variables:get-additional-variable-events");
-            }
-            loadVariables();
 
+            backendCommunicator.onAsync("variables:all-variables-updated", async (variableData) => {
+                service.allVariables = variableData?.allVariables ?? [];
+                service.additionalVariableEvents = variableData?.additionalVariableEvents ?? {};
+            });
 
             service.triggerCache = {};
 
@@ -83,6 +82,8 @@
 
                 return filtered;
             };
+
+            backendCommunicator.send("variables:ui-service-ready");
 
             return service;
         });

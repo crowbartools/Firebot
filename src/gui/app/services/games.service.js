@@ -8,13 +8,6 @@
 
             service.games = [];
 
-            service.loadGames = async () => {
-                const games = await backendCommunicator.fireEventAsync("games:get-games");
-                if (games) {
-                    service.games = games;
-                }
-            };
-
             backendCommunicator.on("games:game-settings-updated", (games) => {
                 if (games) {
                     service.games = games;
@@ -39,6 +32,8 @@
             service.resetGameToDefault = (gameId) => {
                 backendCommunicator.fireEvent("games:reset-game-to-defaults", gameId);
             };
+
+            backendCommunicator.send("games:ui-service-ready");
 
             return service;
         });

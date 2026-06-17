@@ -14,10 +14,6 @@
             const service = {};
 
             let overlayStatus = {};
-            async function loadOverlayStatus() {
-                overlayStatus = await backendCommunicator.fireEventAsync("http-server:get-overlay-status");
-            }
-            loadOverlayStatus();
 
             // Connection Monitor for Overlay
             // Recieves event from main process that connection has been established or disconnected.

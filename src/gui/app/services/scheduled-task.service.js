@@ -20,13 +20,9 @@
                 updateScheduledTask(scheduledTask);
             });
 
-            backendCommunicator.on("allScheduledTasksUpdated", (scheduledTasks) => {
+            backendCommunicator.on("scheduled-tasks:all-scheduled-tasks-updated", (scheduledTasks) => {
                 service.scheduledTasks = scheduledTasks;
             });
-
-            service.loadScheduledTasks = async () => {
-                service.scheduledTasks = await backendCommunicator.fireEventAsync("scheduled-tasks:get-scheduled-tasks");
-            };
 
             service.getScheduledTasks = () => service.scheduledTasks;
 
@@ -184,6 +180,8 @@
                     return "Invalid schedule";
                 }
             };
+
+            backendCommunicator.send("scheduled-tasks:ui-service-ready");
 
             return service;
         });

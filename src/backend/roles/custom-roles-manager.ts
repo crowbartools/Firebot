@@ -32,6 +32,10 @@ class CustomRolesManager extends TypedEmitter<Events> {
     constructor() {
         super();
 
+        frontendCommunicator.onAsync("custom-roles:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
         frontendCommunicator.onAsync("get-custom-roles", async () => this._customRoles);
 
         frontendCommunicator.on("save-custom-role", (role: CustomRole) => {
@@ -350,7 +354,11 @@ class CustomRolesManager extends TypedEmitter<Events> {
     }
 
     triggerUiRefresh(): void {
-        frontendCommunicator.send("custom-roles-updated");
+        this.logger.debug("Triggering custom role UI refresh");
+        frontendCommunicator.send("custom-roles:custom-roles-updated", {
+            hasLegacyCustomRoles: ProfileManager.profileDataPathExistsSync(path.join(ROLES_FOLDER, "customroles.json")),
+            roles: this._customRoles
+        });
     }
 }
 

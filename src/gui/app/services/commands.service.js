@@ -17,18 +17,14 @@
                 customCommands: []
             };
 
+            backendCommunicator.onAsync("commands:commands-updated", async (commandCache) => {
+                service.commandsCache = commandCache;
+            });
+
             // Refresh commands cache
-            service.refreshCommands = async () => {
-                service.commandsCache = await backendCommunicator.fireEventAsync("get-all-commands");
+            service.refreshCommands = () => {
+                backendCommunicator.send("commands:ui-service-ready");
             };
-
-            backendCommunicator.onAsync("system-commands-updated", async () => {
-                await service.refreshCommands();
-            });
-
-            backendCommunicator.onAsync("custom-commands-updated", async () => {
-                await service.refreshCommands();
-            });
 
             service.getSystemCommands = () => service.commandsCache.systemCommands;
 
@@ -165,6 +161,8 @@
                     content: toastMessage
                 });
             });
+
+            backendCommunicator.send("commands:ui-service-ready");
 
             return service;
         });

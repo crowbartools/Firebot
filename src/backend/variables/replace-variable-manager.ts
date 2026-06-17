@@ -61,6 +61,10 @@ class ReplaceVariableManager extends EventEmitter {
     constructor() {
         super();
 
+        frontendCommunicator.onAsync("variables:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
         frontendCommunicator.onAsync("variables:get-replace-variable-definitions", async () => {
             this.logger.debug("got 'get all vars' request");
             return Array.from(this.getVariableHandlers().values())
@@ -390,6 +394,16 @@ class ReplaceVariableManager extends EventEmitter {
         }
 
         return [];
+    }
+
+    triggerUiRefresh(): void {
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("variables:all-variables-updated", {
+            allVariables: Array.from(this.getVariableHandlers().values())
+                .map(v => v.definition)
+                .filter(v => !v.hidden),
+            additionalVariableEvents: this.additionalVariableEvents
+        });
     }
 }
 

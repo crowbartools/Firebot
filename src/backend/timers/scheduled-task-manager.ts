@@ -20,6 +20,10 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
     constructor() {
         super("Scheduled Task", "scheduled-tasks", "Scheduled Tasks");
 
+        frontendCommunicator.onAsync("scheduled-tasks:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
         frontendCommunicator.onAsync("scheduled-tasks:get-scheduled-tasks",
             async () => this.getAllItems()
         );
@@ -187,7 +191,8 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
     }
 
     triggerUiRefresh(): void {
-        frontendCommunicator.send("allScheduledTasksUpdated", this.getAllItems());
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("scheduled-tasks:all-scheduled-tasks-updated", this.getAllItems());
     }
 }
 

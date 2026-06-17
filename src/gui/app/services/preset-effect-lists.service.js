@@ -19,11 +19,7 @@
                 }
             }
 
-            service.loadPresetEffectLists = async () => {
-                service.presetEffectLists = await backendCommunicator.fireEventAsync("preset-effect-lists:get-preset-effect-lists");
-            };
-
-            backendCommunicator.on("all-preset-lists", (presetEffectLists) => {
+            backendCommunicator.on("preset-effect-lists:all-preset-lists-updated", (presetEffectLists) => {
                 if (presetEffectLists != null) {
                     service.presetEffectLists = presetEffectLists;
                 }
@@ -143,6 +139,8 @@
                     });
                 });
             };
+
+            backendCommunicator.send("preset-effect-lists:ui-service-ready");
 
             return service;
         });

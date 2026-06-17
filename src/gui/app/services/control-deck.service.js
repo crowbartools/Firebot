@@ -7,16 +7,15 @@
             const service = {};
 
             service.decks = [];
-
             service.controlTypes = [];
 
-            service.loadDecks = async () => {
-                service.decks = await backendCommunicator.fireEventAsync("control-deck:get-decks") || [];
-            };
+            backendCommunicator.on("control-deck:decks-updated", (decks) => {
+                service.decks = decks ?? [];
+            });
 
-            service.loadControlTypes = async () => {
-                service.controlTypes = await backendCommunicator.fireEventAsync("control-deck:get-control-types") || [];
-            };
+            backendCommunicator.on("control-deck:control-types-updated", (controlTypes) => {
+                service.controlTypes = controlTypes ?? [];
+            });
 
             service.getControlType = (typeId) => {
                 return service.controlTypes.find(t => t.id === typeId) || null;
@@ -90,11 +89,7 @@
                     });
             };
 
-            backendCommunicator.on("control-deck:decks-updated", (decks) => {
-                if (decks != null) {
-                    service.decks = decks;
-                }
-            });
+            backendCommunicator.send("control-deck:ui-service-ready");
 
             return service;
         });

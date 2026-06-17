@@ -6,8 +6,6 @@
         .controller("gamesController", function($scope, gamesService, utilityService) {
             $scope.gamesService = gamesService;
 
-            gamesService.loadGames();
-
             $scope.openEditGameSettingsModal = function(game) {
                 utilityService.showModal({
                     component: "editGameSettingsModal",

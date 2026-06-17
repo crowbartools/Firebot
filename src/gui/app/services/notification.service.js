@@ -34,9 +34,9 @@
                 backendCommunicator.send("notifications:delete-notification", id);
             };
 
-            service.loadAllNotifications = async () => {
-                notificationCache = await backendCommunicator.fireEventAsync("notifications:get-all-notifications") ?? [];
-            };
+            backendCommunicator.onAsync("notifications:notifications-updated", async (notifications) => {
+                notificationCache = notifications ?? [];
+            });
 
             service.getIconClass = (type) => {
                 let iconClass = "";
@@ -107,7 +107,7 @@
                 notificationCache = notificationCache.filter(n => n.id !== id);
             });
 
-            backendCommunicator.send("notifications:start-external-notification-check");
+            backendCommunicator.send("notifications:ui-service-ready");
 
             return service;
         });

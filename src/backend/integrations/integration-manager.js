@@ -6,7 +6,7 @@ const { ProfileManager } = require("../common/profile-manager");
 const { SettingsManager } = require('../common/settings-manager');
 const authManager = require("../auth/auth-manager");
 const frontendCommunicator = require('../common/frontend-communicator');
-const logger = require("../logger-cache").LoggerCache.getLogger("Integration");
+const logger = require("../logger-cache").LoggerCache.getLogger("Integrations");
 const { setValuesForFrontEnd, buildSaveDataFromSettingValues } = require("../common/firebot-setting-helpers");
 
 /**@extends {NodeJS.EventEmitter} */
@@ -15,9 +15,13 @@ class IntegrationManager extends EventEmitter {
         super();
 
         this._integrations = [];
+
+        frontendCommunicator.onAsync("integrations:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
     }
 
-    registerIntegration(integration) {
+    registerIntegration(integration, triggerUiRefresh = true) {
         integration.definition.linked = false;
 
         if (integration.definition.linkType === "auth") {
@@ -59,7 +63,9 @@ class IntegrationManager extends EventEmitter {
 
         this.emit("integrationRegistered", integration);
 
-        frontendCommunicator.send("integrationsUpdated");
+        if (triggerUiRefresh === true) {
+            this.triggerUiRefresh();
+        }
 
         integration.integration.on("connected", (id) => {
             frontendCommunicator.send("integrationConnectionUpdate", {
@@ -175,7 +181,7 @@ class IntegrationManager extends EventEmitter {
         logger.debug(`Unregistered Integration ${integrationId}`);
 
         this.emit("integrationUnregistered", integrationId);
-        frontendCommunicator.send("integrationsUpdated");
+        this.triggerUiRefresh();
     }
 
     getAllIntegrationDefinitions() {
@@ -260,7 +266,7 @@ class IntegrationManager extends EventEmitter {
         integrationDb.push(`/${int.definition.id}/linked`, true);
         int.definition.linked = true;
 
-        frontendCommunicator.send("integrationsUpdated");
+        this.triggerUiRefresh();
         frontendCommunicator.send("integrationLinked", {
             id: int.definition.id,
             connectionToggle: int.definition.connectionToggle
@@ -287,7 +293,7 @@ class IntegrationManager extends EventEmitter {
             logger.warn(error);
         }
 
-        frontendCommunicator.send("integrationsUpdated");
+        this.triggerUiRefresh();
         frontendCommunicator.send("integrationUnlinked", integrationId);
     }
 
@@ -379,6 +385,11 @@ class IntegrationManager extends EventEmitter {
             return false;
         }
         return int.integration.linked;
+    }
+
+    triggerUiRefresh() {
+        logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("integrations:integrations-updated", this.getAllIntegrationDefinitions());
     }
 }
 

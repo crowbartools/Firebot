@@ -25,16 +25,8 @@
                 }
             };
 
-            service.loadRankLadders = async () => {
-                const rankLadders = await backendCommunicator.fireEventAsync("rank-ladders:get-all");
-
-                if (rankLadders) {
-                    service.rankLadders = rankLadders;
-                }
-            };
-
-            backendCommunicator.onAsync("rank-ladders:updated", async () => {
-                await service.loadRankLadders();
+            backendCommunicator.onAsync("rank-ladders:updated", async (rankLadders) => {
+                service.rankLadders = rankLadders ?? [];
             });
 
             /**
@@ -149,6 +141,8 @@
                     iconClass: "fa-users-cog"
                 }
             ];
+
+            backendCommunicator.send("rank-ladders:ui-service-ready");
 
             return service;
         });

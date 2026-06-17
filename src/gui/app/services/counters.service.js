@@ -17,10 +17,6 @@
                 }
             };
 
-            service.loadCounters = async () => {
-                service.counters = await backendCommunicator.fireEventAsync("counters:get-counters");
-            };
-
             service.getCounter = (counterId) => {
                 return service.counters.find(c => c.id === counterId);
             };
@@ -106,6 +102,8 @@
                     }
                 });
             };
+
+            backendCommunicator.send("counters:ui-service-ready");
 
             return service;
         });
