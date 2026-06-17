@@ -68,9 +68,9 @@ module.exports = function(grunt) {
     require('./grunt/include-source')(grunt);
     require('./grunt/typescript.js')(grunt);
     require('./grunt/build-types.js')(grunt);
-    require('./grunt/widgets.js')(grunt);
+    require('./grunt/vite.js')(grunt);
 
-    grunt.registerTask('prep', ['cleanup:build', 'xcopy:src', 'scss', 'tsc', 'widgets', 'include-source']);
+    grunt.registerTask('prep', ['cleanup:build', 'xcopy:src', 'scss', 'tsc', 'vite', 'include-source']);
     grunt.registerTask('fullpack', ['prep', 'pack']);
     grunt.registerTask('build', ['fullpack', 'compile']);
 };

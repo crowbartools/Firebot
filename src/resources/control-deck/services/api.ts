@@ -1,11 +1,9 @@
-// Lightweight API + WebSocket helpers for the hosted Control Deck page.
-
 import type {
     ControlDeckSettings,
     ControlDeckView,
     ControlInputValues,
     DeckSummary
-} from "./types.mjs";
+} from "../types";
 
 const PIN_STORAGE_KEY = "firebot-control-deck-pin";
 

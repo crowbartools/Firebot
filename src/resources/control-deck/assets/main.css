@@ -1,0 +1,112 @@
+:root {
+    --bg: #16181c;
+    --surface: #202329;
+    --surface-2: #2c3035;
+    --text: #f3f4f6;
+    --text-dim: #9aa0a6;
+    --accent: #2c92ff;
+    --danger: #e0526a;
+    --good: #41c98a;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    /* overflow: hidden; */
+    /* overscroll-behavior: none; */
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+#app {
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+}
+
+[v-cloak] {
+    display: none !important;
+}
+
+.centered-message {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--text-dim);
+    padding: 24px;
+}
+
+/*
+ * Shared control content.
+ * These classes are rendered across the control component family — DeckControl's
+ * fallback, the control-type components (Button/Folder/Switch) and ControlIcon/
+ * ControlLabel — so they stay global rather than scoped to any one component.
+ */
+.deck-control-component {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+}
+
+.deck-control-hit {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    padding: 0;
+    cursor: pointer;
+}
+
+.deck-control-inner {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.deck-control-icon {
+    max-width: 75px;
+    max-height: 75px;
+    width: 50%;
+    height: auto;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+.deck-control-glyph {
+    display: inline-flex;
+    line-height: 0;
+}
+
+.deck-control-emoji {
+    font-size: 3rem;
+    line-height: 1;
+    pointer-events: none;
+}
+
+.deck-control-name {
+    font-size: 1.0rem;
+    font-weight: 600;
+    text-align: center;
+    word-break: break-word;
+}

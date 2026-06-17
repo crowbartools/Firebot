@@ -34,13 +34,13 @@ module.exports = function (grunt) {
                             '**',
                             '!secrets.template.json',
                             '!**/*.ts',
-                            '!**/*.mts',
                             '!**/*.js',
                             '**/*.min.js',
-                            'resources/control-deck/**/*.js',
                             'resources/overlay/lib/**/*.js',
                             '!**/*.scss',
-                            '!**/*.vue'
+                            '!**/*.vue',
+                            // handled by vite build task
+                            '!resources/control-deck/**'
                         ],
                         filter: 'isFile'
                     }

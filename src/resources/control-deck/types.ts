@@ -7,7 +7,7 @@ import type {
     ControlDeckResolvedIcon,
     ControlDeckView,
     ControlDeckPage
-} from "../../../types/control-deck.js";
+} from "../../types";
 
 export type GridDims = ControlDeckGrid;
 
@@ -23,7 +23,6 @@ export type {
     ControlDeckPage
 };
 
-/** A component-defined interaction emitted by a control's hosted component. */
 export interface ControlInteraction {
     action: string;
     data?: unknown;
@@ -51,4 +50,3 @@ export interface PlacedControl {
 
 /** Values from input prompt, keyed by input name. */
 export type ControlInputValues = Record<string, string | number | boolean>;
-

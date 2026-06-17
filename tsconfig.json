@@ -23,7 +23,7 @@
         "node_modules",
         "build",
         "dist",
-        "src/resources/control-deck/lib",
+        "src/resources/control-deck",
         "src/resources/overlay/lib",
         "src/resources/overlay-widget-components"
     ]

@@ -1,8 +1,8 @@
 import type { Component } from "vue";
 
-import buttonControl from "./button.mjs";
-import folderControl from "./folder.mjs";
-import switchControl from "./switch.mjs";
+import buttonControl from "./ButtonControl.vue";
+import folderControl from "./FolderControl.vue";
+import switchControl from "./SwitchControl.vue";
 
 export const FOLDER_CONTROL_TYPE_ID = "firebot:folder";
 
