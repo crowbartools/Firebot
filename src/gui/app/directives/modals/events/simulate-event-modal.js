@@ -2,7 +2,7 @@
 
 (function() {
     angular.module("firebotApp")
-        .component("simulateGroupEventsModal", {
+        .component("simulateEventModal", {
             template: `
                 <div class="modal-header">
                     <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
@@ -94,7 +94,7 @@
                     return capitalized.join(" ");
                 };
 
-                $ctrl.eventChanged = (event) => {
+                $ctrl.eventChanged = async (event) => {
                     $ctrl.eventData.eventId = event.eventId;
                     $ctrl.eventData.sourceId = event.sourceId;
                     $ctrl.eventData.metadata = {};
@@ -104,7 +104,7 @@
                         event.eventId
                     );
 
-                    const eventSource = backendCommunicator.fireEventSync("events:get-event-source", event);
+                    const eventSource = await backendCommunicator.fireEventAsync("events:get-event-source", event);
                     if (eventSource.manualMetadata) {
                         $ctrl.manualMetadata = eventSource.manualMetadata;
                         $ctrl.eventData.metadata = {
@@ -163,7 +163,7 @@
                         $ctrl.eventData.metadata
                     );
 
-                    backendCommunicator.fireEventSync("events:simulate-event", $ctrl.eventData);
+                    backendCommunicator.send("events:simulate-event", $ctrl.eventData);
                     ngToast.create({
                         className: 'success',
                         content: "Event simulated!"

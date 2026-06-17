@@ -83,9 +83,8 @@
                     }
                 }
 
-                function getConditionTypes(triggerData) {
-                    return backendCommunicator
-                        .fireEventSync("getConditionTypes", triggerData)
+                async function getConditionTypes(triggerData) {
+                    return (await backendCommunicator.fireEventAsync("conditions:get-condition-types", triggerData))
                         .map((ct) => {
                             ct.getRightSidePresetValues = eval(ct.getRightSidePresetValues); // eslint-disable-line no-eval
                             ct.getLeftSidePresetValues = eval(ct.getLeftSidePresetValues); // eslint-disable-line no-eval
@@ -96,7 +95,7 @@
                         });
                 }
 
-                function reloadConditions() {
+                async function reloadConditions() {
                     if ($ctrl.conditionData == null) {
                         $ctrl.conditionData = {
                             mode: "exclusive",
@@ -110,7 +109,7 @@
                     /*
                         ,
                     */
-                    conditionDefintions = getConditionTypes();
+                    conditionDefintions = await getConditionTypes();
                 }
 
                 $ctrl.getConditionModeDisplay = function() {
@@ -121,13 +120,13 @@
                     return conditionDefintions.find(fd => fd.id === typeId);
                 };
 
-                $ctrl.$onInit = function() {
-                    reloadConditions();
+                $ctrl.$onInit = async () => {
+                    await reloadConditions();
                     validateConditionValues();
                 };
 
-                $ctrl.$onChanges = function() {
-                    reloadConditions();
+                $ctrl.$onChanges = async () => {
+                    await reloadConditions();
                 };
 
                 $ctrl.hasConditionsAvailable = function() {

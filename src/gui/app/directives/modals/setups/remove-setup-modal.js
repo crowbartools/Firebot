@@ -170,8 +170,8 @@
                     }
                 };
 
-                $ctrl.removeSetup = () => {
-                    const success = backendCommunicator.fireEventSync("setups:remove-setup-components", {
+                $ctrl.removeSetup = async () => {
+                    const success = await backendCommunicator.fireEventAsync("setups:remove-setup-components", {
                         components: $ctrl.componentsToRemove
                     });
 

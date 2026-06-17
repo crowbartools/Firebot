@@ -56,8 +56,8 @@ class SetupManager {
             }) => await this.importSetup(setup, selectedCurrency)
         );
 
-        frontendCommunicator.on("setups:remove-setup-components",
-            ({ components }: { components: FirebotSetup["components"] }) =>
+        frontendCommunicator.onAsync("setups:remove-setup-components",
+            async ({ components }: { components: FirebotSetup["components"] }) =>
                 this.removeSetupComponents(components));
     }
 

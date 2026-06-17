@@ -97,8 +97,8 @@ class ConditionManager extends EventEmitter {
 
 const manager = new ConditionManager();
 
-frontendCommunicator.on("getConditionTypes", (trigger) => {
-    logger.info("got 'getConditionTypes' request");
+frontendCommunicator.onAsync("conditions:get-condition-types", async (trigger) => {
+    logger.info(`Got "conditions:get-condition-types" request`);
 
     let conditionTypes = manager.getAllConditionTypes();
     if (trigger != null) {

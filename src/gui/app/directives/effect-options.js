@@ -16,7 +16,7 @@
                 replace: true,
                 template: `<div><div id="child"></div></div>`,
                 link: function($scope, element) {
-                    $scope.$watch("type", function() {
+                    $scope.$watch("effectDef", function() {
                         const effectDef = $scope.effectDef;
 
                         if (effectDef == null) {
@@ -33,16 +33,16 @@
                         element.children("#child").replaceWith(template);
                     });
                 },
-                controller: ($scope, $injector, backendCommunicator) => {
+                controller: async ($scope, $injector, backendCommunicator) => {
                     // Add common options to the scope so we can access them in any effect option template
                     $scope.commonOptions = effectHelperService.commonOptionsForEffectTypes;
 
                     // We want to locate the controller of the given effect type (if there is one)
                     // and run it.
-                    function findController() {
+                    async function findController() {
 
-                        const effectDef = backendCommunicator.fireEventSync(
-                            "getEffectDefinition",
+                        const effectDef = await backendCommunicator.fireEventAsync(
+                            "effects:get-effect-definition",
                             $scope.type
                         );
                         $scope.effectDef = effectDef;
@@ -61,15 +61,15 @@
                     }
 
                     // Find controller on initial load.
-                    findController();
+                    await findController();
 
                     // Find new controller if the user changes the type via the dropdown
-                    $scope.$watch("type", function(newValue, oldValue) {
+                    $scope.$watch("type", async (newValue, oldValue) => {
                         if (newValue === oldValue) {
                             return;
                         }
 
-                        findController();
+                        await findController();
                     });
                 }
             };

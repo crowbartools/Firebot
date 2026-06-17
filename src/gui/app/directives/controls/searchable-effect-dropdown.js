@@ -27,7 +27,7 @@
 
                 if (!effectDefs) {
                     effectDefs = await backendCommunicator
-                        .fireEventAsync("getEffectDefinitions", {
+                        .fireEventAsync("effects:get-effect-defintitions", {
                             triggerType: ctrl.trigger,
                             triggerMeta: ctrl.triggerMeta
                         });

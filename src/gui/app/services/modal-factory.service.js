@@ -463,7 +463,7 @@
                     keyboard: false,
                     backdrop: "static",
                     windowClass: "effect-edit-modal",
-                    controllerFunc: function (
+                    controllerFunc: async function (
                         $scope,
                         $rootScope,
                         $uibModalInstance,
@@ -488,9 +488,7 @@
                         $scope.modalId = modalId;
 
                         $scope.isAddMode = isNew;
-                        $scope.effectDefinition = effectHelperService.getEffectDefinition(
-                            $scope.effect.type
-                        );
+                        $scope.effectDefinition = await effectHelperService.getEffectDefinition($scope.effect.type);
 
                         $scope.getOverflowMenu = () => {
                             return [
@@ -568,8 +566,8 @@
                             ];
                         };
 
-                        function effectTypeUpdated() {
-                            $scope.effectDefinition = effectHelperService.getEffectDefinition(
+                        async function effectTypeUpdated() {
+                            $scope.effectDefinition = await effectHelperService.getEffectDefinition(
                                 $scope.effect.type
                             );
                             utilityService.updateNameForSlidingModal(
@@ -578,7 +576,7 @@
                             );
                         }
 
-                        $scope.effectTypeChanged = function(effectType) {
+                        $scope.effectTypeChanged = async (effectType) => {
                             if ($scope.effect && $scope.effect.type === effectType.id) {
                                 return;
                             }
@@ -589,7 +587,7 @@
                                 type: effectType.id
                             };
 
-                            effectTypeUpdated();
+                            await effectTypeUpdated();
                         };
 
                         $scope.openModals = utilityService.getSlidingModalNamesAndIds();
@@ -630,13 +628,13 @@
                                     triggerMeta: () => triggerMeta,
                                     selectedEffectTypeId: () => $scope.effect && $scope.effect.type
                                 },
-                                closeCallback: (resp) => {
+                                closeCallback: async (resp) => {
                                     if (resp == null) {
                                         return;
                                     }
                                     const { selectedEffectDef } = resp;
 
-                                    $scope.effectTypeChanged(selectedEffectDef);
+                                    await $scope.effectTypeChanged(selectedEffectDef);
                                 }
                             });
                         };
@@ -849,10 +847,10 @@
                             updateDefaultLabels();
                         }, true);
 
-                        $scope.paste = async function() {
+                        $scope.paste = async () => {
                             if ($scope.hasCopiedEffect()) {
                                 $scope.effect = (await objectCopyHelper.getCopiedEffects(triggerType, triggerMeta))[0];
-                                effectTypeUpdated();
+                                await effectTypeUpdated();
                             }
                         };
 
@@ -878,27 +876,6 @@
                         $scope.dismiss = function() {
                             $uibModalInstance.dismiss();
                         };
-
-
-                        /*$scope.footerIsStuck = false;
-                        //scroll sentinel
-                        this.$onInit = function() {
-
-                            $timeout(() => {
-                                let observer = new IntersectionObserver(entries => {
-                                    let entry = entries[0];
-
-                                    $q.resolve(!entry.isIntersecting, (stuck) => {
-                                        $scope.footerIsStuck = stuck;
-                                    });
-                                });
-
-                                let sentinel = document.querySelector('.effect-footer-sentinel');
-                                if (sentinel != null) {
-                                    observer.observe(sentinel);
-                                }
-                            }, 100);
-                        };*/
                     },
                     resolveObj: {
                         effect: () => {

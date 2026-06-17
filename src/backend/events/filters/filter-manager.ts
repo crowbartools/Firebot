@@ -18,7 +18,7 @@ class FilterManager extends EventEmitter {
     constructor() {
         super();
 
-        frontendCommunicator.on("getFiltersForEvent", (data: EventSourceAndId) => {
+        frontendCommunicator.onAsync("filters:get-for-event", async (data: EventSourceAndId) => {
             this.logger.info("got 'get all filters' request");
             const { eventSourceId, eventId } = data;
             return this.getFiltersForEvent(eventSourceId, eventId).map((f) => {

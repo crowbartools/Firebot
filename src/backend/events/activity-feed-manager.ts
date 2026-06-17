@@ -42,7 +42,7 @@ class ActivityFeedManager {
             this.retriggerActivity(activity);
         });
 
-        frontendCommunicator.on("activity-feed:get-activity-feed-supported-events", () => {
+        frontendCommunicator.onAsync("activity-feed:get-activity-feed-supported-events", async () => {
             return EventManager
                 .getAllEventSources()
                 .map(es =>

@@ -17,12 +17,12 @@
                 };
             };
 
-            service.getEffectDefinition = function(id) {
+            service.getEffectDefinition = async (id) => {
                 if (id == null) {
                     return null;
                 }
 
-                const effectDef = backendCommunicator.fireEventSync("getEffectDefinition", id);
+                const effectDef = await backendCommunicator.fireEventAsync("effects:get-effect-definition", id);
 
                 if (effectDef == null) {
                     return null;

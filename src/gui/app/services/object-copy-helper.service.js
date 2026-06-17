@@ -28,7 +28,7 @@
                 let effectDefs;
                 if (triggerType) {
                     effectDefs = await backendCommunicator
-                        .fireEventAsync("getEffectDefinitions", {
+                        .fireEventAsync("effects:get-effect-defintitions", {
                             triggerType: triggerType,
                             triggerMeta: triggerMeta
                         });

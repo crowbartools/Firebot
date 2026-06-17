@@ -36,8 +36,11 @@
         controller: function(backendCommunicator) {
             const ctrl = this;
 
-            const events = backendCommunicator.fireEventSync("events:get-all-events", false);
-            const sources = backendCommunicator.fireEventSync("events:get-all-event-sources", false);
+            let events = [], sources = [];
+            const loadEvents = async () => {
+                events = await backendCommunicator.fireEventAsync("events:get-all-events");
+                sources = await backendCommunicator.fireEventAsync("events:get-all-event-sources");
+            };
 
             const getSelected = () => {
                 // sort events by name
@@ -56,7 +59,8 @@
             };
 
             // when the element is initialized
-            ctrl.$onInit = () => {
+            ctrl.$onInit = async () => {
+                await loadEvents();
                 getSelected();
 
                 // Add source info to event objects for filtering

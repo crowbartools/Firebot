@@ -119,12 +119,11 @@
                         });*/
                 }
 
-                $ctrl.$onInit = function() {
-
-                    $ctrl.restrictionDefinitions = backendCommunicator.fireEventSync("getRestrictions", {
+                $ctrl.$onInit = async () => {
+                    $ctrl.restrictionDefinitions = (await backendCommunicator.fireEventAsync("restrictions:get-restrictions", {
                         triggerType: $ctrl.trigger,
                         triggerMeta: $ctrl.triggerMeta
-                    })
+                    }))
                         .map((r) => {
                             return {
                                 definition: r.definition,

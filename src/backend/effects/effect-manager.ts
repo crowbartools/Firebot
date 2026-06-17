@@ -44,7 +44,7 @@ class EffectManager extends TypedEmitter<{
             return mapped;
         });
 
-        frontendCommunicator.onAsync("getEffectDefinitions", async (triggerData: {
+        frontendCommunicator.onAsync("effects:get-effect-defintitions", async (triggerData: {
             triggerType: TriggerType;
             triggerMeta: TriggerMeta;
         }) => {
@@ -95,7 +95,7 @@ class EffectManager extends TypedEmitter<{
             return filteredEffectDefs;
         });
 
-        frontendCommunicator.on("getEffectDefinition", (effectId) => {
+        frontendCommunicator.onAsync("effects:get-effect-definition", async (effectId) => {
             this.logger.debug("got effect request", effectId);
             return this.mapEffectForFrontEnd(
                 this.getEffectById(effectId)

@@ -108,7 +108,7 @@
                     }
                 }
 
-                function reloadFilters() {
+                async function reloadFilters() {
                     if ($ctrl.filterData == null) {
                         $ctrl.filterData = {
                             mode: "exclusive",
@@ -119,10 +119,10 @@
                         $ctrl.filterData.filters = [];
                     }
 
-                    filterDefintions = backendCommunicator.fireEventSync("getFiltersForEvent", {
+                    filterDefintions = (await backendCommunicator.fireEventAsync("filters:get-for-event", {
                         eventSourceId: $ctrl.eventSourceId,
                         eventId: $ctrl.eventId
-                    }).map((fd) => {
+                    })).map((fd) => {
                         fd.getPresetValues = eval(fd.getPresetValues); // eslint-disable-line no-eval
                         fd.getSelectedValueDisplay = eval(fd.getSelectedValueDisplay); // eslint-disable-line no-eval
                         fd.valueIsStillValid = eval(fd.valueIsStillValid); // eslint-disable-line no-eval
@@ -144,13 +144,13 @@
                     return filterDefintions.find(fd => fd.id === typeId);
                 };
 
-                $ctrl.$onInit = function() {
-                    reloadFilters();
+                $ctrl.$onInit = async () => {
+                    await reloadFilters();
                     validateFilterValues();
                 };
 
-                $ctrl.$onChanges = function() {
-                    reloadFilters();
+                $ctrl.$onChanges = async () => {
+                    await reloadFilters();
                 };
 
                 $ctrl.hasFiltersAvailable = function() {

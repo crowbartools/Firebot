@@ -35,12 +35,12 @@ class EventManager extends TypedEmitter<{
 
         this.setMaxListeners(0);
 
-        frontendCommunicator.on("events:get-all-event-sources", () => {
+        frontendCommunicator.onAsync("events:get-all-event-sources", async () => {
             this.logger.info("got 'get all event sources' request");
             return simpleClone(this.getAllEventSources());
         });
 
-        frontendCommunicator.on("events:get-all-events", () => {
+        frontendCommunicator.onAsync("events:get-all-events", async () => {
             this.logger.info("got 'get all events' request");
             return simpleClone(this.getAllEvents());
         });
@@ -90,7 +90,7 @@ class EventManager extends TypedEmitter<{
             }
         });
 
-        frontendCommunicator.on("events:get-event-source", (event: {
+        frontendCommunicator.onAsync("events:get-event-source", async (event: {
             sourceId: string;
             eventId: string;
         }) => {

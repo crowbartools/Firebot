@@ -25,7 +25,7 @@ class RestrictionsManager extends TypedEmitter<Events> {
     constructor() {
         super();
 
-        frontendCommunicator.on("getRestrictions", (triggerData: {
+        frontendCommunicator.onAsync("restrictions:get-restrictions", async (triggerData: {
             triggerType: TriggerType;
             triggerMeta: TriggerMeta;
         }) => {
