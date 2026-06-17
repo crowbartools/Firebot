@@ -16,8 +16,8 @@
 
         service.eventSetSettings = {};
 
-        function loadAllEventData() {
-            const eventData = backendCommunicator.fireEventSync("getAllEventData");
+        async function loadAllEventData() {
+            const eventData = await backendCommunicator.fireEventAsync("events:get-all-event-data");
 
             if (eventData.mainEvents) {
                 mainEvents = eventData.mainEvents;
@@ -31,8 +31,8 @@
         }
         loadAllEventData();
 
-        backendCommunicator.on("main-events-update", () => {
-            loadAllEventData();
+        backendCommunicator.onAsync("main-events-update", async () => {
+            await loadAllEventData();
         });
 
         backendCommunicator.on("event-group-update", (group) => {

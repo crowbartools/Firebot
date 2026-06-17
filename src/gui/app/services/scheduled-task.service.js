@@ -24,14 +24,14 @@
                 service.scheduledTasks = scheduledTasks;
             });
 
-            service.loadScheduledTasks = () => {
-                service.scheduledTasks = backendCommunicator.fireEventSync("scheduled-tasks:get-scheduled-tasks");
+            service.loadScheduledTasks = async () => {
+                service.scheduledTasks = await backendCommunicator.fireEventAsync("scheduled-tasks:get-scheduled-tasks");
             };
 
             service.getScheduledTasks = () => service.scheduledTasks;
 
-            service.saveScheduledTask = (scheduledTask) => {
-                const savedScheduledTask = backendCommunicator.fireEventSync("scheduled-tasks:save-scheduled-task", scheduledTask);
+            service.saveScheduledTask = async (scheduledTask) => {
+                const savedScheduledTask = await backendCommunicator.fireEventAsync("scheduled-tasks:save-scheduled-task", scheduledTask);
 
                 if (savedScheduledTask) {
                     updateScheduledTask(savedScheduledTask);
@@ -123,7 +123,7 @@
                 return service.scheduledTasks.some(t => t.name === name);
             };
 
-            service.duplicateScheduledTask = (scheduledTaskId) => {
+            service.duplicateScheduledTask = async (scheduledTaskId) => {
                 const scheduledTask = service.scheduledTasks.find(t => t.id === scheduledTaskId);
                 if (scheduledTask == null) {
                     return;
@@ -135,7 +135,7 @@
                     copiedScheduledTask.name += " copy";
                 }
 
-                const successful = service.saveScheduledTask(copiedScheduledTask);
+                const successful = await service.saveScheduledTask(copiedScheduledTask);
                 if (successful) {
                     ngToast.create({
                         className: 'success',

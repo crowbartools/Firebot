@@ -21,7 +21,7 @@ class CurrencyAccess extends EventEmitter {
     constructor() {
         super();
 
-        frontendCommunicator.on("currencies:get-currencies", () => {
+        frontendCommunicator.onAsync("currencies:get-currencies", async () => {
             return this.getCurrencies();
         });
 

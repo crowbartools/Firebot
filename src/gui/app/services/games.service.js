@@ -8,8 +8,8 @@
 
             service.games = [];
 
-            service.loadGames = () => {
-                const games = backendCommunicator.fireEventSync("games:get-games");
+            service.loadGames = async () => {
+                const games = await backendCommunicator.fireEventAsync("games:get-games");
                 if (games) {
                     service.games = games;
                 }

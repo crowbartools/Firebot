@@ -20,11 +20,11 @@ class CounterManager extends JsonDbManager<Counter> {
     constructor() {
         super("Counter", "/counters/counters", "Counters");
 
-        frontendCommunicator.on("counters:get-counters",
-            () => this.getAllItems());
+        frontendCommunicator.onAsync("counters:get-counters",
+            async () => this.getAllItems());
 
-        frontendCommunicator.on("counters:save-counter",
-            (counter: Counter) => this.saveItem(counter));
+        frontendCommunicator.onAsync("counters:save-counter",
+            async (counter: Counter) => this.saveItem(counter));
 
         frontendCommunicator.on("counters:save-all-counters",
             (allCounters: Counter[]) => this.saveAllItems(allCounters));
@@ -32,8 +32,8 @@ class CounterManager extends JsonDbManager<Counter> {
         frontendCommunicator.on("counters:delete-counter",
             (counterId: string) => this.deleteItem(counterId));
 
-        frontendCommunicator.on("counters:get-counter-file-path",
-            (counterName: string) => this.getCounterTxtFilePath(counterName));
+        frontendCommunicator.onAsync("counters:get-counter-file-path",
+            async (counterName: string) => this.getCounterTxtFilePath(counterName));
     }
 
     /**

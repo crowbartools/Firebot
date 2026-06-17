@@ -27,7 +27,7 @@ class EventsAccess {
     private _sortTags: SortTag[] = [];
 
     constructor() {
-        frontendCommunicator.on("getAllEventData", () => {
+        frontendCommunicator.onAsync("events:get-all-event-data", async () => {
             this.logger.debug("got 'get all event data' request");
             return {
                 mainEvents: Array.isArray(this._mainEvents)

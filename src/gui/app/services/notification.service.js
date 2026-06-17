@@ -34,8 +34,8 @@
                 backendCommunicator.send("notifications:delete-notification", id);
             };
 
-            service.loadAllNotifications = () => {
-                notificationCache = backendCommunicator.fireEventSync("notifications:get-all-notifications") ?? [];
+            service.loadAllNotifications = async () => {
+                notificationCache = await backendCommunicator.fireEventAsync("notifications:get-all-notifications") ?? [];
             };
 
             service.getIconClass = (type) => {

@@ -14,7 +14,7 @@ class GameManager {
     private _allGamesSettings: Record<string, GameSettings> = {};
 
     constructor() {
-        frontendCommunicator.on("games:get-games", () => {
+        frontendCommunicator.onAsync("games:get-games", async () => {
             return this.getGames();
         });
 

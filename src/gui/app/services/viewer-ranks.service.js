@@ -33,8 +33,8 @@
                 }
             };
 
-            backendCommunicator.on("rank-ladders:updated", () => {
-                service.loadRankLadders();
+            backendCommunicator.onAsync("rank-ladders:updated", async () => {
+                await service.loadRankLadders();
             });
 
             /**
@@ -70,12 +70,12 @@
 
             service.saveAllRankLadders = function(ladders) {
                 service.rankLadders = ladders;
-                backendCommunicator.fireEvent("rank-ladders:save-all", JSON.parse(angular.toJson(ladders)));
+                backendCommunicator.send("rank-ladders:save-all", JSON.parse(angular.toJson(ladders)));
             };
 
             service.deleteRankLadder = function(ladderId) {
                 service.rankLadders = service.rankLadders.filter(t => t.id !== ladderId);
-                backendCommunicator.fireEvent("rank-ladders:delete", ladderId);
+                backendCommunicator.send("rank-ladders:delete", ladderId);
             };
 
             service.duplicateRankLadder = (ladderId) => {

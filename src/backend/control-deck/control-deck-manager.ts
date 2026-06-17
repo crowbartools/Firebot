@@ -16,16 +16,16 @@ class ControlDeckManager extends JsonDbManager<ControlDeck> {
     constructor() {
         super("Control Deck", "/control-deck/decks", "Control Deck");
 
-        frontendCommunicator.on("control-deck:get-decks",
-            () => this.getAllItems()
+        frontendCommunicator.onAsync("control-deck:get-decks",
+            async () => this.getAllItems()
         );
 
-        frontendCommunicator.on("control-deck:get-deck",
-            (deckId: string) => this.getItem(deckId)
+        frontendCommunicator.onAsync("control-deck:get-deck",
+            async (deckId: string) => this.getItem(deckId)
         );
 
-        frontendCommunicator.on("control-deck:save-deck",
-            (deck: ControlDeck) => this.saveDeck(deck)
+        frontendCommunicator.onAsync("control-deck:save-deck",
+            async (deck: ControlDeck) => this.saveDeck(deck)
         );
 
         frontendCommunicator.on("control-deck:delete-deck",

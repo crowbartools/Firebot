@@ -19,8 +19,8 @@
                 }
             }
 
-            service.loadPresetEffectLists = () => {
-                service.presetEffectLists = backendCommunicator.fireEventSync("preset-effect-lists:get-preset-effect-lists");
+            service.loadPresetEffectLists = async () => {
+                service.presetEffectLists = await backendCommunicator.fireEventAsync("preset-effect-lists:get-preset-effect-lists");
             };
 
             backendCommunicator.on("all-preset-lists", (presetEffectLists) => {

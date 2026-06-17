@@ -18,16 +18,16 @@
             };
 
             // Refresh commands cache
-            service.refreshCommands = function() {
-                service.commandsCache = backendCommunicator.fireEventSync("get-all-commands");
+            service.refreshCommands = async () => {
+                service.commandsCache = await backendCommunicator.fireEventAsync("get-all-commands");
             };
 
-            backendCommunicator.on("system-commands-updated", () => {
-                service.refreshCommands();
+            backendCommunicator.onAsync("system-commands-updated", async () => {
+                await service.refreshCommands();
             });
 
-            backendCommunicator.on("custom-commands-updated", () => {
-                service.refreshCommands();
+            backendCommunicator.onAsync("custom-commands-updated", async () => {
+                await service.refreshCommands();
             });
 
             service.getSystemCommands = () => service.commandsCache.systemCommands;
@@ -108,7 +108,7 @@
                 service.commandsCache.customCommands = service.commandsCache.customCommands.filter(c => c.id !== id);
             });
 
-            backendCommunicator.on("command-count-update", ({commandId, count}) => {
+            backendCommunicator.on("command-count-update", ({ commandId, count }) => {
                 const command = service.getCustomCommands().find(c => c.id === commandId);
 
                 if (command != null) {

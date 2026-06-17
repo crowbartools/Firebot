@@ -312,7 +312,7 @@
                     }
                 };
 
-                $ctrl.save = () => {
+                $ctrl.save = async () => {
                     $scope.widgetSettings.$setSubmitted();
                     if ($scope.widgetSettings.$invalid) {
                         $ctrl.scrollToFirstInvalidField();
@@ -339,7 +339,7 @@
                         delete $ctrl.widget.exitAnimation;
                     }
 
-                    const successful = overlayWidgetsService.saveOverlayWidgetConfig($ctrl.widget, $ctrl.isNewWidget);
+                    const successful = await overlayWidgetsService.saveOverlayWidgetConfig($ctrl.widget, $ctrl.isNewWidget);
 
                     if (successful) {
                         $ctrl.dismiss();

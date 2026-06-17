@@ -9,12 +9,12 @@ class EffectQueueConfigManager extends JsonDbManager<EffectQueueConfig> {
     constructor() {
         super("Effect Queue", "/effects/effectqueues", "Effect Queues");
 
-        frontendCommunicator.on("effect-queues:get-effect-queues",
-            () => this.getAllItems()
+        frontendCommunicator.onAsync("effect-queues:get-effect-queues",
+            async () => this.getAllItems()
         );
 
-        frontendCommunicator.on("effect-queues:save-effect-queue",
-            (effectQueue: EffectQueueConfig) => this.saveItem(effectQueue)
+        frontendCommunicator.onAsync("effect-queues:save-effect-queue",
+            async (effectQueue: EffectQueueConfig) => this.saveItem(effectQueue)
         );
 
         frontendCommunicator.on("effect-queues:save-all-effect-queues",

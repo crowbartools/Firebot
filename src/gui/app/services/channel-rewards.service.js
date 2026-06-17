@@ -124,17 +124,15 @@
             };
 
             service.loadingRedemptions = false;
-            service.refreshChannelRewardRedemptions = () => {
+            service.refreshChannelRewardRedemptions = async () => {
                 if (service.loadingRedemptions) {
                     return;
                 }
 
                 service.loadingRedemptions = true;
 
-                $q.when(backendCommunicator.fireEventAsync("refresh-channel-reward-redemptions"))
-                    .then(() => {
-                        service.loadingRedemptions = false;
-                    });
+                await backendCommunicator.fireEventAsync("refresh-channel-reward-redemptions");
+                service.loadingRedemptions = false;
             };
 
             service.getRewardIdsWithRedemptions = () => {

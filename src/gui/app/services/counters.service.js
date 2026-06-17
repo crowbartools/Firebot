@@ -17,8 +17,8 @@
                 }
             };
 
-            service.loadCounters = () => {
-                service.counters = backendCommunicator.fireEventSync("counters:get-counters");
+            service.loadCounters = async () => {
+                service.counters = await backendCommunicator.fireEventAsync("counters:get-counters");
             };
 
             service.getCounter = (counterId) => {
@@ -30,12 +30,12 @@
                 backendCommunicator.fireEvent("counters:delete-counter", counterId);
             };
 
-            service.saveCounter = (counter) => {
+            service.saveCounter = async (counter) => {
                 if (counter == null) {
                     return;
                 }
 
-                const savedCounter = backendCommunicator.fireEventSync("counters:save-counter", counter);
+                const savedCounter = await backendCommunicator.fireEventAsync("counters:save-counter", counter);
                 if (savedCounter) {
                     updateCounter(savedCounter);
                     return true;
@@ -49,14 +49,14 @@
                     service.counters = counters;
                 }
 
-                backendCommunicator.fireEvent("counters:save-all-counters", service.counters);
+                backendCommunicator.send("counters:save-all-counters", service.counters);
             };
 
             service.counterNameExists = (name) => {
                 return service.counters.some(c => c.name === name);
             };
 
-            service.duplicateCounter = (counterId) => {
+            service.duplicateCounter = async (counterId) => {
                 const counter = service.counters.find(c => c.id === counterId);
                 if (counter == null) {
                     return;
@@ -68,7 +68,7 @@
                     copiedCounter.name += " copy";
                 }
 
-                const successful = service.saveCounter(copiedCounter);
+                const successful = await service.saveCounter(copiedCounter);
                 if (successful) {
                     ngToast.create({
                         className: 'success',
@@ -79,12 +79,12 @@
                 }
             };
 
-            service.getTxtFilePath = (counterName) => {
+            service.getTxtFilePath = async (counterName) => {
                 if (counterName == null) {
                     return "";
                 }
 
-                return backendCommunicator.fireEventSync("counters:get-counter-file-path", counterName);
+                return await backendCommunicator.fireEventAsync("counters:get-counter-file-path", counterName);
             };
 
             backendCommunicator.on("counters:counter-updated", (counter) => {

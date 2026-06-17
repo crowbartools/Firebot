@@ -114,7 +114,7 @@ class ChatModerationManager {
             return this.saveChatModerationSettings(settings);
         });
 
-        frontendCommunicator.on("chat-moderation:get-chat-moderation-data", () => {
+        frontendCommunicator.onAsync("chat-moderation:get-chat-moderation-data", async () => {
             return {
                 settings: this.chatModerationSettings,
                 bannedWords: this.bannedWords.words,

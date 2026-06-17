@@ -5,7 +5,11 @@
         const service = {};
 
         // The currency settings.
-        service.currencies = Object.values(backendCommunicator.fireEventSync("currencies:get-currencies"));
+        service.currencies = [];
+        async function loadCurrencies() {
+            service.currencies = Object.values(await backendCommunicator.fireEventAsync("currencies:get-currencies"));
+        }
+        loadCurrencies();
 
         // This will get currency information.
         // Can pass option param to just get one currency, otherwise it gets all of them.

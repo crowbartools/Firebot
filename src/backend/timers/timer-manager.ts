@@ -18,12 +18,12 @@ class TimerManager extends JsonDbManager<Timer> {
     constructor() {
         super("Timer", "timers", "Timers");
 
-        frontendCommunicator.on("timers:get-timers",
-            () => this.getAllItems()
+        frontendCommunicator.onAsync("timers:get-timers",
+            async () => this.getAllItems()
         );
 
-        frontendCommunicator.on("timers:save-timer",
-            (timer: Timer) => this.saveItem(timer)
+        frontendCommunicator.onAsync("timers:save-timer",
+            async (timer: Timer) => this.saveItem(timer)
         );
 
         frontendCommunicator.on("timers:save-all-timers",

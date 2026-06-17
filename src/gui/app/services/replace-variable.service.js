@@ -9,9 +9,14 @@
             /**
              * @type {Array<import("../../../types").ReplaceVariable['definition']>}
              */
-            service.allVariables = backendCommunicator.fireEventSync("variables:get-replace-variable-definitions");
+            service.allVariables = [];
+            service.additionalVariableEvents = {};
+            async function loadVariables() {
+                service.allVariables = await backendCommunicator.fireEventAsync("variables:get-replace-variable-definitions");
+                service.additionalVariableEvents = await backendCommunicator.fireEventAsync("variables:get-additional-variable-events");
+            }
+            loadVariables();
 
-            service.additionalVariableEvents = backendCommunicator.fireEventSync("variables:get-additional-variable-events");
 
             service.triggerCache = {};
 

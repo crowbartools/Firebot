@@ -9,8 +9,8 @@
             /** @type {import("../../../types").FontAwesomeIcon[]} */
             service.icons = [];
 
-            service.loadFontAwesomeIcons = () => {
-                const icons = backendCommunicator.fireEventSync("all-font-awesome-icons");
+            service.loadFontAwesomeIcons = async () => {
+                const icons = await backendCommunicator.fireEventAsync("all-font-awesome-icons");
 
                 if (icons) {
                     service.icons = icons;

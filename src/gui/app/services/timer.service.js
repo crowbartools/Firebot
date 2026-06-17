@@ -24,14 +24,14 @@
                 service.timers = timers;
             });
 
-            service.loadTimers = () => {
-                service.timers = backendCommunicator.fireEventSync("timers:get-timers");
+            service.loadTimers = async () => {
+                service.timers = await backendCommunicator.fireEventAsync("timers:get-timers");
             };
 
             service.getTimers = () => service.timers;
 
-            service.saveTimer = (timer) => {
-                const savedTimer = backendCommunicator.fireEventSync("timers:save-timer", timer);
+            service.saveTimer = async (timer) => {
+                const savedTimer = await backendCommunicator.fireEventAsync("timers:save-timer", timer);
                 if (savedTimer) {
                     updateTimer(savedTimer);
                     return true;
@@ -41,7 +41,7 @@
 
             service.saveAllTimers = function(timers) {
                 service.timers = timers;
-                backendCommunicator.fireEvent("timers:save-all-timers", timers);
+                backendCommunicator.send("timers:save-all-timers", timers);
             };
 
             service.toggleTimerActiveState = function(timer) {
@@ -57,7 +57,7 @@
                 return service.timers.some(t => t.name === name);
             };
 
-            service.duplicateTimer = (timerId) => {
+            service.duplicateTimer = async (timerId) => {
                 const timer = service.timers.find(t => t.id === timerId);
                 if (timer == null) {
                     return;
@@ -69,7 +69,7 @@
                     copiedTimer.name += " copy";
                 }
 
-                const successful = service.saveTimer(copiedTimer);
+                const successful = await service.saveTimer(copiedTimer);
                 if (successful) {
                     ngToast.create({
                         className: 'success',

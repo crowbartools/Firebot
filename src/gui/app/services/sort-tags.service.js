@@ -19,8 +19,8 @@
              */
             const selectedSortTags = {};
 
-            service.loadSortTags = () => {
-                sortTags = backendCommunicator.fireEventSync("sort-tags:get-sort-tags");
+            service.loadSortTags = async () => {
+                sortTags = await backendCommunicator.fireEventAsync("sort-tags:get-sort-tags");
             };
 
             /**

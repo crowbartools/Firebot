@@ -19,8 +19,8 @@
                 }
             };
 
-            service.loadEffectQueues = () => {
-                const effectQueues = backendCommunicator.fireEventSync("effect-queues:get-effect-queues");
+            service.loadEffectQueues = async () => {
+                const effectQueues = await backendCommunicator.fireEventAsync("effect-queues:get-effect-queues");
                 if (effectQueues != null) {
                     service.effectQueues = effectQueues;
                 }
@@ -81,8 +81,8 @@
                 return service.effectQueues.find(eq => eq.id === id);
             };
 
-            service.saveEffectQueue = (effectQueue) => {
-                const savedEffectQueue = backendCommunicator.fireEventSync("effect-queues:save-effect-queue", effectQueue);
+            service.saveEffectQueue = async (effectQueue) => {
+                const savedEffectQueue = await backendCommunicator.fireEventAsync("effect-queues:save-effect-queue", effectQueue);
 
                 if (savedEffectQueue != null) {
                     updateEffectQueue(savedEffectQueue);
@@ -111,7 +111,7 @@
                 return service.effectQueues.some(eq => eq.name === name);
             };
 
-            service.duplicateEffectQueue = (effectQueueId) => {
+            service.duplicateEffectQueue = async (effectQueueId) => {
                 const effectQueue = service.effectQueues.find(eq => eq.id === effectQueueId);
                 if (effectQueue == null) {
                     return;
@@ -124,7 +124,7 @@
                     copiedEffectQueue.name += " copy";
                 }
 
-                const successful = service.saveEffectQueue(copiedEffectQueue);
+                const successful = await service.saveEffectQueue(copiedEffectQueue);
                 if (successful) {
                     ngToast.create({
                         className: 'success',

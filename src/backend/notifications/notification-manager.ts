@@ -25,7 +25,7 @@ class NotificationManager {
     };
 
     constructor() {
-        frontendCommunicator.on("notifications:get-all-notifications", () => {
+        frontendCommunicator.onAsync("notifications:get-all-notifications", async () => {
             return this.getNotifications();
         });
 

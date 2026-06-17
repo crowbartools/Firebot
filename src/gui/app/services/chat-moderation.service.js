@@ -47,8 +47,8 @@
                 userAllowlist: []
             };
 
-            service.loadChatModerationData = () => {
-                const data = backendCommunicator.fireEventSync("chat-moderation:get-chat-moderation-data");
+            service.loadChatModerationData = async () => {
+                const data = await backendCommunicator.fireEventAsync("chat-moderation:get-chat-moderation-data");
                 if (data != null) {
                     service.chatModerationData = data;
                 }

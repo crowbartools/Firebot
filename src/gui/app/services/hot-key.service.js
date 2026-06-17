@@ -17,21 +17,21 @@
                 }
             };
 
-            service.loadHotkeys = () => {
-                service.hotkeys = backendCommunicator.fireEventSync("hotkeys:get-hotkeys");
+            service.loadHotkeys = async () => {
+                service.hotkeys = await backendCommunicator.fireEventAsync("hotkeys:get-hotkeys");
             };
 
             service.deleteHotkey = (hotkeyId) => {
                 service.hotkeys = service.hotkeys.filter(hk => hk.id !== hotkeyId);
-                backendCommunicator.fireEvent("hotkeys:delete-hotkey", hotkeyId);
+                backendCommunicator.send("hotkeys:delete-hotkey", hotkeyId);
             };
 
-            service.saveHotkey = (hotkey) => {
+            service.saveHotkey = async (hotkey) => {
                 if (hotkey == null) {
                     return;
                 }
 
-                const savedHotkey = backendCommunicator.fireEventSync("hotkeys:save-hotkey", hotkey);
+                const savedHotkey = await backendCommunicator.fireEventAsync("hotkeys:save-hotkey", hotkey);
                 if (savedHotkey) {
                     updateHotkey(savedHotkey);
                     return true;
@@ -45,7 +45,7 @@
                     service.hotkeys = hotkeys;
                 }
 
-                backendCommunicator.fireEvent("hotkeys:save-all-hotkeys", service.hotkeys);
+                backendCommunicator.send("hotkeys:save-all-hotkeys", service.hotkeys);
             };
 
             service.toggleHotkeyActiveState = (hotkey) => {

@@ -14,7 +14,7 @@ class SortTagManager {
     sortTags: SortTagCache = { };
 
     constructor() {
-        frontendCommunicator.on("sort-tags:get-sort-tags", () => {
+        frontendCommunicator.onAsync("sort-tags:get-sort-tags", async () => {
             return this.sortTags ?? { };
         });
 

@@ -26,19 +26,19 @@ class FontManager {
     cachedFonts: FirebotFont[] = [];
 
     constructor() {
-        frontendCommunicator.on("fonts:get-font-folder-path", () => {
+        frontendCommunicator.onAsync("fonts:get-font-folder-path", async () => {
             return this.fontsFolder;
         });
 
-        frontendCommunicator.on("fonts:get-generated-css-path", () => {
+        frontendCommunicator.onAsync("fonts:get-generated-css-path", async () => {
             return this.fontCssPath;
         });
 
-        frontendCommunicator.on("fonts:get-installed-fonts", () => {
+        frontendCommunicator.onAsync("fonts:get-installed-fonts", async () => {
             return this.cachedFonts;
         });
 
-        frontendCommunicator.on("fonts:get-font", (name: string) => {
+        frontendCommunicator.onAsync("fonts:get-font", async (name: string) => {
             return this.getFont(name);
         });
 

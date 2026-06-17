@@ -7,8 +7,8 @@ class PresetEffectListManager extends JsonDbManager<PresetEffectList> {
     constructor() {
         super("Preset Effect List", "/effects/preset-effect-lists", "Preset Effect Lists");
 
-        frontendCommunicator.on("preset-effect-lists:get-preset-effect-lists",
-            () => this.getAllItems()
+        frontendCommunicator.onAsync("preset-effect-lists:get-preset-effect-lists",
+            async () => this.getAllItems()
         );
 
         frontendCommunicator.on("preset-effect-lists:save-preset-effect-list",

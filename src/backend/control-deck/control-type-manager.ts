@@ -15,8 +15,8 @@ class ControlDeckControlTypeManager {
     private controlTypes: Map<string, ControlDeckControlType<any, any>> = new Map();
 
     constructor() {
-        frontendCommunicator.on("control-deck:get-control-types",
-            () => this.getControlTypesForFrontend()
+        frontendCommunicator.onAsync("control-deck:get-control-types",
+            async () => this.getControlTypesForFrontend()
         );
     }
 

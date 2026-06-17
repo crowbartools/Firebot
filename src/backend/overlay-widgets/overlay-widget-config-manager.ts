@@ -73,11 +73,11 @@ class OverlayWidgetConfigManager extends JsonDbManager<OverlayWidgetConfig, Extr
 
 const manager = new OverlayWidgetConfigManager();
 
-frontendCommunicator.on("overlay-widgets:get-all-configs",
-    () => manager.getAllItems()
+frontendCommunicator.onAsync("overlay-widgets:get-all-configs",
+    async () => manager.getAllItems()
 );
 
-frontendCommunicator.on("overlay-widgets:save-config", (config: OverlayWidgetConfig) => {
+frontendCommunicator.onAsync("overlay-widgets:save-config", async (config: OverlayWidgetConfig) => {
     const existing = manager.getItem(config.id);
     if (existing) {
         config.state = existing.state;
@@ -85,8 +85,8 @@ frontendCommunicator.on("overlay-widgets:save-config", (config: OverlayWidgetCon
     return manager.saveWidgetConfig(config);
 });
 
-frontendCommunicator.on("overlay-widgets:save-new-config",
-    (config: OverlayWidgetConfig) => manager.saveWidgetConfig(config, true)
+frontendCommunicator.onAsync("overlay-widgets:save-new-config",
+    async (config: OverlayWidgetConfig) => manager.saveWidgetConfig(config, true)
 );
 
 frontendCommunicator.on("overlay-widgets:save-all-configs",

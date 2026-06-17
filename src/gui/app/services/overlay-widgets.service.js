@@ -37,25 +37,25 @@
                 }
             };
 
-            service.loadOverlayWidgetTypesAndConfigs = () => {
-                const overlayWidgetTypes = backendCommunicator.fireEventSync("overlay-widgets:get-all-types");
+            service.loadOverlayWidgetTypesAndConfigs = async () => {
+                const overlayWidgetTypes = await backendCommunicator.fireEventAsync("overlay-widgets:get-all-types");
                 if (overlayWidgetTypes) {
                     service.overlayWidgetTypes = overlayWidgetTypes;
                 }
 
-                const overlayWidgetConfigs = backendCommunicator.fireEventSync("overlay-widgets:get-all-configs");
+                const overlayWidgetConfigs = await backendCommunicator.fireEventAsync("overlay-widgets:get-all-configs");
                 if (overlayWidgetConfigs) {
                     service.overlayWidgetConfigs = overlayWidgetConfigs;
                 }
 
-                const stateDisplays = backendCommunicator.fireEventSync("overlay-widgets:get-state-displays");
+                const stateDisplays = await backendCommunicator.fireEventAsync("overlay-widgets:get-state-displays");
                 if (stateDisplays) {
                     service.overlayWidgetStateDisplays = stateDisplays;
                 }
             };
 
-            backendCommunicator.on("overlay-widgets:configs-updated", () => {
-                service.loadOverlayWidgetTypesAndConfigs();
+            backendCommunicator.onAsync("overlay-widgets:configs-updated", async () => {
+                await service.loadOverlayWidgetTypesAndConfigs();
             });
 
             backendCommunicator.on("overlay-widgets:type-registered", (overlayWidgetType) => {
@@ -112,7 +112,7 @@
              * @param {OverlayWidgetConfig} config
              * @returns {void}
              */
-            service.saveOverlayWidgetConfig = (config, isNew = false) => {
+            service.saveOverlayWidgetConfig = async (config, isNew = false) => {
                 const copiedConfig = JSON.parse(angular.toJson(config));
 
                 if (isNew) {
@@ -122,7 +122,7 @@
                     }
                 }
 
-                const savedConfig = backendCommunicator.fireEventSync(
+                const savedConfig = await backendCommunicator.fireEventAsync(
                     isNew ? "overlay-widgets:save-new-config" : "overlay-widgets:save-config",
                     JSON.parse(angular.toJson(copiedConfig))
                 );
@@ -137,12 +137,12 @@
 
             service.saveAllOverlayWidgetConfigs = function(widgetConfigs) {
                 service.overlayWidgetConfigs = widgetConfigs;
-                backendCommunicator.fireEvent("overlay-widgets:save-all-configs", JSON.parse(angular.toJson(widgetConfigs)));
+                backendCommunicator.send("overlay-widgets:save-all-configs", JSON.parse(angular.toJson(widgetConfigs)));
             };
 
             service.deleteOverlayWidgetConfig = function(widgetId) {
                 service.overlayWidgetConfigs = service.overlayWidgetConfigs.filter(t => t.id !== widgetId);
-                backendCommunicator.fireEvent("overlay-widgets:delete-config", widgetId);
+                backendCommunicator.send("overlay-widgets:delete-config", widgetId);
             };
 
             service.toggleOverlayWidgetConfig = (widgetId) => {
@@ -156,7 +156,7 @@
                 service.saveOverlayWidgetConfig(widget);
             };
 
-            service.duplicateOverlayWidget = (widgetId) => {
+            service.duplicateOverlayWidget = async (widgetId) => {
                 const widget = service.overlayWidgetConfigs.find(t => t.id === widgetId);
                 if (widget == null) {
                     return;
@@ -168,7 +168,7 @@
                     copiedWidget.name += " copy";
                 }
 
-                const successful = service.saveOverlayWidgetConfig(copiedWidget, true);
+                const successful = await service.saveOverlayWidgetConfig(copiedWidget, true);
                 if (successful) {
                     ngToast.create({
                         className: 'success',

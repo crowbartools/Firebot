@@ -44,7 +44,7 @@ class IconManager {
     icons: FontAwesomeIcon[] = [];
 
     constructor() {
-        frontendCommunicator.on("all-font-awesome-icons", () => this.icons);
+        frontendCommunicator.onAsync("all-font-awesome-icons", async () => this.icons);
     }
 
     async loadFontAwesomeIcons(): Promise<void> {

@@ -10,12 +10,12 @@
 
             service.controlTypes = [];
 
-            service.loadDecks = () => {
-                service.decks = backendCommunicator.fireEventSync("control-deck:get-decks") || [];
+            service.loadDecks = async () => {
+                service.decks = await backendCommunicator.fireEventAsync("control-deck:get-decks") || [];
             };
 
-            service.loadControlTypes = () => {
-                service.controlTypes = backendCommunicator.fireEventSync("control-deck:get-control-types") || [];
+            service.loadControlTypes = async () => {
+                service.controlTypes = await backendCommunicator.fireEventAsync("control-deck:get-control-types") || [];
             };
 
             service.getControlType = (typeId) => {
@@ -26,11 +26,11 @@
                 return service.decks.find(d => d.id === deckId);
             };
 
-            service.saveDeck = (deck) => {
+            service.saveDeck = async (deck) => {
                 if (deck == null) {
                     return false;
                 }
-                const saved = backendCommunicator.fireEventSync("control-deck:save-deck", deck);
+                const saved = await backendCommunicator.fireEventAsync("control-deck:save-deck", deck);
                 if (saved) {
                     const index = service.decks.findIndex(d => d.id === saved.id);
                     if (index > -1) {

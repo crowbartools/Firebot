@@ -25,8 +25,8 @@
                 return integrations.find(i => i.id === id);
             }
 
-            service.updateIntegrations = function() {
-                integrations = backendCommunicator.fireEventSync("getAllIntegrationDefinitions");
+            service.updateIntegrations = async () => {
+                integrations = await backendCommunicator.fireEventAsync("getAllIntegrationDefinitions");
             };
 
             service.getIntegrations = function() {

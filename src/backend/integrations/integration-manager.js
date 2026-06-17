@@ -441,7 +441,7 @@ frontendCommunicator.on("disconnectIntegration", (integrationId) => {
     manager.disconnectIntegration(integrationId);
 });
 
-frontendCommunicator.on("getAllIntegrationDefinitions", () => {
+frontendCommunicator.onAsync("getAllIntegrationDefinitions", async () => {
     logger.info("got 'get all integrations' request");
     return manager.getAllIntegrationDefinitions();
 });

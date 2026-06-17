@@ -14,23 +14,23 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
 
             let teamRoles = [];
 
-            service.loadCustomRoles = function() {
+            service.loadCustomRoles = async () => {
                 // Check for legacy custom roles file and alert the user if it still exists (it shouldn't by this point)
-                const hasLegacyCustomRoles = backendCommunicator.fireEventSync("check-for-legacy-custom-roles");
+                const hasLegacyCustomRoles = await backendCommunicator.fireEventSync("check-for-legacy-custom-roles");
                 if (hasLegacyCustomRoles === true) {
                     utilityService.showErrorModal("Firebot ran into an issue while migrating your custom roles to the new format. Please make sure your streamer account is logged in, then restart Firebot to try again. If you continue to receive this message, please reach out for support in our Discord.");
                     return;
                 }
 
-                const roles = backendCommunicator.fireEventSync("get-custom-roles");
+                const roles = await backendCommunicator.fireEventAsync("get-custom-roles");
                 if (roles != null) {
                     customRoles = roles;
                 }
             };
             service.loadCustomRoles();
 
-            backendCommunicator.on("custom-roles-updated", () => {
-                service.loadCustomRoles();
+            backendCommunicator.onAsync("custom-roles-updated", async () => {
+                await service.loadCustomRoles();
             });
 
             service.getCustomRoles = function() {
@@ -83,7 +83,7 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
                 }
 
                 customRoles[role.id] = role;
-                backendCommunicator.fireEvent("save-custom-role", role);
+                backendCommunicator.send("save-custom-role", role);
             };
 
             service.deleteCustomRole = function(roleId) {
@@ -92,7 +92,7 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
                 }
 
                 delete customRoles[roleId];
-                backendCommunicator.fireEvent("delete-custom-role", roleId);
+                backendCommunicator.send("delete-custom-role", roleId);
             };
 
             service.loadTeamRoles = async function() {

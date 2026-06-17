@@ -173,11 +173,11 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
 
 const manager = new OverlayWidgetsManager();
 
-frontendCommunicator.on("overlay-widgets:get-all-types",
-    () => manager.getOverlayWidgetTypesForFrontend()
+frontendCommunicator.onAsync("overlay-widgets:get-all-types",
+    async () => manager.getOverlayWidgetTypesForFrontend()
 );
 
-frontendCommunicator.on("overlay-widgets:get-state-displays", () => {
+frontendCommunicator.onAsync("overlay-widgets:get-state-displays", async () => {
     const configs = overlayWidgetConfigManager.getAllItems();
     return configs.reduce((acc, config) => {
         const type = manager.getOverlayWidgetType(config.type);

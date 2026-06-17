@@ -453,10 +453,13 @@
         $scope.appTitle = `Firebot v${appVersion}`;
 
         const url = require("url");
-        $scope.customFontCssPath = url.pathToFileURL(fontManager.getFontCssPath());
+        async function setCustomFontCssPath() {
+            $scope.customFontCssPath = url.pathToFileURL(await fontManager.getFontCssPath());
+        }
+        setCustomFontCssPath();
 
-        backendCommunicator.on("fonts:reload-font-css", () => {
-            $scope.customFontCssPath = `${url.pathToFileURL(fontManager.getFontCssPath())}?reload=${new Date().getTime()}`;
+        backendCommunicator.onAsync("fonts:reload-font-css", async () => {
+            $scope.customFontCssPath = `${url.pathToFileURL(await fontManager.getFontCssPath())}?reload=${new Date().getTime()}`;
         });
 
         //make sure sliders render properly

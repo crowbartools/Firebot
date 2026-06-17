@@ -83,7 +83,7 @@ class CommandManager extends TypedEmitter<Events> {
             this.deleteCustomCommand(id);
         });
 
-        frontendCommunicator.on("get-all-commands", () => {
+        frontendCommunicator.onAsync("get-all-commands", async () => {
             return {
                 customCommands: this.getAllCustomCommands(),
                 systemCommands: this.getAllSystemCommandDefinitions()
