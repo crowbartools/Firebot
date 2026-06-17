@@ -29,10 +29,9 @@ class ChannelRewardManager {
         frontendCommunicator.onAsync("get-channel-reward-count",
             TwitchApi.channelRewards.getTotalChannelRewardCount);
 
-        frontendCommunicator.on("get-channel-rewards", () => Object.values(this.channelRewards));
         frontendCommunicator.onAsync("get-channel-rewards", async () => Object.values(this.channelRewards));
 
-        frontendCommunicator.on("get-channel-rewards-eligibility", () => this._eligible);
+        frontendCommunicator.onAsync("get-channel-rewards-eligibility", async () => this._eligible);
 
         frontendCommunicator.onAsync("save-channel-reward",
             async (channelReward: SavedChannelReward) => this.saveChannelReward(channelReward));

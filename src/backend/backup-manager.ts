@@ -41,7 +41,7 @@ class BackupManager {
             this.updateBackupFolderPath();
         });
 
-        frontendCommunicator.on("backups:get-backup-folder-path", () => {
+        frontendCommunicator.onAsync("backups:get-backup-folder-path", async () => {
             return this._backupFolderPath;
         });
 

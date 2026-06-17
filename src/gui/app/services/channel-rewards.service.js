@@ -24,10 +24,10 @@
                 }
             }
 
-            service.loadChannelRewards = () => {
-                service.channelRewards = backendCommunicator.fireEventSync("get-channel-rewards");
+            service.loadChannelRewards = async () => {
+                service.channelRewards = await backendCommunicator.fireEventAsync("get-channel-rewards");
 
-                service.userIsEligible = backendCommunicator.fireEventSync("get-channel-rewards-eligibility");
+                service.userIsEligible = await backendCommunicator.fireEventAsync("get-channel-rewards-eligibility");
             };
 
             service.saveChannelReward = (channelReward) => {

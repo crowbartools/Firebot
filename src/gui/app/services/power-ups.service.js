@@ -23,8 +23,8 @@
                 }
             }
 
-            service.loadPowerUps = () => {
-                service.powerUps = backendCommunicator.fireEventSync("power-ups:get-all");
+            service.loadPowerUps = async () => {
+                service.powerUps = await backendCommunicator.fireEventAsync("power-ups:get-all");
             };
 
             service.savePowerUp = (powerUp) => {

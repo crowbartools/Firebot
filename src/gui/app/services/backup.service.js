@@ -8,7 +8,11 @@
         .factory("backupService", function($q, backendCommunicator, utilityService) {
             const service = {};
 
-            service.backupFolderPath = backendCommunicator.fireEventSync("backups:get-backup-folder-path");
+            service.backupFolderPath = "";
+            const getBackupFolderPath = async () => {
+                service.backupFolderPath = await backendCommunicator.fireEventAsync("backups:get-backup-folder-path");
+            };
+            getBackupFolderPath();
 
             backendCommunicator.on("settings:setting-updated:BackupLocation", (newPath) => {
                 service.backupFolderPath = newPath;

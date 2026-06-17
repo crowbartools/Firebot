@@ -21,7 +21,6 @@ class PowerUpsManager {
     powerUps: Record<string, SavedPowerUp> = {};
 
     constructor() {
-        frontendCommunicator.on("power-ups:get-all", () => Object.values(this.powerUps));
         frontendCommunicator.onAsync("power-ups:get-all", async () => Object.values(this.powerUps));
 
         frontendCommunicator.onAsync("power-ups:save", async (powerUp: SavedPowerUp) => this.savePowerUp(powerUp));
