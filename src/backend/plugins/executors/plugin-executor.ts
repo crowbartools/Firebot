@@ -105,10 +105,6 @@ export class PluginExecutor extends IPluginExecutor {
             return;
         }
 
-        if (registrations) {
-            this.runUnregistrations(plugin, registrations);
-        }
-
         const context: PluginContext = {
             parameters: this.buildParameters(plugin, config)
         };
@@ -117,6 +113,10 @@ export class PluginExecutor extends IPluginExecutor {
             await plugin.onUnload?.(context, isUninstalling);
         } catch (error) {
             logger.error("Error during plugin onUnload", error);
+        }
+
+        if (registrations) {
+            this.runUnregistrations(plugin, registrations);
         }
 
         if (isUninstalling === true) {
