@@ -59,7 +59,6 @@ const { pressed, pressedHandlers } = usePressed();
                 class="deck-control-glyph"
                 name="alert-triangle"
                 color="#f0ad4e"
-                :size="32"
             ></lucide-icon>
             <div class="deck-control-name">{{ control.name }}</div>
         </div>
@@ -69,10 +68,10 @@ const { pressed, pressedHandlers } = usePressed();
 <style scoped>
 .deck-control {
     border: none;
-    border-radius: 14px;
+    border-radius: 5cqmin;
     color: var(--text);
     cursor: pointer;
-    padding: 6px;
+    padding: 3cqmin;
     overflow: hidden;
     transition: transform 0.06s ease, filter 0.06s ease;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);

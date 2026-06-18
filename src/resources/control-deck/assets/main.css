@@ -81,13 +81,12 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 4cqmin;
 }
 
 .deck-control-icon {
-    max-width: 75px;
-    max-height: 75px;
-    width: 50%;
+    width: 50cqmin;
+    max-height: 60cqmin;
     height: auto;
     object-fit: contain;
     pointer-events: none;
@@ -96,16 +95,20 @@ body {
 .deck-control-glyph {
     display: inline-flex;
     line-height: 0;
+    /* Default glyph size (eg the unknown-control fallback). ControlIcon
+       overrides this with an inline cqmin size for resolved glyph icons. */
+    width: 24cqmin;
+    height: 24cqmin;
 }
 
 .deck-control-emoji {
-    font-size: 3rem;
+    font-size: 40cqmin;
     line-height: 1;
     pointer-events: none;
 }
 
 .deck-control-name {
-    font-size: 1.0rem;
+    font-size: 13cqmin;
     font-weight: 600;
     text-align: center;
     word-break: break-word;

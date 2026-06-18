@@ -8,23 +8,23 @@ import type { ControlDeckResolvedIcon } from "../types";
  */
 const props = withDefaults(defineProps<{
     icon?: ControlDeckResolvedIcon | null;
-    size?: number;
     scale?: number;
 }>(), {
     icon: null,
-    size: 50,
     scale: 100
 });
 
 const factor = computed(() => Math.max(props.scale, 1) / 100);
-const glyphSize = computed(() => Math.round(props.size * factor.value));
+const glyphStyle = computed(() => ({
+    width: `${(40 * factor.value).toFixed(2)}cqmin`,
+    height: `${(40 * factor.value).toFixed(2)}cqmin`
+}));
 const imageStyle = computed(() => ({
-    width: `${50 * factor.value}%`,
-    maxWidth: `${Math.round(75 * factor.value)}px`,
-    maxHeight: `${Math.round(75 * factor.value)}px`
+    width: `${(50 * factor.value).toFixed(2)}cqmin`,
+    maxHeight: `${(60 * factor.value).toFixed(2)}cqmin`
 }));
 const emojiStyle = computed(() => ({
-    fontSize: `${(3 * factor.value).toFixed(3)}rem`
+    fontSize: `${(40 * factor.value).toFixed(2)}cqmin`
 }));
 </script>
 
@@ -42,7 +42,7 @@ const emojiStyle = computed(() => ({
         class="deck-control-glyph"
         :name="icon.name"
         :color="icon.color"
-        :size="glyphSize"
+        :style="glyphStyle"
     ></lucide-icon>
     <span
         v-else-if="icon && icon.type === 'emoji'"

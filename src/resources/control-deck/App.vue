@@ -669,7 +669,7 @@ onMounted(async () => {
 
 .control-grid {
     display: grid;
-    gap: 10px;
+    gap: 1.5cqmin;
     aspect-ratio: var(--cd-cols) / var(--cd-rows);
     max-width: 100%;
     width: min(100%, calc(100cqh * var(--cd-cols) / var(--cd-rows)));

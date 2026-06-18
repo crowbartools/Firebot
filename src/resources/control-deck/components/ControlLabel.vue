@@ -15,7 +15,7 @@ const style = computed(() => {
         fontWeight: font?.weight || undefined,
         fontStyle: font?.italic ? "italic" : undefined,
         color: font?.color || undefined,
-        fontSize: scale !== 1 ? `${(1.0 * scale).toFixed(3)}rem` : undefined
+        fontSize: scale !== 1 ? `${(13 * scale).toFixed(2)}cqmin` : undefined
     };
 });
 </script>
