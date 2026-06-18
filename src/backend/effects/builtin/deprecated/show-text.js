@@ -147,7 +147,7 @@ const showText = {
    * The controller for the front end Options
    * Port over from effectHelperService.js
    */
-    optionsController: ($scope, fontManager, utilityService, $timeout, settingsService) => {
+    optionsController: async ($scope, fontManager, utilityService, $timeout, settingsService) => {
 
         $scope.editorClass = "text-editor-white-bg";
 
@@ -221,7 +221,7 @@ const showText = {
             fontNamesIgnoreCheck: ['Inter', 'Open Sans', 'Roboto']
         };
 
-        const installedFontNames = fontManager.getInstalledFonts().map(f => f.name);
+        const installedFontNames = (await fontManager.getInstalledFonts()).map(f => f.name);
         $scope.editorOptions.fontNames = $scope.editorOptions.fontNames.concat(installedFontNames);
         $scope.editorOptions.fontNamesIgnoreCheck = $scope.editorOptions.fontNamesIgnoreCheck.concat(installedFontNames);
 

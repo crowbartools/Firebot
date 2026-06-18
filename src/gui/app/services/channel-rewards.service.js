@@ -24,12 +24,6 @@
                 }
             }
 
-            service.loadChannelRewards = async () => {
-                service.channelRewards = await backendCommunicator.fireEventAsync("get-channel-rewards");
-
-                service.userIsEligible = await backendCommunicator.fireEventAsync("get-channel-rewards-eligibility");
-            };
-
             service.saveChannelReward = (channelReward) => {
                 return $q.when(backendCommunicator.fireEventAsync("save-channel-reward", channelReward))
                     .then((savedReward) => {
@@ -43,7 +37,7 @@
 
             service.saveAllRewards = (channelRewards, updateTwitch = false) => {
                 service.channelRewards = channelRewards;
-                backendCommunicator.fireEvent("save-all-channel-rewards", {
+                backendCommunicator.send("save-all-channel-rewards", {
                     updateTwitch: updateTwitch,
                     channelRewards: channelRewards
                 });
@@ -51,7 +45,7 @@
 
             service.deleteChannelReward = (channelRewardId) => {
                 service.channelRewards = service.channelRewards.filter(cr => cr.id !== channelRewardId);
-                backendCommunicator.fireEvent("delete-channel-reward", channelRewardId);
+                backendCommunicator.send("delete-channel-reward", channelRewardId);
             };
 
             service.showAddOrEditRewardModal = (reward) => {
@@ -67,7 +61,7 @@
             };
 
             service.manuallyTriggerReward = (itemId) => {
-                backendCommunicator.fireEvent("manually-trigger-reward", itemId);
+                backendCommunicator.send("manually-trigger-reward", itemId);
             };
 
             service.channelRewardNameExists = (name) => {
@@ -123,20 +117,6 @@
                     });
             };
 
-            service.loadingRedemptions = false;
-            service.refreshChannelRewardRedemptions = () => {
-                if (service.loadingRedemptions) {
-                    return;
-                }
-
-                service.loadingRedemptions = true;
-
-                $q.when(backendCommunicator.fireEventAsync("refresh-channel-reward-redemptions"))
-                    .then(() => {
-                        service.loadingRedemptions = false;
-                    });
-            };
-
             service.getRewardIdsWithRedemptions = () => {
                 return Object.entries(service.redemptions)
                     .filter(([, redemptions]) => redemptions.length > 0)
@@ -158,11 +138,11 @@
                 }));
             };
 
-            backendCommunicator.on("channel-rewards-updated", (channelRewards) => {
+            backendCommunicator.on("channel-rewards:channel-rewards-updated", (channelRewards) => {
                 service.channelRewards = channelRewards;
             });
 
-            backendCommunicator.on("channel-rewards-eligibility-changed", (eligible) => {
+            backendCommunicator.on("channel-rewards:channel-rewards-eligibility-changed", (eligible) => {
                 service.userIsEligible = eligible;
             });
 
@@ -175,10 +155,11 @@
                 delete service.redemptions[channelRewardId];
             });
 
-            backendCommunicator.on("channel-reward-redemptions-updated", (redemptions) => {
-                service.loadingRedemptions = false;
+            backendCommunicator.on("channel-rewards:channel-reward-redemptions-updated", (redemptions) => {
                 service.redemptions = redemptions;
             });
+
+            backendCommunicator.send("channel-rewards:ui-service-ready");
 
             return service;
         });

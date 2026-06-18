@@ -16,11 +16,15 @@ class HotkeyManager extends JsonDbManager<FirebotHotkey> {
         // Enable usage of Portal's globalShortcuts which improves capability with Wayland on Linux
         app.commandLine.appendSwitch('enable-features', 'GlobalShortcutsPortal');
 
-        frontendCommunicator.on("hotkeys:get-hotkeys",
-            () => this.getAllItems());
+        frontendCommunicator.onAsync("hotkeys:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
 
-        frontendCommunicator.on("hotkeys:save-hotkey",
-            (hotkey: FirebotHotkey) => this.saveItem(hotkey));
+        frontendCommunicator.onAsync("hotkeys:get-hotkeys",
+            async () => this.getAllItems());
+
+        frontendCommunicator.onAsync("hotkeys:save-hotkey",
+            async (hotkey: FirebotHotkey) => this.saveItem(hotkey));
 
         frontendCommunicator.on("hotkeys:save-all-hotkeys",
             (allHotkeys: FirebotHotkey[]) => this.saveAllItems(allHotkeys));
@@ -77,6 +81,7 @@ class HotkeyManager extends JsonDbManager<FirebotHotkey> {
     }
 
     triggerUiRefresh(): void {
+        this.logger.debug("Triggering UI refresh");
         frontendCommunicator.send("hotkeys:all-hotkeys-updated", this.getAllItems());
     }
 

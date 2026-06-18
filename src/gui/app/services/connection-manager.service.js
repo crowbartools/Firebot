@@ -13,11 +13,11 @@
         ) {
             const service = {};
 
-            let overlayStatus = backendCommunicator.fireEventSync("http-server:get-overlay-status");
+            let overlayStatus = {};
 
             // Connection Monitor for Overlay
             // Recieves event from main process that connection has been established or disconnected.
-            backendCommunicator.on("overlayStatusUpdate", (overlayStatusData) => {
+            backendCommunicator.on("http-server:overlay-status-update", (overlayStatusData) => {
                 overlayStatus = overlayStatusData;
             });
 

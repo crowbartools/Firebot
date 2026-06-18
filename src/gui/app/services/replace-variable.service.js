@@ -9,9 +9,13 @@
             /**
              * @type {Array<import("../../../types").ReplaceVariable['definition']>}
              */
-            service.allVariables = backendCommunicator.fireEventSync("variables:get-replace-variable-definitions");
+            service.allVariables = [];
+            service.additionalVariableEvents = {};
 
-            service.additionalVariableEvents = backendCommunicator.fireEventSync("variables:get-additional-variable-events");
+            backendCommunicator.onAsync("variables:all-variables-updated", async (variableData) => {
+                service.allVariables = variableData?.allVariables ?? [];
+                service.additionalVariableEvents = variableData?.additionalVariableEvents ?? {};
+            });
 
             service.triggerCache = {};
 
@@ -78,6 +82,8 @@
 
                 return filtered;
             };
+
+            backendCommunicator.send("variables:ui-service-ready");
 
             return service;
         });

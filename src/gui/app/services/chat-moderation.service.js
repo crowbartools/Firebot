@@ -47,15 +47,12 @@
                 userAllowlist: []
             };
 
-            service.loadChatModerationData = () => {
-                const data = backendCommunicator.fireEventSync("chat-moderation:get-chat-moderation-data");
-                if (data != null) {
-                    service.chatModerationData = data;
-                }
-            };
+            backendCommunicator.onAsync("chat-moderation:settings-updated", async (moderationData) => {
+                service.chatModerationData = moderationData ?? {};
+            });
 
             service.saveChatModerationSettings = () => {
-                backendCommunicator.fireEvent("chat-moderation:update-chat-moderation-settings", service.chatModerationData.settings);
+                backendCommunicator.send("chat-moderation:update-chat-moderation-settings", service.chatModerationData.settings);
             };
 
             service.addBannedWords = (words) => {
@@ -67,7 +64,7 @@
             };
 
             service.addBannedRegex = (text) => {
-                backendCommunicator.fireEvent("chat-moderation:add-banned-regular-expression", text);
+                backendCommunicator.send("chat-moderation:add-banned-regular-expression", text);
             };
 
             service.removeBannedWordByText = (text) => {
@@ -84,11 +81,11 @@
             };
 
             service.removeRegex = (text) => {
-                backendCommunicator.fireEvent("chat-moderation:remove-banned-regular-expression", text);
+                backendCommunicator.send("chat-moderation:remove-banned-regular-expression", text);
             };
 
             service.removeAllBannedRegularExpressions = () => {
-                backendCommunicator.fireEvent("chat-moderation:remove-all-banned-regular-expressions");
+                backendCommunicator.send("chat-moderation:remove-all-banned-regular-expressions");
             };
 
             service.addAllowedUrls = (urls) => {
@@ -96,15 +93,15 @@
                     .filter(u => u != null && u.trim().length > 0 && u.trim().length < 360)
                     .map(u => u.trim().toLowerCase());
 
-                backendCommunicator.fireEvent("chat-moderation:add-allowed-urls", normalizedUrls);
+                backendCommunicator.send("chat-moderation:add-allowed-urls", normalizedUrls);
             };
 
             service.removeAllowedUrlByText = (text) => {
-                backendCommunicator.fireEvent("chat-moderation:remove-allowed-url", text);
+                backendCommunicator.send("chat-moderation:remove-allowed-url", text);
             };
 
             service.removeAllAllowedUrls = () => {
-                backendCommunicator.fireEvent("chat-moderation:remove-all-allowed-urls");
+                backendCommunicator.send("chat-moderation:remove-all-allowed-urls");
             };
 
             /** @param {ModerationImportRequest} request */
@@ -113,23 +110,23 @@
             };
 
             service.addAllowedUser = (user) => {
-                backendCommunicator.fireEvent("chat-moderation:add-allowed-user", { id: user.id, username: user.username, displayName: user.displayName });
+                backendCommunicator.send("chat-moderation:add-allowed-user", { id: user.id, username: user.username, displayName: user.displayName });
             };
 
             service.removeAllowedUserById = (id) => {
-                backendCommunicator.fireEvent("chat-moderation:remove-allowed-user", id);
+                backendCommunicator.send("chat-moderation:remove-allowed-user", id);
             };
 
             service.removeAllAllowedUsers = () => {
-                backendCommunicator.fireEvent("chat-moderation:remove-all-allowed-users");
+                backendCommunicator.send("chat-moderation:remove-all-allowed-users");
             };
 
             service.registerPermitCommand = () => {
-                backendCommunicator.fireEvent("registerPermitCommand");
+                backendCommunicator.send("registerPermitCommand");
             };
 
             service.unregisterPermitCommand = () => {
-                backendCommunicator.fireEvent("unregisterPermitCommand");
+                backendCommunicator.send("unregisterPermitCommand");
             };
 
             backendCommunicator.on("chat-moderation:chat-moderation-settings-updated", (settings) => {
@@ -151,6 +148,8 @@
             backendCommunicator.on("chat-moderation:user-allowlist-updated", (users) => {
                 service.chatModerationData.userAllowlist = users;
             });
+
+            backendCommunicator.send("chat-moderation:ui-service-ready");
 
             return service;
         });

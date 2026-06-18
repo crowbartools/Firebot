@@ -25,7 +25,12 @@ class NotificationManager {
     };
 
     constructor() {
-        frontendCommunicator.on("notifications:get-all-notifications", () => {
+        frontendCommunicator.onAsync("notifications:ui-service-ready", async () => {
+            this.triggerUiRefresh();
+            this.startExternalNotificationCheck();
+        });
+
+        frontendCommunicator.onAsync("notifications:get-all-notifications", async () => {
             return this.getNotifications();
         });
 
@@ -35,10 +40,6 @@ class NotificationManager {
 
         frontendCommunicator.on("notifications:delete-notification", (id: string) => {
             this.deleteNotification(id);
-        });
-
-        frontendCommunicator.on("notifications:start-external-notification-check", () => {
-            this.startExternalNotificationCheck();
         });
     }
 
@@ -197,6 +198,11 @@ class NotificationManager {
             this._notificationCache.notifications = updatedNotifications;
             this.saveNotifications();
         }
+    }
+
+    triggerUiRefresh(): void {
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("notifications:notifications-updated", this.getNotifications());
     }
 }
 

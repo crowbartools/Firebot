@@ -54,6 +54,10 @@ class ChatModerationManager {
     };
 
     constructor() {
+        frontendCommunicator.onAsync("chat-moderation:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
         frontendCommunicator.on("chat-moderation:add-banned-words", (words: string[]): boolean => {
             return this.addBannedWords(words);
         });
@@ -114,7 +118,7 @@ class ChatModerationManager {
             return this.saveChatModerationSettings(settings);
         });
 
-        frontendCommunicator.on("chat-moderation:get-chat-moderation-data", () => {
+        frontendCommunicator.onAsync("chat-moderation:get-chat-moderation-data", async () => {
             return {
                 settings: this.chatModerationSettings,
                 bannedWords: this.bannedWords.words,
@@ -659,6 +663,17 @@ class ChatModerationManager {
                 }
             }
         }
+    }
+
+    triggerUiRefresh(): void {
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("chat-moderation:settings-updated", {
+            settings: this.chatModerationSettings,
+            bannedWords: this.bannedWords.words,
+            bannedRegularExpressions: this.bannedRegularExpressions.regularExpressions,
+            urlAllowlist: this.allowlist.urls,
+            userAllowlist: this.allowlist.users
+        });
     }
 }
 

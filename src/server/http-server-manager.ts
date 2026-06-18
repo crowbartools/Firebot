@@ -81,7 +81,7 @@ class HttpServerManager extends EventEmitter {
 
         setInterval(() => WebSocketServerManager.reportClientsToFrontend(this.isDefaultServerStarted), 3000);
 
-        frontendCommunicator.on("http-server:get-overlay-status", () => {
+        frontendCommunicator.onAsync("http-server:get-overlay-status", async () => {
             return {
                 clientsConnected: WebSocketServerManager.overlayHasClients,
                 serverStarted: this.isDefaultServerStarted

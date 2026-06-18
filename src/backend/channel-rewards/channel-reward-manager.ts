@@ -26,6 +26,10 @@ class ChannelRewardManager {
     private _eligible = false;
 
     constructor() {
+        frontendCommunicator.onAsync("channel-rewards:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
         frontendCommunicator.onAsync("get-channel-reward-count",
             TwitchApi.channelRewards.getTotalChannelRewardCount);
 
@@ -102,7 +106,7 @@ class ChannelRewardManager {
                 this.channelRewards = channelRewardsData;
 
                 this._eligible = false;
-                frontendCommunicator.send("channel-rewards-eligibility-changed", false);
+                frontendCommunicator.send("channel-rewards:channel-rewards-eligibility-changed", false);
 
                 return;
             }
@@ -125,7 +129,7 @@ class ChannelRewardManager {
                 this.channelRewards = channelRewardsData;
 
                 this._eligible = false;
-                frontendCommunicator.send("channel-rewards-eligibility-changed", false);
+                frontendCommunicator.send("channel-rewards:channel-rewards-eligibility-changed", false);
 
                 return;
             }
@@ -171,9 +175,7 @@ class ChannelRewardManager {
 
             this.logger.debug(`Loaded channel rewards.`);
 
-            frontendCommunicator.send("channel-rewards-updated", Object.values(this.channelRewards));
             this._eligible = true;
-            frontendCommunicator.send("channel-rewards-eligibility-changed", true);
         } catch (err) {
             this.logger.warn(`There was an error reading channel rewards file.`, err);
         }
@@ -437,7 +439,7 @@ class ChannelRewardManager {
     async refreshChannelRewardRedemptions(): Promise<void> {
         this._channelRewardRedemptions = await TwitchApi.channelRewards.getOpenChannelRewardRedemptions();
 
-        frontendCommunicator.send("channel-reward-redemptions-updated", this.getChannelRewardRedemptions());
+        frontendCommunicator.send("channel-rewards:channel-reward-redemptions-updated", this.getChannelRewardRedemptions());
     }
 
     addRewardRedemption(rewardId: string, redemption: RewardRedemption): void {
@@ -447,7 +449,7 @@ class ChannelRewardManager {
 
         this._channelRewardRedemptions[rewardId].push(redemption);
 
-        frontendCommunicator.send("channel-reward-redemptions-updated", this.getChannelRewardRedemptions());
+        frontendCommunicator.send("channel-rewards:channel-reward-redemptions-updated", this.getChannelRewardRedemptions());
     }
 
     removeRewardRedemption(rewardId: string, redemptionId: string): void {
@@ -455,7 +457,7 @@ class ChannelRewardManager {
         if (redemptions) {
             this._channelRewardRedemptions[rewardId] = redemptions.filter(r => r.id !== redemptionId);
 
-            frontendCommunicator.send("channel-reward-redemptions-updated", this.getChannelRewardRedemptions());
+            frontendCommunicator.send("channel-rewards:channel-reward-redemptions-updated", this.getChannelRewardRedemptions());
         }
     }
 
@@ -469,6 +471,13 @@ class ChannelRewardManager {
 
     async approveOrRejectAllRedemptionsForChannelRewards(rewardIds: string[], approve = true): Promise<void> {
         await TwitchApi.channelRewards.approveOrRejectAllRedemptionsForChannelRewards(rewardIds, approve);
+    }
+
+    triggerUiRefresh(): void {
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("channel-rewards:channel-rewards-updated", Object.values(this.channelRewards));
+        frontendCommunicator.send("channel-rewards:channel-rewards-eligibility-changed", this._eligible);
+        frontendCommunicator.send("channel-rewards:channel-reward-redemptions-updated", this.getChannelRewardRedemptions());
     }
 }
 

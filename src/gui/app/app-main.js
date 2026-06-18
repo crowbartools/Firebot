@@ -113,95 +113,54 @@
 
     app.run(function initializeApplication(
         logger,
-        quickActionsService,
-        chatMessagesService,
         activityFeedService,
-        viewerRolesService,
-        viewerRanksService,
-        connectionService,
-        notificationService,
-        $timeout,
-        updatesService,
-        commandsService,
-        integrationService,
-        chatModerationService,
-        ttsService,
-        settingsService,
-        countersService,
-        hotkeyService,
-        controlDeckService,
-        gamesService,
-        presetEffectListsService,
-        pluginsService,
-        effectQueuesService,
-        timerService,
-        scheduledTaskService,
+        backupService,
         channelRewardsService,
-        sortTagsService,
+        chatMessagesService,
+        chatModerationService,
+        commandsService,
+        connectionService,
+        controlDeckService,
+        countersService,
+        currencyService,
+        effectQueuesService,
+        eventsService,
+        gamesService,
+        hotkeyService,
         iconsService,
-        videoService,
-        replaceVariableService,
-        variableMacroService,
-        uiExtensionsService,
-        webhooksService,
+        integrationService,
+        notificationService,
         overlayWidgetsService,
+        powerUpsService,
+        presetEffectListsService,
+        quickActionsService,
+        replaceVariableService,
+        scheduledTaskService,
+        settingsService,
+        sortTagsService,
+        timerService,
+        ttsService,
+        updatesService,
+        variableMacroService,
+        videoService,
+        viewerRanksService,
+        viewerRolesService,
+        webhooksService,
+        uiExtensionsService,
+        pluginsService,
         dynamicParameterRegistry,
         platformService
     ) {
-        // 'chatMessagesService' and 'videoService' are included so they're instantiated on app start
+        /**
+         * Services are included here so they're instantiated on app start
+         * and get their initial data
+         */
 
         connectionService.loadProfiles();
 
-        //load viewer roles and ranks
-        viewerRolesService.loadCustomRoles();
-        viewerRanksService.loadRankLadders();
-
-        //load commands
-        commandsService.refreshCommands();
-
-        timerService.loadTimers();
-
-        scheduledTaskService.loadScheduledTasks();
-
-        //get integrations from backend
-        integrationService.updateIntegrations();
-
-        chatModerationService.loadChatModerationData();
-
-        countersService.loadCounters();
-
-        hotkeyService.loadHotkeys();
-
-        controlDeckService.loadDecks();
-        controlDeckService.loadControlTypes();
-
-        gamesService.loadGames();
-
-        presetEffectListsService.loadPresetEffectLists();
-
         pluginsService.loadPlugins();
 
-        effectQueuesService.loadEffectQueues();
-
-        channelRewardsService.loadChannelRewards();
-        channelRewardsService.refreshChannelRewardRedemptions();
-
-        sortTagsService.loadSortTags();
-
-        iconsService.loadFontAwesomeIcons();
-
-        variableMacroService.loadMacros();
-
-        webhooksService.loadWebhookConfigs();
-
-        overlayWidgetsService.loadOverlayWidgetTypesAndConfigs();
-
         platformService.loadPlatform();
-
-        //start notification check
-        $timeout(() => {
-            notificationService.loadAllNotifications();
-        }, 1000);
 
         //check for updates
         if (!updatesService.hasCheckedForUpdates) {
@@ -453,10 +412,13 @@
         $scope.appTitle = `Firebot v${appVersion}`;
 
         const url = require("url");
-        $scope.customFontCssPath = url.pathToFileURL(fontManager.getFontCssPath());
+        async function setCustomFontCssPath() {
+            $scope.customFontCssPath = url.pathToFileURL(await fontManager.getFontCssPath());
+        }
+        setCustomFontCssPath();
 
-        backendCommunicator.on("fonts:reload-font-css", () => {
-            $scope.customFontCssPath = `${url.pathToFileURL(fontManager.getFontCssPath())}?reload=${new Date().getTime()}`;
+        backendCommunicator.onAsync("fonts:reload-font-css", async () => {
+            $scope.customFontCssPath = `${url.pathToFileURL(await fontManager.getFontCssPath())}?reload=${new Date().getTime()}`;
         });
 
         //make sure sliders render properly

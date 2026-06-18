@@ -191,7 +191,7 @@
                         $ctrl.aborting = true;
                         $ctrl.importing = false;
 
-                        backendCommunicator.fireEvent("import:abort-import");
+                        backendCommunicator.send("import:abort-import");
                     }
                 };
 

@@ -29,12 +29,16 @@ class QuickActionManager extends JsonDbManager<QuickActionDefinition> {
     constructor() {
         super("Quick Action", "/custom-quick-actions", "Quick Actions");
 
-        frontendCommunicator.on("quick-actions:get-quick-actions",
-            () => this.getAllItems()
+        frontendCommunicator.onAsync("quick-actions:ui-service-ready",
+            async () => this.triggerUiRefresh()
         );
 
-        frontendCommunicator.on("quick-actions:save-custom-quick-action",
-            (customQuickAction: QuickActionDefinition) =>
+        frontendCommunicator.onAsync("quick-actions:get-quick-actions",
+            async () => this.getAllItems()
+        );
+
+        frontendCommunicator.onAsync("quick-actions:save-custom-quick-action",
+            async (customQuickAction: QuickActionDefinition) =>
                 this.saveQuickAction(customQuickAction)
         );
 
@@ -170,6 +174,7 @@ class QuickActionManager extends JsonDbManager<QuickActionDefinition> {
     }
 
     triggerUiRefresh(): void {
+        this.logger.debug("Triggering UI refresh");
         frontendCommunicator.send("quick-actions:all-quick-actions-updated", this.getAllItems());
     }
 }

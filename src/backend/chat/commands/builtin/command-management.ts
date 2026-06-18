@@ -678,8 +678,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                 command.active = newActiveStatus;
 
                 CommandManager.saveCustomCommand(command, event.userCommand.commandSender);
-
-                frontendCommunicator.send("custom-commands-updated");
+                CommandManager.triggerUiRefresh();
 
                 await TwitchApi.chat.sendChatMessage(
                     `${capitalize(triggeredArg)}d "${trigger}"`, null, true

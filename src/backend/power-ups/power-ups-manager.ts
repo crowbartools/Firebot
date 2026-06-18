@@ -21,6 +21,10 @@ class PowerUpsManager {
     powerUps: Record<string, SavedPowerUp> = {};
 
     constructor() {
+        frontendCommunicator.onAsync("power-ups:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
         frontendCommunicator.onAsync("power-ups:get-all", async () => Object.values(this.powerUps));
 
         frontendCommunicator.onAsync("power-ups:save", async (powerUp: SavedPowerUp) => this.savePowerUp(powerUp));
@@ -114,7 +118,7 @@ class PowerUpsManager {
 
             this.logger.debug(`Loaded power-ups.`);
 
-            frontendCommunicator.send("power-ups:updated-all", Object.values(this.powerUps));
+            this.triggerUiRefresh();
         } catch (err) {
             this.logger.warn(`There was an error reading power-ups file.`, err);
         }
@@ -230,6 +234,11 @@ class PowerUpsManager {
         }
 
         return this.triggerPowerUpEffects(metadata, savedPowerUp.effects, manual);
+    }
+
+    triggerUiRefresh(): void {
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("power-ups:updated-all", Object.values(this.powerUps));
     }
 }
 

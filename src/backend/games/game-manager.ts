@@ -14,7 +14,11 @@ class GameManager {
     private _allGamesSettings: Record<string, GameSettings> = {};
 
     constructor() {
-        frontendCommunicator.on("games:get-games", () => {
+        frontendCommunicator.onAsync("games:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
+        frontendCommunicator.onAsync("games:get-games", async () => {
             return this.getGames();
         });
 
@@ -242,13 +246,18 @@ class GameManager {
             }
         }
 
-        frontendCommunicator.send("games:game-settings-updated", this.getGames());
+        this.triggerUiRefresh();
     }
 
     private saveAllGameSettings() {
         try {
             this.getGameDb().push("/", this._allGamesSettings);
         } catch { }
+    }
+
+    triggerUiRefresh(): void {
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("games:game-settings-updated", this.getGames());
     }
 }
 

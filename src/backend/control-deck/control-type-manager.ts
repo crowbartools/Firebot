@@ -15,8 +15,12 @@ class ControlDeckControlTypeManager {
     private controlTypes: Map<string, ControlDeckControlType<any, any>> = new Map();
 
     constructor() {
-        frontendCommunicator.on("control-deck:get-control-types",
-            () => this.getControlTypesForFrontend()
+        frontendCommunicator.onAsync("control-deck:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
+        frontendCommunicator.onAsync("control-deck:get-control-types",
+            async () => this.getControlTypesForFrontend()
         );
     }
 
@@ -68,6 +72,11 @@ class ControlDeckControlTypeManager {
             enableLabel: controlType.enableLabel === true,
             settingsSchema: controlType.settingsSchema ?? []
         }));
+    }
+
+    triggerUiRefresh(): void {
+        this.logger.debug("Triggering Control Type UI refresh");
+        frontendCommunicator.send("control-deck:control-types-updated", this.getControlTypesForFrontend());
     }
 }
 

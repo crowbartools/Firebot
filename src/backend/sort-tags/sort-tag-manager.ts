@@ -14,7 +14,11 @@ class SortTagManager {
     sortTags: SortTagCache = { };
 
     constructor() {
-        frontendCommunicator.on("sort-tags:get-sort-tags", () => {
+        frontendCommunicator.onAsync("sort-tags:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
+        frontendCommunicator.onAsync("sort-tags:get-sort-tags", async () => {
             return this.sortTags ?? { };
         });
 
@@ -103,11 +107,16 @@ class SortTagManager {
         try {
             this.getSortTagsDb().push("/", this.sortTags);
 
-            frontendCommunicator.send("sort-tags:updated-sort-tags", this.sortTags);
+            this.triggerUiRefresh();
             this.logger.debug("Saved tags");
         } catch (error) {
             this.logger.warn("There was an error saving tags", error);
         }
+    }
+
+    triggerUiRefresh(): void {
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("sort-tags:updated-sort-tags", this.sortTags ?? { });
     }
 }
 

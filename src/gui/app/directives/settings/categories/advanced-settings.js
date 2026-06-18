@@ -243,7 +243,7 @@
                     })
                     .then((confirmed) => {
                         if (confirmed) {
-                            backendCommunicator.fireEvent("recalc-quote-ids");
+                            backendCommunicator.send("recalc-quote-ids");
                         }
                     });
             };

@@ -7,6 +7,10 @@ import frontendCommunicator from "../common/frontend-communicator";
 class RankManager extends JsonDbManager<RankLadder> {
     constructor() {
         super("Rank", "/ranks", "Ranks");
+
+        frontendCommunicator.onAsync("rank-ladders:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
     }
 
     getRankFromLadder(ladder: RankLadder, rankId: string): Rank | undefined {
@@ -26,7 +30,8 @@ class RankManager extends JsonDbManager<RankLadder> {
     }
 
     triggerUiRefresh(): void {
-        frontendCommunicator.send("rank-ladders:updated");
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("rank-ladders:updated", this.getAllItems());
     }
 }
 

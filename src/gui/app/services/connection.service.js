@@ -108,7 +108,7 @@
             backendCommunicator.on("accounts:invalidate-accounts", service.invalidateAccounts);
 
             service.validateAccounts = () => {
-                backendCommunicator.fireEventSync("validate-twitch-accounts");
+                backendCommunicator.send("validate-twitch-accounts");
             };
 
             // Create new profile
@@ -356,7 +356,7 @@
 
             // Connection Monitor for Overlay
             // Recieves event from main process that connection has been established or disconnected.
-            backendCommunicator.on("overlayStatusUpdate", (overlayStatusData) => {
+            backendCommunicator.on("http-server:overlay-status-update", (overlayStatusData) => {
                 let status;
                 if (!overlayStatusData.serverStarted) {
                     status = "disconnected";

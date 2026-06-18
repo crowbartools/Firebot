@@ -47,7 +47,7 @@
             };
 
             service.saveSetting = function (settingName, data) {
-                backendCommunicator.fireEvent("settings:save-setting", {
+                backendCommunicator.send("settings:save-setting", {
                     settingName,
                     data
                 });
@@ -58,7 +58,7 @@
             };
 
             service.flushSettingsCache = function () {
-                backendCommunicator.fireEvent("settings:flush-settings-cache");
+                backendCommunicator.send("settings:flush-settings-cache");
             };
 
             service.showOverlayInfoModal = function (instanceName) {

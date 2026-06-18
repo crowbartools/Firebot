@@ -9,13 +9,11 @@
             /** @type {import("../../../types").FontAwesomeIcon[]} */
             service.icons = [];
 
-            service.loadFontAwesomeIcons = () => {
-                const icons = backendCommunicator.fireEventSync("all-font-awesome-icons");
+            backendCommunicator.on("icons:icons-updated", (icons) => {
+                service.icons = icons;
+            });
 
-                if (icons) {
-                    service.icons = icons;
-                }
-            };
+            backendCommunicator.send("icons:ui-service-ready");
 
             return service;
         });

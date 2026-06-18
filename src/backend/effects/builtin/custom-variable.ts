@@ -74,7 +74,7 @@ const effect: EffectType<{
         }
 
         $scope.openVariableInspector = function () {
-            backendCommunicator.fireEvent("show-variable-inspector");
+            backendCommunicator.send("show-variable-inspector");
         };
 
         $scope.editors = [

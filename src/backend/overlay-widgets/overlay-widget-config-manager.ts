@@ -13,6 +13,30 @@ type ExtraEvents = {
 class OverlayWidgetConfigManager extends JsonDbManager<OverlayWidgetConfig, ExtraEvents> {
     constructor() {
         super("Overlay Widget", "/overlay-widgets", "Overlay Widgets");
+
+        frontendCommunicator.onAsync("overlay-widgets:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
+        frontendCommunicator.onAsync("overlay-widgets:save-config", async (config: OverlayWidgetConfig) => {
+            const existing = this.getItem(config.id);
+            if (existing) {
+                config.state = existing.state;
+            }
+            return this.saveWidgetConfig(config);
+        });
+
+        frontendCommunicator.onAsync("overlay-widgets:save-new-config",
+            async (config: OverlayWidgetConfig) => this.saveWidgetConfig(config, true)
+        );
+
+        frontendCommunicator.on("overlay-widgets:save-all-configs",
+            (configs: OverlayWidgetConfig[]) => this.saveAllItems(configs)
+        );
+
+        frontendCommunicator.on("overlay-widgets:delete-config", (configId: string) =>
+            this.removeWidgetConfigById(configId)
+        );
     }
 
     saveWidgetConfig(config: OverlayWidgetConfig, isNew = false): OverlayWidgetConfig {
@@ -67,34 +91,11 @@ class OverlayWidgetConfigManager extends JsonDbManager<OverlayWidgetConfig, Extr
     }
 
     triggerUiRefresh(): void {
-        frontendCommunicator.send("overlay-widgets:configs-updated");
+        this.logger.debug("Triggering widget config UI refresh");
+        frontendCommunicator.send("overlay-widgets:configs-updated", this.getAllItems());
     }
 }
 
 const manager = new OverlayWidgetConfigManager();
-
-frontendCommunicator.on("overlay-widgets:get-all-configs",
-    () => manager.getAllItems()
-);
-
-frontendCommunicator.on("overlay-widgets:save-config", (config: OverlayWidgetConfig) => {
-    const existing = manager.getItem(config.id);
-    if (existing) {
-        config.state = existing.state;
-    }
-    return manager.saveWidgetConfig(config);
-});
-
-frontendCommunicator.on("overlay-widgets:save-new-config",
-    (config: OverlayWidgetConfig) => manager.saveWidgetConfig(config, true)
-);
-
-frontendCommunicator.on("overlay-widgets:save-all-configs",
-    (configs: OverlayWidgetConfig[]) => manager.saveAllItems(configs)
-);
-
-frontendCommunicator.on("overlay-widgets:delete-config", (configId: string) =>
-    manager.removeWidgetConfigById(configId)
-);
 
 export = manager;

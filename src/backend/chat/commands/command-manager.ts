@@ -42,6 +42,10 @@ class CommandManager extends TypedEmitter<Events> {
     constructor() {
         super();
 
+        frontendCommunicator.onAsync("commands:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
         frontendCommunicator.on("get-all-system-commands", () => {
             this.logger.info("got 'get all cmds' request");
             return this.getSystemCommands();
@@ -83,7 +87,7 @@ class CommandManager extends TypedEmitter<Events> {
             this.deleteCustomCommand(id);
         });
 
-        frontendCommunicator.on("get-all-commands", () => {
+        frontendCommunicator.onAsync("get-all-commands", async () => {
             return {
                 customCommands: this.getAllCustomCommands(),
                 systemCommands: this.getAllSystemCommandDefinitions()
@@ -324,7 +328,7 @@ class CommandManager extends TypedEmitter<Events> {
             this.emit("updated-item", defaultCmd);
         }
 
-        frontendCommunicator.send("system-commands-updated");
+        this.triggerUiRefresh();
     }
 
     /**
@@ -369,7 +373,7 @@ class CommandManager extends TypedEmitter<Events> {
             this.emit("updated-item", command);
         } catch {}
 
-        frontendCommunicator.send("system-commands-updated");
+        this.triggerUiRefresh();
     }
 
     /**
@@ -456,7 +460,7 @@ class CommandManager extends TypedEmitter<Events> {
 
         this._commandCache.customCommands = commands;
 
-        frontendCommunicator.send("custom-commands-updated");
+        this.triggerUiRefresh();
     }
 
     /**
@@ -527,7 +531,11 @@ class CommandManager extends TypedEmitter<Events> {
      * Triggers a refresh of the frontend copy of the command cache
      */
     triggerUiRefresh() {
-        frontendCommunicator.send("custom-commands-updated");
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("commands:commands-updated", {
+            customCommands: this.getAllCustomCommands(),
+            systemCommands: this.getAllSystemCommandDefinitions()
+        });
     }
 }
 

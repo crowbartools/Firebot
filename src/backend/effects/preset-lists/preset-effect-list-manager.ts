@@ -7,8 +7,12 @@ class PresetEffectListManager extends JsonDbManager<PresetEffectList> {
     constructor() {
         super("Preset Effect List", "/effects/preset-effect-lists", "Preset Effect Lists");
 
-        frontendCommunicator.on("preset-effect-lists:get-preset-effect-lists",
-            () => this.getAllItems()
+        frontendCommunicator.onAsync("preset-effect-lists:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
+        frontendCommunicator.onAsync("preset-effect-lists:get-preset-effect-lists",
+            async () => this.getAllItems()
         );
 
         frontendCommunicator.on("preset-effect-lists:save-preset-effect-list",
@@ -26,7 +30,8 @@ class PresetEffectListManager extends JsonDbManager<PresetEffectList> {
     }
 
     triggerUiRefresh(): void {
-        frontendCommunicator.send("all-preset-lists", this.getAllItems());
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("preset-effect-lists:all-preset-lists-updated", this.getAllItems());
     }
 }
 

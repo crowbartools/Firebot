@@ -87,7 +87,7 @@
 
             $ctrl.queueModes = effectQueuesService.queueModes;
 
-            $ctrl.save = () => {
+            $ctrl.save = async () => {
                 if ($ctrl.effectQueue.name == null || $ctrl.effectQueue.name === "") {
                     ngToast.create("Please provide a name for this Effect Queue");
                     return;
@@ -98,7 +98,7 @@
                     return;
                 }
 
-                const successful = effectQueuesService.saveEffectQueue($ctrl.effectQueue);
+                const successful = await effectQueuesService.saveEffectQueue($ctrl.effectQueue);
                 if (successful) {
                     $ctrl.close({
                         $value: {

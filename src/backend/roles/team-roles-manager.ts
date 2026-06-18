@@ -2,6 +2,7 @@ import type { FirebotRole } from "../../types";
 
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 import frontendCommunicator from "../common/frontend-communicator";
+import { LoggerCache } from "../logger-cache";
 
 interface TwitchTeam {
     mappedRole: {
@@ -16,9 +17,14 @@ interface TwitchTeam {
 }
 
 class TeamRolesManager {
+    private logger = LoggerCache.getLogger("Roles");
     private _streamerTeams: TwitchTeam[] = [];
 
     constructor() {
+        frontendCommunicator.onAsync("team-roles:ui-service-ready",
+            async () => await this.triggerUiRefresh()
+        );
+
         frontendCommunicator.onAsync("get-team-roles", async () => {
             if (this._streamerTeams == null) {
                 return [];
@@ -81,6 +87,20 @@ class TeamRolesManager {
         });
 
         return teams;
+    }
+
+    async triggerUiRefresh(): Promise<void> {
+        this.logger.debug("Triggering team role UI refresh");
+
+        let roles: Array<FirebotRole>;
+
+        if (this._streamerTeams == null) {
+            roles = [];
+        } else {
+            roles = await this.getTeamRoles();
+        }
+
+        frontendCommunicator.send("team-roles:team-roles-updated", roles);
     }
 }
 

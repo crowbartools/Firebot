@@ -18,12 +18,16 @@ class TimerManager extends JsonDbManager<Timer> {
     constructor() {
         super("Timer", "timers", "Timers");
 
-        frontendCommunicator.on("timers:get-timers",
-            () => this.getAllItems()
+        frontendCommunicator.onAsync("timers:ui-service-ready",
+            async () => this.triggerUiRefresh()
         );
 
-        frontendCommunicator.on("timers:save-timer",
-            (timer: Timer) => this.saveItem(timer)
+        frontendCommunicator.onAsync("timers:get-timers",
+            async () => this.getAllItems()
+        );
+
+        frontendCommunicator.onAsync("timers:save-timer",
+            async (timer: Timer) => this.saveItem(timer)
         );
 
         frontendCommunicator.on("timers:save-all-timers",
@@ -76,7 +80,8 @@ class TimerManager extends JsonDbManager<Timer> {
     }
 
     triggerUiRefresh(): void {
-        frontendCommunicator.send("all-timers-updated", this.getAllItems());
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("timers:all-timers-updated", this.getAllItems());
     }
 
     updateTimerActiveStatus(timerId: string, active = false): void {

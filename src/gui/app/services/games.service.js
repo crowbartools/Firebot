@@ -8,13 +8,6 @@
 
             service.games = [];
 
-            service.loadGames = () => {
-                const games = backendCommunicator.fireEventSync("games:get-games");
-                if (games) {
-                    service.games = games;
-                }
-            };
-
             backendCommunicator.on("games:game-settings-updated", (games) => {
                 if (games) {
                     service.games = games;
@@ -29,7 +22,7 @@
 
                 service.games[index] = game;
 
-                backendCommunicator.fireEvent("games:update-game-settings", {
+                backendCommunicator.send("games:update-game-settings", {
                     gameId: game.id,
                     activeStatus: game.active,
                     settingCategories: game.settingCategories
@@ -37,8 +30,10 @@
             };
 
             service.resetGameToDefault = (gameId) => {
-                backendCommunicator.fireEvent("games:reset-game-to-defaults", gameId);
+                backendCommunicator.send("games:reset-game-to-defaults", gameId);
             };
+
+            backendCommunicator.send("games:ui-service-ready");
 
             return service;
         });

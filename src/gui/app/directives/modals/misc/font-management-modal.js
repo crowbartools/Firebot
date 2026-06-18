@@ -42,12 +42,12 @@
                 $ctrl.installError = null;
                 $ctrl.installSuccessful = false;
 
-                $ctrl.fonts = fontManager.getInstalledFonts();
+                $ctrl.fonts = [];
 
                 $ctrl.removeFont = async (name) => {
                     try {
                         await fontManager.removeFont(name);
-                        $ctrl.fonts = fontManager.getInstalledFonts();
+                        $ctrl.fonts = await fontManager.getInstalledFonts();
                     } catch (error) {
                         $ctrl.installError = `There was an error removing the font: ${error.message}`;
                     }
@@ -71,12 +71,16 @@
                         const success = await fontManager.installFont(response.path);
 
                         if (success) {
-                            $ctrl.fonts = fontManager.getInstalledFonts();
+                            $ctrl.fonts = await fontManager.getInstalledFonts();
                             $ctrl.installSuccessful = true;
                         } else {
                             $ctrl.installError = "There was an error installing the font. Check the log for more details.";
                         }
                     }
+                };
+
+                $ctrl.$onInit = async () => {
+                    $ctrl.fonts = await fontManager.getInstalledFonts();
                 };
             }
         });

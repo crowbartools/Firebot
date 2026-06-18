@@ -277,7 +277,7 @@ class WebSocketServerManager extends EventEmitter {
             hasClients = [...this.server.clients].filter(client => client.type === "overlay").length > 0;
         }
         if (hasClients !== this.overlayHasClients) {
-            frontendCommunicator.send("overlayStatusUpdate", {
+            frontendCommunicator.send("http-server:overlay-status-update", {
                 clientsConnected: hasClients,
                 serverStarted: isDefaultServerStarted
             });

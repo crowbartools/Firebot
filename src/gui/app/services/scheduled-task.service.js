@@ -20,18 +20,14 @@
                 updateScheduledTask(scheduledTask);
             });
 
-            backendCommunicator.on("allScheduledTasksUpdated", (scheduledTasks) => {
+            backendCommunicator.on("scheduled-tasks:all-scheduled-tasks-updated", (scheduledTasks) => {
                 service.scheduledTasks = scheduledTasks;
             });
 
-            service.loadScheduledTasks = () => {
-                service.scheduledTasks = backendCommunicator.fireEventSync("scheduled-tasks:get-scheduled-tasks");
-            };
-
             service.getScheduledTasks = () => service.scheduledTasks;
 
-            service.saveScheduledTask = (scheduledTask) => {
-                const savedScheduledTask = backendCommunicator.fireEventSync("scheduled-tasks:save-scheduled-task", scheduledTask);
+            service.saveScheduledTask = async (scheduledTask) => {
+                const savedScheduledTask = await backendCommunicator.fireEventAsync("scheduled-tasks:save-scheduled-task", scheduledTask);
 
                 if (savedScheduledTask) {
                     updateScheduledTask(savedScheduledTask);
@@ -107,7 +103,7 @@
 
             service.saveAllScheduledTasks = function(scheduledTasks) {
                 service.scheduledTasks = scheduledTasks;
-                backendCommunicator.fireEvent("scheduled-tasks:save-all-scheduled-tasks", scheduledTasks);
+                backendCommunicator.send("scheduled-tasks:save-all-scheduled-tasks", scheduledTasks);
             };
 
             service.toggleScheduledTaskEnabledState = function(scheduledTask) {
@@ -123,7 +119,7 @@
                 return service.scheduledTasks.some(t => t.name === name);
             };
 
-            service.duplicateScheduledTask = (scheduledTaskId) => {
+            service.duplicateScheduledTask = async (scheduledTaskId) => {
                 const scheduledTask = service.scheduledTasks.find(t => t.id === scheduledTaskId);
                 if (scheduledTask == null) {
                     return;
@@ -135,7 +131,7 @@
                     copiedScheduledTask.name += " copy";
                 }
 
-                const successful = service.saveScheduledTask(copiedScheduledTask);
+                const successful = await service.saveScheduledTask(copiedScheduledTask);
                 if (successful) {
                     ngToast.create({
                         className: 'success',
@@ -154,7 +150,7 @@
 
                 service.scheduledTasks = service.scheduledTasks.filter(t => t.id !== scheduledTask.id);
 
-                backendCommunicator.fireEvent("scheduled-tasks:delete-scheduled-task", scheduledTask.id);
+                backendCommunicator.send("scheduled-tasks:delete-scheduled-task", scheduledTask.id);
             };
 
             service.showAddEditScheduledTaskModal = function(scheduledTask) {
@@ -184,6 +180,8 @@
                     return "Invalid schedule";
                 }
             };
+
+            backendCommunicator.send("scheduled-tasks:ui-service-ready");
 
             return service;
         });

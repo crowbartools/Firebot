@@ -86,12 +86,12 @@
                 }
             };
 
-            $ctrl.save = () => {
+            $ctrl.save = async () => {
                 if (!hotkeyValid()) {
                     return;
                 }
 
-                const successful = hotkeyService.saveHotkey($ctrl.hotkey);
+                const successful = await hotkeyService.saveHotkey($ctrl.hotkey);
                 if (successful) {
                     $ctrl.close({
                         $value: {

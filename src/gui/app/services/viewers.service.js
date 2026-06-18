@@ -41,7 +41,7 @@
             };
 
             service.updateBannedStatus = (username, shouldBeBanned) => {
-                backendCommunicator.fireEvent("update-user-banned-status", { username, shouldBeBanned });
+                backendCommunicator.send("update-user-banned-status", { username, shouldBeBanned });
             };
 
             backendCommunicator.on("viewer-database:viewer-created", markViewersChanged);

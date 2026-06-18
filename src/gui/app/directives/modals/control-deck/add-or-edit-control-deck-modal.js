@@ -516,7 +516,7 @@
                 });
             };
 
-            $ctrl.save = () => {
+            $ctrl.save = async () => {
                 if ($ctrl.deck.name == null || $ctrl.deck.name.trim() === "") {
                     ngToast.create("Please provide a name for the deck.");
                     return;
@@ -525,7 +525,7 @@
                 const deckToSave = angular.extend({}, $ctrl.deck);
                 deckToSave.controls = stripPreview($ctrl.deck.controls);
 
-                const saved = controlDeckService.saveDeck(deckToSave);
+                const saved = await controlDeckService.saveDeck(deckToSave);
                 if (saved) {
                     $ctrl.close();
                 } else {

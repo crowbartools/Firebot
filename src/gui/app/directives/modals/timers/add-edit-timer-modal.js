@@ -106,12 +106,12 @@
                 return true;
             }
 
-            $ctrl.save = function() {
+            $ctrl.save = async () => {
                 if (!timerValid()) {
                     return;
                 }
 
-                const successful = timerService.saveTimer($ctrl.timer);
+                const successful = await timerService.saveTimer($ctrl.timer);
                 if (successful) {
                     $ctrl.close({
                         $value: {
