@@ -38,7 +38,7 @@
         "@types/yargs-parser": "^21.0.3",
         "@typescript-eslint/parser": "^8.46.0",
         "@vitejs/plugin-vue": "^6.0.7",
-        "electron": "^42.4.0",
+        "electron": "^39.8.10",
         "electron-installer-dmg": "^5.0.1",
         "electron-winstaller": "^5.4.0",
         "eslint": "^9.37.0",
