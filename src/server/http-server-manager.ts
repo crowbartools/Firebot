@@ -222,6 +222,11 @@ class HttpServerManager extends EventEmitter {
                 let resourcePath = ResourceTokenManager.getResourcePath(token) || null;
                 if (resourcePath !== null) {
                     resourcePath = resourcePath.replace(/\\/g, "/");
+                    // let clients cache resources, important for control deck button img backgrounds / icons
+                    res.removeHeader("Pragma");
+                    res.removeHeader("Surrogate-Control");
+                    res.setHeader("Expires", new Date(Date.now() + 300000).toUTCString());
+                    res.setHeader("Cache-Control", "public, max-age=300");
                     res.sendFile(resourcePath, { dotfiles: "allow" });
                     return;
                 }
