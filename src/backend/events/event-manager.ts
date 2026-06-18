@@ -144,6 +144,15 @@ class EventManager extends TypedEmitter<{
 
     getEventById(sourceId: string, eventId: string): EventDefinition {
         const source = this._registeredEventSources.find(es => es.id === sourceId);
+
+        if (source == null) {
+            this.logger.warn(`Event source "${sourceId}" does not exist`);
+            return null;
+        } else if (!source.events?.length) {
+            this.logger.warn(`Event source "${sourceId}" contains no events`);
+            return null;
+        }
+
         const event = source.events.find(e => e.id === eventId);
         return event;
     }
