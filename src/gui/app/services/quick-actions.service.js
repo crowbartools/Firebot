@@ -129,7 +129,7 @@
              * @returns {void}
              */
             service.triggerQuickAction = (quickActionId) => {
-                backendCommunicator.fireEvent("quick-actions:trigger-quick-action", quickActionId);
+                backendCommunicator.send("quick-actions:trigger-quick-action", quickActionId);
             };
 
             backendCommunicator.send("quick-actions:ui-service-ready");

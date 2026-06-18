@@ -25,7 +25,7 @@
             service.loadAccounts();
 
             service.logoutAccount = (accountType) => {
-                backendCommunicator.fireEvent("accounts:logout-account", accountType);
+                backendCommunicator.send("accounts:logout-account", accountType);
             };
 
             backendCommunicator.on("accounts:account-update", (accounts) => {

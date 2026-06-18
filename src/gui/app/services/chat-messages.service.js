@@ -127,7 +127,7 @@
             };
 
             service.highlightMessage = (username, userId, displayName, rawText, chatMessage) => {
-                backendCommunicator.fireEvent("highlight-message", {
+                backendCommunicator.send("highlight-message", {
                     username: username,
                     userId: userId,
                     displayName: displayName,

@@ -39,11 +39,12 @@ class BackupManager {
 
         SettingsManager.on("settings:setting-updated:BackupLocation", () => {
             this.updateBackupFolderPath();
+            this.triggerUiRefresh();
         });
 
-        frontendCommunicator.onAsync("backups:get-backup-folder-path", async () => {
-            return this._backupFolderPath;
-        });
+        frontendCommunicator.onAsync("backups:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
 
         frontendCommunicator.onAsync("backups:get-backup-list", async () => {
             return await this.getBackupList();
@@ -391,6 +392,13 @@ class BackupManager {
 
         frontendCommunicator.send("backups:move-backup-folder-completed", success);
         return success;
+    }
+
+    triggerUiRefresh(): void {
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("backups:backup-data-updated", {
+            backupFolderPath: this._backupFolderPath
+        });
     }
 }
 

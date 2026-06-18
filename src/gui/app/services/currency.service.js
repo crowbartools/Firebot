@@ -6,10 +6,6 @@
 
         // The currency settings.
         service.currencies = [];
-        async function loadCurrencies() {
-            service.currencies = Object.values(await backendCommunicator.fireEventAsync("currencies:get-currencies"));
-        }
-        loadCurrencies();
 
         // This will get currency information.
         // Can pass option param to just get one currency, otherwise it gets all of them.
@@ -42,8 +38,10 @@
         };
 
         backendCommunicator.on("currencies:currencies-updated", (currencies) => {
-            service.currencies = Object.values(currencies);
+            service.currencies = currencies ?? [];
         });
+
+        backendCommunicator.send("currencies:ui-service-ready");
 
         return service;
     });

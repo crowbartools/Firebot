@@ -22,7 +22,7 @@
 
                 service.games[index] = game;
 
-                backendCommunicator.fireEvent("games:update-game-settings", {
+                backendCommunicator.send("games:update-game-settings", {
                     gameId: game.id,
                     activeStatus: game.active,
                     settingCategories: game.settingCategories
@@ -30,7 +30,7 @@
             };
 
             service.resetGameToDefault = (gameId) => {
-                backendCommunicator.fireEvent("games:reset-game-to-defaults", gameId);
+                backendCommunicator.send("games:reset-game-to-defaults", gameId);
             };
 
             backendCommunicator.send("games:ui-service-ready");

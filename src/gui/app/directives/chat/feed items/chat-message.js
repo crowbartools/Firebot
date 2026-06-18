@@ -289,7 +289,7 @@
                         return;
                     }
                     $ctrl.respondedToAutoMod = true;
-                    backendCommunicator.fireEvent("process-automod-message", { messageId: $ctrl.message.id, allow: true });
+                    backendCommunicator.send("process-automod-message", { messageId: $ctrl.message.id, allow: true });
                 };
 
                 $ctrl.denyAutoModMessage = () => {
@@ -297,7 +297,7 @@
                         return;
                     }
                     $ctrl.respondedToAutoMod = true;
-                    backendCommunicator.fireEvent("process-automod-message", { messageId: $ctrl.message.id, allow: false });
+                    backendCommunicator.send("process-automod-message", { messageId: $ctrl.message.id, allow: false });
                 };
 
                 $ctrl.showUserDetailsModal = (userId) => {
@@ -494,7 +494,7 @@
                                 })
                                 .then((confirmed) => {
                                     if (confirmed) {
-                                        backendCommunicator.fireEvent("update-user-banned-status", { username: username, shouldBeBanned: true });
+                                        backendCommunicator.send("update-user-banned-status", { username: username, shouldBeBanned: true });
                                     }
                                 });
                             break;

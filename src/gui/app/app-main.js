@@ -114,6 +114,7 @@
     app.run(function initializeApplication(
         logger,
         activityFeedService,
+        backupService,
         channelRewardsService,
         chatMessagesService,
         chatModerationService,
@@ -121,29 +122,32 @@
         connectionService,
         controlDeckService,
         countersService,
+        currencyService,
         effectQueuesService,
+        eventsService,
         gamesService,
         hotkeyService,
+        iconsService,
         integrationService,
         notificationService,
+        overlayWidgetsService,
+        powerUpsService,
         presetEffectListsService,
         quickActionsService,
         replaceVariableService,
         scheduledTaskService,
         settingsService,
+        sortTagsService,
         timerService,
         ttsService,
         updatesService,
+        variableMacroService,
         videoService,
         viewerRanksService,
         viewerRolesService,
-        pluginsService,
-        sortTagsService,
-        iconsService,
-        variableMacroService,
-        uiExtensionsService,
         webhooksService,
-        overlayWidgetsService,
+        uiExtensionsService,
+        pluginsService,
         dynamicParameterRegistry,
         platformService
     ) {
@@ -155,16 +159,6 @@
         connectionService.loadProfiles();
 
         pluginsService.loadPlugins();
-
-        sortTagsService.loadSortTags();
-
-        iconsService.loadFontAwesomeIcons();
-
-        variableMacroService.loadMacros();
-
-        webhooksService.loadWebhookConfigs();
-
-        overlayWidgetsService.loadOverlayWidgetTypesAndConfigs();
 
         platformService.loadPlatform();
 

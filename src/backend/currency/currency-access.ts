@@ -21,6 +21,10 @@ class CurrencyAccess extends EventEmitter {
     constructor() {
         super();
 
+        frontendCommunicator.onAsync("currencies:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
         frontendCommunicator.onAsync("currencies:get-currencies", async () => {
             return this.getCurrencies();
         });
@@ -77,7 +81,7 @@ class CurrencyAccess extends EventEmitter {
         }
 
         this._currencyCache = cache;
-        frontendCommunicator.send("currencies:currencies-updated", this.getCurrencies());
+        this.triggerUiRefresh();
     }
 
     getCurrencies(): CurrencyCache {
@@ -187,7 +191,12 @@ class CurrencyAccess extends EventEmitter {
 
     private saveAllCurrencies(): void {
         this.getCurrencyDb().push("/", this._currencyCache);
-        frontendCommunicator.send("currencies:currencies-updated", this.getCurrencies());
+        this.triggerUiRefresh();
+    }
+
+    triggerUiRefresh(): void {
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("currencies:currencies-updated", Object.values(this.getCurrencies()));
     }
 }
 

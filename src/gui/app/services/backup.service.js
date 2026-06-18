@@ -9,21 +9,21 @@
             const service = {};
 
             service.backupFolderPath = "";
-            const getBackupFolderPath = async () => {
-                service.backupFolderPath = await backendCommunicator.fireEventAsync("backups:get-backup-folder-path");
-            };
-            getBackupFolderPath();
+
+            backendCommunicator.onAsync("backups:backup-data-updated", async (backupData) => {
+                service.backupFolderPath = backupData?.backupFolderPath ?? "";
+            });
 
             backendCommunicator.on("settings:setting-updated:BackupLocation", (newPath) => {
                 service.backupFolderPath = newPath;
             });
 
             service.startBackup = function() {
-                backendCommunicator.fireEvent("backups:start-backup", true);
+                backendCommunicator.send("backups:start-backup", true);
             };
 
             service.openBackupFolder = function() {
-                backendCommunicator.fireEvent("open-backup-folder");
+                backendCommunicator.send("open-backup-folder");
             };
 
             service.openBackupZipFilePicker = function() {
@@ -173,6 +173,8 @@
             service.moveBackupFolder = async (newPath) => {
                 return await backendCommunicator.fireEventAsync("backups:move-backup-folder", newPath);
             };
+
+            backendCommunicator.send("backups:ui-service-ready");
 
             return service;
         });

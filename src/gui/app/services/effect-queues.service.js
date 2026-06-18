@@ -87,17 +87,17 @@
             };
 
             service.toggleEffectQueue = (queue) => {
-                backendCommunicator.fireEvent("effect-queues:toggle-effect-queue", queue.id);
+                backendCommunicator.send("effect-queues:toggle-effect-queue", queue.id);
                 queue.active = !queue.active;
             };
 
             service.clearEffectQueue = (queueId) => {
-                backendCommunicator.fireEvent("effect-queues:clear-effect-queue", queueId);
+                backendCommunicator.send("effect-queues:clear-effect-queue", queueId);
             };
 
             service.saveAllEffectQueues = (effectQueues) => {
                 service.effectQueues = effectQueues;
-                backendCommunicator.fireEvent("effect-queues:save-all-effect-queues", effectQueues);
+                backendCommunicator.send("effect-queues:save-all-effect-queues", effectQueues);
             };
 
             service.effectQueueNameExists = (name) => {
@@ -130,7 +130,7 @@
 
             service.deleteEffectQueue = (effectQueueId) => {
                 service.effectQueues = service.effectQueues.filter(eq => eq.id !== effectQueueId);
-                backendCommunicator.fireEvent("effect-queues:delete-effect-queue", effectQueueId);
+                backendCommunicator.send("effect-queues:delete-effect-queue", effectQueueId);
             };
 
             service.showAddEditEffectQueueModal = (effectQueueId) => {

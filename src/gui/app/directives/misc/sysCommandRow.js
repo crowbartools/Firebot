@@ -164,7 +164,7 @@
                         if (action === "save") {
                             commandsService.saveSystemCommandOverride(resp.command);
                         } else if (action === "reset") {
-                            backendCommunicator.fireEvent("remove-system-command-override", cmd.id);
+                            backendCommunicator.send("remove-system-command-override", cmd.id);
                         }
                     }
                 });

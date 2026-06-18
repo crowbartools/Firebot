@@ -19,10 +19,6 @@
              */
             const selectedSortTags = {};
 
-            service.loadSortTags = async () => {
-                sortTags = await backendCommunicator.fireEventAsync("sort-tags:get-sort-tags");
-            };
-
             /**
              * @param {string} context
              * @returns {SortTag[]}
@@ -88,6 +84,8 @@
             backendCommunicator.on("sort-tags:updated-sort-tags", (updatedSortTags) => {
                 sortTags = updatedSortTags;
             });
+
+            backendCommunicator.send("sort-tags:ui-service-ready");
 
             return service;
         });

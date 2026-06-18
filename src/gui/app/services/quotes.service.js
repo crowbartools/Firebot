@@ -16,14 +16,14 @@
             };
 
             service.addQuote = (quote) => {
-                backendCommunicator.fireEvent("add-quote", quote);
+                backendCommunicator.send("add-quote", quote);
             };
 
             service.updateQuote = (quote) => {
                 const index = service.quotes.findIndex(q => q._id === quote._id);
                 if (index > -1) {
                     service.quotes[index] = quote;
-                    backendCommunicator.fireEvent("update-quote", quote);
+                    backendCommunicator.send("update-quote", quote);
                 }
             };
 
@@ -31,7 +31,7 @@
                 const index = service.quotes.findIndex(q => q._id === quoteId);
                 if (index > -1) {
                     service.quotes.splice(index, 1);
-                    backendCommunicator.fireEvent("delete-quote", quoteId);
+                    backendCommunicator.send("delete-quote", quoteId);
                 }
             };
 

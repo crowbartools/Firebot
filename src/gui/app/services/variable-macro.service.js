@@ -27,19 +27,10 @@
                 }
             };
 
-            /**
-             * @returns {Promise.<void>}
-             */
-            service.loadMacros = async () => {
-                const macros = await backendCommunicator.fireEventAsync("macros:get-all");
-
+            backendCommunicator.on("macros:updated", (macros) => {
                 if (macros) {
                     service.macros = macros;
                 }
-            };
-
-            backendCommunicator.on("macros:updated", () => {
-                service.loadMacros();
             });
 
             /**
@@ -83,7 +74,7 @@
 
             service.saveAllMacros = (macros) => {
                 service.macros = macros;
-                backendCommunicator.fireEvent(
+                backendCommunicator.send(
                     "macros:save-all",
                     JSON.parse(angular.toJson(macros))
                 );
@@ -95,7 +86,7 @@
              */
             service.deleteMacro = (macroId) => {
                 service.macros = service.macros.filter(m => m.id !== macroId);
-                backendCommunicator.fireEvent("macros:delete", macroId);
+                backendCommunicator.send("macros:delete", macroId);
             };
 
             service.duplicateMacro = (macroId) => {
@@ -137,6 +128,8 @@
                     dismissCallback: closeCb
                 });
             };
+
+            backendCommunicator.send("macros:ui-service-ready");
 
             return service;
         });

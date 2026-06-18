@@ -27,6 +27,10 @@ class EventsAccess {
     private _sortTags: SortTag[] = [];
 
     constructor() {
+        frontendCommunicator.onAsync("events:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
         frontendCommunicator.onAsync("events:get-all-event-data", async () => {
             this.logger.debug("got 'get all event data' request");
             return {
@@ -313,7 +317,7 @@ class EventsAccess {
             this._mainEvents[index] = event;
 
             this.saveMainEvents(this._mainEvents);
-            frontendCommunicator.send("main-events-update");
+            this.triggerUiRefresh();
         } else {
             for (const [groupId, group] of Object.entries(this._groups)) {
                 event = this._groups[groupId].events.find(e => e.id === eventId);
@@ -346,8 +350,15 @@ class EventsAccess {
         frontendCommunicator.send("event-group-update", group);
     }
 
-    triggerUiRefresh() {
-        frontendCommunicator.send("main-events-update");
+    triggerUiRefresh(): void {
+        this.logger.debug("Triggering UI update");
+        frontendCommunicator.send("events:main-events-update", {
+            mainEvents: Array.isArray(this._mainEvents)
+                ? this._mainEvents
+                : Object.values(this._mainEvents),
+            groups: Object.values(this._groups),
+            sortTags: this._sortTags
+        });
     }
 }
 

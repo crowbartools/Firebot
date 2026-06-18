@@ -1,6 +1,7 @@
 import type { FontAwesomeIcon } from "../../types";
 
 import frontendCommunicator from "./frontend-communicator";
+import { LoggerCache } from "../logger-cache";
 
 enum FontAwesomeStyle {
     Brands = "brands",
@@ -41,10 +42,13 @@ type FontAwesomeIconDefinitions = {
 const ICON_DEFINITION_URL = "https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@master/metadata/icons.json";
 
 class IconManager {
+    private logger = LoggerCache.getLogger("Icons");
     icons: FontAwesomeIcon[] = [];
 
     constructor() {
-        frontendCommunicator.onAsync("all-font-awesome-icons", async () => this.icons);
+        frontendCommunicator.onAsync("icons:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
     }
 
     async loadFontAwesomeIcons(): Promise<void> {
@@ -79,6 +83,11 @@ class IconManager {
                 }));
             }
         });
+    }
+
+    triggerUiRefresh(): void {
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("icons:icons-updated", this.icons ?? []);
     }
 }
 

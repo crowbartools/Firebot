@@ -37,25 +37,22 @@
                 }
             };
 
-            service.loadOverlayWidgetTypesAndConfigs = async () => {
-                const overlayWidgetTypes = await backendCommunicator.fireEventAsync("overlay-widgets:get-all-types");
+            backendCommunicator.on("overlay-widget:types-updated", (overlayWidgetTypes) => {
                 if (overlayWidgetTypes) {
                     service.overlayWidgetTypes = overlayWidgetTypes;
                 }
+            });
 
-                const overlayWidgetConfigs = await backendCommunicator.fireEventAsync("overlay-widgets:get-all-configs");
+            backendCommunicator.on("overlay-widgets:configs-updated", (overlayWidgetConfigs) => {
                 if (overlayWidgetConfigs) {
                     service.overlayWidgetConfigs = overlayWidgetConfigs;
                 }
+            });
 
-                const stateDisplays = await backendCommunicator.fireEventAsync("overlay-widgets:get-state-displays");
+            backendCommunicator.on("overlay-widgets:state-displays-updated", (stateDisplays) => {
                 if (stateDisplays) {
                     service.overlayWidgetStateDisplays = stateDisplays;
                 }
-            };
-
-            backendCommunicator.onAsync("overlay-widgets:configs-updated", async () => {
-                await service.loadOverlayWidgetTypesAndConfigs();
             });
 
             backendCommunicator.on("overlay-widgets:type-registered", (overlayWidgetType) => {
@@ -185,7 +182,7 @@
              */
             service.showAddOrEditOverlayWidgetModal = (overlayWidgetConfig, closeCb) => {
                 const dismiss = (widgetConfig) => {
-                    backendCommunicator.fireEvent("overlay-widgets:stop-live-preview", widgetConfig);
+                    backendCommunicator.send("overlay-widgets:stop-live-preview", widgetConfig);
                     if (closeCb) {
                         closeCb();
                     }
@@ -204,8 +201,10 @@
             };
 
             service.triggerOverlayWidgetUIAction = (widgetId, actionId) => {
-                backendCommunicator.fireEvent("overlay-widgets:trigger-ui-action", { widgetId, actionId });
+                backendCommunicator.send("overlay-widgets:trigger-ui-action", { widgetId, actionId });
             };
+
+            backendCommunicator.send("overlay-widgets:ui-service-ready");
 
             return service;
         });

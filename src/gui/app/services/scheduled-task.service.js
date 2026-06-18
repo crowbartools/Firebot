@@ -103,7 +103,7 @@
 
             service.saveAllScheduledTasks = function(scheduledTasks) {
                 service.scheduledTasks = scheduledTasks;
-                backendCommunicator.fireEvent("scheduled-tasks:save-all-scheduled-tasks", scheduledTasks);
+                backendCommunicator.send("scheduled-tasks:save-all-scheduled-tasks", scheduledTasks);
             };
 
             service.toggleScheduledTaskEnabledState = function(scheduledTask) {
@@ -150,7 +150,7 @@
 
                 service.scheduledTasks = service.scheduledTasks.filter(t => t.id !== scheduledTask.id);
 
-                backendCommunicator.fireEvent("scheduled-tasks:delete-scheduled-task", scheduledTask.id);
+                backendCommunicator.send("scheduled-tasks:delete-scheduled-task", scheduledTask.id);
             };
 
             service.showAddEditScheduledTaskModal = function(scheduledTask) {

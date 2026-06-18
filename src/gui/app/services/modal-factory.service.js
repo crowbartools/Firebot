@@ -443,7 +443,7 @@
                     idLabel: data.label,
                     steps: data.steps
                 }, (model) => {
-                    backendCommunicator.fireEvent("enteredIntegrationAccountId", {
+                    backendCommunicator.send("enteredIntegrationAccountId", {
                         integrationId: data.integrationId,
                         accountId: model
                     });

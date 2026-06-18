@@ -84,7 +84,7 @@
 
                 service.timers = service.timers.filter(t => t.id !== timer.id);
 
-                backendCommunicator.fireEvent("timers:delete-timer", timer.id);
+                backendCommunicator.send("timers:delete-timer", timer.id);
             };
 
             service.showAddEditTimerModal = function(timer) {

@@ -211,7 +211,7 @@
                 };
 
                 $scope.openScriptsFolder = function() {
-                    backendCommunicator.fireEvent("openScriptsFolder");
+                    backendCommunicator.send("openScriptsFolder");
                 };
 
                 $scope.openScriptsWebsite = function() {

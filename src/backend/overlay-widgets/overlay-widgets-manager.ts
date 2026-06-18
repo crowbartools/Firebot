@@ -29,6 +29,10 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
 
     constructor() {
         super();
+
+        frontendCommunicator.onAsync("overlay-widgets:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -169,27 +173,29 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
             }))
         };
     }
+
+    private formatStateDisplaysForFrontend(): Record<string, string> {
+        const configs = overlayWidgetConfigManager.getAllItems();
+        return configs.reduce((acc, config) => {
+            const type = this.getOverlayWidgetType(config.type);
+            if (type?.stateDisplay) {
+                const display = type.stateDisplay(config);
+                if (display) {
+                    acc[config.id] = display;
+                }
+            }
+            return acc;
+        }, {} as Record<string, string>);
+    }
+
+    triggerUiRefresh(): void {
+        logger.debug("Triggering types/state displays UI refresh");
+        frontendCommunicator.send("overlay-widget:types-updated", this.getOverlayWidgetTypesForFrontend());
+        frontendCommunicator.send("overlay-widget:state-displays-updated", this.formatStateDisplaysForFrontend());
+    }
 }
 
 const manager = new OverlayWidgetsManager();
-
-frontendCommunicator.onAsync("overlay-widgets:get-all-types",
-    async () => manager.getOverlayWidgetTypesForFrontend()
-);
-
-frontendCommunicator.onAsync("overlay-widgets:get-state-displays", async () => {
-    const configs = overlayWidgetConfigManager.getAllItems();
-    return configs.reduce((acc, config) => {
-        const type = manager.getOverlayWidgetType(config.type);
-        if (type?.stateDisplay) {
-            const display = type.stateDisplay(config);
-            if (display) {
-                acc[config.id] = display;
-            }
-        }
-        return acc;
-    }, {} as Record<string, string>);
-});
 
 overlayWidgetConfigManager.on("widget-config-active-changed", (config) => {
     if (config.active === false) {

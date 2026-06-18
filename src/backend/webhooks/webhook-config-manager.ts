@@ -28,7 +28,7 @@ class WebhookConfigManager extends JsonDbManager<WebhookConfig, ExtraEvents> {
                 webhookIds: this.getAllItems().map(item => item.id)
             });
 
-            frontendCommunicator.send("webhooks:updated", this.getAllItems());
+            this.triggerUiRefresh();
         };
 
         this.on("items-changed", sendWebhookIds);
@@ -60,7 +60,7 @@ class WebhookConfigManager extends JsonDbManager<WebhookConfig, ExtraEvents> {
             if (typeof payload === "string") {
                 try {
                     payload = JSON.parse(payload);
-                } catch {}
+                } catch { }
             }
 
             this.emit("webhook-received", {
@@ -97,6 +97,18 @@ class WebhookConfigManager extends JsonDbManager<WebhookConfig, ExtraEvents> {
             });
 
         });
+
+        frontendCommunicator.onAsync("webhooks:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
+        frontendCommunicator.onAsync("webhooks:save", async (webhookConfig: WebhookConfig) =>
+            this.saveItem(webhookConfig)
+        );
+
+        frontendCommunicator.on("webhooks:delete", (webhookConfigId: string) =>
+            this.deleteItem(webhookConfigId)
+        );
     }
 
     getWebhookUrlById(webhookId: string): string {
@@ -192,20 +204,13 @@ class WebhookConfigManager extends JsonDbManager<WebhookConfig, ExtraEvents> {
         this.logger.info(`Unregistered handler for plugin ${pluginId}`);
         return true;
     }
+
+    triggerUiRefresh(): void {
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("webhooks:updated", this.getAllItems());
+    }
 }
 
 const webhookConfigManager = new WebhookConfigManager();
-
-frontendCommunicator.onAsync("webhooks:get-all", async () =>
-    webhookConfigManager.getAllItems()
-);
-
-frontendCommunicator.onAsync("webhooks:save", async (webhookConfig: WebhookConfig) =>
-    webhookConfigManager.saveItem(webhookConfig)
-);
-
-frontendCommunicator.on("webhooks:delete", (webhookConfigId: string) =>
-    webhookConfigManager.deleteItem(webhookConfigId)
-);
 
 export = webhookConfigManager;

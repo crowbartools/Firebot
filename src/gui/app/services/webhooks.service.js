@@ -24,14 +24,6 @@
                 }
             };
 
-            service.loadWebhookConfigs = async () => {
-                const webhookConfigs = await backendCommunicator.fireEventAsync("webhooks:get-all");
-
-                if (webhookConfigs) {
-                    service.webhookConfigs = webhookConfigs;
-                }
-            };
-
             /**
              * @param {string} webhookId
              * @returns {WebhookConfig}
@@ -57,12 +49,14 @@
 
             service.deleteWebhookConfig = function(webhookId) {
                 service.webhookConfigs = service.webhookConfigs.filter(t => t.id !== webhookId);
-                backendCommunicator.fireEvent("webhooks:delete", webhookId);
+                backendCommunicator.send("webhooks:delete", webhookId);
             };
 
             backendCommunicator.on("webhooks:updated", (webhookConfigs) => {
                 service.webhookConfigs = webhookConfigs;
             });
+
+            backendCommunicator.send("webhooks:ui-service-ready");
 
             return service;
         });

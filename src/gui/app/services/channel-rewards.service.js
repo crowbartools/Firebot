@@ -37,7 +37,7 @@
 
             service.saveAllRewards = (channelRewards, updateTwitch = false) => {
                 service.channelRewards = channelRewards;
-                backendCommunicator.fireEvent("save-all-channel-rewards", {
+                backendCommunicator.send("save-all-channel-rewards", {
                     updateTwitch: updateTwitch,
                     channelRewards: channelRewards
                 });
@@ -45,7 +45,7 @@
 
             service.deleteChannelReward = (channelRewardId) => {
                 service.channelRewards = service.channelRewards.filter(cr => cr.id !== channelRewardId);
-                backendCommunicator.fireEvent("delete-channel-reward", channelRewardId);
+                backendCommunicator.send("delete-channel-reward", channelRewardId);
             };
 
             service.showAddOrEditRewardModal = (reward) => {
@@ -61,7 +61,7 @@
             };
 
             service.manuallyTriggerReward = (itemId) => {
-                backendCommunicator.fireEvent("manually-trigger-reward", itemId);
+                backendCommunicator.send("manually-trigger-reward", itemId);
             };
 
             service.channelRewardNameExists = (name) => {

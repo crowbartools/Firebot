@@ -272,19 +272,19 @@
                 $ctrl.toggleLivePreview = () => {
                     if ($ctrl.livePreviewActive) {
                         $ctrl.livePreviewActive = false;
-                        backendCommunicator.fireEvent("overlay-widgets:stop-live-preview", $ctrl.widget);
+                        backendCommunicator.send("overlay-widgets:stop-live-preview", $ctrl.widget);
 
                     } else {
                         if ($ctrl.widget.type == null || !$ctrl.typeSupportsLivePreview) {
                             return;
                         }
-                        backendCommunicator.fireEvent("overlay-widgets:start-live-preview", $ctrl.widget);
+                        backendCommunicator.send("overlay-widgets:start-live-preview", $ctrl.widget);
                         $ctrl.livePreviewActive = true;
                     }
                 };
 
                 const sendLivePreviewUpdate = utilityService.debounce((widget) => {
-                    backendCommunicator.fireEvent("overlay-widgets:update-live-preview", widget);
+                    backendCommunicator.send("overlay-widgets:update-live-preview", widget);
                 }, 200);
 
                 // deep watch $ctrl.widget for updates and send updates to the live preview if active
