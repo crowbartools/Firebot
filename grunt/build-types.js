@@ -79,7 +79,7 @@ throw new Error(
             license: rootPkg.license,
             peerDependencies: {
                 '@types/express': '^5.0.5',
-                '@types/node': '^24.1.0'
+                '@types/node': '^22.19.21'
             },
             publishConfig: {
                 access: "public"
