@@ -70,7 +70,7 @@ interface ManifestDescription {
     long?: string;
 }
 
-interface ManifestFirebotVersion {
+export interface ManifestFirebotVersion {
     major: number;
     minor?: number;
     patch?: number;
