@@ -55,7 +55,9 @@ module.exports = function (grunt) {
         '--out="./dist/pack"',
         '--arch=x64',
         `--electronVersion=${version}`,
-        '--asar',
+        // Unpack native binaries for DuckDB from the
+        // asar archive so they can be loaded at runtime
+        '--asar.unpack="**/*.{node,dylib,so,dll}"',
         '--prune',
         '--overwrite',
         '--version-string.ProductName="Firebot v5"',

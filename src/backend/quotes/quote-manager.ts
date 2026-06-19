@@ -1,8 +1,10 @@
+import { DuckDBConnection, DuckDBInstance } from "@duckdb/node-api";
 import Datastore from "@seald-io/nedb";
 import { TypedEmitter } from "tiny-typed-emitter";
 import fsp from "fs/promises";
+import fs from "fs";
 
-import type { Quote, QuoteAutoid } from "../../types";
+import type { Quote } from "../../types";
 
 import { ProfileManager } from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
@@ -18,9 +20,38 @@ interface DateConfig {
     year: number;
 }
 
+// Shape of a quote document as stored in the legacy NeDB file. The "__autoid__"
+// document uses a string _id and carries the autoincrement counter in `seq`.
+interface LegacyQuoteDoc {
+    _id: number | "__autoid__";
+    seq?: number;
+    text?: string;
+    originator?: string;
+    creator?: string;
+    game?: string;
+    createdAt?: string;
+}
+
+// Shape of a row as returned by DuckDB (snake_case columns)
+interface QuoteRow {
+    id: number;
+    text: string;
+    originator: string;
+    creator: string;
+    game: string;
+    created_at: string | null;
+}
+
+const QUOTES_TABLE = "quotes";
+const META_TABLE = "quote_meta";
+// Key used in the meta table to track the auto-incrementing id, mirroring the
+// legacy NeDB "__autoid__" document.
+const AUTOID_KEY = "autoid";
+
 class QuoteManager {
     private logger = LoggerCache.getLogger("Quotes");
-    private db: Datastore<Quote | QuoteAutoid>;
+    private instance: DuckDBInstance;
+    private db: DuckDBConnection;
 
     events = new TypedEmitter<{
         "created-item": (data: QuoteEventData) => void;
@@ -59,11 +90,24 @@ class QuoteManager {
         return input.replace(/[$^|.*+?(){}\\[\]]/g, '\\$&');
     }
 
+    private rowToQuote(row: QuoteRow): Quote {
+        return {
+            _id: row.id,
+            text: row.text,
+            originator: row.originator,
+            creator: row.creator,
+            game: row.game,
+            createdAt: row.created_at ?? undefined
+        };
+    }
+
     async loadQuoteDatabase(): Promise<void> {
-        const path = ProfileManager.getPathInProfile("db/quotes.db");
-        this.db = new Datastore({ filename: path });
+        const path = ProfileManager.getPathInProfile("db/quotes.duckdb");
         try {
-            await this.db.loadDatabaseAsync();
+            this.instance = await DuckDBInstance.create(path);
+            this.db = await this.instance.connect();
+            await this.createSchema();
+            await this.migrateFromNeDb();
         } catch (error) {
             const err = error as Error;
             this.logger.error("Error Loading Database: ", err.message);
@@ -71,10 +115,118 @@ class QuoteManager {
         }
     }
 
+    private async createSchema(): Promise<void> {
+        await this.db.run(`
+            CREATE TABLE IF NOT EXISTS ${QUOTES_TABLE} (
+                id INTEGER PRIMARY KEY,
+                text VARCHAR,
+                originator VARCHAR,
+                creator VARCHAR,
+                game VARCHAR,
+                created_at VARCHAR
+            )
+        `);
+        await this.db.run(`
+            CREATE TABLE IF NOT EXISTS ${META_TABLE} (
+                key VARCHAR PRIMARY KEY,
+                seq INTEGER
+            )
+        `);
+    }
+
+    /**
+     * One-time migration of an existing NeDB quotes.db into the DuckDB table.
+     *
+     * We deliberately load the legacy file through NeDB rather than DuckDB's
+     * read_json. NeDB's on-disk format is an append-only log: updates and
+     * deletes are appended as additional lines, so the raw file contains
+     * duplicate ids and "$$deleted" tombstones. Loading via NeDB collapses the
+     * log to its true final state; reading the raw JSON would re-import stale
+     * and deleted records.
+     */
+    private async migrateFromNeDb(): Promise<void> {
+        // Don't migrate if the table already has data
+        if ((await this.getQuoteCount()) > 0) {
+            return;
+        }
+
+        const nedbPath = ProfileManager.getPathInProfile("db/quotes.db");
+        if (!fs.existsSync(nedbPath)) {
+            return;
+        }
+
+        this.logger.info("Migrating legacy NeDB quotes database to DuckDB...");
+
+        try {
+            const legacy = new Datastore({ filename: nedbPath });
+            await legacy.loadDatabaseAsync();
+
+            const docs = await legacy.findAsync({}) as LegacyQuoteDoc[];
+
+            const autoIdDoc = docs.find(d => d._id === "__autoid__");
+            const quotes = docs.filter(d => d._id !== "__autoid__") as Quote[];
+
+            await this.db.run("BEGIN TRANSACTION");
+            try {
+                for (const quote of quotes) {
+                    await this.insertQuoteRow(quote);
+                }
+
+                // Preserve the autoincrement counter so newly added quotes don't
+                // reuse ids. Fall back to the highest existing id if there was no
+                // autoid doc.
+                const highestId = quotes.reduce((max, q) => Math.max(max, q._id ?? 0), 0);
+                const seq = autoIdDoc?.seq ?? highestId;
+                await this.setQuoteIdIncrementer(seq);
+
+                await this.db.run("COMMIT");
+            } catch (error) {
+                await this.db.run("ROLLBACK");
+                throw error;
+            }
+
+            // Keep the original file around (renamed) in case the migration
+            // needs to be inspected or re-run.
+            await fsp.rename(nedbPath, `${nedbPath}.migrated`);
+
+            this.logger.info(`Migrated ${quotes.length} quotes from NeDB to DuckDB.`);
+        } catch (error) {
+            const err = error as Error;
+            this.logger.error("Error migrating quotes from NeDB to DuckDB: ", err.message);
+        }
+    }
+
+    private async insertQuoteRow(quote: Quote): Promise<void> {
+        await this.db.run(
+            `INSERT OR REPLACE INTO ${QUOTES_TABLE} (id, text, originator, creator, game, created_at)
+             VALUES ($1, $2, $3, $4, $5, $6)`,
+            [
+                quote._id,
+                quote.text ?? null,
+                quote.originator ?? null,
+                quote.creator ?? null,
+                quote.game ?? null,
+                quote.createdAt ?? null
+            ]
+        );
+    }
+
+    private async getQuoteCount(): Promise<number> {
+        const reader = await this.db.runAndReadAll(
+            `SELECT CAST(COUNT(*) AS INTEGER) AS count FROM ${QUOTES_TABLE}`
+        );
+        const rows = reader.getRowObjects() as Array<{ count: number }>;
+        return rows[0]?.count ?? 0;
+    }
+
     async getCurrentQuoteId(): Promise<number> {
         try {
-            const id: QuoteAutoid = await this.db.findOneAsync({ _id: "__autoid__" });
-            return id.seq;
+            const reader = await this.db.runAndReadAll(
+                `SELECT seq FROM ${META_TABLE} WHERE key = $1`,
+                [AUTOID_KEY]
+            );
+            const rows = reader.getRowObjects() as Array<{ seq: number }>;
+            return rows.length ? Number(rows[0].seq) : null;
         } catch {
             return null;
         }
@@ -82,13 +234,18 @@ class QuoteManager {
 
     async getNextQuoteId(): Promise<number> {
         try {
-            const result = await this.db.updateAsync(
-                { _id: '__autoid__' },
-                { $inc: { seq: 1 } },
-                { upsert: true, returnUpdatedDocs: true }
+            // Ensure the counter row exists, then atomically increment it.
+            await this.db.run(
+                `INSERT INTO ${META_TABLE} (key, seq) VALUES ($1, 0)
+                 ON CONFLICT (key) DO NOTHING`,
+                [AUTOID_KEY]
             );
-
-            return (result.affectedDocuments as QuoteAutoid).seq;
+            const reader = await this.db.runAndReadAll(
+                `UPDATE ${META_TABLE} SET seq = seq + 1 WHERE key = $1 RETURNING seq`,
+                [AUTOID_KEY]
+            );
+            const rows = reader.getRowObjects() as Array<{ seq: number }>;
+            return Number(rows[0].seq);
         } catch {
             return null;
         }
@@ -96,13 +253,12 @@ class QuoteManager {
 
     async setQuoteIdIncrementer(number: number): Promise<number> {
         try {
-            const result = await this.db.updateAsync(
-                { _id: '__autoid__' },
-                { seq: number },
-                { upsert: true, returnUpdatedDocs: true }
+            await this.db.run(
+                `INSERT INTO ${META_TABLE} (key, seq) VALUES ($1, $2)
+                 ON CONFLICT (key) DO UPDATE SET seq = excluded.seq`,
+                [AUTOID_KEY, number]
             );
-
-            return (result.affectedDocuments as QuoteAutoid).seq;
+            return number;
         } catch {
             return null;
         }
@@ -130,11 +286,11 @@ class QuoteManager {
                 }
             }
 
-            const newQuote = await this.db.insertAsync(quote);
+            await this.insertQuoteRow(quote);
 
-            this.events.emit("created-item", { quote: newQuote });
+            this.events.emit("created-item", { quote });
             frontendCommunicator.send("quotes-update");
-            return newQuote._id as number;
+            return quote._id;
         } catch (error) {
             const err = error as Error;
             this.logger.error("QuoteDB: Error adding quote: ", err.message);
@@ -144,20 +300,17 @@ class QuoteManager {
 
     async addQuotes(quotes: Quote[]): Promise<void> {
         try {
-            quotes.forEach(async (q) => {
+            for (const quote of quotes) {
                 const newQuoteId = await this.getNextQuoteId();
 
                 if (newQuoteId == null) {
                     this.logger.error("Unable to add quote as we could not generate a new ID");
-                    return;
+                    continue;
                 }
 
-                q._id = newQuoteId;
-            });
+                quote._id = newQuoteId;
+                await this.insertQuoteRow(quote);
 
-            const newQuotes = await this.db.insertAsync(quotes);
-
-            for (const quote of newQuotes) {
                 this.events.emit("created-item", { quote });
             }
 
@@ -171,12 +324,21 @@ class QuoteManager {
 
     async updateQuote(quote: Quote, dontSendUiUpdateEvent = false): Promise<Quote> {
         try {
-            const { affectedDocuments } = await this.db.updateAsync(
-                { _id: quote._id },
-                quote,
-                { returnUpdatedDocs: true }
+            await this.db.run(
+                `UPDATE ${QUOTES_TABLE}
+                 SET text = $2, originator = $3, creator = $4, game = $5, created_at = $6
+                 WHERE id = $1`,
+                [
+                    quote._id,
+                    quote.text ?? null,
+                    quote.originator ?? null,
+                    quote.creator ?? null,
+                    quote.game ?? null,
+                    quote.createdAt ?? null
+                ]
             );
-            const updatedQuote = affectedDocuments as Quote;
+
+            const updatedQuote = await this.getQuote(quote._id);
 
             this.events.emit("updated-item", { quote: updatedQuote });
 
@@ -194,7 +356,7 @@ class QuoteManager {
 
     async removeQuote(quoteId: number, dontSendUiUpdateEvent = false): Promise<void> {
         try {
-            await this.db.removeAsync({ _id: quoteId }, {});
+            await this.db.run(`DELETE FROM ${QUOTES_TABLE} WHERE id = $1`, [quoteId]);
 
             this.events.emit("deleted-item", { quote: { _id: quoteId } });
 
@@ -209,35 +371,44 @@ class QuoteManager {
 
     async getQuote(quoteId: number): Promise<Quote> {
         try {
-            return await this.db.findOneAsync({ _id: quoteId }) as Quote;
+            const reader = await this.db.runAndReadAll(
+                `SELECT * FROM ${QUOTES_TABLE} WHERE id = $1`,
+                [quoteId]
+            );
+            const rows = reader.getRowObjects() as unknown as QuoteRow[];
+            return rows.length ? this.rowToQuote(rows[0]) : null;
         } catch {
             return null;
         }
     }
 
+    private async getRandomQuoteWhere(whereClause: string, params: Array<string | number>): Promise<Quote> {
+        const reader = await this.db.runAndReadAll(
+            `SELECT * FROM ${QUOTES_TABLE} WHERE ${whereClause} ORDER BY random() LIMIT 1`,
+            params
+        );
+        const rows = reader.getRowObjects() as unknown as QuoteRow[];
+        return rows.length ? this.rowToQuote(rows[0]) : undefined;
+    }
+
     async getRandomQuoteByDate(dateConfig: DateConfig): Promise<Quote> {
         try {
-            let regex = "^";
+            const conditions = [
+                "month(TRY_CAST(created_at AS TIMESTAMP)) = $1",
+                "day(TRY_CAST(created_at AS TIMESTAMP)) = $2"
+            ];
+            const params: number[] = [dateConfig.month, dateConfig.day];
+
             if (dateConfig.year) {
-                regex += dateConfig.year.toString().length === 2 ?
-                    `20${dateConfig.year}-` :
-                    `${dateConfig.year}-`;
-            } else {
-                regex += '\\d{4}-';
+                // Match legacy behavior: a 2-digit year is interpreted as 20YY
+                const fullYear = dateConfig.year.toString().length === 2
+                    ? 2000 + dateConfig.year
+                    : dateConfig.year;
+                conditions.push(`year(TRY_CAST(created_at AS TIMESTAMP)) = $${params.length + 1}`);
+                params.push(fullYear);
             }
 
-            regex += dateConfig.month < 10 ? `${dateConfig.month.toString().padStart(2, "0")}-` : `${dateConfig.month}-`;
-            regex += dateConfig.day < 10 ? `${dateConfig.day.toString().padStart(2, "0")}` : `${dateConfig.day}`;
-            regex += "T";
-
-            const datePattern = new RegExp(regex);
-            const quotes = await this.db.findAsync({ createdAt: { $regex: datePattern } });
-
-            if (!quotes.length) {
-                return;
-            }
-
-            return quotes[Math.floor(Math.random() * quotes.length)] as Quote;
+            return await this.getRandomQuoteWhere(conditions.join(" AND "), params);
         } catch {
             return null;
         }
@@ -245,19 +416,7 @@ class QuoteManager {
 
     async getRandomQuoteByAuthor(author: string): Promise<Quote> {
         try {
-            const quotes = await this.db.findAsync(
-                {
-                    originator: {
-                        $regex: new RegExp(`^${this.regExpEscape(author)}$`, 'i')
-                    }
-                }
-            );
-
-            if (!quotes.length) {
-                return;
-            }
-
-            return quotes[Math.floor(Math.random() * quotes.length)] as Quote;
+            return await this.getRandomQuoteWhere("lower(originator) = lower($1)", [author]);
         } catch {
             return null;
         }
@@ -265,14 +424,13 @@ class QuoteManager {
 
     async getRandomQuoteByGame(gameSearch: string) {
         try {
-            const gamePattern = new RegExp(`${this.regExpEscape(gameSearch)}`, 'i');
-            const quotes = await this.db.findAsync({ originator: { $regex: gamePattern } });
-
-            if (!quotes.length) {
-                return;
-            }
-
-            return quotes[Math.floor(Math.random() * quotes.length)] as Quote;
+            // NOTE: Preserves the legacy behavior of matching against `originator`
+            // rather than `game`. This appears to be a long-standing bug, but is
+            // kept here so this database migration does not change behavior.
+            return await this.getRandomQuoteWhere(
+                "regexp_matches(originator, $1, 'i')",
+                [this.regExpEscape(gameSearch)]
+            );
         } catch {
             return null;
         }
@@ -280,14 +438,10 @@ class QuoteManager {
 
     async getRandomQuoteContainingText(text: string): Promise<Quote> {
         try {
-            const textPattern = new RegExp(`\\b${this.regExpEscape(text)}\\b`, 'i');
-            const quotes = await this.db.findAsync({ text: { $regex: textPattern } });
-
-            if (!quotes.length) {
-                return;
-            }
-
-            return quotes[Math.floor(Math.random() * quotes.length)] as Quote;
+            return await this.getRandomQuoteWhere(
+                `regexp_matches("text", $1, 'i')`,
+                [`\\b${this.regExpEscape(text)}\\b`]
+            );
         } catch {
             return null;
         }
@@ -295,22 +449,11 @@ class QuoteManager {
 
     async getRandomQuote(): Promise<Quote> {
         try {
-            const count = (await this.db.countAsync({})) - 1;
-
-            if (count > 0) {
-                const skipCount = Math.floor(Math.random() * count);
-                const quotes = await this.db.findAsync(
-                    {
-                        $where: function () {
-                            return (this as Quote | QuoteAutoid)._id !== "__autoid__";
-                        }
-                    })
-                    .skip(skipCount)
-                    .limit(1)
-                    .execAsync();
-
-                return quotes[0] as Quote;
-            }
+            const reader = await this.db.runAndReadAll(
+                `SELECT * FROM ${QUOTES_TABLE} ORDER BY random() LIMIT 1`
+            );
+            const rows = reader.getRowObjects() as unknown as QuoteRow[];
+            return rows.length ? this.rowToQuote(rows[0]) : undefined;
         } catch {
             return null;
         }
@@ -318,36 +461,13 @@ class QuoteManager {
 
     async getAllQuotes(): Promise<Quote[]> {
         try {
-            const quotes = await this.db.findAsync({
-                $where: function () {
-                    return (this as Quote | QuoteAutoid)._id !== "__autoid__";
-                }
-            });
-
-            return quotes as Quote[];
+            const reader = await this.db.runAndReadAll(
+                `SELECT * FROM ${QUOTES_TABLE} ORDER BY id`
+            );
+            const rows = reader.getRowObjects() as unknown as QuoteRow[];
+            return rows.map(row => this.rowToQuote(row));
         } catch {
             return null;
-        }
-    }
-
-    private async updateQuoteId(quote: Quote, newId: number): Promise<boolean> {
-        try {
-            if (quote._id === newId) {
-                return true;
-            }
-
-            await this.removeQuote(quote._id, true);
-
-            quote._id = newId;
-            await this.db.insertAsync(quote);
-
-            this.events.emit("created-item", { quote });
-
-            return true;
-        } catch (error) {
-            const err = error as Error;
-            this.logger.error("QuoteDB: Error adding quote: ", err.message);
-            return false;
         }
     }
 
@@ -361,15 +481,26 @@ class QuoteManager {
             return;
         }
 
-        let idCounter = 1;
-        for (const quote of quotes) {
-            await this.updateQuoteId(quote, idCounter);
-            idCounter++;
+        await this.db.run("BEGIN TRANSACTION");
+        try {
+            await this.db.run(`DELETE FROM ${QUOTES_TABLE}`);
+
+            let idCounter = 1;
+            for (const quote of quotes) {
+                quote._id = idCounter;
+                await this.insertQuoteRow(quote);
+                this.events.emit("updated-item", { quote });
+                idCounter++;
+            }
+
+            await this.setQuoteIdIncrementer(idCounter - 1);
+            await this.db.run("COMMIT");
+        } catch (error) {
+            await this.db.run("ROLLBACK");
+            const err = error as Error;
+            this.logger.error("QuoteDB: Error recalculating quote ids: ", err.message);
+            return;
         }
-
-        await this.setQuoteIdIncrementer(idCounter - 1);
-
-        await this.db.compactDatafileAsync();
 
         frontendCommunicator.send("quotes-update");
     }
@@ -377,11 +508,7 @@ class QuoteManager {
     async exportQuotesToFile(filepath: string): Promise<boolean> {
         try {
             const fileLines: string[] = [];
-            const quotes = await this.db.findAsync({
-                $where: function () {
-                    return (this as Quote | QuoteAutoid)._id !== "__autoid__";
-                }
-            }) as Quote[];
+            const quotes = await this.getAllQuotes();
 
             const headers = [
                 "ID",
