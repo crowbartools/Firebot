@@ -19,11 +19,39 @@ type NoResult = Awaitable<void>;
 
 type GenericParameters = Record<string, unknown>;
 
+export type ManagedPluginManifest = {
+    name: string;
+    author: string;
+    description: string;
+    /** Must be a semver string */
+    version: string;
+    downloadUrl: string;
+    sha256: string;
+    /** Must be an ISO-8601 string */
+    releaseDate: string;
+    type: "single-file" | "zip";
+
+    icon?: PluginIcon;
+    tags?: string[];
+    repo?: string;
+    website?: string;
+    support?: string;
+    minimumFirebotVersion?: ManifestFirebotVersion;
+    maximumFirebotVersion?: ManifestFirebotVersion;
+};
+
+export type ManagedPluginDetails = {
+    author: string;
+    name: string;
+    version: string;
+};
+
 export type InstalledPluginConfig<Params extends GenericParameters = GenericParameters> = {
     id: string;
     fileName: string;
     enabled?: boolean;
     legacyImport?: boolean;
+    managedPluginDetails?: ManagedPluginDetails;
     parameters: Params;
 };
 
