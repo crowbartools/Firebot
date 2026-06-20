@@ -25,6 +25,10 @@ export async function whenReady() {
     const { ensureRequiredFoldersExist } = await import("../../data-tasks");
     await ensureRequiredFoldersExist();
 
+    windowManagement.updateSplashScreenStatus("Running daily backup...");
+    const { BackupManager } = await import("../../../backup-manager");
+    await BackupManager.onceADayBackUpCheck();
+
     windowManagement.updateSplashScreenStatus("Loading pronoun cache...");
     const { FirebotPronounManager } = await import("../../../pronouns/pronoun-manager");
     await FirebotPronounManager.cachePronouns();
@@ -258,10 +262,6 @@ export async function whenReady() {
     global.EffectType = Effect.EffectTypeV5Map;
     const { ProfileManager } = await import("../../../common/profile-manager");
     global.SCRIPTS_DIR = ProfileManager.getPathInProfile("/scripts/");
-
-    windowManagement.updateSplashScreenStatus("Running daily backup...");
-    const { BackupManager } = await import("../../../backup-manager");
-    await BackupManager.onceADayBackUpCheck();
 
     // start the REST api server
     windowManagement.updateSplashScreenStatus("Starting internal web server...");
