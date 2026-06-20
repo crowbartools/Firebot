@@ -15,10 +15,10 @@ interface DuckDbHandle {
 const DATABASES_DIR = "databases";
 
 /**
- * Central registry for DuckDB-backed databases.
+ * Registry for DuckDB-backed databases.
  *
- * Each named database lives in its own file under the profile's `databases/`
- * dir (ie databases/quotes.db)
+ * Each named database lives in its own file under the
+ * profile's databases/ dir (ie databases/quotes.db)
  */
 class DuckDbConnectionRegistry {
     private logger = LoggerCache.getLogger("DuckDB");
@@ -66,7 +66,7 @@ class DuckDbConnectionRegistry {
 
     /**
      * Attaches another registered database to the given connection so queries
-     * can join across files, ie
+     * can join across files, ie:
      * "SELECT ... FROM quotes q JOIN viewers.viewers v ON ..."
      */
     async attach(connection: DuckDBConnection, name: string, alias: string, readOnly = true): Promise<void> {
@@ -89,11 +89,10 @@ class DuckDbConnectionRegistry {
     }
 
     async checkpointAll(): Promise<void> {
-        const handles = Array.from(this.handles.values());
-        for (const handlePromise of handles) {
+        const names = Array.from(this.handles.keys());
+        for (const name of names) {
             try {
-                const handle = await handlePromise;
-                await handle.connection.run("CHECKPOINT");
+                await this.checkpoint(name);
             } catch {}
         }
     }
