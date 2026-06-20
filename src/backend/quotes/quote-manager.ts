@@ -1,4 +1,4 @@
-import { DuckDBConnection, DuckDBInstance } from "@duckdb/node-api";
+import type { DuckDBConnection } from "@duckdb/node-api";
 import Datastore from "@seald-io/nedb";
 import { TypedEmitter } from "tiny-typed-emitter";
 import fsp from "fs/promises";
@@ -6,6 +6,7 @@ import fs from "fs";
 
 import type { Quote } from "../../types";
 
+import { DuckDbConnectionRegistry } from "../database/duckdb-connection-registry";
 import { ProfileManager } from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import { LoggerCache } from "../logger-cache";
@@ -20,8 +21,6 @@ interface DateConfig {
     year: number;
 }
 
-// Shape of a quote document as stored in the legacy NeDB file. The "__autoid__"
-// document uses a string _id and carries the autoincrement counter in `seq`.
 interface LegacyQuoteDoc {
     _id: number | "__autoid__";
     seq?: number;
@@ -32,7 +31,6 @@ interface LegacyQuoteDoc {
     createdAt?: string;
 }
 
-// Shape of a row as returned by DuckDB (snake_case columns)
 interface QuoteRow {
     id: number;
     text: string;
@@ -44,13 +42,10 @@ interface QuoteRow {
 
 const QUOTES_TABLE = "quotes";
 const META_TABLE = "quote_meta";
-// Key used in the meta table to track the auto-incrementing id, mirroring the
-// legacy NeDB "__autoid__" document.
 const AUTOID_KEY = "autoid";
 
 class QuoteManager {
     private logger = LoggerCache.getLogger("Quotes");
-    private instance: DuckDBInstance;
     private db: DuckDBConnection;
 
     events = new TypedEmitter<{
@@ -102,16 +97,13 @@ class QuoteManager {
     }
 
     async loadQuoteDatabase(): Promise<void> {
-        const path = ProfileManager.getPathInProfile("db/quotes.duckdb");
         try {
-            this.instance = await DuckDBInstance.create(path);
-            this.db = await this.instance.connect();
+            this.db = await DuckDbConnectionRegistry.getConnection("quotes");
             await this.createSchema();
             await this.migrateFromNeDb();
         } catch (error) {
             const err = error as Error;
             this.logger.error("Error Loading Database: ", err.message);
-            this.logger.debug("Failed Database Path: ", path);
         }
     }
 
@@ -134,16 +126,6 @@ class QuoteManager {
         `);
     }
 
-    /**
-     * One-time migration of an existing NeDB quotes.db into the DuckDB table.
-     *
-     * We deliberately load the legacy file through NeDB rather than DuckDB's
-     * read_json. NeDB's on-disk format is an append-only log: updates and
-     * deletes are appended as additional lines, so the raw file contains
-     * duplicate ids and "$$deleted" tombstones. Loading via NeDB collapses the
-     * log to its true final state; reading the raw JSON would re-import stale
-     * and deleted records.
-     */
     private async migrateFromNeDb(): Promise<void> {
         // Don't migrate if the table already has data
         if ((await this.getQuoteCount()) > 0) {
@@ -174,7 +156,7 @@ class QuoteManager {
 
                 // Preserve the autoincrement counter so newly added quotes don't
                 // reuse ids. Fall back to the highest existing id if there was no
-                // autoid doc.
+                // autoid doc for some reason
                 const highestId = quotes.reduce((max, q) => Math.max(max, q._id ?? 0), 0);
                 const seq = autoIdDoc?.seq ?? highestId;
                 await this.setQuoteIdIncrementer(seq);
@@ -185,8 +167,7 @@ class QuoteManager {
                 throw error;
             }
 
-            // Keep the original file around (renamed) in case the migration
-            // needs to be inspected or re-run.
+            // Keep the original file around just in case
             await fsp.rename(nedbPath, `${nedbPath}.migrated`);
 
             this.logger.info(`Migrated ${quotes.length} quotes from NeDB to DuckDB.`);
@@ -293,7 +274,7 @@ class QuoteManager {
             return quote._id;
         } catch (error) {
             const err = error as Error;
-            this.logger.error("QuoteDB: Error adding quote: ", err.message);
+            this.logger.error("Error adding quote: ", err.message);
             return null;
         }
     }
@@ -317,7 +298,7 @@ class QuoteManager {
             frontendCommunicator.send("quotes-update");
         } catch (error) {
             const err = error as Error;
-            this.logger.error("QuoteDB: Error adding quotes: ", err.message);
+            this.logger.error("Error adding quotes: ", err.message);
             throw error;
         }
     }
@@ -349,7 +330,7 @@ class QuoteManager {
             return updatedQuote;
         } catch (error) {
             const err = error as Error;
-            this.logger.error("QuoteDB: Error updating quote: ", err.message);
+            this.logger.error("Error updating quote: ", err.message);
             return null;
         }
     }
@@ -400,7 +381,7 @@ class QuoteManager {
             const params: number[] = [dateConfig.month, dateConfig.day];
 
             if (dateConfig.year) {
-                // Match legacy behavior: a 2-digit year is interpreted as 20YY
+                // a 2-digit year is interpreted as 20YY
                 const fullYear = dateConfig.year.toString().length === 2
                     ? 2000 + dateConfig.year
                     : dateConfig.year;
@@ -424,11 +405,8 @@ class QuoteManager {
 
     async getRandomQuoteByGame(gameSearch: string) {
         try {
-            // NOTE: Preserves the legacy behavior of matching against `originator`
-            // rather than `game`. This appears to be a long-standing bug, but is
-            // kept here so this database migration does not change behavior.
             return await this.getRandomQuoteWhere(
-                "regexp_matches(originator, $1, 'i')",
+                "regexp_matches(game, $1, 'i')",
                 [this.regExpEscape(gameSearch)]
             );
         } catch {
@@ -498,7 +476,7 @@ class QuoteManager {
         } catch (error) {
             await this.db.run("ROLLBACK");
             const err = error as Error;
-            this.logger.error("QuoteDB: Error recalculating quote ids: ", err.message);
+            this.logger.error("Error recalculating quote ids: ", err.message);
             return;
         }
 
