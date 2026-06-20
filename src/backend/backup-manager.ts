@@ -11,6 +11,8 @@ import frontendCommunicator from "./common/frontend-communicator";
 import { LoggerCache } from "./logger-cache";
 import { emptyFolder, wait } from "./utils";
 
+import { DuckDbConnectionRegistry } from "./database/duckdb-connection-registry";
+
 interface ZipEntry {
     path: string;
     autodrain: () => Promise<void>;
@@ -176,6 +178,8 @@ class BackupManager {
     async startBackup(manualActivation = false) {
         this.logger.info(`Backup manualActivation: ${manualActivation}`);
         let finished = false;
+
+        await DuckDbConnectionRegistry.checkpointAll();
 
         const version = app.getVersion(),
             milliseconds = Date.now(),
