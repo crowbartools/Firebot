@@ -21,7 +21,7 @@ const DATABASES_DIR = "databases";
  * profile's databases/ dir (ie databases/quotes.db)
  */
 class DuckDbConnectionRegistry {
-    private logger = LoggerCache.getLogger("DuckDB");
+    private logger = LoggerCache.getLogger("DbConnectionRegistry");
     private handles = new Map<string, Promise<DuckDbHandle>>();
 
     constructor() {
