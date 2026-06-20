@@ -40,10 +40,30 @@ export type ManagedPluginManifest = {
     maximumFirebotVersion?: ManifestFirebotVersion;
 };
 
-export type ManagedPluginDetails = {
+export type ManagedPlugin = {
     author: string;
     name: string;
     version: string;
+};
+
+export type ManagedPluginWithManifest = ManagedPlugin & {
+    manifest: ManagedPluginManifest;
+};
+
+export type ManagedPluginUpdateRequest = {
+    author: string;
+    name: string;
+    version: string;
+    firebotVersion: ManifestFirebotVersion;
+};
+
+export type ManagedPluginBatchUpdateRequest = {
+    plugins: Array<{
+        author: string;
+        name: string;
+        version: string;
+    }>;
+    firebotVersion: ManifestFirebotVersion;
 };
 
 export type InstalledPluginConfig<Params extends GenericParameters = GenericParameters> = {
@@ -51,7 +71,7 @@ export type InstalledPluginConfig<Params extends GenericParameters = GenericPara
     fileName: string;
     enabled?: boolean;
     legacyImport?: boolean;
-    managedPluginDetails?: ManagedPluginDetails;
+    managedPluginDetails?: ManagedPlugin;
     parameters: Params;
 };
 
