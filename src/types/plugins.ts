@@ -51,13 +51,6 @@ export type ManagedPluginWithManifest = ManagedPlugin & {
 };
 
 export type ManagedPluginUpdateRequest = {
-    author: string;
-    name: string;
-    version: string;
-    firebotVersion: ManifestFirebotVersion;
-};
-
-export type ManagedPluginBatchUpdateRequest = {
     plugins: Array<{
         author: string;
         name: string;
