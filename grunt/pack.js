@@ -31,20 +31,20 @@ module.exports = function (grunt) {
     let ignoreFlags;
     try {
         ignoreFlags = formatIgnoreList([
-            {dotfiles: true},
-            {dotdirs: true},
-            {path: 'build/resources'},
-            {path: 'dist'},
-            {path: 'doc'},
-            {path: 'docs'},
-            {path: 'grunt'},
-            {path: 'profiles'},
-            {path: 'src'},
-            {path: 'Gruntfile.js', isFile: true},
-            {path: 'package.lock', isFile: true},
-            {path: 'README.md', isFile: true},
-            {path: 'secrets.gpg', isFile: true},
-            {path: 'tsconfig.json', isFile: true}
+            { dotfiles: true },
+            { dotdirs: true },
+            { path: 'build/resources' },
+            { path: 'dist' },
+            { path: 'doc' },
+            { path: 'docs' },
+            { path: 'grunt' },
+            { path: 'profiles' },
+            { path: 'src' },
+            { path: 'Gruntfile.js', isFile: true },
+            { path: 'package.lock', isFile: true },
+            { path: 'README.md', isFile: true },
+            { path: 'secrets.gpg', isFile: true },
+            { path: 'tsconfig.json', isFile: true }
         ]);
     } catch (err) {
         grunt.fail.fatal(err);
@@ -53,9 +53,8 @@ module.exports = function (grunt) {
 
     const flags = [
         '--out="./dist/pack"',
-        '--arch=x64',
         `--electronVersion=${version}`,
-        '--asar.unpack="**/@duckdb/**/*.{node,dylib,so,dll}"',
+        '--asar.unpack="**/@tursodatabase/**/*.node"',
         '--prune',
         '--overwrite',
         '--version-string.ProductName="Firebot v5"',
@@ -76,13 +75,13 @@ module.exports = function (grunt) {
     grunt.config.merge({
         shell: {
             packwin64: {
-                command: `npx --no-install @electron/packager . Firebot --platform=win32 ${flags} --app-version=${windowsAppVersion}`
+                command: `npx --no-install @electron/packager . Firebot --platform=win32 --arch=x64 ${flags} --app-version=${windowsAppVersion}`
             },
             packdarwin: {
-                command: `npx --no-install @electron/packager . Firebot --platform=darwin ${flags} --arch=arm64 --extend-info="extra.plist" --extra-resource="./src/resources/firebot-setup-file-icon.icns"`
+                command: `npx --no-install @electron/packager . Firebot --platform=darwin --arch=arm64 ${flags} --extend-info="extra.plist" --extra-resource="./src/resources/firebot-setup-file-icon.icns"`
             },
             packlinux: {
-                command: `npx --no-install @electron/packager . Firebot --platform=linux ${flags}`
+                command: `npx --no-install @electron/packager . Firebot --platform=linux --arch=x64 ${flags}`
             }
         }
     });

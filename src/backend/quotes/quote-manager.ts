@@ -1,4 +1,4 @@
-import type { DuckDBConnection } from "@duckdb/node-api";
+import type { Database } from "@tursodatabase/database";
 import Datastore from "@seald-io/nedb";
 import { TypedEmitter } from "tiny-typed-emitter";
 import fsp from "fs/promises";
@@ -6,7 +6,7 @@ import fs from "fs";
 
 import type { Quote } from "../../types";
 
-import { DuckDbConnectionRegistry } from "../database/duckdb-connection-registry";
+import { TursoConnectionRegistry } from "../database/turso-connection-registry";
 import { ProfileManager } from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import { LoggerCache } from "../logger-cache";
@@ -46,7 +46,7 @@ const AUTOID_KEY = "autoid";
 
 class QuoteManager {
     private logger = LoggerCache.getLogger("Quotes");
-    private db: DuckDBConnection;
+    private db: Database;
 
     events = new TypedEmitter<{
         "created-item": (data: QuoteEventData) => void;
@@ -85,6 +85,11 @@ class QuoteManager {
         return input.replace(/[$^|.*+?(){}\\[\]]/g, '\\$&');
     }
 
+    private buildSearchPattern(term: string, wholeWord = false): string {
+        const escaped = this.regExpEscape(term);
+        return wholeWord ? `(?i)\\b${escaped}\\b` : `(?i)${escaped}`;
+    }
+
     private rowToQuote(row: QuoteRow): Quote {
         return {
             _id: row.id,
@@ -98,7 +103,7 @@ class QuoteManager {
 
     async loadQuoteDatabase(): Promise<void> {
         try {
-            this.db = await DuckDbConnectionRegistry.getConnection("quotes");
+            this.db = await TursoConnectionRegistry.getConnection("quotes");
             await this.createSchema();
             await this.migrateFromNeDb();
         } catch (error) {
@@ -108,19 +113,19 @@ class QuoteManager {
     }
 
     private async createSchema(): Promise<void> {
-        await this.db.run(`
+        await this.db.exec(`
             CREATE TABLE IF NOT EXISTS ${QUOTES_TABLE} (
                 id INTEGER PRIMARY KEY,
-                text VARCHAR,
-                originator VARCHAR,
-                creator VARCHAR,
-                game VARCHAR,
-                created_at VARCHAR
+                text TEXT,
+                originator TEXT,
+                creator TEXT,
+                game TEXT,
+                created_at TEXT
             )
         `);
-        await this.db.run(`
+        await this.db.exec(`
             CREATE TABLE IF NOT EXISTS ${META_TABLE} (
-                key VARCHAR PRIMARY KEY,
+                key TEXT PRIMARY KEY,
                 seq INTEGER
             )
         `);
@@ -137,7 +142,7 @@ class QuoteManager {
             return;
         }
 
-        this.logger.info("Migrating legacy NeDB quotes database to DuckDB...");
+        this.logger.info("Migrating legacy NeDB quotes database to Turso...");
 
         try {
             const legacy = new Datastore({ filename: nedbPath });
@@ -148,8 +153,7 @@ class QuoteManager {
             const autoIdDoc = docs.find(d => d._id === "__autoid__");
             const quotes = docs.filter(d => d._id !== "__autoid__") as Quote[];
 
-            await this.db.run("BEGIN TRANSACTION");
-            try {
+            const insertAll = this.db.transaction(async () => {
                 for (const quote of quotes) {
                     await this.insertQuoteRow(quote);
                 }
@@ -160,27 +164,23 @@ class QuoteManager {
                 const highestId = quotes.reduce((max, q) => Math.max(max, q._id ?? 0), 0);
                 const seq = autoIdDoc?.seq ?? highestId;
                 await this.setQuoteIdIncrementer(seq);
-
-                await this.db.run("COMMIT");
-            } catch (error) {
-                await this.db.run("ROLLBACK");
-                throw error;
-            }
+            });
+            await insertAll();
 
             // Keep the original file around just in case
             await fsp.rename(nedbPath, `${nedbPath}.migrated`);
 
-            this.logger.info(`Migrated ${quotes.length} quotes from NeDB to DuckDB.`);
+            this.logger.info(`Migrated ${quotes.length} quotes from NeDB to Turso.`);
         } catch (error) {
             const err = error as Error;
-            this.logger.error("Error migrating quotes from NeDB to DuckDB: ", err.message);
+            this.logger.error("Error migrating quotes from NeDB to Turso: ", err.message);
         }
     }
 
     private async insertQuoteRow(quote: Quote): Promise<void> {
         await this.db.run(
             `INSERT OR REPLACE INTO ${QUOTES_TABLE} (id, text, originator, creator, game, created_at)
-             VALUES ($1, $2, $3, $4, $5, $6)`,
+             VALUES (?, ?, ?, ?, ?, ?)`,
             [
                 quote._id,
                 quote.text ?? null,
@@ -193,21 +193,19 @@ class QuoteManager {
     }
 
     private async getQuoteCount(): Promise<number> {
-        const reader = await this.db.runAndReadAll(
-            `SELECT CAST(COUNT(*) AS INTEGER) AS count FROM ${QUOTES_TABLE}`
-        );
-        const rows = reader.getRowObjects() as Array<{ count: number }>;
-        return rows[0]?.count ?? 0;
+        const row = await this.db.get(
+            `SELECT COUNT(*) AS count FROM ${QUOTES_TABLE}`
+        ) as { count: number } | undefined;
+        return row?.count ?? 0;
     }
 
     async getCurrentQuoteId(): Promise<number> {
         try {
-            const reader = await this.db.runAndReadAll(
-                `SELECT seq FROM ${META_TABLE} WHERE key = $1`,
+            const row = await this.db.get(
+                `SELECT seq FROM ${META_TABLE} WHERE key = ?`,
                 [AUTOID_KEY]
-            );
-            const rows = reader.getRowObjects() as Array<{ seq: number }>;
-            return rows.length ? Number(rows[0].seq) : null;
+            ) as { seq: number } | undefined;
+            return row != null ? Number(row.seq) : null;
         } catch {
             return null;
         }
@@ -217,16 +215,15 @@ class QuoteManager {
         try {
             // Ensure the counter row exists, then atomically increment it.
             await this.db.run(
-                `INSERT INTO ${META_TABLE} (key, seq) VALUES ($1, 0)
-                 ON CONFLICT (key) DO NOTHING`,
+                `INSERT INTO ${META_TABLE} (key, seq) VALUES (?, 0)
+                 ON CONFLICT(key) DO NOTHING`,
                 [AUTOID_KEY]
             );
-            const reader = await this.db.runAndReadAll(
-                `UPDATE ${META_TABLE} SET seq = seq + 1 WHERE key = $1 RETURNING seq`,
+            const row = await this.db.get(
+                `UPDATE ${META_TABLE} SET seq = seq + 1 WHERE key = ? RETURNING seq`,
                 [AUTOID_KEY]
-            );
-            const rows = reader.getRowObjects() as Array<{ seq: number }>;
-            return Number(rows[0].seq);
+            ) as { seq: number } | undefined;
+            return row != null ? Number(row.seq) : null;
         } catch {
             return null;
         }
@@ -235,8 +232,8 @@ class QuoteManager {
     async setQuoteIdIncrementer(number: number): Promise<number> {
         try {
             await this.db.run(
-                `INSERT INTO ${META_TABLE} (key, seq) VALUES ($1, $2)
-                 ON CONFLICT (key) DO UPDATE SET seq = excluded.seq`,
+                `INSERT INTO ${META_TABLE} (key, seq) VALUES (?, ?)
+                 ON CONFLICT(key) DO UPDATE SET seq = excluded.seq`,
                 [AUTOID_KEY, number]
             );
             return number;
@@ -307,15 +304,15 @@ class QuoteManager {
         try {
             await this.db.run(
                 `UPDATE ${QUOTES_TABLE}
-                 SET text = $2, originator = $3, creator = $4, game = $5, created_at = $6
-                 WHERE id = $1`,
+                 SET text = ?, originator = ?, creator = ?, game = ?, created_at = ?
+                 WHERE id = ?`,
                 [
-                    quote._id,
                     quote.text ?? null,
                     quote.originator ?? null,
                     quote.creator ?? null,
                     quote.game ?? null,
-                    quote.createdAt ?? null
+                    quote.createdAt ?? null,
+                    quote._id
                 ]
             );
 
@@ -337,7 +334,7 @@ class QuoteManager {
 
     async removeQuote(quoteId: number, dontSendUiUpdateEvent = false): Promise<void> {
         try {
-            await this.db.run(`DELETE FROM ${QUOTES_TABLE} WHERE id = $1`, [quoteId]);
+            await this.db.run(`DELETE FROM ${QUOTES_TABLE} WHERE id = ?`, [quoteId]);
 
             this.events.emit("deleted-item", { quote: { _id: quoteId } });
 
@@ -352,31 +349,31 @@ class QuoteManager {
 
     async getQuote(quoteId: number): Promise<Quote> {
         try {
-            const reader = await this.db.runAndReadAll(
-                `SELECT * FROM ${QUOTES_TABLE} WHERE id = $1`,
+            const row = await this.db.get(
+                `SELECT * FROM ${QUOTES_TABLE} WHERE id = ?`,
                 [quoteId]
-            );
-            const rows = reader.getRowObjects() as unknown as QuoteRow[];
-            return rows.length ? this.rowToQuote(rows[0]) : null;
+            ) as QuoteRow | undefined;
+            return row != null ? this.rowToQuote(row) : null;
         } catch {
             return null;
         }
     }
 
     private async getRandomQuoteWhere(whereClause: string, params: Array<string | number>): Promise<Quote> {
-        const reader = await this.db.runAndReadAll(
+        const row = await this.db.get(
             `SELECT * FROM ${QUOTES_TABLE} WHERE ${whereClause} ORDER BY random() LIMIT 1`,
             params
-        );
-        const rows = reader.getRowObjects() as unknown as QuoteRow[];
-        return rows.length ? this.rowToQuote(rows[0]) : undefined;
+        ) as QuoteRow | undefined;
+        return row != null ? this.rowToQuote(row) : undefined;
     }
 
     async getRandomQuoteByDate(dateConfig: DateConfig): Promise<Quote> {
         try {
+            // created_at is stored as an ISO8601 string, which strftime parses
+            // natively to pull out the date parts.
             const conditions = [
-                "month(TRY_CAST(created_at AS TIMESTAMP)) = $1",
-                "day(TRY_CAST(created_at AS TIMESTAMP)) = $2"
+                "CAST(strftime('%m', created_at) AS INTEGER) = ?",
+                "CAST(strftime('%d', created_at) AS INTEGER) = ?"
             ];
             const params: number[] = [dateConfig.month, dateConfig.day];
 
@@ -385,7 +382,7 @@ class QuoteManager {
                 const fullYear = dateConfig.year.toString().length === 2
                     ? 2000 + dateConfig.year
                     : dateConfig.year;
-                conditions.push(`year(TRY_CAST(created_at AS TIMESTAMP)) = $${params.length + 1}`);
+                conditions.push("CAST(strftime('%Y', created_at) AS INTEGER) = ?");
                 params.push(fullYear);
             }
 
@@ -397,7 +394,7 @@ class QuoteManager {
 
     async getRandomQuoteByAuthor(author: string): Promise<Quote> {
         try {
-            return await this.getRandomQuoteWhere("lower(originator) = lower($1)", [author]);
+            return await this.getRandomQuoteWhere("lower(originator) = lower(?)", [author]);
         } catch {
             return null;
         }
@@ -405,10 +402,7 @@ class QuoteManager {
 
     async getRandomQuoteByGame(gameSearch: string) {
         try {
-            return await this.getRandomQuoteWhere(
-                "regexp_matches(game, $1, 'i')",
-                [this.regExpEscape(gameSearch)]
-            );
+            return await this.getRandomQuoteWhere("game REGEXP ?", [this.buildSearchPattern(gameSearch)]);
         } catch {
             return null;
         }
@@ -416,10 +410,7 @@ class QuoteManager {
 
     async getRandomQuoteContainingText(text: string): Promise<Quote> {
         try {
-            return await this.getRandomQuoteWhere(
-                `regexp_matches("text", $1, 'i')`,
-                [`\\b${this.regExpEscape(text)}\\b`]
-            );
+            return await this.getRandomQuoteWhere(`"text" REGEXP ?`, [this.buildSearchPattern(text, true)]);
         } catch {
             return null;
         }
@@ -427,11 +418,10 @@ class QuoteManager {
 
     async getRandomQuote(): Promise<Quote> {
         try {
-            const reader = await this.db.runAndReadAll(
+            const row = await this.db.get(
                 `SELECT * FROM ${QUOTES_TABLE} ORDER BY random() LIMIT 1`
-            );
-            const rows = reader.getRowObjects() as unknown as QuoteRow[];
-            return rows.length ? this.rowToQuote(rows[0]) : undefined;
+            ) as QuoteRow | undefined;
+            return row != null ? this.rowToQuote(row) : undefined;
         } catch {
             return null;
         }
@@ -439,10 +429,9 @@ class QuoteManager {
 
     async getAllQuotes(): Promise<Quote[]> {
         try {
-            const reader = await this.db.runAndReadAll(
+            const rows = await this.db.all(
                 `SELECT * FROM ${QUOTES_TABLE} ORDER BY id`
-            );
-            const rows = reader.getRowObjects() as unknown as QuoteRow[];
+            ) as QuoteRow[];
             return rows.map(row => this.rowToQuote(row));
         } catch {
             return null;
@@ -459,22 +448,22 @@ class QuoteManager {
             return;
         }
 
-        await this.db.run("BEGIN TRANSACTION");
         try {
-            await this.db.run(`DELETE FROM ${QUOTES_TABLE}`);
+            const renumber = this.db.transaction(async () => {
+                await this.db.run(`DELETE FROM ${QUOTES_TABLE}`);
 
-            let idCounter = 1;
-            for (const quote of quotes) {
-                quote._id = idCounter;
-                await this.insertQuoteRow(quote);
-                this.events.emit("updated-item", { quote });
-                idCounter++;
-            }
+                let idCounter = 1;
+                for (const quote of quotes) {
+                    quote._id = idCounter;
+                    await this.insertQuoteRow(quote);
+                    this.events.emit("updated-item", { quote });
+                    idCounter++;
+                }
 
-            await this.setQuoteIdIncrementer(idCounter - 1);
-            await this.db.run("COMMIT");
+                await this.setQuoteIdIncrementer(idCounter - 1);
+            });
+            await renumber();
         } catch (error) {
-            await this.db.run("ROLLBACK");
             const err = error as Error;
             this.logger.error("Error recalculating quote ids: ", err.message);
             return;

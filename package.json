@@ -60,9 +60,9 @@
     },
     "dependencies": {
         "@aws-sdk/client-polly": "^3.26.0",
-        "@duckdb/node-api": "^1.5.4-r.1",
         "@lucide/vue": "^1.18.0",
         "@seald-io/nedb": "^4.0.4",
+        "@tursodatabase/database": "^0.6.1",
         "@twurple/chat": "^8.1.4",
         "@twurple/eventsub-ws": "^8.1.4",
         "@types/tinycolor2": "^1.4.6",
