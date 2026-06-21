@@ -27,4 +27,13 @@ export type ModalFactory = {
         trigger?: TriggerType;
         triggerMeta?: unknown;
     }, callback: (result: T) => void, dismissCallback?: () => void) => void;
+    showConfirmationModal: (options: {
+        title: string;
+        question: string;
+        tip?: string;
+        cancelLabel?: string;
+        cancelBtnType?: string;
+        confirmLabel?: string;
+        confirmBtnType?: string;
+    }) => Promise<boolean>;
 };
