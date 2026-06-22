@@ -23,6 +23,7 @@ export interface PluginRegistrations {
     eventSourceIds?: string[];
     filterIds?: string[];
     systemCommandIds?: string[];
+    conditionIds?: string[];
     restrictionIds?: string[];
     integrationIds?: string[];
     gameIds?: string[];

@@ -14,6 +14,7 @@ import type { OverlayWidgetType } from "./overlay-widgets";
 import type { PluginHttpRouteDefinition } from "./http-server";
 import type { CustomWebSocketHandler } from "./websocket";
 import type { PluginWebhooks } from "./webhooks";
+import { ConditionType } from "./conditions";
 
 type NoResult = Awaitable<void>;
 
@@ -172,6 +173,7 @@ export interface Plugin<Params extends FirebotParams = FirebotParams> extends Pl
         integrations?: DynamicArray<Integration<any>>;
         filters?: DynamicArray<EventFilter>;
         restrictions?: DynamicArray<RestrictionType<any>>;
+        conditions?: DynamicArray<ConditionType<any, any, any>>;
         systemCommands?: DynamicArray<SystemCommand<any>>;
         games?: DynamicArray<FirebotGame>;
         frontendListeners?: DynamicArray<FrontendListener>;

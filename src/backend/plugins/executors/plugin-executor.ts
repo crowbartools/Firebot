@@ -18,6 +18,7 @@ import { ReplaceVariableManager } from "../../variables/replace-variable-manager
 import { EventManager } from "../../events/event-manager";
 import { FilterManager } from "../../events/filters/filter-manager";
 import { CommandManager } from "../../chat/commands/command-manager";
+import ConditionManager from "../../effects/builtin/conditional-effects/conditions/condition-manager";
 import { RestrictionsManager } from "../../restrictions/restriction-manager";
 import { GameManager } from "../../games/game-manager";
 import { LoggerCache } from "../../logger-cache";
@@ -237,6 +238,17 @@ export class PluginExecutor extends IPluginExecutor {
             }
         }
 
+        if (Array.isArray(r.conditions)) {
+            registrations.conditionIds = [];
+            for (const entry of r.conditions) {
+                const def = await resolve(entry);
+                if (def?.id) {
+                    ConditionManager.registerConditionType(def);
+                    registrations.conditionIds.push(def.id);
+                }
+            }
+        }
+
         if (Array.isArray(r.restrictions)) {
             registrations.restrictionIds = [];
             for (const entry of r.restrictions) {
@@ -426,6 +438,15 @@ export class PluginExecutor extends IPluginExecutor {
                 CommandManager.unregisterSystemCommand(id);
             } catch (e) {
                 logger.warn(`Failed to unregister system command ${id}`, e);
+            }
+        }
+
+        for (const id of registrations.conditionIds ?? []) {
+            try {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                ConditionManager.unregisterConditionType(id);
+            } catch (e) {
+                logger.warn(`Failed to unregister condition type ${id}`, e);
             }
         }
 

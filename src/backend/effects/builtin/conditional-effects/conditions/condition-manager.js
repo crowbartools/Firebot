@@ -32,6 +32,15 @@ class ConditionManager extends EventEmitter {
         this.emit("conditionTypeRegistered", conditionType);
     }
 
+    unregisterConditionType(conditionTypeId) {
+        const index = this._registeredConditionTypes.findIndex(ct => ct.id === conditionTypeId);
+        if (index !== -1) {
+            const [removed] = this._registeredConditionTypes.splice(index, 1);
+            logger.debug(`Unregistered Condition Type ${conditionTypeId}`);
+            this.emit("conditionTypeUnregistered", removed);
+        }
+    }
+
     getConditionTypeById(conditionTypeId) {
         return this._registeredConditionTypes.find(ct => ct.id === conditionTypeId);
     }
