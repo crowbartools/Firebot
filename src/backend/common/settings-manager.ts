@@ -184,10 +184,6 @@ class SettingsManager extends TypedEmitter<Events> {
 
         this.migrateUserSettingsToGlobal();
 
-        frontendCommunicator.on("settings:get-setting-path", (settingName: keyof FirebotSettingsTypes) => {
-            return this.getSettingPath(settingName);
-        });
-
         frontendCommunicator.on("settings:get-setting", (settingName: keyof FirebotSettingsTypes) => {
             return this.getSetting(settingName);
         });
@@ -196,7 +192,7 @@ class SettingsManager extends TypedEmitter<Events> {
             this.saveSetting(request.settingName, request.data);
         });
 
-        frontendCommunicator.on("settings:delete-setting", (settingName: keyof FirebotSettingsTypes) => {
+        frontendCommunicator.onAsync("settings:delete-setting", async (settingName: keyof FirebotSettingsTypes) => {
             this.deleteSetting(settingName);
         });
 
@@ -341,7 +337,6 @@ class SettingsManager extends TypedEmitter<Events> {
         try {
             this.getSettingsFile().push(settingPath, data);
             this.settingsCache[settingPath] = data;
-            frontendCommunicator.send("settings:setting-updated", { settingPath, data });
         } catch (err) {
             this.logger.debug((err as Error).message);
         }
@@ -351,7 +346,6 @@ class SettingsManager extends TypedEmitter<Events> {
         try {
             this.getGlobalSettingsFile().push(settingPath, data);
             this.settingsCache[settingPath] = data;
-            frontendCommunicator.send("settings:setting-updated", { settingPath, data });
         } catch (err) {
             this.logger.debug((err as Error).message);
         }
@@ -361,7 +355,6 @@ class SettingsManager extends TypedEmitter<Events> {
         try {
             this.getSettingsFile().delete(settingPath);
             delete this.settingsCache[settingPath];
-            frontendCommunicator.send("settings:setting-deleted", settingPath);
         } catch { }
     }
 
@@ -369,7 +362,6 @@ class SettingsManager extends TypedEmitter<Events> {
         try {
             this.getGlobalSettingsFile().delete(settingPath);
             delete this.settingsCache[settingPath];
-            frontendCommunicator.send("settings:setting-deleted", settingPath);
         } catch { }
     }
 
@@ -421,7 +413,7 @@ class SettingsManager extends TypedEmitter<Events> {
             this.pushDataToFile(this.getSettingPath(settingName), data);
         }
 
-        frontendCommunicator.send(`settings:setting-updated:${settingName}`, data);
+        frontendCommunicator.send("settings:setting-updated", { settingName, data });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.emit(`settings:setting-updated:${settingName}` as any, data);
     }
@@ -438,7 +430,7 @@ class SettingsManager extends TypedEmitter<Events> {
             this.deleteUserDataAtPath(this.getSettingPath(settingName));
         }
 
-        frontendCommunicator.send(`settings:setting-updated:${settingName}`, null);
+        frontendCommunicator.send("settings:setting-deleted", settingName);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.emit(`settings:setting-deleted:${settingName}` as any);
     }

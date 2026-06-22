@@ -14,10 +14,6 @@
                 service.backupFolderPath = backupData?.backupFolderPath ?? "";
             });
 
-            backendCommunicator.on("settings:setting-updated:BackupLocation", (newPath) => {
-                service.backupFolderPath = newPath;
-            });
-
             service.startBackup = function() {
                 backendCommunicator.send("backups:start-backup", true);
             };
