@@ -135,6 +135,52 @@ export interface PluginFrontendCommunicatorApi {
     ): Promise<ReturnPayload>;
 }
 
+export interface PluginMessageEvent<TPayload = unknown> {
+    /** The pluginId of the plugin that sent the message. */
+    sender: string;
+    /** The provided payload. */
+    payload: TPayload;
+}
+
+/**
+ * Plugin-to-plugin messaging. Supports both fire-and-forget (`emit`/`on`/`off`)
+ * and request/response (`invoke`/`handle`) messaging over a shared event bus,
+ * based on Electron's IPC
+ */
+export interface ScopedIpc {
+    /** Broadcast a message on a channel. */
+    emit(channel: string, data: unknown): void;
+
+    /**
+     * Listen for messages on a channel.
+     * Returns an `unsubscribe` function.
+     */
+    on<TPayload = unknown>(
+        channel: string,
+        callback: (event: PluginMessageEvent<TPayload>) => void
+    ): () => void;
+
+    /** Remove a previously registered `on` listener. */
+    off(channel: string, callback: (...args: never[]) => void): void;
+
+    /**
+     * Send a request on a channel and await a response. Rejects if
+     * no handler responds within a 10s timeout or if the handler throws.
+     */
+    invoke<TRequestPayload = unknown, TResponseData = unknown>(
+        channel: string,
+        data?: TRequestPayload
+    ): Promise<TResponseData>;
+
+    /**
+     * Register the handler for a request channel.
+     */
+    handle<TRequestPayload = unknown, TResponseData = unknown>(
+        channel: string,
+        handlerFn: (payload: TRequestPayload, sender: string) => Promise<TResponseData> | TResponseData
+    ): void;
+}
+
 export interface PluginSettingsApi {
     /**
      * Get a Firebot setting value or its default
@@ -200,6 +246,8 @@ export interface FirebotPluginApi {
     parameters: PluginParametersApi;
     /** Two-way messaging between the plugin and the frontend. */
     frontendCommunicator: PluginFrontendCommunicatorApi;
+    /** Plugin-to-plugin messaging */
+    messaging: ScopedIpc;
     /** Notifications owned by this plugin. */
     notifications: PluginNotificationsApi;
     /** Access to installed plugins. */

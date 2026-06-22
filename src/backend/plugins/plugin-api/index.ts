@@ -13,6 +13,7 @@ import { createEffectsApi } from "./namespaces/effects";
 import { createTwitchApi } from "./namespaces/twitch";
 import { createParametersApi } from "./namespaces/parameters";
 import { createFrontendCommunicatorApi } from "./namespaces/frontend-communicator";
+import { createMessagingApi } from "./namespaces/messaging";
 import { createNotificationsApi } from "./namespaces/notifications";
 import { createSettingsApi } from "./namespaces/settings";
 import { createPluginsApi } from "./namespaces/plugins";
@@ -37,6 +38,7 @@ export function buildPluginApi(ctx: PluginApiContext): FirebotPluginApi {
         twitch: createTwitchApi(ctx),
         parameters: createParametersApi(ctx),
         frontendCommunicator: createFrontendCommunicatorApi(ctx),
+        messaging: createMessagingApi(ctx),
         notifications: createNotificationsApi(ctx),
         plugins: createPluginsApi(ctx),
         webServer: createWebServerApi(ctx),
