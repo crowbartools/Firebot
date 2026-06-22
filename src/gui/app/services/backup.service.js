@@ -19,7 +19,7 @@
             };
 
             service.openBackupFolder = function() {
-                backendCommunicator.send("open-backup-folder");
+                backendCommunicator.send("backups:open-backup-folder");
             };
 
             service.openBackupZipFilePicker = function() {

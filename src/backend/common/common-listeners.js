@@ -1,6 +1,6 @@
 "use strict";
 
-const { app, dialog, shell, autoUpdater } = require("electron");
+const { app, dialog, autoUpdater } = require("electron");
 const os = require('os');
 const logger = require("../logger-cache").LoggerCache.getLogger("Core");
 const { restartApp } = require("../app-management/electron/app-helpers");
@@ -91,10 +91,6 @@ exports.setupCommonListeners = () => {
     });
 
     frontendCommunicator.on("restartApp", () => restartApp());
-
-    frontendCommunicator.on("open-backup-folder", () => {
-        shell.openPath(BackupManager.backupFolderPath);
-    });
 
     // Change profile when we get event from renderer
     frontendCommunicator.on("sendToOverlay", (data) => {

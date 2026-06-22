@@ -1,4 +1,4 @@
-import { app } from "electron";
+import { app, shell } from "electron";
 import fs from "fs";
 import fsp from "fs/promises";
 import { finished } from "stream/promises";
@@ -45,6 +45,10 @@ class BackupManager {
 
         frontendCommunicator.onAsync("backups:ui-service-ready",
             async () => this.triggerUiRefresh()
+        );
+
+        frontendCommunicator.on("backups:open-backup-folder",
+            () => shell.openPath(this.backupFolderPath)
         );
 
         frontendCommunicator.onAsync("backups:get-backup-list", async () => {
