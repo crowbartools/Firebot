@@ -48,7 +48,7 @@ export async function whenReady() {
     const { FirebotDeviceAuthProvider } = await import("../../../auth/firebot-device-auth-provider");
     FirebotDeviceAuthProvider.setupDeviceAuthProvider();
 
-    const connectionManager = (await import("../../../common/connection-manager")).default;
+    const { ConnectionManager } = await import("../../../common/connection-manager");
 
     windowManagement.updateSplashScreenStatus("Loading timers...");
     const { TimerManager } = await import("../../../timers/timer-manager");
@@ -69,7 +69,7 @@ export async function whenReady() {
     await TwitchApi.refreshAccounts();
 
     windowManagement.updateSplashScreenStatus("Starting stream status poll...");
-    connectionManager.startOnlineCheckInterval();
+    ConnectionManager.startOnlineCheckInterval();
 
     // load effects
     logger.debug("Loading effects...");

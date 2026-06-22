@@ -372,8 +372,9 @@
                     type: "overlay",
                     status: status
                 });
-            }
-            );
+            });
+
+            backendCommunicator.send("connections:ui-service-ready");
 
             return service;
         });

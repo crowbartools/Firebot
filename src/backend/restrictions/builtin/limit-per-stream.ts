@@ -1,7 +1,7 @@
 import type { RestrictionType, Trigger } from "../../../types";
 
 import { AccountAccess } from "../../common/account-access";
-import connectionManager from "../../common/connection-manager";
+import { ConnectionManager } from "../../common/connection-manager";
 import frontendCommunicator from "../../common/frontend-communicator";
 
 type RestrictionData = {
@@ -17,7 +17,7 @@ type CommandUsages = {
 let usageCache: Record<string, CommandUsages> = {};
 
 // clear cache when stream changes
-connectionManager.on("streamerOnlineChange", () => {
+ConnectionManager.on("streamerOnlineChange", () => {
     usageCache = {};
 });
 
@@ -113,9 +113,7 @@ const limitPerStreamRestriction: RestrictionType<RestrictionData> = {
             };
         }
 
-        const isOnline = connectionManager.streamerIsOnline();
-
-        if (!isOnline) {
+        if (!ConnectionManager.streamerIsOnline) {
             return {
                 success: false,
                 failureReason: "Streamer is not live."

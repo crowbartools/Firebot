@@ -87,6 +87,13 @@ class HttpServerManager extends EventEmitter {
                 serverStarted: this.isDefaultServerStarted
             };
         });
+
+        frontendCommunicator.on("connections:ui-service-ready", () => {
+            frontendCommunicator.send("http-server:overlay-status-update", {
+                clientsConnected: WebSocketServerManager.overlayHasClients,
+                serverStarted: this.isDefaultServerStarted
+            });
+        });
     }
 
     start(): void {

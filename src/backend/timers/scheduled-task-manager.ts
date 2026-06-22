@@ -5,7 +5,7 @@ import type { ScheduledTask, Trigger } from "../../types";
 
 import JsonDbManager from "../database/json-db-manager";
 import { AccountAccess } from "../common/account-access";
-import connectionManager from "../common/connection-manager";
+import { ConnectionManager } from "../common/connection-manager";
 import effectRunner from "../common/effect-runner";
 import frontendCommunicator from "../common/frontend-communicator";
 
@@ -67,7 +67,7 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
         return new CronJob(
             task.schedule,
             () => {
-                if (task.onlyWhenLive && !connectionManager.streamerIsOnline()) {
+                if (task.onlyWhenLive && !ConnectionManager.streamerIsOnline) {
                     this.logger.debug(`Skipping scheduled task "${task.name}" run - stream is offline`);
                     return;
                 }

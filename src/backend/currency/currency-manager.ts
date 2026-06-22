@@ -8,7 +8,7 @@ import viewerDatabase from "../viewers/viewer-database";
 import viewerOnlineStatusManager from "../viewers/viewer-online-status-manager";
 import { EventManager } from "../events/event-manager";
 import frontendCommunicator from "../common/frontend-communicator";
-import connectionManager from "../common/connection-manager";
+import { ConnectionManager } from "../common/connection-manager";
 import twitchChat from "../chat/twitch-chat";
 import customRolesManager from "../roles/custom-roles-manager";
 import firebotRolesManager from "../roles/firebot-roles-manager";
@@ -249,7 +249,7 @@ class CurrencyManager {
 
         for (const currency of currencies) {
             let basePayout = currency.payout;
-            if (!connectionManager.streamerIsOnline()) {
+            if (!ConnectionManager.streamerIsOnline) {
                 if (!currency.offline) {
                     continue;
                 }

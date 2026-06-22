@@ -172,7 +172,7 @@ class EventManager extends TypedEmitter<{
     async triggerEvent(
         eventSourceId: string,
         eventId: string,
-        meta: Record<string, unknown>,
+        meta?: Record<string, unknown>,
         isManual = false,
         isRetrigger = false,
         isSimulation = false
@@ -186,10 +186,8 @@ class EventManager extends TypedEmitter<{
         if (isManual && !isSimulation) {
             meta = event.manualMetadata || {};
         }
-        if (meta == null) {
-            meta = {};
-        }
 
+        meta ??= {};
         if (meta.username == null) {
             meta.username = AccountAccess.getAccounts().streamer.username;
         }

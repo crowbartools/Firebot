@@ -3,7 +3,7 @@ import type { BasicViewer, FirebotViewer } from "../../types";
 import { SettingsManager } from "../common/settings-manager";
 import viewerDatabase from "./viewer-database";
 import chatRolesManager from "../roles/chat-roles-manager";
-import connectionManager from "../common/connection-manager";
+import { ConnectionManager } from "../common/connection-manager";
 import { EventManager } from "../events/event-manager";
 import twitchChat from "../chat/twitch-chat";
 import twitchChatterPoll from "../streaming-platforms/twitch/chatter-poll";
@@ -232,7 +232,7 @@ class ViewerOnlineStatusManager {
 
     async calcAllViewersOnlineMinutes(): Promise<void> {
         try {
-            if (connectionManager.streamerIsOnline() === true) {
+            if (ConnectionManager.streamerIsOnline === true) {
                 const onlineViewers = await viewerDatabase.getViewerDb().findAsync({ online: true });
 
                 onlineViewers.forEach(viewer => this.calcViewerOnlineMinutes(viewer));

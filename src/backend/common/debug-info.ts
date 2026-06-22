@@ -3,7 +3,7 @@
 import { app } from "electron";
 import os from "os";
 import frontendCommunicator from "./frontend-communicator";
-import ConnectionManager from "./connection-manager";
+import { ConnectionManager } from "./connection-manager";
 import { AccountAccess } from "./account-access";
 import { HttpServerManager } from "../../server/http-server-manager";
 import { WebSocketServerManager } from "../../server/websocket-server-manager";
@@ -39,7 +39,7 @@ async function getDebugInfoString(): Promise<string> {
     const streamerLoggedIn = accounts.streamer.loggedIn ? "Yes" : "No";
     const botLoggedIn = accounts.bot.loggedIn ? "Yes" : "No";
 
-    const connectedToTwitch = ConnectionManager.chatIsConnected() ? "Connected" : "Disconnected";
+    const connectedToTwitch = ConnectionManager.chatIsConnected ? "Connected" : "Disconnected";
     const connectedToOBS = isConnected() ? "Connected" : "Disconnected";
 
     const httpServerStatus = HttpServerManager.isDefaultServerStarted ? "Running" : "Stopped";

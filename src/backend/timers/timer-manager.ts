@@ -8,7 +8,7 @@ import type {
 
 import JsonDbManager from "../database/json-db-manager";
 import { AccountAccess } from "../common/account-access";
-import connectionManager from "../common/connection-manager";
+import { ConnectionManager } from "../common/connection-manager";
 import effectRunner from "../common/effect-runner";
 import frontendCommunicator from "../common/frontend-communicator";
 
@@ -39,7 +39,7 @@ class TimerManager extends JsonDbManager<Timer> {
         );
 
         // restart timers when the Streamer goes offline/online
-        connectionManager.on("streamerOnlineChange", (isOnline: boolean) => {
+        ConnectionManager.on("streamerOnlineChange", (isOnline: boolean) => {
             if (isOnline) {
                 this.logger.debug("Streamer has gone live. Starting live timers.");
 
@@ -217,7 +217,7 @@ class TimerManager extends JsonDbManager<Timer> {
         this.clearIntervalForTimerId(timer.id);
 
         if (!timer.active || (timer.onlyWhenLive &&
-            !connectionManager.streamerIsOnline())) {
+            !ConnectionManager.streamerIsOnline)) {
             return;
         }
 
@@ -236,7 +236,7 @@ class TimerManager extends JsonDbManager<Timer> {
             }
 
             // skip over timers that require the streamer to be live
-            if (timer.onlyWhenLive && !connectionManager.streamerIsOnline()) {
+            if (timer.onlyWhenLive && !ConnectionManager.streamerIsOnline) {
                 continue;
             }
 

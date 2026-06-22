@@ -9,7 +9,7 @@ const frontendCommunicator = require('../common/frontend-communicator');
 const logger = require("../logger-cache").LoggerCache.getLogger("Integrations");
 const { setValuesForFrontEnd, buildSaveDataFromSettingValues } = require("../common/firebot-setting-helpers");
 
-/**@extends {NodeJS.EventEmitter} */
+/**@extends {EventEmitter} */
 class IntegrationManager extends EventEmitter {
     constructor() {
         super();
