@@ -35,20 +35,12 @@ class ProfileManager {
             async () => this.triggerUiRefresh()
         );
 
-        frontendCommunicator.on("profiles:get-active-profiles",
-            () => SettingsManager.getSetting("ActiveProfiles")
-        );
-
         frontendCommunicator.on("profiles:get-logged-in-profile",
             () => this.getLoggedInProfile()
         );
 
         frontendCommunicator.on("profiles:get-path-in-profile",
             (path: string) => this.getPathInProfile(path)
-        );
-
-        frontendCommunicator.on("profiles:get-account-info",
-            (request: AccountInfoRequest): FirebotAccount => this.getAccountInfo(request.profileId, request.accountType)
         );
 
         frontendCommunicator.on("profiles:create-profile",

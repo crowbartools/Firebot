@@ -117,16 +117,6 @@ class ChatModerationManager {
         frontendCommunicator.on("chat-moderation:update-chat-moderation-settings", (settings: ChatModerationSettings): boolean => {
             return this.saveChatModerationSettings(settings);
         });
-
-        frontendCommunicator.onAsync("chat-moderation:get-chat-moderation-data", async () => {
-            return {
-                settings: this.chatModerationSettings,
-                bannedWords: this.bannedWords.words,
-                bannedRegularExpressions: this.bannedRegularExpressions.regularExpressions,
-                urlAllowlist: this.allowlist.urls,
-                userAllowlist: this.allowlist.users
-            };
-        });
     }
 
     // Banned words

@@ -46,21 +46,6 @@ class CommandManager extends TypedEmitter<Events> {
             async () => this.triggerUiRefresh()
         );
 
-        frontendCommunicator.on("get-all-system-commands", () => {
-            this.logger.info("got 'get all cmds' request");
-            return this.getSystemCommands();
-        });
-
-        frontendCommunicator.on("get-all-system-command-definitions", () => {
-            this.logger.info("got 'get all cmd defs' request");
-            return this.getAllSystemCommandDefinitions();
-        });
-
-        frontendCommunicator.on("get-system-command", (commandId: string) => {
-            this.logger.info("got 'get cmd' request", commandId);
-            return this.getSystemCommandById(commandId);
-        });
-
         frontendCommunicator.on("save-system-command-override", (sysCommand: SystemCommandDefinition) => {
             this.logger.info("got 'save sys cmd' request");
             this.saveSystemCommandOverride(sysCommand);
@@ -69,10 +54,6 @@ class CommandManager extends TypedEmitter<Events> {
         frontendCommunicator.on("remove-system-command-override", (id: string) => {
             this.logger.info("got 'remove sys cmd' request");
             this.removeSystemCommandOverride(id);
-        });
-
-        frontendCommunicator.on("get-all-custom-commands", () => {
-            return this.getAllCustomCommands();
         });
 
         frontendCommunicator.on("save-custom-command", (commandData: { command: CommandDefinition, user: string }) => {
@@ -85,13 +66,6 @@ class CommandManager extends TypedEmitter<Events> {
 
         frontendCommunicator.on("delete-custom-command", (id: string) => {
             this.deleteCustomCommand(id);
-        });
-
-        frontendCommunicator.onAsync("get-all-commands", async () => {
-            return {
-                customCommands: this.getAllCustomCommands(),
-                systemCommands: this.getAllSystemCommandDefinitions()
-            };
         });
 
         this.refreshCommandCache();

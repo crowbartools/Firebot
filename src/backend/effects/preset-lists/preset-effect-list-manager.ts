@@ -11,10 +11,6 @@ class PresetEffectListManager extends JsonDbManager<PresetEffectList> {
             async () => this.triggerUiRefresh()
         );
 
-        frontendCommunicator.onAsync("preset-effect-lists:get-preset-effect-lists",
-            async () => this.getAllItems()
-        );
-
         frontendCommunicator.on("preset-effect-lists:save-preset-effect-list",
             (data: { presetEffectList: PresetEffectList, isNew: boolean }) =>
                 this.saveItem(data.presetEffectList, data.isNew)

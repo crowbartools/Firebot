@@ -29,17 +29,8 @@
 
             service.profiles = [];
 
-            service.getActiveProfiles = () =>
-                backendCommunicator.fireEventSync("profiles:get-active-profiles");
-
-            service.getLoggedInProfile = () =>
-                backendCommunicator.fireEventSync("profiles:get-logged-in-profile");
-
             service.getPathInProfile = path =>
                 backendCommunicator.fireEventSync("profiles:get-path-in-profile", path);
-
-            service.getAccountInfo = (profileId, accountType = "streamer") =>
-                backendCommunicator.fireEventSync("profiles:get-account-info", { profileId, accountType });
 
             backendCommunicator.on("profiles:updated-profiles", (profiles) => {
                 service.profiles = profiles;

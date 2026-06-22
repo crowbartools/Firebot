@@ -13,10 +13,6 @@ class EffectQueueConfigManager extends JsonDbManager<EffectQueueConfig> {
             async () => this.triggerUiRefresh()
         );
 
-        frontendCommunicator.onAsync("effect-queues:get-effect-queues",
-            async () => this.getAllItems()
-        );
-
         frontendCommunicator.onAsync("effect-queues:save-effect-queue",
             async (effectQueue: EffectQueueConfig) => this.saveItem(effectQueue)
         );

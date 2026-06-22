@@ -749,10 +749,6 @@ frontendCommunicator.onAsync("getPrimaryDisplay", async () => {
     return screenHelpers.getPrimaryDisplay();
 });
 
-frontendCommunicator.on("takeScreenshot", (displayId) => {
-    return screenHelpers.takeScreenshot(displayId);
-});
-
 exports.updateSplashScreenStatus = updateSplashScreenStatus;
 exports.createVariableInspectorWindow = createVariableInspectorWindow;
 exports.createStreamPreviewWindow = createStreamPreviewWindow;

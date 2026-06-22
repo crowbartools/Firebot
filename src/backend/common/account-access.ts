@@ -49,11 +49,6 @@ class AccountAccess extends TypedEmitter<Events> {
             async () => this.sendAccountUpdate(true)
         );
 
-        frontendCommunicator.on("accounts:get-accounts", () => {
-            this.logger.debug("got 'get accounts' request");
-            return this._cache;
-        });
-
         frontendCommunicator.on("accounts:logout-account", (accountType: AccountType) => {
             this.logger.debug("got logout request for", accountType);
             this.removeAccount(accountType);

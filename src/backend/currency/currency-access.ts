@@ -25,18 +25,6 @@ class CurrencyAccess extends EventEmitter {
             async () => this.triggerUiRefresh()
         );
 
-        frontendCommunicator.onAsync("currencies:get-currencies", async () => {
-            return this.getCurrencies();
-        });
-
-        frontendCommunicator.on("currencies:get-currency-by-id", (currencyId: string) => {
-            return this.getCurrencyById(currencyId);
-        });
-
-        frontendCommunicator.on("currencies:get-currency-by-name", (currencyName: string) => {
-            return this.getCurrencyByName(currencyName);
-        });
-
         frontendCommunicator.on("currencies:create-currency", (currency: Currency) => {
             this.createCurrency(currency);
         });

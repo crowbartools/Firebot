@@ -36,11 +36,6 @@ exports.setupCommonListeners = () => {
         return process.platform;
     });
 
-    frontendCommunicator.on("show-twitch-preview", () => {
-        const windowManagement = require("../app-management/electron/window-management");
-        windowManagement.createStreamPreviewWindow();
-    });
-
     frontendCommunicator.on("show-variable-inspector", () => {
         const windowManagement = require("../app-management/electron/window-management");
         windowManagement.createVariableInspectorWindow();
