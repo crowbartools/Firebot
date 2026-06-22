@@ -1,15 +1,16 @@
 import { app } from "electron";
 import fs from "fs";
 import fsp from "fs/promises";
+import { finished } from "stream/promises";
 import path from "path";
+import { ZipArchive } from "archiver";
 import unzipper from "unzipper";
-import archiver from "archiver";
 
 import { SettingsManager } from "./common/settings-manager";
 import * as dataAccess from "./common/data-access";
 import frontendCommunicator from "./common/frontend-communicator";
 import { LoggerCache } from "./logger-cache";
-import { emptyFolder, wait } from "./utils";
+import { emptyFolder } from "./utils";
 
 interface ZipEntry {
     path: string;
@@ -52,8 +53,6 @@ class BackupManager {
 
         frontendCommunicator.on("backups:start-backup", async (manualActivation: boolean) => {
             await this.startBackup(manualActivation);
-
-            this.logger.info("backup complete");
 
             frontendCommunicator.send("backups:backup-complete", manualActivation);
         });
@@ -174,80 +173,72 @@ class BackupManager {
     }
 
     async startBackup(manualActivation = false) {
-        this.logger.info(`Backup manualActivation: ${manualActivation}`);
-        let finished = false;
-
-        const version = app.getVersion(),
-            milliseconds = Date.now(),
-            fileExtension = "zip";
-
-        const filename = `backup_${milliseconds}_v${version}${
-            manualActivation ? "_manual" : ""
-        }.${fileExtension}`;
-
-        if (!fs.existsSync(this._backupFolderPath)) {
-            this.logger.warn(`Backup path ${this._backupFolderPath} does not exist. Resetting to default.`);
-            SettingsManager.deleteSetting("BackupLocation");
-            this.updateBackupFolderPath();
-            SettingsManager.saveSetting("BackupLocationReset", true);
-        }
-
-        const output = fs.createWriteStream(path.join(this._backupFolderPath, filename));
-        const archive = archiver(fileExtension, {
-            zlib: { level: 9 }
-        });
-
-        output.on("close", () => {
-            finished = true;
-        });
-
-        archive.on("warning", (err) => {
-            finished = true;
-            if (err.code === "ENOENT") {
-                this.logger.warn("Error during backup: ", err);
-            } else {
-                if (manualActivation) {
-                    frontendCommunicator.send(
-                        "error",
-                        "Something bad happened, please check your logs."
-                    );
-                }
-                throw err;
-            }
-        });
-
-        archive.on("error", (err) => {
-            finished = true;
-            throw err;
-        });
-
-        archive.pipe(output);
-
-        const varIgnoreInArchive = ["backups/**", "clips/**", "logs/**", "overlay.html", "profiles/*/db/*.db~"];
-        const ignoreResources = SettingsManager.getSetting("BackupIgnoreResources");
-
-        if (ignoreResources && !manualActivation) {
-            this.logger.info("Ignoring overlay-resources folder");
-            varIgnoreInArchive.push("overlay-resources/**");
-        }
-
-        archive.glob("**/*", {
-            ignore: varIgnoreInArchive,
-            cwd: path.resolve(dataAccess.getPathInUserData("/"))
-        });
+        this.logger.info(`Starting ${manualActivation === true ? "manual" : "automatic"} backup`);
 
         try {
-            await archive.finalize();
+            const version = app.getVersion(),
+                milliseconds = Date.now(),
+                fileExtension = "zip";
 
-            while (finished === false) {
-                await wait(250);
+            const filename = `backup_${milliseconds}_v${version}${
+                manualActivation ? "_manual" : ""
+            }.${fileExtension}`;
+
+            if (!fs.existsSync(this._backupFolderPath)) {
+                this.logger.warn(`Backup path ${this._backupFolderPath} does not exist. Resetting to default.`);
+                SettingsManager.deleteSetting("BackupLocation");
+                this.updateBackupFolderPath();
+                SettingsManager.saveSetting("BackupLocationReset", true);
             }
+
+            const output = fs.createWriteStream(path.join(this._backupFolderPath, filename));
+            const archive = new ZipArchive({
+                zlib: { level: 9 }
+            });
+
+            archive.on("warning", (err) => {
+                if (err.code === "ENOENT") {
+                    this.logger.warn("Error during backup: ", err);
+                } else {
+                    if (manualActivation) {
+                        frontendCommunicator.send(
+                            "error",
+                            "Something bad happened, please check your logs."
+                        );
+                    }
+                    throw err;
+                }
+            });
+
+            archive.on("error", (err) => {
+                throw err;
+            });
+
+            archive.pipe(output);
+
+            const varIgnoreInArchive = ["backups/**", "clips/**", "logs/**", "overlay.html", "profiles/*/db/*.db~"];
+            const ignoreResources = SettingsManager.getSetting("BackupIgnoreResources");
+
+            if (ignoreResources && !manualActivation) {
+                this.logger.info("Ignoring overlay-resources folder");
+                varIgnoreInArchive.push("overlay-resources/**");
+            }
+
+            archive.glob("**/*", {
+                ignore: varIgnoreInArchive,
+                cwd: path.resolve(dataAccess.getPathInUserData("/"))
+            });
+
+            await archive.finalize();
+            await finished(output);
 
             SettingsManager.saveSetting("LastBackupDate", new Date());
 
             await this.cleanUpOldBackups();
+
+            this.logger.info("Backup complete");
         } catch (error) {
-            this.logger.error("Error finalizing backup archive", error);
+            this.logger.error("Error creating backup", error);
         }
     }
 
