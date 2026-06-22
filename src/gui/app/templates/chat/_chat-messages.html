@@ -213,7 +213,7 @@
           <i class="far fa-ellipsis-v"></i>
         </a>
         <ul class="dropdown-menu right-justified-dropdown" uib-dropdown-menu>
-          <li ng-class="{'disabled': afs.activities.length < 1}">
+          <li ng-class="{'disabled': afs.filteredActivities.length < 1}">
             <a ng-click="afs.toggleMarkAllAcknowledged()"
               ><i
                 class="far fa-check-square mr-4"
@@ -223,7 +223,7 @@
               'Acknowledged'}}</a
             >
           </li>
-          <li ng-class="{'disabled': afs.activities.length < 1}">
+          <li ng-class="{'disabled': afs.filteredActivities.length < 1}">
             <a ng-click="afs.clearAllActivities()"
               ><i
                 class="far fa-trash-alt mr-4"
@@ -247,7 +247,7 @@
       <div
         class="activity alternate-bg"
         ng-class="activity.acknowledged ? 'acknowledged' : ''"
-        ng-repeat="activity in afs.activities track by activity.id"
+        ng-repeat="activity in afs.filteredActivities track by activity.id"
       >
         <div
           class="mr-4"
@@ -291,7 +291,7 @@
           <i
             class="clickable far"
             ng-class="activity.acknowledged ? 'fa-check-square' : 'fa-square'"
-            ng-click="activity.acknowledged = !activity.acknowledged"
+            ng-click="afs.toggleActivityAcknowledged(activity.id)"
             uib-tooltip="{{activity.acknowledged ? 'Acknowledged' : 'Acknowledge'}}"
             tooltip-placement="top-right"
             tooltip-append-to-body="true"
