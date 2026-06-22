@@ -45,6 +45,10 @@ class AccountAccess extends TypedEmitter<Events> {
     constructor() {
         super();
 
+        frontendCommunicator.onAsync("accounts:ui-service-ready",
+            async () => this.sendAccountUpdate(true)
+        );
+
         frontendCommunicator.on("accounts:get-accounts", () => {
             this.logger.debug("got 'get accounts' request");
             return this._cache;
@@ -68,9 +72,14 @@ class AccountAccess extends TypedEmitter<Events> {
         return this._accountTokenIssueFlags["bot"];
     }
 
-    private sendAccountUpdate() {
+    private sendAccountUpdate(frontendOnly = false) {
+        if (frontendOnly !== true) {
+            this.emit("account-update", this._cache);
+        }
+
+        this.logger.debug("Triggering UI refresh");
         frontendCommunicator.send("accounts:account-update", this._cache);
-        this.emit("account-update", this._cache);
+        ProfileManager.triggerUiRefresh();
     }
 
     private sendAccountAuthUpdate(accountType: AccountType) {

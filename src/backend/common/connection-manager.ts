@@ -75,27 +75,27 @@ class ConnectionManager extends TypedEmitter<ConnectionManagerEvents> {
             (id: string) => this.onServiceConnectionUpdated(`integration.${id}`, ConnectionState.Disconnected)
         );
 
-        frontendCommunicator.onAsync("connect-sidebar-controlled-services", async () => {
-            const serviceIds = SettingsManager.getSetting("SidebarControlledServices");
-
-            await this.updateConnectionForServices(serviceIds.map(id => ({
-                id,
-                action: true
-            })));
-        });
-
-        frontendCommunicator.on("disconnect-sidebar-controlled-services", () => {
-            const serviceIds = SettingsManager.getSetting("SidebarControlledServices");
-            for (const id of serviceIds) {
-                this.updateServiceConnection(id, false);
+        frontendCommunicator.onAsync("connections:ui-service-ready", async () => {
+            if (SettingsManager.getSetting("ConnectOnLaunch") === true) {
+                await this.connectSidebarControlledServices();
             }
+
+            this.triggerUiRefresh();
         });
 
-        frontendCommunicator.on("connect-service", (serviceId: string) => {
+        frontendCommunicator.onAsync("connections:connect-sidebar-controlled-services", async () => {
+            await this.connectSidebarControlledServices();
+        });
+
+        frontendCommunicator.onAsync("connections:disconnect-sidebar-controlled-services", async () => {
+            await this.disconnectSidebarControlledServices();
+        });
+
+        frontendCommunicator.onAsync("connect-service", async (serviceId: string) => {
             this.updateServiceConnection(serviceId, true);
         });
 
-        frontendCommunicator.on("disconnect-service", (serviceId: string) => {
+        frontendCommunicator.onAsync("disconnect-service", async (serviceId: string) => {
             this.updateServiceConnection(serviceId, false);
         });
     }
@@ -108,7 +108,7 @@ class ConnectionManager extends TypedEmitter<ConnectionManagerEvents> {
             connectionState
         };
         this.emit("service-connection-update", eventData);
-        frontendCommunicator.send("service-connection-update", eventData);
+        frontendCommunicator.send("connections:service-connection-update", eventData);
 
         if (this._currentlyWaitingService?.serviceId === serviceId
             && (connectionState === ConnectionState.Connected
@@ -159,6 +159,24 @@ class ConnectionManager extends TypedEmitter<ConnectionManagerEvents> {
 
     serviceIsConnected(serviceId: string): boolean {
         return this._serviceConnectionStates[serviceId] === ConnectionState.Connected;
+    }
+
+    private async connectSidebarControlledServices(): Promise<void> {
+        const serviceIds = SettingsManager.getSetting("SidebarControlledServices");
+
+        await this.updateConnectionForServices(serviceIds.map(id => ({
+            id,
+            action: true
+        })));
+    }
+
+    private async disconnectSidebarControlledServices(): Promise<void> {
+        const serviceIds = SettingsManager.getSetting("SidebarControlledServices");
+
+        await this.updateConnectionForServices(serviceIds.map(id => ({
+            id,
+            action: false
+        })));
     }
 
     updateChatConnection(shouldConnect: boolean): boolean {
@@ -262,6 +280,16 @@ class ConnectionManager extends TypedEmitter<ConnectionManagerEvents> {
 
         await wait(250);
         frontendCommunicator.send("connect-services-complete");
+    }
+
+    triggerUiRefresh(): void {
+        this._logger.debug("Triggering UI refresh");
+        const serviceConnectionStates = Object.keys(this._serviceConnectionStates)
+            .map(serviceId => ({
+                serviceId,
+                connectionState: this._serviceConnectionStates[serviceId]
+            }));
+        frontendCommunicator.send("connections:updated-all-service-connections", serviceConnectionStates);
     }
 }
 

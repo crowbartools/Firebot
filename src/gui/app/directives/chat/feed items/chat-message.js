@@ -276,7 +276,7 @@
                 chatMessagesService,
                 viewerRolesService,
                 utilityService,
-                connectionService,
+                accountAccess,
                 backendCommunicator
             ) {
 
@@ -374,8 +374,8 @@
                         icon: "fa-thumbtack"
                     });
 
-                    if (message.username.toLowerCase() !== connectionService.accounts.streamer.username.toLowerCase() &&
-                        message.username.toLowerCase() !== connectionService.accounts.bot.username.toLowerCase()) {
+                    if (message.username.toLowerCase() !== accountAccess.accounts.streamer.username.toLowerCase() &&
+                        message.username.toLowerCase() !== accountAccess.accounts.bot.username.toLowerCase()) {
 
                         actions.push({
                             name: "Whisper",

@@ -152,11 +152,11 @@
                     >
                         <img
                             class="login-thumbnail noselect"
-                            ng-src="{{cs.getAccountAvatar('streamer')}}"
+                            ng-src="{{accountAccess.getAccountAvatar('streamer')}}"
                         />
                         <img
                             class="login-thumbnail noselect"
-                            ng-src="{{cs.getAccountAvatar('bot')}}"
+                            ng-src="{{accountAccess.getAccountAvatar('bot')}}"
                         />
                         <div class="fb-arrow down login-arrow"></div>
                         <ul
@@ -178,7 +178,7 @@
                             <li class="divider"></li>
                             <li class="dropdown-header">Profiles</li>
                             <li
-                                ng-repeat="profile in cs.profiles"
+                                ng-repeat="profile in profileManager.profiles"
                                 ng-class="{'noclick': currentProfileId == profile.profileId}"
                                 uib-tooltip="Current profile"
                                 tooltip-enable="currentProfileId == profile.profileId"

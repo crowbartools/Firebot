@@ -113,6 +113,7 @@
 
     app.run(function initializeApplication(
         logger,
+        accountAccess,
         activityFeedService,
         backupService,
         channelRewardsService,
@@ -156,8 +157,6 @@
          * and get their initial data
          */
 
-        connectionService.loadProfiles();
-
         pluginsService.loadPlugins();
 
         platformService.loadPlatform();
@@ -168,7 +167,7 @@
         }
 
         // Validate Twitch accounts
-        connectionService.validateAccounts();
+        accountAccess.validateAccounts();
 
         ttsService.obtainVoices().then(() => {
             if (settingsService.getSetting("DefaultTtsVoiceId") == null) {
@@ -221,7 +220,7 @@
         uiExtensionsService.setAsReady();
     });
 
-    app.controller("MainController", function($scope, $rootScope, $timeout, connectionService, utilityService,
+    app.controller("MainController", function($scope, $rootScope, $timeout, accountAccess, utilityService, profileManager,
         settingsService, backupService, sidebarManager, logger, backendCommunicator, fontManager, ngToast, modalFactory) {
         $rootScope.showSpinner = true;
 
@@ -287,7 +286,7 @@
                 templateUrl: "newProfileModal.html",
                 size: 'sm',
                 // This is the controller to be used for the modal.
-                controllerFunc: ($scope, $uibModalInstance, connectionService, ngToast) => {
+                controllerFunc: ($scope, $uibModalInstance, profileManager, ngToast) => {
 
                     // Login Kickoff
                     $scope.createNewProfile = function() {
@@ -296,7 +295,7 @@
                             return;
                         }
                         $uibModalInstance.close();
-                        connectionService.createNewProfile($scope.profileName);
+                        profileManager.createNewProfile($scope.profileName);
                     };
 
                     // When they hit cancel or click outside the modal, we don't want to do anything
@@ -319,7 +318,7 @@
                     currentProfileId: () => ipcRenderer.sendSync("profiles:get-logged-in-profile")
                 },
                 // This is the controller to be used for the modal.
-                controllerFunc: ($scope, $uibModalInstance, connectionService, ngToast, currentProfileId) => {
+                controllerFunc: ($scope, $uibModalInstance, profileManager, ngToast, currentProfileId) => {
 
                     $scope.profileName = currentProfileId;
 
@@ -330,7 +329,7 @@
                             return;
                         }
                         $uibModalInstance.close();
-                        connectionService.renameProfile($scope.profileName);
+                        profileManager.renameProfile($scope.profileName);
                     };
 
                     // When they hit cancel or click outside the modal, we don't want to do anything
@@ -352,11 +351,11 @@
                 templateUrl: "deleteProfileModal.html",
                 size: 'sm',
                 // This is the controller to be used for the modal.
-                controllerFunc: ($scope, $uibModalInstance, connectionService) => {
+                controllerFunc: ($scope, $uibModalInstance, profileManager) => {
                     // Delete Profile
                     $scope.deleteProfile = function() {
                         $uibModalInstance.close();
-                        connectionService.deleteProfile();
+                        profileManager.deleteProfile();
                     };
 
                     // When they hit cancel or click outside the modal, we don't want to do anything
@@ -380,7 +379,7 @@
                     })
                     .then((confirmed) => {
                         if (confirmed) {
-                            connectionService.switchProfiles(profileId);
+                            profileManager.switchProfiles(profileId);
                         }
                     });
             }
@@ -391,9 +390,8 @@
         /**
          * Initial App Load
          */
-        $scope.cs = connectionService;
-        //$scope.accounts = connectionService.accounts;
-        //$scope.profiles = connectionService.profiles;
+        $scope.accountAccess = accountAccess;
+        $scope.profileManager = profileManager;
 
         if (settingsService.getSetting("JustUpdated")) {
             utilityService.showUpdatedModal();
@@ -484,10 +482,6 @@
         if (settingsService.getSetting("BackupLocationReset") === true) {
             modalFactory.showInfoModal("Your previous backup location could not be found. Backup location has been reset to default. You can change it in Settings > Backups.");
             settingsService.deleteSetting("BackupLocationReset");
-        }
-
-        if (settingsService.getSetting("ConnectOnLaunch") === true) {
-            connectionService.connectSidebarControlledServices();
         }
     });
 

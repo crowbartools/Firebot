@@ -23,7 +23,7 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function(accountAccess, connectionService, backendCommunicator) {
+            controller: function(accountAccess, backendCommunicator) {
                 const $ctrl = this;
                 $ctrl.dcfAccount = null;
 
@@ -35,7 +35,7 @@
 
                 $ctrl.onConnectOrDisconnectClicked = function(type) {
                     if (accountAccess.accounts[type].loggedIn) {
-                        return connectionService.logout(type);
+                        return accountAccess.logout(type);
                     }
                     $ctrl.dcfAccount = type;
                 };

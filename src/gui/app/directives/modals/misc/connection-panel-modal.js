@@ -78,15 +78,13 @@
         controller: function(
             connectionService,
             settingsService,
-            integrationService,
-            connectionManager
+            integrationService
         ) {
             const $ctrl = this;
 
             $ctrl.$onInit = function() {
                 $ctrl.conn = connectionService;
                 $ctrl.is = integrationService;
-                $ctrl.cm = connectionManager;
             };
 
 
@@ -109,7 +107,7 @@
 
             let overlayStatusId = 0;
             $ctrl.overlayConnectionMessage = function() {
-                const connectionStatus = connectionManager.getConnectionStatusForService(
+                const connectionStatus = connectionService.getConnectionStatusForService(
                     "overlay"
                 );
 

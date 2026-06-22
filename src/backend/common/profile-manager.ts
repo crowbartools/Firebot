@@ -11,6 +11,19 @@ import * as dataAccess from "./data-access";
 import frontendCommunicator from "./frontend-communicator";
 import { LoggerCache } from "../logger-cache";
 
+const DEFAULT_FRONTEND_AVATAR_URL = "../images/placeholders/nologin.png";
+
+type AccountInfoRequest = {
+    profileId: string;
+    accountType: "streamer" | "bot";
+};
+
+type FrontendProfileData = {
+    username: string;
+    avatar: string;
+    profileId: string;
+};
+
 class ProfileManager {
     private logger = LoggerCache.getLogger("Profiles");
 
@@ -18,6 +31,10 @@ class ProfileManager {
     profileToRename: string = null;
 
     constructor() {
+        frontendCommunicator.onAsync("profiles:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
         frontendCommunicator.on("profiles:get-active-profiles",
             () => SettingsManager.getSetting("ActiveProfiles")
         );
@@ -31,15 +48,7 @@ class ProfileManager {
         );
 
         frontendCommunicator.on("profiles:get-account-info",
-            (data: { profileId: string, accountType: string }): FirebotAccount => {
-                try {
-                    return dataAccess.getJsonDbInUserData(`./profiles/${data.profileId}/auth-twitch`)
-                        .getData(`/${data.accountType}`) as FirebotAccount;
-                } catch (error) {
-                    this.logger.info(`Couldn't get ${data.accountType} data for profile ${data.profileId} while updating the UI. It's possible this account hasn't logged in yet.`, error);
-                    return null;
-                }
-            }
+            (request: AccountInfoRequest): FirebotAccount => this.getAccountInfo(request.profileId, request.accountType)
         );
 
         frontendCommunicator.on("profiles:create-profile",
@@ -242,6 +251,62 @@ class ProfileManager {
 
     getNewProfileName = (): string => this.profileToRename;
     hasProfileRename = (): boolean => this.profileToRename != null;
+
+    private getAccountInfo(profileId: string, accountType: "streamer" | "bot") {
+        try {
+            return dataAccess.getJsonDbInUserData(`./profiles/${profileId}/auth-twitch`)
+                .getData(`/${accountType}`) as FirebotAccount;
+        } catch (error) {
+            if (error instanceof Error
+                && error.name === "DataError"
+                && error.message.startsWith("Can't find dataPath: /streamer")
+            ) {
+                this.logger.info(`Couldn't get ${accountType} data for profile ${profileId} while updating the UI. It's possible this account hasn't logged in yet.`);
+            } else {
+                this.logger.warn(`Failed to get ${accountType} data for profile ${profileId}.`, error);
+            }
+            return null;
+        }
+    }
+
+    private getProfileDataForFrontend(): FrontendProfileData[] {
+        const activeProfiles = SettingsManager.getSetting("ActiveProfiles");
+
+        if (activeProfiles == null) {
+            return [];
+        }
+
+        const profiles: FrontendProfileData[] = [];
+        for (const profileId of activeProfiles) {
+            const profile = {
+                username: "User",
+                avatar: DEFAULT_FRONTEND_AVATAR_URL,
+                profileId: profileId
+            };
+
+            // Try to get streamer settings for this profile.
+            // If it exists, overwrite defaults.
+            const streamer = this.getAccountInfo(profileId, "streamer");
+
+            if (streamer) {
+                if (streamer.username) {
+                    profile.username = streamer.username;
+                }
+                if (streamer.avatar) {
+                    profile.avatar = streamer.avatar;
+                }
+            }
+
+            profiles.push(profile);
+        }
+
+        return profiles;
+    }
+
+    triggerUiRefresh(): void {
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("profiles:updated-profiles", this.getProfileDataForFrontend());
+    }
 }
 
 const manager = new ProfileManager();

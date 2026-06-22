@@ -23,10 +23,10 @@
                     </div>
                 </eos-container>
                 `,
-            controller: function(connectionService) {
+            controller: function(accountAccess) {
                 const ctrl = this;
 
-                ctrl.botLoggedIn = connectionService.accounts.bot.loggedIn;
+                ctrl.botLoggedIn = accountAccess.accounts.bot.loggedIn;
 
                 ctrl.$onInit = function() {
                 // Reset overlay instance to default (or null) if the saved instance doesnt exist anymore

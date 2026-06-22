@@ -6,6 +6,7 @@
         .controller("chatMessagesController", function(
             $scope,
             chatMessagesService,
+            accountAccess,
             connectionService,
             settingsService,
             utilityService,
@@ -19,7 +20,7 @@
 
             $scope.selectedUserData = {};
 
-            $scope.botLoggedIn = connectionService.accounts.bot.loggedIn;
+            $scope.botLoggedIn = accountAccess.accounts.bot.loggedIn;
 
             // the number of messages to show visually, we have to make the number negative so angular knows to limit
             // from the end of the array instead of the front

@@ -16,7 +16,6 @@
         controller: function(
             $rootScope,
             $timeout,
-            connectionManager,
             connectionService,
             integrationService,
             logger
@@ -169,7 +168,7 @@
                 }
 
                 if (ctrl.type === ConnectionType.OVERLAY) {
-                    ctrl.connectionStatus = connectionManager.getConnectionStatusForService("overlay");
+                    ctrl.connectionStatus = connectionService.getConnectionStatusForService("overlay");
                 } else {
                     ctrl.connectionStatus = "disconnected";
                 }

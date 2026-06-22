@@ -47,7 +47,7 @@
                     </nav>
 
                     <div>
-                        <patronage-tracker ng-show="$ctrl.cs.accounts.streamer.partnered"></patronage-tracker>
+                        <patronage-tracker ng-show="$ctrl.accountAccess.accounts.streamer.partnered"></patronage-tracker>
 
                         <div class="connection-status-wrapper">
                             <div class='interactive-status-wrapper'>
@@ -108,7 +108,7 @@
             `,
         controller: function(
             sidebarManager,
-            updatesService,
+            accountAccess,
             connectionService,
             integrationService,
             utilityService,
@@ -118,6 +118,8 @@
             const ctrl = this;
 
             ctrl.sbm = sidebarManager;
+
+            ctrl.accountAccess = accountAccess;
 
             ctrl.cs = connectionService;
 
