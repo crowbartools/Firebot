@@ -161,11 +161,6 @@
 
         platformService.loadPlatform();
 
-        //check for updates
-        if (!updatesService.hasCheckedForUpdates) {
-            updatesService.checkForUpdate();
-        }
-
         // Validate Twitch accounts
         accountAccess.validateAccounts();
 

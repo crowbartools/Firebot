@@ -123,5 +123,4 @@ function compareVersions(newVersion: string, currentVersion: string): UpdateType
     return updateType;
 }
 
-exports.UpdateType = UpdateType;
-exports.compareVersions = compareVersions;
+export { UpdateType, compareVersions };

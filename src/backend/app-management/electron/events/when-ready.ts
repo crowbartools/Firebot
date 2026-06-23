@@ -314,6 +314,9 @@ export async function whenReady() {
         .default;
     countdownManager.startTimer();
 
+    // Get UpdateManager in memory
+    await import("../../../core/update-manager");
+
     logger.debug("...loading main window");
     windowManagement.updateSplashScreenStatus("Here we go!");
     await windowManagement.createMainWindow();

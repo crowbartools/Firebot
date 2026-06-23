@@ -314,14 +314,13 @@
                         $scope.downloadComplete = false;
 
                         // Update downloaded listener
-                        backendCommunicator.on("updateDownloaded", () => {
+                        backendCommunicator.on("updates:update-downloaded", () => {
                             // the autoupdater has downloaded the update
                             $scope.downloadComplete = true;
-                            updatesService.updateIsDownloaded = true;
                         });
 
                         // Install update listener
-                        backendCommunicator.on("installingUpdate", () => {
+                        backendCommunicator.on("updates:installing-update", () => {
                             // the autoupdater is installing the update
                             $scope.downloadComplete = true;
                             $scope.installing = true;
@@ -336,7 +335,7 @@
                                 $scope.errorMessage =
                                     "Download is taking longer than normal. There may have been an error. You can keep waiting or close this and try again later.";
                             }
-                        }, 180 * 1000);
+                        }, 5 * 60 * 1000);
 
                         $scope.installUpdate = function() {
                             updatesService.installUpdate();

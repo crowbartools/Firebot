@@ -1,6 +1,6 @@
 "use strict";
 
-const { app, dialog, autoUpdater } = require("electron");
+const { dialog } = require("electron");
 const os = require('os');
 const logger = require("../logger-cache").LoggerCache.getLogger("Core");
 const { restartApp } = require("../app-management/electron/app-helpers");
@@ -23,9 +23,7 @@ function getLocalIpAddress() {
 }
 
 exports.setupCommonListeners = () => {
-    const { BackupManager } = require("../backup-manager");
     const { HttpServerManager } = require("../../server/http-server-manager");
-    const { SettingsManager } = require("./settings-manager");
     const frontendCommunicator = require("./frontend-communicator");
 
     frontendCommunicator.onAsync("get-ip-address", async () => {
@@ -98,35 +96,6 @@ exports.setupCommonListeners = () => {
             return;
         }
         HttpServerManager.sendToOverlay(data.event, data.meta);
-    });
-
-    const updateFeedUrl = `https://update.electronjs.org/crowbartools/Firebot/win32/${app.getVersion()}`;
-
-    frontendCommunicator.on("downloadUpdate", async () => {
-        //back up first
-        if (SettingsManager.getSetting("BackupBeforeUpdates")) {
-            await BackupManager.startBackup();
-        }
-
-        autoUpdater.setFeedURL({ url: updateFeedUrl });
-        autoUpdater.checkForUpdates();
-
-        // When an update has been downloaded
-        autoUpdater.on("update-downloaded", () => {
-            logger.info("Updated downloaded.");
-            //let the front end know and wait a few secs.
-            frontendCommunicator.send("updateDownloaded");
-
-            // Prepare for update install on next run
-            SettingsManager.saveSetting("JustUpdated", true);
-        });
-    });
-
-    frontendCommunicator.on("installUpdate", () => {
-        logger.info("Installing update...");
-        frontendCommunicator.send("installingUpdate");
-
-        autoUpdater.quitAndInstall();
     });
 
     frontendCommunicator.on("copy-debug-info-to-clipboard", copyDebugInfoToClipboard);

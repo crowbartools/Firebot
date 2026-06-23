@@ -23,7 +23,6 @@
     "devDependencies": {
         "@electron/packager": "^18.3.6",
         "@eslint/js": "^9.37.0",
-        "@octokit/rest": "^22.0.0",
         "@stylistic/eslint-plugin": "^5.4.0",
         "@types/angular": "^1.8.4",
         "@types/archiver": "^8.0.0",
@@ -61,6 +60,7 @@
     "dependencies": {
         "@aws-sdk/client-polly": "^3.26.0",
         "@lucide/vue": "^1.18.0",
+        "@octokit/rest": "^22.0.0",
         "@seald-io/nedb": "^4.0.4",
         "@tursodatabase/database": "^0.6.1",
         "@twurple/chat": "^8.1.4",
