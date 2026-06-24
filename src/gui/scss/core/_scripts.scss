@@ -1,0 +1,29 @@
+.plugin-link-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #cfd3da;
+    text-decoration: none;
+    transition:
+        background 0.15s ease,
+        color 0.15s ease,
+        border-color 0.15s ease;
+
+    &:hover,
+    &:focus {
+        background: rgba(83, 175, 255, 0.16);
+        border-color: rgba(83, 175, 255, 0.4);
+        color: #53afff;
+        text-decoration: none;
+    }
+
+    i {
+        font-size: 12px;
+    }
+}

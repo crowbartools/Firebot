@@ -1,4 +1,4 @@
-import type { EffectList, EffectType } from "../../../../types/effects";
+import type { EffectList, EffectType } from "../../../../types";
 
 import effectRunner from "../../../common/effect-runner";
 

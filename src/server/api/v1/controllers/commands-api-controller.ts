@@ -1,5 +1,7 @@
 import type { Request, Response } from "express";
-import type { Trigger } from "../../../../types/triggers";
+
+import type { Trigger } from "../../../../types";
+
 import { CommandManager } from "../../../../backend/chat/commands/command-manager";
 import commandRunner from "../../../../backend/chat/commands/command-runner";
 

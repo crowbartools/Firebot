@@ -2,11 +2,11 @@
 
 const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
 const { CustomVariableManager } = require("../../common/custom-variable-manager");
+const { HttpServerManager } = require("../../../server/http-server-manager");
 const { SettingsManager } = require("../../common/settings-manager");
 const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
-const webServer = require("../../../server/http-server-manager");
-const logger = require("../../logwrapper");
+const logger = require("../../logger-cache").LoggerCache.getLogger("Effects");
 const { wait } = require("../../utils");
 const { resolveTwitchClipVideoUrl } = require("../../common/handlers/twitch-clip-url-resolver");
 const discord = require("../../integrations/builtin/discord/discord-message-sender");
@@ -290,7 +290,7 @@ const clip = {
 
                 const { url, useIframe } = await resolveTwitchClipVideoUrl(clip);
 
-                webServer.sendToOverlay("playTwitchClip", {
+                HttpServerManager.sendToOverlay("playTwitchClip", {
                     clipVideoUrl: url,
                     useIframe,
                     width: effect.width,

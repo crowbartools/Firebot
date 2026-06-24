@@ -3,16 +3,23 @@ import xlsx from "node-xlsx";
 import { DateTime } from "luxon";
 
 import type { HelixUser } from "@twurple/api";
-import type { ParsedQuotes, ParsedViewers, ThirdPartyImporter } from "../../../types/import";
-import type { Quote } from "../../../types/quotes";
-import { FirebotViewer } from "../../../types/viewers";
+
+import type {
+    FirebotViewer,
+    ParsedQuotes,
+    ParsedViewers,
+    Quote,
+    ThirdPartyImporter
+} from "../../../types";
 
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
 import chatRolesManager from "../../roles/chat-roles-manager";
 import viewerDatabase from "../../viewers/viewer-database";
 
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
 import frontendCommunicator from "../../../backend/common/frontend-communicator";
+
+const logger = LoggerCache.getLogger("Import");
 
 interface Settings {
     viewers: {
@@ -35,7 +42,7 @@ const loadFile = async (filepath: string): Promise<{ name: string, data: unknown
     } catch (error) {
         logger.error("Error reading Streamlabs Chatbot import file", error);
     }
-}
+};
 
 const splitQuotes = (quotes: string[][]): Quote[] => {
     return quotes.map((q) => {
@@ -112,7 +119,9 @@ const addViewersFromTwitch = async (viewers: StreamlabsViewer[], abortSignal: Ab
     }
 
     for (const group of nameGroups) {
-        if (abortSignal.aborted) break;
+        if (abortSignal.aborted) {
+            break;
+        }
 
         try {
             const names = group.map(v => v.name);
@@ -150,7 +159,9 @@ const addNewViewers = async (viewers: StreamlabsViewer[], settings: Settings["vi
 
     try {
         for (const viewer of twitchViewers) {
-            if (abortSignal.aborted) break;
+            if (abortSignal.aborted) {
+                break;
+            }
 
             const roles = await chatRolesManager.getUsersChatRoles(viewer.id);
             const importedViewer = viewers.find(v => v.name.toLowerCase() === viewer.name.toLowerCase());
@@ -174,7 +185,9 @@ const addNewViewers = async (viewers: StreamlabsViewer[], settings: Settings["vi
 const updateViewers = async (viewers: FirebotViewer[], abortSignal: AbortSignal): Promise<FirebotViewer[]> => {
     const updatedViewers: FirebotViewer[] = [];
     for (const viewer of viewers) {
-        if (abortSignal.aborted) break;
+        if (abortSignal.aborted) {
+            break;
+        }
 
         try {
             await viewerDatabase.updateViewer(viewer);
@@ -188,10 +201,10 @@ const updateViewers = async (viewers: FirebotViewer[], abortSignal: AbortSignal)
 };
 
 const importViewers = async (
-    data: { 
-        viewers: StreamlabsViewer[], 
-        settings: Settings["viewers"], 
-        abortSignal: AbortSignal 
+    data: {
+        viewers: StreamlabsViewer[];
+        settings: Settings["viewers"];
+        abortSignal: AbortSignal;
     }): Promise<void> => {
     logger.debug(`Attempting to import viewers...`);
 
@@ -205,7 +218,9 @@ const importViewers = async (
         newViewers = viewers;
     } else {
         for (const v of viewers) {
-            if (abortSignal.aborted) break;
+            if (abortSignal.aborted) {
+                break;
+            }
 
             v.name = String(v.name);
             let viewer = existingViewers.find(ev => ev.username.toLowerCase() === v.name.toLowerCase());
@@ -241,7 +256,7 @@ const reverseImport = async (newViewers: FirebotViewer[], updatedViewers: Firebo
     }
 
     if (updatedViewers.length) {
-        updatedViewers.forEach(async uv => {
+        updatedViewers.forEach(async (uv) => {
             const v = existingViewers.find(ev => ev._id === uv._id);
 
             await viewerDatabase.updateViewer(v);

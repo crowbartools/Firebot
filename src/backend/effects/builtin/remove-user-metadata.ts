@@ -1,4 +1,5 @@
-import type { EffectType } from "../../../types/effects";
+import type { EffectType } from "../../../types";
+
 import viewerMetadataManager from "../../viewers/viewer-metadata-manager";
 
 const effect: EffectType<{

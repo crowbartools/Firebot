@@ -1,13 +1,12 @@
 import EventEmitter from "events";
 import { JsonDB } from "node-json-db";
 
-import { Currency } from "../../types/currency";
-import { FirebotViewer } from "../../types/viewers";
+import type { Currency, FirebotViewer } from "../../types";
 
 import { SettingsManager } from "../common/settings-manager";
 import { ProfileManager } from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 import { simpleClone } from "../utils";
 
 type CurrencyCache = {
@@ -15,22 +14,16 @@ type CurrencyCache = {
 };
 
 class CurrencyAccess extends EventEmitter {
+    private logger = LoggerCache.getLogger("Currency");
+
     private _currencyCache: CurrencyCache = {};
 
     constructor() {
         super();
 
-        frontendCommunicator.on("currencies:get-currencies", () => {
-            return this.getCurrencies();
-        });
-
-        frontendCommunicator.on("currencies:get-currency-by-id", (currencyId: string) => {
-            return this.getCurrencyById(currencyId);
-        });
-
-        frontendCommunicator.on("currencies:get-currency-by-name", (currencyName: string) => {
-            return this.getCurrencyByName(currencyName);
-        });
+        frontendCommunicator.onAsync("currencies:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
 
         frontendCommunicator.on("currencies:create-currency", (currency: Currency) => {
             this.createCurrency(currency);
@@ -58,7 +51,7 @@ class CurrencyAccess extends EventEmitter {
             return;
         }
 
-        logger.debug("Refreshing currency cache");
+        this.logger.debug("Refreshing currency cache");
         const db = this.getCurrencyDb();
 
         let resaveCurrencies = false;
@@ -76,7 +69,7 @@ class CurrencyAccess extends EventEmitter {
         }
 
         this._currencyCache = cache;
-        frontendCommunicator.send("currencies:currencies-updated", this.getCurrencies());
+        this.triggerUiRefresh();
     }
 
     getCurrencies(): CurrencyCache {
@@ -150,7 +143,7 @@ class CurrencyAccess extends EventEmitter {
         }
 
         if (Object.values(this._currencyCache).some(c => c.name === currency.name)) {
-            logger.error(`User tried to create currency with the same name as another currency: ${currency.name}.`);
+            this.logger.error(`User tried to create currency with the same name as another currency: ${currency.name}.`);
             return false;
         }
 
@@ -158,7 +151,7 @@ class CurrencyAccess extends EventEmitter {
         this.saveAllCurrencies();
         this.emit("currencies:currency-created", currency);
 
-        logger.debug(`Currency created with name: ${currency.name}`);
+        this.logger.debug(`Currency created with name: ${currency.name}`);
         return true;
     }
 
@@ -186,7 +179,12 @@ class CurrencyAccess extends EventEmitter {
 
     private saveAllCurrencies(): void {
         this.getCurrencyDb().push("/", this._currencyCache);
-        frontendCommunicator.send("currencies:currencies-updated", this.getCurrencies());
+        this.triggerUiRefresh();
+    }
+
+    triggerUiRefresh(): void {
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("currencies:currencies-updated", Object.values(this.getCurrencies()));
     }
 }
 

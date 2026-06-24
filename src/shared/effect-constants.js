@@ -38,6 +38,7 @@ const EffectTrigger = Object.freeze({
     POWER_UP: "power_up",
     MANUAL: "manual",
     QUICK_ACTION: "quick_action",
+    CONTROL_DECK: "control_deck",
     OVERLAY_WIDGET: "overlay_widget",
     ALL: "all"
 });

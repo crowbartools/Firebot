@@ -1,4 +1,5 @@
-import type { EffectType } from "../../../types/effects";
+import type { EffectType } from "../../../types";
+
 import { CommandManager } from "../../chat/commands/command-manager";
 
 const effect: EffectType<{

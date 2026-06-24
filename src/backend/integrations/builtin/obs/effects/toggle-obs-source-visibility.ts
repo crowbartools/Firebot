@@ -1,8 +1,8 @@
-import { EffectType } from "../../../../../types/effects";
+import type { EffectType, BackendCommunicator } from "../../../../../types";
 import {
+    type SourceData,
     getSourceVisibility,
-    setSourceVisibility,
-    SourceData
+    setSourceVisibility
 } from "../obs-remote";
 
 type SourceAction = boolean | "toggle";
@@ -17,11 +17,6 @@ type EffectProperties = {
     }>;
 };
 
-type Scope = {
-    effect: EffectProperties;
-    [x: string]: any;
-};
-
 export const ToggleSourceVisibilityEffectType: EffectType<EffectProperties> =
     {
         definition: {
@@ -34,7 +29,7 @@ export const ToggleSourceVisibilityEffectType: EffectType<EffectProperties> =
         optionsTemplate: `
 <eos-container ng-show="missingSources.length > 0">
         <div class="effect-info alert alert-warning">
-            <p><b>Warning!</b> 
+            <p><b>Warning!</b>
                 Cannot find {{missingSources.length}} sources in this effect. Ensure the correct profile or scene collection is loaded in OBS, and OBS is running.
             </p>
         </div>
@@ -47,7 +42,7 @@ export const ToggleSourceVisibilityEffectType: EffectType<EffectProperties> =
             <span>Name: {{sceneName.sourceName || 'Unknown'}},</span>
             <span ng-if="sceneName.sourceName == null">Id: {{sceneName.sourceId}},</span>
             <span>Action: {{getMissingActionDisplay(sceneName.action)}}</span>
-        </div>   
+        </div>
         <div>
             <button class="btn btn-danger" ng-click="deleteSceneAtIndex($index)"><i class="far fa-trash"></i></button>
         </div>
@@ -95,7 +90,7 @@ export const ToggleSourceVisibilityEffectType: EffectType<EffectProperties> =
   </div>
 </eos-container>
 `,
-        optionsController: ($scope: Scope, backendCommunicator: any, $q: any) => {
+        optionsController: ($scope, backendCommunicator: BackendCommunicator) => {
             $scope.isObsConfigured = false;
 
             $scope.sourceData = null;
@@ -129,7 +124,7 @@ export const ToggleSourceVisibilityEffectType: EffectType<EffectProperties> =
                 }
             };
 
-            $scope.sourceIsSelected = (sceneName: string, sourceId: number) => {
+            $scope.sourceIsSelected = (sceneName: string, sourceId: number): boolean => {
                 return $scope.effect.selectedSources.some(
                     s => s.sceneName === sceneName && s.sourceId === sourceId
                 );
@@ -212,15 +207,14 @@ export const ToggleSourceVisibilityEffectType: EffectType<EffectProperties> =
                 }
             };
 
-            $scope.getSourceData = () => {
-                $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
+            $scope.getSourceData = async () => {
+                $scope.isObsConfigured = await backendCommunicator.fireEventAsync("obs-is-configured");
 
-                $q.when(backendCommunicator.fireEventAsync("obs-get-source-data")).then(
-                    (sourceData: SourceData) => {
-                        $scope.sourceData = sourceData ?? null;
-                        $scope.filterScenes();
-                    }
-                );
+                try {
+                    const sourceData: SourceData = await backendCommunicator.fireEventAsync("obs-get-source-data");
+                    $scope.sourceData = sourceData ?? null;
+                    $scope.filterScenes();
+                } catch { }
             };
             $scope.getSourceData();
             $scope.getStoredData();

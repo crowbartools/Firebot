@@ -4,7 +4,7 @@ import NodeCache from "node-cache";
 import { Pronoun, UserPronoun } from "../../types";
 
 import frontendCommunicator from "../common/frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 
 const PRONOUN_SERVICE_BASE_URL = "https://api.pronouns.alejo.io/v1/";
 
@@ -16,6 +16,7 @@ type UserPronounResponse = {
 };
 
 class FirebotPronounManager {
+    private logger = LoggerCache.getLogger("Pronouns");
     private _appVersion = app.getVersion();
     private _pronounCache: Record<string, Pronoun> = { };
     private _userPronounCache = new NodeCache({
@@ -47,13 +48,13 @@ class FirebotPronounManager {
                 this._pronounCache = await response.json() as Record<string, Pronoun>;
             }
         } catch (error) {
-            logger.error("Unable to cache pronoun definitions", error);
+            this.logger.error("Unable to cache pronoun definitions", error);
         }
     }
 
-    async getUserPronouns(username: string, fallback: string = "they/them"): Promise<UserPronoun | undefined> {
+    async getUserPronouns(username: string, fallback: string = undefined): Promise<UserPronoun | undefined> {
         if (!!username?.length) {
-            const cachedPronouns =  this._userPronounCache.get<UserPronoun>(username);
+            const cachedPronouns = this._userPronounCache.get<UserPronoun>(username);
 
             if (cachedPronouns) {
                 return cachedPronouns;
@@ -74,11 +75,11 @@ class FirebotPronounManager {
                     });
                     return this._userPronounCache.get<UserPronoun>(username);
                 } else if (response.status === 404) {
-                    logger.debug(`No pronouns set for ${username}`);
+                    this.logger.debug(`No pronouns set for ${username}`);
                     this._userNoPronounCache.set(username, true);
                 }
             } catch (error) {
-                logger.warn(`Unable to get pronouns for ${username}`, error);
+                this.logger.warn(`Unable to get pronouns for ${username}`, error);
             }
         }
 
@@ -87,7 +88,7 @@ class FirebotPronounManager {
             : undefined;
     };
 
-    async getUserFriendlyPronounString(username: string, fallback: string = "they/them", type: "subject" | "object" | "both" = "both") {
+    async getUserFriendlyPronounString(username: string, fallback: string = undefined, type: "subject" | "object" | "both" = "both") {
         const pronouns = await this.getUserPronouns(username, fallback);
 
         if (pronouns) {

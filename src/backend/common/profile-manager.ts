@@ -4,20 +4,35 @@ import fs from "fs";
 import path from "path";
 import sanitizeFileName from "sanitize-filename";
 
-import type { FirebotAccount } from "../../types/accounts";
+import type { FirebotAccount } from "../../types";
 
 import { SettingsManager } from "./settings-manager";
 import * as dataAccess from "./data-access";
 import frontendCommunicator from "./frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
+
+const DEFAULT_FRONTEND_AVATAR_URL = "../images/placeholders/nologin.png";
+
+type AccountInfoRequest = {
+    profileId: string;
+    accountType: "streamer" | "bot";
+};
+
+type FrontendProfileData = {
+    username: string;
+    avatar: string;
+    profileId: string;
+};
 
 class ProfileManager {
+    private logger = LoggerCache.getLogger("Profiles");
+
     loggedInUser: string = null;
     profileToRename: string = null;
 
     constructor() {
-        frontendCommunicator.on("profiles:get-active-profiles",
-            () => SettingsManager.getSetting("ActiveProfiles")
+        frontendCommunicator.onAsync("profiles:ui-service-ready",
+            async () => this.triggerUiRefresh()
         );
 
         frontendCommunicator.on("profiles:get-logged-in-profile",
@@ -26,18 +41,6 @@ class ProfileManager {
 
         frontendCommunicator.on("profiles:get-path-in-profile",
             (path: string) => this.getPathInProfile(path)
-        );
-
-        frontendCommunicator.on("profiles:get-account-info",
-            (data: { profileId: string, accountType: string }): FirebotAccount => {
-                try {
-                    return dataAccess.getJsonDbInUserData(`./profiles/${data.profileId}/auth-twitch`)
-                        .getData(`/${data.accountType}`) as FirebotAccount;
-                } catch (error) {
-                    logger.info(`Couldn't get ${data.accountType} data for profile ${data.profileId} while updating the UI. It's possible this account hasn't logged in yet.`, error);
-                    return null;
-                }
-            }
         );
 
         frontendCommunicator.on("profiles:create-profile",
@@ -65,7 +68,7 @@ class ProfileManager {
     }
 
     logInProfile(profileId: string, restart = true): void {
-        logger.info(`Logging in to profile "${profileId}".${restart ? " Restarting now." : ""}`);
+        this.logger.info(`Logging in to profile "${profileId}".${restart ? " Restarting now." : ""}`);
         SettingsManager.saveSetting("LoggedInProfile", profileId);
 
         if (restart === true) {
@@ -75,12 +78,12 @@ class ProfileManager {
         }
     }
 
-    createNewProfile(profileId: string = undefined, restart = true): void {
+    createNewProfile(profileId: string, restart = true): void {
         const globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
         let activeProfiles = [];
 
         if (profileId == null || profileId === "") {
-            profileId = "Main";
+            profileId = "Main Profile";
         } else {
             profileId = sanitizeFileName(profileId);
         }
@@ -91,7 +94,7 @@ class ProfileManager {
 
         if (!activeProfiles?.length) {
             // This means either all profiles have been deleted, or this is our first launch.
-            logger.info("No active profiles found while creating a new profile.");
+            this.logger.info("No active profiles found while creating a new profile.");
         }
 
         let counter = 1;
@@ -107,10 +110,10 @@ class ProfileManager {
         try {
             globalSettingsDb.push("/profiles/activeProfiles", activeProfiles);
             globalSettingsDb.push("/profiles/loggedInProfile", profileId);
-            logger.info(`New profile created: ${profileId}.${restart ? " Restarting." : ""}`);
+            this.logger.info(`New profile created: ${profileId}.${restart ? " Restarting." : ""}`);
         } catch (error) {
             const errorMessage = (error as Error).name === "DatabaseError" ? error?.inner?.message ?? error.stack : error;
-            logger.error(`Error saving ${profileId} profile to global settings. Is the file locked or corrupted?`, errorMessage);
+            this.logger.error(`Error saving ${profileId} profile to global settings. Is the file locked or corrupted?`, errorMessage);
             dialog.showErrorBox("Error Loading Profile", `An error occurred while trying to load your ${profileId} profile. Please try starting Firebot again. If this issue continues, please reach out on our Discord for support.`);
             app.quit();
             return;
@@ -131,19 +134,19 @@ class ProfileManager {
 
         // We have a value in global settings! Set it to our cache, then return.
         if (this.loggedInUser != null) {
-            logger.info("Setting logged in user cache.");
+            this.logger.info("Setting logged in user cache.");
             return this.loggedInUser;
         }
 
         // We don't have a value in our global settings. So, let's try some other things.
-        logger.info(`No logged in profile in global settings file. Attempting to set one${restartIfNotLoggedIn ? " and restart the app" : ""}.`);
+        this.logger.info(`No logged in profile in global settings file. Attempting to set one${restartIfNotLoggedIn ? " and restart the app" : ""}.`);
 
         const activeProfiles = SettingsManager.getSetting("ActiveProfiles");
         if (activeProfiles[0] != null) {
             this.logInProfile(activeProfiles[0], restartIfNotLoggedIn);
         } else {
             // We don't have any profiles at all. Let's make one.
-            this.createNewProfile(null, restartIfNotLoggedIn);
+            this.createNewProfile("Main Profile", restartIfNotLoggedIn);
         }
 
         if (restartIfNotLoggedIn !== true) {
@@ -153,11 +156,11 @@ class ProfileManager {
 
     renameProfile(newProfileId: string): void {
         const profileId = this.getLoggedInProfile();
-        logger.warn(`User wants to rename profile: ${profileId}. Restarting the app.`);
+        this.logger.warn(`User wants to rename profile: ${profileId}. Restarting the app.`);
 
         let sanitizedNewProfileId = sanitizeFileName(newProfileId);
         if (sanitizedNewProfileId == null || sanitizedNewProfileId === "") {
-            logger.error(`Attempted to rename profile to an invalid name: ${newProfileId}`);
+            this.logger.error(`Attempted to rename profile to an invalid name: ${newProfileId}`);
             return;
         }
 
@@ -165,7 +168,7 @@ class ProfileManager {
         const activeProfiles = SettingsManager.getSetting("ActiveProfiles");
 
         if (!activeProfiles.length) {
-            logger.debug("No active profiles found");
+            this.logger.debug("No active profiles found");
         }
 
         let counter = 1;
@@ -182,7 +185,7 @@ class ProfileManager {
 
     deleteProfile(): void {
         const profileId = this.getLoggedInProfile();
-        logger.warn(`User wants to delete profile: ${profileId}. Restarting the app.`);
+        this.logger.warn(`User wants to delete profile: ${profileId}. Restarting the app.`);
 
         // Lets set this profile to be deleted on restart. (When no files are in use).
         const globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
@@ -216,7 +219,7 @@ class ProfileManager {
             db.load();
             return db;
         } catch {
-            logger.error(`Error loading JsonDB at ${jsonDbPath}. Attempting to recreate.`);
+            this.logger.error(`Error loading JsonDB at ${jsonDbPath}. Attempting to recreate.`);
 
             const fullPath = jsonDbPath.toLowerCase().endsWith(".json")
                 ? jsonDbPath
@@ -240,6 +243,62 @@ class ProfileManager {
 
     getNewProfileName = (): string => this.profileToRename;
     hasProfileRename = (): boolean => this.profileToRename != null;
+
+    private getAccountInfo(profileId: string, accountType: "streamer" | "bot") {
+        try {
+            return dataAccess.getJsonDbInUserData(`./profiles/${profileId}/auth-twitch`)
+                .getData(`/${accountType}`) as FirebotAccount;
+        } catch (error) {
+            if (error instanceof Error
+                && error.name === "DataError"
+                && error.message.startsWith("Can't find dataPath: /streamer")
+            ) {
+                this.logger.info(`Couldn't get ${accountType} data for profile ${profileId} while updating the UI. It's possible this account hasn't logged in yet.`);
+            } else {
+                this.logger.warn(`Failed to get ${accountType} data for profile ${profileId}.`, error);
+            }
+            return null;
+        }
+    }
+
+    private getProfileDataForFrontend(): FrontendProfileData[] {
+        const activeProfiles = SettingsManager.getSetting("ActiveProfiles");
+
+        if (activeProfiles == null) {
+            return [];
+        }
+
+        const profiles: FrontendProfileData[] = [];
+        for (const profileId of activeProfiles) {
+            const profile = {
+                username: "User",
+                avatar: DEFAULT_FRONTEND_AVATAR_URL,
+                profileId: profileId
+            };
+
+            // Try to get streamer settings for this profile.
+            // If it exists, overwrite defaults.
+            const streamer = this.getAccountInfo(profileId, "streamer");
+
+            if (streamer) {
+                if (streamer.username) {
+                    profile.username = streamer.username;
+                }
+                if (streamer.avatar) {
+                    profile.avatar = streamer.avatar;
+                }
+            }
+
+            profiles.push(profile);
+        }
+
+        return profiles;
+    }
+
+    triggerUiRefresh(): void {
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("profiles:updated-profiles", this.getProfileDataForFrontend());
+    }
 }
 
 const manager = new ProfileManager();

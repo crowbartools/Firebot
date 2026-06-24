@@ -1,5 +1,5 @@
-import type { EffectType } from "../../../types/effects";
-import type { Timer } from "../../../types/timers";
+import type { EffectType, Timer } from "../../../types";
+
 import { TimerManager } from "../../timers/timer-manager";
 
 const effect: EffectType<{

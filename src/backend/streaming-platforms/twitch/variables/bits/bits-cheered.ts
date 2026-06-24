@@ -1,7 +1,9 @@
 import type { HelixBitsLeaderboardPeriod } from "@twurple/api";
 import type { ReplaceVariable, Trigger } from "../../../../../types/variables";
 import { TwitchApi } from "../../api";
-import logger from "../../../../logwrapper";
+import { LoggerCache } from "../../../../logger-cache";
+
+const logger = LoggerCache.getLogger("Effects");
 
 const expressionish = require('expressionish');
 const moment = require("moment");

@@ -1,19 +1,24 @@
-import type { SortTag } from "../../types/sort-tags";
+import type { SortTag } from "../../types";
 
 import { SettingsManager } from "../common/settings-manager";
 import { ProfileManager } from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 
 interface SortTagCache {
     [context: string]: SortTag[];
 }
 
 class SortTagManager {
+    private logger = LoggerCache.getLogger("Sort Tags");
     sortTags: SortTagCache = { };
 
     constructor() {
-        frontendCommunicator.on("sort-tags:get-sort-tags", () => {
+        frontendCommunicator.onAsync("sort-tags:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
+        frontendCommunicator.onAsync("sort-tags:get-sort-tags", async () => {
             return this.sortTags ?? { };
         });
 
@@ -27,7 +32,7 @@ class SortTagManager {
     }
 
     loadSortTags() {
-        logger.debug("Attempting to load tags");
+        this.logger.debug("Attempting to load tags");
 
         try {
             const sortTagsData = this.getSortTagsDb().getData("/") as SortTagCache;
@@ -36,9 +41,9 @@ class SortTagManager {
                 this.sortTags = sortTagsData;
             }
 
-            logger.debug(`Loaded tags.`);
+            this.logger.debug(`Loaded tags.`);
         } catch (err) {
-            logger.warn(`There was an error reading tags file.`, err);
+            this.logger.warn(`There was an error reading tags file.`, err);
         }
 
         this.getLegacyEventAndCommandTags();
@@ -102,11 +107,16 @@ class SortTagManager {
         try {
             this.getSortTagsDb().push("/", this.sortTags);
 
-            frontendCommunicator.send("sort-tags:updated-sort-tags", this.sortTags);
-            logger.debug("Saved tags");
+            this.triggerUiRefresh();
+            this.logger.debug("Saved tags");
         } catch (error) {
-            logger.warn("There was an error saving tags", error);
+            this.logger.warn("There was an error saving tags", error);
         }
+    }
+
+    triggerUiRefresh(): void {
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("sort-tags:updated-sort-tags", this.sortTags ?? { });
     }
 }
 

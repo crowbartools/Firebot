@@ -1,4 +1,4 @@
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
 
 interface RaidMessage {
@@ -7,6 +7,8 @@ interface RaidMessage {
 }
 
 class RaidMessageChecker {
+    private logger = LoggerCache.getLogger("Moderation");
+
     private readonly _chatCacheLimit = 50;
     private _messageCache: RaidMessage[] = [];
     private _raidMessage = "";
@@ -76,7 +78,7 @@ class RaidMessageChecker {
         await this.checkPreviousMessages();
 
         this._checkerEnabled = true;
-        logger.debug("Raid message checker enabled");
+        this.logger.debug("Raid message checker enabled");
     }
 
     disable(): void {

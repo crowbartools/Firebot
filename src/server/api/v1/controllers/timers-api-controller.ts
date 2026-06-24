@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
-import { Timer } from "../../../../types/timers";
+
+import type { Timer } from "../../../../types";
+
 import { TimerManager } from "../../../../backend/timers/timer-manager";
 
 function findTimer(req: Request, res: Response): Timer {

@@ -1,11 +1,12 @@
 import { BrowserWindow } from "electron";
 import windowStateKeeper from "electron-window-state";
-import { SecretsManager } from "../../../secrets-manager";
 import path from "path";
 import url from "url";
 
-import type { QueueState } from "../../../../types/effects";
+import type { QueueState } from "../../../../types";
+
 import { EffectQueueConfigManager } from "../../../effects/queues/effect-queue-config-manager";
+import { SecretsManager } from "../../../secrets-manager";
 import effectQueueRunner from "../../../effects/queues/effect-queue-runner";
 import frontendCommunicator from "../../../common/frontend-communicator";
 

@@ -3,11 +3,11 @@
 import { app } from "electron";
 import os from "os";
 import frontendCommunicator from "./frontend-communicator";
-import ConnectionManager from "./connection-manager";
+import { ConnectionManager } from "./connection-manager";
 import { AccountAccess } from "./account-access";
-import HttpServerManager from "../../server/http-server-manager";
-import WebsocketServerManager from "../../server/websocket-server-manager";
-import startupScriptsManager from "../common/handlers/custom-scripts/startup-scripts-manager";
+import { HttpServerManager } from "../../server/http-server-manager";
+import { WebSocketServerManager } from "../../server/websocket-server-manager";
+import { PluginManager } from "../plugins/plugin-manager";
 import { isConnected } from "../integrations/builtin/obs/obs-remote";
 
 function getOsName(platform: NodeJS.Platform): string {
@@ -32,19 +32,21 @@ async function getDebugInfoString(): Promise<string> {
     const osVersion = typeof process.getSystemVersion === "function" ? process.getSystemVersion() : os.release();
     const osArch = os.arch();
 
+    // eslint-disable-next-line new-cap
     const { locale } = Intl.DateTimeFormat().resolvedOptions();
 
     const accounts = AccountAccess.getAccounts();
     const streamerLoggedIn = accounts.streamer.loggedIn ? "Yes" : "No";
     const botLoggedIn = accounts.bot.loggedIn ? "Yes" : "No";
 
-    const connectedToTwitch = ConnectionManager.chatIsConnected() ? "Connected" : "Disconnected";
+    const connectedToTwitch = ConnectionManager.chatIsConnected ? "Connected" : "Disconnected";
     const connectedToOBS = isConnected() ? "Connected" : "Disconnected";
 
     const httpServerStatus = HttpServerManager.isDefaultServerStarted ? "Running" : "Stopped";
-    const websocketClients = WebsocketServerManager.getNumberOfOverlayClients();
+    const websocketClients = WebSocketServerManager.getNumberOfOverlayClients();
 
-    const startupScripts = Object.values(startupScriptsManager.getLoadedStartupScripts());
+    const plugins = (await PluginManager.getInstalledPlugins())
+        .toSorted((a, b) => a.details.manifest.name.localeCompare(b.details.manifest.name));
 
     return [
         "Firebot Debug Info",
@@ -64,9 +66,9 @@ async function getDebugInfoString(): Promise<string> {
         `  - HTTP Server: ${httpServerStatus}`,
         `  - Overlay Clients: ${websocketClients}\n`,
         'Plugins:',
-        startupScripts.length === 0
+        plugins.length === 0
             ? "  - None"
-            : startupScripts.map(script => `  - ${script.name}`).join("\n")
+            : plugins.map(p => `  - ${p.details.manifest.name} ${p.details.manifest.version}`).join("\n")
     ].join("\n");
 }
 

@@ -1,8 +1,7 @@
 import moment from "moment";
 import NodeCache from "node-cache";
 
-import type { SystemCommand } from "../../../../types/commands";
-import type { RolePercentageParameterValue } from "../../../../types/parameters";
+import type { RolePercentageParameterValue, SystemCommand } from "../../../../types";
 
 import { CommandManager } from "../../../chat/commands/command-manager";
 import { GameManager } from "../../game-manager";
@@ -12,10 +11,12 @@ import currencyManager from "../../../currency/currency-manager";
 import customRolesManager from "../../../roles/custom-roles-manager";
 import teamRolesManager from "../../../roles/team-roles-manager";
 import twitchRolesManager from "../../../../shared/twitch-roles";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
 import { commafy, humanizeTime } from "../../../utils";
 
 import slotMachine from "./slot-machine";
+
+const logger = LoggerCache.getLogger("Games");
 
 const activeSpinners = new NodeCache({ checkperiod: 2 });
 const cooldownCache = new NodeCache({ checkperiod: 5 });

@@ -5,9 +5,10 @@ import {
     type UserIdResolvable,
     extractUserId
 } from "@twurple/api";
-import type { BasicViewer } from '../../../../../types/viewers';
+import type { BasicViewer } from '../../../../../types';
 import { ApiResourceBase } from './api-resource-base';
 import type { TwitchApi } from "../";
+import { FrontendChatManager } from "../../../../chat/frontend-chat-manager";
 import frontendCommunicator from '../../../../common/frontend-communicator';
 
 interface UserModRequest {
@@ -369,7 +370,7 @@ export class TwitchModerationApi extends ApiResourceBase<ModerationEvents> {
         } catch (error) {
             // eslint-disable-next-line
             const likelyExpired = error?.body?.includes("attempted to update a message status that was either already set") === true;
-            frontendCommunicator.send("twitch:chat:automod-update-error", { messageId, likelyExpired });
+            FrontendChatManager.setChatMessageAutomodError(messageId, likelyExpired);
             this.logger.error(`Error processing held AutoMod message: ${(error as Error).message}`);
         }
     }

@@ -1,14 +1,26 @@
-import { OverlayWidgetConfig, OverlayWidgetType, WidgetEventHandler, WidgetEventResult, WidgetUIAction } from "../../types/overlay-widgets";
 import { TypedEmitter } from "tiny-typed-emitter";
-import frontendCommunicator from "../common/frontend-communicator";
-import overlayWidgetConfigManager from "./overlay-widget-config-manager";
-import websocketServerManager from "../../server/websocket-server-manager";
-import { wait } from "../utils";
-import logger from "../logwrapper";
+
+import {
+    OverlayWidgetConfig,
+    OverlayWidgetType,
+    WidgetEventHandler,
+    WidgetEventResult,
+    WidgetUIAction,
+    WidgetOverlayEvent
+} from "../../types";
+
 import { ResourceTokenManager } from "../resource-token-manager";
+import { WebSocketServerManager } from "../../server/websocket-server-manager";
+import overlayWidgetConfigManager from "./overlay-widget-config-manager";
+import frontendCommunicator from "../common/frontend-communicator";
+import { LoggerCache } from "../logger-cache";
+import { wait } from "../utils";
+
+const logger = LoggerCache.getLogger("Overlay Widgets");
 
 type Events = {
     "overlay-widget-type-registered": (overlayWidgetType: OverlayWidgetType) => void;
+    "overlay-widget-type-unregistered": (id: string) => void;
 };
 
 class OverlayWidgetsManager extends TypedEmitter<Events> {
@@ -17,6 +29,10 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
 
     constructor() {
         super();
+
+        frontendCommunicator.onAsync("overlay-widgets:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,10 +40,25 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
         if (this.overlayWidgetTypes.has(overlayWidgetType.id)) {
             throw new Error(`Overlay widget type with ID '${overlayWidgetType.id}' is already registered.`);
         }
+        const hasOverlayExtension = !!overlayWidgetType.overlayExtension;
+        const hasComponentExtension = !!overlayWidgetType.componentExtension;
+        if (hasOverlayExtension === hasComponentExtension) {
+            throw new Error(`Overlay widget type with ID '${overlayWidgetType.id}' must register exactly one of 'overlayExtension' or 'componentExtension'.`);
+        }
         this.overlayWidgetTypes.set(overlayWidgetType.id, overlayWidgetType);
         this.emit("overlay-widget-type-registered", overlayWidgetType);
         frontendCommunicator.send("overlay-widgets:type-registered", this.formatForFrontend(overlayWidgetType));
-        websocketServerManager.refreshAllOverlays();
+        WebSocketServerManager.refreshAllOverlays();
+    }
+
+    unregisterOverlayWidgetType(id: string) {
+        if (!this.overlayWidgetTypes.has(id)) {
+            throw new Error(`Overlay widget type with ID '${id}' is not registered.`);
+        }
+        this.overlayWidgetTypes.delete(id);
+        this.emit("overlay-widget-type-unregistered", id);
+        frontendCommunicator.send("overlay-widgets:type-unregistered", { id });
+        WebSocketServerManager.refreshAllOverlays();
     }
 
     getOverlayWidgetType(id: string): OverlayWidgetType | null {
@@ -40,12 +71,29 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
 
     getOverlayExtensions() {
         return Array.from(this.overlayWidgetTypes.values())
+            .filter(w => w.overlayExtension != null)
             .map(w => ({
                 typeId: w.id,
                 dependencies: w.overlayExtension.dependencies,
                 eventHandler: w.overlayExtension.eventHandler,
                 onInitialLoad: w.overlayExtension.onInitialLoad
             }));
+    }
+
+    getOverlayComponents() {
+        return Array.from(this.overlayWidgetTypes.values())
+            .filter(w => w.componentExtension != null)
+            .map(w => ({
+                typeId: w.id,
+                dependencies: w.componentExtension.dependencies
+            }));
+    }
+
+    /**
+     * Returns the inline ESM bundle source for a component widget registered with `bundleSource`
+     */
+    getOverlayComponentSource(typeId: string): string | null {
+        return this.overlayWidgetTypes.get(typeId)?.componentExtension?.bundleSource ?? null;
     }
 
     async sendWidgetEventToOverlay<EventName extends WidgetOverlayEvent["name"]>(eventName: EventName, widgetConfig: OverlayWidgetConfig, messageInfo: EventName extends "message" ? { messageName: string, messageData?: unknown } : undefined = undefined, previewMode = false) {
@@ -91,7 +139,7 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
             }
         }
 
-        websocketServerManager.sendWidgetEventToOverlay({
+        WebSocketServerManager.sendWidgetEventToOverlay({
             name: eventName,
             data: {
                 widgetConfig: {
@@ -99,6 +147,7 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
                     resourceTokens
                 },
                 widgetType,
+                isComponentWidget: !!widgetType.componentExtension,
                 previewMode,
                 ...messageInfo
             }
@@ -124,27 +173,29 @@ class OverlayWidgetsManager extends TypedEmitter<Events> {
             }))
         };
     }
+
+    private formatStateDisplaysForFrontend(): Record<string, string> {
+        const configs = overlayWidgetConfigManager.getAllItems();
+        return configs.reduce((acc, config) => {
+            const type = this.getOverlayWidgetType(config.type);
+            if (type?.stateDisplay) {
+                const display = type.stateDisplay(config);
+                if (display) {
+                    acc[config.id] = display;
+                }
+            }
+            return acc;
+        }, {} as Record<string, string>);
+    }
+
+    triggerUiRefresh(): void {
+        logger.debug("Triggering types/state displays UI refresh");
+        frontendCommunicator.send("overlay-widget:types-updated", this.getOverlayWidgetTypesForFrontend());
+        frontendCommunicator.send("overlay-widget:state-displays-updated", this.formatStateDisplaysForFrontend());
+    }
 }
 
 const manager = new OverlayWidgetsManager();
-
-frontendCommunicator.on("overlay-widgets:get-all-types",
-    () => manager.getOverlayWidgetTypesForFrontend()
-);
-
-frontendCommunicator.on("overlay-widgets:get-state-displays", () => {
-    const configs = overlayWidgetConfigManager.getAllItems();
-    return configs.reduce((acc, config) => {
-        const type = manager.getOverlayWidgetType(config.type);
-        if (type?.stateDisplay) {
-            const display = type.stateDisplay(config);
-            if (display) {
-                acc[config.id] = display;
-            }
-        }
-        return acc;
-    }, {} as Record<string, string>);
-});
 
 overlayWidgetConfigManager.on("widget-config-active-changed", (config) => {
     if (config.active === false) {
@@ -257,7 +308,8 @@ const handleLivePreviewUpdate = async (config: OverlayWidgetConfig) => {
     }
 
     // Ensure config has some state
-    config.state = type.livePreviewState ?? config.state ?? type.initialState ?? {};
+    const livePreviewState = typeof type.livePreviewState === "function" ? type.livePreviewState() : type.livePreviewState;
+    config.state = livePreviewState ?? config.state ?? type.initialState ?? {};
 
     livePreviewWidgetConfig = config;
 
@@ -316,7 +368,7 @@ frontendCommunicator.on("overlay-widgets:trigger-ui-action", async (data: { widg
     }
 });
 
-websocketServerManager.on("overlay-connected", (instanceName: string = "Default") => {
+WebSocketServerManager.on("overlay-connected", (instanceName: string = "Default") => {
     const widgetConfigs = overlayWidgetConfigManager
         .getAllItems()
         .filter(w => w.active !== false && (
@@ -333,7 +385,7 @@ websocketServerManager.on("overlay-connected", (instanceName: string = "Default"
     }
 });
 
-websocketServerManager.on("overlay-event", (event: { name: string, data: unknown }) => {
+WebSocketServerManager.on("overlay-event", (event: { name: string, data: unknown }) => {
     if (event.name !== "overlay-widget-message") {
         return;
     }

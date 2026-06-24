@@ -4,7 +4,7 @@ import { EventSubWsListener } from "@twurple/eventsub-ws";
 import type { SavedChannelReward } from "../../../../../types";
 
 import { AccountAccess } from "../../../../common/account-access";
-import { FirebotFrontendChatHelpers } from "../../../../chat/frontend-chat-helpers";
+import { FrontendChatManager } from "../../../../chat/frontend-chat-manager";
 import { SharedChatCache } from "../../chat/shared-chat-cache";
 import { TwitchEventHandlers } from "../../events";
 import { TwitchEventSubChatHelpers } from "./eventsub-chat-helpers";
@@ -15,15 +15,18 @@ import chatHelpers from "../../../../chat/chat-helpers";
 import rewardManager from "../../../../channel-rewards/channel-reward-manager";
 import twitchStreamInfoPoll from "../../stream-info-manager";
 import viewerDatabase from "../../../../viewers/viewer-database";
-import logger from "../../../../logwrapper";
+import { LoggerCache } from "../../../../logger-cache";
 import {
     getChannelRewardOrPowerUpImageUrl,
     mapEventSubRewardToTwitchData,
     mapSharedChatParticipants
 } from "./eventsub-helpers";
 import { EventSubPowerUpRedemptionAddSubscription } from "./custom-subscriptions/power-up-redemption-add-subscription";
+import { logTwurpleMessage } from "../twurple-logger";
 
 class TwitchEventSubClient {
+    private logger = LoggerCache.getLogger("Twitch EventSub");
+
     private _eventSubListener: EventSubWsListener;
     private _subscriptions: Array<EventSubSubscription> = [];
 
@@ -128,7 +131,7 @@ class TwitchEventSubClient {
             streamer.userId,
             async (event) => {
                 const firebotChatMessage = await chatHelpers.buildViewerFirebotChatMessageFromAutoModMessage(event);
-                FirebotFrontendChatHelpers.sendChatMessageToFrontend(firebotChatMessage);
+                FrontendChatManager.sendChatMessageToFrontend(firebotChatMessage);
             }
         );
         this._subscriptions.push(autoModMessageHoldSub);
@@ -138,14 +141,10 @@ class TwitchEventSubClient {
             streamer.userId,
             streamer.userId,
             (event) => {
-                FirebotFrontendChatHelpers.updateMessageAutomodStatus(
+                FrontendChatManager.updateChatMessageAutomodStatus(
                     event.messageId,
                     event.status,
-                    event.moderatorName,
-                    event.moderatorId,
-                    event.reason === "automod"
-                        ? (event.autoMod?.boundaries?.map(b => b.text) ?? [])
-                        : (event.blockedTerms?.map(b => b.text) ?? [])
+                    event.moderatorName
                 );
             }
         );
@@ -244,7 +243,7 @@ class TwitchEventSubClient {
             (event) => {
                 const reward = channelRewardManager.getChannelReward(event.rewardId);
                 if (!reward) {
-                    logger.debug(
+                    this.logger.debug(
                         `Received a reward redemption for a reward that does not exist locally. Reward: ${event.rewardTitle}`,
                         event
                     );
@@ -287,7 +286,7 @@ class TwitchEventSubClient {
             (event) => {
                 const reward = channelRewardManager.getChannelReward(event.rewardId);
                 if (!reward) {
-                    logger.debug(
+                    this.logger.debug(
                         `Received a reward redemption update for a reward that does not exist locally. Reward: ${event.rewardTitle}`,
                         event
                     );
@@ -295,7 +294,7 @@ class TwitchEventSubClient {
                 }
 
                 if (reward.twitchData.shouldRedemptionsSkipRequestQueue) {
-                    logger.debug(
+                    this.logger.debug(
                         `Received a reward redemption update for a reward that should skip the request queue. Reward: ${event.rewardTitle}`,
                         event
                     );
@@ -337,7 +336,7 @@ class TwitchEventSubClient {
                 const powerUp = await TwitchApi.powerUps.getCustomPowerUpById(event.custom_power_up.id);
 
                 if (!powerUp) {
-                    logger.debug(
+                    this.logger.debug(
                         `Received a custom power-up redemption for an unknown power-up. Power-up ID: ${event.custom_power_up.id}`,
                         event
                     );
@@ -671,7 +670,7 @@ class TwitchEventSubClient {
                 );
             }
 
-            FirebotFrontendChatHelpers.deleteUserMessagesFromFrontend(event.userName);
+            FrontendChatManager.deleteUserMessagesFromFrontend(event.userName);
         });
         this._subscriptions.push(banSubscription);
 
@@ -794,7 +793,7 @@ class TwitchEventSubClient {
             (event) => {
                 switch (event.moderationAction) {
                     case "clear":
-                        FirebotFrontendChatHelpers.clearChatFeed(event.moderatorName);
+                        FrontendChatManager.clearChatFeed(event.moderatorName);
                         TwitchEventHandlers.chat.triggerChatCleared(event.moderatorName, event.moderatorId);
                         break;
                     case "mod":
@@ -846,7 +845,7 @@ class TwitchEventSubClient {
                             event.messageText,
                             event.messageId
                         );
-                        FirebotFrontendChatHelpers.deleteMessageFromFrontend(event.messageId);
+                        FrontendChatManager.deleteChatMessageFromFrontend(event.messageId);
                         break;
 
                     // Outbound Raid Starting
@@ -1005,14 +1004,14 @@ class TwitchEventSubClient {
 
                         // Pass any message the viewer sent with the streak to the frontend
                         if (!!event.messageText?.length) {
-                            FirebotFrontendChatHelpers.sendChatMessageToFrontend(
+                            FrontendChatManager.sendChatMessageToFrontend(
                                 await TwitchEventSubChatHelpers.buildChatMessageFromChatEvent(event)
                             );
                         }
                         break;
 
                     default:
-                        logger.debug(`Unknown EventSub chat notification type: ${event.type}. Metadata:`, event);
+                        this.logger.debug(`Unknown EventSub chat notification type: ${event.type}. Metadata:`, event);
                         break;
                 }
             }
@@ -1023,20 +1022,24 @@ class TwitchEventSubClient {
     createClient(): void {
         this.disconnectEventSub();
 
-        logger.info("Connecting to Twitch EventSub...");
+        this.logger.info("Connecting to Twitch EventSub...");
 
         try {
             this._eventSubListener = new EventSubWsListener({
-                apiClient: TwitchApi.streamerClient
+                apiClient: TwitchApi.streamerClient,
+                logger: {
+                    minLevel: 3,
+                    custom: (level, message) => logTwurpleMessage(level, message)
+                }
             });
 
             this._eventSubListener.start();
 
             this.createSubscriptions();
 
-            logger.info("Connected to the Twitch EventSub!");
+            this.logger.info("Connected to the Twitch EventSub!");
         } catch (error) {
-            logger.error("Failed to connect to Twitch EventSub", error);
+            this.logger.error("Failed to connect to Twitch EventSub", error);
             return;
         }
     }
@@ -1057,10 +1060,10 @@ class TwitchEventSubClient {
         try {
             if (this._eventSubListener) {
                 this._eventSubListener.stop();
-                logger.info("Disconnected from EventSub.");
+                this.logger.info("Disconnected from EventSub.");
             }
         } catch (error) {
-            logger.debug("Error disconnecting EventSub", error);
+            this.logger.debug("Error disconnecting EventSub", error);
         }
     }
 }

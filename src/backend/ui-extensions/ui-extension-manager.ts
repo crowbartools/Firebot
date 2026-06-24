@@ -1,24 +1,47 @@
-import type { UIExtension } from "./extension-types";
+import type { UIExtension } from "../../types";
 import frontendCommunicator from "../common/frontend-communicator";
+import { LoggerCache } from "../logger-cache";
+
+type RegisteredUIExtension = UIExtension & {
+    pluginId?: string;
+};
 
 class UIExtensionManager {
-    private _extensions: UIExtension[] = [];
+    private _logger = LoggerCache.getLogger("UI Extensions");
+    private _extensions: RegisteredUIExtension[] = [];
 
     private uiReady = false;
 
-    registerUIExtension(extension: UIExtension): void {
-        if (this._extensions.find(ext => ext.id === extension.id)) {
-            throw new Error(`Extension with id ${extension.id} already registered`);
+    constructor() {
+        frontendCommunicator.on("ui-extensions-ready", () => {
+            this.setUIReadyForExtensions();
+        });
+    }
+
+    registerUIExtension(extension: UIExtension, pluginId?: string): boolean {
+        const existingExtension = this._extensions.find(ext => ext.id === extension.id);
+        if (existingExtension) {
+            if (!!existingExtension.pluginId?.length && existingExtension.pluginId === pluginId) {
+                this._logger.warn(`Plugin ${pluginId} has already registered UI Extension with ID ${extension.id}`);
+                return false;
+            }
+
+            throw new Error(`UI Extension with ID ${extension.id} already registered`);
         }
 
-        this._extensions.push(extension);
+        this._extensions.push({
+            ...extension,
+            pluginId
+        });
 
         if (this.uiReady) {
             frontendCommunicator.send("ui-extension-registered", this.prepareExtensionForFrontend(extension));
         }
+
+        return true;
     }
 
-    setUIReadyForExtensions(): void {
+    private setUIReadyForExtensions(): void {
         if (this.uiReady) {
             return;
         }
@@ -82,8 +105,4 @@ class UIExtensionManager {
 
 const manager = new UIExtensionManager();
 
-frontendCommunicator.on("ui-extensions-ready", () => {
-    manager.setUIReadyForExtensions();
-});
-
-export = manager;
+export { manager as UIExtensionManager };

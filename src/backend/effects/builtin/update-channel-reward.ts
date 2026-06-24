@@ -1,8 +1,10 @@
-import { SavedChannelReward } from "../../../types/channel-rewards";
-import { EffectType } from "../../../types/effects";
+import { EffectType, SavedChannelReward } from "../../../types";
+
 import channelRewardsManager from "../../channel-rewards/channel-reward-manager";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
 import { isValidUUID } from "../../utils";
+
+const logger = LoggerCache.getLogger("Effects");
 
 type StringUpdatable = { update: boolean, newValue: string };
 type StatusUpdatable = { update: boolean, newValue: 'toggle' | boolean };

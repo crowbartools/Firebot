@@ -1,5 +1,7 @@
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
 import { getRandomItem, shuffleArray } from "../../../utils";
+
+const logger = LoggerCache.getLogger("Games");
 
 interface RawTriviaResponse {
     response_code: number;

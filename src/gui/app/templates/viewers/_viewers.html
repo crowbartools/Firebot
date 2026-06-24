@@ -1,6 +1,6 @@
 <div ng-if="isViewerDBOn">
     <div class="p-6 mx-0 flex justify-between">
-        <button ng-click="vs.updateViewers()" class="btn btn-primary mr-4">
+        <button ng-click="vs.refreshViewers()" class="btn btn-primary mr-4">
             <i class="far fa-sync mr-2"></i> Refresh
         </button>
         <div class="btn-group" uib-dropdown>
@@ -36,7 +36,6 @@
 
     <div class="p-6">
         <sortable-table
-            table-data-set="vs.viewers"
             headers="headers"
             query="viewerSearch"
             clickable="true"
@@ -45,6 +44,8 @@
             starting-sort-field="username"
             no-data-message="No viewer data available yet!"
             page-size="viewerTablePageSize"
+            on-fetch-page="vs.getViewersPage(params)"
+            reload-token="vs.viewerListVersion"
         >
         </sortable-table>
     </div>

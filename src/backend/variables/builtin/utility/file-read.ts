@@ -2,8 +2,10 @@ import fs from "fs/promises";
 
 import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
 import { getRandomInt } from "../../../utils";
+
+const logger = LoggerCache.getLogger("Variables");
 
 const model : ReplaceVariable = {
     definition: {

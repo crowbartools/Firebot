@@ -51,6 +51,8 @@ exports.loadEffects = () => {
         'run-command',
         'run-program',
         'send-custom-websocket-event',
+        'set-active-control-deck',
+        'set-default-control-deck',
         'set-output',
         'set-user-metadata',
         'shoutout',
@@ -74,6 +76,7 @@ exports.loadEffects = () => {
         'update-role',
         'update-viewer-rank',
 
+        'overlay-widgets/clear-chat-widget',
         'overlay-widgets/update-overlay-widget-settings',
         'overlay-widgets/update-progress-bar',
         'overlay-widgets/update-dynamic-countdown',
@@ -85,7 +88,7 @@ exports.loadEffects = () => {
 
         // Deprecated (no remove date)
         'deprecated/random-effect',
-        'deprecated/sequential-effect',
+        'deprecated/sequential-effect'
     ].forEach((filename) => {
         const definition = require(`./builtin/${filename}`);
         EffectManager.registerEffect(definition);
@@ -113,7 +116,12 @@ exports.loadEffects = () => {
         'create-prediction',
         'lock-prediction',
         'resolve-prediction',
-        'update-vip-role'
+
+        'update-vip-role',
+
+        'pin-chat-message',
+        'update-pinned-chat-message',
+        'unpin-chat-message'
     ].forEach((filename) => {
         const definition = require(`../streaming-platforms/twitch/effects/${filename}`);
         EffectManager.registerEffect(definition);

@@ -1,4 +1,5 @@
-import { EffectType } from '../../../types/effects';
+import type { EffectType } from "../../../types";
+
 import { type DiceEffectModel, handleDiceEffect } from "../../common/handlers/dice-processor";
 
 const model: EffectType<DiceEffectModel> = {

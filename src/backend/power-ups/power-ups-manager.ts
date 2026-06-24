@@ -1,9 +1,12 @@
 import { JsonDB } from "node-json-db";
 
-import { PowerUpRedemptionMetadata, SavedPowerUp } from "../../types/power-ups";
-import { EffectList } from "../../types/effects";
-import { Trigger } from "../../types/triggers";
-import { CustomPowerUp } from "../streaming-platforms/twitch/api/resource/power-ups";
+import type {
+    EffectList,
+    PowerUpRedemptionMetadata,
+    SavedPowerUp,
+    Trigger
+} from "../../types";
+import type { CustomPowerUp } from "../streaming-platforms/twitch/api/resource/power-ups";
 
 import { AccountAccess } from "../common/account-access";
 import { ActiveUserHandler } from "../chat/active-user-handler";
@@ -11,13 +14,17 @@ import { ProfileManager } from "../common/profile-manager";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 import effectRunner from "../common/effect-runner";
 import frontendCommunicator from "../common/frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 
 class PowerUpsManager {
+    private logger = LoggerCache.getLogger("Power-Ups");
     powerUps: Record<string, SavedPowerUp> = {};
 
     constructor() {
-        frontendCommunicator.on("power-ups:get-all", () => Object.values(this.powerUps));
+        frontendCommunicator.onAsync("power-ups:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
         frontendCommunicator.onAsync("power-ups:get-all", async () => Object.values(this.powerUps));
 
         frontendCommunicator.onAsync("power-ups:save", async (powerUp: SavedPowerUp) => this.savePowerUp(powerUp));
@@ -40,16 +47,19 @@ class PowerUpsManager {
             }
 
             // Manually triggered by streamer, must pass in userId and userDisplayName can be falsy
+            const messageText = "Testing power-up";
             void this.triggerPowerUp(
                 powerUpId,
                 {
-                    messageText: "Testing power-up",
+                    messageText: messageText,
+                    args: messageText.split(" "),
                     powerUpId: savedPowerUp.id,
                     bits: savedPowerUp.twitchData.bits,
                     powerUpImage: savedPowerUp.twitchData.image
                         ? savedPowerUp.twitchData.image.url4x
                         : savedPowerUp.twitchData.defaultImage.url4x,
                     powerUpName: savedPowerUp.twitchData.title,
+                    powerUpDescription: savedPowerUp.twitchData.prompt,
                     username: AccountAccess.getAccounts().streamer.displayName,
                     userId: "",
                     userDisplayName: ""
@@ -64,7 +74,7 @@ class PowerUpsManager {
     }
 
     async loadPowerUps() {
-        logger.debug(`Attempting to load power-ups...`);
+        this.logger.debug(`Attempting to load power-ups...`);
 
         try {
             // Load existing power-up data
@@ -74,7 +84,7 @@ class PowerUpsManager {
             // Get all power-ups from Twitch
             const twitchPowerUps: CustomPowerUp[] = await TwitchApi.powerUps.getCustomPowerUps();
             if (twitchPowerUps == null) {
-                logger.error("Twitch power-ups returned null!");
+                this.logger.error("Twitch power-ups returned null!");
                 this.powerUps = powerUpsData;
                 return;
             }
@@ -106,11 +116,11 @@ class PowerUpsManager {
 
             this.powerUps = syncedPowerUps;
 
-            logger.debug(`Loaded power-ups.`);
+            this.logger.debug(`Loaded power-ups.`);
 
-            frontendCommunicator.send("power-ups:updated-all", Object.values(this.powerUps));
+            this.triggerUiRefresh();
         } catch (err) {
-            logger.warn(`There was an error reading power-ups file.`, err);
+            this.logger.warn(`There was an error reading power-ups file.`, err);
         }
     }
 
@@ -133,7 +143,7 @@ class PowerUpsManager {
 
             db.push(`/${powerUp.id}`, powerUp);
 
-            logger.debug(`Saved power-up ${powerUp.id} to file.`);
+            this.logger.debug(`Saved power-up ${powerUp.id} to file.`);
 
             if (emitUpdateEvent) {
                 frontendCommunicator.send("power-ups:updated", powerUp);
@@ -141,7 +151,7 @@ class PowerUpsManager {
 
             return powerUp;
         } catch (err) {
-            logger.warn(`There was an error saving a power-up.`, err);
+            this.logger.warn(`There was an error saving a power-up.`, err);
             return null;
         }
     }
@@ -159,9 +169,9 @@ class PowerUpsManager {
 
             db.push("/", this.powerUps);
 
-            logger.debug(`Saved all power-ups to file.`);
+            this.logger.debug(`Saved all power-ups to file.`);
         } catch (err) {
-            logger.warn(`There was an error saving all power-ups.`, err);
+            this.logger.warn(`There was an error saving all power-ups.`, err);
         }
     }
 
@@ -203,7 +213,7 @@ class PowerUpsManager {
         try {
             await effectRunner.processEffects(processEffectsRequest);
         } catch (reason) {
-            logger.error(`error when running effects: ${reason}`);
+            this.logger.error(`error when running effects: ${reason}`);
         }
     }
 
@@ -224,6 +234,11 @@ class PowerUpsManager {
         }
 
         return this.triggerPowerUpEffects(metadata, savedPowerUp.effects, manual);
+    }
+
+    triggerUiRefresh(): void {
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("power-ups:updated-all", Object.values(this.powerUps));
     }
 }
 

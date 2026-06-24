@@ -1,11 +1,11 @@
 "use strict";
 
+const { HttpServerManager } = require("../../../server/http-server-manager");
 const { SettingsManager } = require("../settings-manager");
-const { ResourceTokenManager } = require("../../resource-token-manager");
-const { getRandomInt } = require("../../utils");
-const logger = require("../../logwrapper");
 const { ReplaceVariableManager } = require("../../variables/replace-variable-manager");
-const webServer = require("../../../server/http-server-manager");
+const { ResourceTokenManager } = require("../../resource-token-manager");
+const logger = require("../../logger-cache").LoggerCache.getLogger("Media Processor");
+const { getRandomInt } = require("../../utils");
 
 function getRandomPresetLocation() {
     const presetPositions = [
@@ -78,7 +78,7 @@ async function imageProcessor(effect, trigger) {
         data.url = await ReplaceVariableManager.populateStringWithTriggerData(data.url, trigger);
     }
 
-    webServer.sendToOverlay("image", data);
+    HttpServerManager.sendToOverlay("image", data);
 }
 
 // Video Processor
@@ -125,7 +125,7 @@ function videoProcessor(effect) {
     );
     data.resourceToken = resourceToken;
 
-    webServer.sendToOverlay("video", data);
+    HttpServerManager.sendToOverlay("video", data);
 }
 
 // Display Text Processor
@@ -198,7 +198,7 @@ async function showText(effect, trigger) {
         dto.dontWrap = false;
     }
 
-    webServer.sendToOverlay("text", dto);
+    HttpServerManager.sendToOverlay("text", dto);
 }
 
 // Export Functions

@@ -2,8 +2,12 @@ import fs from "fs";
 import fsp from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
-import { EffectType } from "../../../types/effects";
-import logger from "../../logwrapper";
+
+import type { EffectType } from "../../../types";
+
+import { LoggerCache } from "../../logger-cache";
+
+const logger = LoggerCache.getLogger("Effects");
 
 async function doesTextExistInFile(filepath: string, text: string): Promise<boolean> {
     const contents = await fsp.readFile(filepath, { encoding: "utf8" });

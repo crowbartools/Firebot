@@ -1,6 +1,9 @@
-import type { EffectType } from "../../../types/effects";
+import type { EffectType } from "../../../types";
+
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
-import logger from '../../logwrapper';
+import { LoggerCache } from "../../logger-cache";
+
+const logger = LoggerCache.getLogger("Effects");
 
 const effect: EffectType<{
     username: string;

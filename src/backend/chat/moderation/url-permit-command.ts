@@ -1,10 +1,12 @@
-import type { SystemCommand } from "../../../types/commands";
+import type { SystemCommand } from "../../../types";
 import { CommandManager } from "../commands/command-manager";
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
 import frontendCommunicator from "../../common/frontend-communicator";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
 
 class PermitManager {
+    private logger = LoggerCache.getLogger("Moderation");
+
     private readonly _permidCommandId: string = "firebot:moderation:url:permit";
     private _tempPermittedUsers: string[] = [];
 
@@ -73,7 +75,7 @@ class PermitManager {
             }
 
             this._tempPermittedUsers.push(normalizedTarget);
-            logger.debug(`URL moderation: ${target} has been temporary permitted to post a URL.`);
+            this.logger.debug(`URL moderation: ${target} has been temporary permitted to post a URL.`);
 
             const message = commandOptions.permitDisplayTemplate
                 .replaceAll("{target}", target)
@@ -85,7 +87,7 @@ class PermitManager {
 
             setTimeout(() => {
                 this._tempPermittedUsers = this._tempPermittedUsers.filter(user => user !== normalizedTarget);
-                logger.debug(`URL moderation: Temporary URL permission for ${target} expired.`);
+                this.logger.debug(`URL moderation: Temporary URL permission for ${target} expired.`);
             }, commandOptions.permitDuration * 1000);
         }
     };

@@ -1,4 +1,5 @@
-import type { FirebotGame } from "../../../../types/games";
+import type { FirebotGame } from "../../../../types";
+
 import * as heistCommand from "./heist-command";
 
 const game: FirebotGame = {

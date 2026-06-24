@@ -1,5 +1,5 @@
 import { TypedEmitter } from "tiny-typed-emitter";
-import webSocketServerManager from "./websocket-server-manager";
+import { WebSocketServerManager } from "./websocket-server-manager";
 
 // Firebot Component Managers
 import { CommandManager } from "../backend/chat/commands/command-manager";
@@ -87,7 +87,7 @@ export function createComponentEventListeners() {
     for (const { componentName, manager, eventNameOverrides } of FIREBOT_COMPONENT_MANAGERS) {
         for (const [managerEvent, webSocketEvent] of eventNameOverrides ?? MANAGER_EVENT_MAP) {
             manager.on(managerEvent, (item) => {
-                webSocketServerManager.triggerEvent(`${componentName}:${webSocketEvent}`, item);
+                WebSocketServerManager.triggerEvent(`${componentName}:${webSocketEvent}`, item);
             });
         }
     }

@@ -1,9 +1,10 @@
-/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
+import type { RestrictionType } from "../../../types";
 
-import type { RestrictionType } from "../../../types/restrictions";
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
 import { AccountAccess } from "../../common/account-access";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
+
+const logger = LoggerCache.getLogger("Restrictions");
 
 type ComparisonType = "less" | "greater" | "equal";
 
@@ -69,55 +70,52 @@ const model: RestrictionType<{
 
         return `Viewers ${comparisionString} ${amount}`;
     },
-    /*
-      function that resolves/rejects a promise based on if the restriction criteria is met
-    */
-    predicate: (triggerData, restrictionData) => {
-        return new Promise(async (resolve, reject) => {
-            const client = TwitchApi.streamerClient;
-            const streamer = AccountAccess.getAccounts().streamer;
+    predicate: async (_, { comparison, amount: numViewers }) => {
+        const client = TwitchApi.streamerClient;
+        const streamer = AccountAccess.getAccounts().streamer;
 
-            let currentViewers = null;
-            try {
-                const stream = await client.streams.getStreamByUserId(streamer.userId);
-                currentViewers = stream.viewers;
-            } catch (error) {
-                logger.warn("unable to get stream viewer count", error);
-            }
+        let currentViewers = null;
+        try {
+            const stream = await client.streams.getStreamByUserId(streamer.userId);
+            currentViewers = stream.viewers;
+        } catch (error) {
+            logger.warn("unable to get stream viewer count", error);
+        }
 
-            if (currentViewers) {
-                return reject(`Can't determine the current number of viewers.`);
-            }
+        if (currentViewers) {
+            return {
+                success: false,
+                failureReason: `Can't determine the current number of viewers.`
+            };
+        }
 
-            const comparison = restrictionData.comparison;
-            const numViewers = restrictionData.amount;
-            let comparisonText = "";
+        let comparisonText = "";
 
-            let passed = false;
-            if (comparison === "less" && currentViewers <= numViewers) {
-                passed = true;
-            }
+        let passed = false;
+        if (comparison === "less" && currentViewers <= numViewers) {
+            passed = true;
+        }
 
-            if (comparison === "greater" && currentViewers >= numViewers) {
-                passed = true;
-            }
+        if (comparison === "greater" && currentViewers >= numViewers) {
+            passed = true;
+        }
 
-            if (comparison === "equal" && currentViewers === numViewers) {
-                passed = true;
-            }
+        if (comparison === "equal" && currentViewers === numViewers) {
+            passed = true;
+        }
 
-            if (comparison === "greater" || comparison === "less") {
-                comparisonText = `${comparison} than`;
-            } else {
-                comparisonText = `${comparison} to`;
-            }
+        if (comparison === "greater" || comparison === "less") {
+            comparisonText = `${comparison} than`;
+        } else {
+            comparisonText = `${comparison} to`;
+        }
 
-            if (passed) {
-                resolve(true);
-            } else {
-                reject(`Viewer count must be ${comparisonText} ${numViewers}.`);
-            }
-        });
+        return {
+            success: passed,
+            failureReason: passed !== true
+                ? `Viewer count must be ${comparisonText} ${numViewers}.`
+                : undefined
+        };
     }
 };
 

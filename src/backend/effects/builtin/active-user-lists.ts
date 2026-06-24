@@ -1,7 +1,10 @@
-import { EffectType } from '../../../types/effects';
+import type { EffectType } from "../../../types";
+
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
 import { ActiveUserHandler } from "../../chat/active-user-handler";
-import logger from '../../logwrapper';
+import { LoggerCache } from "../../logger-cache";
+
+const logger = LoggerCache.getLogger("Effects");
 
 const effect: EffectType<{
     action: string;

@@ -8,165 +8,11 @@
             $rootScope,
             backendCommunicator,
             logger,
-            accountAccess,
-            profileManager,
             settingsService,
             utilityService,
             integrationService
         ) {
             const service = {};
-
-            backendCommunicator.on("accounts:account-update", (accounts) => {
-                service.accounts = accounts;
-                service.loadProfiles();
-            });
-            service.loadAccounts = () => {
-                service.accounts = backendCommunicator.fireEventSync("accounts:get-accounts");
-            };
-            service.loadAccounts();
-
-            const defaultPhotoUrl = "../images/placeholders/nologin.png";
-
-            /**
-             * Login Stuff
-             */
-
-            service.getAccountAvatar = function(type) {
-                if (type !== "streamer" && type !== "bot" && service.accounts[type] != null) {
-                    return defaultPhotoUrl;
-                }
-
-                return service.accounts[type].avatar || defaultPhotoUrl;
-            };
-
-            // Login Kickoff
-            service.loginOrLogout = function(type) {
-                if (type === "streamer") {
-                    if (service.accounts.streamer.loggedIn) {
-                        service.logout(type);
-                    } else {
-                        utilityService.showModal({
-                            component: "twitchDcfModal",
-                            resolveObj: {
-                                accountType: () => type
-                            },
-                            closeCallback: () => {
-                                backendCommunicator.send("cancel-device-token-check");
-                            }
-                        });
-                    }
-                } else if (type === "bot") {
-                    if (service.accounts.bot.loggedIn) {
-                        service.logout(type);
-                    } else {
-                        utilityService.showModal({
-                            component: "twitchDcfModal",
-                            resolveObj: {
-                                accountType: () => type
-                            },
-                            closeCallback: () => {
-                                backendCommunicator.send("cancel-device-token-check");
-                            }
-                        });
-                    }
-                }
-            };
-
-            service.logout = (type) => {
-                if (type !== "streamer" && type !== "bot") {
-                    return;
-                }
-
-                if (service.accounts[type].loggedIn) {
-                    accountAccess.logoutAccount(type);
-                }
-            };
-
-            service.invalidateAccounts = (invalidAccounts) => {
-                if (!invalidAccounts.streamer && !invalidAccounts.bot) {
-                    return;
-                }
-
-                service.disconnectFromService("chat");
-
-                if (invalidAccounts.streamer) {
-                    service.logout("streamer");
-                }
-
-                if (invalidAccounts.bot) {
-                    service.logout("bot");
-                }
-
-                utilityService.showModal({
-                    component: "loginsModal",
-                    resolveObj: {
-                        invalidAccounts: () => invalidAccounts
-                    }
-                });
-            };
-
-            backendCommunicator.on("accounts:invalidate-accounts", service.invalidateAccounts);
-
-            service.validateAccounts = () => {
-                backendCommunicator.fireEventSync("validate-twitch-accounts");
-            };
-
-            // Create new profile
-            service.createNewProfile = (profileId) => {
-                backendCommunicator.send("profiles:create-profile", profileId);
-            };
-
-            service.renameProfile = (newProfileId) => {
-                backendCommunicator.send("profiles:rename-profile", newProfileId);
-            };
-
-            // delete profile
-            service.deleteProfile = () => {
-                backendCommunicator.send("profiles:delete-profile");
-            };
-
-            // switch profile
-            service.switchProfiles = (profileId) => {
-                backendCommunicator.send("profiles:switch-profile", profileId);
-            };
-
-            service.profiles = [];
-            //load profiles
-            service.loadProfiles = () => {
-                // Get full list of active profiles.
-
-                const activeProfileIds = profileManager.getActiveProfiles();
-
-                if (activeProfileIds == null) {
-                    return;
-                }
-
-                const profiles = [];
-                for (const profileId of activeProfileIds) {
-                    const profile = {
-                        username: "User",
-                        avatar: defaultPhotoUrl,
-                        profileId: profileId
-                    };
-
-                    // Try to get streamer settings for this profile.
-                    // If it exists, overwrite defaults.
-                    const streamer = profileManager.getAccountInfo(profileId, "streamer");
-
-                    if (streamer) {
-                        if (streamer.username) {
-                            profile.username = streamer.username;
-                        }
-                        if (streamer.avatar) {
-                            profile.avatar = streamer.avatar;
-                        }
-                    }
-
-                    profiles.push(profile);
-                }
-
-                service.profiles = profiles;
-            };
 
             service.isConnectingAll = false;
 
@@ -263,9 +109,9 @@
 
             service.connectSidebarControlledServices = () => {
                 service.isConnectingAll = true;
-                backendCommunicator.send("connect-sidebar-controlled-services");
+                backendCommunicator.send("connections:connect-sidebar-controlled-services");
             };
-            service.disconnectSidebarControlledServices = () => backendCommunicator.send("disconnect-sidebar-controlled-services");
+            service.disconnectSidebarControlledServices = () => backendCommunicator.send("connections:disconnect-sidebar-controlled-services");
             service.toggleSidebarControlledServices = () => {
                 if (service.isConnectingAll) {
                     return;
@@ -279,6 +125,54 @@
                     service.disconnectSidebarControlledServices();
                     logger.debug("Triggering disconnection of all sidebar controlled services");
                 }
+            };
+
+            service.getConnectionStatusForService = function(serviceId) {
+                let connectionStatus = null;
+                switch (serviceId) {
+                    case "overlay": {
+                        return service.connections["overlay"];
+                    }
+                    case "chat":
+                        if (service.connectedToChat) {
+                            connectionStatus = "connected";
+                        } else {
+                            connectionStatus = "disconnected";
+                        }
+                        break;
+                    case "integrations": {
+                        const sidebarControlledIntegrations = settingsService
+                            .getSetting("SidebarControlledServices")
+                            .filter(s => s.startsWith("integration."))
+                            .map(s => s.replace("integration.", ""));
+
+                        let connectedCount = 0;
+                        sidebarControlledIntegrations.forEach((i) => {
+                            if (integrationService.integrationIsConnected(i)) {
+                                connectedCount++;
+                            }
+                        });
+
+                        if (connectedCount === 0) {
+                            connectionStatus = "disconnected";
+                        } else if (
+                            connectedCount === sidebarControlledIntegrations.length
+                        ) {
+                            connectionStatus = "connected";
+                        } else {
+                            connectionStatus = "warning";
+                        }
+                        break;
+                    }
+                    default:
+                        connectionStatus = "disconnected";
+                }
+                return connectionStatus;
+            };
+
+            let overlayStatus = {};
+            service.getOverlayStatus = function() {
+                return overlayStatus;
             };
 
             backendCommunicator.on("connect-services-complete", () => {
@@ -300,7 +194,7 @@
                 soundService.connectSound(soundType);
             }, 250);
 
-            backendCommunicator.on("service-connection-update", (data) => {
+            backendCommunicator.on("connections:service-connection-update", (data) => {
                 /**@type {string} */
                 const serviceId = data.serviceId;
                 /**@type {ConnectionState} */
@@ -335,6 +229,30 @@
                 });
             });
 
+            backendCommunicator.on("connections:updated-all-service-connections", (data) => {
+                for (const serviceInfo of data) {
+                    /**@type {string} */
+                    const serviceId = serviceInfo.serviceId;
+                    /**@type {ConnectionState} */
+                    const connectionState = serviceInfo.connectionState;
+
+                    //see if there has been no change
+                    if (service.connections[serviceId] === connectionState) {
+                        continue;
+                    }
+
+                    service.connections[serviceId] = connectionState;
+
+                    $rootScope.$broadcast("connection:update", {
+                        type: serviceInfo.serviceId,
+                        status: serviceInfo.connectionState
+                    });
+                }
+
+                updateSidebarServicesOverallStatus();
+                updateIntegrationsOverallStatus();
+            });
+
             backendCommunicator.on("integrationLinked", (integration) => {
                 if (integration == null || !integration.connectionToggle) {
                     return;
@@ -348,19 +266,15 @@
                 delete service.connections[serviceId];
             });
 
-
-            /*
-             * OLD CONNECTION STUFF. TODO: Delete
-             */
-            service.connectedBoard = "";
-
             // Connection Monitor for Overlay
             // Recieves event from main process that connection has been established or disconnected.
-            backendCommunicator.on("overlayStatusUpdate", (overlayStatusData) => {
+            backendCommunicator.on("http-server:overlay-status-update", (overlayStatusData) => {
+                overlayStatus = overlayStatusData;
+
                 let status;
-                if (!overlayStatusData.serverStarted) {
+                if (!overlayStatus.serverStarted) {
                     status = "disconnected";
-                } else if (overlayStatusData.clientsConnected) {
+                } else if (overlayStatus.clientsConnected) {
                     status = "connected";
                 } else {
                     status = "warning";
@@ -372,8 +286,9 @@
                     type: "overlay",
                     status: status
                 });
-            }
-            );
+            });
+
+            backendCommunicator.send("connections:ui-service-ready");
 
             return service;
         });

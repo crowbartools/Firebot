@@ -1,7 +1,7 @@
 "use strict";
 const EventEmitter = require("events");
 const io = require("socket.io-client");
-const logger = require("../../../logwrapper");
+const logger = require("../../../logger-cache").LoggerCache.getLogger("Integration: TipeeeStream");
 const { SecretsManager } = require("../../../secrets-manager");
 
 const tsEventHandler = require("./events/tipeeestream-event-handler");

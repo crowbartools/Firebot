@@ -2,7 +2,9 @@ import fs from "fs";
 import { ProfileManager } from "../common/profile-manager";
 import { SettingsManager } from "../common/settings-manager";
 import * as dataAccess from "../common/data-access";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
+
+const logger = LoggerCache.getLogger("Profiles");
 
 export function handleProfileRename() {
     if (!ProfileManager.hasProfileRename()) {

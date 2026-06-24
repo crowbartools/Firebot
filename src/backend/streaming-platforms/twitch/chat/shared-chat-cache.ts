@@ -1,4 +1,5 @@
-import type { SharedChatParticipant } from '../../../../types';
+import type { SharedChatParticipant } from "../../../../types";
+
 import { TwitchApi } from "../api";
 
 class SharedChatCache {

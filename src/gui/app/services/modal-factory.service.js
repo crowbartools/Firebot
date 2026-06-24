@@ -314,14 +314,13 @@
                         $scope.downloadComplete = false;
 
                         // Update downloaded listener
-                        backendCommunicator.on("updateDownloaded", () => {
+                        backendCommunicator.on("updates:update-downloaded", () => {
                             // the autoupdater has downloaded the update
                             $scope.downloadComplete = true;
-                            updatesService.updateIsDownloaded = true;
                         });
 
                         // Install update listener
-                        backendCommunicator.on("installingUpdate", () => {
+                        backendCommunicator.on("updates:installing-update", () => {
                             // the autoupdater is installing the update
                             $scope.downloadComplete = true;
                             $scope.installing = true;
@@ -336,7 +335,7 @@
                                 $scope.errorMessage =
                                     "Download is taking longer than normal. There may have been an error. You can keep waiting or close this and try again later.";
                             }
-                        }, 180 * 1000);
+                        }, 5 * 60 * 1000);
 
                         $scope.installUpdate = function() {
                             updatesService.installUpdate();
@@ -443,7 +442,7 @@
                     idLabel: data.label,
                     steps: data.steps
                 }, (model) => {
-                    backendCommunicator.fireEvent("enteredIntegrationAccountId", {
+                    backendCommunicator.send("enteredIntegrationAccountId", {
                         integrationId: data.integrationId,
                         accountId: model
                     });
@@ -463,7 +462,7 @@
                     keyboard: false,
                     backdrop: "static",
                     windowClass: "effect-edit-modal",
-                    controllerFunc: function (
+                    controllerFunc: async function (
                         $scope,
                         $rootScope,
                         $uibModalInstance,
@@ -477,7 +476,10 @@
                         index,
                         triggerType,
                         triggerMeta,
-                        objectCopyHelper
+                        objectCopyHelper,
+                        settingsService,
+                        $q,
+                        $injector
                     ) {
                         $scope.effect = JSON.parse(angular.toJson(effect));
                         $scope.triggerType = triggerType;
@@ -485,9 +487,7 @@
                         $scope.modalId = modalId;
 
                         $scope.isAddMode = isNew;
-                        $scope.effectDefinition = effectHelperService.getEffectDefinition(
-                            $scope.effect.type
-                        );
+                        $scope.effectDefinition = await effectHelperService.getEffectDefinition($scope.effect.type);
 
                         $scope.getOverflowMenu = () => {
                             return [
@@ -565,8 +565,8 @@
                             ];
                         };
 
-                        function effectTypeUpdated() {
-                            $scope.effectDefinition = effectHelperService.getEffectDefinition(
+                        async function effectTypeUpdated() {
+                            $scope.effectDefinition = await effectHelperService.getEffectDefinition(
                                 $scope.effect.type
                             );
                             utilityService.updateNameForSlidingModal(
@@ -575,7 +575,7 @@
                             );
                         }
 
-                        $scope.effectTypeChanged = function(effectType) {
+                        $scope.effectTypeChanged = async (effectType) => {
                             if ($scope.effect && $scope.effect.type === effectType.id) {
                                 return;
                             }
@@ -586,7 +586,7 @@
                                 type: effectType.id
                             };
 
-                            effectTypeUpdated();
+                            await effectTypeUpdated();
                         };
 
                         $scope.openModals = utilityService.getSlidingModalNamesAndIds();
@@ -627,13 +627,13 @@
                                     triggerMeta: () => triggerMeta,
                                     selectedEffectTypeId: () => $scope.effect && $scope.effect.type
                                 },
-                                closeCallback: (resp) => {
+                                closeCallback: async (resp) => {
                                     if (resp == null) {
                                         return;
                                     }
                                     const { selectedEffectDef } = resp;
 
-                                    $scope.effectTypeChanged(selectedEffectDef);
+                                    await $scope.effectTypeChanged(selectedEffectDef);
                                 }
                             });
                         };
@@ -789,10 +789,67 @@
                                 });
                         };
 
-                        $scope.paste = async function() {
+                        $scope.defaultLabel = null;
+
+                        $scope.isUsingDefaultLabel = () => {
+                            return (
+                                !$scope.effect.effectLabel?.length && !!$scope.defaultLabel?.length && !$scope.isAddMode
+                            );
+                        };
+
+                        $scope.getEffectLabel = () => {
+                            if ($scope.effect.effectLabel?.length) {
+                                return $scope.effect.effectLabel;
+                            }
+
+                            if ($scope.effect?.id && settingsService.getSetting("DefaultEffectLabelsEnabled")) {
+                                if (isNew) {
+                                    return "[Not set - will use default]";
+                                }
+
+                                if ($scope.defaultLabel != null) {
+                                    return $scope.defaultLabel;
+                                }
+                            }
+                            return;
+                        };
+
+                        async function getDefaultLabel() {
+                            if (!$scope.effectDefinition) {
+                                return;
+                            }
+
+                            if (!$scope.effectDefinition?.getDefaultLabel) {
+                                return;
+                            }
+
+                            return Promise.resolve(
+                                $injector.invoke(
+                                    $scope.effectDefinition.getDefaultLabel,
+                                    {},
+                                    {
+                                        effect: $scope.effect
+                                    }
+                                )
+                            ).catch(() => {
+                                return null;
+                            });
+                        }
+
+                        function updateDefaultLabels() {
+                            $q.when(getDefaultLabel()).then((label) => {
+                                $scope.defaultLabel = label;
+                            });
+                        }
+
+                        $scope.$watch("effect", () => {
+                            updateDefaultLabels();
+                        }, true);
+
+                        $scope.paste = async () => {
                             if ($scope.hasCopiedEffect()) {
                                 $scope.effect = (await objectCopyHelper.getCopiedEffects(triggerType, triggerMeta))[0];
-                                effectTypeUpdated();
+                                await effectTypeUpdated();
                             }
                         };
 
@@ -818,27 +875,6 @@
                         $scope.dismiss = function() {
                             $uibModalInstance.dismiss();
                         };
-
-
-                        /*$scope.footerIsStuck = false;
-                        //scroll sentinel
-                        this.$onInit = function() {
-
-                            $timeout(() => {
-                                let observer = new IntersectionObserver(entries => {
-                                    let entry = entries[0];
-
-                                    $q.resolve(!entry.isIntersecting, (stuck) => {
-                                        $scope.footerIsStuck = stuck;
-                                    });
-                                });
-
-                                let sentinel = document.querySelector('.effect-footer-sentinel');
-                                if (sentinel != null) {
-                                    observer.observe(sentinel);
-                                }
-                            }, 100);
-                        };*/
                     },
                     resolveObj: {
                         effect: () => {

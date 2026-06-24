@@ -1,6 +1,6 @@
 "use strict";
 
-/** @import { ThirdPartyImporter, LoadResult, ParsedQuotes, ParsedViewers } from "../../../types/import" */
+/** @import { ThirdPartyImporter, LoadResult, ParsedQuotes, ParsedViewers } from "../../../types" */
 
 (function() {
     angular

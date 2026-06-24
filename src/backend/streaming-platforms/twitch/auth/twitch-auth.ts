@@ -9,7 +9,9 @@ import { SecretsManager } from "../../../secrets-manager";
 import { AccountAccess } from "../../../common/account-access";
 import authManager from "../../../auth/auth-manager";
 import channelRewardManager from "../../../channel-rewards/channel-reward-manager";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
+
+const logger = LoggerCache.getLogger("Auth");
 
 class TwitchAuthProviders {
     private readonly _host = "https://id.twitch.tv";

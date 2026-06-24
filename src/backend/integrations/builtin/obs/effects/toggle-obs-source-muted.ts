@@ -1,5 +1,9 @@
-import { EffectType } from "../../../../../types/effects";
-import { OBSSource, setSourceMuted, toggleSourceMuted } from "../obs-remote";
+import type { EffectType, BackendCommunicator } from "../../../../../types";
+import {
+    type OBSSource,
+    setSourceMuted,
+    toggleSourceMuted
+} from "../obs-remote";
 
 type SourceAction = boolean | "toggle";
 
@@ -8,11 +12,6 @@ type EffectProperties = {
         sourceName: string;
         action: SourceAction;
     }>;
-};
-
-type Scope = {
-    effect: EffectProperties;
-    [x: string]: any;
 };
 
 export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
@@ -27,7 +26,7 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
         optionsTemplate: `
     <eos-container ng-show="missingSources.length > 0">
         <div class="effect-info alert alert-warning">
-            <p><b>Warning!</b> 
+            <p><b>Warning!</b>
                 Cannot find {{missingSources.length}} sources in this effect. Ensure the correct profile or scene collection is loaded in OBS, and OBS is running.
             </p>
         </div>
@@ -37,7 +36,7 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
           <div class="list-item" style="display: flex;border: 2px solid #3e4045;box-shadow: none;border-radius: 8px;padding: 5px 5px;">
             <div class="pl-5">
                 <span>Source: {{sourceList.sourceName}}</span>
-            </div>   
+            </div>
             <div>
                 <button class="btn btn-danger" ng-click="deleteSceneAtIndex($index)"><i class="far fa-trash"></i></button>
             </div>
@@ -76,7 +75,7 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
       </div>
     </eos-container>
   `,
-        optionsController: ($scope: Scope, backendCommunicator: any, $q: any) => {
+        optionsController: ($scope, backendCommunicator: BackendCommunicator) => {
             $scope.isObsConfigured = false;
 
             $scope.sourceList = null;
@@ -163,14 +162,13 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
                 }
             };
 
-            $scope.getSourceList = () => {
-                $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
+            $scope.getSourceList = async () => {
+                $scope.isObsConfigured = await backendCommunicator.fireEventAsync("obs-is-configured");
 
-                $q.when(
-                    backendCommunicator.fireEventAsync("obs-get-audio-sources")
-                ).then((sourceList: Array<OBSSource>) => {
+                try {
+                    const sourceList: Array<OBSSource> = await backendCommunicator.fireEventAsync("obs-get-audio-sources");
                     $scope.sourceList = sourceList ?? null;
-                });
+                } catch { }
             };
 
             $scope.getSourceList();

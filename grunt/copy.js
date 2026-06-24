@@ -13,6 +13,8 @@ function remFiles(scope) {
 
     fs.rmSync(path.join(dir, './overlay/'), { recursive: true, force: true });
     fs.rmSync(path.join(dir, './overlay.html'), { recursive: true, force: true });
+    fs.rmSync(path.join(dir, './control-deck/'), { recursive: true, force: true });
+    fs.rmSync(path.join(dir, './overlay-widget-components/'), { recursive: true, force: true });
     fs.rmSync(path.join(dir, './firebot-setup-file-icon.ico'), { recursive: true, force: true });
     fs.rmSync(path.join(dir, './kbm-java/'), { recursive: true, force: true });
     fs.rmSync(path.join(dir, './ffmpeg/'), { recursive: true, force: true });
@@ -34,7 +36,11 @@ module.exports = function (grunt) {
                             '!**/*.ts',
                             '!**/*.js',
                             '**/*.min.js',
-                            '!**/*.scss'
+                            'resources/overlay/lib/**/*.js',
+                            '!**/*.scss',
+                            '!**/*.vue',
+                            // handled by vite build task
+                            '!resources/control-deck/**'
                         ],
                         filter: 'isFile'
                     }
@@ -54,13 +60,6 @@ module.exports = function (grunt) {
             },
             darwin: {
                 files: [
-                    {
-                        expand: true,
-                        dest: 'dist/pack/Firebot-darwin-x64/Firebot.app/Contents/Resources/resources/',
-                        cwd: 'build/resources/',
-                        src: ['**'],
-                        filter: 'isFile'
-                    },
                     {
                         expand: true,
                         dest: 'dist/pack/Firebot-darwin-arm64/Firebot.app/Contents/Resources/resources/',
@@ -88,10 +87,29 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.task.renameTask('copy', 'xcopy');
 
+    grunt.registerTask('copy-vcruntime', function() {
+        const sysroot = process.env.SystemRoot || 'C:\\Windows';
+        const src = path.join(sysroot, 'System32', 'VCRUNTIME140.dll');
+        const dest = path.join(
+            __dirname,
+            '../dist/pack/Firebot-win32-x64/resources/app.asar.unpacked/node_modules/@tursodatabase/database-win32-x64-msvc/VCRUNTIME140.dll'
+        );
+        if (!fs.existsSync(src)) {
+            grunt.fail.fatal(`VCRUNTIME140.dll not found at ${src}. Please install the Visual C++ Redistributable before building.`);
+            return;
+        }
+        fs.mkdirSync(path.dirname(dest), { recursive: true });
+        fs.copyFileSync(src, dest);
+        grunt.log.ok(`Copied VCRUNTIME140.dll into turso unpacked dir`);
+    });
+
     grunt.registerTask('copy', function () {
         const platform = grunt.config.get('platform');
         remFiles(platform);
         grunt.task.run(`xcopy:${platform}`);
+        if (platform === 'win64') {
+            grunt.task.run('copy-vcruntime');
+        }
     });
 
     grunt.registerTask('copysrc', function() {

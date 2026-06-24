@@ -121,7 +121,7 @@
                 $ctrl.validationErrors = {};
 
                 /**
-                 * @type {import('../../../../../types/variable-macros').VariableMacro}
+                 * @type {import("../../../../../types").VariableMacro}
                  */
                 $ctrl.macro = {
                     id: null,

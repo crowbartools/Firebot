@@ -1,4 +1,5 @@
-import type { EffectType } from "../../../types/effects";
+import type { EffectType } from "../../../types";
+
 import { wait } from "../../utils";
 
 const effect: EffectType<{

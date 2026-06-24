@@ -3,12 +3,12 @@
 const { getPathInTmpDir } = require("../../../common/data-access");
 const { SettingsManager } = require("../../../common/settings-manager");
 const { ResourceTokenManager } = require("../../../resource-token-manager");
-const webServer = require("../../../../server/http-server-manager");
+const { HttpServerManager } = require("../../../../server/http-server-manager");
 const { randomUUID } = require("crypto");
 const fs = require('fs');
 const fsp = require('fs/promises');
 const path = require("path");
-const logger = require("../../../logwrapper");
+const logger = require("../../../logger-cache").LoggerCache.getLogger("Integration: AWS");
 const frontendCommunicator = require("../../../common/frontend-communicator");
 const integrationManager = require("../../integration-manager");
 const { EffectCategory } = require('../../../../shared/effect-constants');
@@ -604,7 +604,7 @@ const playSound = {
             data.resourceToken = resourceToken;
 
             // send event to the overlay
-            webServer.sendToOverlay("sound", data);
+            HttpServerManager.sendToOverlay("sound", data);
         } else {
             // Send data back to media.js in the gui.
             frontendCommunicator.send("playsound", data);

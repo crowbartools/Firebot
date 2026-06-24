@@ -1,7 +1,9 @@
 import type { EffectType } from "../../../../types/effects";
 import { EventManager } from "../../../events/event-manager";
 import { TwitchApi } from "../api";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
+
+const logger = LoggerCache.getLogger("Effects");
 
 const model: EffectType<{
     mode: "specific" | "custom" | "clear";

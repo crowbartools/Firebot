@@ -13,7 +13,7 @@ import { EventManager } from "../../../events/event-manager";
 import { FilterManager } from "../../../events/filters/filter-manager";
 import { ReplaceVariableManager } from "../../../variables/replace-variable-manager";
 import frontendCommunicator from "../../../common/frontend-communicator";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
 
 import { initRemote } from "./obs-remote";
 import { setupFrontendListeners } from "./communicator";
@@ -76,6 +76,8 @@ import { InputAudioMonitorTypeVariable } from "./variables/input-audio-monitor-t
 import { GroupItemIdVariable } from "./variables/group-item-id";
 import { GroupNameVariable } from "./variables/group-name";
 
+const logger = LoggerCache.getLogger("Integration: OBS");
+
 type ObsSettings = {
     websocketSettings: {
         ipAddress: string;
@@ -98,9 +100,9 @@ class ObsIntegration
     constructor(private readonly eventManager: typeof EventManager) {
         super();
 
-        frontendCommunicator.on(
+        frontendCommunicator.onAsync(
             "obs-is-configured",
-            () => this._isConfigured
+            async () => this._isConfigured
         );
     }
 

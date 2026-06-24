@@ -1,7 +1,7 @@
 "use strict";
 
+const { HttpServerManager } = require("../../../server/http-server-manager");
 const { SettingsManager } = require("../../common/settings-manager");
-const webServer = require("../../../server/http-server-manager");
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 /**
@@ -144,7 +144,7 @@ const html = {
             }
         }
 
-        webServer.sendToOverlay("html", data);
+        HttpServerManager.sendToOverlay("html", data);
         return true;
     },
     /**
@@ -159,7 +159,7 @@ const html = {
             name: "html",
             onOverlayEvent: (event) => {
                 // The absolute position prevents the html effect from always being underneath other effects.
-                const element = $(event.html).css({"position": "absolute"});
+                const element = $(event.html).css({ "position": "absolute" });
 
                 element.hide();
 

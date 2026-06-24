@@ -1,5 +1,6 @@
+import type { EventFilter } from "../../../../../types";
+
 import { ComparisonType } from "../../../../../shared/filter-constants";
-import { EventFilter } from "../../../../../types/events";
 import twitchStreamInfoManager from "../../../../streaming-platforms/twitch/stream-info-manager";
 
 const filter: EventFilter = {

@@ -1,5 +1,6 @@
-import type { EffectType } from "../../../types/effects";
-import connectionManager from "../../common/connection-manager";
+import type { EffectType } from "../../../types";
+
+import { ConnectionManager } from "../../common/connection-manager";
 import integrationManager from "../../integrations/integration-manager";
 
 interface Service {
@@ -177,7 +178,7 @@ const effect: EffectType<{
             }
         }
 
-        await connectionManager.updateConnectionForServices(services);
+        await ConnectionManager.updateConnectionForServices(services);
     }
 };
 

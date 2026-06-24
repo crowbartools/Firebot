@@ -15,6 +15,7 @@ import { TwitchGoalsApi } from "./resource/goals";
 import { TwitchHypeTrainApi } from "./resource/hypetrain";
 import { TwitchModerationApi } from "./resource/moderation";
 import { TwitchPollsApi } from "./resource/polls";
+import { TwitchPowerUpsApi } from "./resource/power-ups";
 import { TwitchPredictionsApi } from "./resource/predictions";
 import { TwitchStreamsApi } from "./resource/streams";
 import { TwitchSubscriptionsApi } from "./resource/subscriptions";
@@ -27,8 +28,8 @@ import { UserContextApiClient } from "./user-context-api-client";
 import { AccountAccess } from "../../../common/account-access";
 import { SettingsManager } from "../../../common/settings-manager";
 import frontendCommunicator from "../../../common/frontend-communicator";
-import logger from "../../../logwrapper";
-import { TwitchPowerUpsApi } from "./resource/power-ups";
+import { LoggerCache } from "../../../logger-cache";
+import { logTwurpleMessage } from "./twurple-logger";
 
 class TwitchApi {
     private _streamerClient: UserContextApiClient;
@@ -94,7 +95,7 @@ class TwitchApi {
         try {
             data = await this.users.getUserById(account.userId);
         } catch (error) {
-            logger.warn("[accounts.getTwitchData] Failed to get account data", (error as Error).message);
+            this.logger.warn("[accounts.getTwitchData] Failed to get account data", (error as Error).message);
             return account;
         }
 
@@ -124,7 +125,7 @@ class TwitchApi {
     }
 
     setupApiClients(streamerProvider: AuthProvider, botProvider: AuthProvider): void {
-        logger.debug("Call to setupApiClients");
+        this.logger.debug("Call to setupApiClients");
 
         if (!streamerProvider && !botProvider) {
             return;
@@ -132,19 +133,31 @@ class TwitchApi {
 
         if (AccountAccess.getAccounts().streamer.loggedIn) {
             this._streamerClient = new UserContextApiClient(
-                { authProvider: streamerProvider },
+                {
+                    authProvider: streamerProvider,
+                    logger: {
+                        minLevel: 3,
+                        custom: (level, message) => logTwurpleMessage(level, message)
+                    }
+                },
                 AccountAccess.getAccounts().streamer.userId
             );
         }
 
         if (AccountAccess.getAccounts().bot.loggedIn) {
             this._botClient = new UserContextApiClient(
-                { authProvider: botProvider },
+                {
+                    authProvider: botProvider,
+                    logger: {
+                        minLevel: 3,
+                        custom: (level, message) => logTwurpleMessage(level, message)
+                    }
+                },
                 AccountAccess.getAccounts().bot.userId
             );
         }
 
-        logger.info("Finished setting up Twitch API clients");
+        this.logger.info("Finished setting up Twitch API clients");
     }
 
     /**
@@ -169,12 +182,19 @@ class TwitchApi {
             : this.streamerClient;
     }
 
+    get moderatorId(): string {
+        const modUser = SettingsManager.getSetting("DefaultModerationUser");
+        return modUser === "bot" && this.accounts.bot.loggedIn === true
+            ? this.accounts.bot.userId
+            : this.accounts.streamer.userId;
+    }
+
     get accounts() {
         return AccountAccess.getAccounts();
     }
 
     get logger() {
-        return logger;
+        return LoggerCache.getLogger("Twitch API");
     }
 
     private _auth: TwitchAuthApi;

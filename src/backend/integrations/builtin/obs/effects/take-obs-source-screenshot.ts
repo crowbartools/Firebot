@@ -1,8 +1,20 @@
-import { EffectType } from "../../../../../types/effects";
-import {CustomEmbed, EmbedType} from "../../../../../types/discord";
-import {getCurrentSceneName, OBSSource, OBSSourceScreenshotSettings, takeSourceScreenshot} from "../obs-remote";
-import logger from "../../../../logwrapper";
+import type {
+    EffectType,
+    DiscordCustomEmbed,
+    DiscordEmbedType,
+    BackendCommunicator
+} from "../../../../../types";
+
+import {
+    type OBSSource,
+    type OBSSourceScreenshotSettings,
+    getCurrentSceneName,
+    takeSourceScreenshot
+} from "../obs-remote";
+import { LoggerCache } from "../../../../logger-cache";
 import * as screenshotHelpers from "../../../../common/screenshot-helpers";
+
+const logger = LoggerCache.getLogger("Integration: OBS");
 
 export const TakeOBSSourceScreenshotEffectType: EffectType<{
     source: string;
@@ -24,9 +36,9 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
     quality: number;
     useActiveScene: boolean;
     includeEmbed?: boolean;
-    embedType?: EmbedType;
+    embedType?: DiscordEmbedType;
     embedColor?: string;
-    customEmbed: CustomEmbed;
+    customEmbed: DiscordCustomEmbed;
 } & screenshotHelpers.ScreenshotEffectData> = {
     definition: {
         id: "firebot:obs-source-screenshot",
@@ -110,18 +122,17 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
         <screenshot-effect-options effect="effect"></screenshot-effect-options>
     <div>
   `,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
+
+    optionsController: ($scope, backendCommunicator: BackendCommunicator) => {
         $scope.isObsConfigured = false;
 
-        $scope.getSources = () => {
-            $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
+        $scope.getSources = async () => {
+            $scope.isObsConfigured = await backendCommunicator.fireEventAsync("obs-is-configured");
 
-            $q.when(
-                backendCommunicator.fireEventAsync("obs-get-all-sources")
-            ).then(
-                (sources: OBSSource[]) => $scope.sources = sources
-            );
+            try {
+                const sources: OBSSource[] = await backendCommunicator.fireEventAsync("obs-get-all-sources");
+                $scope.sources = sources;
+            } catch { }
         };
 
         $scope.getSources();

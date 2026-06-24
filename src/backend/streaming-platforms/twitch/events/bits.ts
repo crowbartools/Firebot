@@ -1,7 +1,7 @@
+import type { EventSubChannelBitsUseMessagePart } from "../api/twurple-private-types";
 import { EventManager } from "../../../events/event-manager";
+import { FrontendChatManager } from "../../../chat/frontend-chat-manager";
 import powerUpsManager from "../../../power-ups/power-ups-manager";
-import frontendCommunicator from "../../../common/frontend-communicator";
-import { EventSubChannelBitsUseMessagePart } from "../api/twurple-private-types";
 
 export function triggerCheer(
     username: string,
@@ -112,7 +112,7 @@ export function handleCustomPowerUpRedemption(
     powerUpCost: number,
     powerUpImageUrl: string
 ): void {
-    frontendCommunicator.send("twitch:chat:twitch:chat:powerupredemption", {
+    FrontendChatManager.sendPowerUpRedemptionToDashboard({
         id: redemptionId,
         status,
         messageText,
@@ -153,9 +153,11 @@ export function handleCustomPowerUpRedemption(
             userId,
             userDisplayName,
             messageText,
+            args: redemptionMeta.args,
             powerUpId,
             powerUpImage: powerUpImageUrl,
             powerUpName: powerUpTitle,
+            powerUpDescription: powerUpPrompt,
             bits: powerUpCost
         });
     }, 100);

@@ -1,9 +1,13 @@
 import { Request, Response } from "express";
-import { EffectList } from "../../../../types/effects";
+
+import type {
+    EffectList,
+    Trigger
+} from "../../../../types";
+
 import { PresetEffectListManager } from "../../../../backend/effects/preset-lists/preset-effect-list-manager";
 import { EffectManager } from "../../../../backend/effects/effect-manager";
 import effectRunner from "../../../../backend/common/effect-runner";
-import { Trigger } from "../../../../types/triggers";
 
 export function getEffects(req: Request, res: Response): void {
     let effectDefs = EffectManager.getEffectDefinitions();

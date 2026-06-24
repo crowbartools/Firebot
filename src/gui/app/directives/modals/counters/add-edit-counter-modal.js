@@ -125,13 +125,13 @@
                 });
             };
 
-            $ctrl.save = () => {
+            $ctrl.save = async () => {
                 if ($ctrl.counter.name == null || $ctrl.counter.name === "") {
                     ngToast.create("Please provide a name for this Counter");
                     return;
                 }
 
-                const successful = countersService.saveCounter($ctrl.counter);
+                const successful = await countersService.saveCounter($ctrl.counter);
                 if (successful) {
                     $ctrl.close({
                         $value: {
@@ -247,7 +247,7 @@
                 $ctrl.counter.minimumEffects = effects;
             };
 
-            $ctrl.$onInit = () => {
+            $ctrl.$onInit = async () => {
                 if ($ctrl.resolve.counter) {
                     $ctrl.counter = JSON.parse(
                         angular.toJson($ctrl.resolve.counter)
@@ -260,7 +260,7 @@
                     $ctrl.isNewCounter = false;
                 }
 
-                $ctrl.txtFilePath = countersService.getTxtFilePath($ctrl.counter.name);
+                $ctrl.txtFilePath = await countersService.getTxtFilePath($ctrl.counter.name);
             };
         }
     });

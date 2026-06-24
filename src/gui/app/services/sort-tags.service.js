@@ -1,6 +1,6 @@
 "use strict";
 
-/** @import { SortTag } from "../../../types/sort-tags" */
+/** @import { SortTag } from "../../../types" */
 
 (function() {
 
@@ -18,10 +18,6 @@
              * @type {Record<string, SortTag>}
              */
             const selectedSortTags = {};
-
-            service.loadSortTags = () => {
-                sortTags = backendCommunicator.fireEventSync("sort-tags:get-sort-tags");
-            };
 
             /**
              * @param {string} context
@@ -88,6 +84,8 @@
             backendCommunicator.on("sort-tags:updated-sort-tags", (updatedSortTags) => {
                 sortTags = updatedSortTags;
             });
+
+            backendCommunicator.send("sort-tags:ui-service-ready");
 
             return service;
         });

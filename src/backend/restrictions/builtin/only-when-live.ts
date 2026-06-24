@@ -1,8 +1,5 @@
-/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
-
-import type { RestrictionType } from "../../../types/restrictions";
+import type { RestrictionType } from "../../../types";
 import twitchStreamInfoManager from "../../streaming-platforms/twitch/stream-info-manager";
-
 
 const restriction: RestrictionType = {
     definition: {
@@ -15,14 +12,15 @@ const restriction: RestrictionType = {
             <p>Usage will be restricted to when you are live.</p>
         </div>
     `,
-    predicate: async () => {
-        return new Promise((resolve, reject) => {
-            if (!twitchStreamInfoManager.streamInfo.isLive) {
-                return reject("Stream is not live.");
-            }
+    predicate: () => {
+        if (!twitchStreamInfoManager.streamInfo.isLive) {
+            return {
+                success: false,
+                failureReason: "Stream is not live."
+            };
+        }
 
-            return resolve(true);
-        });
+        return { success: true };
     }
 };
 

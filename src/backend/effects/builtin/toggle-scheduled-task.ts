@@ -1,4 +1,5 @@
-import { EffectType } from "../../../types/effects";
+import type { EffectType } from "../../../types";
+
 import { ScheduledTaskManager } from "../../timers/scheduled-task-manager";
 
 const effect: EffectType<{

@@ -3,8 +3,10 @@ import { OverlayWidgetType, OverlayWidgetConfig, IOverlayWidgetEventUtils } from
 import { WidgetOverlayEvent } from "../../../../types/overlay-widgets";
 import { Duration } from "luxon";
 import frontendCommunicator from "../../../common/frontend-communicator";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
 import type { EffectList } from "../../../../types/effects";
+
+const logger = LoggerCache.getLogger("Overlay Widgets");
 
 export type Settings = {
     fontOptions: FontOptions;
@@ -111,7 +113,7 @@ export const dynamicCountdown: OverlayWidgetType<Settings, State> = {
             label: "Add Time",
             icon: "fa-plus-circle",
             click: async (config) => {
-                const seconds = await frontendCommunicator.fireEventAsync<number>("openGetInputModal", {
+                const seconds: number = await frontendCommunicator.fireEventAsync("openGetInputModal", {
                     config: {
                         model: config.state?.remainingSeconds ?? 0,
                         inputType: "number",

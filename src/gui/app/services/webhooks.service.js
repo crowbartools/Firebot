@@ -1,7 +1,7 @@
 "use strict";
 
 (function() {
-    /** @typedef {import("../../../types/webhooks").WebhookConfig} WebhookConfig */
+    /** @typedef {import("../../../types").WebhookConfig} WebhookConfig */
 
     angular
         .module("firebotApp")
@@ -21,14 +21,6 @@
                     service.webhookConfigs[index] = webhook;
                 } else {
                     service.webhookConfigs.push(webhook);
-                }
-            };
-
-            service.loadWebhookConfigs = async () => {
-                const webhookConfigs = await backendCommunicator.fireEventAsync("webhooks:get-all");
-
-                if (webhookConfigs) {
-                    service.webhookConfigs = webhookConfigs;
                 }
             };
 
@@ -57,12 +49,14 @@
 
             service.deleteWebhookConfig = function(webhookId) {
                 service.webhookConfigs = service.webhookConfigs.filter(t => t.id !== webhookId);
-                backendCommunicator.fireEvent("webhooks:delete", webhookId);
+                backendCommunicator.send("webhooks:delete", webhookId);
             };
 
             backendCommunicator.on("webhooks:updated", (webhookConfigs) => {
                 service.webhookConfigs = webhookConfigs;
             });
+
+            backendCommunicator.send("webhooks:ui-service-ready");
 
             return service;
         });

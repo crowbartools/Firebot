@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../../types/variables";
+import type { ReplaceVariable } from "../../../../../types";
 import { isConnected } from "../obs-remote";
 
 export const IsConnectedVariable: ReplaceVariable = {
@@ -8,7 +8,7 @@ export const IsConnectedVariable: ReplaceVariable = {
         possibleDataOutput: ["bool"],
         categories: ["advanced", "integrations", "obs"]
     },
-    evaluator: async () => {
+    evaluator: () => {
         return isConnected() ?? false;
     }
 };

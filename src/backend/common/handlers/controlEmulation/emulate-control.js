@@ -1,6 +1,6 @@
 "use strict";
 const { keyboard, Key, mouse, Button } = require("firebot-nutjs");
-const logger = require("../../../logwrapper");
+const logger = require("../../../logger-cache").LoggerCache.getLogger("Emulate Control");
 
 function mapNutKey(key) {
     key = key.toUpperCase();

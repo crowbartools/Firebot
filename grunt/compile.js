@@ -13,7 +13,6 @@ const createWindowsInstaller = require('electron-winstaller').createWindowsInsta
  */
 module.exports = function (grunt) {
 
-    const macIntelPathIn = path.resolve(__dirname, `../dist/pack/Firebot-darwin-x64/Firebot.app`);
     const macArmPathIn = path.resolve(__dirname, `../dist/pack/Firebot-darwin-arm64/Firebot.app`);
     const macPathOut = path.resolve(__dirname, '../dist/install/darwin');
     const macDmgIcon = path.resolve(__dirname, `../build/gui/images/logo_transparent_2.png`);
@@ -138,15 +137,6 @@ module.exports = function (grunt) {
             }
         },
         'create-macos-installer': {
-            x64: {
-                appPath: macIntelPathIn,
-                out: macPathOut,
-                name: `firebot-v${version}-macos-x64`,
-                title: "Firebot Installer",
-                icon: macDmgIcon,
-                background: macDmgBg,
-                installInstructionsPath: path.resolve(__dirname, '../macos-x64-install-instructions.txt')
-            },
             arm64: {
                 appPath: macArmPathIn,
                 out: macPathOut,
@@ -185,7 +175,7 @@ module.exports = function (grunt) {
             break;
 
         case 'darwin':
-            compileCommands = ['create-macos-installer:x64', 'create-macos-installer:arm64'];
+            compileCommands = ['create-macos-installer:arm64'];
             break;
 
         default:

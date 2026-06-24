@@ -1,4 +1,5 @@
-import { SystemQuickAction } from "../../../types/quick-actions";
+import type { SystemQuickAction } from "../../../types";
+
 import frontendCommunicator from "../../common/frontend-communicator";
 
 const OpenRewardQueueQuickAction: SystemQuickAction = {

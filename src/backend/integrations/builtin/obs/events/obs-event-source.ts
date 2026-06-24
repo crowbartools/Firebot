@@ -1,4 +1,4 @@
-import { EventSource } from "../../../../../types/events";
+import type { EventSource } from "../../../../../types";
 import {
     OBS_CURRENT_PROFILE_CHANGED_EVENT_ID,
     OBS_CURRENT_PROGRAM_SCENE_CHANGED_EVENT_ID,

@@ -1,5 +1,5 @@
-import { EffectType } from "../../../types/effects";
-import { OverlayWidgetConfig } from "../../../types/overlay-widgets";
+import type { EffectType, OverlayWidgetConfig } from "../../../types";
+
 import overlayWidgetConfigManager from "../../overlay-widgets/overlay-widget-config-manager";
 
 const effect: EffectType<{

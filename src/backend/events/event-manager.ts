@@ -3,14 +3,15 @@ import { TypedEmitter } from "tiny-typed-emitter";
 import type {
     EventManagerModule,
     EventDefinition,
-    EventSource
+    EventSource,
+    TriggeredEvent
 } from "../../types";
 
 import { AccountAccess } from "../common/account-access";
 import { EventsAccess } from "./events-access";
 import eventsRouter from "./events-router";
 import frontendCommunicator from "../common/frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 import { flattenArray, simpleClone } from "../utils";
 
 type RegisteredEventDefinition = EventDefinition & {
@@ -24,26 +25,23 @@ type RegisteredEventSource = Omit<EventSource, "events"> & {
 class EventManager extends TypedEmitter<{
     "eventSourceRegistered": (source: RegisteredEventSource) => void;
     "eventSourceUnregistered": (id: string) => void;
-    "event-triggered": (event: {
-        event: EventDefinition;
-        source: EventSource;
-        meta: Record<string, unknown>;
-        isManual: boolean;
-        isRetrigger: boolean;
-    }) => void;
+    "event-triggered": (event: TriggeredEvent) => void;
 }> implements EventManagerModule {
+    private logger = LoggerCache.getLogger("Events");
     private _registeredEventSources: RegisteredEventSource[] = [];
 
     constructor() {
         super();
 
-        frontendCommunicator.on("events:get-all-event-sources", () => {
-            logger.info("got 'get all event sources' request");
+        this.setMaxListeners(0);
+
+        frontendCommunicator.onAsync("events:get-all-event-sources", async () => {
+            this.logger.info("got 'get all event sources' request");
             return simpleClone(this.getAllEventSources());
         });
 
-        frontendCommunicator.on("events:get-all-events", () => {
-            logger.info("got 'get all events' request");
+        frontendCommunicator.onAsync("events:get-all-events", async () => {
+            this.logger.info("got 'get all events' request");
             return simpleClone(this.getAllEvents());
         });
 
@@ -92,7 +90,7 @@ class EventManager extends TypedEmitter<{
             }
         });
 
-        frontendCommunicator.on("events:get-event-source", (event: {
+        frontendCommunicator.onAsync("events:get-event-source", async (event: {
             sourceId: string;
             eventId: string;
         }) => {
@@ -120,7 +118,7 @@ class EventManager extends TypedEmitter<{
 
         this._registeredEventSources.push(eventSource);
 
-        logger.debug(`Registered Event Source ${eventSource.id}`);
+        this.logger.debug(`Registered Event Source ${eventSource.id}`);
 
         this.emit("eventSourceRegistered", eventSource);
     }
@@ -131,7 +129,7 @@ class EventManager extends TypedEmitter<{
         );
 
         if (!existing) {
-            logger.debug(`Cannot unregister event source ${id}. Event source does not exist.`);
+            this.logger.debug(`Cannot unregister event source ${id}. Event source does not exist.`);
             return;
         }
 
@@ -146,6 +144,15 @@ class EventManager extends TypedEmitter<{
 
     getEventById(sourceId: string, eventId: string): EventDefinition {
         const source = this._registeredEventSources.find(es => es.id === sourceId);
+
+        if (source == null) {
+            this.logger.warn(`Event source "${sourceId}" does not exist`);
+            return null;
+        } else if (!source.events?.length) {
+            this.logger.warn(`Event source "${sourceId}" contains no events`);
+            return null;
+        }
+
         const event = source.events.find(e => e.id === eventId);
         return event;
     }
@@ -165,7 +172,7 @@ class EventManager extends TypedEmitter<{
     async triggerEvent(
         eventSourceId: string,
         eventId: string,
-        meta: Record<string, unknown>,
+        meta?: Record<string, unknown>,
         isManual = false,
         isRetrigger = false,
         isSimulation = false
@@ -179,10 +186,8 @@ class EventManager extends TypedEmitter<{
         if (isManual && !isSimulation) {
             meta = event.manualMetadata || {};
         }
-        if (meta == null) {
-            meta = {};
-        }
 
+        meta ??= {};
         if (meta.username == null) {
             meta.username = AccountAccess.getAccounts().streamer.username;
         }

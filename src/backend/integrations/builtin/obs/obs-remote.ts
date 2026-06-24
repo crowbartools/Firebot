@@ -34,7 +34,9 @@ import {
     OBS_DISCONNECTED_EVENT_ID,
     OBS_EXITING_EVENT_ID
 } from "./constants";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
+
+const logger = LoggerCache.getLogger("Integration: OBS");
 
 type CachedGroupInfo = {
     /// The name of a group.
@@ -609,8 +611,7 @@ async function maintainConnection(
             });
         } catch (error) {
             if (logging) {
-                logger.debug("Failed to connect, attempting again in 10 secs.");
-                logger.debug(error);
+                logger.debug("Failed to connect, attempting again in 10 secs.", error);
             }
             reconnectTimeout = setTimeout(
                 () => maintainConnection(ip, port, password, logging),

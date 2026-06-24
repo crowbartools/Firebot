@@ -1,5 +1,5 @@
-import { EffectType } from "../../../../../types/effects";
-import { OBSSource, setMediaSourceSettings } from "../obs-remote";
+import type { EffectType, BackendCommunicator } from "../../../../../types";
+import { type OBSSource, setMediaSourceSettings } from "../obs-remote";
 
 export const SetOBSMediaSourceFileEffectType: EffectType<{
     mediaSourceName: string;
@@ -35,7 +35,7 @@ export const SetOBSMediaSourceFileEffectType: EffectType<{
         <file-chooser model="effect.file" options="{ filters: [ {name: 'OBS-Supported Video Files', extensions: ['mp4', 'm4v', 'ts', 'mov', 'mxf', 'flv', 'mkv', 'avi', 'gif', 'webm']}, {name: 'OBS-Supported Audio Files', extensions: ['mp3', 'aac', 'ogg', 'wav']}, {name: 'All Files', extensions: ['*']} ]}"></file-chooser>
     </eos-container>
   `,
-    optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
+    optionsController: ($scope, backendCommunicator: BackendCommunicator) => {
         $scope.isObsConfigured = false;
 
         $scope.mediaSources = [];
@@ -44,16 +44,16 @@ export const SetOBSMediaSourceFileEffectType: EffectType<{
             $scope.effect.mediaSourceName = mediaSourceName;
         };
 
-        $scope.getMediaSources = () => {
-            $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
+        $scope.getMediaSources = async () => {
+            $scope.isObsConfigured = await backendCommunicator.fireEventAsync("obs-is-configured");
 
-            $q.when(
-                backendCommunicator.fireEventAsync("obs-get-media-sources")
-            ).then((mediaSources: OBSSource[]) => {
+            try {
+                const mediaSources: OBSSource[] = await backendCommunicator.fireEventAsync("obs-get-media-sources");
                 $scope.mediaSources = mediaSources;
                 $scope.selected = $scope.mediaSources?.find(source => source.name === $scope.effect.mediaSourceName);
-            });
+            } catch { }
         };
+
         $scope.getMediaSources();
     },
     optionsValidator: (effect) => {

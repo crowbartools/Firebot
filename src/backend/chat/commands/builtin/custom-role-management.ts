@@ -1,4 +1,4 @@
-import { SystemCommand } from "../../../../types/commands";
+import type { SystemCommand } from "../../../../types";
 import customRoleManager from "../../../roles/custom-roles-manager";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 

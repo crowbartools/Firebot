@@ -1,5 +1,5 @@
-import { EffectType } from "../../../../../types/effects";
-import { OBSSource, setBrowserSourceSettings } from "../obs-remote";
+import type { EffectType, BackendCommunicator } from "../../../../../types";
+import { type OBSSource, setBrowserSourceSettings } from "../obs-remote";
 
 export const SetOBSBrowserSourceUrlEffectType: EffectType<{
     browserSourceName: string;
@@ -36,7 +36,7 @@ export const SetOBSBrowserSourceUrlEffectType: EffectType<{
         <firebot-input model="effect.url"></firebot-input>
     </eos-container>
   `,
-    optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
+    optionsController: ($scope, backendCommunicator: BackendCommunicator) => {
         $scope.isObsConfigured = false;
 
         $scope.browserSources = [];
@@ -45,16 +45,16 @@ export const SetOBSBrowserSourceUrlEffectType: EffectType<{
             $scope.effect.browserSourceName = browserSourceName;
         };
 
-        $scope.getBrowserSources = () => {
-            $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
+        $scope.getBrowserSources = async () => {
+            $scope.isObsConfigured = await backendCommunicator.fireEventAsync("obs-is-configured");
 
-            $q.when(
-                backendCommunicator.fireEventAsync("obs-get-browser-sources")
-            ).then((browserSources: OBSSource[]) => {
+            try {
+                const browserSources: OBSSource[] = await backendCommunicator.fireEventAsync("obs-get-browser-sources");
                 $scope.browserSources = browserSources;
                 $scope.selected = $scope.browserSources?.find(source => source.name === $scope.effect.browserSourceName);
-            });
+            } catch { }
         };
+
         $scope.getBrowserSources();
     },
     optionsValidator: (effect) => {

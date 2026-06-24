@@ -1,9 +1,10 @@
+import type { EventFilter } from "../../../../../types";
+
+import chatRolesManager from "../../../../roles/chat-roles-manager";
 import customRolesManager from "../../../../roles/custom-roles-manager";
 import teamRolesManager from "../../../../roles/team-roles-manager";
 import twitchRolesManager from "../../../../../shared/twitch-roles";
-import chatRolesManager from "../../../../roles/chat-roles-manager";
 import { TwitchApi } from "../../../../streaming-platforms/twitch/api";
-import { EventFilter } from "../../../../../types/events";
 
 const filter: EventFilter = {
     id: "firebot:viewerroles",
