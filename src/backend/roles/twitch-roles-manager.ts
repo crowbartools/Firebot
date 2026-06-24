@@ -20,6 +20,7 @@ class TwitchRolesManager extends TypedEmitter<Events> {
     private _vips: BasicViewer[] = [];
     private _moderators: BasicViewer[] = [];
     private _subscribers: Subscriber[] = [];
+    private _subscribersLastLoadedAt: number | null = null;
 
     constructor() {
         super();
@@ -86,6 +87,11 @@ class TwitchRolesManager extends TypedEmitter<Events> {
     }
 
     async loadSubscribers(): Promise<void> {
+        // Only reload subscribers if it's been more than 30 minutes since they were last loaded
+        if (this.getMinutesSinceSubscribersLoaded() < 30) {
+            return;
+        }
+
         this._subscribers = (await TwitchApi.subscriptions.getSubscriptions())
             .map(m => ({
                 id: m.userId,
@@ -93,6 +99,15 @@ class TwitchRolesManager extends TypedEmitter<Events> {
                 displayName: m.userDisplayName,
                 subTier: this.getRoleForSubTier(m.tier)
             }));
+
+        this._subscribersLastLoadedAt = Date.now();
+    }
+
+    private getMinutesSinceSubscribersLoaded(): number {
+        if (this._subscribersLastLoadedAt == null) {
+            return Infinity;
+        }
+        return (Date.now() - this._subscribersLastLoadedAt) / 1000 / 60;
     }
 
     getSubscribers(): Subscriber[] {
