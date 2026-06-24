@@ -1,6 +1,5 @@
 import type {
-    FirebotParameterCategories,
-    FirebotParams
+    FirebotParameterCategories
 } from "./parameters";
 import type { Awaitable, ObjectOfUnknowns } from "./util-types";
 
@@ -55,7 +54,7 @@ export interface IntegrationEvents {
     "settings-update": (id: string, settings: Record<string, any>) => void;
 }
 
-type LinkData =
+export type LinkData =
     | {
         accountId: string;
     }
