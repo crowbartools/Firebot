@@ -1,4 +1,4 @@
-import { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
+import type { ReplaceVariable, TriggersObject } from "../../../../../types";
 import { OBS_EVENT_SOURCE_ID, OBS_SCENE_ITEM_ENABLE_STATE_CHANGED_EVENT_ID } from "../constants";
 import { getGroupItem, getSceneItem } from "../obs-remote";
 

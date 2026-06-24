@@ -92,18 +92,4 @@ export function createTray(mainWindow: BrowserWindow) {
             minimizedToTray = false;
         }
     });
-
-    frontendCommunicator.on("settings-updated-renderer", (evt: {
-        path: string;
-        data: unknown;
-    }) => {
-        if (
-            evt.path === "/settings/minimizeToTray"
-            && evt.data !== true
-            && minimizedToTray === true
-        ) {
-            mainWindow.show();
-            minimizedToTray = false;
-        }
-    });
 };

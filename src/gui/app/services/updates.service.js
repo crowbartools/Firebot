@@ -1,187 +1,47 @@
 'use strict';
 
 (function(angular) {
-
-    //This handles updates
-    const VersionCompare = require('../../shared/compare-versions');
-    const UpdateType = VersionCompare.UpdateType;
     const { marked } = require("marked");
-
     const { sanitize } = require("dompurify");
 
     angular
         .module('firebotApp')
-        .factory('updatesService', function (logger, $q, $http, $sce, settingsService, utilityService, backendCommunicator) {
-            // factory/service object
+        .factory('updatesService', function (
+            $sce,
+            settingsService,
+            modalFactory,
+            backendCommunicator
+        ) {
             const service = {};
-
-            const FIREBOT_RELEASES_URL = "https://api.github.com/repos/crowbartools/Firebot/releases";
-
-            const APP_VERSION = firebotAppDetails.version;
-            const isDev = !firebotAppDetails.isPackaged;
-            const isWindows = firebotAppDetails.os.isWindows;
 
             service.updateData = null;
 
-            service.isCheckingForUpdates = false;
-
-            service.hasCheckedForUpdates = false;
-
-            service.hasReleaseData = false;
-
-            service.willAutoUpdate = false;
-
-            service.newBetaAvailable = false;
-
-            service.updateIsAvailable = function() {
-                return service.hasCheckedForUpdates ? (service.updateData?.updateIsAvailable || service.majorUpdate != null) : false;
+            service.installUpdate = () => {
+                backendCommunicator.send("updates:install-update");
             };
 
-            service.updateIsDownloaded = false;
-
-            function shouldAutoUpdate(autoUpdateLevel, updateType) {
-                // if auto updating is completely disabled
-                if (autoUpdateLevel === 0) {
-                    return false;
-                }
-
-                // Skip auto update if this is dev build or is not running on Windows
-                if (isDev || !isWindows) {
-                    return false;
-                }
-
-                // check each update type
-                switch (updateType) {
-                    case UpdateType.OFFICIAL:
-                    case UpdateType.PATCH:
-                    case UpdateType.MINOR:
-                        return autoUpdateLevel >= 1;
-                    case UpdateType.PRERELEASE:
-                    case UpdateType.NONE:
-                    case UpdateType.MAJOR:
-                    case UpdateType.MAJOR_PRERELEASE:
-                    default:
-                        return false;
-                }
-            }
-
-            // Update Checker
-            // This checks for updates.
-            service.checkForUpdate = function() {
-                return $q(async (resolve) => {
-
-                    service.isCheckingForUpdates = true;
-
-                    try {
-                        const response = await $http.get(FIREBOT_RELEASES_URL);
-                        // Get app version
-
-
-                        const releases = response.data;
-
-                        let latestRelease = null;
-                        let latestUpdateType = null;
-                        let foundMajorRelease = false;
-                        for (const release of releases) {
-                            // Now lets look to see if there is a newer version.
-                            const updateType = VersionCompare.compareVersions(release.tag_name, APP_VERSION);
-
-                            if (!foundMajorRelease && (updateType === UpdateType.MAJOR || updateType === UpdateType.MAJOR_PRERELEASE)) {
-                                foundMajorRelease = true;
-                                if (settingsService.getSetting("NotifyOnBeta")) {
-                                    service.newBetaAvailable = true;
-                                    service.majorUpdate = {
-                                        gitName: release.name,
-                                        gitVersion: release.tag_name,
-                                        gitLink: release.html_url
-                                    };
-                                }
-                            } else if (updateType === UpdateType.OFFICIAL ||
-                                updateType === UpdateType.PATCH ||
-                                updateType === UpdateType.MINOR ||
-                                updateType === UpdateType.NONE ||
-                                (updateType === UpdateType.PRERELEASE && settingsService.getSetting("NotifyOnBeta"))) {
-                                latestRelease = release;
-                                latestUpdateType = updateType;
-                                if (updateType === UpdateType.PRERELEASE) {
-                                    service.newBetaAvailable = true;
-                                }
-                                break;
-                            }
-                        }
-
-                        // Parse github api to get tag name.
-                        const gitNewest = latestRelease;
-
-                        if (gitNewest != null) {
-                            const gitName = gitNewest.name;
-                            const gitDate = gitNewest.published_at;
-                            const gitLink = gitNewest.html_url;
-                            const gitNotes = sanitize(marked(gitNewest.body));
-
-                            // Now lets look to see if there is a newer version.
-
-                            let updateIsAvailable = false;
-                            if (latestUpdateType !== UpdateType.NONE) {
-                                updateIsAvailable = true;
-                                const autoUpdateLevel = settingsService.getSetting("AutoUpdateLevel");
-
-                                // Check if we should auto update based on the users setting
-                                if (shouldAutoUpdate(autoUpdateLevel, latestUpdateType)) {
-                                    service.willAutoUpdate = true;
-                                    utilityService.showDownloadModal();
-                                    backendCommunicator.send("downloadUpdate");
-                                }
-                            }
-
-                            service.updateData = {
-                                gitName: gitName,
-                                gitVersion: gitNewest.tag_name,
-                                gitDate: gitDate,
-                                gitLink: gitLink,
-                                gitNotes: $sce.trustAsHtml(gitNotes),
-                                updateIsAvailable,
-                                latestUpdateType
-                            };
-                        }
-
-                        service.hasCheckedForUpdates = true;
-                        service.isCheckingForUpdates = false;
-
-                        resolve();
-                    } catch (error) {
-                        service.hasCheckedForUpdates = true;
-                        service.isCheckingForUpdates = false;
-                        logger.error(error);
-                        resolve(false);
-                    }
-                });
+            service.downloadAndInstallUpdate = () => {
+                backendCommunicator.send("updates:download-and-install-update");
             };
 
-            service.downloadUpdate = function() {
-                if (service.updateIsAvailable()) {
-                    utilityService.showDownloadModal();
-                    backendCommunicator.send("downloadUpdate");
-                }
-            };
+            backendCommunicator.on("updates:update-data", (data) => {
+                service.updateData = data.updateData;
 
-            service.installUpdate = function() {
-                if (service.updateIsAvailable()) {
-                    utilityService.showDownloadModal();
-                    backendCommunicator.send("installUpdate");
+                if (data.justUpdated === true && data.pendingUpdate !== true) {
+                    modalFactory.showUpdatedModal();
+                    settingsService.saveSetting("JustUpdated", false);
                 }
-            };
 
-            service.downloadAndInstallUpdate = function() {
-                if (service.updateData?.updateIsAvailable === true
-                    && service.updateData?.latestUpdateType === UpdateType.PRERELEASE
-                ) {
-                    window.open(`https://github.com/crowbartools/Firebot/releases/${service.updateData.gitVersion}`, "_blank");
-                } else {
-                    service.downloadUpdate();
-                    service.installUpdate();
+                if (service.updateData?.releaseNotes) {
+                    service.updateData.releaseNotes = $sce.trustAsHtml(sanitize(marked(service.updateData.releaseNotes)));
                 }
-            };
+            });
+
+            backendCommunicator.on("updates:show-download-modal", () => {
+                modalFactory.showDownloadModal();
+            });
+
+            backendCommunicator.send("updates:ui-service-ready");
 
             return service;
         });

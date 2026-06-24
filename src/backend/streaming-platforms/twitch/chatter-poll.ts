@@ -1,12 +1,14 @@
 import { AccountAccess } from "../../common/account-access";
 import { ActiveUserHandler } from "../../chat/active-user-handler";
 import { TwitchApi } from "./api";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
 
 // Every 5 mins
 const POLL_INTERVAL: number = 5 * 60 * 1000;
 
 class TwitchChatterPoll {
+    private logger = LoggerCache.getLogger("Chat");
+
     private _chatterPollIntervalId: NodeJS.Timeout;
     private _pollIsRunning = false;
 
@@ -24,11 +26,11 @@ class TwitchChatterPoll {
                 return;
             }
 
-            logger.debug("Getting connected chat users...");
+            this.logger.debug("Getting connected chat users...");
 
             const chatters = await TwitchApi.chat.getAllChatters();
 
-            logger.debug(`There are ${chatters.length} online chat users.`);
+            this.logger.debug(`There are ${chatters.length} online chat users.`);
 
             if (!chatters.length) {
                 return;
@@ -38,7 +40,7 @@ class TwitchChatterPoll {
                 await ActiveUserHandler.addOnlineUser(chatter);
             }
         } catch (error) {
-            logger.error("There was an error getting connected chat users", (error as Error).message);
+            this.logger.error("There was an error getting connected chat users", (error as Error).message);
         }
     }
 

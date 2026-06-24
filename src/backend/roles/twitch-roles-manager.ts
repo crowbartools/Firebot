@@ -1,6 +1,7 @@
 import { TypedEmitter } from "tiny-typed-emitter";
 
-import type { BasicViewer } from "../../types/viewers";
+import type { BasicViewer } from "../../types";
+
 import frontendCommunicator from "../common/frontend-communicator";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 

@@ -25,8 +25,8 @@
                     tooltip-placement="{{$ctrl.tooltipPlacement || 'top'}}"
                     tooltip-append-to-body="true"
                 >
-                    <i ng-if="$ctrl.loading" class="far fa-spinner-third fa-spin" style="margin-right: 5px;"></i>
-                    <i ng-if="$ctrl.icon && !$ctrl.loading" ng-class="$ctrl.iconClass" style="margin-right: 5px;"></i>
+                    <i ng-if="$ctrl.loading" class="far fa-spinner-third fa-spin" ng-style="{ 'margin-right': $ctrl.text ? '5px' : '0' }"></i>
+                    <i ng-if="$ctrl.icon && !$ctrl.loading" ng-class="$ctrl.iconClass" ng-style="{ 'margin-right': $ctrl.text ? '5px' : '0' }"></i>
                     <span>{{$ctrl.text}}</span>
                 </button>
             `,

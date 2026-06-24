@@ -2,9 +2,11 @@ import fsp from "fs/promises";
 import path from "path";
 import sanitizeFileName from "sanitize-filename";
 
-import type { Counter } from "../../types/counters";
-import type { EffectList } from "../../types/effects";
-import type { Trigger } from "../../types/triggers";
+import type {
+    Counter,
+    EffectList,
+    Trigger
+} from "../../types";
 import type { CounterDisplayWidgetConfig } from "../overlay-widgets/builtin-types/counter-display/counter-display-types";
 
 import { AccountAccess } from "../common/account-access";
@@ -13,17 +15,20 @@ import JsonDbManager from "../database/json-db-manager";
 import effectRunner from "../common/effect-runner";
 import overlayWidgetConfigManager from "../overlay-widgets/overlay-widget-config-manager";
 import frontendCommunicator from "../common/frontend-communicator";
-import logger from "../logwrapper";
 
 class CounterManager extends JsonDbManager<Counter> {
     constructor() {
-        super("Counter", "/counters/counters");
+        super("Counter", "/counters/counters", "Counters");
 
-        frontendCommunicator.on("counters:get-counters",
-            () => this.getAllItems());
+        frontendCommunicator.onAsync("counters:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
 
-        frontendCommunicator.on("counters:save-counter",
-            (counter: Counter) => this.saveItem(counter));
+        frontendCommunicator.onAsync("counters:get-counters",
+            async () => this.getAllItems());
+
+        frontendCommunicator.onAsync("counters:save-counter",
+            async (counter: Counter) => this.saveItem(counter));
 
         frontendCommunicator.on("counters:save-all-counters",
             (allCounters: Counter[]) => this.saveAllItems(allCounters));
@@ -31,8 +36,8 @@ class CounterManager extends JsonDbManager<Counter> {
         frontendCommunicator.on("counters:delete-counter",
             (counterId: string) => this.deleteItem(counterId));
 
-        frontendCommunicator.on("counters:get-counter-file-path",
-            (counterName: string) => this.getCounterTxtFilePath(counterName));
+        frontendCommunicator.onAsync("counters:get-counter-file-path",
+            async (counterName: string) => this.getCounterTxtFilePath(counterName));
     }
 
     /**
@@ -84,6 +89,7 @@ class CounterManager extends JsonDbManager<Counter> {
     }
 
     triggerUiRefresh(): void {
+        this.logger.debug("Triggering UI refresh");
         frontendCommunicator.send("counters:all-counters-updated", this.getAllItems());
     }
 
@@ -113,7 +119,7 @@ class CounterManager extends JsonDbManager<Counter> {
             const txtFilePath = this.getCounterTxtFilePath(counterName);
             return await fsp.writeFile(txtFilePath, counterValue.toString(), { encoding: "utf8" });
         } catch (err) {
-            logger.error("There was an error updating the counter text file", err);
+            this.logger.error("There was an error updating the counter text file", err);
             return;
         }
     }
@@ -129,7 +135,7 @@ class CounterManager extends JsonDbManager<Counter> {
 
             return await fsp.rename(oldTxtFilePath, newTxtFilePath);
         } catch (err) {
-            logger.error("There was an error renaming the counter text file", err);
+            this.logger.error("There was an error renaming the counter text file", err);
             return;
         }
     }
@@ -147,9 +153,9 @@ class CounterManager extends JsonDbManager<Counter> {
                 return fsp.unlink(txtFilePath);
             }
 
-            logger.warn(`Failed to delete counter "${counterName}" text file: the file doesn't exist.`);
+            this.logger.warn(`Failed to delete counter "${counterName}" text file: the file doesn't exist.`);
         } catch (err) {
-            logger.error("There was an error deleting the counter text file", err);
+            this.logger.error("There was an error deleting the counter text file", err);
             return;
         }
     }
@@ -211,7 +217,7 @@ class CounterManager extends JsonDbManager<Counter> {
 
     async updateCounterValue(counterId: string, value: string | number, overridePreviousValue = false): Promise<void> {
         if (counterId == null || (typeof value === "number" && isNaN(value))) {
-            logger.warn(`Failed to update counter, invalid values: ${counterId}, ${value}`);
+            this.logger.warn(`Failed to update counter, invalid values: ${counterId}, ${value}`);
             return;
         }
 

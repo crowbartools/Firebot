@@ -1,5 +1,4 @@
-import type { RestrictionType } from "../../../types/restrictions";
-import type { Currency } from "../../../types/currency";
+import type { RestrictionType, Currency } from "../../../types";
 import currencyAccess from "../../currency/currency-access";
 import currencyManager from "../../currency/currency-manager";
 
@@ -121,10 +120,14 @@ const model: RestrictionType<{
             const currency = currencyAccess.getCurrencyById(selectedCurrency);
             const currencyName = currency ? currency.name.toLowerCase() : "Unknown currency";
             const amountText = comparison !== "equal" ? `${comparison} than ${currencyAmount}` : `${currencyAmount}`;
-            throw new Error(`you need ${amountText} ${currencyName}`);
+
+            return {
+                success: false,
+                failureReason: `you need ${amountText} ${currencyName}`
+            };
         }
 
-        return passed;
+        return { success: true };
     },
     onSuccessful: async ({ metadata }, {
         selectedCurrency: currencyId,

@@ -1,4 +1,4 @@
-import { EffectType } from "../../../../../types/effects";
+import type { EffectType } from "../../../../../types";
 import { createRecordChapter } from "../obs-remote";
 
 export const CreateRecordChapter: EffectType<{

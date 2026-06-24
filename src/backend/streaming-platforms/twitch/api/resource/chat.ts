@@ -1,4 +1,4 @@
-import {
+import type {
     HelixChatAnnouncementColor,
     HelixChatChatter,
     HelixSendChatAnnouncementParams,
@@ -6,10 +6,18 @@ import {
     HelixUpdateChatSettingsParams,
     HelixUserEmote
 } from "@twurple/api";
-import type { SharedChatParticipant } from '../../../../../types';
-import { ApiResourceBase } from "./api-resource-base";
+
+import type {
+    CamelCased,
+    SharedChatParticipant,
+    SnakeCased
+} from "../../../../../types";
+import type { EventSubChatMessageData } from "../twurple-private-types";
 import type { TwitchApi } from "../";
+
+import { ApiResourceBase } from "./api-resource-base";
 import { TwitchSlashCommandHandler } from "../../chat/twitch-slash-command-handler";
+import { FrontendChatManager } from "../../../../chat/frontend-chat-manager";
 import frontendCommunicator from '../../../../common/frontend-communicator';
 
 interface ResultWithError<TResult, TError> {
@@ -24,6 +32,28 @@ interface ChatMessageRequest {
     replyToMessageId?: string;
 }
 
+interface SendChatMessageResult {
+    success: boolean;
+    isSlashCommand: boolean;
+    messageId?: string;
+    error?: string;
+}
+
+export type TwitchPinnedChatMessage = {
+    messageId: string;
+    broadcasterId: string;
+    senderUserId: string;
+    senderUserLogin: string;
+    senderUserName: string;
+    pinnedByUserId: string;
+    pinnedByUserLogin: string;
+    pinnedByUserName: string;
+    message: CamelCased<EventSubChatMessageData>;
+    startsAt: Date;
+    endsAt?: Date;
+    updatedAt: Date;
+};
+
 export class TwitchChatApi extends ApiResourceBase {
     private _slashCommandHandler: TwitchSlashCommandHandler;
 
@@ -32,14 +62,18 @@ export class TwitchChatApi extends ApiResourceBase {
 
         this._slashCommandHandler = new TwitchSlashCommandHandler(apiBase);
 
-        frontendCommunicator.onAsync("send-chat-message", async (sendData: ChatMessageRequest) => {
+        frontendCommunicator.onAsync("chat:send-chat-message", async (sendData: ChatMessageRequest) => {
             const { message, accountType, replyToMessageId } = sendData;
 
             await this.sendChatMessage(message, replyToMessageId, accountType.toLowerCase() === "bot");
         });
 
-        frontendCommunicator.onAsync("delete-message", async (messageId: string) => {
-            return await this.deleteChatMessage(messageId);
+        frontendCommunicator.onAsync("chat:delete-message",
+            async (messageId: string) => await this.deleteChatMessage(messageId)
+        );
+
+        frontendCommunicator.onAsync("chat:pin-message", async (messageId: string) => {
+            return await this.pinChatMessage(messageId);
         });
     }
 
@@ -67,11 +101,16 @@ export class TwitchChatApi extends ApiResourceBase {
      * @param replyToMessageId The ID of the message this should be replying to. Leave as null for non replies.
      * @param sendAsBot If the chat message should be sent as the bot or not.
      * If this is set to `false` or the bot account is not logged in, the chat message will be sent as the streamer.
-     * @returns `true` if sending the chat message was successful or `false` if it failed
      */
-    async sendChatMessage(message: string, replyToMessageId: string = null, sendAsBot = false): Promise<boolean> {
+    async sendChatMessage(message: string, replyToMessageId: string = null, sendAsBot = false): Promise<SendChatMessageResult> {
+        const sendChatMessageResult: SendChatMessageResult = {
+            success: false,
+            isSlashCommand: false
+        };
+
         if (!message?.length) {
-            return false;
+            sendChatMessageResult.error = "No message specified";
+            return sendChatMessageResult;
         }
 
         try {
@@ -96,23 +135,19 @@ export class TwitchChatApi extends ApiResourceBase {
                     );
 
                 if (!slashCommandResult) {
-                    frontendCommunicator.send("chatUpdate", {
-                        fbEvent: "ChatAlert",
-                        message: `Failed to execute "${message}"`
-                    });
+                    FrontendChatManager.sendAlertToDashboard(`Failed to execute "${message}"`);
                 }
 
-                return slashCommandResult;
+                sendChatMessageResult.success = slashCommandResult;
+                sendChatMessageResult.isSlashCommand = true;
+                return sendChatMessageResult;
             }
 
             if (slashCommandValidationResult != null
                 && slashCommandValidationResult.success === false
                 && slashCommandValidationResult.foundCommand !== false
             ) {
-                frontendCommunicator.send("chatUpdate", {
-                    fbEvent: "ChatAlert",
-                    message: slashCommandValidationResult.errorMessage
-                });
+                FrontendChatManager.sendAlertToDashboard(slashCommandValidationResult.errorMessage);
             }
 
             const messageFragments = message
@@ -130,16 +165,20 @@ export class TwitchChatApi extends ApiResourceBase {
 
                 if (result.isSent !== true) {
                     this.logger.error(`Twitch dropped chat message. Reason: ${result.dropReasonMessage}`);
-                    return false;
+                    return sendChatMessageResult;
                 }
             }
 
-            return result.isSent;
+            sendChatMessageResult.success = result.isSent;
+            sendChatMessageResult.messageId = result.id;
+            sendChatMessageResult.error = result.dropReasonMessage;
+            return sendChatMessageResult;
         } catch (error) {
             this.logger.error(`Unable to send ${sendAsBot === true ? "bot" : "steamer"} chat message`, error);
+            sendChatMessageResult.error = ((error as Error).message ?? error) as string;
         }
 
-        return false;
+        return sendChatMessageResult;
     }
 
     /**
@@ -228,6 +267,10 @@ export class TwitchChatApi extends ApiResourceBase {
             return true;
         } catch (error) {
             this.logger.error("Error deleting chat message", (error as Error).message);
+            frontendCommunicator.send("showToast", {
+                content: "Unable to delete chat message. Check log for more details.",
+                className: "warning"
+            });
         }
 
         return false;
@@ -449,5 +492,191 @@ export class TwitchChatApi extends ApiResourceBase {
             const error = err as Error;
             this.logger.error(`Failed to get shared chat session`, error.message);
         }
+    }
+
+    /**
+     * Gets the currently pinned message in the streamer's chat, if one exists
+     * @returns The currently pinned chat message, or `null` if no message is pinned
+     */
+    async getPinnedChatMessage(): Promise<TwitchPinnedChatMessage> {
+        try {
+            const query: Record<string, string> = {
+                // eslint-disable-next-line camelcase
+                broadcaster_id: this.accounts.streamer.userId,
+                // eslint-disable-next-line camelcase
+                moderator_id: this.accounts.streamer.userId
+            };
+
+            const response = await this.streamerClient?.callApi<{
+                data: SnakeCased<TwitchPinnedChatMessage>[];
+            }>({
+                type: "helix",
+                method: "GET",
+                url: "chat/pins",
+                query
+            });
+
+            const message = response.data[0];
+
+            return message
+                ? {
+                    messageId: message.message_id,
+                    broadcasterId: message.broadcaster_id,
+                    senderUserId: message.sender_user_id,
+                    senderUserLogin: message.sender_user_login,
+                    senderUserName: message.sender_user_name,
+                    pinnedByUserId: message.pinned_by_user_id,
+                    pinnedByUserLogin: message.pinned_by_user_login,
+                    pinnedByUserName: message.pinned_by_user_name,
+                    message: {
+                        text: message.message.text,
+                        fragments: message.message.fragments.map((f) => {
+                            return {
+                                type: f.type,
+                                text: f.text,
+                                cheermote: f.type === "cheermote"
+                                    ? {
+                                        prefix: f.cheermote.prefix,
+                                        bits: f.cheermote.bits,
+                                        tier: f.cheermote.tier
+                                    }
+                                    : null,
+                                emote: f.type === "emote"
+                                    ? {
+                                        id: f.emote.id,
+                                        emoteSetId: f.emote.emote_set_id,
+                                        ownerId: f.emote.owner_id,
+                                        format: f.emote.format
+                                    }
+                                    : null,
+                                mention: f.type === "mention"
+                                    ? {
+                                        userId: f.mention.user_id,
+                                        userLogin: f.mention.user_login,
+                                        userName: f.mention.user_name
+                                    }
+                                    : null
+                            };
+                        })
+                    },
+                    startsAt: new Date(message.starts_at),
+                    endsAt: message.ends_at
+                        ? new Date(message.ends_at)
+                        : null,
+                    updatedAt: new Date(message.updated_at)
+                }
+                : null;
+        } catch (err) {
+            const error = err as Error;
+            this.logger.error(`Failed to get pinned chat message`, error.message);
+        }
+    }
+
+    /**
+     * Pin a chat message to the top of the streamer's chat
+     * @param messageId ID of the chat message to pin
+     * @param duration The number of seconds the message should be pinned for. Minimum: 30. Maximum: 1800. If not specified, the message will be pinned until the stream ends.
+     * @returns `true` if the message was pinned, `false` if it failed
+     */
+    async pinChatMessage(messageId: string, duration?: number): Promise<boolean> {
+        try {
+            const query: Record<string, string> = {
+                // eslint-disable-next-line camelcase
+                broadcaster_id: this.accounts.streamer.userId,
+                // eslint-disable-next-line camelcase
+                moderator_id: this.moderatorId,
+                // eslint-disable-next-line camelcase
+                message_id: messageId
+            };
+
+            if (duration) {
+                // eslint-disable-next-line camelcase
+                query.duration_seconds = String(duration);
+            }
+
+            await this.moderationClient?.callApi({
+                type: "helix",
+                method: "PUT",
+                url: "chat/pins",
+                query
+            });
+
+            return true;
+        } catch (err) {
+            const error = err as Error;
+            this.logger.error(`Failed to pin chat message`, error.message);
+        }
+
+        return false;
+    }
+
+    /**
+     * Updates the chat message currently pinned to the top of the streamer's chat
+     * @param messageId ID of the pinned message to update
+     * @param duration The number of seconds the message should be pinned for. Minimum: 30. Maximum: 1800. If not specified, the message will be pinned until the stream ends.
+     * @returns `true` if the pinned message was updated, `false` if it failed
+     */
+    async updatePinnedChatMessage(messageId: string, duration?: number): Promise<boolean> {
+        try {
+            const query: Record<string, string> = {
+                // eslint-disable-next-line camelcase
+                broadcaster_id: this.accounts.streamer.userId,
+                // eslint-disable-next-line camelcase
+                moderator_id: this.moderatorId,
+                // eslint-disable-next-line camelcase
+                message_id: messageId
+            };
+
+            if (duration) {
+                // eslint-disable-next-line camelcase
+                query.duration_seconds = String(duration);
+            }
+
+            await this.moderationClient?.callApi({
+                type: "helix",
+                method: "PATCH",
+                url: "chat/pins",
+                query
+            });
+
+            return true;
+        } catch (err) {
+            const error = err as Error;
+            this.logger.error(`Failed to update pinned chat message`, error.message);
+        }
+
+        return false;
+    }
+
+    /**
+     * Unpins a message from the streamer's chat
+     * @param messageId ID of the message to unpin
+     * @returns `true` if the message was unpinned, `false` if it failed
+     */
+    async unpinChatMessage(messageId: string): Promise<boolean> {
+        try {
+            const query: Record<string, string> = {
+                // eslint-disable-next-line camelcase
+                broadcaster_id: this.accounts.streamer.userId,
+                // eslint-disable-next-line camelcase
+                moderator_id: this.moderatorId,
+                // eslint-disable-next-line camelcase
+                message_id: messageId
+            };
+
+            await this.moderationClient?.callApi({
+                type: "helix",
+                method: "DELETE",
+                url: "chat/pins",
+                query
+            });
+
+            return true;
+        } catch (err) {
+            const error = err as Error;
+            this.logger.error(`Failed to unpin chat message`, error.message);
+        }
+
+        return false;
     }
 }

@@ -1,8 +1,10 @@
 import { checkForFirebotSetupPathInArgs } from "../../file-open-helpers";
 import frontendCommunicator from "../../../common/frontend-communicator";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
+
 
 export async function whenReady() {
+    const logger = LoggerCache.getLogger("Init");
 
     logger.debug("...Applying IPC events");
     const { setupIpcEvents } = await import("./ipc-events");
@@ -23,6 +25,14 @@ export async function whenReady() {
     const { ensureRequiredFoldersExist } = await import("../../data-tasks");
     await ensureRequiredFoldersExist();
 
+    windowManagement.updateSplashScreenStatus("Running daily backup...");
+    const { BackupManager } = await import("../../../backup-manager");
+    await BackupManager.onceADayBackUpCheck();
+
+    windowManagement.updateSplashScreenStatus("Loading pronoun cache...");
+    const { FirebotPronounManager } = await import("../../../pronouns/pronoun-manager");
+    await FirebotPronounManager.cachePronouns();
+
     // load twitch auth
     windowManagement.updateSplashScreenStatus("Loading Twitch login system...");
     await import("../../../auth/auth-manager");
@@ -38,7 +48,7 @@ export async function whenReady() {
     const { FirebotDeviceAuthProvider } = await import("../../../auth/firebot-device-auth-provider");
     FirebotDeviceAuthProvider.setupDeviceAuthProvider();
 
-    const connectionManager = (await import("../../../common/connection-manager")).default;
+    const { ConnectionManager } = await import("../../../common/connection-manager");
 
     windowManagement.updateSplashScreenStatus("Loading timers...");
     const { TimerManager } = await import("../../../timers/timer-manager");
@@ -52,15 +62,14 @@ export async function whenReady() {
 
     windowManagement.updateSplashScreenStatus("Refreshing Twitch account data...");
 
-    // Loading these first so that the refresh caches the account avatar URLs
-    const _chatHelpers = await import("../../../chat/chat-helpers");
+    // Loading this first so that the refresh caches the account avatar URLs
     const _eventSubChatHelpers = await import("../../../streaming-platforms/twitch/api/eventsub/eventsub-chat-helpers");
 
     const { TwitchApi } = await import("../../../streaming-platforms/twitch/api");
     await TwitchApi.refreshAccounts();
 
     windowManagement.updateSplashScreenStatus("Starting stream status poll...");
-    connectionManager.startOnlineCheckInterval();
+    ConnectionManager.startOnlineCheckInterval();
 
     // load effects
     logger.debug("Loading effects...");
@@ -93,12 +102,6 @@ export async function whenReady() {
     windowManagement.updateSplashScreenStatus("Loading filters...");
     const { loadFilters } = await import("../../../events/filters/builtin-filter-loader");
     loadFilters();
-
-    // load integrations
-    logger.debug("Loading integrations...");
-    windowManagement.updateSplashScreenStatus("Loading integrations...");
-    const { loadIntegrations } = await import("../../../integrations/builtin-integration-loader");
-    loadIntegrations();
 
     // load variables
     logger.debug("Loading variables...");
@@ -162,6 +165,15 @@ export async function whenReady() {
     const { QuickActionManager } = await import("../../../quick-actions/quick-action-manager");
     QuickActionManager.loadItems();
 
+    windowManagement.updateSplashScreenStatus("Loading control decks...");
+    const { ControlDeckControlTypeManager } = await import("../../../control-deck/control-type-manager");
+    ControlDeckControlTypeManager.registerBuiltInControlTypes();
+    const { ControlDeckManager } = await import("../../../control-deck/control-deck-manager");
+    ControlDeckManager.loadItems();
+    const { ControlDeckStateManager } = await import("../../../control-deck/control-deck-state-manager");
+    ControlDeckStateManager.loadItems();
+    await ControlDeckManager.initializeControlStates();
+
     windowManagement.updateSplashScreenStatus("Loading webhooks...");
     const webhookConfigManager = (await import("../../../webhooks/webhook-config-manager")).default;
     webhookConfigManager.loadItems();
@@ -173,9 +185,14 @@ export async function whenReady() {
     const overlayWidgetConfigManager = (await import("../../../overlay-widgets/overlay-widget-config-manager")).default;
     overlayWidgetConfigManager.loadItems();
 
-    windowManagement.updateSplashScreenStatus("Loading startup script data...");
-    const startupScriptsManager = await import("../../../common/handlers/custom-scripts/startup-scripts-manager");
-    startupScriptsManager.loadStartupConfig();
+    windowManagement.updateSplashScreenStatus("Loading plugins...");
+
+    // Migrate legacy startup scripts before we load plugin configs
+    const { PluginManager } = await import("../../../plugins/plugin-manager");
+    await PluginManager.migrateLegacyStartUpScriptsToPlugins();
+
+    const { PluginConfigManager } = await import("../../../plugins/plugin-config-manager");
+    PluginConfigManager.loadItems();
 
     windowManagement.updateSplashScreenStatus("Starting chat moderation manager...");
     const { ChatModerationManager } = await import("../../../chat/moderation/chat-moderation-manager");
@@ -238,7 +255,7 @@ export async function whenReady() {
     const { QuoteManager } = await import("../../../quotes/quote-manager");
     await QuoteManager.loadQuoteDatabase();
 
-    // These are defined globally for Custom Scripts.
+    // These are defined globally for legacy Custom Scripts.
     // We will probably want to handle these differently but we shouldn't
     // change anything until we are ready as changing this will break most scripts
     const Effect = await import("../../../common/EffectType");
@@ -246,14 +263,13 @@ export async function whenReady() {
     const { ProfileManager } = await import("../../../common/profile-manager");
     global.SCRIPTS_DIR = ProfileManager.getPathInProfile("/scripts/");
 
-    windowManagement.updateSplashScreenStatus("Running daily backup...");
-    const { BackupManager } = await import("../../../backup-manager");
-    await BackupManager.onceADayBackUpCheck();
-
     // start the REST api server
     windowManagement.updateSplashScreenStatus("Starting internal web server...");
-    const httpServerManager = (await import("../../../../server/http-server-manager")).default;
-    httpServerManager.start();
+    const { HttpServerManager } = (await import("../../../../server/http-server-manager"));
+    HttpServerManager.start();
+
+    const { BonjourManager } = (await import("../../../../server/bonjour-manager"));
+    BonjourManager.start();
 
     // register websocket event handlers
     const websocketEventsHandler = await import("../../../../server/websocket-events-handler");
@@ -262,6 +278,10 @@ export async function whenReady() {
     windowManagement.updateSplashScreenStatus("Loading channel rewards...");
     const channelRewardManager = (await import("../../../channel-rewards/channel-reward-manager")).default;
     await channelRewardManager.loadChannelRewards();
+
+    windowManagement.updateSplashScreenStatus("Loading power-ups...");
+    const powerUpsManager = (await import("../../../power-ups/power-ups-manager")).default;
+    await powerUpsManager.loadPowerUps();
 
     // load activity feed manager
     await import("../../../events/activity-feed-manager");
@@ -276,6 +296,7 @@ export async function whenReady() {
     windowManagement.updateSplashScreenStatus("Starting notification manager...");
     const { NotificationManager } = await import("../../../notifications/notification-manager");
     NotificationManager.loadNotificationCache();
+    NotificationManager.migrateLegacyScriptNotifications();
 
     // get ui extension manager in memory
     await import("../../../ui-extensions/ui-extension-manager");
@@ -283,19 +304,26 @@ export async function whenReady() {
     // start crowbar relay websocket
     await import("../../../crowbar-relay/crowbar-relay-websocket");
 
-    const countdownManager = (await import("../../../overlay-widgets/builtin-types/countdown/countdown-manager")).default;
+    // load integrations
+    logger.debug("Loading integrations...");
+    windowManagement.updateSplashScreenStatus("Loading integrations...");
+    const { loadIntegrations } = await import("../../../integrations/builtin-integration-loader");
+    loadIntegrations();
+
+    const countdownManager = (await import("../../../overlay-widgets/builtin-types/countdown/countdown-manager"))
+        .default;
     countdownManager.startTimer();
+
+    // Get additional modules in memory
+    await import("../../../core/update-manager");
+    await import("../../../chat/frontend-chat-manager");
 
     logger.debug("...loading main window");
     windowManagement.updateSplashScreenStatus("Here we go!");
     await windowManagement.createMainWindow();
 
     // Receive log messages from frontend
-    frontendCommunicator.on("logging", (data: {
-        level: string;
-        message: string;
-        meta?: unknown[];
-    }) => {
-        logger.log(data.level, data.message, ...(data.meta ?? []));
+    frontendCommunicator.on("logging", (data: { level: string, message: string, meta?: unknown[] }) => {
+        LoggerCache.getLogger("Renderer").log(data.level, data.message, ...(data.meta ?? []));
     });
-};
+}

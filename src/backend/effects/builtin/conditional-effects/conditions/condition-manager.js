@@ -3,7 +3,7 @@
 const EventEmitter = require("events");
 const { ReplaceVariableManager } = require("../../../../variables/replace-variable-manager");
 const frontendCommunicator = require("../../../../common/frontend-communicator");
-const logger = require("../../../../logwrapper");
+const logger = require("../../../../logger-cache").LoggerCache.getLogger("Conditions");
 const { simpleClone } = require("../../../../utils");
 
 class ConditionManager extends EventEmitter {
@@ -30,6 +30,15 @@ class ConditionManager extends EventEmitter {
         logger.debug(`Registered Condition Type ${conditionType.id}`);
 
         this.emit("conditionTypeRegistered", conditionType);
+    }
+
+    unregisterConditionType(conditionTypeId) {
+        const index = this._registeredConditionTypes.findIndex(ct => ct.id === conditionTypeId);
+        if (index !== -1) {
+            const [removed] = this._registeredConditionTypes.splice(index, 1);
+            logger.debug(`Unregistered Condition Type ${conditionTypeId}`);
+            this.emit("conditionTypeUnregistered", removed);
+        }
     }
 
     getConditionTypeById(conditionTypeId) {
@@ -97,8 +106,8 @@ class ConditionManager extends EventEmitter {
 
 const manager = new ConditionManager();
 
-frontendCommunicator.on("getConditionTypes", (trigger) => {
-    logger.info("got 'getConditionTypes' request");
+frontendCommunicator.onAsync("conditions:get-condition-types", async (trigger) => {
+    logger.info(`Got "conditions:get-condition-types" request`);
 
     let conditionTypes = manager.getAllConditionTypes();
     if (trigger != null) {

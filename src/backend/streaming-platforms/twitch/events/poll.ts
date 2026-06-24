@@ -5,6 +5,7 @@ import {
 } from "@twurple/eventsub-base";
 import { EventManager } from "../../../events/event-manager";
 import { pick } from "../../../utils";
+import { InternalBus } from "../../../internal-bus";
 
 interface TwitchPollWinningChoice {
     winningChoiceName: string;
@@ -38,13 +39,26 @@ export function triggerChannelPollBegin(
     isChannelPointsVotingEnabled: boolean,
     channelPointsPerVote: number
 ) {
+    const mappedChoices = choices.map(c => pick(c, ["id", "title"]));
+
     void EventManager.triggerEvent("twitch", "channel-poll-begin", {
         title,
-        choices: choices.map(c => pick(c, ["id", "title"])),
+        choices: mappedChoices,
         startDate,
         endDate,
         isChannelPointsVotingEnabled,
         channelPointsPerVote
+    });
+
+    InternalBus.emit("channel-poll-begin", {
+        title,
+        choices: mappedChoices.map(c => ({ ...c, totalVotes: 0, channelPointsVotes: 0 })),
+        winningChoiceIds: [],
+        startDate,
+        endDate,
+        isChannelPointsVotingEnabled,
+        channelPointsPerVote,
+        status: "active"
     });
 }
 
@@ -58,16 +72,29 @@ export function triggerChannelPollProgress(
 ) {
     const { winningChoiceName, winningChoiceVotes } = getWinningChoices(choices);
 
+    const mappedChoices = mapChoices(choices);
+    const winningChoiceIds = mappedChoices.filter(c => c.totalVotes === winningChoiceVotes).map(c => c.id);
 
     void EventManager.triggerEvent("twitch", "channel-poll-progress", {
         title,
-        choices: mapChoices(choices),
+        choices: mappedChoices,
         winningChoiceName,
         winningChoiceVotes,
         startDate,
         endDate,
         isChannelPointsVotingEnabled,
         channelPointsPerVote
+    });
+
+    InternalBus.emit("channel-poll-progress", {
+        title,
+        choices: mappedChoices,
+        winningChoiceIds,
+        startDate,
+        endDate,
+        isChannelPointsVotingEnabled,
+        channelPointsPerVote,
+        status: "active"
     });
 }
 
@@ -82,11 +109,25 @@ export function triggerChannelPollEnd(
 ) {
     const { winningChoiceName, winningChoiceVotes } = getWinningChoices(choices);
 
+    const mappedChoices = mapChoices(choices);
+    const winningChoiceIds = mappedChoices.filter(c => c.totalVotes === winningChoiceVotes).map(c => c.id);
+
     void EventManager.triggerEvent("twitch", "channel-poll-end", {
         title,
-        choices: mapChoices(choices),
+        choices: mappedChoices,
         winningChoiceName,
         winningChoiceVotes,
+        startDate,
+        endDate,
+        isChannelPointsVotingEnabled,
+        channelPointsPerVote,
+        status
+    });
+
+    InternalBus.emit("channel-poll-end", {
+        title,
+        choices: mappedChoices,
+        winningChoiceIds,
         startDate,
         endDate,
         isChannelPointsVotingEnabled,

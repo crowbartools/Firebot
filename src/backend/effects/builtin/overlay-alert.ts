@@ -4,16 +4,19 @@
 
 import fs from "fs/promises";
 import path from "path";
+import escapeHTML from "escape-html";
 
 import type { EffectType, FirebotAudioDevice } from "../../../types";
 
+import { HttpServerManager } from "../../../server/http-server-manager";
 import { ReplaceVariableManager } from "../../variables/replace-variable-manager";
 import { ResourceTokenManager } from "../../resource-token-manager";
 import { SettingsManager } from "../../common/settings-manager";
-import webServer from "../../../server/http-server-manager";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
 import { wait } from "../../utils";
 import { playSound } from "../../common/handlers/sound-handler";
+
+const logger = LoggerCache.getLogger("Effects");
 
 interface OverlayAlertEffect {
     mediaType: "image" | "video" | "none";
@@ -276,6 +279,10 @@ const effect: EffectType<OverlayAlertEffect> = {
                 placeholder-text="Enter alert text"
                 use-text-area="true"
             />
+            <div class="muted">
+                If you would like to add HTML from a variable, you must wrap it inside of <code>$allowHtml</code> (e.g. <code>$allowHtml[$someOtherVariable]</code>).<br />
+                <strong>WARNING:</strong> Be very careful doing this with untrusted or potentially harmful data, like chat messages.
+            </div>
             <div class="mt-3">
                 <font-options ng-model="effect.font" allow-alpha="true"></font-options>
             </div>
@@ -664,10 +671,18 @@ const effect: EffectType<OverlayAlertEffect> = {
                 );
             }
 
-            effect.text = await ReplaceVariableManager.populateStringWithTriggerData(effect.text, {
-                ...event.trigger,
-                effectOutputs: event.outputs
-            });
+            effect.text = await ReplaceVariableManager.populateStringWithTriggerData(
+                effect.text,
+                {
+                    ...event.trigger,
+                    effectOutputs: event.outputs
+                },
+                (text, token) => {
+                    if (token.value !== "allowHtml") {
+                        return escapeHTML(text);
+                    }
+                }
+            );
         }
 
         const data: OverlayData = {
@@ -786,7 +801,7 @@ const effect: EffectType<OverlayAlertEffect> = {
             // }
         }
 
-        webServer.sendToOverlay("overlayalert", data);
+        HttpServerManager.sendToOverlay("overlayalert", data);
 
         // Handle sound effect
         if (effect.playSound) {

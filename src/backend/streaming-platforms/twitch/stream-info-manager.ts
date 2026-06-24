@@ -9,7 +9,7 @@ import {
     triggerTitleChanged
 } from "./events/stream";
 import frontendCommunicator from "../../common/frontend-communicator";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
 
 interface TwitchStreamInfo {
     isLive?: boolean;
@@ -28,6 +28,8 @@ const POLL_INTERVAL = 15 * 1000;
 const WEB_CHECKIN_INTERVAL = 25;
 
 class TwitchStreamInfoManager {
+    private logger = LoggerCache.getLogger("Stream Info");
+
     private _streamInfoPollIntervalId: NodeJS.Timeout;
     private _lastWebCheckin: DateTime = DateTime.fromMillis(0);
 
@@ -48,7 +50,7 @@ class TwitchStreamInfoManager {
     private async doWebCheckin(): Promise<void> {
         try {
             if (Math.abs(this._lastWebCheckin.diffNow("minutes").minutes) >= WEB_CHECKIN_INTERVAL) {
-                logger.debug("Sending online heartbeat to firebot.app");
+                this.logger.debug("Sending online heartbeat to firebot.app");
 
                 await fetch(`https://firebot.app/api/live-now/${AccountAccess.getAccounts().streamer.userId}`, {
                     method: "POST"
@@ -57,7 +59,7 @@ class TwitchStreamInfoManager {
                 this._lastWebCheckin = DateTime.utc();
             }
         } catch (error) {
-            logger.warn(`Unable to do online web check-in: ${(error as Error).message}`);
+            this.logger.warn(`Unable to do online web check-in: ${(error as Error).message}`);
         }
     }
 
@@ -108,7 +110,7 @@ class TwitchStreamInfoManager {
             streamInfoChanged = streamInfoChanged || metaUpdateResult;
         }
         if (streamInfoChanged) {
-            logger.debug(`Sending stream info update`);
+            this.logger.debug(`Sending stream info update`);
             frontendCommunicator.send("stream-info-update", this.streamInfo);
         }
     }

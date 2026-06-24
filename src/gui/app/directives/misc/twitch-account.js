@@ -21,7 +21,7 @@
                     <div class="flex items-center">
                         <img
                             class="login-thumbnail-large noselect"
-                            ng-src="{{$ctrl.cs.getAccountAvatar($ctrl.type)}}"
+                            ng-src="{{$ctrl.accountAccess.getAccountAvatar($ctrl.type)}}"
                         />
                         <div class="ml-10">
                             <h3 class="font-bold" style="margin: 0;">{{$ctrl.getAccount().displayName}}</h3>
@@ -35,10 +35,10 @@
             </div>
           </div>
           `,
-        controller: function(accountAccess, connectionService) {
+        controller: function(accountAccess) {
             const $ctrl = this;
 
-            $ctrl.cs = connectionService;
+            $ctrl.accountAccess = accountAccess;
 
             $ctrl.descriptions = {
                 streamer: "The main account that Firebot uses to connect to Twitch services.",

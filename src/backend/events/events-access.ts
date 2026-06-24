@@ -9,7 +9,7 @@ import type {
 import { ProfileManager } from "../common/profile-manager";
 import { SettingsManager } from "../common/settings-manager";
 import frontendCommunicator from "../common/frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 
 const EVENTS_FOLDER = "events";
 
@@ -21,13 +21,18 @@ interface EventData {
 }
 
 class EventsAccess {
+    private logger = LoggerCache.getLogger("Events");
     private _mainEvents: EventSettings[] = [];
     private _groups: Record<string, EventGroup> = {};
     private _sortTags: SortTag[] = [];
 
     constructor() {
-        frontendCommunicator.on("getAllEventData", () => {
-            logger.debug("got 'get all event data' request");
+        frontendCommunicator.onAsync("events:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
+        frontendCommunicator.onAsync("events:get-all-event-data", async () => {
+            this.logger.debug("got 'get all event data' request");
             return {
                 mainEvents: Array.isArray(this._mainEvents)
                     ? this._mainEvents
@@ -41,7 +46,7 @@ class EventsAccess {
             action: string;
             meta: unknown;
         }) => {
-            logger.debug("got 'eventUpdate' event");
+            this.logger.debug("got 'eventUpdate' event");
 
             const { action, meta } = data;
 
@@ -79,9 +84,9 @@ class EventsAccess {
         try {
             this._mainEvents = events;
             eventsDb.push("/mainEvents", events);
-            logger.debug(`Saved main events.`);
+            this.logger.debug(`Saved main events.`);
         } catch (err) {
-            logger.warn(`Unable to save main events.`, err);
+            this.logger.warn(`Unable to save main events.`, err);
         }
     }
 
@@ -93,13 +98,13 @@ class EventsAccess {
         try {
             this._groups[group.id] = group;
             eventsDb.push(`/groups/${group.id}`, group);
-            logger.debug(`Saved event group '${group.id}'.`);
+            this.logger.debug(`Saved event group '${group.id}'.`);
 
             this.rebuildSettings();
 
             frontendCommunicator.send("event-access:event-set-saved", this._groups[group.id]);
         } catch (err) {
-            logger.warn(`Unable to save event group '${group.id}'.`, err);
+            this.logger.warn(`Unable to save event group '${group.id}'.`, err);
         }
     }
 
@@ -111,13 +116,13 @@ class EventsAccess {
         try {
             this._groups = groupsToSave;
             eventsDb.push("/groups", groupsToSave);
-            logger.debug(`Saved all groups.`);
+            this.logger.debug(`Saved all groups.`);
 
             this.rebuildSettings();
 
             frontendCommunicator.send("event-access:all-event-sets-saved", this._groups);
         } catch (err) {
-            logger.warn(`Unable to save groups.`, err);
+            this.logger.warn(`Unable to save groups.`, err);
         }
     }
 
@@ -173,14 +178,14 @@ class EventsAccess {
         const eventsDb = this.getEventsDb();
         try {
             eventsDb.push("/sortTags", this._sortTags);
-            logger.debug(`Saved event tags.`);
+            this.logger.debug(`Saved event tags.`);
         } catch (err) {
-            logger.warn(`Unable to save event tags.`, err);
+            this.logger.warn(`Unable to save event tags.`, err);
         }
     }
 
     loadEventsAndGroups() {
-        logger.debug(`Attempting to load event data...`);
+        this.logger.debug(`Attempting to load event data...`);
 
         const eventsDb = this.getEventsDb();
 
@@ -212,9 +217,9 @@ class EventsAccess {
 
             this.rebuildSettings();
 
-            logger.debug(`Loaded event data.`);
+            this.logger.debug(`Loaded event data.`);
         } catch (err) {
-            logger.warn(`There was an error reading events data file.`, err);
+            this.logger.warn(`There was an error reading events data file.`, err);
         }
     }
 
@@ -226,13 +231,13 @@ class EventsAccess {
         try {
             eventsDb.delete(`/groups/${groupId}`);
             delete this._groups[groupId];
-            logger.debug(`Deleted event group '${groupId}'.`);
+            this.logger.debug(`Deleted event group '${groupId}'.`);
 
             this.rebuildSettings();
 
             frontendCommunicator.send("event-access:event-set-deleted", groupId);
         } catch (err) {
-            logger.warn(`Unable to delete event group '${groupId}'.`, err);
+            this.logger.warn(`Unable to delete event group '${groupId}'.`, err);
         }
     }
 
@@ -252,7 +257,7 @@ class EventsAccess {
 
             this.saveMainEvents(this._mainEvents);
         } catch (err) {
-            logger.warn(`Unable to save new event to main events.`, err);
+            this.logger.warn(`Unable to save new event to main events.`, err);
         }
     }
 
@@ -312,7 +317,7 @@ class EventsAccess {
             this._mainEvents[index] = event;
 
             this.saveMainEvents(this._mainEvents);
-            frontendCommunicator.send("main-events-update");
+            this.triggerUiRefresh();
         } else {
             for (const [groupId, group] of Object.entries(this._groups)) {
                 event = this._groups[groupId].events.find(e => e.id === eventId);
@@ -345,8 +350,15 @@ class EventsAccess {
         frontendCommunicator.send("event-group-update", group);
     }
 
-    triggerUiRefresh() {
-        frontendCommunicator.send("main-events-update");
+    triggerUiRefresh(): void {
+        this.logger.debug("Triggering UI update");
+        frontendCommunicator.send("events:main-events-update", {
+            mainEvents: Array.isArray(this._mainEvents)
+                ? this._mainEvents
+                : Object.values(this._mainEvents),
+            groups: Object.values(this._groups),
+            sortTags: this._sortTags
+        });
     }
 }
 

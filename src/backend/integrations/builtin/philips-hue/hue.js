@@ -1,6 +1,6 @@
 "use strict";
 const EventEmitter = require("events");
-const logger = require("../../../logwrapper");
+const logger = require("../../../logger-cache").LoggerCache.getLogger("Integration: Philips Hue");
 const hueManager = require("./hue-manager");
 const nodeApi = require('node-hue-api'),
     discovery = nodeApi.discovery,

@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../../types/variables";
+import type { ReplaceVariable } from "../../../../../types";
 import tinycolor from "tinycolor2";
 
 export const ColorValueVariable: ReplaceVariable = {

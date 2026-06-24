@@ -1,4 +1,7 @@
+import type { EventSubChannelBitsUseMessagePart } from "../api/twurple-private-types";
 import { EventManager } from "../../../events/event-manager";
+import { FrontendChatManager } from "../../../chat/frontend-chat-manager";
+import powerUpsManager from "../../../power-ups/power-ups-manager";
 
 export function triggerCheer(
     username: string,
@@ -6,7 +9,8 @@ export function triggerCheer(
     userDisplayName: string,
     bits: number,
     totalBits: number,
-    cheerMessage: string
+    cheerMessage: string,
+    cheerMessageParts: EventSubChannelBitsUseMessagePart[]
 ): void {
     void EventManager.triggerEvent("twitch", "cheer", {
         username,
@@ -15,7 +19,8 @@ export function triggerCheer(
         isAnonymous: false,
         bits,
         totalBits,
-        cheerMessage
+        cheerMessage,
+        cheerMessageParts
     });
 }
 
@@ -92,4 +97,68 @@ export function triggerPowerupGigantifyEmote(
         emoteName,
         emoteUrl
     });
+}
+
+export function handleCustomPowerUpRedemption(
+    redemptionId: string,
+    status: string,
+    messageText: string,
+    userId: string,
+    username: string,
+    userDisplayName: string,
+    powerUpId: string,
+    powerUpTitle: string,
+    powerUpPrompt: string,
+    powerUpCost: number,
+    powerUpImageUrl: string
+): void {
+    FrontendChatManager.sendPowerUpRedemptionToDashboard({
+        id: redemptionId,
+        status,
+        messageText,
+        user: {
+            id: userId,
+            username,
+            displayName: userDisplayName
+        },
+        powerUp: {
+            id: powerUpId,
+            name: powerUpTitle,
+            bits: powerUpCost,
+            imageUrl:
+                powerUpImageUrl ??
+                "https://static-cdn.jtvnw.net/twilight-static-assets/Default-Power-up-Line-Lightshade-112x112.png"
+        }
+    });
+
+    setTimeout(() => {
+        const redemptionMeta = {
+            username,
+            userId,
+            userDisplayName,
+            messageText,
+            args: (messageText ?? "").split(" "),
+            redemptionId,
+            powerUpId,
+            powerUpImage: powerUpImageUrl,
+            powerUpName: powerUpTitle,
+            powerUpDescription: powerUpPrompt,
+            powerUpCost
+        };
+
+        void void EventManager.triggerEvent("twitch", "power-up-redemption", redemptionMeta);
+
+        void powerUpsManager.triggerPowerUp(powerUpId, {
+            username,
+            userId,
+            userDisplayName,
+            messageText,
+            args: redemptionMeta.args,
+            powerUpId,
+            powerUpImage: powerUpImageUrl,
+            powerUpName: powerUpTitle,
+            powerUpDescription: powerUpPrompt,
+            bits: powerUpCost
+        });
+    }, 100);
 }

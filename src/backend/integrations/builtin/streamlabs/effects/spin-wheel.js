@@ -1,8 +1,7 @@
 "use strict";
 
-const { EffectCategory } = require("../../../../../shared/effect-constants");
 const integrationManager = require("../../../integration-manager");
-const logger = require("../../../../logwrapper");
+const logger = require("../../../../logger-cache").LoggerCache.getLogger("Integration: Streamlabs");
 
 const effect = {
     definition: {

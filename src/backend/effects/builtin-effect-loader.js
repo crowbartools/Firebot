@@ -44,7 +44,6 @@ exports.loadEffects = () => {
         'play-sound',
         'play-video', // No migration needed.
         'overlay-alert',
-        'random-effect',
         'random-reddit-image',
         'remove-user-metadata',
         'reset-timer',
@@ -52,7 +51,8 @@ exports.loadEffects = () => {
         'run-command',
         'run-program',
         'send-custom-websocket-event',
-        'sequential-effect',
+        'set-active-control-deck',
+        'set-default-control-deck',
         'set-output',
         'set-user-metadata',
         'shoutout',
@@ -76,11 +76,19 @@ exports.loadEffects = () => {
         'update-role',
         'update-viewer-rank',
 
+        'overlay-widgets/clear-chat-widget',
         'overlay-widgets/update-overlay-widget-settings',
         'overlay-widgets/update-progress-bar',
         'overlay-widgets/update-dynamic-countdown',
         'overlay-widgets/set-custom-widget-state',
-        'overlay-widgets/send-message-to-custom-widget'
+        'overlay-widgets/send-message-to-custom-widget',
+
+        // Deprecated - remove after min 90 days post-release
+        'deprecated/show-text',
+
+        // Deprecated (no remove date)
+        'deprecated/random-effect',
+        'deprecated/sequential-effect'
     ].forEach((filename) => {
         const definition = require(`./builtin/${filename}`);
         EffectManager.registerEffect(definition);
@@ -108,7 +116,12 @@ exports.loadEffects = () => {
         'create-prediction',
         'lock-prediction',
         'resolve-prediction',
-        'update-vip-role'
+
+        'update-vip-role',
+
+        'pin-chat-message',
+        'update-pinned-chat-message',
+        'unpin-chat-message'
     ].forEach((filename) => {
         const definition = require(`../streaming-platforms/twitch/effects/${filename}`);
         EffectManager.registerEffect(definition);

@@ -31,7 +31,7 @@
                     return;
                 }
                 if ($ctrl.schema.sync) {
-                    backendCommunicator.fireEvent($ctrl.schema.backendEventName);
+                    backendCommunicator.send($ctrl.schema.backendEventName);
                 } else {
                     $ctrl.buttonLoading = true;
                     backendCommunicator.fireEventAsync($ctrl.schema.backendEventName)

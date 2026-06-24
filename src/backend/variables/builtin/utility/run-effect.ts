@@ -2,8 +2,9 @@ import { randomUUID } from "crypto";
 import type { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 import effectRunner from "../../../common/effect-runner";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
 
+const logger = LoggerCache.getLogger("Variables");
 
 const model : ReplaceVariable = {
     definition: {

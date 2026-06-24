@@ -155,7 +155,7 @@
 
                             $scope.showOpenScriptsFolderButton = notification.source === "script" && notification.type === "update";
                             $scope.openScriptsFolder = () => {
-                                backendCommunicator.fireEvent("openScriptsFolder");
+                                backendCommunicator.send("openScriptsFolder");
                             };
 
                             $scope.ok = function() {

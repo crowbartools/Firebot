@@ -10,7 +10,7 @@ on:
 
 jobs:
   checkversion:
-    name: Check if version has corrosponding tag
+    name: Check if version has corresponding tag
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
@@ -52,7 +52,7 @@ jobs:
           echo "${TEMPLATE}" >> $GITHUB_OUTPUT
           echo "${EOF}" >> $GITHUB_OUTPUT
 
-      - name: "Check: package version has corrosponding git tag"
+      - name: "Check: package version has corresponding git tag"
         id: dobuild
         shell: bash
         run: echo dobuild=$(git show-ref --tags --verify --quiet -- "refs/tags/v${{ steps.version.outputs.version }}" && echo 0 || echo 1) >> $GITHUB_OUTPUT
@@ -76,14 +76,16 @@ jobs:
       - name: Setup Nodejs
         uses: actions/setup-node@v4
         with:
-          node-version: "20.14.0"
+          node-version: "20.19.0"
 
       - name: Install correct npm version
         run: npm install -g npm@10.8.1
 
       - name: Linux Build Prep
         if: runner.os == 'linux'
-        run: sudo apt-get install libx11-dev libxtst-dev libpng-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install libx11-dev libxtst-dev libpng-dev
 
       - name: MacOS Build Prep
         if: runner.os == 'macOS'
@@ -94,7 +96,7 @@ jobs:
         run: npm install --global --production --omit=dev grunt-cli node-gyp
 
       - name: Install Project Dependencies
-        run: npm install
+        run: npm ci
 
       - name: Decrypt Secrets.gpg
         env:
@@ -140,5 +142,4 @@ jobs:
             ./bundles/Linux/firebot-v${{ needs.checkversion.outputs.version }}-linux-x64.tar.gz
             ./bundles/Linux/firebot-v${{ needs.checkversion.outputs.version }}-linux-x64.deb
             ./bundles/Linux/firebot-v${{ needs.checkversion.outputs.version }}-linux-x64.rpm
-            ./bundles/macOS/firebot-v${{ needs.checkversion.outputs.version }}-macos-x64.dmg
             ./bundles/macOS/firebot-v${{ needs.checkversion.outputs.version }}-macos-arm64.dmg

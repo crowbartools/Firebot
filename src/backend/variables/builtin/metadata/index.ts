@@ -3,6 +3,7 @@ import argArray from './arg-array';
 import argArrayRaw from './arg-array-raw';
 import argCount from './arg-count';
 import commandTrigger from './command-trigger';
+import controlDeckInput from './control-deck-input';
 import count from './count';
 import effectOutput from './effect-output';
 import effectQueueId from './effect-queue-id';
@@ -32,6 +33,7 @@ export default [
     argArrayRaw,
     argCount,
     commandTrigger,
+    controlDeckInput,
     count,
     effectOutput,
     effectQueueId,

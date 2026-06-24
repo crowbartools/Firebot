@@ -1,6 +1,9 @@
-import { EffectType } from "../../../types/effects";
+import type { EffectType } from "../../../types";
+
 import { evalSandboxedJs } from "../../common/handlers/js-sandbox/sandbox-eval";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
+
+const logger = LoggerCache.getLogger("Effects");
 
 const effect: EffectType<{
     code: string;

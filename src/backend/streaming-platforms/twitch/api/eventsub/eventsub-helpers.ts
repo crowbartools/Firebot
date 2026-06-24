@@ -4,6 +4,7 @@ import type {
 } from "@twurple/eventsub-base";
 import type { SharedChatParticipant } from "../../../../../types";
 import type { CustomReward } from "../resource/channel-rewards";
+import { CustomPowerUp } from "../resource/power-ups";
 
 export function mapEventSubRewardToTwitchData(event: EventSubChannelRewardEvent): CustomReward {
     const image = {
@@ -46,8 +47,8 @@ export function mapEventSubRewardToTwitchData(event: EventSubChannelRewardEvent)
     return customReward;
 }
 
-export function getChannelRewardImageUrl(reward: CustomReward): string {
-    return reward.image?.url4x || reward.image?.url2x || reward.image?.url1x || "";
+export function getChannelRewardOrPowerUpImageUrl(rewardOrPowerUp: CustomReward | CustomPowerUp): string {
+    return rewardOrPowerUp.image?.url4x || rewardOrPowerUp.image?.url2x || rewardOrPowerUp.image?.url1x || "";
 }
 
 export async function mapSharedChatParticipants(

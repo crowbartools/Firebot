@@ -2,7 +2,7 @@
 
 const effectRunner = require("../../common/effect-runner");
 const { EffectCategory } = require('../../../shared/effect-constants');
-const logger = require("../../logwrapper");
+const logger = require("../../logger-cache").LoggerCache.getLogger("Effects");
 const { SettingsManager } = require("../../common/settings-manager");
 const conditionManager = require("./conditional-effects/conditions/condition-manager");
 const { wait } = require("../../utils");

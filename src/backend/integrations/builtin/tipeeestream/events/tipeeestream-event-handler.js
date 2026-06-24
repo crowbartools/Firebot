@@ -1,5 +1,5 @@
 "use strict";
-const logger = require('../../../../logwrapper');
+const logger = require("../../../../logger-cache").LoggerCache.getLogger("Integration: TipeeeStream");
 const { EventManager } = require("../../../../events/event-manager");
 
 const EVENT_SOURCE_ID = "tipeeestream";

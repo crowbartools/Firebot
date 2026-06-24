@@ -1,5 +1,9 @@
-import { EffectType } from "../../../../../types/effects";
-import { OBSSceneItem, OBSSourceTransformKeys, transformSceneItem } from "../obs-remote";
+import type { EffectType, BackendCommunicator } from "../../../../../types";
+import {
+    type OBSSceneItem,
+    type OBSSourceTransformKeys,
+    transformSceneItem
+} from "../obs-remote";
 
 export const TransformSourceEffectType: EffectType<{
     sceneName?: string;
@@ -69,14 +73,14 @@ export const TransformSourceEffectType: EffectType<{
                     model="effect.duration"
                     style="margin-bottom: 20px;" />
                 <div style="display: flex; gap: 20px;">
-                    <firebot-checkbox 
-                        label="Ease-In" 
-                        tooltip="Smooth the start of the animation" 
+                    <firebot-checkbox
+                        label="Ease-In"
+                        tooltip="Smooth the start of the animation"
                         model="effect.easeIn"
                         style="flex-basis: 50%" />
-                    <firebot-checkbox 
-                        label="Ease-Out" 
-                        tooltip="Smooth the end of the animation" 
+                    <firebot-checkbox
+                        label="Ease-Out"
+                        tooltip="Smooth the end of the animation"
                         model="effect.easeOut"
                         style="flex-basis: 50%" />
                 </div>
@@ -88,9 +92,9 @@ export const TransformSourceEffectType: EffectType<{
                     placeholder="Unchanged" />
             </eos-container>
             <eos-container header="Transform" pad-top="true">
-                <firebot-checkbox 
-                    label="Position" 
-                    tooltip="Transform the position of the OBS source" 
+                <firebot-checkbox
+                    label="Position"
+                    tooltip="Transform the position of the OBS source"
                     model="effect.isTransformingPosition" />
                 <div ng-if="effect.isTransformingPosition" style="margin-top: 10px">
                     <div style="display: flex; gap: 20px; margin-bottom: 20px;">
@@ -118,9 +122,9 @@ export const TransformSourceEffectType: EffectType<{
                             style="flex-basis: 50%" />
                     </div>
                 </div>
-                <firebot-checkbox 
-                    label="Scale" 
-                    tooltip="Transform the scale of the OBS source" 
+                <firebot-checkbox
+                    label="Scale"
+                    tooltip="Transform the scale of the OBS source"
                     model="effect.isTransformingScale" />
                 <div ng-if="effect.isTransformingScale" style="margin-bottom: 20px">
                     <div style="display: flex; gap: 20px; margin-bottom: 20px;">
@@ -148,9 +152,9 @@ export const TransformSourceEffectType: EffectType<{
                             style="flex-basis: 50%" />
                     </div>
                 </div>
-                <firebot-checkbox 
-                    label="Rotation" 
-                    tooltip="Transform the rotation of the OBS source" 
+                <firebot-checkbox
+                    label="Rotation"
+                    tooltip="Transform the rotation of the OBS source"
                     model="effect.isTransformingRotation" />
                 <div ng-if="effect.isTransformingRotation" style="margin-bottom: 20px">
                     <div style="display: flex; gap: 20px; margin-bottom: 20px;">
@@ -169,7 +173,7 @@ export const TransformSourceEffectType: EffectType<{
             </eos-container>
         </div>
     `,
-    optionsController: ($scope: any, backendCommunicator: any) => {
+    optionsController: ($scope: any, backendCommunicator: BackendCommunicator) => {
         $scope.isObsConfigured = false;
         $scope.isUsingInvalidItemId = false;
 
@@ -208,30 +212,29 @@ export const TransformSourceEffectType: EffectType<{
             $scope.isUsingInvalidItemId = false;
         };
 
-        $scope.getScenes = () => {
-            $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
+        $scope.getScenes = async () => {
+            $scope.isObsConfigured = await backendCommunicator.fireEventAsync("obs-is-configured");
 
-            backendCommunicator.fireEventAsync("obs-get-scene-list").then(
-                (scenes: string[] | undefined) => {
-                    $scope.scenes = scenes?.map(scene => ({ name: scene, custom: false })) ?? [];
-                    $scope.scenes.push($scope.customScene);
+            try {
+                const scenes: string[] = await backendCommunicator.fireEventAsync("obs-get-scene-list");
 
-                    if ($scope.effect.sceneName != null) {
-                        $scope.getSources($scope.effect.sceneName);
-                    }
+                $scope.scenes = scenes?.map(scene => ({ name: scene, custom: false })) ?? [];
+                $scope.scenes.push($scope.customScene);
+
+                if ($scope.effect.sceneName != null) {
+                    $scope.getSources($scope.effect.sceneName);
                 }
-            );
+            } catch { }
         };
         $scope.getScenes();
 
-        $scope.getSources = (sceneName: string) => {
-            $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
+        $scope.getSources = async (sceneName: string) => {
+            $scope.isObsConfigured = await backendCommunicator.fireEventAsync("obs-is-configured");
 
-            backendCommunicator.fireEventAsync("obs-get-transformable-scene-items", [sceneName]).then(
-                (sceneItems: OBSSceneItem[]) => {
-                    $scope.sceneItems = sceneItems ?? [];
-                }
-            );
+            try {
+                const sceneItems: OBSSceneItem[] = await backendCommunicator.fireEventAsync("obs-get-transformable-scene-items", [sceneName]);
+                $scope.sceneItems = sceneItems ?? [];
+            } catch { }
         };
     },
     optionsValidator: (effect) => {

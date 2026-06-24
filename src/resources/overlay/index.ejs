@@ -19,6 +19,16 @@
             <style><%-globalStyle%></style>
         <% } %>
 
+        <!-- Shared Vue runtime, Lucide icons, and Motion for component widgets that want to use them -->
+        <script type="importmap">
+            {
+                "imports": {
+                    "vue": "./lib/vue.esm-browser.prod.js",
+                    "@lucide/vue": "./lib/lucide-vue.esm.js",
+                    "motion-v": "./lib/motion-v.esm.js"
+                }
+            }
+        </script>
     </head>
     
     <body>
@@ -45,15 +55,35 @@
     <script src="https://www.youtube.com/iframe_api"></script>
 
     <% for(let jsDep of dependencies.js) { %>
-        <script src="<%-jsDep%>"></script>
+        <% if (jsDep.module) { %>
+            <script type="module" src="<%-jsDep.url%>"></script>
+        <% } else { %>
+            <script src="<%-jsDep.url%>"></script>
+        <% } %>
     <% } %>
 
-    <script>
+    <script type="module">
         const queryParams = new URLSearchParams(window.location.search);
         if (queryParams.has("instance") && queryParams.get("instance") !== "") {
             document.title = `Firebot Overlay (${queryParams.get("instance")})`;
         } else {
             document.title = "Firebot Overlay (Default)";
+        }
+
+        // Wait here in case the page reloads but scripts failed
+        while (typeof effectEvents === "undefined") {
+            const overlayPort = window.location.port || (window.location.protocol === 'https:' ? 443 : 80);
+            const baseUrl = `${window.location.hostname}${(overlayPort ? `:${overlayPort}` : '')}`;
+
+            try {
+                const response = await fetch(`//${baseUrl}/api/v1/status`);
+    
+                if (response.ok) {
+                    location.reload();
+                }
+            } catch { }
+
+            await new Promise(resolve => setTimeout(resolve, 500));
         }
 
         <% for(let effectEvent of effectEvents) {%>

@@ -1,6 +1,6 @@
 import { EventManager } from "../../../events/event-manager";
+import { FrontendChatManager } from "../../../chat/frontend-chat-manager";
 import rewardManager from "../../../channel-rewards/channel-reward-manager";
-import frontendCommunicator from "../../../common/frontend-communicator";
 
 export function handleRewardRedemption(
     redemptionId: string,
@@ -15,7 +15,7 @@ export function handleRewardRedemption(
     rewardCost: number,
     rewardImageUrl: string
 ): void {
-    frontendCommunicator.send("twitch:chat:rewardredemption", {
+    FrontendChatManager.sendRewardRedemptionToDashboard({
         id: redemptionId,
         status,
         messageText,

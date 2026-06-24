@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
+import type { RestrictionType } from "../../../types";
 
-import type { RestrictionType } from "../../../types/restrictions";
 import { AccountAccess } from "../../common/account-access";
 import userAccess from "../../common/user-access";
 
@@ -70,31 +69,30 @@ const model: RestrictionType<{
 
         return value;
     },
-    predicate: async (trigger, restrictionData) => {
-        return new Promise(async (resolve, reject) => {
-            const triggerUsername = trigger.metadata.username || "";
-            const followListString = restrictionData.checkMode === "custom"
-                ? restrictionData.value || ""
-                : AccountAccess.getAccounts().streamer.username;
+    predicate: async ({ metadata }, restrictionData) => {
+        const triggerUsername = metadata.username || "";
+        const followListString = restrictionData.checkMode === "custom"
+            ? restrictionData.value || ""
+            : AccountAccess.getAccounts().streamer.username;
 
-            if (triggerUsername === "" || followListString === "") {
-                return resolve(true);
-            }
+        if (triggerUsername === "" || followListString === "") {
+            return { success: true };
+        }
 
-            const followCheckList = followListString.split(',')
-                .filter(f => f != null)
-                .map(f => f.toLowerCase().trim());
+        const followCheckList = followListString.split(',')
+            .filter(f => f != null)
+            .map(f => f.toLowerCase().trim());
 
-            const seconds = restrictionData.useFollowAge ? restrictionData.followAgeSeconds : 0;
+        const seconds = restrictionData.useFollowAge ? restrictionData.followAgeSeconds : 0;
 
-            const followCheck = await userAccess.userFollowsChannels(triggerUsername, followCheckList, seconds);
+        const followCheck = await userAccess.userFollowsChannels(triggerUsername, followCheckList, seconds);
 
-            if (followCheck) {
-                resolve(true);
-            } else {
-                reject(`You must be following: ${followListString}`);
-            }
-        });
+        return {
+            success: followCheck,
+            failureReason: followCheck !== true
+                ? `You must be following: ${followListString}`
+                : undefined
+        };
     }
 };
 

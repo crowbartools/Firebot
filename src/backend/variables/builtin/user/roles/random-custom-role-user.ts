@@ -1,7 +1,9 @@
 import type { ReplaceVariable } from "../../../../../types/variables";
 import customRolesManager from "../../../../roles/custom-roles-manager";
-import logger from "../../../../logwrapper";
+import { LoggerCache } from "../../../../logger-cache";
 import { getRandomInt } from "../../../../utils";
+
+const logger = LoggerCache.getLogger("Variables");
 
 const model : ReplaceVariable = {
     definition: {

@@ -1,12 +1,12 @@
 import NodeCache from "node-cache";
 import { DateTime } from "luxon";
 
-import { CommandDefinition, Cooldown, SubCommand } from "../../../types/commands";
+import type { CommandDefinition, Cooldown, SubCommand } from "../../../types";
 
 import { AccountAccess } from "../../common/account-access";
 import { SettingsManager } from "../../common/settings-manager";
 import frontendCommunicator from "../../common/frontend-communicator";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
 
 // This is purposefully ridiculous to try and avoid collisions when we split the string
 // (like with system commands that commonly use colons in their name)
@@ -33,8 +33,9 @@ interface ClearCooldownConfig {
 }
 
 class CommandCooldownManager {
-    private _cooldownCache = new NodeCache({ stdTTL: 1, checkperiod: 1 });
+    private logger = LoggerCache.getLogger("Commands");
 
+    private _cooldownCache = new NodeCache({ stdTTL: 1, checkperiod: 1 });
 
     private buildCooldownCacheKey(commandId: string, subCommandId: string = null, username: string = null): string {
         const tokens = [commandId];
@@ -53,7 +54,7 @@ class CommandCooldownManager {
     getRemainingCooldown(command: CommandDefinition, triggeredSubcmd: SubCommand, username: string): number {
         if (username === AccountAccess.getAccounts().streamer.username
             && SettingsManager.getSetting("StreamerExemptFromCooldowns") === true) {
-            logger.debug("Streamer sent command. Ignoring cooldown.");
+            this.logger.debug("Streamer sent command. Ignoring cooldown.");
             return 0;
         }
 
@@ -103,7 +104,7 @@ class CommandCooldownManager {
         if (cooldown == null) {
             return;
         }
-        logger.debug("Triggering cooldown for command");
+        this.logger.debug("Triggering cooldown for command");
 
         const subCommandId = triggeredSubcmd && !triggeredSubcmd.inheritBaseCommandCooldown
             ? triggeredSubcmd.id ?? triggeredSubcmd.arg

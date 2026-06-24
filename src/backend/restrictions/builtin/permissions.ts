@@ -1,7 +1,4 @@
-/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
-
-import type { RestrictionType } from "../../../types/restrictions";
-import type { FirebotRole } from "../../../types/roles";
+import type { RestrictionType, FirebotRole } from "../../../types";
 
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
 import chatRolesManager from "../../roles/chat-roles-manager";
@@ -191,86 +188,93 @@ const model: RestrictionType<{
         }
         return "";
     },
-    predicate: (triggerData, restrictionData) => {
-        return new Promise(async (resolve, reject) => {
-            if (restrictionData.mode === "roles") {
-                let userId = triggerData.metadata.userId as string;
+    predicate: async (triggerData, restrictionData) => {
+        if (restrictionData.mode === "roles") {
+            let userId = triggerData.metadata.userId as string;
 
-                if (userId == null) {
-                    const username = triggerData.metadata.username;
-                    const user = await TwitchApi.users.getUserByName(username);
+            if (userId == null) {
+                const username = triggerData.metadata.username;
+                const user = await TwitchApi.users.getUserByName(username);
 
-                    if (user == null) {
-                        reject("User does not exist");
-                    }
-
-                    userId = user.id;
+                if (user == null) {
+                    return {
+                        success: false,
+                        failureReason: "User does not exist"
+                    };
                 }
 
-                let twitchUserRoles = triggerData.metadata.userTwitchRoles as string[];
+                userId = user.id;
+            }
 
-                // For sub tier-specific/known bot permission checking, we have to get live data
-                if (twitchUserRoles == null
+            let twitchUserRoles = triggerData.metadata.userTwitchRoles as string[];
+
+            // For sub tier-specific/known bot permission checking, we have to get live data
+            if (twitchUserRoles == null
                     || restrictionData.roleIds.includes("tier1")
                     || restrictionData.roleIds.includes("tier2")
                     || restrictionData.roleIds.includes("tier3")
                     || restrictionData.roleIds.includes("viewerlistbot")
-                ) {
-                    twitchUserRoles = await chatRolesManager.getUsersChatRoles(userId);
-                }
+            ) {
+                twitchUserRoles = await chatRolesManager.getUsersChatRoles(userId);
+            }
 
-                const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(userId) || [];
-                const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(userId) || [];
-                const userTwitchRoles = (twitchUserRoles || [])
-                    .map(mr => twitchRolesManager.mapTwitchRole(mr));
+            const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(userId) || [];
+            const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(userId) || [];
+            const userTwitchRoles = (twitchUserRoles || [])
+                .map(mr => twitchRolesManager.mapTwitchRole(mr));
 
-                const allRoles = [
-                    ...userTwitchRoles,
-                    ...userTeamRoles,
-                    ...userCustomRoles
-                ].filter(r => r != null);
+            const allRoles = [
+                ...userTwitchRoles,
+                ...userTeamRoles,
+                ...userCustomRoles
+            ].filter(r => r != null);
 
-                const expectedRoleIds = restrictionData.roleIds || [];
-                const hasARole = allRoles.some(r => expectedRoleIds.includes(r.id));
+            const expectedRoleIds = restrictionData.roleIds || [];
+            const hasARole = allRoles.some(r => expectedRoleIds.includes(r.id));
 
-                const expectedRanks = (restrictionData.ranks || [])
-                    .filter(r => rankManager.getItem(r.ladderId) != null);
+            const expectedRanks = (restrictionData.ranks || [])
+                .filter(r => rankManager.getItem(r.ladderId) != null);
 
-                let hasARank = false;
+            let hasARank = false;
 
-                const viewer = await viewerDatabase.getViewerById(userId);
-                if (viewer) {
-                    const rankLadders = rankManager.getRankLadderHelpers();
-                    for (const rankDetails of expectedRanks) {
-                        const ladder = rankLadders.find(l => l.id === rankDetails.ladderId);
-                        if (ladder != null) {
-                            const rank = ladder.getRank(rankDetails.rankId);
-                            if (rank != null) {
-                                hasARank = viewerDatabase.viewerHasRank(viewer, ladder.id, rank.id);
-                                if (hasARank) {
-                                    break;
-                                }
+            const viewer = await viewerDatabase.getViewerById(userId);
+            if (viewer) {
+                const rankLadders = rankManager.getRankLadderHelpers();
+                for (const rankDetails of expectedRanks) {
+                    const ladder = rankLadders.find(l => l.id === rankDetails.ladderId);
+                    if (ladder != null) {
+                        const rank = ladder.getRank(rankDetails.rankId);
+                        if (rank != null) {
+                            hasARank = viewerDatabase.viewerHasRank(viewer, ladder.id, rank.id);
+                            if (hasARank) {
+                                break;
                             }
                         }
                     }
                 }
-
-                if (hasARole || hasARank) {
-                    resolve(true);
-                } else {
-                    reject("You do not have permission");
-                }
-            } else if (restrictionData.mode === "viewer") {
-                const username = (triggerData.metadata.username || "").toLowerCase();
-                if (username === restrictionData.username.toLowerCase()) {
-                    resolve(true);
-                } else {
-                    reject("You do not have permission");
-                }
-            } else {
-                resolve(true);
             }
-        });
+
+            if (hasARole || hasARank) {
+                return { success: true };
+            }
+
+            return {
+                success: false,
+                failureReason: "You do not have permission"
+            };
+        } else if (restrictionData.mode === "viewer") {
+            const username = (triggerData.metadata.username || "").toLowerCase();
+            if (username === restrictionData.username.toLowerCase()) {
+                return { success: true };
+            }
+
+            return {
+                success: false,
+                failureReason: "You do not have permission"
+            };
+        }
+
+        return { success: true };
     }
 };
 

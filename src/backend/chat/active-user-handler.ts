@@ -2,13 +2,15 @@ import { TypedEmitter } from "tiny-typed-emitter";
 import NodeCache from "node-cache";
 import type { HelixChatChatter } from "@twurple/api";
 
+import type { FrontendViewer } from "../../types";
+
 import { SettingsManager } from "../common/settings-manager";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
-import chatHelpers from "./chat-helpers";
+import { TwitchEventSubChatHelpers } from "../streaming-platforms/twitch/api/eventsub/eventsub-chat-helpers";
 import chatRolesManager from "../roles/chat-roles-manager";
 import viewerDatabase from "../viewers/viewer-database";
 import frontendCommunicator from "../common/frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 import { getRandomInt } from "../utils";
 
 type User = {
@@ -42,6 +44,9 @@ type Events = {
 };
 
 class ActiveUserHandler extends TypedEmitter<Events> {
+    private _logger = LoggerCache.getLogger("Chat");
+    private _cachedFrontendViewers: FrontendViewer[] = [];
+
     private readonly DEFAULT_ACTIVE_TIMEOUT = 300; // 5 mins
     private readonly ONLINE_TIMEOUT = 450; // 7.50 mins
 
@@ -58,14 +63,54 @@ class ActiveUserHandler extends TypedEmitter<Events> {
     constructor() {
         super();
 
-        this._activeUsers.on("expired", (usernameOrId: string) => {
-            frontendCommunicator.send("twitch:chat:user-inactive", usernameOrId);
+        this._activeUsers.on("expired",
+            (usernameOrId: string) => this.updateViewerActiveStatus(usernameOrId, false)
+        );
+
+        this._onlineUsers.on("expired",
+            (userId: string) => this.setUserOffline(userId)
+        );
+
+        viewerDatabase.on("frontend-viewer-updated", (viewer) => {
+            const existingViewerIndex = this._cachedFrontendViewers.findIndex(v => v.id === viewer.id);
+
+            if (existingViewerIndex > -1) {
+                this._cachedFrontendViewers.splice(existingViewerIndex, 1, viewer);
+                this.sendViewerUpdateToFrontend(viewer);
+            }
         });
 
-        this._onlineUsers.on("expired", (userId: string) => {
-            this.emit("user:offline", userId);
-            frontendCommunicator.send("twitch:chat:user-left", userId);
-        });
+        frontendCommunicator.onAsync("chat:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+    }
+
+    private sendViewerUpdateToFrontend(viewer: FrontendViewer): void {
+        frontendCommunicator.send("chat:viewer-updated", viewer);
+    }
+
+    private updateViewerActiveStatus(userId: string, active = true): void {
+        const viewer = this._cachedFrontendViewers.find(v => v.id === userId);
+
+        if (viewer != null) {
+            viewer.active = active;
+            this.sendViewerUpdateToFrontend(viewer);
+        }
+    }
+
+    updateOnlineViewerRoles(userId: string, roles: string[]): void {
+        const viewer = this._cachedFrontendViewers.find(v => v.id === userId);
+
+        if (viewer != null) {
+            viewer.roles = roles;
+            this.sendViewerUpdateToFrontend(viewer);
+        }
+    }
+
+    private setUserOffline(userId: string): void {
+        this.emit("user:offline", userId);
+        this._cachedFrontendViewers = this._cachedFrontendViewers.filter(v => v.id !== userId);
+        frontendCommunicator.send("chat:viewer-left", userId);
     }
 
     /**
@@ -149,10 +194,10 @@ class ActiveUserHandler extends TypedEmitter<Events> {
     private async updateUserOnlineStatus(userDetails: UserDetails, updateDb = false) {
         const userOnline: ChatUser = this._onlineUsers.get(userDetails.id);
         if (userOnline && userOnline.online === true) {
-            logger.debug(`Updating user ${userDetails.displayName}'s "online" ttl to ${this.ONLINE_TIMEOUT} secs`);
+            this._logger.debug(`Updating user ${userDetails.displayName}'s "online" ttl to ${this.ONLINE_TIMEOUT} secs`);
             this._onlineUsers.ttl(userDetails.id, this.ONLINE_TIMEOUT);
         } else {
-            logger.debug(`Marking user ${userDetails.displayName} as online with ttl of ${this.ONLINE_TIMEOUT} secs`);
+            this._logger.debug(`Marking user ${userDetails.displayName} as online with ttl of ${this.ONLINE_TIMEOUT} secs`);
             this._onlineUsers.set(userDetails.id, {
                 username: userDetails.username,
                 displayName: userDetails.displayName,
@@ -163,7 +208,7 @@ class ActiveUserHandler extends TypedEmitter<Events> {
 
             const roles = await chatRolesManager.getUsersChatRoles(userDetails.id);
 
-            frontendCommunicator.send("twitch:chat:user-joined", {
+            const newViewer: FrontendViewer = {
                 id: userDetails.id,
                 username: userDetails.username,
                 displayName: userDetails.displayName,
@@ -171,7 +216,16 @@ class ActiveUserHandler extends TypedEmitter<Events> {
                 profilePicUrl: userDetails.profilePicUrl,
                 active: this.userIsActive(userDetails.id),
                 disableViewerList: userDetails.disableViewerList
-            });
+            };
+
+            const existingViewerIndex = this._cachedFrontendViewers.findIndex(v => v.id === newViewer.id);
+            if (existingViewerIndex > -1) {
+                this._cachedFrontendViewers.splice(existingViewerIndex, 1, newViewer);
+                this.sendViewerUpdateToFrontend(newViewer);
+            } else {
+                this._cachedFrontendViewers.push(newViewer);
+                frontendCommunicator.send("chat:viewer-joined", newViewer);
+            }
 
             if (updateDb) {
                 this.emit("user:online", userDetails);
@@ -187,7 +241,7 @@ class ActiveUserHandler extends TypedEmitter<Events> {
                 const twitchUser = await TwitchApi.users.getUserById(viewer.userId);
 
                 if (twitchUser == null) {
-                    logger.warn(`Could not find Twitch user with ID '${viewer.userId}'`);
+                    this._logger.warn(`Could not find Twitch user with ID '${viewer.userId}'`);
                     return;
                 }
 
@@ -202,7 +256,7 @@ class ActiveUserHandler extends TypedEmitter<Events> {
                     disableViewerList: false
                 };
 
-                chatHelpers.setUserProfilePicUrl(twitchUser.id, twitchUser.profilePictureUrl);
+                TwitchEventSubChatHelpers.setUserProfilePicUrl(twitchUser.id, twitchUser.profilePictureUrl);
 
                 await viewerDatabase.addNewViewerFromChat(userDetails, true);
 
@@ -219,7 +273,7 @@ class ActiveUserHandler extends TypedEmitter<Events> {
                 await this.updateUserOnlineStatus(userDetails, true);
             }
         } catch (error) {
-            logger.error(`Failed to set ${viewer.userDisplayName} as online`, error);
+            this._logger.error(`Failed to set ${viewer.userDisplayName} as online`, error);
         }
     }
 
@@ -242,7 +296,7 @@ class ActiveUserHandler extends TypedEmitter<Events> {
                 ...(chatUser.isMod || chatUser.badges?.has("lead_moderator") ? ['mod'] : []),
                 ...(chatUser.isVip ? ['vip'] : [])
             ],
-            profilePicUrl: (await chatHelpers.getUserProfilePicUrl(chatUser.userId)),
+            profilePicUrl: (await TwitchEventSubChatHelpers.getUserProfilePicUrl(chatUser.userId)),
             disableViewerList: !!user?.disableViewerList
         };
 
@@ -262,17 +316,17 @@ class ActiveUserHandler extends TypedEmitter<Events> {
 
         const userActive = this._activeUsers.get(userDetails.id);
         if (!userActive) {
-            logger.debug(`Marking user ${userDetails.displayName} as active with ttl of ${ttl} secs`, ttl);
+            this._logger.debug(`Marking user ${userDetails.displayName} as active with ttl of ${ttl} secs`, ttl);
             this._activeUsers.set(userDetails.id, userDetails.username, ttl);
             this._activeUsers.set(userDetails.username, userDetails.id, ttl);
-            frontendCommunicator.send("twitch:chat:user-active", userDetails.id);
         } else {
         // user is still active reset ttl
-            logger.debug(`Updating user ${userDetails.displayName}'s "active" ttl to ${ttl} secs`, ttl);
+            this._logger.debug(`Updating user ${userDetails.displayName}'s "active" ttl to ${ttl} secs`, ttl);
             this._activeUsers.ttl(userDetails.id, ttl);
             this._activeUsers.ttl(userDetails.username, ttl);
-            frontendCommunicator.send("twitch:chat:user-active", userDetails.id);
         }
+
+        this.updateViewerActiveStatus(userDetails.id);
     };
 
     removeActiveUser(usernameOrId: string | number) {
@@ -286,13 +340,18 @@ class ActiveUserHandler extends TypedEmitter<Events> {
         }
         // @ts-ignore
         this._activeUsers.del([usernameOrId, other]);
-        frontendCommunicator.send("twitch:chat:user-inactive", isUsername ? other : usernameOrId);
+        this.updateViewerActiveStatus((isUsername ? other : usernameOrId) as string);
     }
 
     clearAllActiveUsers() {
         this._activeUsers.flushAll();
         this._onlineUsers.flushAll();
-        frontendCommunicator.send("twitch:chat:clear-user-list");
+        this.triggerUiRefresh();
+    }
+
+    triggerUiRefresh(): void {
+        this._logger.debug("Triggering viewer UI refresh");
+        frontendCommunicator.send("chat:all-viewers", this._cachedFrontendViewers);
     }
 }
 

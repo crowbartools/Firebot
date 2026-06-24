@@ -14,7 +14,7 @@
                 ng-model="$ctrl.local.family"
                 ng-click="$ctrl.onTouched()"
             />
-            <div class="pt-2">
+            <div class="pt-2" ng-if="$ctrl.schema.hideColor !== true">
                 <color-picker-input
                     model="$ctrl.local.color"
                     on-blur="$ctrl.onTouched()"
@@ -23,7 +23,7 @@
                     ng-click="$ctrl.onTouched()"
                 />
             </div>
-            <div class="input-group pt-2">
+            <div class="input-group pt-2" ng-if="$ctrl.schema.hideSize !== true">
                 <span class="input-group-addon">Size (px)</span>
                 <input
                     class="form-control"

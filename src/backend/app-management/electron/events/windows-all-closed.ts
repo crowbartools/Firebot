@@ -1,5 +1,7 @@
 import { app } from "electron";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
+
+const logger = LoggerCache.getLogger("Core");
 
 export function windowsAllClosed() {
     logger.debug("All windows closed triggered");

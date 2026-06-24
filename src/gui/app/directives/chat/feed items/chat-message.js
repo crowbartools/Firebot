@@ -72,6 +72,10 @@
                         <img ng-src="{{$ctrl.message.reward.imageUrl}}" />
                         <b>{{$ctrl.message.userDisplayName}}{{($ctrl.message.userDisplayName.toLowerCase() !== $ctrl.message.username.toLowerCase() ? " (" + $ctrl.message.username + ")" : "")}}</b> <span>redeemed</span> <b>{{$ctrl.message.reward.name}}</b>
                     </div>
+                    <div ng-if="$ctrl.message.powerUp" class="power-up-redemption" ng-class="{ isHighlight: $ctrl.message.powerUp.id === 'highlight-message' }">
+                        <img ng-src="{{$ctrl.message.powerUp.imageUrl}}" />
+                        <b>{{$ctrl.message.userDisplayName}}{{($ctrl.message.userDisplayName.toLowerCase() !== $ctrl.message.username.toLowerCase() ? " (" + $ctrl.message.username + ")" : "")}}</b> <span>redeemed</span> <b>{{$ctrl.message.powerUp.name}}</b>
+                    </div>
                     <div
                         ng-if="$ctrl.message.sharedChatRoomDisplayName && !$ctrl.compactDisplay"
                         ng-show="$ctrl.showSharedChatInfo"
@@ -148,9 +152,9 @@
                                     class="pronoun"
                                     uib-tooltip="Pronouns"
                                     tooltip-append-to-body="true"
-                                    ng-click="$root.openLinkExternally('https://pronouns.alejo.io/')"
-                                    ng-show="$ctrl.showPronoun && $ctrl.pronouns.pronounCache[$ctrl.message.username] != null"
-                                >{{$ctrl.pronouns.pronounCache[$ctrl.message.username]}}</span>
+                                    ng-click="$root.openLinkExternally('https://pr.alejo.io/')"
+                                    ng-show="$ctrl.showPronoun && $ctrl.message.pronouns != null"
+                                >{{ $ctrl.message.pronouns }}</span>
 
                                 <span
                                     class="rank-role-badge"
@@ -272,14 +276,11 @@
                 chatMessagesService,
                 viewerRolesService,
                 utilityService,
-                connectionService,
-                pronounsService,
+                accountAccess,
                 backendCommunicator
             ) {
 
                 const $ctrl = this;
-
-                $ctrl.pronouns = pronounsService;
 
                 $ctrl.respondedToAutoMod = false;
 
@@ -288,7 +289,7 @@
                         return;
                     }
                     $ctrl.respondedToAutoMod = true;
-                    backendCommunicator.fireEvent("process-automod-message", { messageId: $ctrl.message.id, allow: true });
+                    backendCommunicator.send("process-automod-message", { messageId: $ctrl.message.id, allow: true });
                 };
 
                 $ctrl.denyAutoModMessage = () => {
@@ -296,7 +297,7 @@
                         return;
                     }
                     $ctrl.respondedToAutoMod = true;
-                    backendCommunicator.fireEvent("process-automod-message", { messageId: $ctrl.message.id, allow: false });
+                    backendCommunicator.send("process-automod-message", { messageId: $ctrl.message.id, allow: false });
                 };
 
                 $ctrl.showUserDetailsModal = (userId) => {
@@ -339,66 +340,84 @@
 
                     actions.push({
                         name: "Details",
+                        actionName: "user:details",
                         icon: "fa-info-circle"
                     });
 
                     actions.push({
                         name: "Delete Message",
+                        actionName: "message:delete",
                         icon: "fa-trash-alt"
                     });
 
                     actions.push({
                         name: "Mention",
+                        actionName: "user:mention",
                         icon: "fa-at"
                     });
 
                     actions.push({
                         name: "Reply To Message",
+                        actionName: "message:reply",
                         icon: "fa-reply"
                     });
 
                     actions.push({
                         name: "Quote Message",
+                        actionName: "message:quote",
                         icon: "fa-quote-right"
                     });
 
-                    if (message.username.toLowerCase() !== connectionService.accounts.streamer.username.toLowerCase() &&
-                        message.username.toLowerCase() !== connectionService.accounts.bot.username.toLowerCase()) {
+                    actions.push({
+                        name: "Pin Message",
+                        actionName: "message:pin",
+                        icon: "fa-thumbtack"
+                    });
+
+                    if (message.username.toLowerCase() !== accountAccess.accounts.streamer.username.toLowerCase() &&
+                        message.username.toLowerCase() !== accountAccess.accounts.bot.username.toLowerCase()) {
 
                         actions.push({
                             name: "Whisper",
+                            actionName: "user:whisper",
                             icon: "fa-envelope"
                         });
 
                         actions.push({
                             name: "Spotlight Message",
+                            actionName: "message:spotlight",
                             icon: "fa-lightbulb-on"
                         });
 
                         actions.push({
                             name: "Shoutout",
+                            actionName: "user:shoutout",
                             icon: "fa-megaphone"
                         });
 
                         if (message.roles.includes("mod")) {
                             actions.push({
                                 name: "Unmod",
+                                actionName: "user:unmod",
                                 icon: "fa-user-times"
                             });
                         } else {
                             actions.push({
                                 name: "Mod",
+                                actionName: "user:mod",
                                 icon: "fa-user-plus"
                             });
 
                             if (message.roles.includes("vip")) {
                                 actions.push({
                                     name: "Remove VIP",
+                                    actionName: "user:unvip",
                                     icon: "fa-gem"
                                 });
                             } else {
                                 actions.push({
                                     name: "Add as VIP",
+                                    actionName: "user:vip",
                                     icon: "fa-gem"
                                 });
                             }
@@ -406,11 +425,13 @@
 
                         actions.push({
                             name: "Timeout",
+                            actionName: "user:timeout",
                             icon: "fa-clock"
                         });
 
                         actions.push({
                             name: "Ban",
+                            actionName: "user:ban",
                             icon: "fa-ban"
                         });
                     }
@@ -425,7 +446,7 @@
                         },
                         ...actions.map((a) => {
                             let html = "";
-                            if (a.name === "Remove VIP") {
+                            if (a.actionName === "user:unvip") {
                                 html = `
                                     <div class="message-action">
                                         <span class="fa-stack fa-1x mr-3" style="width: 18px">
@@ -446,21 +467,24 @@
                             return {
                                 html: html,
                                 click: () => {
-                                    $ctrl.messageActionSelected(a.name, message.username, message.userId, message.displayName, message.id, message.rawText, message);
+                                    $ctrl.messageActionSelected(a.actionName, message.username, message.userId, message.displayName, message.id, message.rawText, message);
                                 }
                             };
                         })];
                 };
 
                 $ctrl.messageActionSelected = (action, username, userId, displayName, msgId, rawText, message) => {
-                    switch (action.toLowerCase()) {
-                        case "delete message":
+                    switch (action) {
+                        case "message:pin":
+                            chatMessagesService.pinMessage(msgId);
+                            break;
+                        case "message:delete":
                             chatMessagesService.deleteMessage(msgId);
                             break;
-                        case "timeout":
+                        case "user:timeout":
                             updateChatField(`/timeout @${username} 300`);
                             break;
-                        case "ban":
+                        case "user:ban":
                             utilityService
                                 .showConfirmationModal({
                                     title: "Ban User",
@@ -470,14 +494,14 @@
                                 })
                                 .then((confirmed) => {
                                     if (confirmed) {
-                                        backendCommunicator.fireEvent("update-user-banned-status", { username: username, shouldBeBanned: true });
+                                        backendCommunicator.send("update-user-banned-status", { username: username, shouldBeBanned: true });
                                     }
                                 });
                             break;
-                        case "mod":
+                        case "user:mod":
                             viewerRolesService.updateModRoleForUser(username, true);
                             break;
-                        case "unmod":
+                        case "user:unmod":
                             utilityService
                                 .showConfirmationModal({
                                     title: "Mod User",
@@ -491,33 +515,33 @@
                                     }
                                 });
                             break;
-                        case "add as vip":
+                        case "user:vip":
                             viewerRolesService.updateVipRoleForUser(username, true);
                             break;
-                        case "remove vip":
+                        case "user:unvip":
                             viewerRolesService.updateVipRoleForUser(username, false);
                             break;
-                        case "whisper":
+                        case "user:whisper":
                             updateChatField(`/w @${username} `);
                             break;
-                        case "mention":
+                        case "user:mention":
                             updateChatField(`@${username} `);
                             break;
-                        case "reply to message":
+                        case "message:reply":
                             $ctrl.onReplyClicked({
                                 threadOrReplyMessageId: $ctrl.message.id
                             });
                             break;
-                        case "quote message":
+                        case "message:quote":
                             updateChatField(`!quote add @${username} ${rawText}`);
                             break;
-                        case "spotlight message":
-                            chatMessagesService.highlightMessage(username, userId, displayName, rawText, message);
+                        case "message:spotlight":
+                            chatMessagesService.spotlightMessage(username, userId, displayName, rawText, message);
                             break;
-                        case "shoutout":
+                        case "user:shoutout":
                             updateChatField(`!so @${username}`);
                             break;
-                        case "details": {
+                        case "user:details": {
                             $ctrl.showUserDetailsModal(userId);
                             break;
                         }

@@ -1,5 +1,6 @@
+import type { EventFilter } from "../../../../../types";
+
 import { ComparisonType } from "../../../../../shared/filter-constants";
-import { EventFilter } from "../../../../../types/events";
 import twitchStreamInfoManager from "../../../../streaming-platforms/twitch/stream-info-manager";
 
 const filter: EventFilter = {
@@ -12,6 +13,7 @@ const filter: EventFilter = {
         { eventSourceId: "twitch", eventId: "bits-badge-unlocked" },
         { eventSourceId: "twitch", eventId: "category-changed" },
         { eventSourceId: "twitch", eventId: "channel-reward-redemption" },
+        { eventSourceId: "twitch", eventId: "power-up-redemption" },
         { eventSourceId: "twitch", eventId: "chat-message" },
         { eventSourceId: "twitch", eventId: "chat-mode-changed" },
         { eventSourceId: "twitch", eventId: "cheer" },

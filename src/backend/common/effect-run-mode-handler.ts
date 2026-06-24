@@ -1,7 +1,9 @@
 import { EffectInstance, EffectList } from "../../types";
 import { EffectManager } from "../effects/effect-manager";
 import { containsAll, getRandomInt, shuffleArray } from "../utils";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
+
+const logger = LoggerCache.getLogger("Effects");
 
 interface CacheEntry {
     /**
@@ -30,7 +32,7 @@ function getEntryFromCache(effectListId: string, effectIds: string[], cache: Eff
     if (!cacheEntry) {
         // we don't have a preexisting queue in the cache, create a new one
         cacheEntry = {
-            queue: shuffleArray(effectIds),
+            queue: shuffle ? shuffleArray(effectIds) : effectIds,
             currentEffectIds: effectIds
         };
 
@@ -174,4 +176,3 @@ export function resolveEffectsForExecution(effectList: EffectList): EffectInstan
     }
     return [];
 }
-

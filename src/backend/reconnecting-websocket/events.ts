@@ -33,11 +33,13 @@ export interface WebSocketEventMap {
     error: ErrorEvent;
     message: MessageEvent;
     open: Event;
+    ping: Event;
 }
 
 export interface WebSocketEventListenerMap {
-    close: (event: CloseEvent) => void | {handleEvent: (event: CloseEvent) => void};
-    error: (event: ErrorEvent) => void | {handleEvent: (event: ErrorEvent) => void};
-    message: (event: MessageEvent) => void | {handleEvent: (event: MessageEvent) => void};
-    open: (event: Event) => void | {handleEvent: (event: Event) => void};
+    close: (event: CloseEvent) => void | { handleEvent: (event: CloseEvent) => void };
+    error: (event: ErrorEvent) => void | { handleEvent: (event: ErrorEvent) => void };
+    message: (event: MessageEvent) => void | { handleEvent: (event: MessageEvent) => void };
+    open: (event: Event) => void | { handleEvent: (event: Event) => void };
+    ping: (event: Event) => void | { handleEvent: (event: Event) => void };
 }

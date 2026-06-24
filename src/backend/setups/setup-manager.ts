@@ -1,7 +1,10 @@
 import fsp from "fs/promises";
 
-import type { FirebotSetup, SetupImportQuestion } from "../../types/setups";
-import type { Currency } from "../../types/currency";
+import type {
+    Currency,
+    FirebotSetup,
+    SetupImportQuestion
+} from "../../types";
 
 import { CommandManager } from "../chat/commands/command-manager";
 import { CounterManager } from "../counters/counter-manager";
@@ -19,7 +22,7 @@ import overlayWidgetConfigManager from "../overlay-widgets/overlay-widget-config
 import rankManager from "../ranks/rank-manager";
 import variableMacroManager from "../variables/macro-manager";
 import frontendCommunicator from "../common/frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 import { escapeRegExp } from "../utils";
 
 export interface LoadSetupResult {
@@ -29,6 +32,7 @@ export interface LoadSetupResult {
 }
 
 class SetupManager {
+    private logger = LoggerCache.getLogger("Firebot Setups");
     constructor() { }
 
     // We need this because this class doesn't get instantiated otherwise
@@ -52,8 +56,8 @@ class SetupManager {
             }) => await this.importSetup(setup, selectedCurrency)
         );
 
-        frontendCommunicator.on("setups:remove-setup-components",
-            ({ components }: { components: FirebotSetup["components"] }) =>
+        frontendCommunicator.onAsync("setups:remove-setup-components",
+            async ({ components }: { components: FirebotSetup["components"] }) =>
                 this.removeSetupComponents(components));
     }
 
@@ -67,7 +71,7 @@ class SetupManager {
         try {
             setup = JSON.parse(await fsp.readFile(setupFilePath, { encoding: "utf8" })) as FirebotSetup;
         } catch (error) {
-            logger.error("Failed to load setup file", error);
+            this.logger.error("Failed to load setup file", error);
             result.error = "Failed to load setup file: cannot read file";
             return result;
         }
@@ -87,7 +91,7 @@ class SetupManager {
             await fsp.writeFile(setupFilePath, JSON.stringify(setup));
             return true;
         } catch (error) {
-            logger.error("Failed to create setup", error);
+            this.logger.error("Failed to create setup", error);
             return false;
         }
     }

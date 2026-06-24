@@ -1,5 +1,6 @@
+import type { EventFilter } from "../../../../../types";
+
 import { ComparisonType } from "../../../../../shared/filter-constants";
-import { EventFilter } from "../../../../../types/events";
 
 const filter: EventFilter = {
     id: "firebot:triggered-command",

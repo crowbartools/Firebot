@@ -13,15 +13,14 @@
             modalService,
             modalFactory,
             settingsService,
-            chatMessagesService,
-            ngToast) {
+            ngToast
+        ) {
             const service = {};
 
             service.allActivities = [];
-            service.activities = [];
+            service.filteredActivities = [];
 
             backendCommunicator.on("activity-feed:event-activity", (activity) => {
-                const rawMessage = activity.message;
                 activity.message = $sce.trustAsHtml(sanitize(marked.parseInline(activity.message)));
 
                 service.allActivities.unshift(activity);
@@ -34,43 +33,26 @@
                     return;
                 }
 
-                service.activities.unshift(activity);
+                service.filteredActivities.unshift(activity);
 
-                if (settingsService.getSetting("ShowActivityFeedEventsInChat") === true
-                    && activity.excludeFromChatFeed !== true) {
-                    chatMessagesService.chatAlertMessage(rawMessage, activity.icon);
-                }
-
-                if (service.activities.length > 100) {
-                    service.activities.length = 100;
+                if (service.filteredActivities.length > 100) {
+                    service.filteredActivities.length = 100;
                 }
             });
 
+            service.toggleActivityAcknowledged = (activityId) => {
+                backendCommunicator.send("activity-feed:toggle-activity-acknowledged", activityId);
+            };
+
             service.allAcknowledged = () => {
-                if (service.activities.length < 1) {
+                if (service.filteredActivities.length < 1) {
                     return false;
                 }
-                return !service.activities.some(a => a.acknowledged === false);
-            };
-
-            service.markAllAcknowledged = () => {
-                service.allActivities.forEach((a) => {
-                    a.acknowledged = true;
-                });
-            };
-
-            service.markAllNotAcknowledged = () => {
-                service.allActivities.forEach((a) => {
-                    a.acknowledged = false;
-                });
+                return !service.filteredActivities.some(a => a.acknowledged === false);
             };
 
             service.toggleMarkAllAcknowledged = () => {
-                if (service.allAcknowledged()) {
-                    service.markAllNotAcknowledged();
-                } else {
-                    service.markAllAcknowledged();
-                }
+                backendCommunicator.send("activity-feed:toggle-acknowledged-for-all");
             };
 
             service.clearAllActivities = () => {
@@ -79,10 +61,9 @@
                     question: "Are you sure you want to clear all activities?",
                     confirmLabel: "Clear",
                     confirmBtnType: "btn-danger"
-                }).then((confirmed) => {
+                }).then(async (confirmed) => {
                     if (confirmed) {
-                        service.allActivities = [];
-                        service.activities = [];
+                        backendCommunicator.send("activity-feed:clear-all-activities");
                         ngToast.create({
                             className: 'success',
                             content: "Successfully cleared all activities!",
@@ -93,12 +74,8 @@
             };
 
             service.unacknowledgedCount = () => {
-                return service.activities.filter(a => !a.acknowledged).length;
+                return service.filteredActivities.filter(a => !a.acknowledged).length;
             };
-
-            backendCommunicator.on("activity-feed:acknowledge-all-activity", () => {
-                service.markAllAcknowledged();
-            });
 
             service.retriggerEvent = (activityId) => {
                 backendCommunicator.send("activity-feed:retrigger-event", activityId);
@@ -115,11 +92,39 @@
                     size: "md",
                     closeCallback: () => {
                         const allowedEvents = settingsService.getSetting("AllowedActivityEvents");
-                        service.activities = service.allActivities
+                        service.filteredActivities = service.allActivities
                             .filter(a => allowedEvents.includes(`${a.source.id}:${a.event.id}`));
                     }
                 });
             };
+
+            backendCommunicator.on("activity-feed:activity-updated", (activity) => {
+                activity.message = $sce.trustAsHtml(sanitize(marked.parseInline(activity.message)));
+                const existingActivity = service.allActivities.findIndex(a => a.id === activity.id);
+
+                if (existingActivity > -1) {
+                    service.allActivities.splice(existingActivity, 1, activity);
+                }
+
+                const existingFilteredActivity = service.filteredActivities.findIndex(a => a.id === activity.id);
+
+                if (existingFilteredActivity > -1) {
+                    service.filteredActivities.splice(existingFilteredActivity, 1, activity);
+                }
+            });
+
+            backendCommunicator.on("activity-feed:all-items", (items) => {
+                service.allActivities = items ?? [];
+                service.allActivities.forEach((a) => {
+                    a.message = $sce.trustAsHtml(sanitize(marked.parseInline(a.message)));
+                });
+
+                const allowedEvents = settingsService.getSetting("AllowedActivityEvents");
+                service.filteredActivities = service.allActivities
+                    .filter(a => allowedEvents.includes(`${a.source.id}:${a.event.id}`));
+            });
+
+            backendCommunicator.send("activity-feed:ui-service-ready");
 
             return service;
         });

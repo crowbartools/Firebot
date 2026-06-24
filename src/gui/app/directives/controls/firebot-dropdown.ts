@@ -1,6 +1,6 @@
 "use strict";
 
-import type { FirebotComponent } from "../../../../types/";
+import type { FirebotComponent } from "../../../../types";
 
 export type DropdownOption = {
     name: string;

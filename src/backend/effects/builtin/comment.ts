@@ -1,4 +1,4 @@
-import type { EffectType } from "../../../types/effects";
+import type { EffectType } from "../../../types";
 
 const effect: EffectType<{
     effectComment: string;
@@ -51,5 +51,3 @@ const effect: EffectType<{
 };
 
 export = effect;
-
-

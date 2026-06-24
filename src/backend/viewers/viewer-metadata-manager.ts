@@ -1,11 +1,12 @@
-import { FirebotViewer } from "../../types/viewers";
+import { TypedEmitter } from "tiny-typed-emitter";
 
-import logger from "../logwrapper";
+import type { FirebotViewer } from "../../types";
+
+import { LoggerCache } from "../logger-cache";
 import viewerDatabase from "./viewer-database";
 import jsonDataHelpers from "../common/json-data-helpers";
 import frontendCommunicator from "../common/frontend-communicator";
 import { EventManager } from "../events/event-manager";
-import { TypedEmitter } from "tiny-typed-emitter";
 
 type Events = {
     "created-item": (item: object) => void;
@@ -25,6 +26,8 @@ interface ViewerMetadataDeleteRequest {
 }
 
 class ViewerMetadataManager extends TypedEmitter<Events> {
+    private logger = LoggerCache.getLogger("Viewers");
+
     constructor() {
         super();
 
@@ -75,7 +78,7 @@ class ViewerMetadataManager extends TypedEmitter<Events> {
 
             return metadata[0];
         } catch (error) {
-            logger.error("Error getting top metadata request: ", error);
+            this.logger.error("Error getting top metadata request: ", error);
             return;
         }
     }
@@ -99,7 +102,7 @@ class ViewerMetadataManager extends TypedEmitter<Events> {
 
             return metadata || [];
         } catch (error) {
-            logger.error("Error getting top metadata list: ", error);
+            this.logger.error("Error getting top metadata list: ", error);
             return [];
         }
     }
@@ -138,7 +141,7 @@ class ViewerMetadataManager extends TypedEmitter<Events> {
 
             this.emit(eventType, eventData);
         } catch (error) {
-            logger.error("Unable to set metadata for viewer", error);
+            this.logger.error("Unable to set metadata for viewer", error);
         }
     }
 

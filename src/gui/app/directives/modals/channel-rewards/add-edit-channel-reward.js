@@ -322,7 +322,7 @@
 
 
                 /**
-                 * @type {import('../../../../../types/channel-rewards').SavedChannelReward}
+                 * @type {import("../../../../../types").SavedChannelReward}
                  */
                 $ctrl.reward = {
                     id: null,

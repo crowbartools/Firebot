@@ -52,19 +52,18 @@
                     }
                 });
 
-                $ctrl.$onInit = () => {
+                $ctrl.$onInit = async () => {
                     $ctrl.systemFontsLoading = true;
 
-                    const installedFontNames = fontManager.getInstalledFonts().map(f => f.name);
+                    const installedFontNames = (await fontManager.getInstalledFonts()).map(f => f.name);
+                    const systemFonts = await fontManager.getSystemFonts();
 
-                    fontManager.getSystemFonts().then((systemFonts) => {
-                        $ctrl.fontNames = [...new Set([
-                            ...$ctrl.fontNames,
-                            ...installedFontNames,
-                            ...systemFonts
-                        ])].filter(f => !!f).sort((a, b) => a.localeCompare(b));
-                        $ctrl.systemFontsLoading = false;
-                    });
+                    $ctrl.fontNames = [...new Set([
+                        ...$ctrl.fontNames,
+                        ...installedFontNames,
+                        ...systemFonts
+                    ])].filter(f => !!f).sort((a, b) => a.localeCompare(b));
+                    $ctrl.systemFontsLoading = false;
                 };
             }
         });

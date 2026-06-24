@@ -12,7 +12,7 @@
             onTouched: '&'
         },
         template: `
-          <div>
+          <div ng-if="!$ctrl.schema.useSwitch">
             <label class="control-fb control--checkbox" style="font-weight: 600;">
             <div class="flex items-center">
                 <span ng-if="$ctrl.title" ng-bind-html="$ctrl.title" class="markdown-container"></span>
@@ -21,6 +21,15 @@
               <input type="checkbox" ng-click="$ctrl.local = !$ctrl.local" ng-checked="$ctrl.local" aria-label="...">
               <div class="control__indicator"></div>
             </label>
+          </div>
+          <div ng-if="$ctrl.schema.useSwitch" class="flex-row jspacebetween" style="align-items: center;">
+            <div>
+                <label ng-if="$ctrl.title" class="control-label markdown-container" style="margin:0;" ng-bind-html="$ctrl.title"></label>
+                <p ng-if="$ctrl.description" class="help-block">{{$ctrl.description}}</p>
+            </div>
+            <div>
+                <toggle-button toggle-model="$ctrl.local" auto-update-value="true" font-size="32"></toggle-button>
+            </div>
           </div>
         `,
         controller: function($scope, $sce) {

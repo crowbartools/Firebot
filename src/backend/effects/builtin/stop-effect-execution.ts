@@ -1,6 +1,7 @@
+import type { EffectType } from "../../../types";
+
 import effectQueueRunner from "../queues/effect-queue-runner";
 import { abortEffectList, abortEffect, abortAllEffectLists } from "../../common/effect-abort-helpers";
-import { EffectType } from "../../../types/effects";
 
 const model: EffectType<{
     target:

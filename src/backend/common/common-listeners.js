@@ -1,8 +1,8 @@
 "use strict";
 
-const { app, dialog, shell, autoUpdater } = require("electron");
+const { dialog } = require("electron");
 const os = require('os');
-const logger = require("../logwrapper");
+const logger = require("../logger-cache").LoggerCache.getLogger("Core");
 const { restartApp } = require("../app-management/electron/app-helpers");
 const { copyDebugInfoToClipboard } = require("../common/debug-info");
 
@@ -23,10 +23,8 @@ function getLocalIpAddress() {
 }
 
 exports.setupCommonListeners = () => {
+    const { HttpServerManager } = require("../../server/http-server-manager");
     const frontendCommunicator = require("./frontend-communicator");
-    const { SettingsManager } = require("./settings-manager");
-    const { BackupManager } = require("../backup-manager");
-    const webServer = require("../../server/http-server-manager");
 
     frontendCommunicator.onAsync("get-ip-address", async () => {
         return getLocalIpAddress();
@@ -34,11 +32,6 @@ exports.setupCommonListeners = () => {
 
     frontendCommunicator.onAsync("getPlatform", async () => {
         return process.platform;
-    });
-
-    frontendCommunicator.on("show-twitch-preview", () => {
-        const windowManagement = require("../app-management/electron/window-management");
-        windowManagement.createStreamPreviewWindow();
     });
 
     frontendCommunicator.on("show-variable-inspector", () => {
@@ -85,7 +78,7 @@ exports.setupCommonListeners = () => {
         return { path: path, id: uuid };
     });
 
-    frontendCommunicator.on("highlight-message", (data) => {
+    frontendCommunicator.on("spotlight-message", (data) => {
         const { EventManager } = require("../events/event-manager");
         EventManager.triggerEvent("firebot", "highlight-message", data);
     });
@@ -97,45 +90,12 @@ exports.setupCommonListeners = () => {
 
     frontendCommunicator.on("restartApp", () => restartApp());
 
-    frontendCommunicator.on("open-backup-folder", () => {
-        shell.openPath(BackupManager.backupFolderPath);
-    });
-
     // Change profile when we get event from renderer
     frontendCommunicator.on("sendToOverlay", (data) => {
         if (data == null) {
             return;
         }
-        webServer.sendToOverlay(data.event, data.meta);
-    });
-
-    const updateFeedUrl = `https://update.electronjs.org/crowbartools/Firebot/win32/${app.getVersion()}`;
-
-    frontendCommunicator.on("downloadUpdate", async () => {
-        //back up first
-        if (SettingsManager.getSetting("BackupBeforeUpdates")) {
-            await BackupManager.startBackup();
-        }
-
-        autoUpdater.setFeedURL({ url: updateFeedUrl });
-        autoUpdater.checkForUpdates();
-
-        // When an update has been downloaded
-        autoUpdater.on("update-downloaded", () => {
-            logger.info("Updated downloaded.");
-            //let the front end know and wait a few secs.
-            frontendCommunicator.send("updateDownloaded");
-
-            // Prepare for update install on next run
-            SettingsManager.saveSetting("JustUpdated", true);
-        });
-    });
-
-    frontendCommunicator.on("installUpdate", () => {
-        logger.info("Installing update...");
-        frontendCommunicator.send("installingUpdate");
-
-        autoUpdater.quitAndInstall();
+        HttpServerManager.sendToOverlay(data.event, data.meta);
     });
 
     frontendCommunicator.on("copy-debug-info-to-clipboard", copyDebugInfoToClipboard);

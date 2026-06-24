@@ -1,4 +1,4 @@
-import { EventSource } from "../../../types/events";
+import type { EventSource } from "../../../types";
 
 export const FirebotEventSource: EventSource = {
     id: "firebot",

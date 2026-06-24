@@ -8,12 +8,13 @@
                 autoUpdateValue: "<",
                 onToggle: "&",
                 fontSize: "<?",
-                accessibilityLabel: "<"
+                accessibilityLabel: "<",
+                disabled: "<?"
             },
             template: `
                 <div class="toggle-button"
-                    ng-class="{'toggled-on': $ctrl.toggleModel}"
-                    ng-click="$ctrl.toggle()"
+                    ng-class="{'toggled-on': $ctrl.toggleModel, 'disabled-control': $ctrl.disabled}"
+                    ng-click="$ctrl.disabled ? angular.noop : $ctrl.toggle()"
                     ng-style="$ctrl.getCustomStyles()"
                     aria-label="{{ $ctrl.accessibilityLabel }}">
                         <i class="fad" style="display: block;" ng-class="{'fa-toggle-on': $ctrl.toggleModel, 'fa-toggle-off': !$ctrl.toggleModel}"></i>

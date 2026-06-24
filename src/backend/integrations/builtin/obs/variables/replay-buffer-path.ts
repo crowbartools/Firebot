@@ -1,4 +1,4 @@
-import { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
+import type { ReplaceVariable, TriggersObject } from "../../../../../types";
 import {
     OBS_EVENT_SOURCE_ID,
     OBS_REPLAY_BUFFER_SAVED_EVENT_ID

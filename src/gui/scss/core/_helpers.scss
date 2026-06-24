@@ -1,4 +1,3 @@
-
 // Font size
 
 .text-xs {
@@ -41,6 +40,21 @@
     font-size: 4rem;
 }
 
+.text-7xl {
+    font-size: 5rem;
+}
+
+.text-8xl {
+    font-size: 6rem;
+}
+
+.text-9xl {
+    font-size: 8rem;
+}
+
+.text-10xl {
+    font-size: 9rem;
+}
 
 // Font weight
 
@@ -79,7 +93,6 @@
 .font-black {
     font-weight: 900;
 }
-
 
 // Margin & Padding
 
@@ -145,7 +158,13 @@
     }
 }
 
-@include spacing(("margin": "m", "padding": "p"));
+@include spacing(
+    (
+        "margin": "m",
+        "padding": "p",
+        "gap": "gap"
+    )
+);
 
 // Flexbox
 
@@ -157,7 +176,8 @@
     display: inline-flex;
 }
 
-.flex-col {
+.flex-col,
+.flex-column {
     flex-direction: column;
 }
 
@@ -191,6 +211,14 @@
 
 .self-start {
     align-self: flex-start;
+}
+
+.h-full {
+    height: 100%;
+}
+
+.w-full {
+    width: 100%;
 }
 
 .truncate {

@@ -1,5 +1,7 @@
 import { TypedEmitter } from "tiny-typed-emitter";
-import type { FirebotRole } from "../../types/roles";
+
+import type { FirebotRole } from "../../types";
+
 import firebotRolesManager from "./firebot-roles-manager";
 import twitchRolesManager from "./twitch-roles-manager";
 import chatRolesManager from "./chat-roles-manager";

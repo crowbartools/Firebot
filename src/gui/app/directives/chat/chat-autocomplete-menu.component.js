@@ -247,7 +247,7 @@
                     $scope.chatMessagesService = chatMessagesService;
 
                     function buildChatUserItems() {
-                        return chatMessagesService.chatUsers.map(user => ({
+                        return chatMessagesService.viewers.map(user => ({
                             display: user.username && user.username.toLowerCase() !== user.displayName.toLowerCase()
                                 ? `${user.displayName} (${user.username})`
                                 : user.displayName,
@@ -256,7 +256,7 @@
                     }
 
                     chatUsersCategory.items = buildChatUserItems();
-                    $scope.$watchCollection("chatMessagesService.chatUsers", () => {
+                    $scope.$watchCollection("chatMessagesService.viewers", () => {
                         chatUsersCategory.items = buildChatUserItems();
                     });
 

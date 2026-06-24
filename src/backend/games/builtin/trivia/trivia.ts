@@ -1,4 +1,5 @@
-import { FirebotGame } from "../../../../types/games";
+import { FirebotGame } from "../../../../types";
+
 import triviaCommand from "./trivia-command";
 
 const game: FirebotGame = {

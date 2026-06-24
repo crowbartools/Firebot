@@ -1,4 +1,4 @@
-import { EffectType } from "../../../../../types/effects";
+import type { EffectType } from "../../../../../types";
 import { startVirtualCam } from "../obs-remote";
 
 export const StartVirtualCamEffectType: EffectType = {
@@ -21,7 +21,7 @@ export const StartVirtualCamEffectType: EffectType = {
         return [];
     },
     onTriggerEvent: async () => {
-        startVirtualCam();
+        await startVirtualCam();
         return true;
     }
 };

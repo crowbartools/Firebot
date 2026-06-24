@@ -23,9 +23,9 @@
                 const ctrl = this;
 
                 function updateTooltip() {
-                    if (updatesService.newBetaAvailable) {
+                    if (updatesService.updateData?.newBetaAvailable) {
                         ctrl.tooltip = "<b>Firebot Beta Update Available</b><br/>Beta update is available. Click to view the release notes and to download the update.";
-                    } else if (process.platform === 'win32' && updatesService.willAutoUpdate) {
+                    } else if (process.platform === 'win32' && updatesService.updateData?.willAutoUpdate) {
                         ctrl.tooltip = "<b>Firebot Update Available</b><br/>Update is available and will be installed next time you close/reopen Firebot.";
                     } else {
                         ctrl.tooltip = "<b>Firebot Update Available</b><br/>Click to view the release notes and to download the update.";
@@ -35,14 +35,13 @@
                 updateTooltip();
 
                 $scope.$watchGroup([
-                    () => updatesService.newBetaAvailable,
-                    () => updatesService.willAutoUpdate
+                    () => updatesService.updateData
                 ], function() {
                     updateTooltip();
                 });
 
                 ctrl.updateIsAvailable = () => {
-                    return updatesService.updateIsAvailable();
+                    return updatesService.updateData?.updateIsAvailable === true;
                 };
 
                 ctrl.showUpdateModal = () => {

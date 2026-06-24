@@ -29,6 +29,10 @@ type Bindings = {
         presetListArgs?: Array<{
             name: string;
         }>;
+        controlInputs?: Array<{
+            name: string;
+            description?: string;
+        }>;
         [x: string]: unknown;
     };
     effects: EffectList;
@@ -154,14 +158,19 @@ type ContextMenuItemScope = {
                                         <i class="fas fa-grip-vertical"></i>
                                     </div>
                                     <effect-icon effect-id="effect.type" effect-definition="$ctrl.getEffectDefinitionById(effect.type)"></effect-icon>
-                                    <div class="pr-4 flex flex-col justify-center" style="text-overflow: ellipsis;overflow: hidden;flex-grow: 1;">
+                                    <div
+                                        class="pr-4 flex flex-col justify-center"
+                                        style="text-overflow: ellipsis;overflow: hidden;flex-grow: 1;"
+                                    >
                                         <div class="flex items-center">
-                                            <div class="effect-name truncate">
+                                            <div class="effect-name truncate" ng-dblclick="$ctrl.editLabelForEffectAtIndex($index)">
                                                 {{$ctrl.getEffectNameById(effect.type)}}
                                             </div>
                                             <span ng-if="!effect.active" class="effect-disabled-label">Disabled</span>
                                         </div>
-                                        <div ng-if="$ctrl.getEffectLabel(effect)" class="muted truncate" style="font-size: 12px;">{{$ctrl.getEffectLabel(effect)}}</div>
+                                        <div ng-if="$ctrl.getEffectLabel(effect)" class="muted truncate" style="font-size: 12px;">
+                                            <span ng-dblclick="$ctrl.editLabelForEffectAtIndex($index)">{{$ctrl.getEffectLabel(effect)}}</span>
+                                        </div>
                                     </div>
                                     <span class="flex-row-center" style="flex-shrink: 0;">
                                         <div
@@ -172,6 +181,15 @@ type ContextMenuItemScope = {
                                             aria-label="Async Effect"
                                         >
                                             <div>ASYNC</div>
+                                        </div>
+                                        <div
+                                            ng-if="$ctrl.isEffectDeprecated(effect.type)"
+                                            uib-tooltip="This effect has been deprecated and may be removed from a future version of Firebot."
+                                            tooltip-append-to-body="true"
+                                            class="effect-deprecated-badge mr-5"
+                                            aria-label="Deprecated Effect"
+                                        >
+                                            <div>DEPRECATED</div>
                                         </div>
                                         <button
                                             ng-if="effect.abortTimeout && effect.abortTimeout > 0"
@@ -391,6 +409,14 @@ type ContextMenuItemScope = {
                 return effectTypes.find(e => e.definition.id === id)?.definition?.name ?? `Unknown Effect: ${id}`;
             };
 
+            $ctrl.isEffectDeprecated = (id: string) => {
+                if (!effectTypes || effectTypes.length < 1) {
+                    return false;
+                }
+
+                return effectTypes.find(e => e.definition.id === id)?.definition?.deprecated === true;
+            };
+
             $ctrl.getEffectDefinitionById = (id: string) => {
                 if (!effectTypes || effectTypes.length < 1) {
                     return undefined;
@@ -498,7 +524,6 @@ type ContextMenuItemScope = {
 
             $ctrl.$onInit = $ctrl.$onChanges = function () {
                 $q.when(effectHelperService.getAllEffectTypes()).then((types) => {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                     effectTypes = types;
 
                     if ($ctrl.effects != null && !Array.isArray($ctrl.effects)) {
@@ -691,6 +716,23 @@ type ContextMenuItemScope = {
                                         {
                                             handle: `$presetListArg[${a.name}]`,
                                             description: "Long hand version of the preset list argument"
+                                        }
+                                    ]
+                                    : undefined
+                            };
+                        }) || [],
+                    controlInputs:
+                        $ctrl.triggerMeta?.controlInputs?.map((input) => {
+                            const canBeShorthand = stringCanBeShorthand(input.name);
+                            return {
+                                name: input.name,
+                                handle: canBeShorthand ? `$@${input.name}` : `$controlDeckInput[${input.name}]`,
+                                description: input.description,
+                                examples: canBeShorthand
+                                    ? [
+                                        {
+                                            handle: `$controlDeckInput[${input.name}]`,
+                                            description: "Long hand version of the control input"
                                         }
                                     ]
                                     : undefined

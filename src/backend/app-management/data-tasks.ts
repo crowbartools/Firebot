@@ -1,6 +1,8 @@
 import { SettingsManager } from "../common/settings-manager";
 import * as dataAccess from "../common/data-access";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
+
+const logger = LoggerCache.getLogger("Data Tasks");
 
 /**
  * Ensures a dir at the given path exists. Creates one if it doesn't

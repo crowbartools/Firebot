@@ -1,9 +1,13 @@
-type WidgetOverlayEvent = import("../../../types/overlay-widgets").WidgetOverlayEvent;
-type Position = import("../../../types/overlay-widgets").Position;
-type OverlayAnimation = import("../../../types/overlay-widgets").Animation;
-type IOverlayWidgetEventUtils = import("../../../types/overlay-widgets").IOverlayWidgetEventUtils;
-type IOverlayWidgetInitUtils = import("../../../types/overlay-widgets").IOverlayWidgetInitUtils;
-type FontOptions = import("../../../types/parameters").FontOptions;
+type WidgetOverlayEvent = import("../../../types").WidgetOverlayEvent;
+type Position = import("../../../types").Position;
+type OverlayAnimation = import("../../../types").Animation;
+type IOverlayWidgetEventUtils = import("../../../types").IOverlayWidgetEventUtils;
+type IOverlayWidgetInitUtils = import("../../../types").IOverlayWidgetInitUtils;
+type FontOptions = import("../../../types").FontOptions;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type OverlayWidgetComponent = import("../../../types").OverlayWidgetComponent<any, any>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type OverlayWidgetInstance = import("../../../types").OverlayWidgetInstance<any, any>;
 
 // @ts-ignore
 widgetEvents = new EventEmitter();
@@ -75,7 +79,7 @@ class OverlayWidgetEventUtils implements IOverlayWidgetEventUtils {
         }
     }
 
-    getWidgetPositionStyle(position?: Position, zIndex?: number): string {
+    getWidgetPositionStyle(position?: Position, zIndex?: number, additionalStyles?: Record<string, string | number | undefined>): string {
         if (!position) {
             position = this.widgetEvent.data.widgetConfig.position;
         }
@@ -91,6 +95,7 @@ class OverlayWidgetEventUtils implements IOverlayWidgetEventUtils {
             width: position.width !== null ? `${position.width}px` : undefined,
             height: position.height !== null ? `${position.height}px` : undefined,
             'z-index': zIndex != null ? zIndex : undefined,
+            ...additionalStyles,
         };
 
         return Object.entries(styles).reduce((acc, [key, value]) => {
@@ -107,13 +112,14 @@ class OverlayWidgetEventUtils implements IOverlayWidgetEventUtils {
 
     initializeWidget(
         html: string,
+        additionalContainerStyles?: Record<string, string | number | undefined>
     ) {
         const container = this.getWidgetContainerElement();
         if (container) {
             container.remove();
         }
 
-        let positionStyle = this.getWidgetPositionStyle();
+        let positionStyle = this.getWidgetPositionStyle(undefined, undefined, additionalContainerStyles);
 
         if (this.widgetEvent.data.previewMode) {
             // add a border to the widget in preview mode
@@ -227,7 +233,89 @@ class OverlayWidgetEventUtils implements IOverlayWidgetEventUtils {
     }
 }
 
+const componentModuleCache = new Map<string, Promise<{ default: OverlayWidgetComponent }>>();
+const componentInstances = new Map<string, OverlayWidgetInstance>();
+
+// This file is compiled to CommonJS via tsc which turns a literal `import()` into a
+// `require()` call, which fails in the browser. Wrapping the the dynamic import in a Function
+// is a hack to keep it a genuine ESM import that isn't touched by tsc
+const nativeImport = new Function("specifier", "return import(specifier);") as (
+    specifier: string
+) => Promise<{ default: OverlayWidgetComponent }>;
+
+function loadComponentModule(typeId: string, bundleUrl: string) {
+    if (!componentModuleCache.has(typeId)) {
+        componentModuleCache.set(typeId, nativeImport(bundleUrl));
+    }
+    return componentModuleCache.get(typeId);
+}
+
+async function handleComponentEvent(event: WidgetOverlayEvent, utils: IOverlayWidgetEventUtils) {
+    const typeId = event.data.widgetType.id;
+    const widgetId = event.data.widgetConfig.id;
+
+    try {
+        switch (event.name) {
+            case "show": {
+                componentInstances.get(widgetId)?.destroy();
+                componentInstances.delete(widgetId);
+
+                const module = await loadComponentModule(typeId, `/overlay/widget-components/${encodeURIComponent(typeId)}`);
+                const component = module?.default;
+                if (!component) {
+                    console.error(`Component widget bundle for '${typeId}' has no default export.`);
+                    return;
+                }
+
+                const container = utils.initializeWidget("");
+                if (!container) {
+                    return;
+                }
+
+                const instance = await component.mount({
+                    container,
+                    config: event.data.widgetConfig,
+                    utils
+                });
+                componentInstances.set(widgetId, instance);
+                break;
+            }
+            case "settings-update": {
+                utils.updateWidgetPosition();
+                componentInstances.get(widgetId)?.update(event.data.widgetConfig);
+                break;
+            }
+            case "state-update": {
+                componentInstances.get(widgetId)?.update(event.data.widgetConfig);
+                break;
+            }
+            case "message": {
+                componentInstances.get(widgetId)?.onMessage?.(event.data.messageName, event.data.messageData);
+                break;
+            }
+            case "remove": {
+                componentInstances.get(widgetId)?.destroy();
+                componentInstances.delete(widgetId);
+                utils.removeWidget();
+                break;
+            }
+            default:
+                console.warn(`Unhandled component widget event type: ${event.name}`);
+                break;
+        }
+    } catch (ex) {
+        console.error(`Error handling '${event.name}' for component widget '${typeId}' (${widgetId})`, ex);
+    }
+}
+
 function handleOverlayEvent(event: WidgetOverlayEvent) {
+    const utils = new OverlayWidgetEventUtils(event);
+
+    if (event.data.isComponentWidget) {
+        void handleComponentEvent(event, utils);
+        return;
+    }
+
     // @ts-ignore
-    widgetEvents.emit(`overlay-widget:${event.data.widgetType.id}`, event, new OverlayWidgetEventUtils(event));
+    widgetEvents.emit(`overlay-widget:${event.data.widgetType.id}`, event, utils);
 }

@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../../types/variables";
+import type { ReplaceVariable } from "../../../../../types";
 import { getCurrentSceneName } from "../obs-remote";
 
 export const SceneNameVariable: ReplaceVariable = {

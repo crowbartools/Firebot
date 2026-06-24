@@ -22,9 +22,9 @@ import {
 export function setupFrontendListeners(
     frontendCommunicator: FrontendCommunicatorModule
 ) {
-    frontendCommunicator.on<never, string[]>(
+    frontendCommunicator.onAsync<never, string[]>(
         "obs-get-group-list",
-        getGroupList
+        async () => getGroupList()
     );
 
     frontendCommunicator.onAsync<never, string[]>(

@@ -6,8 +6,9 @@
                 ng-click="$ctrl.onAddNewClicked()"
                 class="btn btn-primary mr-4"
                 ng-disabled="$ctrl.addNewButtonDisabled"
+                ng-hide="$ctrl.addNewButtonHidden"
             >
-                <i class="fas fa-plus-circle mr-2"></i>
+                <i class="fas mr-2" ng-class="$ctrl.addNewButtonIcon ? $ctrl.addNewButtonIcon : 'fa-plus-circle'"></i>
                 {{$ctrl.addNewButtonText}}
             </button>
             <div ng-transclude="toolbar"></div>

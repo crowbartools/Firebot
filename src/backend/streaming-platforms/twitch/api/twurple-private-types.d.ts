@@ -1,6 +1,6 @@
 // These are private in Twurple, but we need them, so we redeclare them here.
 
-import type { HelixUserType } from "@twurple/api";
+import type { HelixUserType, HelixBroadcasterType } from "@twurple/api";
 
 export interface EventSubChatMessageTextPart {
     type: 'text';
@@ -46,12 +46,12 @@ export interface EventSubChatMessageMentionPart {
 
 export type EventSubChatMessagePart = EventSubChatMessageTextPart | EventSubChatMessageCheermotePart | EventSubChatMessageEmotePart | EventSubChatMessageMentionPart;
 
+export type EventSubChannelBitsUseMessagePart = EventSubChatMessageTextPart | EventSubChatMessageCheermotePart | EventSubChatMessageEmotePart;
+
 export interface EventSubChatMessageData {
     text: string;
     fragments: EventSubChatMessagePart[];
 }
-
-export type HelixBroadcasterType = 'partner' | 'affiliate' | '';
 
 export interface HelixUserData {
     id: string;

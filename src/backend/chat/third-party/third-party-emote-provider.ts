@@ -1,5 +1,5 @@
 import { AccountAccess } from "../../common/account-access";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
 
 export class ThirdPartyEmote {
     origin: string;
@@ -12,6 +12,8 @@ export abstract class ThirdPartyEmoteProvider<
     GlobalEmotesResponse,
     ChannelEmotesResponse = GlobalEmotesResponse
 > {
+    private logger = LoggerCache.getLogger("Chat");
+
     abstract providerName: string;
 
     abstract globalEmoteUrl: string;
@@ -28,11 +30,11 @@ export abstract class ThirdPartyEmoteProvider<
             globalEmotes = this.globalEmotesMapper(globalEmotesResponse);
 
             if (!Array.isArray(globalEmotes)) {
-                logger.warn(`Invalid global ${this.providerName} emote response: ${JSON.stringify(globalEmotes)}`);
+                this.logger.warn(`Invalid global ${this.providerName} emote response: ${JSON.stringify(globalEmotes)}`);
                 globalEmotes = [];
             }
         } catch (error) {
-            logger.error(`Failed to get global ${this.providerName} emotes: ${(error as Error).message}`);
+            this.logger.error(`Failed to get global ${this.providerName} emotes: ${(error as Error).message}`);
         }
 
         let channelEmotes: ThirdPartyEmote[] = [];
@@ -44,11 +46,11 @@ export abstract class ThirdPartyEmoteProvider<
             channelEmotes = this.channelEmotesMapper(channelEmotesResponse);
 
             if (!Array.isArray(channelEmotes)) {
-                logger.warn(`Invalid channel ${this.providerName} emote response: ${JSON.stringify(channelEmotes)}`);
+                this.logger.warn(`Invalid channel ${this.providerName} emote response: ${JSON.stringify(channelEmotes)}`);
                 channelEmotes = [];
             }
         } catch (error) {
-            logger.error(`Failed to get channel ${this.providerName} emotes: ${(error as Error).message}`);
+            this.logger.error(`Failed to get channel ${this.providerName} emotes: ${(error as Error).message}`);
         }
 
         return [...globalEmotes, ...channelEmotes];

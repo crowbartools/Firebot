@@ -10,13 +10,13 @@
                 </div>
                 <div class="modal-body">
                     <div ng-if="$ctrl.getUpdateData() != null">
-                        <div ng-if="us.majorUpdate != null">
+                        <div ng-if="$ctrl.getUpdateData().newMajorUpdateAvailable">
                             <div class="update-alert alert alert-info" style="display: inline-block;">
-                                <p><i class="fas fa-birthday-cake"></i> Great news! A major update ({{$ctrl.updatesService.majorUpdate.gitVersion}}) is available! Check out the update notes to view all the new features and changes. <a class="github-link" href ng-click="$ctrl.openLink(release.gitLink)"><button class="btn btn-primary">View update</button></a></p>
+                                <p><i class="fas fa-birthday-cake"></i> Great news! A major update ({{$ctrl.getUpdateData().version}}) is available! Check out the update notes to view all the new features and changes. <a class="github-link" href ng-click="$ctrl.openLink($ctrl.getUpdateData().url)"><button class="btn btn-primary">View update</button></a></p>
                             </div>
                         </div>
 
-                        <div ng-if="$ctrl.updatesService.majorUpdate == null && !$ctrl.getUpdateData().updateIsAvailable" class="update-alert alert alert-info" style="display: inline-block;">
+                        <div ng-if="!$ctrl.getUpdateData().newMajorUpdateAvailable && !$ctrl.getUpdateData().updateIsAvailable" class="update-alert alert alert-info" style="display: inline-block;">
                             <p><i class="fas fa-check-circle"></i> Firebot is up-to-date.</p>
                         </div>
 
@@ -25,12 +25,12 @@
                         </div>
 
                         <div class="latest-update" style="font-size:30px;font-weight:200;">
-                            {{$ctrl.getUpdateData().gitName}}
+                            {{$ctrl.getUpdateData().name}}
                         </div>
                         <div class="release-date" style="font-weight:600;">
-                            {{$ctrl.getUpdateData().gitDate | date: 'medium'}}
+                            {{$ctrl.getUpdateData().releaseDate | date: 'medium'}}
                         </div>
-                        <div class="update-notes" ng-bind-html="$ctrl.getUpdateData().gitNotes"></div>
+                        <div class="update-notes" ng-bind-html="$ctrl.getUpdateData().releaseNotes"></div>
                     </div>
 
                     <div ng-if="$ctrl.getUpdateData() == null">
@@ -53,24 +53,17 @@
             controller: function($rootScope, updatesService) {
                 const $ctrl = this;
 
-                $ctrl.updatesService = updatesService;
-
                 $ctrl.openLink = $rootScope.openLinkExternally;
 
                 $ctrl.getUpdateData = () => {
                     return updatesService.updateData;
                 };
 
-                // Get update information if we havent already
-                if (!updatesService.hasCheckedForUpdates) {
-                    updatesService.checkForUpdate();
-                }
-
                 $ctrl.downloadAndInstallUpdate = () => {
                     if (process.platform === 'win32') {
                         updatesService.downloadAndInstallUpdate();
                     } else {
-                        $rootScope.openLinkExternally(updatesService.updateData.gitLink);
+                        $rootScope.openLinkExternally(updatesService.updateData.url);
                     }
                 };
 

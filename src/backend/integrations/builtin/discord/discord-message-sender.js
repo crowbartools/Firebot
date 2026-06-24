@@ -2,7 +2,7 @@
 const FormData = require('form-data');
 
 const integrationManager = require("../../integration-manager");
-const logger = require("../../../logwrapper");
+const logger = require("../../../logger-cache").LoggerCache.getLogger("Integration: Discord");
 
 /**
  *

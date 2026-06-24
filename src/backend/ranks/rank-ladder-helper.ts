@@ -1,5 +1,9 @@
-import type { RankLadder, Rank } from "../../types/ranks";
-import type { FirebotViewer } from "../../types/viewers";
+import type {
+    FirebotViewer,
+    RankLadder,
+    Rank
+} from "../../types";
+
 import currencyAccess from "../currency/currency-access";
 
 export class RankLadderHelper {

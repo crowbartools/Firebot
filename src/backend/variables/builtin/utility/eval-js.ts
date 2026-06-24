@@ -1,6 +1,8 @@
 import type { ReplaceVariable, Trigger } from "../../../../types/variables";
-import logger from '../../../logwrapper';
+import { LoggerCache } from "../../../logger-cache";
 import { evalSandboxedJs } from '../../../common/handlers/js-sandbox/sandbox-eval';
+
+const logger = LoggerCache.getLogger("Variables");
 
 const model : ReplaceVariable = {
     definition: {

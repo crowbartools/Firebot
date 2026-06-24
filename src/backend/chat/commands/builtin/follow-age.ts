@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 
-import { SystemCommand } from "../../../../types/commands";
+import type { SystemCommand } from "../../../../types";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 import { getDateDiffString } from "../../../utils";
 

@@ -1,10 +1,11 @@
 import type { JsonDB } from "node-json-db";
 import { TypedEmitter, type ListenerSignature } from "tiny-typed-emitter";
+import type { Logger } from "winston";
 import { randomUUID } from "crypto";
 
 import { AppCloseListenerManager } from "../app-management/app-close-listener-manager";
 import { ProfileManager } from "../common/profile-manager";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 
 interface Item {
     id?: string;
@@ -25,6 +26,7 @@ type DefaultEvents<I extends Item = Item> = {
 abstract class JsonDbManager<T extends Item, E extends ListenerSignature<E> = DefaultEvents<T>>
     extends TypedEmitter<E & DefaultEvents<T>> {
 
+    protected logger: Logger;
     protected items: { [key: string]: T };
     protected db: JsonDB;
     private batchedSaveTimeout: NodeJS.Timeout | null = null;
@@ -33,8 +35,14 @@ abstract class JsonDbManager<T extends Item, E extends ListenerSignature<E> = De
      * @param type - The type of data in the json file
      * @param path - The path to the json file
      */
-    constructor(protected type: string, protected path: string) {
+    constructor(
+        protected type: string,
+        protected path: string,
+        protected loggerModule: string
+    ) {
         super();
+
+        this.logger = LoggerCache.getLogger(loggerModule);
 
         this.type = type;
         this.items = {};
@@ -44,14 +52,14 @@ abstract class JsonDbManager<T extends Item, E extends ListenerSignature<E> = De
             if (this.batchedSaveTimeout) {
                 clearTimeout(this.batchedSaveTimeout);
                 this.batchedSaveTimeout = null;
-                logger.debug(`App is closing, saving any batched ${this.type} before exit...`);
+                this.logger.debug(`App is closing, saving any batched ${this.type} before exit...`);
                 this.saveCurrentItems();
             }
         });
     }
 
     loadItems(): void {
-        logger.debug(`Attempting to load ${this.type}s...`);
+        this.logger.debug(`Attempting to load ${this.type}s...`);
 
         try {
             const data = this.db.getData("/") as { [key: string]: T };
@@ -59,13 +67,13 @@ abstract class JsonDbManager<T extends Item, E extends ListenerSignature<E> = De
                 this.items = data;
             }
 
-            logger.debug(`Loaded ${this.type}s.`);
+            this.logger.debug(`Loaded ${this.type}s.`);
 
             //@ts-ignore - typescript is handling the types for .emit poorly
             this.emit("loaded-items", Object.values(this.items));
             this.emitItemsChanged();
         } catch (err) {
-            logger.error(`There was an error reading ${this.type} file.`, err);
+            this.logger.error(`There was an error reading ${this.type} file.`, err);
         }
     }
 
@@ -118,10 +126,10 @@ abstract class JsonDbManager<T extends Item, E extends ListenerSignature<E> = De
 
         try {
             this.db.push(`/${item.id}`, item);
-            logger.debug(`Saved ${this.type} with id ${item.id} to file.`);
+            this.logger.debug(`Saved ${this.type} with id ${item.id} to file.`);
             return item;
         } catch (err) {
-            logger.error(`There was an error saving ${this.type}.`, err);
+            this.logger.error(`There was an error saving ${this.type}.`, err);
             return null;
         }
     }
@@ -137,22 +145,22 @@ abstract class JsonDbManager<T extends Item, E extends ListenerSignature<E> = De
         try {
             this.db.push("/", itemsObject);
 
-            logger.debug(`Saved all ${this.type} to file.`);
+            this.logger.debug(`Saved all ${this.type} to file.`);
 
             //@ts-ignore - typescript is handling the types for .emit poorly
             this.emit("saved-all-items", allItems);
             this.emitItemsChanged();
         } catch (err) {
-            logger.error(`There was an error saving all ${this.type}s.`, err);
+            this.logger.error(`There was an error saving all ${this.type}s.`, err);
         }
     }
 
     private saveCurrentItems(): void {
         try {
             this.db.push("/", this.items);
-            logger.debug(`Batched saved ${this.type} to file.`);
+            this.logger.debug(`Batched saved ${this.type} to file.`);
         } catch (err) {
-            logger.error(`There was an error batch saving ${this.type}s.`, err);
+            this.logger.error(`There was an error batch saving ${this.type}s.`, err);
         }
     }
 
@@ -172,14 +180,14 @@ abstract class JsonDbManager<T extends Item, E extends ListenerSignature<E> = De
         try {
             this.db.delete(`/${itemId}`);
 
-            logger.debug(`Deleted ${this.type}: ${itemId}`);
+            this.logger.debug(`Deleted ${this.type}: ${itemId}`);
 
             //@ts-ignore - typescript is handling the types for .emit poorly
             this.emit("deleted-item", item);
             this.emitItemsChanged();
             return true;
         } catch (err) {
-            logger.error(`There was an error deleting ${this.type}.`, err);
+            this.logger.error(`There was an error deleting ${this.type}.`, err);
         }
 
         return false;
@@ -191,13 +199,13 @@ abstract class JsonDbManager<T extends Item, E extends ListenerSignature<E> = De
         try {
             this.db.resetData("/");
 
-            logger.debug(`Deleted all ${this.type}s.`);
+            this.logger.debug(`Deleted all ${this.type}s.`);
 
             //@ts-ignore - typescript is handling the types for .emit poorly
             this.emit("deleted-all-items");
             this.emitItemsChanged();
         } catch (err) {
-            logger.error(`There was an error deleting all ${this.type}s.`, err);
+            this.logger.error(`There was an error deleting all ${this.type}s.`, err);
         }
     }
 

@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
-
-import type { RestrictionType } from "../../../types/restrictions";
+import type { RestrictionType } from "../../../types";
 
 import { AccountAccess } from "../../common/account-access";
 import { TwitchApi } from "../../streaming-platforms/twitch/api";
@@ -70,39 +68,44 @@ const model: RestrictionType<{
         }
         return "[Category/Game Not Set]";
     },
-    predicate: (_, restrictionData) => {
-        return new Promise(async (resolve, reject) => {
-            const expectedGameId = restrictionData.gameId;
-            if (expectedGameId == null) {
-                return resolve(true);
-            }
+    predicate: async (_, { gameId }) => {
+        if (gameId == null) {
+            return { success: true };
+        }
 
-            const streamerId = AccountAccess.getAccounts().streamer.userId;
-            const channel = await TwitchApi.channels.getChannelInformation(streamerId);
+        const streamerId = AccountAccess.getAccounts().streamer.userId;
+        const channel = await TwitchApi.channels.getChannelInformation(streamerId);
 
-            if (channel == null) {
-                return reject(`Can't get channel information.`);
-            }
+        if (channel == null) {
+            return {
+                success: false,
+                failureReason: "Can't get channel information."
+            };
+        }
 
-            const currentGameId = channel.gameId;
-            if (currentGameId == null) {
-                return reject(`Can't determine the category/game being played.`);
-            }
+        const currentGameId = channel.gameId;
+        if (currentGameId == null) {
+            return {
+                success: false,
+                failureReason: "Can't determine the category/game being played."
+            };
+        }
 
-            let passed = false;
-            if (expectedGameId === currentGameId) {
-                passed = true;
-            }
+        let passed = false;
+        if (gameId === currentGameId) {
+            passed = true;
+        }
 
-            if (passed) {
-                resolve(true);
-            } else {
-                const expectedGame = await TwitchApi.categories.getCategoryById(expectedGameId);
-                reject(
-                    `Channel category/game isn't set to ${expectedGame?.name ?? "the correct category/game"}.`
-                );
-            }
-        });
+        if (passed) {
+            return { success: true };
+        }
+
+        const expectedGame = await TwitchApi.categories.getCategoryById(gameId);
+        return {
+            success: false,
+            failureReason: `Channel category/game isn't set to ${expectedGame?.name ?? "the correct category/game"}.`
+        };
+
     }
 };
 

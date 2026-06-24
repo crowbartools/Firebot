@@ -2,8 +2,10 @@ import NodeCache from "node-cache";
 import { DateTime } from "luxon";
 import { SettingsManager } from "../../../common/settings-manager";
 import { EventManager } from "../../../events/event-manager";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
 import { wait } from "../../../utils";
+
+const logger = LoggerCache.getLogger("Events");
 
 const communitySubCache = new NodeCache({ stdTTL: 10, checkperiod: 2 });
 

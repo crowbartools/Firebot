@@ -1,4 +1,4 @@
-import { EffectQueueConfig } from "../../../types/effects";
+import type { EffectQueueConfig } from "../../../types";
 
 import JsonDbManager from "../../database/json-db-manager";
 import effectQueueRunner from "./effect-queue-runner";
@@ -7,14 +7,14 @@ import { simpleClone } from "../../utils";
 
 class EffectQueueConfigManager extends JsonDbManager<EffectQueueConfig> {
     constructor() {
-        super("Effect Queue", "/effects/effectqueues");
+        super("Effect Queue", "/effects/effectqueues", "Effect Queues");
 
-        frontendCommunicator.on("effect-queues:get-effect-queues",
-            () => this.getAllItems()
+        frontendCommunicator.onAsync("effect-queues:ui-service-ready",
+            async () => this.triggerUiRefresh()
         );
 
-        frontendCommunicator.on("effect-queues:save-effect-queue",
-            (effectQueue: EffectQueueConfig) => this.saveItem(effectQueue)
+        frontendCommunicator.onAsync("effect-queues:save-effect-queue",
+            async (effectQueue: EffectQueueConfig) => this.saveItem(effectQueue)
         );
 
         frontendCommunicator.on("effect-queues:save-all-effect-queues",
@@ -93,7 +93,8 @@ class EffectQueueConfigManager extends JsonDbManager<EffectQueueConfig> {
     }
 
     triggerUiRefresh(): void {
-        frontendCommunicator.send("all-queues", this.getAllItems());
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("effect-queues:all-queues", this.getAllItems());
     }
 
     private setQueueActiveStatus(

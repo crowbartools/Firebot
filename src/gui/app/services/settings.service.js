@@ -7,47 +7,34 @@
         .factory("settingsService", function (utilityService, backendCommunicator) {
             const service = {};
 
-            let settingPathCache = {};
             let settingsCache = {};
 
-            /** @param {string} settingName */
-            function getSettingPath(settingName) {
-                if (settingPathCache[settingName] == null) {
-                    settingPathCache[settingName] = backendCommunicator.fireEventSync("settings:get-setting-path", settingName);
-                }
-
-                return settingPathCache[settingName];
-            }
-
-            backendCommunicator.on("settings:setting-updated", ({ settingPath, data }) => {
-                if (settingPath == null || settingPath === "") {
+            backendCommunicator.on("settings:setting-updated", ({ settingName, data }) => {
+                if (settingName == null || settingName === "") {
                     return;
                 }
 
-                settingsCache[settingPath] = data;
+                settingsCache[settingName] = data;
             });
 
-            backendCommunicator.on("settings:setting-deleted", (settingPath) => {
-                delete settingsCache[settingPath];
+            backendCommunicator.on("settings:setting-deleted", (settingName) => {
+                delete settingsCache[settingName];
             });
 
             backendCommunicator.on("settings:settings-cache-flushed", () => {
-                settingPathCache = {};
                 settingsCache = {};
             });
 
             service.getSetting = function (settingName, forceCacheUpdate = false) {
-                const settingPath = getSettingPath(settingName);
-
-                if (settingsCache[settingPath] == null || forceCacheUpdate === true) {
-                    settingsCache[settingPath] = backendCommunicator.fireEventSync("settings:get-setting", settingName);
+                if (settingsCache[settingName] == null || forceCacheUpdate === true) {
+                    settingsCache[settingName] = backendCommunicator.fireEventSync("settings:get-setting", settingName);
                 }
 
-                return settingsCache[settingPath];
+                return settingsCache[settingName];
             };
 
             service.saveSetting = function (settingName, data) {
-                backendCommunicator.fireEvent("settings:save-setting", {
+                backendCommunicator.send("settings:save-setting", {
                     settingName,
                     data
                 });
@@ -58,7 +45,7 @@
             };
 
             service.flushSettingsCache = function () {
-                backendCommunicator.fireEvent("settings:flush-settings-cache");
+                backendCommunicator.send("settings:flush-settings-cache");
             };
 
             service.showOverlayInfoModal = function (instanceName) {

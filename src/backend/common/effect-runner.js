@@ -4,17 +4,17 @@ const { randomUUID } = require("crypto");
 
 const { EffectTrigger } = require("../../shared/effect-constants");
 const { AccountAccess } = require('./account-access');
-const { ReplaceVariableManager } = require("../variables/replace-variable-manager");
 const { EffectManager } = require("../effects/effect-manager");
-const webServer = require("../../server/http-server-manager");
+const { HttpServerManager } = require("../../server/http-server-manager");
+const { ReplaceVariableManager } = require("../variables/replace-variable-manager");
+const frontendCommunicator = require('./frontend-communicator');
+const logger = require('../logger-cache').LoggerCache.getLogger("Effects");
+const { getEventIdFromTriggerData } = require("../utils");
+const { checkEffectDependencies } = require("../effects/effect-helpers");
 const {
     addEffectAbortController,
     removeEffectAbortController
 } = require("./effect-abort-helpers");
-const { checkEffectDependencies } = require("../effects/effect-helpers");
-const frontendCommunicator = require('./frontend-communicator');
-const logger = require('../logwrapper');
-const { getEventIdFromTriggerData } = require("../utils");
 
 const SKIP_VARIABLE_PROPERTIES = ["list", "leftSideValue", "rightSideValue", "effectLabel", 'effectListLabel'];
 
@@ -115,7 +115,7 @@ function triggerEffect(effect, trigger, outputs, manualAbortSignal, listAbortSig
         const sendDataToOverlay = (data, overlayInstance) => {
             const overlayEventName = effectDef.overlayExtension?.event?.name;
             if (overlayEventName) {
-                webServer.sendToOverlay(overlayEventName, data, overlayInstance);
+                HttpServerManager.sendToOverlay(overlayEventName, data, overlayInstance);
             }
         };
 
@@ -332,7 +332,7 @@ function runEffects(runEffectsContext) {
 
 /**
  *
- * @param {import("../../types/effects").RunEffectsContext} runEffectsContext
+ * @param {import("../../types").RunEffectsContext} runEffectsContext
  * @returns
  */
 async function processEffects(runEffectsContext) {

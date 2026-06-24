@@ -16,9 +16,7 @@
 
         service.eventSetSettings = {};
 
-        function loadAllEventData() {
-            const eventData = backendCommunicator.fireEventSync("getAllEventData");
-
+        backendCommunicator.onAsync("events:main-events-update", async (eventData) => {
             if (eventData.mainEvents) {
                 mainEvents = eventData.mainEvents;
             }
@@ -28,11 +26,6 @@
             }
 
             service.eventSetSettings = settingsService.getSetting("EventSetSettings");
-        }
-        loadAllEventData();
-
-        backendCommunicator.on("main-events-update", () => {
-            loadAllEventData();
         });
 
         backendCommunicator.on("event-group-update", (group) => {
@@ -131,7 +124,7 @@
             } else {
                 groups.push(group);
             }
-            backendCommunicator.fireEvent("eventUpdate", {
+            backendCommunicator.send("eventUpdate", {
                 action: "saveGroup",
                 meta: group
             });
@@ -142,7 +135,7 @@
             if (group) {
                 group.active = !group.active;
             }
-            backendCommunicator.fireEvent("eventUpdate", {
+            backendCommunicator.send("eventUpdate", {
                 action: "saveGroup",
                 meta: JSON.parse(angular.toJson(group))
             });
@@ -157,7 +150,7 @@
             if (selectedTab === groupId) {
                 service.setSelectedTab("mainevents");
             }
-            backendCommunicator.fireEvent("eventUpdate", {
+            backendCommunicator.send("eventUpdate", {
                 action: "deleteGroup",
                 meta: groupId
             });
@@ -180,11 +173,13 @@
         };
 
         service.saveMainEvents = function() {
-            backendCommunicator.fireEvent("eventUpdate", {
+            backendCommunicator.send("eventUpdate", {
                 action: "saveMainEvents",
                 meta: mainEvents
             });
         };
+
+        backendCommunicator.send("events:ui-service-ready");
 
         return service;
     });

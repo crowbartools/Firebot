@@ -4,7 +4,7 @@ const integrationManager = require("../../integration-manager");
 const discordEmbedBuilder = require('./discord-embed-builder');
 const discord = require("./discord-message-sender");
 const frontEndCommunicator = require("../../../common/frontend-communicator");
-const logger = require("../../../logwrapper");
+const logger = require("../../../logger-cache").LoggerCache.getLogger("Integration: Discord");
 const fs = require("fs");
 
 frontEndCommunicator.onAsync("getDiscordChannels", async () => {
@@ -120,7 +120,7 @@ module.exports = {
             files = [];
             effect.files.forEach((file) => {
                 if (fs.existsSync(file.path)) {
-                    files.push({name: file.name, file: fs.readFileSync(file.path)});
+                    files.push({ name: file.name, file: fs.readFileSync(file.path) });
                 } else {
                     logger.info("File not found, skipping: ", file);
                 }

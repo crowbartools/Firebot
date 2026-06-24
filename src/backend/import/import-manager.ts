@@ -1,23 +1,24 @@
 import type {
-    ThirdPartyImporter,
+    ImportRequest,
+    ImportResult,
     LoadRequest,
     LoadResult,
     ParsedQuotes,
     ParsedViewers,
-    ImportRequest,
-    ImportResult
-} from "../../types/import";
-import type { Quote } from "../../types/quotes";
+    Quote,
+    ThirdPartyImporter
+} from "../../types";
 
 import { QuoteManager } from "../quotes/quote-manager";
 import frontendCommunicator from "../common/frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 
 import { StreamlabsChatbotImporter } from "./third-party/streamlabs-chatbot-importer";
 import { MixItUpImporter } from "./third-party/mix-it-up-importer";
 import { FirebotImporter } from "./third-party/firebot-importer";
 
 class ImportManager {
+    private logger = LoggerCache.getLogger("Import");
     private _registeredImporters: Record<string, ThirdPartyImporter> = {};
     private _abortController: AbortController;
 
@@ -56,7 +57,7 @@ class ImportManager {
 
         this._registeredImporters[importer.id] = importer;
 
-        logger.debug(`Registered importer ${importer.id} (${importer.appName})`);
+        this.logger.debug(`Registered importer ${importer.id} (${importer.appName})`);
     }
 
     unregisterImporter(importer: ThirdPartyImporter): void {
@@ -66,7 +67,7 @@ class ImportManager {
 
         delete this._registeredImporters[importer.id];
 
-        logger.debug(`Unregistered importer ${importer.id} (${importer.appName})`);
+        this.logger.debug(`Unregistered importer ${importer.id} (${importer.appName})`);
     }
 
     private async loadQuotes(request: LoadRequest): Promise<LoadResult<ParsedQuotes>> {
@@ -78,7 +79,7 @@ class ImportManager {
                 try {
                     return await importer.loadQuotes(request.filepath);
                 } catch (error) {
-                    logger.error(`Unexpected error while parsing ${importer.appName} quotes`, error);
+                    this.logger.error(`Unexpected error while parsing ${importer.appName} quotes`, error);
                     return {
                         success: false,
                         error: (error as Error).message
@@ -87,10 +88,10 @@ class ImportManager {
             }
 
             error = `Unable to import quotes from ${importer.appName}`;
-            logger.warn(`Importer ${importer.appName} cannot import quotes`);
+            this.logger.warn(`Importer ${importer.appName} cannot import quotes`);
         } else {
             error = "Unable to import from that app";
-            logger.warn(`No importer registered with ID ${request.appId}`);
+            this.logger.warn(`No importer registered with ID ${request.appId}`);
         }
 
         return {
@@ -121,7 +122,7 @@ class ImportManager {
                 try {
                     return await quoteImporter(request.data, request.settings);
                 } catch (error) {
-                    logger.error(`Unexpected error while importing ${importer.appName} quotes`, error);
+                    this.logger.error(`Unexpected error while importing ${importer.appName} quotes`, error);
                     return {
                         success: false,
                         error: (error as Error).message
@@ -130,10 +131,10 @@ class ImportManager {
             }
 
             error = `Unable to import quotes from ${importer.appName}`;
-            logger.warn(`Importer ${importer.appName} cannot import quotes`);
+            this.logger.warn(`Importer ${importer.appName} cannot import quotes`);
         } else {
             error = "Unable to import from that app";
-            logger.warn(`No importer registered with ID ${request.appId}`);
+            this.logger.warn(`No importer registered with ID ${request.appId}`);
         }
 
         return {
@@ -151,7 +152,7 @@ class ImportManager {
                 try {
                     return await importer.loadViewers(request.filepath);
                 } catch (error) {
-                    logger.error(`Unexpected error while parsing ${importer.appName} viewers`, error);
+                    this.logger.error(`Unexpected error while parsing ${importer.appName} viewers`, error);
                     return {
                         success: false,
                         error: (error as Error).message
@@ -160,10 +161,10 @@ class ImportManager {
             }
 
             error = `Unable to import viewers from ${importer.appName}`;
-            logger.warn(`Importer for ${importer.appName} cannot import viewers`);
+            this.logger.warn(`Importer for ${importer.appName} cannot import viewers`);
         } else {
             error = "Unable to import from that app";
-            logger.warn(`No importer registered with ID ${request.appId}`);
+            this.logger.warn(`No importer registered with ID ${request.appId}`);
         }
 
         return {
@@ -182,7 +183,7 @@ class ImportManager {
                 try {
                     return await importer.importViewers(request.data as unknown[], request.settings, this._abortController.signal);
                 } catch (error) {
-                    logger.error(`Unexpected error while importing ${importer.appName} viewers`, error);
+                    this.logger.error(`Unexpected error while importing ${importer.appName} viewers`, error);
                     return {
                         success: false,
                         error: (error as Error).message
@@ -191,10 +192,10 @@ class ImportManager {
             }
 
             error = `Unable to import viewers from ${importer.appName}`;
-            logger.warn(`Importer for ${importer.appName} cannot import viewers`);
+            this.logger.warn(`Importer for ${importer.appName} cannot import viewers`);
         } else {
             error = "Unable to import from that app";
-            logger.warn(`No importer registered with ID ${request.appId}`);
+            this.logger.warn(`No importer registered with ID ${request.appId}`);
         }
 
         return {

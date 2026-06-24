@@ -229,7 +229,7 @@
                                 value = JSON.parse(value);
                             } catch (error) { /* silently fail */ }
 
-                            backendCommunicator.fireEvent("update-viewer-metadata", {
+                            backendCommunicator.send("update-viewer-metadata", {
                                 username: $ctrl.viewerDetails.firebotData.username,
                                 key,
                                 value
@@ -249,7 +249,7 @@
                         confirmBtnType: "btn-danger"
                     }).then((confirmed) => {
                         if (confirmed) {
-                            backendCommunicator.fireEvent("delete-viewer-metadata", {
+                            backendCommunicator.send("delete-viewer-metadata", {
                                 username: $ctrl.viewerDetails.firebotData.username,
                                 key
                             });
@@ -461,7 +461,7 @@
                 }
 
                 $ctrl.disableAutoStatAccuralChange = () => {
-                    backendCommunicator.fireEvent("update-firebot-viewer-data-field", {
+                    backendCommunicator.send("update-firebot-viewer-data-field", {
                         userId: $ctrl.resolve.userId,
                         field: "disableAutoStatAccrual",
                         value: $ctrl.viewerDetails.firebotData.disableAutoStatAccrual
@@ -469,7 +469,7 @@
                 };
 
                 $ctrl.disableActiveUserListChange = () => {
-                    backendCommunicator.fireEvent("update-firebot-viewer-data-field", {
+                    backendCommunicator.send("update-firebot-viewer-data-field", {
                         userId: $ctrl.resolve.userId,
                         field: "disableActiveUserList",
                         value: $ctrl.viewerDetails.firebotData.disableActiveUserList
@@ -477,7 +477,7 @@
                 };
 
                 $ctrl.disableViewerListChange = () => {
-                    backendCommunicator.fireEvent("update-firebot-viewer-data-field", {
+                    backendCommunicator.send("update-firebot-viewer-data-field", {
                         userId: $ctrl.resolve.userId,
                         field: "disableViewerList",
                         value: $ctrl.viewerDetails.firebotData.disableViewerList
@@ -825,7 +825,7 @@
                                 $ctrl.viewerDetails.firebotData = {};
                                 $ctrl.dataPoints = [];
 
-                                backendCommunicator.fireEvent("remove-viewer-from-db", $ctrl.resolve.userId);
+                                backendCommunicator.send("remove-viewer-from-db", $ctrl.resolve.userId);
                             }
                         });
                 };

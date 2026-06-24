@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import logger from "./logwrapper";
+import { LoggerCache } from "./logger-cache";
 
 interface ResourceToken {
     path: string;
@@ -7,10 +7,11 @@ interface ResourceToken {
 }
 
 class ResourceTokenManager {
+    private logger = LoggerCache.getLogger("Resource Tokens");
     tokens: Record<string, ResourceToken> = {};
 
     private deleteToken(token: string) {
-        logger.debug(`Deleting token: ${token}`);
+        this.logger.debug(`Deleting token: ${token}`);
         if (this.tokens[token] !== undefined) {
             delete this.tokens[token];
         }
@@ -22,9 +23,12 @@ class ResourceTokenManager {
         // delete the token if we actually had something saved.
         // delay for the given length before deletion to allow multiple requests at once and loading.
         if (resource != null) {
-            setTimeout((t) => {
-                this.deleteToken(t);
-            }, resource.length, token);
+            // A null length means a permanent token that must never be auto-deleted.
+            if (resource.length != null) {
+                setTimeout((t) => {
+                    this.deleteToken(t);
+                }, resource.length, token);
+            }
             return resource.path;
         }
         return null;
@@ -33,8 +37,8 @@ class ResourceTokenManager {
     storeResourcePath(path: string, length: string | number | null) {
         const existingToken = Object.entries(this.tokens).find(([, value]) => value.path === path);
 
-        // if we already have a token for this path and it is not temporary, return it.
-        if (existingToken && existingToken.length == null) {
+        // if we already have a permanent token for this path, reuse it.
+        if (existingToken && existingToken[1].length == null) {
             return existingToken[0];
         }
 

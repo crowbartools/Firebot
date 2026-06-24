@@ -1,4 +1,5 @@
-import type { EffectType } from "../../../types/effects";
+import type { EffectType } from "../../../types";
+
 import { ActivityFeedManager } from "../../events/activity-feed-manager";
 
 const effect: EffectType = {

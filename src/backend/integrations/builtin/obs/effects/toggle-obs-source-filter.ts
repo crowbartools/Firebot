@@ -1,7 +1,7 @@
-import { EffectType } from "../../../../../types/effects";
+import type { BackendCommunicator, EffectType } from "../../../../../types";
 import {
+    type OBSSource,
     getFilterEnabledStatus,
-    OBSSource,
     setFilterEnabled
 } from "../obs-remote";
 
@@ -13,11 +13,6 @@ type EffectProperties = {
         filterName: string;
         action: SourceAction;
     }>;
-};
-
-type Scope = {
-    effect: EffectProperties;
-    [x: string]: any;
 };
 
 export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
@@ -32,7 +27,7 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
         optionsTemplate: `
     <eos-container ng-show="missingSources.length > 0">
         <div class="effect-info alert alert-warning">
-             <p><b>Warning!</b> 
+             <p><b>Warning!</b>
                  Cannot find {{missingSources.length}} sources in this effect. Ensure the correct profile or scene collection is loaded in OBS, and OBS is running.
              </p>
         </div>
@@ -44,7 +39,7 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
                 <span>Source: {{filterName.sourceName}},</span>
                 <span>Name: {{filterName.filterName}},</span>
                 <span>Action: {{getMissingActionDisplay(filterName.action)}}</span>
-            </div>   
+            </div>
             <div>
                   <button class="btn btn-danger" ng-click="deleteSceneAtIndex($index)"><i class="far fa-trash"></i></button>
             </div>
@@ -91,7 +86,7 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
       </div>
     </eos-container>
   `,
-        optionsController: ($scope: Scope, backendCommunicator: any, $q: any) => {
+        optionsController: ($scope, backendCommunicator: BackendCommunicator) => {
             $scope.isObsConfigured = false;
 
             $scope.sourceList = null;
@@ -215,15 +210,14 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
                 }
             };
 
-            $scope.getSourceList = () => {
-                $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
+            $scope.getSourceList = async () => {
+                $scope.isObsConfigured = await backendCommunicator.fireEventAsync("obs-is-configured");
 
-                $q.when(
-                    backendCommunicator.fireEventAsync("obs-get-sources-with-filters")
-                ).then((sourceList: Array<OBSSource>) => {
+                try {
+                    const sourceList: Array<OBSSource> = await backendCommunicator.fireEventAsync("obs-get-sources-with-filters");
                     $scope.sourceList = sourceList ?? null;
                     $scope.filterSources($scope.searchText);
-                });
+                } catch { }
             };
 
             $scope.getSourceList();

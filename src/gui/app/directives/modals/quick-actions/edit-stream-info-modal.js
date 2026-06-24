@@ -208,7 +208,7 @@
                 $ctrl.save = async () => {
                     await backendCommunicator.fireEventAsync("set-channel-info", $ctrl.streamInfo);
                     if ($ctrl.streamInfo.gameId !== $ctrl.originalGame.id) {
-                        backendCommunicator.fireEvent("category-changed", $ctrl.streamInfo.gameName);
+                        backendCommunicator.send("category-changed", $ctrl.streamInfo.gameName);
                     }
                     ngToast.create({
                         className: 'success',

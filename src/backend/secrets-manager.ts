@@ -1,7 +1,7 @@
 import { resolve } from "path";
 import { readFileSync } from "fs";
 import argv from "./common/argv-parser";
-import logger from "./logwrapper";
+import { LoggerCache } from "./logger-cache";
 
 interface FirebotSecrets {
     twitchClientId: string;
@@ -13,6 +13,8 @@ interface FirebotSecrets {
 }
 
 class SecretsManager {
+    private logger = LoggerCache.getLogger("Init");
+
     secrets: FirebotSecrets;
     expectedKeys: (keyof FirebotSecrets)[] = [
         "twitchClientId",
@@ -30,7 +32,7 @@ class SecretsManager {
     }
 
     testSecrets(): boolean {
-        logger.debug("...Starting secrets test");
+        this.logger.debug("...Starting secrets test");
         let missingKeys = this.expectedKeys;
         try {
             let secrets: FirebotSecrets;
@@ -49,17 +51,17 @@ class SecretsManager {
         } catch (error) {
             const err = error as { code: string };
             if (err && err.code === "MODULE_NOT_FOUND") {
-                logger.error("Unable to find secrets.json in the root directory. Please create one. Contact us in the CrowbarTools Discord if you have any questions.");
+                this.logger.error("Unable to find secrets.json in the root directory. Please create one. Contact us in the CrowbarTools Discord if you have any questions.");
                 return false;
             } else if (err && err.code === "ENOENT") {
-                logger.error(`Unable to find user-specified secrets file "${resolve(__dirname, "../", argv["fb-secrets-json"] as string)}"`);
+                this.logger.error(`Unable to find user-specified secrets file "${resolve(__dirname, "../", argv["fb-secrets-json"] as string)}"`);
                 return false;
             }
-            logger.error(`Secrets file is invalid JSON data`);
+            this.logger.error(`Secrets file is invalid JSON data`);
             return false;
         }
 
-        logger.error(`secrets.json is missing the following key(s): ${missingKeys.join(", ")}`);
+        this.logger.error(`secrets.json is missing the following key(s): ${missingKeys.join(", ")}`);
         return false;
     }
 }

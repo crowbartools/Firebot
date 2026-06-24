@@ -1,4 +1,4 @@
-import { EffectType } from "../../../../../types/effects";
+import type { EffectType } from "../../../../../types";
 import { startStreaming } from "../obs-remote";
 
 export const StartStreamEffectType: EffectType = {
@@ -21,7 +21,7 @@ export const StartStreamEffectType: EffectType = {
         return [];
     },
     onTriggerEvent: async () => {
-        startStreaming();
+        await startStreaming();
         return true;
     }
 };

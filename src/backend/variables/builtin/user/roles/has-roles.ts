@@ -1,4 +1,4 @@
-import type { ReplaceVariable, TriggersObject } from "../../../../../types/variables";
+import type { ReplaceVariable, TriggersObject } from "../../../../../types";
 
 import { TwitchApi } from "../../../../streaming-platforms/twitch/api";
 import roleHelpers from "../../../../roles/role-helpers";
@@ -10,6 +10,7 @@ triggers["manual"] = true;
 triggers["custom_script"] = true;
 triggers["preset"] = true;
 triggers["channel_reward"] = true;
+triggers["power_up"] = true;
 
 const model : ReplaceVariable = {
     definition: {

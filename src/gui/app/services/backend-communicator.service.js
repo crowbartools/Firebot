@@ -23,15 +23,15 @@
                 knownEvents.add(eventName);
 
                 return (function(name) {
-                    ipcRenderer.on(name, function(_, data) {
+                    ipcRenderer.on(name, function(_, ...data) {
                         const eventListeners = listeners[name];
                         for (const listener of eventListeners) {
                             if (listener.async) {
-                                listener.callback(data).then((returnValue) => {
+                                listener.callback(...data).then((returnValue) => {
                                     service.fireEvent(`${name}:reply`, returnValue);
                                 });
                             } else {
-                                $q.resolve(true, () => listener.callback(data));
+                                $q.resolve(true, () => listener.callback(...data));
                             }
                         }
                     });
@@ -64,24 +64,24 @@
 
             service.onAsync = (eventName, callback) => service.on(eventName, callback, true);
 
-            service.fireEventAsync = function(type, data) {
+            service.fireEventAsync = function(type, ...data) {
                 if (data !== undefined) {
                     data = JSON.parse(JSON.stringify(data));
                 }
                 return $q.when(new Promise((resolve) => {
-                    ipcRenderer.send(type, data);
+                    ipcRenderer.send(type, ...data);
                     ipcRenderer.once(`${type}:reply`, (_, eventData) => {
                         resolve(eventData);
                     });
                 }));
             };
 
-            service.fireEventSync = function(type, data) {
-                return ipcRenderer.sendSync(type, data);
+            service.fireEventSync = function(type, ...data) {
+                return ipcRenderer.sendSync(type, ...data);
             };
 
-            service.fireEvent = function(type, data) {
-                ipcRenderer.send(type, data);
+            service.fireEvent = function(type, ...data) {
+                ipcRenderer.send(type, ...data);
             };
 
             service.send = service.fireEvent;

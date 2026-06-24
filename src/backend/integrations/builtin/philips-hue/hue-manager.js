@@ -1,6 +1,6 @@
 "use strict";
 
-const logger = require("../../../logwrapper");
+const logger = require("../../../logger-cache").LoggerCache.getLogger("Integration: Philips Hue");
 const frontendCommunicator = require("../../../common/frontend-communicator");
 const tinycolor = require("tinycolor2");
 const { api: hueApi, model } = require('node-hue-api');
