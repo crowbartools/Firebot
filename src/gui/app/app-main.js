@@ -388,10 +388,7 @@
         $scope.accountAccess = accountAccess;
         $scope.profileManager = profileManager;
 
-        if (settingsService.getSetting("JustUpdated")) {
-            utilityService.showUpdatedModal();
-            settingsService.saveSetting("JustUpdated", false);
-        } else if (settingsService.getSetting("FirstTimeUse")) {
+        if (settingsService.getSetting("FirstTimeUse")) {
             utilityService.showSetupWizard();
             settingsService.saveSetting("FirstTimeUse", false);
         }

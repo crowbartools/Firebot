@@ -116,7 +116,6 @@
             service.openViewerSearchModal = modalFactory.openViewerSearchModal;
             service.showOverlayInfoModal = modalFactory.showOverlayInfoModal;
             service.showOverlayEventsModal = modalFactory.showOverlayEventsModal;
-            service.showUpdatedModal = modalFactory.showUpdatedModal;
             service.showErrorModal = modalFactory.showErrorModal;
             service.showErrorDetailModal = modalFactory.showErrorDetailModal;
             service.showInfoModal = modalFactory.showInfoModal;

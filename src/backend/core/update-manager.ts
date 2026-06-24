@@ -99,6 +99,7 @@ class UpdateManager {
 
         if (this._hasCheckedForUpdates === true) {
             this._logger.info("Update check has already run");
+            this.triggerUiRefresh();
             return;
         }
 
@@ -237,7 +238,11 @@ class UpdateManager {
 
     triggerUiRefresh(): void {
         this._logger.debug("Triggering UI refresh");
-        frontendCommunicator.send("updates:update-data", app.isPackaged ? this._updateData : null);
+        frontendCommunicator.send("updates:update-data", ({
+            updateData: app.isPackaged ? this._updateData : null,
+            justUpdated: SettingsManager.getSetting("JustUpdated") === true,
+            pendingUpdate: this._updateDownloaded === true
+        }));
     }
 }
 

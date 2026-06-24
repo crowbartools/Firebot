@@ -6,7 +6,12 @@
 
     angular
         .module('firebotApp')
-        .factory('updatesService', function ($sce, modalFactory, backendCommunicator) {
+        .factory('updatesService', function (
+            $sce,
+            settingsService,
+            modalFactory,
+            backendCommunicator
+        ) {
             const service = {};
 
             service.updateData = null;
@@ -19,8 +24,13 @@
                 backendCommunicator.send("updates:download-and-install-update");
             };
 
-            backendCommunicator.on("updates:update-data", (updateData) => {
-                service.updateData = updateData;
+            backendCommunicator.on("updates:update-data", (data) => {
+                service.updateData = data.updateData;
+
+                if (data.justUpdated === true && data.pendingUpdate !== true) {
+                    modalFactory.showUpdatedModal();
+                    settingsService.saveSetting("JustUpdated", false);
+                }
 
                 if (service.updateData?.releaseNotes) {
                     service.updateData.releaseNotes = $sce.trustAsHtml(sanitize(marked(service.updateData.releaseNotes)));
