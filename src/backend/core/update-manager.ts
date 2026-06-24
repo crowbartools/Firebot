@@ -93,12 +93,12 @@ class UpdateManager {
 
     private async checkForUpdate(): Promise<void> {
         if (this._isCheckingForUpdates === true) {
-            this._logger.info("Already checking for Firebot update");
+            this._logger.debug("Already checking for Firebot update");
             return;
         }
 
         if (this._hasCheckedForUpdates === true) {
-            this._logger.info("Update check has already run");
+            this._logger.debug("Update check has already run");
             this.triggerUiRefresh();
             return;
         }
