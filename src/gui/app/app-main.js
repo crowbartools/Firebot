@@ -113,6 +113,7 @@
 
     app.run(function initializeApplication(
         logger,
+        backendCommunicator,
         accountAccess,
         activityFeedService,
         backupService,
@@ -156,8 +157,6 @@
          * Services are included here so they're instantiated on app start
          * and get their initial data
          */
-
-        pluginsService.loadPlugins();
 
         platformService.loadPlatform();
 
@@ -212,7 +211,7 @@
         dynamicParameterRegistry.register("sort-tag-select", { tag: "fb-param-sort-tag-select" });
         dynamicParameterRegistry.register("animation-select", { tag: "fb-param-animation-select" });
 
-        uiExtensionsService.setAsReady();
+        backendCommunicator.send("main-window-ready");
     });
 
     app.controller("MainController", function($scope, $rootScope, $timeout, accountAccess, utilityService, profileManager,

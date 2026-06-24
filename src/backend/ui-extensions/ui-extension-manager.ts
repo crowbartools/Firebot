@@ -12,12 +12,6 @@ class UIExtensionManager {
 
     private uiReady = false;
 
-    constructor() {
-        frontendCommunicator.on("ui-extensions-ready", () => {
-            this.setUIReadyForExtensions();
-        });
-    }
-
     registerUIExtension(extension: UIExtension, pluginId?: string): boolean {
         const existingExtension = this._extensions.find(ext => ext.id === extension.id);
         if (existingExtension) {
@@ -35,18 +29,15 @@ class UIExtensionManager {
         });
 
         if (this.uiReady) {
-            frontendCommunicator.send("ui-extension-registered", this.prepareExtensionForFrontend(extension));
+            frontendCommunicator.send("ui-extensions:ui-extension-registered", this.prepareExtensionForFrontend(extension));
         }
 
         return true;
     }
 
-    private setUIReadyForExtensions(): void {
-        if (this.uiReady) {
-            return;
-        }
+    setUIReadyForExtensions(): void {
         this.uiReady = true;
-        frontendCommunicator.send("all-ui-extensions", this._extensions.map(ext => this.prepareExtensionForFrontend(ext)));
+        frontendCommunicator.send("ui-extensions:all-ui-extensions", this._extensions.map(ext => this.prepareExtensionForFrontend(ext)));
     }
 
     private prepareExtensionForFrontend(extension: UIExtension) {

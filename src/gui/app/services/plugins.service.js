@@ -9,20 +9,14 @@
 
             let installedPlugins = [];
 
-            service.loadPlugins = function() {
-                return $q.when(
-                    backendCommunicator.fireEventAsync("plugin-manager:get-installed-plugins")
-                ).then((plugins) => {
-                    installedPlugins = Array.isArray(plugins) ? plugins : [];
-                    return installedPlugins;
-                });
-            };
-
-            service.reloadPlugins = service.loadPlugins;
-
-            backendCommunicator.on("plugin-manager:refresh-plugins", () => {
-                service.reloadPlugins();
+            backendCommunicator.on("plugin-manager:all-plugins", (plugins) => {
+                installedPlugins = Array.isArray(plugins) ? plugins : [];
+                return installedPlugins;
             });
+
+            service.loadPlugins = function() {
+                backendCommunicator.send("plugin-manager:ui-service-ready");
+            };
 
             service.getInstalledPlugins = function() {
                 return installedPlugins;
@@ -38,31 +32,29 @@
                 }
                 return $q.when(
                     backendCommunicator.fireEventAsync("plugin-manager:save-config", { pluginConfig, isNewInstall })
-                ).then(() => service.loadPlugins());
+                );
             };
 
             service.deletePlugin = function(pluginId, deletePluginFile = false) {
                 if (!pluginId) {
-                    return $q.resolve(false);
+                    return;
                 }
-                return $q.when(
-                    backendCommunicator.fireEventAsync("plugin-manager:delete", {
-                        id: pluginId,
-                        deletePluginFile: deletePluginFile === true
-                    })
-                ).then(() => service.loadPlugins());
+
+                backendCommunicator.send("plugin-manager:delete", {
+                    id: pluginId,
+                    deletePluginFile: deletePluginFile === true
+                });
             };
 
             service.setPluginEnabled = function(pluginId, enabled) {
                 if (!pluginId) {
-                    return $q.resolve(false);
+                    return;
                 }
-                return $q.when(
-                    backendCommunicator.fireEventAsync("plugin-manager:set-enabled", {
-                        id: pluginId,
-                        enabled: enabled === true
-                    })
-                ).then(() => service.loadPlugins());
+
+                backendCommunicator.send("plugin-manager:set-enabled", {
+                    id: pluginId,
+                    enabled: enabled === true
+                });
             };
 
             /**
@@ -89,11 +81,10 @@
 
             service.cancelInstall = function(fileName) {
                 if (!fileName) {
-                    return $q.resolve();
+                    return;
                 }
-                return $q.when(
-                    backendCommunicator.fireEventAsync("plugin-manager:cancel-install", { fileName })
-                );
+
+                backendCommunicator.send("plugin-manager:cancel-install", { fileName });
             };
 
             service.getScriptDetails = function(fileName, expectedScriptType) {
@@ -101,6 +92,8 @@
                     backendCommunicator.fireEventAsync("plugin-manager:get-plugin-details", { fileName, expectedScriptType })
                 );
             };
+
+            backendCommunicator.send("plugin-manager:ui-service-ready");
 
             return service;
         });

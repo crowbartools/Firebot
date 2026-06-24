@@ -25,6 +25,8 @@ const { copyDebugInfoToClipboard } = require("../../common/debug-info");
  */
 let mainWindow = null;
 
+let initialLoadComplete = false;
+
 /**
  * @type {import("tiny-typed-emitter").TypedEmitter<{
 *    "main-window-closed": () => void;
@@ -626,22 +628,6 @@ async function createMainWindow() {
             splashscreenWindow.destroy();
         }
 
-        const { PluginManager } = require("../../plugins/plugin-manager");
-        await PluginManager.startPlugins();
-
-        const { EventManager } = require("../../events/event-manager");
-        EventManager.triggerEvent("firebot", "firebot-started", {
-            username: "Firebot"
-        });
-
-        if (SettingsManager.getSetting("OpenStreamPreviewOnLaunch") === true) {
-            createStreamPreviewWindow();
-        }
-
-        if (SettingsManager.getSetting("OpenEffectQueueMonitorOnLaunch") === true) {
-            createEffectQueueMonitorWindow();
-        }
-
         fileOpenHelpers.setWindowReady(true);
     });
 
@@ -747,6 +733,32 @@ frontendCommunicator.onAsync("getAllDisplays", async () => {
 
 frontendCommunicator.onAsync("getPrimaryDisplay", async () => {
     return screenHelpers.getPrimaryDisplay();
+});
+
+frontendCommunicator.onAsync("main-window-ready", async () => {
+    if (initialLoadComplete !== true) {
+        const { PluginManager } = require("../../plugins/plugin-manager");
+        await PluginManager.startPlugins();
+
+        const { EventManager } = require("../../events/event-manager");
+        EventManager.triggerEvent("firebot", "firebot-started", {
+            username: "Firebot"
+        });
+
+        if (SettingsManager.getSetting("OpenStreamPreviewOnLaunch") === true) {
+            createStreamPreviewWindow();
+        }
+
+        if (SettingsManager.getSetting("OpenEffectQueueMonitorOnLaunch") === true) {
+            createEffectQueueMonitorWindow();
+        }
+
+        initialLoadComplete = true;
+    }
+
+    // Always run this so we re-send UI extenions to frontend
+    const { UIExtensionManager } = require("../../ui-extensions/ui-extension-manager");
+    UIExtensionManager.setUIReadyForExtensions();
 });
 
 exports.updateSplashScreenStatus = updateSplashScreenStatus;

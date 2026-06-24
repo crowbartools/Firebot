@@ -15,13 +15,15 @@ import type {
     Trigger
 } from "../../types";
 import type { FirebotPluginApi } from "../../types/plugin-api";
+import type { PluginApiContext, PluginApiContextSource } from "./plugin-api";
+import type { DisposeBag } from "./plugin-api/internal/dispose-bag";
 
+import { PluginConfigManager } from "./plugin-config-manager";
 import { ProfileManager } from "../common/profile-manager";
+import { SettingsManager } from "../common/settings-manager";
+import webhookConfigManager from "../webhooks/webhook-config-manager";
 import { LoggerCache } from "../logger-cache";
 import frontendCommunicator from "../common/frontend-communicator";
-import { SettingsManager } from "../common/settings-manager";
-import { PluginConfigManager } from "./plugin-config-manager";
-import webhookConfigManager from "../webhooks/webhook-config-manager";
 
 import { PluginExecutor } from "./executors/plugin-executor";
 import { LegacyStartUpScript } from "./executors/legacy-startup-script-executor";
@@ -33,10 +35,6 @@ import {
     PluginExecutionResult
 } from "./executors/plugin-executor.interface";
 import { buildPluginApi, createPluginApiContext } from "./plugin-api";
-import type { PluginApiContext, PluginApiContextSource } from "./plugin-api";
-import type { DisposeBag } from "./plugin-api/internal/dispose-bag";
-
-const logger = LoggerCache.getLogger("Plugins");
 
 type LoadedPlugin = PluginBase | LegacyCustomScript;
 type AnyPluginExecutor = IPluginExecutor;
@@ -75,6 +73,8 @@ type GetPluginDetailsResult = {
 };
 
 class PluginManager {
+    private _logger = LoggerCache.getLogger("Plugins");
+
     private startingPlugins: Map<string, Promise<void>> = new Map();
     private activePlugins: Record<string, ActivePluginEntry> = {};
 
@@ -91,6 +91,74 @@ class PluginManager {
 
     constructor() {
         this.installRequireInterceptor();
+
+        PluginConfigManager.on("deleted-item", async (config) => {
+            await this.onPluginConfigDeleted(config);
+        });
+
+        frontendCommunicator.onAsync("plugin-manager:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
+        frontendCommunicator.onAsync("plugin-manager:get-plugin-details",
+            async (data: { fileName: string, expectedPluginType?: PluginType }) => {
+                this._logger.debug("Getting plugin details for", data);
+                try {
+                    const details = await this.getPluginDetailsByFileName(data.fileName, data.expectedPluginType);
+                    this._logger.debug("Got details", details);
+                    return details;
+                } catch (error) {
+                    this._logger.debug("Error getting plugin details", error);
+                    return { success: false, error: "Failed to get plugin details" };
+                }
+            }
+        );
+
+        frontendCommunicator.onAsync("plugin-manager:save-config",
+            async ({ pluginConfig, isNewInstall = false }: { pluginConfig: InstalledPluginConfig, isNewInstall?: boolean }) => {
+                const newConfig = PluginConfigManager.saveItem(pluginConfig);
+                await this.reloadPluginConfig(newConfig, isNewInstall);
+                return newConfig;
+            }
+        );
+
+        frontendCommunicator.onAsync("plugin-manager:install-from-file",
+            async (data: { filePath: string, overwrite?: boolean }) => {
+                return await this.installPluginFromPath(data?.filePath, data?.overwrite === true);
+            }
+        );
+
+        frontendCommunicator.onAsync("plugin-manager:update-from-file",
+            async (data: { pluginId: string, filePath: string, overwrite?: boolean }) => {
+                return await this.updatePluginFromPath(
+                    data?.pluginId,
+                    data?.filePath,
+                    data?.overwrite === true
+                );
+            }
+        );
+
+        frontendCommunicator.onAsync("plugin-manager:cancel-install",
+            async (data: { fileName: string }) => {
+                await this.cancelInstall(data?.fileName);
+                return true;
+            }
+        );
+
+        frontendCommunicator.onAsync("plugin-manager:set-enabled",
+            async (data: { id: string, enabled: boolean }) => {
+                await this.setPluginEnabled(data?.id, data?.enabled === true);
+                return true;
+            }
+        );
+
+        frontendCommunicator.onAsync("plugin-manager:delete",
+            async (data: string | { id: string, deletePluginFile?: boolean }) => {
+                const id = typeof data === "string" ? data : data?.id;
+                const deletePluginFile = typeof data !== "string" && data?.deletePluginFile === true;
+                return this.deletePlugin(id, deletePluginFile);
+            }
+        );
     }
 
     async migrateLegacyStartUpScriptsToPlugins() {
@@ -117,7 +185,7 @@ class PluginManager {
 
         const startupScriptsData: StartUpScriptData | undefined = startUpScriptsDb.getData("/") as unknown as StartUpScriptData;
 
-        logger.info("Migrating start up scripts to plugins");
+        this._logger.info("Migrating start up scripts to plugins");
 
         if (startupScriptsData) {
             for (const script of Object.values(startupScriptsData)) {
@@ -152,7 +220,7 @@ class PluginManager {
                         });
                     }
                 } catch (error) {
-                    logger.error(`Failed to migrate start up script ${script.id}: ${error}`);
+                    this._logger.error(`Failed to migrate start up script ${script.id}: ${error}`);
                 }
             }
         }
@@ -160,12 +228,17 @@ class PluginManager {
         // eslint-disable-next-line no-warning-comments
         // TODO: in a future version we can uncomment the following to clean up old start up script data after migration has been out for a while
 
-        // this.logger.info("Deleting start up scripts database");
+        // this.this._logger.info("Deleting start up scripts database");
         // ProfileManager.deletePathInProfile("startup-scripts-config.json");
 
         SettingsManager.saveSetting("MigratedLegacyStartUpScriptsToPlugins", true);
 
-        logger.info("Start up scripts migration complete");
+        this._logger.info("Start up scripts migration complete");
+    }
+
+    async triggerUiRefresh(): Promise<void> {
+        this._logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("plugin-manager:all-plugins", await this.getInstalledPlugins());
     }
 
     // #region Plugin lifecycle
@@ -191,14 +264,14 @@ class PluginManager {
 
     private async doStartPlugin(pluginConfig: InstalledPluginConfig, installing?: boolean): Promise<void> {
         if (this.activePlugins[pluginConfig.id]) {
-            logger.warn(`Plugin ${pluginConfig.fileName} is already loaded.`);
+            this._logger.warn(`Plugin ${pluginConfig.fileName} is already loaded.`);
             return;
         }
 
         // Guard against two different plugin configs pointing at the same plugin file
         const existingForFile = this.getActivePluginByFileName(pluginConfig.fileName);
         if (existingForFile) {
-            logger.warn(`Cannot start plugin ${pluginConfig.fileName}: another plugin (${existingForFile.config.id}) is already running from the same script file.`);
+            this._logger.warn(`Cannot start plugin ${pluginConfig.fileName}: another plugin (${existingForFile.config.id}) is already running from the same script file.`);
             return;
         }
 
@@ -207,7 +280,7 @@ class PluginManager {
 
         const detailsResult = await this.getPluginDetailsByFileName(pluginConfig.fileName, "plugin");
         if (detailsResult.success === false) {
-            logger.warn(`Could not get details for plugin ${pluginConfig.fileName}: ${detailsResult.error}`);
+            this._logger.warn(`Could not get details for plugin ${pluginConfig.fileName}: ${detailsResult.error}`);
             return;
         }
 
@@ -222,7 +295,7 @@ class PluginManager {
         }
 
         if (!(await this.isValidPlugin(plugin))) {
-            logger.warn(`Plugin ${pluginConfig.fileName} is not a valid plugin.`);
+            this._logger.warn(`Plugin ${pluginConfig.fileName} is not a valid plugin.`);
             await apiInstance.disposeBag.drain();
             this.pendingApiInstances.delete(pluginConfig.fileName);
             delete require.cache[require.resolve(pluginFilePath)];
@@ -231,7 +304,7 @@ class PluginManager {
 
         const executor = await this.findPluginExecutor(plugin);
         if (!executor) {
-            logger.warn(`No plugin executor found for ${pluginConfig.fileName}.`);
+            this._logger.warn(`No plugin executor found for ${pluginConfig.fileName}.`);
             await apiInstance.disposeBag.drain();
             this.pendingApiInstances.delete(pluginConfig.fileName);
             delete require.cache[require.resolve(pluginFilePath)];
@@ -256,9 +329,9 @@ class PluginManager {
                 manifest: detailsResult.details.manifest
             };
             this.pendingApiInstances.delete(pluginConfig.fileName);
-            logger.info(`Started plugin ${pluginConfig.fileName}`);
+            this._logger.info(`Started plugin ${pluginConfig.fileName}`);
         } else {
-            logger.warn(`Could not start plugin ${pluginConfig.fileName}: ${result.error}`);
+            this._logger.warn(`Could not start plugin ${pluginConfig.fileName}: ${result.error}`);
             await apiInstance.disposeBag.drain();
             this.pendingApiInstances.delete(pluginConfig.fileName);
             delete require.cache[require.resolve(pluginFilePath)];
@@ -269,11 +342,11 @@ class PluginManager {
         const pluginConfigs = PluginConfigManager.getAllItems();
         for (const pluginConfig of pluginConfigs) {
             if (pluginConfig.enabled !== false) {
-                logger.info(`Starting plugin ${pluginConfig.fileName}`);
+                this._logger.info(`Starting plugin ${pluginConfig.fileName}`);
                 await this.startPlugin(pluginConfig, false);
             }
         }
-        logger.info("All plugins started");
+        this._logger.info("All plugins started");
     }
 
     async stopPlugin(pluginId: string, uninstalling = false): Promise<void> {
@@ -285,20 +358,20 @@ class PluginManager {
         try {
             await active.executor.unloadPlugin(active.plugin, active.config, active.registrations, uninstalling);
         } catch (error) {
-            logger.error(`Error while unloading plugin ${active.fileName}`, error);
+            this._logger.error(`Error while unloading plugin ${active.fileName}`, error);
         }
 
         try {
             const pluginFilePath = this.getPluginFilePath(active.fileName);
             delete require.cache[require.resolve(pluginFilePath)];
         } catch (error) {
-            logger.warn(`Could not clear require cache for plugin ${active.fileName}`, error);
+            this._logger.warn(`Could not clear require cache for plugin ${active.fileName}`, error);
         }
 
         await active.apiInstance.disposeBag.drain();
 
         delete this.activePlugins[pluginId];
-        logger.info(`Stopped plugin ${active.fileName}`);
+        this._logger.info(`Stopped plugin ${active.fileName}`);
     }
 
     /**
@@ -326,15 +399,15 @@ class PluginManager {
 
         await this.startPlugin(config, false);
 
-        frontendCommunicator.send("plugin-manager:refresh-plugins");
+        void this.triggerUiRefresh();
     }
 
     async stopAllPlugins(): Promise<void> {
-        logger.info("Stopping all plugins...");
+        this._logger.info("Stopping all plugins...");
         for (const id of Object.keys(this.activePlugins)) {
             await this.stopPlugin(id, false);
         }
-        logger.info("Stopped all plugins");
+        this._logger.info("Stopped all plugins");
     }
 
     /**
@@ -363,10 +436,10 @@ class PluginManager {
         try {
             await active.executor.updateParameters?.(active.plugin, pluginConfig);
         } catch (error) {
-            logger.error(`Error during updateParameters for ${active.fileName}`, error);
+            this._logger.error(`Error during updateParameters for ${active.fileName}`, error);
         }
 
-        frontendCommunicator.send("plugin-manager:refresh-plugins");
+        void this.triggerUiRefresh();
     }
 
     async setPluginEnabled(pluginId: string, enabled: boolean): Promise<void> {
@@ -392,13 +465,13 @@ class PluginManager {
                 const result = await this.getPluginDetailsByFileName(pluginConfig.fileName, "plugin");
 
                 if (result.success === false) {
-                    logger.warn(`Could not get details for plugin ${pluginConfig.fileName}: ${result.error}`);
+                    this._logger.warn(`Could not get details for plugin ${pluginConfig.fileName}: ${result.error}`);
                     continue;
                 }
 
                 installedPlugins.push({ config: pluginConfig, details: result.details });
             } catch (error) {
-                logger.warn(`Error getting details for plugin ${pluginConfig.fileName}`, error);
+                this._logger.warn(`Error getting details for plugin ${pluginConfig.fileName}`, error);
                 continue;
             }
         }
@@ -546,8 +619,10 @@ class PluginManager {
             }
             delete require.cache[require.resolve(filePath)];
         } catch (error) {
-            logger.warn(`Failed to delete cancelled install ${fileName}`, error);
+            this._logger.warn(`Failed to delete cancelled install ${fileName}`, error);
         }
+
+        void this.triggerUiRefresh();
     }
 
     /**
@@ -571,7 +646,7 @@ class PluginManager {
                 await fsp.unlink(filePath);
             }
         } catch (error) {
-            logger.warn(`Failed to delete plugin file for ${fileName}`, error);
+            this._logger.warn(`Failed to delete plugin file for ${fileName}`, error);
         }
     }
 
@@ -592,6 +667,8 @@ class PluginManager {
         if (deletePluginFile) {
             await this.deletePluginFileIfUnreferenced(fileName);
         }
+
+        void this.triggerUiRefresh();
 
         return true;
     }
@@ -654,7 +731,7 @@ class PluginManager {
                 await fsp.rename(oldFilePath, backupPath);
             } catch (error) {
                 backupPath = null;
-                logger.warn(`Failed to back up ${oldFileName} before update`, error);
+                this._logger.warn(`Failed to back up ${oldFileName} before update`, error);
             }
         }
 
@@ -688,7 +765,7 @@ class PluginManager {
                 try {
                     await fsp.rename(backupPath, oldFilePath);
                 } catch (error) {
-                    logger.warn(`Failed to restore backup for ${oldFileName}`, error);
+                    this._logger.warn(`Failed to restore backup for ${oldFileName}`, error);
                 }
             }
             await this.startPlugin(config, false).catch(() => undefined);
@@ -710,7 +787,7 @@ class PluginManager {
                     await fsp.unlink(backupPath);
                 }
             } catch (error) {
-                logger.warn(`Cleanup of old plugin ${oldFileName} failed`, error);
+                this._logger.warn(`Cleanup of old plugin ${oldFileName} failed`, error);
             }
         } else if (backupPath && !fileNameChanged) {
             // Same name — backup served its purpose, drop it.
@@ -760,7 +837,7 @@ class PluginManager {
 
         const detailsResult = await this.getPluginDetailsByFileName(scriptName, "script");
         if (detailsResult.success === false) {
-            logger.warn(`Could not get details for effect script ${scriptName}: ${detailsResult.error}`);
+            this._logger.warn(`Could not get details for effect script ${scriptName}: ${detailsResult.error}`);
             return { success: false, error: "Could not load script details" };
         }
 
@@ -803,7 +880,7 @@ class PluginManager {
         try {
             return await this.legacyEffectScriptExecutor.executeScript(script, context);
         } catch (error) {
-            logger.error(`Error running script '${scriptName}'`, error);
+            this._logger.error(`Error running script '${scriptName}'`, error);
             return { success: false, error: (error as Error)?.message ?? "Error running script" };
         }
     }
@@ -830,7 +907,7 @@ class PluginManager {
         return undefined;
     }
 
-    private installRequireInterceptor() {
+    private installRequireInterceptor(): void {
         if (this.requireInterceptorInstalled) {
             return;
         }
@@ -898,7 +975,7 @@ class PluginManager {
             return (loadedPlugin?.default ?? loadedPlugin) as LoadedPlugin;
         } catch (error) {
             frontendCommunicator.send("error", `Error loading the plugin '${pluginFilePath}' \n\n ${error}`);
-            logger.error(error);
+            this._logger.error(error);
             return null;
         }
     }
@@ -924,7 +1001,7 @@ class PluginManager {
             return (isolatedModule.exports?.default ?? isolatedModule.exports) as LoadedPlugin;
         } catch (error) {
             frontendCommunicator.send("error", `Error loading the plugin '${pluginFilePath}' \n\n ${error}`);
-            logger.error(error);
+            this._logger.error(error);
             return null;
         }
     }
@@ -942,77 +1019,5 @@ class PluginManager {
 }
 
 const pluginManager = new PluginManager();
-
-frontendCommunicator.onAsync("plugin-manager:get-installed-plugins", async () => {
-    return await pluginManager.getInstalledPlugins();
-});
-
-frontendCommunicator.onAsync(
-    "plugin-manager:get-plugin-details",
-    async (data: { fileName: string, expectedPluginType?: PluginType }) => {
-        console.log("Getting plugin details for", data);
-        try {
-            const details = await pluginManager.getPluginDetailsByFileName(data.fileName, data.expectedPluginType);
-            console.log("Got details", details);
-            return details;
-        } catch (error) {
-            console.log("Error getting plugin details", error);
-            return { success: false, error: "Failed to get plugin details" };
-        }
-    }
-);
-
-frontendCommunicator.onAsync("plugin-manager:save-config", async ({ pluginConfig, isNewInstall = false }: { pluginConfig: InstalledPluginConfig, isNewInstall?: boolean }) => {
-    const newConfig = PluginConfigManager.saveItem(pluginConfig);
-    await pluginManager.reloadPluginConfig(newConfig, isNewInstall);
-    return newConfig;
-});
-
-frontendCommunicator.onAsync(
-    "plugin-manager:install-from-file",
-    async (data: { filePath: string, overwrite?: boolean }) => {
-        return await pluginManager.installPluginFromPath(data?.filePath, data?.overwrite === true);
-    }
-);
-
-frontendCommunicator.onAsync(
-    "plugin-manager:update-from-file",
-    async (data: { pluginId: string, filePath: string, overwrite?: boolean }) => {
-        return await pluginManager.updatePluginFromPath(
-            data?.pluginId,
-            data?.filePath,
-            data?.overwrite === true
-        );
-    }
-);
-
-frontendCommunicator.onAsync(
-    "plugin-manager:cancel-install",
-    async (data: { fileName: string }) => {
-        await pluginManager.cancelInstall(data?.fileName);
-        return true;
-    }
-);
-
-frontendCommunicator.onAsync(
-    "plugin-manager:set-enabled",
-    async (data: { id: string, enabled: boolean }) => {
-        await pluginManager.setPluginEnabled(data?.id, data?.enabled === true);
-        return true;
-    }
-);
-
-frontendCommunicator.onAsync(
-    "plugin-manager:delete",
-    async (data: string | { id: string, deletePluginFile?: boolean }) => {
-        const id = typeof data === "string" ? data : data?.id;
-        const deletePluginFile = typeof data !== "string" && data?.deletePluginFile === true;
-        return pluginManager.deletePlugin(id, deletePluginFile);
-    }
-);
-
-PluginConfigManager.on("deleted-item", async (config) => {
-    await pluginManager.onPluginConfigDeleted(config);
-});
 
 export { pluginManager as PluginManager };

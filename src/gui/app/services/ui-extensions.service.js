@@ -8,10 +8,6 @@
 
             service.extensions = [];
 
-            service.setAsReady = () => {
-                backendCommunicator.send("ui-extensions-ready");
-            };
-
             service.getPage = (extensionId, pageId) => {
                 const extension = service.extensions.find(e => e.id === extensionId);
                 if (!extension) {
@@ -149,13 +145,13 @@
                 }
             }
 
-            backendCommunicator.on("all-ui-extensions", (extensions) => {
+            backendCommunicator.on("ui-extensions:all-ui-extensions", (extensions) => {
                 for (const extension of extensions) {
                     installExtension(extension);
                 }
             });
 
-            backendCommunicator.on("ui-extension-registered", (extension) => {
+            backendCommunicator.on("ui-extensions:ui-extension-registered", (extension) => {
                 installExtension(extension);
             });
 
