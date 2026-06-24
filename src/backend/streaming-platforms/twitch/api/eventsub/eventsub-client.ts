@@ -941,6 +941,12 @@ class TwitchEventSubClient {
                             event.isPrime,
                             event.type === "resub"
                         );
+                        twitchRolesManager.addSubscriberToSubscribersList(
+                            event.chatterId,
+                            event.chatterName,
+                            event.chatterDisplayName,
+                            event.tier
+                        );
                         break;
 
                     case "community_sub_gift":
@@ -963,6 +969,12 @@ class TwitchEventSubClient {
                             event.cumulativeAmount,
                             event.communityGiftId
                         );
+                        twitchRolesManager.addSubscriberToSubscribersList(
+                            event.recipientId,
+                            event.recipientName,
+                            event.recipientDisplayName,
+                            event.tier
+                        );
                         await viewerDatabase.calculateAutoRanks(event.recipientId);
                         break;
 
@@ -979,6 +991,13 @@ class TwitchEventSubClient {
                                 event.gifterDisplayName,
                                 upgradeTier
                             );
+
+                            twitchRolesManager.addSubscriberToSubscribersList(
+                                event.chatterId,
+                                event.chatterName,
+                                event.chatterDisplayName,
+                                upgradeTier
+                            );
                         }
                         await viewerDatabase.calculateAutoRanks(event.chatterId);
                         break;
@@ -987,6 +1006,12 @@ class TwitchEventSubClient {
                         TwitchEventHandlers.sub.triggerPrimeUpgrade(
                             event.chatterName,
                             event.chatterId,
+                            event.chatterDisplayName,
+                            event.tier
+                        );
+                        twitchRolesManager.addSubscriberToSubscribersList(
+                            event.chatterId,
+                            event.chatterName,
                             event.chatterDisplayName,
                             event.tier
                         );
