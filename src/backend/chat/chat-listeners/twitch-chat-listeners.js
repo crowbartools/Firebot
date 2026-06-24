@@ -5,7 +5,7 @@ const chatHelpers = require("../chat-helpers");
 const { AccountAccess } = require("../../common/account-access");
 const { ActiveUserHandler } = require("../active-user-handler");
 const { ChatModerationManager } = require("../moderation/chat-moderation-manager");
-const { FirebotFrontendChatHelpers } = require("../frontend-chat-helpers");
+const { FrontendChatManager } = require("../frontend-chat-manager");
 const { TwitchEventHandlers } = require("../../streaming-platforms/twitch/events");
 const twitchRolesManager = require("../../roles/twitch-roles-manager");
 const raidMessageChecker = require(".././moderation/raid-message-checker");
@@ -38,7 +38,7 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
         firebotChatMessage.isAnnouncement = true;
         firebotChatMessage.announcementColor = announcementInfo.color ?? "PRIMARY";
 
-        FirebotFrontendChatHelpers.sendChatMessageToFrontend(firebotChatMessage);
+        FrontendChatManager.sendChatMessageToFrontend(firebotChatMessage);
 
         TwitchEventHandlers.announcement.triggerAnnouncement(
             firebotChatMessage.username,
@@ -75,7 +75,7 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
                 imageUrl: "https://static-cdn.jtvnw.net/automatic-reward-images/highlight-4.png"
             };
         }
-        FirebotFrontendChatHelpers.sendChatMessageToFrontend(firebotChatMessage);
+        FrontendChatManager.sendChatMessageToFrontend(firebotChatMessage);
         exports.events.emit("chat-message", firebotChatMessage);
 
         const { ranCommand, command, userCommand } = await chatCommandHandler.handleChatMessage(firebotChatMessage);
@@ -116,7 +116,7 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
 
         chatCommandHandler.handleChatMessage(firebotChatMessage);
 
-        FirebotFrontendChatHelpers.sendChatMessageToFrontend(firebotChatMessage);
+        FrontendChatManager.sendChatMessageToFrontend(firebotChatMessage);
 
         TwitchEventHandlers.whisper.triggerWhisper(
             msg.userInfo.userName,
@@ -143,7 +143,7 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
             twitchRolesManager.removeVipFromVipList(msg.userInfo.userId);
         }
 
-        FirebotFrontendChatHelpers.sendChatMessageToFrontend(firebotChatMessage);
+        FrontendChatManager.sendChatMessageToFrontend(firebotChatMessage);
 
         const { ranCommand, command, userCommand } = await chatCommandHandler.handleChatMessage(firebotChatMessage);
 
@@ -173,7 +173,7 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
             if (subInfo.message != null && subInfo.message.length > 0) {
                 const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, subInfo.message);
 
-                FirebotFrontendChatHelpers.sendChatMessageToFrontend(firebotChatMessage);
+                FrontendChatManager.sendChatMessageToFrontend(firebotChatMessage);
 
                 exports.events.emit("chat-message", firebotChatMessage);
             }

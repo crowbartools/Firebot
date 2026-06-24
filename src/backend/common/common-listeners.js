@@ -78,7 +78,7 @@ exports.setupCommonListeners = () => {
         return { path: path, id: uuid };
     });
 
-    frontendCommunicator.on("highlight-message", (data) => {
+    frontendCommunicator.on("spotlight-message", (data) => {
         const { EventManager } = require("../events/event-manager");
         EventManager.triggerEvent("firebot", "highlight-message", data);
     });

@@ -17,6 +17,7 @@ import type { TwitchApi } from "../";
 
 import { ApiResourceBase } from "./api-resource-base";
 import { TwitchSlashCommandHandler } from "../../chat/twitch-slash-command-handler";
+import { FrontendChatManager } from "../../../../chat/frontend-chat-manager";
 import frontendCommunicator from '../../../../common/frontend-communicator';
 
 interface ResultWithError<TResult, TError> {
@@ -61,15 +62,15 @@ export class TwitchChatApi extends ApiResourceBase {
 
         this._slashCommandHandler = new TwitchSlashCommandHandler(apiBase);
 
-        frontendCommunicator.onAsync("send-chat-message", async (sendData: ChatMessageRequest) => {
+        frontendCommunicator.onAsync("chat:send-chat-message", async (sendData: ChatMessageRequest) => {
             const { message, accountType, replyToMessageId } = sendData;
 
             await this.sendChatMessage(message, replyToMessageId, accountType.toLowerCase() === "bot");
         });
 
-        frontendCommunicator.onAsync("delete-message", async (messageId: string) => {
-            return await this.deleteChatMessage(messageId);
-        });
+        frontendCommunicator.onAsync("chat:delete-message",
+            async (messageId: string) => await this.deleteChatMessage(messageId)
+        );
 
         frontendCommunicator.onAsync("chat:pin-message", async (messageId: string) => {
             return await this.pinChatMessage(messageId);
@@ -134,10 +135,7 @@ export class TwitchChatApi extends ApiResourceBase {
                     );
 
                 if (!slashCommandResult) {
-                    frontendCommunicator.send("chatUpdate", {
-                        fbEvent: "ChatAlert",
-                        message: `Failed to execute "${message}"`
-                    });
+                    FrontendChatManager.sendAlertToDashboard(`Failed to execute "${message}"`);
                 }
 
                 sendChatMessageResult.success = slashCommandResult;
@@ -149,10 +147,7 @@ export class TwitchChatApi extends ApiResourceBase {
                 && slashCommandValidationResult.success === false
                 && slashCommandValidationResult.foundCommand !== false
             ) {
-                frontendCommunicator.send("chatUpdate", {
-                    fbEvent: "ChatAlert",
-                    message: slashCommandValidationResult.errorMessage
-                });
+                FrontendChatManager.sendAlertToDashboard(slashCommandValidationResult.errorMessage);
             }
 
             const messageFragments = message
@@ -272,6 +267,10 @@ export class TwitchChatApi extends ApiResourceBase {
             return true;
         } catch (error) {
             this.logger.error("Error deleting chat message", (error as Error).message);
+            frontendCommunicator.send("showToast", {
+                content: "Unable to delete chat message. Check log for more details.",
+                className: "warning"
+            });
         }
 
         return false;

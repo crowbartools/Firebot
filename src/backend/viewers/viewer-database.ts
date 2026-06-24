@@ -6,6 +6,7 @@ import type { HelixUser, HelixBan } from "@twurple/api";
 import type {
     BasicViewer,
     FirebotViewer,
+    FrontendViewer,
     NewFirebotViewer,
     Rank,
     RankLadder
@@ -80,6 +81,7 @@ interface UserDetails {
 class ViewerDatabase extends TypedEmitter<{
     "viewer-database-loaded": () => void;
     "updated-viewer-avatar": (event: { userId: string, url: string }) => void;
+    "frontend-viewer-updated": (viewer: FrontendViewer) => void;
 }> {
     private logger = LoggerCache.getLogger("Viewers");
 
@@ -867,14 +869,16 @@ class ViewerDatabase extends TypedEmitter<{
             if (userUpdated) {
                 await this.updateViewer(firebotUserData);
 
-                frontendCommunicator.send("twitch:chat:user-updated", {
+                const updatedViewer: FrontendViewer = {
                     id: firebotUserData._id,
                     username: firebotUserData.username,
                     displayName: firebotUserData.displayName,
                     roles: userRoles,
                     profilePicUrl: firebotUserData.profilePicUrl,
                     active: this._activeViewers.includes(firebotUserData._id)
-                });
+                };
+
+                this.emit("frontend-viewer-updated", updatedViewer);
             }
         }
 

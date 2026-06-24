@@ -314,8 +314,9 @@ export async function whenReady() {
         .default;
     countdownManager.startTimer();
 
-    // Get UpdateManager in memory
+    // Get additional modules in memory
     await import("../../../core/update-manager");
+    await import("../../../chat/frontend-chat-manager");
 
     logger.debug("...loading main window");
     windowManagement.updateSplashScreenStatus("Here we go!");

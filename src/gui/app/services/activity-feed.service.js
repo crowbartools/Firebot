@@ -13,15 +13,14 @@
             modalService,
             modalFactory,
             settingsService,
-            chatMessagesService,
-            ngToast) {
+            ngToast
+        ) {
             const service = {};
 
             service.allActivities = [];
             service.filteredActivities = [];
 
             backendCommunicator.on("activity-feed:event-activity", (activity) => {
-                const rawMessage = activity.message;
                 activity.message = $sce.trustAsHtml(sanitize(marked.parseInline(activity.message)));
 
                 service.allActivities.unshift(activity);
@@ -35,11 +34,6 @@
                 }
 
                 service.filteredActivities.unshift(activity);
-
-                if (settingsService.getSetting("ShowActivityFeedEventsInChat") === true
-                    && activity.excludeFromChatFeed !== true) {
-                    chatMessagesService.chatAlertMessage(rawMessage, activity.icon);
-                }
 
                 if (service.filteredActivities.length > 100) {
                     service.filteredActivities.length = 100;

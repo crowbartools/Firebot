@@ -71,6 +71,7 @@ export type FirebotParsedMessagePart = {
 export type FirebotChatMessage = {
     id: string;
     timestamp?: number;
+    timestampDisplay?: string;
     username: string;
     userId: string;
     userDisplayName?: string;
@@ -103,6 +104,9 @@ export type FirebotChatMessage = {
     isAutoModHeld?: boolean;
     autoModStatus?: "pending" | "approved" | "denied" | "expired";
     autoModReason?: string;
+    autoModHeldMessageId?: string;
+    autoModResolvedBy?: string;
+    autoModErrorMessage?: string;
     isFirstChat?: boolean;
     isReturningChatter?: boolean;
     isRaider?: boolean;
@@ -133,6 +137,12 @@ export type FirebotChatMessage = {
         cost: number;
         imageUrl: string;
     };
+    powerUp?: {
+        id: string;
+        name: string;
+        bits: number;
+        imageUrl: string;
+    };
     isGigantified?: boolean;
 };
 
@@ -157,3 +167,87 @@ export type SharedChatParticipant = {
     broadcasterDisplayName: string;
     profilePictureUrl: string;
 };
+
+type DashboardChatFeedItemType =
+    | "message"
+    | "alert"
+    | "reward-redemption"
+    | "power-up-redemption";
+
+type DashboardChatFeedItemBase = {
+    id: string;
+    type: DashboardChatFeedItemType;
+};
+
+export type DashboardChatMessageData = FirebotChatMessage & {
+    deleted?: boolean;
+    isHiddenFromChatFeed?: boolean;
+    customHighlightColor?: string;
+    customBannerIcon?: string;
+    customBannerText?: string;
+};
+
+export type DashboardChatFeedMessageItem = DashboardChatFeedItemBase & {
+    type: "message";
+    data: DashboardChatMessageData;
+    rewardMatched?: boolean;
+    powerUpMatched?: boolean;
+};
+
+export type DashboardChatFeedAlertItem = DashboardChatFeedItemBase & {
+    type: "alert";
+    message: string;
+    icon: string;
+};
+
+export type DashboardChatFeedRewardData = {
+    id: string;
+    status: string;
+    messageText: string;
+    user: {
+        id: string;
+        username: string;
+        displayName: string;
+    };
+    reward: {
+        id: string;
+        name: string;
+        cost: number;
+        imageUrl: string;
+    };
+};
+
+export type DashboardChatFeedRewardItem = DashboardChatFeedItemBase & {
+    type: "reward-redemption";
+    data: DashboardChatFeedRewardData;
+    rewardMatched?: boolean;
+};
+
+export type DashboardChatFeedPowerUpData = {
+    id: string;
+    status: string;
+    messageText: string;
+    user: {
+        id: string;
+        username: string;
+        displayName: string;
+    };
+    powerUp: {
+        id: string;
+        name: string;
+        bits: number;
+        imageUrl: string;
+    };
+};
+
+export type DashboardChatFeedPowerUpItem = DashboardChatFeedItemBase & {
+    type: "power-up-redemption";
+    data: DashboardChatFeedPowerUpData;
+    powerUpMatched?: boolean;
+};
+
+export type DashboardChatFeedItem =
+    | DashboardChatFeedMessageItem
+    | DashboardChatFeedAlertItem
+    | DashboardChatFeedRewardItem
+    | DashboardChatFeedPowerUpItem;

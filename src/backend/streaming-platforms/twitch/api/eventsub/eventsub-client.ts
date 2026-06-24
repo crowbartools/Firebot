@@ -4,7 +4,7 @@ import { EventSubWsListener } from "@twurple/eventsub-ws";
 import type { SavedChannelReward } from "../../../../../types";
 
 import { AccountAccess } from "../../../../common/account-access";
-import { FirebotFrontendChatHelpers } from "../../../../chat/frontend-chat-helpers";
+import { FrontendChatManager } from "../../../../chat/frontend-chat-manager";
 import { SharedChatCache } from "../../chat/shared-chat-cache";
 import { TwitchEventHandlers } from "../../events";
 import { TwitchEventSubChatHelpers } from "./eventsub-chat-helpers";
@@ -131,7 +131,7 @@ class TwitchEventSubClient {
             streamer.userId,
             async (event) => {
                 const firebotChatMessage = await chatHelpers.buildViewerFirebotChatMessageFromAutoModMessage(event);
-                FirebotFrontendChatHelpers.sendChatMessageToFrontend(firebotChatMessage);
+                FrontendChatManager.sendChatMessageToFrontend(firebotChatMessage);
             }
         );
         this._subscriptions.push(autoModMessageHoldSub);
@@ -141,14 +141,10 @@ class TwitchEventSubClient {
             streamer.userId,
             streamer.userId,
             (event) => {
-                FirebotFrontendChatHelpers.updateMessageAutomodStatus(
+                FrontendChatManager.updateChatMessageAutomodStatus(
                     event.messageId,
                     event.status,
-                    event.moderatorName,
-                    event.moderatorId,
-                    event.reason === "automod"
-                        ? (event.autoMod?.boundaries?.map(b => b.text) ?? [])
-                        : (event.blockedTerms?.map(b => b.text) ?? [])
+                    event.moderatorName
                 );
             }
         );
@@ -674,7 +670,7 @@ class TwitchEventSubClient {
                 );
             }
 
-            FirebotFrontendChatHelpers.deleteUserMessagesFromFrontend(event.userName);
+            FrontendChatManager.deleteUserMessagesFromFrontend(event.userName);
         });
         this._subscriptions.push(banSubscription);
 
@@ -797,7 +793,7 @@ class TwitchEventSubClient {
             (event) => {
                 switch (event.moderationAction) {
                     case "clear":
-                        FirebotFrontendChatHelpers.clearChatFeed(event.moderatorName);
+                        FrontendChatManager.clearChatFeed(event.moderatorName);
                         TwitchEventHandlers.chat.triggerChatCleared(event.moderatorName, event.moderatorId);
                         break;
                     case "mod":
@@ -849,7 +845,7 @@ class TwitchEventSubClient {
                             event.messageText,
                             event.messageId
                         );
-                        FirebotFrontendChatHelpers.deleteMessageFromFrontend(event.messageId);
+                        FrontendChatManager.deleteChatMessageFromFrontend(event.messageId);
                         break;
 
                     // Outbound Raid Starting
@@ -1008,7 +1004,7 @@ class TwitchEventSubClient {
 
                         // Pass any message the viewer sent with the streak to the frontend
                         if (!!event.messageText?.length) {
-                            FirebotFrontendChatHelpers.sendChatMessageToFrontend(
+                            FrontendChatManager.sendChatMessageToFrontend(
                                 await TwitchEventSubChatHelpers.buildChatMessageFromChatEvent(event)
                             );
                         }

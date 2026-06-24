@@ -5,6 +5,7 @@ import { randomUUID } from "crypto";
 import type { EventDefinition, RewardRedemptionMetadata } from "../../types";
 
 import { EventManager } from "./event-manager";
+import { FrontendChatManager } from "../chat/frontend-chat-manager";
 import { SettingsManager } from "../common/settings-manager";
 import rewardManager from "../channel-rewards/channel-reward-manager";
 import frontendCommunicator from "../common/frontend-communicator";
@@ -148,6 +149,13 @@ class ActivityFeedManager {
 
         if (this._previousActivity.length > 500) {
             this._previousActivity.length = 500;
+        }
+
+
+        if (SettingsManager.getSetting("ShowActivityFeedEventsInChat") === true
+            && newActivity.excludeFromChatFeed !== true
+        ) {
+            FrontendChatManager.sendAlertToDashboard(newActivity.message, newActivity.icon);
         }
 
         frontendCommunicator.send("activity-feed:event-activity", this.formatActivityForFrontend(newActivity));

@@ -118,6 +118,10 @@ class TwitchEventSubChatHelpers {
                 this.setUserProfilePicUrl(userId, url);
             }
         );
+
+        frontendCommunicator.onAsync("chat:ui-service-ready",
+            async () => this.sendAllEmotesToFrontend()
+        );
     }
 
     get badges() {
@@ -236,11 +240,17 @@ class TwitchEventSubChatHelpers {
         await this.cacheTwitchEmotes();
 
         // If the all emotes setting is disabled, just send the standard global/channel list for both accounts
-        frontendCommunicator.send("all-emotes", {
-            streamer: this._mapCachedEmotesForFrontend(this._twitchEmotes.streamer),
-            bot: this._mapCachedEmotesForFrontend(this._getAllTwitchEmotes ? this._twitchEmotes.bot : this._twitchEmotes.streamer),
-            thirdParty: this._thirdPartyEmotes
-        });
+        this.sendAllEmotesToFrontend();
+    }
+
+    private sendAllEmotesToFrontend(): void {
+        if (this._twitchEmotes?.streamer != null && this._thirdPartyEmotes != null) {
+            frontendCommunicator.send("chat:all-emotes", {
+                streamer: this._mapCachedEmotesForFrontend(this._twitchEmotes.streamer),
+                bot: this._mapCachedEmotesForFrontend(this._getAllTwitchEmotes ? this._twitchEmotes.bot ?? [] : this._twitchEmotes.streamer),
+                thirdParty: this._thirdPartyEmotes
+            });
+        }
     }
 
     private _mapCachedEmotesForFrontend(emoteList: HelixEmoteBase[]) {

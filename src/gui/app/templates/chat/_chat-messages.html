@@ -56,7 +56,7 @@
         style="{{customFontSizeStyle}}"
       >
         <div
-          ng-repeat="chatItem in cms.chatQueue | hideBotMessages | hideHiddenMessages | hideWhispers | limitTo:messageDisplayLimit | reverseChat:reverseChatOrder track by chatItem.id"
+          ng-repeat="chatItem in cms.chatFeedItems | hideBotMessages | hideHiddenMessages | hideWhispers | limitTo:messageDisplayLimit | reverseChat:reverseChatOrder track by chatItem.id"
           class="chat-item"
           ng-class="{ alternate: alternateBackgrounds}"
           scroll-glue-anchor
@@ -147,7 +147,7 @@
           </div>
           <ul class="dropdown-menu">
             <li ng-click="cms.chatSender = 'Streamer'"><a>Streamer</a></li>
-            <li ng-click="cms.chatSender = 'Bot'" ng-show="botLoggedIn">
+            <li ng-click="cms.chatSender = 'Bot'" ng-show="botLoggedIn()">
               <a>Bot</a>
             </li>
           </ul>

@@ -1,6 +1,6 @@
 import type { EffectType } from "../../../../types/effects";
 import { TwitchApi } from "../api";
-import frontendCommunicator from "../../../common/frontend-communicator";
+import { FrontendChatManager } from "../../../chat/frontend-chat-manager";
 import { LoggerCache } from "../../../logger-cache";
 
 const logger = LoggerCache.getLogger("Effects");
@@ -52,10 +52,7 @@ const model: EffectType<{
         }
         const result = await TwitchApi.chat.sendShoutout(targetUserId);
         if (!result.success) {
-            frontendCommunicator.send("chatUpdate", {
-                fbEvent: "ChatAlert",
-                message: result.error
-            });
+            FrontendChatManager.sendAlertToDashboard(result.error);
         }
         return result.success;
     }

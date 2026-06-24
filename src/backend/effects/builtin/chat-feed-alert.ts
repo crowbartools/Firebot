@@ -1,6 +1,6 @@
 import type { EffectType } from "../../../types";
 
-import frontendCommunicator from "../../common/frontend-communicator";
+import { FrontendChatManager } from "../../chat/frontend-chat-manager";
 
 const effect: EffectType<{
     message: string;
@@ -54,16 +54,8 @@ const effect: EffectType<{
         }
         return errors;
     },
-    onTriggerEvent: (event) => {
-
-        const { effect } = event;
-
-        frontendCommunicator.send("chatUpdate", {
-            fbEvent: "ChatAlert",
-            message: effect.message,
-            icon: effect.icon
-        });
-
+    onTriggerEvent: ({ effect }) => {
+        FrontendChatManager.sendAlertToDashboard(effect.message, effect.icon);
         return true;
     }
 };

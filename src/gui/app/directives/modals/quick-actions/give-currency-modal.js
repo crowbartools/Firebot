@@ -110,7 +110,7 @@
 
                 $ctrl.currencies = currencyService.getCurrencies();
 
-                $ctrl.usernames = chatMessagesService.chatUsers.map(u => u.username);
+                $ctrl.usernames = chatMessagesService.viewers.map(u => u.username);
 
                 $ctrl.roles = viewerRolesService.getAllRoles();
                 $ctrl.selectedRole = "Select...";

@@ -11,7 +11,7 @@ import { ActiveUserHandler } from "../chat/active-user-handler";
 import { LoggerCache } from "../logger-cache";
 
 class ViewerOnlineStatusManager {
-    private logger = LoggerCache.getLogger("Viewers");
+    private _logger = LoggerCache.getLogger("Viewers");
 
     private _updateLastSeenIntervalId: NodeJS.Timeout;
     private _updateTimeIntervalId: NodeJS.Timeout;
@@ -77,7 +77,7 @@ class ViewerOnlineStatusManager {
 
             return viewers || [];
         } catch (error) {
-            this.logger.error("Error getting top view time viewers: ", error);
+            this._logger.error("Error getting top view time viewers: ", error);
             return [];
         }
     }
@@ -111,7 +111,7 @@ class ViewerOnlineStatusManager {
             await viewerDatabase.calculateAutoRanks(viewer.id);
 
         } catch (error) {
-            this.logger.error("Failed to set viewer to online", error);
+            this._logger.error("Failed to set viewer to online", error);
         }
     }
 
@@ -153,9 +153,9 @@ class ViewerOnlineStatusManager {
 
             await viewerDatabase.getViewerDb().updateAsync({ _id: viewer._id }, { $set: { online: false } });
 
-            this.logger.debug(`Set ${viewer.username} (${viewer._id}) to offline.`);
+            this._logger.debug(`Set ${viewer.username} (${viewer._id}) to offline.`);
         } catch (error) {
-            this.logger.error("Error setting viewer to offline.", error);
+            this._logger.error("Error setting viewer to offline.", error);
         }
     }
 
@@ -164,14 +164,14 @@ class ViewerOnlineStatusManager {
             return;
         }
 
-        this.logger.debug('Trying to set all viewers to offline.');
+        this._logger.debug('Trying to set all viewers to offline.');
 
         const { numAffected } = await viewerDatabase.getViewerDb().updateAsync({ online: true }, { $set: { online: false } }, { multi: true });
 
         if (numAffected > 0) {
-            this.logger.debug(`Set ${numAffected} viewers to offline.`);
+            this._logger.debug(`Set ${numAffected} viewers to offline.`);
         } else {
-            this.logger.debug('No viewers were set to offline.');
+            this._logger.debug('No viewers were set to offline.');
         }
     }
 
@@ -186,9 +186,9 @@ class ViewerOnlineStatusManager {
         try {
             const { numAffected } = await viewerDatabase.getViewerDb().updateAsync({ online: true }, { $set: { lastSeen: Date.now() } }, { multi: true });
 
-            this.logger.debug(`Setting last seen date for ${numAffected} viewers`);
+            this._logger.debug(`Setting last seen date for ${numAffected} viewers`);
         } catch {
-            this.logger.debug("Error setting last seen");
+            this._logger.debug("Error setting last seen");
         }
     }
 
@@ -221,12 +221,12 @@ class ViewerOnlineStatusManager {
                 .updateAsync({ _id: viewer._id }, { $set: { minutesInChannel: newTotalMinutes } });
 
             if (numAffected === 0) {
-                this.logger.debug(`Couldnt update viewer's online minutes. viewerId: ${viewer._id}`);
+                this._logger.debug(`Couldnt update viewer's online minutes. viewerId: ${viewer._id}`);
             } else {
                 this.viewerViewTimeUpdate(viewer, previousTotalMinutes, newTotalMinutes);
             }
         } catch (error) {
-            this.logger.debug(`Couldnt update viewer's online minutes because of an error. viewerId: ${viewer._id}`, error);
+            this._logger.debug(`Couldnt update viewer's online minutes because of an error. viewerId: ${viewer._id}`, error);
         }
     }
 

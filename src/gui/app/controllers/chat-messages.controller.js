@@ -20,14 +20,16 @@
 
             $scope.selectedUserData = {};
 
-            $scope.botLoggedIn = accountAccess.accounts.bot.loggedIn;
+            $scope.botLoggedIn = () => {
+                return accountAccess.accounts.bot.loggedIn;
+            };
 
             // the number of messages to show visually, we have to make the number negative so angular knows to limit
             // from the end of the array instead of the front
-            $scope.messageDisplayLimit = chatMessagesService.chatMessageDisplayLimit * -1;
+            $scope.messageDisplayLimit = chatMessagesService.chatFeedItemLimit * -1;
 
             function getThreadMessages(threadOrReplyMessageId) {
-                return chatMessagesService.chatQueue.filter((chatItem) => {
+                return chatMessagesService.chatFeedItems.filter((chatItem) => {
                     return chatItem.type === "message" && (chatItem.data.id === threadOrReplyMessageId || chatItem.data.replyParentMessageId === threadOrReplyMessageId || chatItem.data.threadParentMessageId === threadOrReplyMessageId);
                 }).map(ci => ci.data);
             }
@@ -124,7 +126,7 @@
             };
 
             $scope.setThreadDetails = (threadOrReplyMessageId) => {
-                const parentReplyMessage = chatMessagesService.chatQueue.find(ci => ci.type === "message" && ci.data.id === threadOrReplyMessageId)?.data;
+                const parentReplyMessage = chatMessagesService.chatFeedItems.find(ci => ci.type === "message" && ci.data.id === threadOrReplyMessageId)?.data;
                 if (!parentReplyMessage) {
                     return;
                 }
@@ -156,7 +158,7 @@
             };
 
             $scope.getChatViewerListSetting = function() {
-                return chatMessagesService.getChatViewerListSetting();
+                return settingsService.getSetting("ShowChatViewerList");
             };
 
             // This happens when a chat message is submitted.
@@ -164,7 +166,7 @@
                 if (chatMessagesService.chatMessage == null || chatMessagesService.chatMessage.length < 1) {
                     return;
                 }
-                chatMessagesService.submitChat(chatMessagesService.chatSender, chatMessagesService.chatMessage, chatMessagesService.threadDetails?.replyToMessageId);
+                chatMessagesService.sendChatMessage(chatMessagesService.chatSender, chatMessagesService.chatMessage, chatMessagesService.threadDetails?.replyToMessageId);
                 chatMessagesService.chatHistory.unshift(chatMessagesService.chatMessage);
                 chatMessagesService.currrentHistoryIndex = -1;
                 chatMessagesService.chatMessage = "";

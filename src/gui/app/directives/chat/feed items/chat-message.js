@@ -536,7 +536,7 @@
                             updateChatField(`!quote add @${username} ${rawText}`);
                             break;
                         case "message:spotlight":
-                            chatMessagesService.highlightMessage(username, userId, displayName, rawText, message);
+                            chatMessagesService.spotlightMessage(username, userId, displayName, rawText, message);
                             break;
                         case "user:shoutout":
                             updateChatField(`!so @${username}`);

@@ -28,3 +28,13 @@ export interface BasicViewer {
 }
 
 export type NewFirebotViewer = BasicViewer & Partial<Omit<FirebotViewer, "_id" | "username" | "displayName" | "twitchRoles" | "profilePicUrl">>;
+
+export type FrontendViewer = {
+    id: string;
+    username: string;
+    displayName: string;
+    roles: string[];
+    profilePicUrl: string;
+    active: boolean;
+    disableViewerList?: boolean;
+};
