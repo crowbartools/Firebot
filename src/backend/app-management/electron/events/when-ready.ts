@@ -6,6 +6,11 @@ import { LoggerCache } from "../../../logger-cache";
 export async function whenReady() {
     const logger = LoggerCache.getLogger("Init");
 
+    // Receive log messages from frontend
+    frontendCommunicator.on("logging", (data: { level: string, message: string, meta?: unknown[] }) => {
+        LoggerCache.getLogger("Renderer").log(data.level, data.message, ...(data.meta ?? []));
+    });
+
     logger.debug("...Applying IPC events");
     const { setupIpcEvents } = await import("./ipc-events");
     setupIpcEvents();
@@ -321,9 +326,4 @@ export async function whenReady() {
     logger.debug("...loading main window");
     windowManagement.updateSplashScreenStatus("Here we go!");
     await windowManagement.createMainWindow();
-
-    // Receive log messages from frontend
-    frontendCommunicator.on("logging", (data: { level: string, message: string, meta?: unknown[] }) => {
-        LoggerCache.getLogger("Renderer").log(data.level, data.message, ...(data.meta ?? []));
-    });
 }
