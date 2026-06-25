@@ -4,10 +4,11 @@
 
     angular
         .module("firebotApp")
-        .factory("pluginsService", function(backendCommunicator, $q) {
+        .factory("pluginsService", function(backendCommunicator, modalFactory, $q) {
             const service = {};
 
             let installedPlugins = [];
+            service.pendingFrontendReload = false;
 
             backendCommunicator.on("plugin-manager:all-plugins", (plugins) => {
                 installedPlugins = Array.isArray(plugins) ? plugins : [];
@@ -92,6 +93,28 @@
                     backendCommunicator.fireEventAsync("plugin-manager:get-plugin-details", { fileName, expectedScriptType })
                 );
             };
+
+            backendCommunicator.onAsync("plugin-manager:prompt-frontend-reload",
+                async (data) => {
+                    // Only show the reload prompt once. There's an indicator.
+                    if (service.pendingFrontendReload !== true) {
+                        modalFactory.showConfirmationModal({
+                            title: "Reload Required",
+                            question: `In order to fully update, disable, or uninstall the ${data.pluginName} plugin, you must reload the main Firebot window. Would you like to do that now?`,
+                            tip: "NOTE: Firebot will continue running, but you will lose any unsaved changes in any currently open modals.",
+                            cancelLabel: "No, Don't Reload",
+                            cancelBtnType: "btn-default",
+                            confirmLabel: "Yes, Reload Now"
+                        }).then((confirmed) => {
+                            if (confirmed) {
+                                backendCommunicator.send("reload-main-window");
+                            } else {
+                                service.pendingFrontendReload = true;
+                            }
+                        });
+                    }
+                }
+            );
 
             backendCommunicator.send("plugin-manager:ui-service-ready");
 

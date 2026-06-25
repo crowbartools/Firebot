@@ -24,6 +24,11 @@ const { copyDebugInfoToClipboard } = require("../../common/debug-info");
  *@type {Electron.BrowserWindow}
  */
 let mainWindow = null;
+const MAIN_WINDOW_ROOT_URL = url.format({
+    pathname: path.join(__dirname, "../../../gui/app/index.html"),
+    protocol: "file:",
+    slashes: true
+});
 
 let initialLoadComplete = false;
 
@@ -610,13 +615,7 @@ async function createMainWindow() {
     mainWindowState.manage(mainWindow);
 
     // and load the index.html of the app.
-    mainWindow.loadURL(
-        url.format({
-            pathname: path.join(__dirname, "../../../gui/app/index.html"),
-            protocol: "file:",
-            slashes: true
-        })
-    );
+    mainWindow.loadURL(MAIN_WINDOW_ROOT_URL);
 
     // wait for the main window's content to load, then show it
     mainWindow.webContents.on("did-finish-load", async () => {
@@ -759,6 +758,10 @@ frontendCommunicator.onAsync("main-window-ready", async () => {
     // Always run this so we re-send UI extenions to frontend
     const { UIExtensionManager } = require("../../ui-extensions/ui-extension-manager");
     UIExtensionManager.setUIReadyForExtensions();
+});
+
+frontendCommunicator.on("reload-main-window", () => {
+    mainWindow?.webContents.loadURL(MAIN_WINDOW_ROOT_URL);
 });
 
 exports.updateSplashScreenStatus = updateSplashScreenStatus;

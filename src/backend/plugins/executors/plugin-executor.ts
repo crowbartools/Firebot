@@ -443,7 +443,6 @@ export class PluginExecutor extends IPluginExecutor {
 
         for (const id of registrations.conditionIds ?? []) {
             try {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 ConditionManager.unregisterConditionType(id);
             } catch (e) {
                 logger.warn(`Failed to unregister condition type ${id}`, e);
@@ -521,12 +520,14 @@ export class PluginExecutor extends IPluginExecutor {
             }
         }
 
-        // UI Extensions can't be dynamically unregistered. Users will need to restart Firebot to fully remove.
+        // UI Extensions can't be dynamically unregistered. Users will need to reload Firebot frontend to fully remove.
         if (!!registrations.uiExtensionIds?.length) {
-            frontendCommunicator.send("showToast", {
-                content: `You must restart Firebot to fully update, disable, or uninstall the ${plugin.manifest.name} plugin.`,
-                className: "warning",
-                dismissOnTimeout: false
+            for (const extensionId of registrations.uiExtensionIds) {
+                UIExtensionManager.queueUIExtensionRemoval(extensionId);
+            }
+
+            frontendCommunicator.send("plugin-manager:prompt-frontend-reload", {
+                pluginName: plugin.manifest.name
             });
         }
     }
