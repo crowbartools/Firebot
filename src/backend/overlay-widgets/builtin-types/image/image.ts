@@ -93,7 +93,7 @@ export const image: OverlayWidgetType<Settings, State> = {
                 if (config.settings?.imageType === "url" && config.settings?.url) {
                     imageSrc = config.settings.url;
                 } else if (config.settings?.imageType === "local" && config.resourceTokens.filepath) {
-                    imageSrc = `http://${window.location.hostname}:7472/resource/${config.resourceTokens.filepath}`;
+                    imageSrc = `//${baseUrl}/resource/${config.resourceTokens.filepath}`;
                 }
 
                 return `

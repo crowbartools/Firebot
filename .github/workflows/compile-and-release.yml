@@ -83,7 +83,9 @@ jobs:
 
       - name: Linux Build Prep
         if: runner.os == 'linux'
-        run: sudo apt-get install libx11-dev libxtst-dev libpng-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install libx11-dev libxtst-dev libpng-dev
 
       - name: MacOS Build Prep
         if: runner.os == 'macOS'

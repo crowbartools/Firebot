@@ -1,4 +1,4 @@
-import { globalShortcut } from "electron";
+import { app, globalShortcut } from "electron";
 
 import { FirebotHotkey } from "../../types/hotkeys";
 import { Trigger } from "../../types/triggers";
@@ -14,6 +14,9 @@ class HotkeyManager extends JsonDbManager<FirebotHotkey> {
 
     constructor() {
         super("Hotkey", "hotkeys");
+
+        // Enable usage of Portal's globalShortcuts which improves capability with Wayland on Linux
+        app.commandLine.appendSwitch('enable-features', 'GlobalShortcutsPortal');
 
         frontendCommunicator.on("hotkeys:get-hotkeys",
             () => this.getAllItems());

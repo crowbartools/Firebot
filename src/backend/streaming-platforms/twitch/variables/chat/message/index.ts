@@ -1,6 +1,7 @@
 import chatMessageAnimatedEmoteUrls from './chat-message-animated-emote-urls';
 import chatMessageEmoteNames from './chat-message-emote-names';
 import chatMessageEmoteUrls from './chat-message-emote-urls';
+import chatMessageHtml from './chat-message-html';
 import chatMessageId from './chat-message-id';
 import chatMessageTextOnly from './chat-message-text-only';
 import chatMessage from './chat-message';
@@ -15,6 +16,7 @@ export default [
     chatMessageAnimatedEmoteUrls,
     chatMessageEmoteNames,
     chatMessageEmoteUrls,
+    chatMessageHtml,
     chatMessageId,
     chatMessageTextOnly,
     chatMessage,

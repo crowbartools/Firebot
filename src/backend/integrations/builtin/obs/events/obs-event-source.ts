@@ -13,6 +13,7 @@ import {
     OBS_REPLAY_BUFFER_SAVED_EVENT_ID,
     OBS_SCENE_CHANGED_EVENT_ID,
     OBS_SCENE_ITEM_ENABLE_STATE_CHANGED_EVENT_ID,
+    OBS_SCENE_ITEM_LIST_REINDEXED_EVENT_ID,
     OBS_SCENE_TRANSITION_ENDED_EVENT_ID,
     OBS_SCENE_TRANSITION_STARTED_EVENT_ID,
     OBS_STREAM_STARTED_EVENT_ID,
@@ -29,7 +30,8 @@ import {
     OBS_INPUT_AUDIO_BALANCE_CHANGED_EVENT_ID,
     OBS_INPUT_AUDIO_SYNC_OFFSET_CHANGED_EVENT_ID,
     OBS_INPUT_AUDIO_MONITOR_TYPE_CHANGED_EVENT_ID,
-    OBS_INPUT_AUDIO_TRACKS_CHANGED_EVENT_ID
+    OBS_INPUT_AUDIO_TRACKS_CHANGED_EVENT_ID,
+    OBS_EXITING_EVENT_ID
 } from "../constants";
 
 export const OBSEventSource: EventSource = {
@@ -89,6 +91,14 @@ export const OBSEventSource: EventSource = {
                 groupName: "Test Group Name",
                 sceneItemEnabled: true,
                 sceneItemId: -1,
+                sceneName: "Test Scene Name"
+            }
+        },
+        {
+            id: OBS_SCENE_ITEM_LIST_REINDEXED_EVENT_ID,
+            name: "OBS Scene Item List Reindexed",
+            description: "When the items in a scene have been re-ordered",
+            manualMetadata: {
                 sceneName: "Test Scene Name"
             }
         },
@@ -288,6 +298,11 @@ export const OBSEventSource: EventSource = {
                     value: "OBS_MONITORING_TYPE_NONE"
                 }
             }
+        },
+        {
+            id: OBS_EXITING_EVENT_ID,
+            name: "OBS Exiting",
+            description: "When OBS signals that it is exiting/closing"
         }
     ]
 };

@@ -12,13 +12,10 @@
                         name="Viewer Database"
                         description="Turn on/off the viewer tracking database. This could improve performance in some cases."
                     >
-                        <firebot-select
-                            options="{ true: 'On', false: 'Off' }"
-                            ng-init="viewerDb = settings.getSetting('ViewerDB')"
-                            selected="viewerDb"
-                            on-update="settings.saveSetting('ViewerDB', option === 'true')"
-                            right-justify="true"
-                            aria-label="enable or disable Viewer Database"
+                        <toggle-button
+                            toggle-model="settings.getSetting('ViewerDB')"
+                            on-toggle="settings.saveSetting('ViewerDB', !settings.getSetting('ViewerDB'))"
+                            font-size="40"
                         />
                     </firebot-setting>
 
@@ -26,13 +23,10 @@
                         name="Auto Flag Bots"
                         description="Prevents known bots from generating stats or showing up in active viewer lists."
                     >
-                        <firebot-select
-                            options="{ true: 'On', false: 'Off' }"
-                            ng-init="autoFlagBots = settings.getSetting('AutoFlagBots')"
-                            selected="autoFlagBots"
-                            on-update="settings.saveSetting('AutoFlagBots', option === 'true')"
-                            right-justify="true"
-                            aria-label="enable or disable Auto Flag Bots"
+                        <toggle-button
+                            toggle-model="settings.getSetting('AutoFlagBots')"
+                            on-toggle="settings.saveSetting('AutoFlagBots', !settings.getSetting('AutoFlagBots'))"
+                            font-size="40"
                         />
                     </firebot-setting>
 

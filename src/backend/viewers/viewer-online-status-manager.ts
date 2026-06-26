@@ -41,6 +41,10 @@ class ViewerOnlineStatusManager {
         ActiveUserHandler.on("user:online", (user) => {
             void this.setChatViewerOnline(user);
         });
+
+        ActiveUserHandler.on("user:offline", (userId) => {
+            void this.setChatViewerOffline(userId);
+        });
     }
 
     async getOnlineViewers(): Promise<FirebotViewer[]> {

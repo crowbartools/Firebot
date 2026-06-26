@@ -91,6 +91,7 @@ class OverlayWidgetEventUtils implements IOverlayWidgetEventUtils {
             width: position.width !== null ? `${position.width}px` : undefined,
             height: position.height !== null ? `${position.height}px` : undefined,
             'z-index': zIndex != null ? zIndex : undefined,
+            "overflow": "hidden"
         };
 
         return Object.entries(styles).reduce((acc, [key, value]) => {

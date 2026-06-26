@@ -97,7 +97,7 @@ class QuoteManager {
         try {
             const result = await this.db.updateAsync(
                 { _id: '__autoid__' },
-                { $inc: { seq: number } },
+                { seq: number },
                 { upsert: true, returnUpdatedDocs: true }
             );
 

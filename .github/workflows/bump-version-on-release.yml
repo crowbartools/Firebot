@@ -1,0 +1,33 @@
+name: Bump dev version on release
+
+on:
+  release:
+    types: [released]
+  workflow_dispatch:
+
+jobs:
+  bumpversion:
+    name: Bump version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v5
+        with:
+          ref: v5
+          token: ${{ secrets.ZUNDER_TOKEN }}
+
+      - name: Setup Nodejs
+        uses: actions/setup-node@v5
+        with:
+          node-version: latest
+
+      - name: Git config
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+      - name: Update patch version
+        run: npm version patch
+
+      - name: Push
+        run: git push --force

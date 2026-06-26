@@ -20,7 +20,7 @@ class ViewerExportManager {
 
     setupListeners () {
         frontendCommunicator.onAsync("export-viewers", async (data: { folderpath: string, exportOptions: ViewerExportOptions }) => {
-            return await this.exportViewersToFile(data.folderpath, data.exportOptions)
+            return await this.exportViewersToFile(data.folderpath, data.exportOptions);
         });
     }
 
@@ -53,8 +53,8 @@ class ViewerExportManager {
             const headers = [
                 "ID",
                 "Username",
-                "Last Seen",
                 "Join Date",
+                "Last Seen",
                 "Minutes in Channel",
                 "Chat Messages"
             ];
@@ -74,7 +74,7 @@ class ViewerExportManager {
                 fileLines.push(viewerData.join(","));
             }
 
-            await fsp.writeFile(folderpath + "/viewers.csv", fileLines.join("\n"), { encoding: "utf8" });
+            await fsp.writeFile(`${folderpath}/viewers.csv`, fileLines.join("\n"), { encoding: "utf8" });
             return true;
         } catch (error) {
             logger.error("Error exporting viewers to file", error);
@@ -115,7 +115,7 @@ class ViewerExportManager {
                 fileLines.push(viewerData.join(","));
             }
 
-            await fsp.writeFile(folderpath + "/currencies.csv", fileLines.join("\n"), { encoding: "utf8" });
+            await fsp.writeFile(`${folderpath}/currencies.csv`, fileLines.join("\n"), { encoding: "utf8" });
             return true;
         } catch (error) {
             logger.error("Error exporting currencies to file", error);
@@ -164,7 +164,7 @@ class ViewerExportManager {
                 fileLines.push(viewerData.join(","));
             }
 
-            await fsp.writeFile(folderpath + "/ranks.csv", fileLines.join("\n"), { encoding: "utf8" });
+            await fsp.writeFile(`${folderpath}/ranks.csv`, fileLines.join("\n"), { encoding: "utf8" });
             return true;
         } catch (error) {
             logger.error("Error exporting ranks to file", error);

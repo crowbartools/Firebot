@@ -154,7 +154,7 @@ export type OverlayWidgetType<
     overlayExtension: {
         dependencies?: {
             css?: string[];
-            js?: string[];
+            js?: Array<string | { module: boolean, url: string }>;
             globalStyles?: string;
         };
 

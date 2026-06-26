@@ -9,7 +9,7 @@ import { SettingsManager } from "./common/settings-manager";
 import * as dataAccess from "./common/data-access";
 import frontendCommunicator from "./common/frontend-communicator";
 import logger from "./logwrapper";
-import { emptyFolder } from "./utils";
+import { emptyFolder, wait } from "./utils";
 
 interface ZipEntry {
     path: string;
@@ -173,6 +173,7 @@ class BackupManager {
 
     async startBackup(manualActivation = false) {
         logger.info(`Backup manualActivation: ${manualActivation}`);
+        let finished = false;
 
         const version = app.getVersion(),
             milliseconds = Date.now(),
@@ -194,7 +195,12 @@ class BackupManager {
             zlib: { level: 9 }
         });
 
-        archive.on("warning", function(err) {
+        output.on("close", () => {
+            finished = true;
+        });
+
+        archive.on("warning", (err) => {
+            finished = true;
             if (err.code === "ENOENT") {
                 logger.warn("Error during backup: ", err);
             } else {
@@ -208,7 +214,8 @@ class BackupManager {
             }
         });
 
-        archive.on("error", function(err) {
+        archive.on("error", (err) => {
+            finished = true;
             throw err;
         });
 
@@ -229,6 +236,10 @@ class BackupManager {
 
         try {
             await archive.finalize();
+
+            while (finished === false) {
+                await wait(250);
+            }
 
             SettingsManager.saveSetting("LastBackupDate", new Date());
 

@@ -72,6 +72,10 @@
                         <img ng-src="{{$ctrl.message.reward.imageUrl}}" />
                         <b>{{$ctrl.message.userDisplayName}}{{($ctrl.message.userDisplayName.toLowerCase() !== $ctrl.message.username.toLowerCase() ? " (" + $ctrl.message.username + ")" : "")}}</b> <span>redeemed</span> <b>{{$ctrl.message.reward.name}}</b>
                     </div>
+                    <div ng-if="$ctrl.message.powerUp" class="power-up-redemption" ng-class="{ isHighlight: $ctrl.message.powerUp.id === 'highlight-message' }">
+                        <img ng-src="{{$ctrl.message.powerUp.imageUrl}}" />
+                        <b>{{$ctrl.message.userDisplayName}}{{($ctrl.message.userDisplayName.toLowerCase() !== $ctrl.message.username.toLowerCase() ? " (" + $ctrl.message.username + ")" : "")}}</b> <span>redeemed</span> <b>{{$ctrl.message.powerUp.name}}</b>
+                    </div>
                     <div
                         ng-if="$ctrl.message.sharedChatRoomDisplayName && !$ctrl.compactDisplay"
                         ng-show="$ctrl.showSharedChatInfo"
@@ -148,9 +152,9 @@
                                     class="pronoun"
                                     uib-tooltip="Pronouns"
                                     tooltip-append-to-body="true"
-                                    ng-click="$root.openLinkExternally('https://pronouns.alejo.io/')"
-                                    ng-show="$ctrl.showPronoun && $ctrl.pronouns.pronounCache[$ctrl.message.username] != null"
-                                >{{$ctrl.pronouns.pronounCache[$ctrl.message.username]}}</span>
+                                    ng-click="$root.openLinkExternally('https://pr.alejo.io/')"
+                                    ng-show="$ctrl.showPronoun && $ctrl.message.pronouns != null"
+                                >{{ $ctrl.message.pronouns }}</span>
 
                                 <span
                                     class="rank-role-badge"
@@ -273,13 +277,10 @@
                 viewerRolesService,
                 utilityService,
                 connectionService,
-                pronounsService,
                 backendCommunicator
             ) {
 
                 const $ctrl = this;
-
-                $ctrl.pronouns = pronounsService;
 
                 $ctrl.respondedToAutoMod = false;
 

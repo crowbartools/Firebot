@@ -130,10 +130,20 @@ class HttpServerManager extends EventEmitter {
             const combinedJsDeps = [...new Set([
                 ...effectDefs
                     .filter(ed => ed.dependencies?.js?.length)
-                    .map(ed => ed.dependencies.js),
+                    .map(ed => ed.dependencies.js.map((jsDep) => {
+                        if (typeof jsDep === "string") {
+                            return { module: false, url: jsDep };
+                        }
+                        return jsDep;
+                    })),
                 ...widgetExtensions
                     .filter(we => we.dependencies?.js?.length)
-                    .map(we => we.dependencies.js)
+                    .map(we => we.dependencies.js.map((jsDep) => {
+                        if (typeof jsDep === "string") {
+                            return { module: false, url: jsDep };
+                        }
+                        return jsDep;
+                    }))
             ].flat())];
 
             const combinedGlobalStyles = [

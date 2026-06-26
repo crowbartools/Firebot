@@ -4,6 +4,7 @@
 
 import fs from "fs/promises";
 import path from "path";
+import escapeHTML from "escape-html";
 
 import type { EffectType, FirebotAudioDevice } from "../../../types";
 
@@ -276,6 +277,10 @@ const effect: EffectType<OverlayAlertEffect> = {
                 placeholder-text="Enter alert text"
                 use-text-area="true"
             />
+            <div class="muted">
+                If you would like to add HTML from a variable, you must wrap it inside of <code>$allowHtml</code> (e.g. <code>$allowHtml[$someOtherVariable]</code>).<br />
+                <strong>WARNING:</strong> Be very careful doing this with untrusted or potentially harmful data, like chat messages.
+            </div>
             <div class="mt-3">
                 <font-options ng-model="effect.font" allow-alpha="true"></font-options>
             </div>
@@ -664,10 +669,18 @@ const effect: EffectType<OverlayAlertEffect> = {
                 );
             }
 
-            effect.text = await ReplaceVariableManager.populateStringWithTriggerData(effect.text, {
-                ...event.trigger,
-                effectOutputs: event.outputs
-            });
+            effect.text = await ReplaceVariableManager.populateStringWithTriggerData(
+                effect.text,
+                {
+                    ...event.trigger,
+                    effectOutputs: event.outputs
+                },
+                (text, token) => {
+                    if (token.value !== "allowHtml") {
+                        return escapeHTML(text);
+                    }
+                }
+            );
         }
 
         const data: OverlayData = {

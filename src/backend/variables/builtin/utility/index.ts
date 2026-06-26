@@ -1,3 +1,4 @@
+import allowHtml from './allow-html';
 import apiRead from './api-read';
 import apiReadRaw from './api-read-raw';
 import audioDuration from './audio-duration';
@@ -20,6 +21,7 @@ import runEffect from './run-effect';
 import videoDuration from './video-duration';
 
 export default [
+    allowHtml,
     apiRead,
     apiReadRaw,
     audioDuration,

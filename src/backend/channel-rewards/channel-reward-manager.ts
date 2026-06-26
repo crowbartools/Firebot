@@ -24,6 +24,7 @@ class ChannelRewardManager {
             TwitchApi.channelRewards.getTotalChannelRewardCount);
 
         frontendCommunicator.on("get-channel-rewards", () => Object.values(this.channelRewards));
+        frontendCommunicator.onAsync("get-channel-rewards", async () => Object.values(this.channelRewards));
 
         frontendCommunicator.on("get-channel-rewards-eligibility", () => this._eligible);
 
@@ -432,10 +433,6 @@ class ChannelRewardManager {
     }
 
     async refreshChannelRewardRedemptions(): Promise<void> {
-        if (AccountAccess.getAccounts().streamer.broadcasterType === "") {
-            return;
-        }
-
         this._channelRewardRedemptions = await TwitchApi.channelRewards.getOpenChannelRewardRedemptions();
 
         frontendCommunicator.send("channel-reward-redemptions-updated", this.getChannelRewardRedemptions());

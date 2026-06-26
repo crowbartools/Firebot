@@ -70,10 +70,12 @@ export type FirebotParsedMessagePart = {
 
 export type FirebotChatMessage = {
     id: string;
+    timestamp?: number;
     username: string;
     userId: string;
     userDisplayName?: string;
     profilePicUrl?: string;
+    pronouns?: string;
     isExtension?: boolean;
     roles: string[];
     badges: Array<{

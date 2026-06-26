@@ -3,6 +3,8 @@ import { ThirdPartyEmote, ThirdPartyEmoteProvider } from "./third-party-emote-pr
 type FFZEmotesResponse = Array<{
     images: {
         "1x": string;
+        "2x": string;
+        "4x": string;
     };
     code: string;
     imageType: string;
@@ -18,7 +20,7 @@ export class FFZEmoteProvider extends ThirdPartyEmoteProvider<FFZEmotesResponse>
 
     private emoteMapper = (response: FFZEmotesResponse): ThirdPartyEmote[] =>
         response?.map(e => ({
-            url: e.images && e.images["1x"],
+            url: e.images && e.images["4x"] || e.images["2x"] || e.images["1x"] || "",
             code: e.code,
             animated: e.imageType?.toLowerCase() === "gif",
             origin: this.providerName

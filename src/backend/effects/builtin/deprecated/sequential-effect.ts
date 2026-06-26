@@ -1,5 +1,5 @@
-import type { EffectList, EffectType } from "../../../types/effects";
-import effectRunner from "../../common/effect-runner";
+import type { EffectList, EffectType } from "../../../../types/effects";
+import effectRunner from "../../../common/effect-runner";
 
 const effect: EffectType<{
     id: string;
@@ -8,14 +8,22 @@ const effect: EffectType<{
 }> = {
     definition: {
         id: "firebot:sequentialeffect",
-        name: "Run Sequential Effect",
+        name: "Run Sequential Effect (deprecated)",
         description: "Run a single effect sequentially from a list of effects",
         icon: "fad fa-list-ol",
         categories: ["advanced", "scripting"],
-        dependencies: []
+        dependencies: [],
+        hidden: true,
+        deprecated: true
     },
     optionsTemplate: `
     <eos-container>
+            <div class="effect-info alert alert-warning">
+                WARNING: This effect has been deprecated. Instead, you can now use the <strong>Sequential (Single)</strong> run mode on any effect list.
+            </div>
+        </eos-container>
+
+    <eos-container pad-top="true">
         <p>This effect will run a single effect sequentially from the list below. Particularly useful in Timers!</p>
     </eos-container>
 

@@ -20,14 +20,30 @@
 
                     <firebot-setting
                         name="Minimize to Tray"
-                        description="When minimized, Firebot will minimize to tray instead of task bar"
+                        description="When minimized, Firebot will minimize to tray instead of taskbar"
                     >
                         <toggle-button
                             toggle-model="settings.getSetting('MinimizeToTray')"
                             on-toggle="settings.saveSetting('MinimizeToTray', !settings.getSetting('MinimizeToTray'))"
                             font-size="40"
-                            aria-label="Minimize to Tray, When minimized, Firebot will minimize to tray instead of task bar"
-                            accessibility-label="(settings.getSetting('MinimizeToTray') ? 'Enabled' : 'Disabled') + ' When minimized, Firebot will minimize to tray instead of task bar'"
+                            aria-label="Minimize to Tray, When minimized, Firebot will minimize to tray instead of taskbar"
+                            accessibility-label="(settings.getSetting('MinimizeToTray') ? 'Enabled' : 'Disabled') + ' When minimized, Firebot will minimize to tray instead of taskbar'"
+                        />
+                    </firebot-setting>
+
+                    <firebot-setting
+                        name="Connect on Launch"
+                        description="Automatically connect to Twitch and other services when Firebot launches"
+                    >
+                        <setting-description-addon>
+                            <strong>NOTE:</strong> Enabling this setting may conflict with any <strong>Toggle Connection</strong> effects you have setup on a <strong>Firebot Started</strong> event. Be sure to disable or delete those effects after enabling this.
+                        </setting-description-addon>
+                        <toggle-button
+                            toggle-model="settings.getSetting('ConnectOnLaunch')"
+                            on-toggle="settings.saveSetting('ConnectOnLaunch', !settings.getSetting('ConnectOnLaunch'))"
+                            font-size="40"
+                            aria-label="Connect on Launch, Automatically connect to Twitch and other services when Firebot launches"
+                            accessibility-label="(settings.getSetting('ConnectOnLaunch') ? 'Enabled' : 'Disabled') + ' Automatically connect to Twitch and other services when Firebot launches'"
                         />
                     </firebot-setting>
 
@@ -190,6 +206,20 @@
                             on-toggle="settings.saveSetting('OpenStreamPreviewOnLaunch', !settings.getSetting('OpenStreamPreviewOnLaunch'))"
                             font-size="40"
                             accessibility-label="(settings.getSetting('OpenStreamPreviewOnLaunch') ? 'Enabled' : 'Disabled') + ' Stream Preview on Launch'"
+                        />
+                    </firebot-setting>
+
+                    <firebot-setting
+                        name="Default Reward Tab"
+                        description="Sets the default tab when switching to the Power-Ups and Rewards page."
+                    >
+                        <firebot-select
+                            options="{ powerups: 'Power-ups', rewards: 'Channel Rewards', queue: 'Request Queue' }"
+                            ng-init="defaultRewardTab = settings.getSetting('DefaultRewardTab')"
+                            selected="defaultRewardTab"
+                            on-update="settings.saveSetting('DefaultRewardTab', option)"
+                            right-justify="true"
+                            aria-label="Sets the default tab when switching to the Power-Ups and Rewards page."
                         />
                     </firebot-setting>
                 </div>

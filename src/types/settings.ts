@@ -56,6 +56,7 @@ export type FirebotSettingsTypes = {
     ChatTimestamps: boolean;
     ClearChatFeedMode: "never" | "onlyStreamer" | "always";
     ClearCustomScriptCache: boolean;
+    ConnectOnLaunch: boolean;
     CopiedOverlayVersion: string;
     DashboardLayout: {
         dashboardViewerList: string;
@@ -65,6 +66,7 @@ export type FirebotSettingsTypes = {
     DebugMode: boolean;
     DefaultEffectLabelsEnabled: boolean;
     DefaultModerationUser: "streamer" | "bot";
+    DefaultRewardTab: "powerups" | "rewards" | "queue";
     DefaultToAdvancedCommandMode: boolean;
     DefaultTtsVoiceId: string;
     DeleteProfile: string;
@@ -193,6 +195,7 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     ChatTimestamps: true,
     ClearChatFeedMode: "onlyStreamer",
     ClearCustomScriptCache: false,
+    ConnectOnLaunch: false,
     CopiedOverlayVersion: "",
     DashboardLayout: {
         dashboardViewerList: "225px",
@@ -202,6 +205,7 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     DebugMode: false,
     DefaultEffectLabelsEnabled: true,
     DefaultModerationUser: "streamer",
+    DefaultRewardTab: "powerups",
     DefaultToAdvancedCommandMode: false,
     DefaultTtsVoiceId: undefined,
     DeleteProfile: undefined,

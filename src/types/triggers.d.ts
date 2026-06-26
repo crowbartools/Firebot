@@ -15,6 +15,7 @@ export type TriggerType =
     | "quick_action"
     | "manual"
     | "channel_reward"
+    | "power_up"
     | "overlay_widget";
 
 export type TriggerMeta = {

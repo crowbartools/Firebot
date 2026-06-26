@@ -30,7 +30,7 @@ function getEntryFromCache(effectListId: string, effectIds: string[], cache: Eff
     if (!cacheEntry) {
         // we don't have a preexisting queue in the cache, create a new one
         cacheEntry = {
-            queue: shuffleArray(effectIds),
+            queue: shuffle ? shuffleArray(effectIds) : effectIds,
             currentEffectIds: effectIds
         };
 
@@ -174,4 +174,3 @@ export function resolveEffectsForExecution(effectList: EffectList): EffectInstan
     }
     return [];
 }
-

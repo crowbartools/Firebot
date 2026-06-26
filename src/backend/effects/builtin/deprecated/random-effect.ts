@@ -1,6 +1,6 @@
-import type { EffectList, EffectType } from "../../../types/effects";
+import type { EffectList, EffectType } from "../../../../types/effects";
 
-import effectRunner from "../../common/effect-runner";
+import effectRunner from "../../../common/effect-runner";
 
 const effect: EffectType<{
     effectList: EffectList;
@@ -11,13 +11,21 @@ const effect: EffectType<{
 }> = {
     definition: {
         id: "firebot:randomeffect",
-        name: "Run Random Effect",
+        name: "Run Random Effect (deprecated)",
         description: "Run a random effect from a list of effects",
         icon: "fad fa-random",
-        categories: ["advanced", "scripting"]
+        categories: ["advanced", "scripting"],
+        hidden: true,
+        deprecated: true
     },
     optionsTemplate: `
         <eos-container>
+            <div class="effect-info alert alert-warning">
+                WARNING: This effect has been deprecated. Instead, you can now use the <strong>Random</strong> run mode on any effect list.
+            </div>
+        </eos-container>
+
+        <eos-container pad-top="true">
             <p>This effect will run a random effect from the list below.</p>
 
             <div style="padding-top: 10px;">

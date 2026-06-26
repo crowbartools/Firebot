@@ -46,10 +46,12 @@ class FrontendTransport extends Transport {
     log(info :TransformableInfo, callback: () => void) {
         setImmediate(() => this.emit("logged", info));
 
-        frontendCommunicator.send("logging", {
-            message: info[Symbol.for("message")],
-            meta: info[Symbol.for("splat")]
-        });
+        try {
+            frontendCommunicator.send("logging", {
+                message: info[Symbol.for("message")],
+                meta: info[Symbol.for("splat")]
+            });
+        } catch { }
 
         if (callback) {
             callback();

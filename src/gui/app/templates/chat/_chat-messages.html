@@ -80,7 +80,11 @@
             font-family-style="{{customFontFamilyStyle}}"
           />
           <reward-redemption
-            ng-if="chatItem.type === 'redemption'"
+            ng-if="chatItem.type === 'reward-redemption'"
+            redemption="chatItem.data"
+          />
+          <power-up-redemption
+            ng-if="chatItem.type === 'power-up-redemption'"
             redemption="chatItem.data"
           />
           <chat-alert
@@ -155,7 +159,7 @@
           placeholder="Message the stream"
           class="text-input-field"
           style="height: 100%"
-          ng-maxlength="360"
+          ng-maxlength="500"
           ng-model="cms.chatMessage"
           ng-change="onMessageFieldUpdate()"
           ng-keydown="onMessageFieldKeypress($event)"

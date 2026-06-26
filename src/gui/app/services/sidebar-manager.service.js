@@ -51,7 +51,7 @@
                     "effect queues",
                     "events",
                     "timers",
-                    "channel rewards",
+                    "power-ups and rewards",
                     "roles and ranks",
                     "moderation",
                     "buttons",
@@ -78,7 +78,7 @@
                     "commands",
                     "events",
                     "timers",
-                    "channel rewards",
+                    "power-ups and rewards",
                     "roles and ranks",
                     "preset effect lists",
                     "variable macros",
@@ -119,10 +119,10 @@
                         });
                         break;
 
-                    case "channel-rewards":
-                        $translate("SIDEBAR.OTHER.CHANNELREWARDS").then((tabName) => {
-                            service.setTab("channel rewards", tabName);
-                            $location.path("/channel-rewards");
+                    case "power-ups-and-rewards":
+                        $translate("SIDEBAR.OTHER.POWERUPSANDREWARDS").then((tabName) => {
+                            service.setTab("power-ups & rewards", tabName);
+                            $location.path("/power-ups-and-rewards");
                         });
                         break;
 
@@ -192,9 +192,9 @@
                     controller: "effectQueuesController"
                 })
 
-                .when("/channel-rewards", {
-                    templateUrl: "./templates/_channel-rewards.html",
-                    controller: "channelRewardsController"
+                .when("/power-ups-and-rewards", {
+                    templateUrl: "./templates/_power-ups-and-rewards.html",
+                    controller: "powerUpsAndRewardsController"
                 })
 
                 .when("/moderation", {

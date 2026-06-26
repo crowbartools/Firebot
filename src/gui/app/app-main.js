@@ -256,6 +256,7 @@
         dynamicParameterRegistry.register("codemirror", { tag: "fb-param-code-mirror" });
         dynamicParameterRegistry.register("counter-select", { tag: "fb-param-counter-select" });
         dynamicParameterRegistry.register("sort-tag-select", { tag: "fb-param-sort-tag-select" });
+        dynamicParameterRegistry.register("animation-select", { tag: "fb-param-animation-select" });
 
         uiExtensionsService.setAsReady();
     });
@@ -520,6 +521,10 @@
         if (settingsService.getSetting("BackupLocationReset") === true) {
             modalFactory.showInfoModal("Your previous backup location could not be found. Backup location has been reset to default. You can change it in Settings > Backups.");
             settingsService.deleteSetting("BackupLocationReset");
+        }
+
+        if (settingsService.getSetting("ConnectOnLaunch") === true) {
+            connectionService.connectSidebarControlledServices();
         }
     });
 
