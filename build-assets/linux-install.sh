@@ -2,7 +2,7 @@
 
 sizes="16 24 32 48 64 96 128 256 512"
 
-cd /usr/lib/firebotv5
+cd /usr/lib/firebotdlv5
 
 for size in ${sizes}; do
     xdg-icon-resource install --context mimetypes --size ${size} resources/linux/firebotsetup-icon/${size}x${size}.png application-x-firebotsetup

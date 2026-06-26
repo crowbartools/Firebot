@@ -30,9 +30,9 @@ if (Object.hasOwn(argv, "fbuser-data-directory") && argv["fbuser-data-directory"
     userDataPath = argv["fbuser-data-directory"] as string;
     tmpDirectoryPath = path.join(userDataPath, "./tmp");
 } else {
-    const rootUserDataPath = path.join(appDataPath, "Firebot");
-    userDataPath = path.join(rootUserDataPath, "v5");
-    tmpDirectoryPath = path.join(rootUserDataPath, "tmp");
+    const rootUserDataPath = path.join(appDataPath, "FirebotDL");
+    userDataPath = path.join(rootUserDataPath, "DLv5");
+    tmpDirectoryPath = path.join(rootUserDataPath, "tmpDL");
 }
 
 export function getPathInUserData(filePath: string): string {
