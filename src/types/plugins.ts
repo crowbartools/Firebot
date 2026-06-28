@@ -148,12 +148,6 @@ export interface Manifest {
      * The icon to be displayed for the plugin.
      */
     icon?: PluginIcon;
-
-    /**
-     * If true, the plugin will be initialized before parameters are shown to the user,
-     * allowing the plugin to provide custom parameter types that can be used in its own parametersSchema.
-     */
-    initBeforeShowingParams?: boolean;
 }
 
 
@@ -257,7 +251,6 @@ type LegacyCustomScriptManifest = {
     author: string;
     website?: string;
     startupOnly?: boolean;
-    initBeforeShowingParams?: boolean;
     firebotVersion?: "5";
 };
 
