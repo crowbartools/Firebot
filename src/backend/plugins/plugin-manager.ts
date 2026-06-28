@@ -1,12 +1,15 @@
 import path from "path";
 import { promises as fsp, existsSync, readFileSync } from "fs";
 import Module from "module";
-import { randomUUID } from "crypto";
+import { randomUUID, createHash } from "crypto";
+import { app } from "electron";
 
 import type {
     InstalledPlugin,
     InstalledPluginConfig,
     LegacyCustomScript,
+    ManagedPlugin,
+    ManagedPluginExtended,
     Manifest,
     PluginBase,
     PluginContext,
@@ -35,6 +38,9 @@ import {
     PluginExecutionResult
 } from "./executors/plugin-executor.interface";
 import { buildPluginApi, createPluginApiContext } from "./plugin-api";
+import { resolvePluginManifestLinks } from "./plugin-manifest-utils";
+import { parseVersion } from "../../shared/compare-versions";
+import { meetsFirebotVersionRequirement } from "../utils";
 
 type LoadedPlugin = PluginBase | LegacyCustomScript;
 type AnyPluginExecutor = IPluginExecutor;
@@ -71,6 +77,16 @@ type GetPluginDetailsResult = {
     success: false;
     error: string;
 };
+
+type PluginInstallResult = {
+    success: true;
+    installedPlugin: InstalledPlugin;
+} | {
+    success: false;
+    error: string;
+};
+
+const COMMUNITY_PLUGIN_SERVICE_ROOT_URL = "https://api.crowbar.tools/v1/plugins/";
 
 class PluginManager {
     private _logger = LoggerCache.getLogger("Plugins");
@@ -115,9 +131,9 @@ class PluginManager {
         );
 
         frontendCommunicator.onAsync("plugin-manager:save-config",
-            async ({ pluginConfig, isNewInstall = false }: { pluginConfig: InstalledPluginConfig, isNewInstall?: boolean }) => {
+            async ({ pluginConfig }: { pluginConfig: InstalledPluginConfig }) => {
                 const newConfig = PluginConfigManager.saveItem(pluginConfig);
-                await this.reloadPluginConfig(newConfig, isNewInstall);
+                await this.reloadPluginConfig(newConfig);
                 return newConfig;
             }
         );
@@ -138,13 +154,6 @@ class PluginManager {
             }
         );
 
-        frontendCommunicator.onAsync("plugin-manager:cancel-install",
-            async (data: { fileName: string }) => {
-                await this.cancelInstall(data?.fileName);
-                return true;
-            }
-        );
-
         frontendCommunicator.onAsync("plugin-manager:set-enabled",
             async (data: { id: string, enabled: boolean }) => {
                 await this.setPluginEnabled(data?.id, data?.enabled === true);
@@ -157,6 +166,18 @@ class PluginManager {
                 const id = typeof data === "string" ? data : data?.id;
                 const deletePluginFile = typeof data !== "string" && data?.deletePluginFile === true;
                 return this.deletePlugin(id, deletePluginFile);
+            }
+        );
+
+        frontendCommunicator.onAsync("plugin-manager:search-community-plugins",
+            async (query: string) => {
+                return await this.searchForCommunityPlugins(query);
+            }
+        );
+
+        frontendCommunicator.onAsync("plugin-manager:install-community-plugin",
+            async (pluginDetails: ManagedPluginExtended) => {
+                return await this.installCommunityPlugin(pluginDetails);
             }
         );
     }
@@ -414,7 +435,7 @@ class PluginManager {
      * Handle a config change. Starts/stops as needed, and on a still-enabled plugin
      * either re-loads (if file may have changed) or invokes onParameterUpdate.
      */
-    async reloadPluginConfig(pluginConfig: InstalledPluginConfig, isNewInstall = false): Promise<void> {
+    async reloadPluginConfig(pluginConfig: InstalledPluginConfig): Promise<void> {
         const active = this.activePlugins[pluginConfig.id];
 
         // Disabled now -> stop if running
@@ -427,7 +448,7 @@ class PluginManager {
 
         // Enabled, not yet running -> start
         if (!active) {
-            await this.startPlugin(pluginConfig, isNewInstall);
+            await this.startPlugin(pluginConfig, false);
             return;
         }
 
@@ -551,7 +572,7 @@ class PluginManager {
     async installPluginFromPath(
         sourcePath: string,
         overwrite = false
-    ): Promise<GetPluginDetailsResult | { success: false, error: string, conflict?: boolean }> {
+    ): Promise<PluginInstallResult | { success: false, error: string, conflict?: boolean }> {
         if (!sourcePath || typeof sourcePath !== "string") {
             return { success: false, error: "Invalid file path." };
         }
@@ -568,61 +589,68 @@ class PluginManager {
         const destFolder = ProfileManager.getPathInProfile("/scripts");
         const destPath = path.resolve(destFolder, fileName);
 
+        let details: GetPluginDetailsResult;
+
         // If the selected file is already inside the scripts folder,
         // there's nothing to do - just validate and return details.
         const sourceIsInScriptsFolder = path.resolve(sourcePath) === destPath;
         if (sourceIsInScriptsFolder) {
-            return this.getPluginDetailsByFileName(fileName);
-        }
+            details = await this.getPluginDetailsByFileName(fileName);
+        } else {
+            if (existsSync(destPath) && !overwrite) {
+                return { success: false, error: `A plugin named '${fileName}' already exists in the scripts folder.`, conflict: true };
+            }
 
-        if (existsSync(destPath) && !overwrite) {
-            return { success: false, error: `A plugin named '${fileName}' already exists in the scripts folder.`, conflict: true };
-        }
-
-        // copy then load, and if it doesn't validate, remove the copy.
-        try {
-            await fsp.mkdir(destFolder, { recursive: true });
-            await fsp.copyFile(sourcePath, destPath);
-        } catch (error) {
-            return { success: false, error: `Failed to copy plugin: ${(error as Error).message}` };
-        }
-
-        const details = await this.getPluginDetailsByFileName(fileName);
-        if (details.success === false) {
+            // copy then load, and if it doesn't validate, remove the copy.
             try {
-                await fsp.unlink(destPath);
-            } catch {
-                // best-effort
+                await fsp.mkdir(destFolder, { recursive: true });
+                await fsp.copyFile(sourcePath, destPath);
+            } catch (error) {
+                return { success: false, error: `Failed to copy plugin: ${(error as Error).message}` };
             }
-            return details;
-        }
 
-        return details;
-    }
-
-    /**
-     * Delete a copied plugin file that the user cancelled installing, but only
-     * when no config currently references it.
-     */
-    async cancelInstall(fileName: string): Promise<void> {
-        if (!fileName) {
-            return;
-        }
-        const referenced = PluginConfigManager.getAllItems().some(c => c.fileName === fileName);
-        if (referenced) {
-            return;
-        }
-        const filePath = this.getPluginFilePath(fileName);
-        try {
-            if (existsSync(filePath)) {
-                await fsp.unlink(filePath);
+            details = await this.getPluginDetailsByFileName(fileName);
+            if (details.success === false) {
+                try {
+                    await fsp.unlink(destPath);
+                } catch {
+                    // best-effort
+                }
+                return details;
             }
-            delete require.cache[require.resolve(filePath)];
-        } catch (error) {
-            this._logger.warn(`Failed to delete cancelled install ${fileName}`, error);
         }
 
-        void this.triggerUiRefresh();
+        if (details.success === true) {
+            const defaultParams: Record<string, unknown> = {};
+            for (const param of details.details.parametersSchema ?? []) {
+                defaultParams[param.name] = param.default;
+            }
+            const installedPluginConfig: InstalledPluginConfig = {
+                id: randomUUID(),
+                fileName,
+                enabled: true,
+                parameters: defaultParams
+            };
+
+            PluginConfigManager.saveItem(installedPluginConfig);
+
+            await this.startPlugin(installedPluginConfig, true);
+
+            void this.triggerUiRefresh();
+
+            return {
+                success: true,
+                installedPlugin: {
+                    config: installedPluginConfig,
+                    details: details.details
+                }
+            };
+        }
+
+        return {
+            success: false,
+            error: "Failed to install plugin. Check the log for more details."
+        };
     }
 
     /**
@@ -890,6 +918,10 @@ class PluginManager {
     // #region Internals
 
     private getPluginFilePath(fileName: string): string {
+        if (fileName.startsWith(`plugins${path.sep}`)) {
+            return path.resolve(ProfileManager.getPathInProfile(fileName));
+        }
+
         const scriptsFolder = ProfileManager.getPathInProfile("/scripts");
         return path.resolve(scriptsFolder, fileName);
     }
@@ -914,6 +946,7 @@ class PluginManager {
         this.requireInterceptorInstalled = true;
 
         const scriptsFolder = path.resolve(ProfileManager.getPathInProfile("/scripts"));
+        const pluginsFolder = path.resolve(ProfileManager.getPathInProfile("/plugins"));
 
         type LoadFn = (request: string, parent?: NodeJS.Module, isMain?: boolean) => unknown;
         const nodeModule = Module as unknown as { _load: LoadFn };
@@ -930,12 +963,20 @@ class PluginManager {
             }
 
             const parentPath = parent?.filename ? path.resolve(parent.filename) : null;
-            if (!parentPath || !parentPath.startsWith(scriptsFolder + path.sep)) {
+            if (!parentPath
+                || (!parentPath.startsWith(scriptsFolder + path.sep)
+                    && !parentPath.startsWith(pluginsFolder + path.sep))
+            ) {
                 // require("@crowbartools/firebot-types") from something other than a custom script - deny.
                 return {};
             }
 
-            const fileName = path.basename(parentPath);
+            let fileName = path.basename(parentPath);
+
+            // Community plugins install to a separate nested file path
+            if (parentPath.startsWith(pluginsFolder + path.sep)) {
+                fileName = path.join("plugins", parentPath.replace(pluginsFolder + path.sep, ""));
+            }
 
             const instance = manager.getActivePluginByFileName(fileName)?.apiInstance
                 ?? manager.pendingApiInstances.get(fileName);
@@ -1013,6 +1054,227 @@ class PluginManager {
             }
         }
         return false;
+    }
+
+    // #endregion
+
+    // #region Managed (Community) Plugins
+
+    private async searchForCommunityPlugins(query: string): Promise<ManagedPluginExtended[]> {
+        const plugins: ManagedPluginExtended[] = [];
+
+        try {
+            const firebotVersionString = app.getVersion();
+            const firebotVersion = parseVersion(firebotVersionString);
+            const body = {
+                query,
+                firebotVersion
+            };
+
+            const response = await fetch(`${COMMUNITY_PLUGIN_SERVICE_ROOT_URL}search`, {
+                method: "POST",
+                body: JSON.stringify(body),
+                headers: {
+                    "User-Agent": `Firebot/${firebotVersionString}`,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (response.ok) {
+                const pluginSearchResults = await response.json() as ManagedPlugin[];
+
+                for (const result of pluginSearchResults) {
+                    const installedPlugin = PluginConfigManager.getAllItems().find(c =>
+                        c.managedPluginDetails?.author === result.author
+                        && c.managedPluginDetails?.name === result.name
+                    );
+
+                    plugins.push({
+                        ...result,
+                        installed: installedPlugin?.managedPluginDetails?.version != null,
+                        installedVersion: installedPlugin?.managedPluginDetails?.version
+                    });
+                }
+            } else {
+                const responseBody = await response.text();
+
+                this._logger.error(`Failed to search community plugins for "${query}". Response: ${responseBody}`);
+                frontendCommunicator.send("showToast", {
+                    content: "Failed to search for community plugins. Check the log for more details.",
+                    className: "warning"
+                });
+            }
+        } catch (error) {
+            this._logger.error(`Failed to search community plugins for "${query}"`, error);
+            frontendCommunicator.send("showToast", {
+                content: "Failed to search for community plugins. Check the log for more details.",
+                className: "warning"
+            });
+        }
+
+        for (const plugin of plugins) {
+            plugin.manifest = resolvePluginManifestLinks(plugin.manifest);
+        }
+
+        return plugins;
+    }
+
+    private async saveCommunityPlugin(
+        plugin: ManagedPluginExtended,
+        downloadedPlugin: Uint8Array<ArrayBuffer>,
+        overwrite = false
+    ): Promise<{ success: boolean, path?: string }> {
+        const result = {
+            success: false,
+            path: undefined
+        };
+
+        try {
+            const pluginRelativePath = path.join(
+                "plugins",
+                plugin.author,
+                plugin.name,
+                plugin.version
+            );
+            const destFolder = ProfileManager.getPathInProfile(pluginRelativePath);
+
+            switch (plugin.manifest.type) {
+                case "single-file": {
+                    await fsp.mkdir(destFolder, { recursive: true });
+                    const destPath = path.resolve(destFolder, "plugin.js");
+                    const exists = existsSync(destPath);
+
+                    if (exists !== true || overwrite === true) {
+                        await fsp.writeFile(destPath, downloadedPlugin);
+                        result.success = true;
+                        result.path = path.join(pluginRelativePath, "plugin.js");
+                    } else {
+                        this._logger.error(`Community plugin file "${path.join(pluginRelativePath, "plugin.js")}" already exists`);
+                        return result;
+                    }
+                    break;
+                }
+
+                case "zip": //TODO
+                default:
+                    this._logger.warn(`Unknown plugin type "${plugin.manifest.type}"`);
+                    return result;
+            }
+        } catch (error) {
+            this._logger.error("Failed to save community plugin", error);
+            return result;
+        }
+
+        return result;
+    }
+
+    private async installCommunityPlugin(
+        plugin: ManagedPluginExtended,
+        overwrite = false
+    ): Promise<PluginInstallResult> {
+        // Ensure we have data
+        if (plugin == null) {
+            const errorMessage = "No community plugin details provided for install";
+            this._logger.error(errorMessage);
+            return { success: false, error: errorMessage };
+        }
+
+        // Make sure it's not already installed
+        if (plugin.installed === true) {
+            const errorMessage = `Plugin ${plugin.manifest.name} is already installed (currently v${plugin.installedVersion})`;
+            this._logger.warn(errorMessage);
+            return { success: false, error: errorMessage };
+        }
+
+        try {
+            // Check that plugin meets Firebot version spec
+            const currentFirebotVersion = parseVersion(app.getVersion());
+            const versionPassed = meetsFirebotVersionRequirement(
+                currentFirebotVersion,
+                plugin.manifest.minimumFirebotVersion,
+                plugin.manifest.maximumFirebotVersion
+            );
+
+            if (versionPassed !== true) {
+                const errorMessage = "Plugin is not designed to work with this version of Firebot";
+                this._logger.error(errorMessage);
+                return { success: false, error: errorMessage };
+            }
+
+            // Download the file
+            const downloadResponse = await fetch(plugin.manifest.downloadUrl);
+
+            if (!downloadResponse.ok) {
+                const errorMessage = "Unable to download plugin file";
+                const downloadResponseBody = await downloadResponse.text();
+                this._logger.error(`${errorMessage}. Response: ${downloadResponseBody}`);
+                return { success: false, error: errorMessage };
+            }
+
+            const fileContents = await downloadResponse.bytes();
+
+            // Verify the SHA
+            const hash = createHash("sha256").update(fileContents).digest("hex");
+            if (hash.toLowerCase() !== plugin.manifest.sha256.toLowerCase()) {
+                const errorMessage = "Downloaded plugin signature doesn't match plugin manifest";
+                this._logger.error(errorMessage);
+                return { success: false, error: errorMessage };
+            }
+
+            // Save the file
+            const saveResult = await this.saveCommunityPlugin(plugin, fileContents, overwrite);
+
+            if (saveResult.success !== true) {
+                return { success: false, error: "Failed to save downloaded plugin" };
+            }
+
+            // Grab the plugin details
+            const pluginDetails = await this.getPluginDetailsByFileName(saveResult.path, "plugin");
+            if (pluginDetails.success !== true) {
+                const errorMessage = "Failed to load plugin details";
+                this._logger.error(errorMessage);
+
+                try {
+                    await fsp.rm(this.getPluginFilePath(saveResult.path), { force: true });
+                } catch { }
+
+                return { success: false, error: errorMessage };
+            }
+
+            const defaultParams: Record<string, unknown> = {};
+            for (const param of pluginDetails.details.parametersSchema ?? []) {
+                defaultParams[param.name] = param.default;
+            }
+
+            // And finally, save and start the plugin
+            const installedPluginConfig: InstalledPluginConfig = {
+                id: randomUUID(),
+                enabled: true,
+                fileName: saveResult.path,
+                parameters: defaultParams,
+                managedPluginDetails: {
+                    author: plugin.author,
+                    name: plugin.name,
+                    version: plugin.version
+                }
+            };
+            PluginConfigManager.saveItem(installedPluginConfig);
+
+            await this.startPlugin(installedPluginConfig, true);
+
+            void this.triggerUiRefresh();
+
+            return {
+                success: true,
+                installedPlugin: {
+                    config: installedPluginConfig,
+                    details: pluginDetails.details
+                }
+            };
+        } catch (error) {
+            this._logger.error(`Failed to install community plugin "${plugin.author}:${plugin.name}"`, error);
+            return { success: false, error: "Installation failed. Check the log for more info." };
+        }
     }
 
     // #endregion

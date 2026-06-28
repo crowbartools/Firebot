@@ -56,24 +56,29 @@
                         </div>
                     </div>
                     <div class="muted" style="font-size: 12px; padding: 0 4px 20px;">
-                        Want to write your own plugins? Learn how <a
+                        <p>Plugins are scripts loaded at startup that can register new effects, variables, events, and more.</p>
+                        <p>Want to write your own plugins? Learn how <a
                             class="clickable"
                             ng-click="openLink('https://docs.firebot.app/v5/dev/scripts')"
-                        >here</a>.
+                        >here</a>.</p>
                     </div>
 
                     <div>
                         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 10px;">
-                            <div>
-                                <h3 style="margin: 0;">Plugins</h3>
-                                <div class="muted" style="font-size: 13px;">Plugins are scripts loaded at startup that can register new effects, variables, events, and more.</div>
-                            </div>
-                            <div>
+                            <h3 style="margin: 0;">Installed Plugins</h3>
+                            <div style="display: flex; gap: 8px;">
                                 <firebot-button
-                                    text="Install Plugin"
-                                    type="primary"
+                                    text="Install From File"
+                                    type="default"
                                     icon="fa-plus"
-                                    ng-click="installPlugin()"
+                                    ng-click="installPluginFromFile()"
+                                    disabled="!settings.getSetting('RunCustomScripts')"
+                                />
+                                <firebot-button
+                                    text="Browse Plugins"
+                                    type="primary"
+                                    icon="fa-search"
+                                    ng-click="showCommunityPluginModal()"
                                     disabled="!settings.getSetting('RunCustomScripts')"
                                 />
                             </div>
@@ -178,8 +183,10 @@
 
                 </div>
           `,
-            controller: function($rootScope, $scope, settingsService, utilityService,
-                pluginsService, backendCommunicator, ngToast, $q, profileManager) {
+            controller: function($rootScope, $scope, settingsService, modalFactory,
+                modalService, pluginsService, backendCommunicator, ngToast, $q,
+                profileManager
+            ) {
                 $scope.openLink = $rootScope.openLinkExternally;
                 $scope.settings = settingsService;
 
@@ -213,27 +220,26 @@
                 };
 
                 $scope.configurePlugin = function(plugin) {
-                    utilityService.showModal({
+                    modalService.showModal({
                         component: "configurePluginModal",
                         size: "md",
                         backdrop: true,
                         keyboard: true,
                         resolveObj: {
-                            plugin: () => angular.copy(plugin),
-                            isNewInstall: () => false
-                        },
-                        closeCallback: () => pluginsService.loadPlugins()
+                            plugin: () => angular.copy(plugin)
+                        }
                     });
                 };
 
                 $scope.removePlugin = function(plugin) {
-                    utilityService.showModal({
+                    modalService.showModal({
                         component: "removePluginModal",
                         size: "sm",
                         backdrop: true,
                         keyboard: true,
                         resolveObj: {
-                            pluginName: () => plugin.details.manifest.name || plugin.config.fileName
+                            pluginName: () => plugin.details.manifest.name || plugin.config.fileName,
+                            isManagedPlugin: () => plugin.config.managedPluginDetails != null
                         },
                         closeCallback: (response) => {
                             if (response && response.confirmed) {
@@ -267,37 +273,6 @@
                     ];
                 };
 
-                function openConfigureModalForInstall(details, fileName) {
-                    const { randomUUID } = require("crypto");
-                    const skeleton = {
-                        config: {
-                            id: randomUUID(),
-                            fileName: fileName,
-                            enabled: true,
-                            parameters: {}
-                        },
-                        details: details
-                    };
-
-                    utilityService.showModal({
-                        component: "configurePluginModal",
-                        size: "md",
-                        backdrop: "static",
-                        keyboard: false,
-                        resolveObj: {
-                            plugin: () => skeleton,
-                            isNewInstall: () => true
-                        },
-                        closeCallback: (result) => {
-                            if (!result || !result.saved) {
-                                // user cancelled - clean up the copied file
-                                pluginsService.cancelInstall(fileName);
-                            }
-                            pluginsService.loadPlugins();
-                        }
-                    });
-                }
-
                 function doInstall(filePath, overwrite) {
                     return $q.when(pluginsService.installPluginFromFile(filePath, overwrite))
                         .then((result) => {
@@ -306,7 +281,7 @@
                                 return;
                             }
                             if (result.conflict) {
-                                utilityService.showConfirmationModal({
+                                modalFactory.showConfirmationModal({
                                     title: "Plugin File Already Exists",
                                     question: `${result.error} Overwrite it?`,
                                     confirmLabel: "Overwrite",
@@ -319,14 +294,14 @@
                                 return;
                             }
                             if (result.success === false) {
-                                utilityService.showErrorModal(result.error || "Failed to install plugin.");
+                                modalFactory.showErrorModal(result.error || "Failed to install plugin.");
                                 return;
                             }
-                            openConfigureModalForInstall(result.details, result.fileName);
+                            $scope.configurePlugin(result.installedPlugin);
                         });
                 }
 
-                $scope.installPlugin = function() {
+                $scope.installPluginFromFile = function() {
                     $q.when(backendCommunicator.fireEventAsync("open-file-browser", {
                         currentPath: profileManager.getPathInProfile("/scripts"),
                         options: {
@@ -342,6 +317,13 @@
                     });
                 };
 
+                $scope.showCommunityPluginModal = () => {
+                    modalService.showModal({
+                        component: "installCommunityPluginModal",
+                        size: "lg"
+                    });
+                };
+
                 function doUpdate(plugin, filePath, overwrite) {
                     return $q.when(pluginsService.updatePluginFromFile(plugin.config.id, filePath, overwrite))
                         .then((result) => {
@@ -350,7 +332,7 @@
                                 return;
                             }
                             if (result.conflict) {
-                                utilityService.showConfirmationModal({
+                                modalFactory.showConfirmationModal({
                                     title: "Plugin File Already Exists",
                                     question: `${result.error} Overwrite it?`,
                                     confirmLabel: "Overwrite",
@@ -363,7 +345,7 @@
                                 return;
                             }
                             if (result.success === false) {
-                                utilityService.showErrorModal(result.error || "Failed to update plugin.");
+                                modalFactory.showErrorModal(result.error || "Failed to update plugin.");
                                 return;
                             }
                             pluginsService.loadPlugins();

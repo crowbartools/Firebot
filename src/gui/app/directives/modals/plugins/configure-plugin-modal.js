@@ -7,9 +7,9 @@
         .component("configurePluginModal", {
             template: `
             <div class="modal-header sticky-header">
-                <button type="button" class="close" ng-hide="$ctrl.isInitializing" ng-click="$ctrl.cancel()"><span>&times;</span></button>
+                <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
                 <h4 class="modal-title">
-                    <div style="font-size: 22px;">{{$ctrl.isNewInstall ? "Configure New Plugin" : "Configure Plugin"}}:</div>
+                    <div style="font-size: 22px;">Configure Plugin</div>
                     <div style="font-weight:bold;font-size: 24px;">{{$ctrl.plugin.details.manifest.name || $ctrl.plugin.config.fileName}}</div>
                 </h4>
             </div>
@@ -56,13 +56,7 @@
                 </div>
 
                 <eos-container header="Settings">
-                    <div ng-if="$ctrl.isInitializing" class="muted">
-                        <i class="fas fa-spinner fa-pulse"></i> Initializing plugin...
-                    </div>
-                    <div ng-if="!$ctrl.isInitializing && $ctrl.initFirst" class="muted">
-                        After installing this plugin, you'll be able to configure its settings.
-                    </div>
-                    <div ng-if="!$ctrl.isInitializing && !$ctrl.initFirst">
+                    <div>
                         <div ng-if="!$ctrl.hasParameters()" class="muted">This plugin has no settings.</div>
                         <div ng-if="$ctrl.hasParameters()">
                             <dynamic-parameter
@@ -76,8 +70,8 @@
                 </eos-container>
             </div>
             <div class="modal-footer sticky-footer">
-                <button type="button" class="btn btn-link" ng-hide="$ctrl.isInitializing" ng-click="$ctrl.cancel()">Cancel</button>
-                <button type="button" class="btn btn-primary" ng-disabled="$ctrl.isInitializing" ng-click="$ctrl.save()">{{$ctrl.primaryButtonLabel()}}</button>
+                <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
+                <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Save</button>
             </div>
             `,
             bindings: {
@@ -89,50 +83,21 @@
                 const $ctrl = this;
 
                 $ctrl.plugin = null;
-                $ctrl.isNewInstall = false;
                 $ctrl.parameters = [];
-                $ctrl.initFirst = false;
-                $ctrl.isInitializing = false;
-
-                function seedParameters() {
-                    const schema = $ctrl.plugin.details && $ctrl.plugin.details.parametersSchema;
-                    $ctrl.parameters = Array.isArray(schema) ? schema : [];
-
-                    // Seed any unset values from schema defaults
-                    for (const p of $ctrl.parameters) {
-                        if (!p || !p.name) {
-                            continue;
-                        }
-                        if ($ctrl.plugin.config.parameters[p.name] === undefined && p.default !== undefined) {
-                            $ctrl.plugin.config.parameters[p.name] = p.default;
-                        }
-                    }
-                }
 
                 $ctrl.$onInit = function() {
                     $ctrl.plugin = $ctrl.resolve.plugin;
-                    $ctrl.isNewInstall = $ctrl.resolve.isNewInstall === true;
 
                     if (!$ctrl.plugin.config.parameters) {
                         $ctrl.plugin.config.parameters = {};
                     }
 
-                    const manifest = ($ctrl.plugin.details && $ctrl.plugin.details.manifest) || {};
-
-                    $ctrl.initFirst = $ctrl.isNewInstall && manifest.initBeforeShowingParams === true;
-
-                    seedParameters();
+                    const schema = $ctrl.plugin.details && $ctrl.plugin.details.parametersSchema;
+                    $ctrl.parameters = Array.isArray(schema) ? schema : [];
                 };
 
                 $ctrl.hasParameters = function() {
                     return Array.isArray($ctrl.parameters) && $ctrl.parameters.length > 0;
-                };
-
-                $ctrl.primaryButtonLabel = function() {
-                    if (!$ctrl.isNewInstall) {
-                        return "Save";
-                    }
-                    return $ctrl.initFirst ? "Install & Configure" : "Install";
                 };
 
                 $ctrl.hasLinks = function() {
@@ -147,37 +112,9 @@
                 };
 
                 $ctrl.save = function() {
-                    if ($ctrl.isInitializing) {
-                        return;
-                    }
-
-                    // install & load the plugin, then show its params to the user
-                    if ($ctrl.initFirst) {
-                        $ctrl.isInitializing = true;
-                        pluginsService.savePluginConfig($ctrl.plugin.config, true)
-                            .then(() => {
-                                const updated = pluginsService.getPluginById($ctrl.plugin.config.id);
-                                if (updated && updated.details) {
-                                    $ctrl.plugin.details = updated.details;
-                                }
-                                $ctrl.isNewInstall = false;
-                                $ctrl.initFirst = false;
-                                $ctrl.isInitializing = false;
-                                seedParameters();
-                            })
-                            .catch(() => {
-                                $ctrl.isInitializing = false;
-                            });
-                        return;
-                    }
-
-                    pluginsService.savePluginConfig($ctrl.plugin.config, $ctrl.isNewInstall).then(() => {
+                    pluginsService.savePluginConfig($ctrl.plugin.config).then(() => {
                         $ctrl.close({ $value: { saved: true } });
                     });
-                };
-
-                $ctrl.cancel = function() {
-                    $ctrl.dismiss();
                 };
             }
         });

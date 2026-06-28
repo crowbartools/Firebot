@@ -27,13 +27,12 @@
                 return installedPlugins.find(p => p.config && p.config.id === id);
             };
 
-            service.savePluginConfig = function(pluginConfig, isNewInstall = false) {
+            service.savePluginConfig = async (pluginConfig) => {
                 if (!pluginConfig || !pluginConfig.id) {
-                    return $q.resolve(false);
+                    return;
                 }
-                return $q.when(
-                    backendCommunicator.fireEventAsync("plugin-manager:save-config", { pluginConfig, isNewInstall })
-                );
+
+                return await backendCommunicator.fireEventAsync("plugin-manager:save-config", { pluginConfig });
             };
 
             service.deletePlugin = function(pluginId, deletePluginFile = false) {
@@ -78,14 +77,6 @@
                         overwrite: overwrite === true
                     })
                 );
-            };
-
-            service.cancelInstall = function(fileName) {
-                if (!fileName) {
-                    return;
-                }
-
-                backendCommunicator.send("plugin-manager:cancel-install", { fileName });
             };
 
             service.getScriptDetails = function(fileName, expectedScriptType) {
