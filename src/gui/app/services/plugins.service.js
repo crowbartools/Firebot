@@ -79,6 +79,14 @@
                 );
             };
 
+            service.searchCommunityPlugins = async (searchQuery) => {
+                return await backendCommunicator.fireEventAsync("plugin-manager:search-community-plugins", searchQuery);
+            };
+
+            service.installCommunityPlugin = async (pluginDetails) => {
+                return await backendCommunicator.fireEventAsync("plugin-manager:install-community-plugin", pluginDetails);
+            };
+
             service.getScriptDetails = function(fileName, expectedScriptType) {
                 return $q.when(
                     backendCommunicator.fireEventAsync("plugin-manager:get-plugin-details", { fileName, expectedScriptType })

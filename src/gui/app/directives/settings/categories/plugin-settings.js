@@ -111,6 +111,10 @@
                                             ng-if="plugin.details.manifest.author"
                                         >by {{plugin.details.manifest.author}}</span>
                                         <span
+                                            ng-if="plugin.config.managedPluginDetails != null"
+                                            style="font-size: 11px; padding: 1px 8px; border-radius: 10px; background: rgba(0,208,255,0.18); color: #00d0ff;"
+                                        >Community</span>
+                                        <span
                                             ng-if="plugin.config.enabled === false"
                                             style="font-size: 11px; padding: 1px 8px; border-radius: 10px; background: rgba(217,146,17,0.18); color: #d99211;"
                                         >Disabled</span>

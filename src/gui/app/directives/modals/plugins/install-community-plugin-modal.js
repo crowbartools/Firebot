@@ -150,7 +150,6 @@
                 $rootScope,
                 $scope,
                 pluginsService,
-                backendCommunicator,
                 modalFactory,
                 modalService
             ) {
@@ -171,7 +170,7 @@
 
                     $ctrl.isSearching = true;
 
-                    const results = await backendCommunicator.fireEventAsync("plugin-manager:search-community-plugins", $ctrl.searchQuery);
+                    const results = await pluginsService.searchCommunityPlugins($ctrl.searchQuery);
                     $ctrl.searchResults = results ?? [];
 
                     $ctrl.searchPerformed = true;
@@ -198,7 +197,7 @@
                     $ctrl.isInstallingPlugin = true;
                     pluginDetails.installing = true;
 
-                    const result = await backendCommunicator.fireEventAsync("plugin-manager:install-community-plugin", pluginDetails);
+                    const result = await pluginsService.installCommunityPlugin(pluginDetails);
 
                     if (result.success === true) {
                         pluginDetails.installed = true;
