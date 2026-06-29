@@ -1,6 +1,8 @@
 "use strict";
 
 (function() {
+    const { DateTime } = require("luxon");
+
     angular
         .module("firebotApp")
         .component("installCommunityPluginModal", {
@@ -75,6 +77,12 @@
                                     style="font-size: 13px; margin-top: 4px; line-height: 1.4; overflow-wrap: anywhere;"
                                 >
                                     {{plugin.manifest.description}}
+                                </div>
+                                <div
+                                    class="muted"
+                                    style="font-size: 13px; margin-top: 4px; line-height: 1.4; overflow-wrap: anywhere;"
+                                >
+                                    Last updated: {{$ctrl.getPluginReleaseDate(plugin)}}
                                 </div>
                                 <div
                                     ng-if="$ctrl.hasPluginLinks(plugin)"
@@ -187,6 +195,15 @@
                         }
                     }
                 });
+
+                $ctrl.getPluginReleaseDate = (plugin) => {
+                    if (plugin?.manifest?.releaseDate) {
+                        const releaseDate = DateTime.fromISO(plugin.manifest.releaseDate);
+                        return releaseDate.toFormat("MMMM d, yyyy");
+                    }
+
+                    return "Unknown";
+                };
 
                 $ctrl.hasPluginLinks = function(plugin) {
                     const manifest = (plugin && plugin.manifest) || {};
