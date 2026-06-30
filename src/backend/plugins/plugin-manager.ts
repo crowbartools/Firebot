@@ -10,6 +10,7 @@ import type {
     LegacyCustomScript,
     ManagedPlugin,
     ManagedPluginExtended,
+    ManagedPluginUpdateRequest,
     Manifest,
     PluginBase,
     PluginContext,
@@ -39,7 +40,7 @@ import {
 } from "./executors/plugin-executor.interface";
 import { buildPluginApi, createPluginApiContext } from "./plugin-api";
 import { resolvePluginManifestLinks } from "./plugin-manifest-utils";
-import { parseVersion } from "../../shared/compare-versions";
+import { compareVersions, parseVersion, UpdateType } from "../../shared/compare-versions";
 import { meetsFirebotVersionRequirement } from "../utils";
 
 type LoadedPlugin = PluginBase | LegacyCustomScript;
@@ -93,6 +94,9 @@ class PluginManager {
 
     private startingPlugins: Map<string, Promise<void>> = new Map();
     private activePlugins: Record<string, ActivePluginEntry> = {};
+
+    private updateCheckInterval: NodeJS.Timeout;
+    private pendingUpdates: Record<string, ManagedPlugin> = {};
 
     private pendingApiInstances: Map<string, PluginApiInstance> = new Map();
 
@@ -180,6 +184,12 @@ class PluginManager {
                 return await this.installCommunityPlugin(pluginDetails);
             }
         );
+
+        frontendCommunicator.onAsync("plugin-manager:update-community-plugin",
+            async (data: { pluginId: string, pluginUpdate: ManagedPluginExtended }) => {
+                return await this.updateCommunityPlugin(data.pluginId, data.pluginUpdate);
+            }
+        );
     }
 
     async migrateLegacyStartUpScriptsToPlugins() {
@@ -260,6 +270,7 @@ class PluginManager {
     async triggerUiRefresh(): Promise<void> {
         this._logger.debug("Triggering UI refresh");
         frontendCommunicator.send("plugin-manager:all-plugins", await this.getInstalledPlugins());
+        frontendCommunicator.send("plugin-manager:community-plugin-updates", this.pendingUpdates);
     }
 
     // #region Plugin lifecycle
@@ -1119,9 +1130,8 @@ class PluginManager {
         return plugins;
     }
 
-    private async saveCommunityPlugin(
-        plugin: ManagedPluginExtended,
-        downloadedPlugin: Uint8Array<ArrayBuffer>,
+    private async downloadAndSaveCommunityPlugin(
+        plugin: ManagedPlugin,
         overwrite = false
     ): Promise<{ success: boolean, path?: string }> {
         const result = {
@@ -1130,6 +1140,24 @@ class PluginManager {
         };
 
         try {
+            // Download the file
+            const downloadResponse = await fetch(plugin.manifest.downloadUrl);
+
+            if (!downloadResponse.ok) {
+                const downloadResponseBody = await downloadResponse.text();
+                this._logger.error(`Unable to download plugin file. Response: ${downloadResponseBody}`);
+                return { success: false };
+            }
+
+            const fileContents = await downloadResponse.bytes();
+
+            // Verify the SHA
+            const hash = createHash("sha256").update(fileContents).digest("hex");
+            if (hash.toLowerCase() !== plugin.manifest.sha256.toLowerCase()) {
+                this._logger.error("Downloaded plugin signature doesn't match plugin manifest");
+                return { success: false };
+            }
+
             const pluginRelativePath = path.join(
                 "plugins",
                 plugin.author,
@@ -1145,7 +1173,7 @@ class PluginManager {
                     const exists = existsSync(destPath);
 
                     if (exists !== true || overwrite === true) {
-                        await fsp.writeFile(destPath, downloadedPlugin);
+                        await fsp.writeFile(destPath, fileContents);
                         result.success = true;
                         result.path = path.join(pluginRelativePath, "plugin.js");
                     } else {
@@ -1201,31 +1229,11 @@ class PluginManager {
                 return { success: false, error: errorMessage };
             }
 
-            // Download the file
-            const downloadResponse = await fetch(plugin.manifest.downloadUrl);
-
-            if (!downloadResponse.ok) {
-                const errorMessage = "Unable to download plugin file";
-                const downloadResponseBody = await downloadResponse.text();
-                this._logger.error(`${errorMessage}. Response: ${downloadResponseBody}`);
-                return { success: false, error: errorMessage };
-            }
-
-            const fileContents = await downloadResponse.bytes();
-
-            // Verify the SHA
-            const hash = createHash("sha256").update(fileContents).digest("hex");
-            if (hash.toLowerCase() !== plugin.manifest.sha256.toLowerCase()) {
-                const errorMessage = "Downloaded plugin signature doesn't match plugin manifest";
-                this._logger.error(errorMessage);
-                return { success: false, error: errorMessage };
-            }
-
-            // Save the file
-            const saveResult = await this.saveCommunityPlugin(plugin, fileContents, overwrite);
+            // Download and save the file
+            const saveResult = await this.downloadAndSaveCommunityPlugin(plugin, overwrite);
 
             if (saveResult.success !== true) {
-                return { success: false, error: "Failed to save downloaded plugin" };
+                return { success: false, error: "Failed to download or save plugin" };
             }
 
             // Grab the plugin details
@@ -1274,6 +1282,163 @@ class PluginManager {
         } catch (error) {
             this._logger.error(`Failed to install community plugin "${plugin.author}:${plugin.name}"`, error);
             return { success: false, error: "Installation failed. Check the log for more info." };
+        }
+    }
+
+    private async updateCommunityPlugin(
+        pluginId: string,
+        pluginUpdate: ManagedPlugin
+    ): Promise<PluginInstallResult> {
+        // Make sure existing plugin is valid
+        const installedPluginConfig = PluginConfigManager.getItem(pluginId);
+
+        if (installedPluginConfig == null) {
+            const errorMessage = `Plugin ${pluginId} not found`;
+            this._logger.warn(errorMessage);
+            return { success: false, error: errorMessage };
+        }
+
+        if (installedPluginConfig.managedPluginDetails == null
+            || !installedPluginConfig.managedPluginDetails.author?.length
+            || !installedPluginConfig.managedPluginDetails.name?.length
+            || !installedPluginConfig.managedPluginDetails.version?.length
+        ) {
+            const errorMessage = `Plugin ${pluginId} is not a community plugin`;
+            this._logger.warn(errorMessage);
+            return { success: false, error: errorMessage };
+        }
+
+        // Ensure we have data
+        if (pluginUpdate == null) {
+            const errorMessage = "No community plugin details provided for update";
+            this._logger.error(errorMessage);
+            return { success: false, error: errorMessage };
+        }
+
+        // Ensure it's the same plugin
+        if (pluginUpdate.author !== installedPluginConfig.managedPluginDetails.author
+            || pluginUpdate.name !== installedPluginConfig.managedPluginDetails.name
+        ) {
+            const errorMessage = "Update does not match installed plugin";
+            this._logger.error(errorMessage);
+            return { success: false, error: errorMessage };
+        }
+
+        // Ensure it's actually an upgrade
+        const updateType = compareVersions(pluginUpdate.version, installedPluginConfig.managedPluginDetails.version);
+        if (updateType === UpdateType.NONE || updateType === UpdateType.PREVIOUS_VERSION) {
+            const errorMessage = "Installed plugin version is already up-to-date";
+            this._logger.error(errorMessage);
+            return { success: false, error: errorMessage };
+        }
+
+        try {
+            // Download and save the update
+            const saveResult = await this.downloadAndSaveCommunityPlugin(pluginUpdate);
+
+            if (saveResult.success !== true) {
+                return { success: false, error: "Failed to download or save plugin update" };
+            }
+
+            // Grab the update details
+            const pluginDetails = await this.getPluginDetailsByFileName(saveResult.path, "plugin");
+            if (pluginDetails.success !== true) {
+                const errorMessage = "Failed to load plugin details";
+                this._logger.error(errorMessage);
+
+                try {
+                    await fsp.rm(this.getPluginFilePath(saveResult.path), { force: true });
+                } catch { }
+
+                return { success: false, error: errorMessage };
+            }
+
+            // Stop the plugin, update the config with the new details, and restart it
+            await this.stopPlugin(pluginId, false);
+
+            installedPluginConfig.fileName = saveResult.path;
+            installedPluginConfig.managedPluginDetails.version = pluginUpdate.version;
+            PluginConfigManager.saveItem(installedPluginConfig);
+
+            await this.startPlugin(installedPluginConfig, false);
+
+            void this.triggerUiRefresh();
+
+            return {
+                success: true,
+                installedPlugin: {
+                    config: installedPluginConfig,
+                    details: pluginDetails.details
+                }
+            };
+        } catch (error) {
+            this._logger.error(`Failed to update community plugin "${pluginUpdate.author}:${pluginUpdate.name}"`, error);
+            return { success: false, error: "Update failed. Check the log for more info." };
+        }
+    }
+
+    startCommunityPluginUpdateCheck(): void {
+        if (this.updateCheckInterval == null) {
+            this.updateCheckInterval = setInterval(
+                async () => await this.checkForCommunityPluginUpdates(),
+                24 * 60 * 60 * 1000 // Every 24 hours
+            );
+        }
+    }
+
+    private async checkForCommunityPluginUpdates(): Promise<void> {
+        const communityPlugins = PluginConfigManager.getAllItems()
+            .filter(p => p.managedPluginDetails != null)
+            .map(p => ({
+                id: p.id,
+                details: p.managedPluginDetails
+            }));
+
+        const firebotVersionString = app.getVersion();
+        const updateRequest: ManagedPluginUpdateRequest = {
+            firebotVersion: parseVersion(firebotVersionString),
+            plugins: communityPlugins.map(p => p.details)
+        };
+
+        try {
+            const response = await fetch(`${COMMUNITY_PLUGIN_SERVICE_ROOT_URL}updates`, {
+                method: "POST",
+                body: JSON.stringify(updateRequest),
+                headers: {
+                    "User-Agent": `Firebot/${firebotVersionString}`,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                const responseBody = await response.text();
+                this._logger.error(`Failed to check for community plugin updates. Response: ${responseBody}`);
+                return;
+            }
+
+            const availableUpdates = await response.json() as ManagedPlugin[];
+
+            for (const plugin of communityPlugins) {
+                const update = availableUpdates.find(p =>
+                    p.author === plugin.details.author
+                    && p.name === plugin.details.name
+                );
+
+                if (update != null) {
+                    this.pendingUpdates[plugin.id] = update;
+                } else {
+                    delete this.pendingUpdates[plugin.id];
+                }
+            }
+
+            const updateCount = Object.keys(this.pendingUpdates).length;
+            if (updateCount > 0) {
+                this._logger.info(`Update check complete. ${updateCount} community plugin update${updateCount > 1 ? "s" : ""} available`);
+            } else {
+                this._logger.info("Update check complete. All community plugins up-to-date.");
+            }
+        } catch (error) {
+            this._logger.error("Unknown error checking for community plugin updates", error);
         }
     }
 

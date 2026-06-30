@@ -738,6 +738,7 @@ frontendCommunicator.onAsync("main-window-ready", async () => {
     if (initialLoadComplete !== true) {
         const { PluginManager } = require("../../plugins/plugin-manager");
         await PluginManager.startPlugins();
+        PluginManager.startCommunityPluginUpdateCheck();
 
         const { EventManager } = require("../../events/event-manager");
         EventManager.triggerEvent("firebot", "firebot-started", {
