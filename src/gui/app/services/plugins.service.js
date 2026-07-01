@@ -9,10 +9,14 @@
 
             let installedPlugins = [];
             service.pendingFrontendReload = false;
+            service.pendingPluginUpdates = {};
 
             backendCommunicator.on("plugin-manager:all-plugins", (plugins) => {
                 installedPlugins = Array.isArray(plugins) ? plugins : [];
-                return installedPlugins;
+            });
+
+            backendCommunicator.on("plugin-manager:community-plugin-updates", (updates) => {
+                service.pendingPluginUpdates = updates ?? {};
             });
 
             service.loadPlugins = function() {

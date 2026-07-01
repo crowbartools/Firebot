@@ -1378,6 +1378,8 @@ class PluginManager {
     }
 
     startCommunityPluginUpdateCheck(): void {
+        void this.checkForCommunityPluginUpdates();
+
         if (this.updateCheckInterval == null) {
             this.updateCheckInterval = setInterval(
                 async () => await this.checkForCommunityPluginUpdates(),
@@ -1387,6 +1389,7 @@ class PluginManager {
     }
 
     private async checkForCommunityPluginUpdates(): Promise<void> {
+        this._logger.info("Checking for community plugin updates");
         const communityPlugins = PluginConfigManager.getAllItems()
             .filter(p => p.managedPluginDetails != null)
             .map(p => ({
@@ -1440,6 +1443,8 @@ class PluginManager {
         } catch (error) {
             this._logger.error("Unknown error checking for community plugin updates", error);
         }
+
+        void this.triggerUiRefresh();
     }
 
     // #endregion
