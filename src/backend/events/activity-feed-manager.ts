@@ -153,6 +153,7 @@ class ActivityFeedManager {
 
 
         if (SettingsManager.getSetting("ShowActivityFeedEventsInChat") === true
+            && SettingsManager.getSetting("AllowedActivityEvents").includes(`${newActivity.source.id}:${newActivity.event.id}`)
             && newActivity.excludeFromChatFeed !== true
         ) {
             FrontendChatManager.sendAlertToDashboard(newActivity.message, newActivity.icon);
