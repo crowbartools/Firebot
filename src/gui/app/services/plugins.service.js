@@ -91,6 +91,10 @@
                 return await backendCommunicator.fireEventAsync("plugin-manager:install-community-plugin", pluginDetails);
             };
 
+            service.updateCommunityPlugin = async (pluginId) => {
+                return await backendCommunicator.fireEventAsync("plugin-manager:update-community-plugin", pluginId);
+            };
+
             service.getScriptDetails = function(fileName, expectedScriptType) {
                 return $q.when(
                     backendCommunicator.fireEventAsync("plugin-manager:get-plugin-details", { fileName, expectedScriptType })

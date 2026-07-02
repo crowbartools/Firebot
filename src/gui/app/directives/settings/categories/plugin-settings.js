@@ -120,6 +120,15 @@
                                         >Disabled</span>
                                     </div>
                                     <div
+                                        ng-if="pendingUpdateDetails(plugin) != null"
+                                        style="display:flex; align-items:center; flex-wrap: wrap; gap: 8px; margin-top: 8px;"
+                                    >
+                                        <span
+                                            class="muted"
+                                            style="font-size: 11px; padding: 1px 6px; border-radius: 4px; background: rgba(255,255,255,0.06);"
+                                        ><i class="fas fa-download"></i> v{{pendingUpdateDetails(plugin).version}} update ready to download</span>
+                                    </div>
+                                    <div
                                         class="muted"
                                         style="font-size: 13px; margin-top: 4px; line-height: 1.4; overflow-wrap: anywhere;"
                                         ng-if="plugin.details.manifest.description"
@@ -217,6 +226,12 @@
                     return !!(manifest.repo || manifest.website || manifest.support);
                 };
 
+                $scope.pendingUpdateDetails = (plugin) => {
+                    return plugin?.config?.managedPluginDetails != null
+                        ? pluginsService.pendingPluginUpdates[plugin.config.id]
+                        : null;
+                };
+
                 $scope.togglePluginEnabled = function(plugin) {
                     const next = !(plugin.config.enabled !== false);
                     plugin.config.enabled = next;
@@ -255,26 +270,44 @@
 
                 $scope.pluginMenuOptions = function(plugin) {
                     const isEnabled = plugin.config.enabled !== false;
-                    return [
+                    const isCommunityPlugin = plugin.config.managedPluginDetails != null;
+                    const pendingUpdate = isCommunityPlugin
+                        ? pluginsService.pendingPluginUpdates[plugin.config.id]
+                        : null;
+
+                    const options = [
                         {
                             html: `<a href><i class="far ${isEnabled ? 'fa-toggle-off' : 'fa-toggle-on'}" style="margin-right: 10px;"></i> ${isEnabled ? 'Disable' : 'Enable'}</a>`,
                             click: () => {
                                 $scope.togglePluginEnabled(plugin);
                             }
-                        },
-                        {
+                        }
+                    ];
+
+                    if (isCommunityPlugin !== true) {
+                        options.push({
                             html: `<a href><i class="far fa-sync" style="margin-right: 10px;"></i> Update</a>`,
                             click: () => {
                                 $scope.updatePlugin(plugin);
                             }
-                        },
-                        {
-                            html: `<a href style="color: #d9534f;"><i class="far fa-trash" style="margin-right: 10px;"></i> Remove</a>`,
+                        });
+                    } else if (pendingUpdate != null) {
+                        options.push({
+                            html: `<a href><i class="far fa-download" style="margin-right: 10px;"></i> Download and install v${pendingUpdate.version}</a>`,
                             click: () => {
-                                $scope.removePlugin(plugin);
+                                $scope.updateCommunityPlugin(plugin);
                             }
+                        });
+                    }
+
+                    options.push({
+                        html: `<a href style="color: #d9534f;"><i class="far fa-trash" style="margin-right: 10px;"></i> Remove</a>`,
+                        click: () => {
+                            $scope.removePlugin(plugin);
                         }
-                    ];
+                    });
+
+                    return options;
                 };
 
                 function doInstall(filePath, overwrite) {
@@ -376,6 +409,32 @@
                             return;
                         }
                         doUpdate(plugin, response.path, false);
+                    });
+                };
+
+                $scope.updateCommunityPlugin = async (plugin) => {
+                    if (!plugin?.config) {
+                        return;
+                    }
+
+                    const pluginUpdate = pluginsService.pendingPluginUpdates[plugin.config.id];
+                    if (!pluginUpdate) {
+                        return;
+                    }
+
+                    const result = await pluginsService.updateCommunityPlugin(plugin.config.id);
+
+                    if (result.success !== true) {
+                        ngToast.create({
+                            className: "warn",
+                            content: `Plugin update failed (${result.error}). Check log for more info.`
+                        });
+                        return;
+                    }
+
+                    ngToast.create({
+                        className: "success",
+                        content: `Plugin '${plugin.details.name}' updated to v${pluginUpdate.version}`
                     });
                 };
             }

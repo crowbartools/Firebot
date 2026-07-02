@@ -186,8 +186,8 @@ class PluginManager {
         );
 
         frontendCommunicator.onAsync("plugin-manager:update-community-plugin",
-            async (data: { pluginId: string, pluginUpdate: ManagedPluginExtended }) => {
-                return await this.updateCommunityPlugin(data.pluginId, data.pluginUpdate);
+            async (pluginId: string) => {
+                return await this.updateCommunityPlugin(pluginId);
             }
         );
     }
@@ -1286,8 +1286,7 @@ class PluginManager {
     }
 
     private async updateCommunityPlugin(
-        pluginId: string,
-        pluginUpdate: ManagedPlugin
+        pluginId: string
     ): Promise<PluginInstallResult> {
         // Make sure existing plugin is valid
         const installedPluginConfig = PluginConfigManager.getItem(pluginId);
@@ -1309,8 +1308,9 @@ class PluginManager {
         }
 
         // Ensure we have data
+        const pluginUpdate = this.pendingUpdates[pluginId];
         if (pluginUpdate == null) {
-            const errorMessage = "No community plugin details provided for update";
+            const errorMessage = "No update available for community plugin";
             this._logger.error(errorMessage);
             return { success: false, error: errorMessage };
         }
