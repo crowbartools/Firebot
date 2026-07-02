@@ -97,8 +97,6 @@
             controller: function(utilityService, backendCommunicator) {
                 const $ctrl = this;
 
-                console.log("Restrictions List", $ctrl.trigger, $ctrl.triggerMeta);
-
                 $ctrl.restrictionDefinitions = [];
 
                 $ctrl.getRestrictionModeDisplay = function() {
@@ -119,8 +117,8 @@
                         });*/
                 }
 
-                $ctrl.$onInit = async () => {
-                    $ctrl.restrictionDefinitions = (await backendCommunicator.fireEventAsync("restrictions:get-restrictions", {
+                $ctrl.$onInit = () => {
+                    $ctrl.restrictionDefinitions = (backendCommunicator.fireEventSync("restrictions:get-restrictions", {
                         triggerType: $ctrl.trigger,
                         triggerMeta: $ctrl.triggerMeta
                     }))
