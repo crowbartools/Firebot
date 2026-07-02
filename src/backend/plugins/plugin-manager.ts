@@ -1131,8 +1131,7 @@ class PluginManager {
     }
 
     private async downloadAndSaveCommunityPlugin(
-        plugin: ManagedPlugin,
-        overwrite = false
+        plugin: ManagedPlugin
     ): Promise<{ success: boolean, path?: string }> {
         const result = {
             success: false,
@@ -1170,16 +1169,10 @@ class PluginManager {
                 case "single-file": {
                     await fsp.mkdir(destFolder, { recursive: true });
                     const destPath = path.resolve(destFolder, "plugin.js");
-                    const exists = existsSync(destPath);
 
-                    if (exists !== true || overwrite === true) {
-                        await fsp.writeFile(destPath, fileContents);
-                        result.success = true;
-                        result.path = path.join(pluginRelativePath, "plugin.js");
-                    } else {
-                        this._logger.error(`Community plugin file "${path.join(pluginRelativePath, "plugin.js")}" already exists`);
-                        return result;
-                    }
+                    await fsp.writeFile(destPath, fileContents);
+                    result.success = true;
+                    result.path = path.join(pluginRelativePath, "plugin.js");
                     break;
                 }
 
@@ -1197,8 +1190,7 @@ class PluginManager {
     }
 
     private async installCommunityPlugin(
-        plugin: ManagedPluginExtended,
-        overwrite = false
+        plugin: ManagedPluginExtended
     ): Promise<PluginInstallResult> {
         // Ensure we have data
         if (plugin == null) {
@@ -1230,7 +1222,7 @@ class PluginManager {
             }
 
             // Download and save the file
-            const saveResult = await this.downloadAndSaveCommunityPlugin(plugin, overwrite);
+            const saveResult = await this.downloadAndSaveCommunityPlugin(plugin);
 
             if (saveResult.success !== true) {
                 return { success: false, error: "Failed to download or save plugin" };
@@ -1361,6 +1353,8 @@ class PluginManager {
             PluginConfigManager.saveItem(installedPluginConfig);
 
             await this.startPlugin(installedPluginConfig, false);
+
+            delete this.pendingUpdates[pluginId];
 
             void this.triggerUiRefresh();
 

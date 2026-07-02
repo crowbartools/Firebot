@@ -63,6 +63,61 @@
                         >here</a>.</p>
                     </div>
 
+                    <div ng-if="getPluginsWithPendingUpdates().length > 0" class="mb-12">
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 10px;">
+                            <h3 style="margin: 0;">Plugins Ready to Update</h3>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div
+                                ng-repeat="plugin in getPluginsWithPendingUpdates() | orderBy:getPluginName track by plugin.config.id"
+                                style="display: flex; align-items: flex-start; gap: 14px; padding: 14px 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; min-width: 0;"
+                            >
+                                <plugin-icon plugin-icon="plugin.details.manifest.icon"></plugin-icon>
+
+                                <div style="flex-grow: 1; min-width: 0;">
+                                    <div style="display:flex; align-items:baseline; gap: 8px; flex-wrap: wrap;">
+                                        <span style="font-weight: 600; font-size: 15px; word-break: break-word;">
+                                            {{getPluginName(plugin)}}
+                                        </span>
+                                    </div>
+                                    <div
+                                        class="muted"
+                                        style="font-size: 13px; margin-top: 4px; line-height: 1.4; overflow-wrap: anywhere;"
+                                        ng-if="plugin.details.manifest.description"
+                                    >
+                                        Installed version: v{{plugin.details.manifest.version}}
+                                    </div>
+                                    <div
+                                        class="muted"
+                                        style="font-size: 13px; margin-top: 4px; line-height: 1.4; overflow-wrap: anywhere;"
+                                        ng-if="plugin.details.manifest.description"
+                                    >
+                                        Available version: v{{pendingUpdateDetails(plugin).version}}
+                                    </div>
+                                </div>
+
+                                <div style="display:flex; align-items:center; gap: 6px; flex-shrink: 0;">
+                                    <firebot-button
+                                        text="Download Update"
+                                        type="default"
+                                        size="small"
+                                        disabled="$scope.installingUpdate === true"
+                                        ng-if="plugin.isInstallingUpdate !== true"
+                                        ng-click="updateCommunityPlugin(plugin)"
+                                    />
+                                    <firebot-button
+                                        text="Updating..."
+                                        type="default"
+                                        size="small"
+                                        disabled="true"
+                                        ng-if="plugin.isInstallingUpdate === true"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div>
                         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 10px;">
                             <h3 style="margin: 0;">Installed Plugins</h3>
@@ -118,15 +173,6 @@
                                             ng-if="plugin.config.enabled === false"
                                             style="font-size: 11px; padding: 1px 8px; border-radius: 10px; background: rgba(217,146,17,0.18); color: #d99211;"
                                         >Disabled</span>
-                                    </div>
-                                    <div
-                                        ng-if="pendingUpdateDetails(plugin) != null"
-                                        style="display:flex; align-items:center; flex-wrap: wrap; gap: 8px; margin-top: 8px;"
-                                    >
-                                        <span
-                                            class="muted"
-                                            style="font-size: 11px; padding: 1px 6px; border-radius: 4px; background: rgba(255,255,255,0.06);"
-                                        ><i class="fas fa-download"></i> v{{pendingUpdateDetails(plugin).version}} update ready to download</span>
                                     </div>
                                     <div
                                         class="muted"
@@ -203,6 +249,8 @@
                 $scope.openLink = $rootScope.openLinkExternally;
                 $scope.settings = settingsService;
 
+                $scope.installingUpdate = false;
+
                 pluginsService.loadPlugins();
 
                 $scope.getPluginName = (plugin) => {
@@ -219,6 +267,11 @@
 
                 $scope.getPlugins = function() {
                     return pluginsService.getInstalledPlugins();
+                };
+
+                $scope.getPluginsWithPendingUpdates = function() {
+                    return pluginsService.getInstalledPlugins()
+                        .filter(p => pluginsService.pendingPluginUpdates[p.config.id] != null);
                 };
 
                 $scope.hasPluginLinks = function(plugin) {
@@ -271,9 +324,6 @@
                 $scope.pluginMenuOptions = function(plugin) {
                     const isEnabled = plugin.config.enabled !== false;
                     const isCommunityPlugin = plugin.config.managedPluginDetails != null;
-                    const pendingUpdate = isCommunityPlugin
-                        ? pluginsService.pendingPluginUpdates[plugin.config.id]
-                        : null;
 
                     const options = [
                         {
@@ -289,13 +339,6 @@
                             html: `<a href><i class="far fa-sync" style="margin-right: 10px;"></i> Update</a>`,
                             click: () => {
                                 $scope.updatePlugin(plugin);
-                            }
-                        });
-                    } else if (pendingUpdate != null) {
-                        options.push({
-                            html: `<a href><i class="far fa-download" style="margin-right: 10px;"></i> Download and install v${pendingUpdate.version}</a>`,
-                            click: () => {
-                                $scope.updateCommunityPlugin(plugin);
                             }
                         });
                     }
@@ -422,7 +465,13 @@
                         return;
                     }
 
+                    $scope.installingUpdate = true;
+                    plugin.isInstallingUpdate = true;
+
                     const result = await pluginsService.updateCommunityPlugin(plugin.config.id);
+
+                    plugin.isInstallingUpdate = false;
+                    $scope.installingUpdate = false;
 
                     if (result.success !== true) {
                         ngToast.create({
@@ -434,7 +483,7 @@
 
                     ngToast.create({
                         className: "success",
-                        content: `Plugin '${plugin.details.name}' updated to v${pluginUpdate.version}`
+                        content: `${plugin.details.manifest.name} plugin updated to v${pluginUpdate.version}`
                     });
                 };
             }
