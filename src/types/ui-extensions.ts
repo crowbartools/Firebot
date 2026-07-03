@@ -18,8 +18,12 @@ export type AngularJsPage = BasePage & {
 
 export type IframePage = BasePage & {
     type: 'iframe';
-    // Other properties TBD
+    url: string;
 };
+
+export type UiExtensionPage =
+    | AngularJsPage
+    | IframePage;
 
 export type AngularJsFactory = {
     name: string;
@@ -89,7 +93,7 @@ export type UIExtension = {
     /**
      * Adds new sidebar entries under an "Extensions" category
      */
-    pages?: AngularJsPage[];
+    pages?: UiExtensionPage[];
     /**
      * Add your own AngularJS services, components, directives, filters
      */
