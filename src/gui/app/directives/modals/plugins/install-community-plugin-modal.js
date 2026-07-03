@@ -159,7 +159,8 @@
                 $scope,
                 pluginsService,
                 modalFactory,
-                modalService
+                modalService,
+                ngToast
             ) {
                 const $ctrl = this;
 
@@ -220,15 +221,20 @@
                         pluginDetails.installed = true;
                         pluginDetails.installedVersion = result.installedPlugin.config.managedPluginDetails.version;
 
-                        modalService.showModal({
-                            component: "configurePluginModal",
-                            size: "md",
-                            backdrop: true,
-                            keyboard: true,
-                            resolveObj: {
-                                plugin: () => result.installedPlugin
-                            }
+                        ngToast.create({
+                            className: "success",
+                            content: `${result.installedPlugin.details.manifest.name} plugin installed!`
                         });
+
+                        if (!!result.installedPlugin.details.parametersSchema?.length) {
+                            modalService.showModal({
+                                component: "configurePluginModal",
+                                size: "md",
+                                resolveObj: {
+                                    plugin: () => result.installedPlugin
+                                }
+                            });
+                        }
                     } else {
                         modalFactory.showErrorModal(result.error);
                     }

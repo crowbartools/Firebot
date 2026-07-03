@@ -295,8 +295,6 @@
                     modalService.showModal({
                         component: "configurePluginModal",
                         size: "md",
-                        backdrop: true,
-                        keyboard: true,
                         resolveObj: {
                             plugin: () => angular.copy(plugin)
                         }
@@ -377,7 +375,16 @@
                                 modalFactory.showErrorModal(result.error || "Failed to install plugin.");
                                 return;
                             }
-                            $scope.configurePlugin(result.installedPlugin);
+
+                            const pluginName = $scope.getPluginName(result.installedPlugin);
+                            ngToast.create({
+                                className: "success",
+                                content: `${pluginName} plugin installed!`
+                            });
+
+                            if (!!result.installedPlugin.details.parametersSchema?.length) {
+                                $scope.configurePlugin(result.installedPlugin);
+                            }
                         });
                 }
 
