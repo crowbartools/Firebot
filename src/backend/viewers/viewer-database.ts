@@ -15,6 +15,7 @@ import type {
 import { AccountAccess } from "../common/account-access";
 import { BackupManager } from "../backup-manager";
 import { EventManager } from "../events/event-manager";
+import { FirebotPronounManager } from "../pronouns/pronoun-manager";
 import { ProfileManager } from "../common/profile-manager";
 import { SettingsManager } from "../common/settings-manager";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
@@ -76,6 +77,7 @@ interface UserDetails {
     twitchData: Record<string, unknown>;
     streamerFollowsUser: boolean;
     userFollowsStreamer: boolean;
+    pronouns: string;
 }
 
 class ViewerDatabase extends TypedEmitter<{
@@ -922,7 +924,10 @@ class ViewerDatabase extends TypedEmitter<{
             firebotData: (firebotUserData ?? {}) as FirebotViewer,
             twitchData: twitchUserData,
             streamerFollowsUser: streamerFollowsUser,
-            userFollowsStreamer: userFollowsStreamer
+            userFollowsStreamer: userFollowsStreamer,
+            pronouns: twitchUserData
+                ? await FirebotPronounManager.getUserFriendlyPronounString(twitchUserData.username as string)
+                : null
         };
 
         return userDetails;
