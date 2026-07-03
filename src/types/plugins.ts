@@ -20,6 +20,29 @@ type NoResult = Awaitable<void>;
 
 type GenericParameters = Record<string, unknown>;
 
+type FontAwesomeIcon = {
+    type: "font-awesome";
+    /**
+     * A FontAwesome icon name shown in the UI (eg. "fa-cogs").
+     */
+    name: `fa-${string}`;
+    /**
+     * A css color value (eg. "#FF0000") used for the icon.
+     */
+    color?: string;
+};
+
+type CustomIcon = {
+    type: "custom";
+    url: string;
+    /**
+     * A css color value (eg. "#FF0000") used for the background of the icon.
+     */
+    backgroundColor?: string;
+};
+
+export type PluginIcon = FontAwesomeIcon | CustomIcon;
+
 export type ManagedPluginManifest = {
     name: string;
     author: string;
@@ -41,18 +64,23 @@ export type ManagedPluginManifest = {
     maximumFirebotVersion?: ManifestFirebotVersion;
 };
 
-export type ManagedPlugin = {
+export type ManagedPluginBase = {
     author: string;
     name: string;
     version: string;
 };
 
-export type ManagedPluginWithManifest = ManagedPlugin & {
+export type ManagedPlugin = ManagedPluginBase & {
     manifest: ManagedPluginManifest;
 };
 
+export type ManagedPluginExtended = ManagedPlugin & {
+    installed: boolean;
+    installedVersion?: string;
+};
+
 export type ManagedPluginUpdateRequest = {
-    plugins: Array<ManagedPlugin>;
+    plugins: Array<ManagedPluginBase>;
     firebotVersion: ManifestFirebotVersion;
 };
 
@@ -61,7 +89,7 @@ export type InstalledPluginConfig<Params extends GenericParameters = GenericPara
     fileName: string;
     enabled?: boolean;
     legacyImport?: boolean;
-    managedPluginDetails?: ManagedPlugin;
+    managedPluginDetails?: ManagedPluginBase;
     parameters: Params;
 };
 
@@ -85,29 +113,6 @@ export interface ManifestFirebotVersion {
     minor?: number;
     patch?: number;
 }
-
-type FontAwesomeIcon = {
-    type: "font-awesome";
-    /**
-     * A FontAwesome icon name shown in the UI (eg. "fa-cogs").
-     */
-    name: `fa-${string}`;
-    /**
-     * A css color value (eg. "#FF0000") used for the icon.
-     */
-    color?: string;
-};
-
-type CustomIcon = {
-    type: "custom";
-    url: string;
-    /**
-     * A css color value (eg. "#FF0000") used for the background of the icon.
-     */
-    backgroundColor?: string;
-};
-
-export type PluginIcon = FontAwesomeIcon | CustomIcon;
 
 export interface Manifest {
     name: string;
@@ -143,12 +148,6 @@ export interface Manifest {
      * The icon to be displayed for the plugin.
      */
     icon?: PluginIcon;
-
-    /**
-     * If true, the plugin will be initialized before parameters are shown to the user,
-     * allowing the plugin to provide custom parameter types that can be used in its own parametersSchema.
-     */
-    initBeforeShowingParams?: boolean;
 }
 
 
@@ -252,7 +251,6 @@ type LegacyCustomScriptManifest = {
     author: string;
     website?: string;
     startupOnly?: boolean;
-    initBeforeShowingParams?: boolean;
     firebotVersion?: "5";
 };
 

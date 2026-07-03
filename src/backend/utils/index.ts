@@ -72,3 +72,7 @@ export {
 export {
     getUrlRegex
 } from "./url";
+
+export {
+    meetsFirebotVersionRequirement
+} from "./versions";

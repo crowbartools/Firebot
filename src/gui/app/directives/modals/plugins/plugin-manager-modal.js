@@ -12,9 +12,6 @@
                 <div class="modal-body mx-4 my-8">
                     <plugin-settings />
                 </div>
-                <div class="modal-footer sticky-footer">
-                    <button type="button" class="btn btn-default" ng-click="$ctrl.dismiss()">Close</button>
-                </div>
             `,
             bindings: {
                 resolve: "<",

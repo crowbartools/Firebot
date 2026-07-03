@@ -56,24 +56,84 @@
                         </div>
                     </div>
                     <div class="muted" style="font-size: 12px; padding: 0 4px 20px;">
-                        Want to write your own plugins? Learn how <a
+                        <p>Plugins are scripts loaded at startup that can register new effects, variables, events, and more.</p>
+                        <p>Want to write your own plugins? Learn how <a
                             class="clickable"
                             ng-click="openLink('https://docs.firebot.app/v5/dev/scripts')"
-                        >here</a>.
+                        >here</a>.</p>
+                    </div>
+
+                    <div ng-if="getPluginsWithPendingUpdates().length > 0" class="mb-12">
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 10px;">
+                            <h3 style="margin: 0;">Plugins Ready to Update</h3>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div
+                                ng-repeat="plugin in getPluginsWithPendingUpdates() | orderBy:getPluginName track by plugin.config.id"
+                                style="display: flex; align-items: flex-start; gap: 14px; padding: 14px 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; min-width: 0;"
+                            >
+                                <plugin-icon plugin-icon="plugin.details.manifest.icon"></plugin-icon>
+
+                                <div style="flex-grow: 1; min-width: 0;">
+                                    <div style="display:flex; align-items:baseline; gap: 8px; flex-wrap: wrap;">
+                                        <span style="font-weight: 600; font-size: 15px; word-break: break-word;">
+                                            {{getPluginName(plugin)}}
+                                        </span>
+                                    </div>
+                                    <div
+                                        class="muted"
+                                        style="font-size: 13px; margin-top: 4px; line-height: 1.4; overflow-wrap: anywhere;"
+                                        ng-if="plugin.details.manifest.description"
+                                    >
+                                        Installed version: v{{plugin.details.manifest.version}}
+                                    </div>
+                                    <div
+                                        class="muted"
+                                        style="font-size: 13px; margin-top: 4px; line-height: 1.4; overflow-wrap: anywhere;"
+                                        ng-if="plugin.details.manifest.description"
+                                    >
+                                        Available version: v{{pendingUpdateDetails(plugin).version}}
+                                    </div>
+                                </div>
+
+                                <div style="display:flex; align-items:center; gap: 6px; flex-shrink: 0;">
+                                    <firebot-button
+                                        text="Download Update"
+                                        type="default"
+                                        size="small"
+                                        disabled="$scope.installingUpdate === true"
+                                        ng-if="plugin.isInstallingUpdate !== true"
+                                        ng-click="updateCommunityPlugin(plugin)"
+                                    />
+                                    <firebot-button
+                                        text="Updating..."
+                                        type="default"
+                                        size="small"
+                                        disabled="true"
+                                        ng-if="plugin.isInstallingUpdate === true"
+                                    />
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div>
                         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 10px;">
-                            <div>
-                                <h3 style="margin: 0;">Plugins</h3>
-                                <div class="muted" style="font-size: 13px;">Plugins are scripts loaded at startup that can register new effects, variables, events, and more.</div>
-                            </div>
-                            <div>
+                            <h3 style="margin: 0;">Installed Plugins</h3>
+                            <div style="display: flex; gap: 8px;">
                                 <firebot-button
-                                    text="Install Plugin"
-                                    type="primary"
+                                    text="Install From File"
+                                    type="default"
                                     icon="fa-plus"
-                                    ng-click="installPlugin()"
+                                    ng-click="installPluginFromFile()"
+                                    disabled="!settings.getSetting('RunCustomScripts')"
+                                />
+                                <firebot-button
+                                    text="Browse Plugins"
+                                    type="primary"
+                                    icon="fa-search"
+                                    ng-click="showCommunityPluginModal()"
                                     disabled="!settings.getSetting('RunCustomScripts')"
                                 />
                             </div>
@@ -105,6 +165,10 @@
                                             style="font-size: 12px;"
                                             ng-if="plugin.details.manifest.author"
                                         >by {{plugin.details.manifest.author}}</span>
+                                        <span
+                                            ng-if="plugin.config.managedPluginDetails != null"
+                                            style="font-size: 11px; padding: 1px 8px; border-radius: 10px; background: rgba(0,208,255,0.18); color: #00d0ff;"
+                                        >Community</span>
                                         <span
                                             ng-if="plugin.config.enabled === false"
                                             style="font-size: 11px; padding: 1px 8px; border-radius: 10px; background: rgba(217,146,17,0.18); color: #d99211;"
@@ -178,10 +242,14 @@
 
                 </div>
           `,
-            controller: function($rootScope, $scope, settingsService, utilityService,
-                pluginsService, backendCommunicator, ngToast, $q, profileManager) {
+            controller: function($rootScope, $scope, settingsService, modalFactory,
+                modalService, pluginsService, backendCommunicator, ngToast, $q,
+                profileManager
+            ) {
                 $scope.openLink = $rootScope.openLinkExternally;
                 $scope.settings = settingsService;
+
+                $scope.installingUpdate = false;
 
                 pluginsService.loadPlugins();
 
@@ -201,9 +269,20 @@
                     return pluginsService.getInstalledPlugins();
                 };
 
+                $scope.getPluginsWithPendingUpdates = function() {
+                    return pluginsService.getInstalledPlugins()
+                        .filter(p => pluginsService.pendingPluginUpdates[p.config.id] != null);
+                };
+
                 $scope.hasPluginLinks = function(plugin) {
                     const manifest = (plugin && plugin.details && plugin.details.manifest) || {};
                     return !!(manifest.repo || manifest.website || manifest.support);
+                };
+
+                $scope.pendingUpdateDetails = (plugin) => {
+                    return plugin?.config?.managedPluginDetails != null
+                        ? pluginsService.pendingPluginUpdates[plugin.config.id]
+                        : null;
                 };
 
                 $scope.togglePluginEnabled = function(plugin) {
@@ -213,27 +292,24 @@
                 };
 
                 $scope.configurePlugin = function(plugin) {
-                    utilityService.showModal({
+                    modalService.showModal({
                         component: "configurePluginModal",
                         size: "md",
-                        backdrop: true,
-                        keyboard: true,
                         resolveObj: {
-                            plugin: () => angular.copy(plugin),
-                            isNewInstall: () => false
-                        },
-                        closeCallback: () => pluginsService.loadPlugins()
+                            plugin: () => angular.copy(plugin)
+                        }
                     });
                 };
 
                 $scope.removePlugin = function(plugin) {
-                    utilityService.showModal({
+                    modalService.showModal({
                         component: "removePluginModal",
                         size: "sm",
                         backdrop: true,
                         keyboard: true,
                         resolveObj: {
-                            pluginName: () => plugin.details.manifest.name || plugin.config.fileName
+                            pluginName: () => plugin.details.manifest.name || plugin.config.fileName,
+                            isManagedPlugin: () => plugin.config.managedPluginDetails != null
                         },
                         closeCallback: (response) => {
                             if (response && response.confirmed) {
@@ -245,58 +321,35 @@
 
                 $scope.pluginMenuOptions = function(plugin) {
                     const isEnabled = plugin.config.enabled !== false;
-                    return [
+                    const isCommunityPlugin = plugin.config.managedPluginDetails != null;
+
+                    const options = [
                         {
                             html: `<a href><i class="far ${isEnabled ? 'fa-toggle-off' : 'fa-toggle-on'}" style="margin-right: 10px;"></i> ${isEnabled ? 'Disable' : 'Enable'}</a>`,
                             click: () => {
                                 $scope.togglePluginEnabled(plugin);
                             }
-                        },
-                        {
+                        }
+                    ];
+
+                    if (isCommunityPlugin !== true) {
+                        options.push({
                             html: `<a href><i class="far fa-sync" style="margin-right: 10px;"></i> Update</a>`,
                             click: () => {
                                 $scope.updatePlugin(plugin);
                             }
-                        },
-                        {
-                            html: `<a href style="color: #d9534f;"><i class="far fa-trash" style="margin-right: 10px;"></i> Remove</a>`,
-                            click: () => {
-                                $scope.removePlugin(plugin);
-                            }
-                        }
-                    ];
-                };
+                        });
+                    }
 
-                function openConfigureModalForInstall(details, fileName) {
-                    const { randomUUID } = require("crypto");
-                    const skeleton = {
-                        config: {
-                            id: randomUUID(),
-                            fileName: fileName,
-                            enabled: true,
-                            parameters: {}
-                        },
-                        details: details
-                    };
-
-                    utilityService.showModal({
-                        component: "configurePluginModal",
-                        size: "md",
-                        backdrop: "static",
-                        keyboard: false,
-                        resolveObj: {
-                            plugin: () => skeleton,
-                            isNewInstall: () => true
-                        },
-                        closeCallback: (result) => {
-                            if (!result || !result.saved) {
-                                // user cancelled - clean up the copied file
-                                pluginsService.cancelInstall(fileName);
-                            }
-                            pluginsService.loadPlugins();
+                    options.push({
+                        html: `<a href style="color: #d9534f;"><i class="far fa-trash" style="margin-right: 10px;"></i> Remove</a>`,
+                        click: () => {
+                            $scope.removePlugin(plugin);
                         }
                     });
-                }
+
+                    return options;
+                };
 
                 function doInstall(filePath, overwrite) {
                     return $q.when(pluginsService.installPluginFromFile(filePath, overwrite))
@@ -306,7 +359,7 @@
                                 return;
                             }
                             if (result.conflict) {
-                                utilityService.showConfirmationModal({
+                                modalFactory.showConfirmationModal({
                                     title: "Plugin File Already Exists",
                                     question: `${result.error} Overwrite it?`,
                                     confirmLabel: "Overwrite",
@@ -319,14 +372,23 @@
                                 return;
                             }
                             if (result.success === false) {
-                                utilityService.showErrorModal(result.error || "Failed to install plugin.");
+                                modalFactory.showErrorModal(result.error || "Failed to install plugin.");
                                 return;
                             }
-                            openConfigureModalForInstall(result.details, result.fileName);
+
+                            const pluginName = $scope.getPluginName(result.installedPlugin);
+                            ngToast.create({
+                                className: "success",
+                                content: `${pluginName} plugin installed!`
+                            });
+
+                            if (!!result.installedPlugin.details.parametersSchema?.length) {
+                                $scope.configurePlugin(result.installedPlugin);
+                            }
                         });
                 }
 
-                $scope.installPlugin = function() {
+                $scope.installPluginFromFile = function() {
                     $q.when(backendCommunicator.fireEventAsync("open-file-browser", {
                         currentPath: profileManager.getPathInProfile("/scripts"),
                         options: {
@@ -342,6 +404,13 @@
                     });
                 };
 
+                $scope.showCommunityPluginModal = () => {
+                    modalService.showModal({
+                        component: "installCommunityPluginModal",
+                        size: "lg"
+                    });
+                };
+
                 function doUpdate(plugin, filePath, overwrite) {
                     return $q.when(pluginsService.updatePluginFromFile(plugin.config.id, filePath, overwrite))
                         .then((result) => {
@@ -350,7 +419,7 @@
                                 return;
                             }
                             if (result.conflict) {
-                                utilityService.showConfirmationModal({
+                                modalFactory.showConfirmationModal({
                                     title: "Plugin File Already Exists",
                                     question: `${result.error} Overwrite it?`,
                                     confirmLabel: "Overwrite",
@@ -363,7 +432,7 @@
                                 return;
                             }
                             if (result.success === false) {
-                                utilityService.showErrorModal(result.error || "Failed to update plugin.");
+                                modalFactory.showErrorModal(result.error || "Failed to update plugin.");
                                 return;
                             }
                             pluginsService.loadPlugins();
@@ -390,6 +459,38 @@
                             return;
                         }
                         doUpdate(plugin, response.path, false);
+                    });
+                };
+
+                $scope.updateCommunityPlugin = async (plugin) => {
+                    if (!plugin?.config) {
+                        return;
+                    }
+
+                    const pluginUpdate = pluginsService.pendingPluginUpdates[plugin.config.id];
+                    if (!pluginUpdate) {
+                        return;
+                    }
+
+                    $scope.installingUpdate = true;
+                    plugin.isInstallingUpdate = true;
+
+                    const result = await pluginsService.updateCommunityPlugin(plugin.config.id);
+
+                    plugin.isInstallingUpdate = false;
+                    $scope.installingUpdate = false;
+
+                    if (result.success !== true) {
+                        ngToast.create({
+                            className: "warn",
+                            content: `Plugin update failed (${result.error}). Check log for more info.`
+                        });
+                        return;
+                    }
+
+                    ngToast.create({
+                        className: "success",
+                        content: `${plugin.details.manifest.name} plugin updated to v${pluginUpdate.version}`
                     });
                 };
             }

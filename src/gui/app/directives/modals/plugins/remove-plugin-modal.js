@@ -11,10 +11,11 @@
                 <h4 class="modal-title">Remove Plugin</h4>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to remove "<b>{{$ctrl.pluginName}}</b>"?</p>
+                <p>Are you sure you want to remove the <strong>{{$ctrl.pluginName}}</strong> plugin?</p>
                 <firebot-checkbox
                     label="Also delete the plugin file from the scripts folder"
                     model="$ctrl.deletePluginFile"
+                    ng-if="$ctrl.isManagedPlugin !== true"
                 ></firebot-checkbox>
             </div>
             <div class="modal-footer">
@@ -35,6 +36,7 @@
 
                 $ctrl.$onInit = function() {
                     $ctrl.pluginName = $ctrl.resolve.pluginName;
+                    $ctrl.isManagedPlugin = $ctrl.resolve.isManagedPlugin;
                 };
 
                 $ctrl.confirm = function() {
@@ -42,6 +44,7 @@
                         $value: {
                             confirmed: true,
                             deletePluginFile: $ctrl.deletePluginFile === true
+                                || $ctrl.isManagedPlugin === true
                         }
                     });
                 };

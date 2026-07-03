@@ -9,10 +9,14 @@
 
             let installedPlugins = [];
             service.pendingFrontendReload = false;
+            service.pendingPluginUpdates = {};
 
             backendCommunicator.on("plugin-manager:all-plugins", (plugins) => {
                 installedPlugins = Array.isArray(plugins) ? plugins : [];
-                return installedPlugins;
+            });
+
+            backendCommunicator.on("plugin-manager:community-plugin-updates", (updates) => {
+                service.pendingPluginUpdates = updates ?? {};
             });
 
             service.loadPlugins = function() {
@@ -27,13 +31,12 @@
                 return installedPlugins.find(p => p.config && p.config.id === id);
             };
 
-            service.savePluginConfig = function(pluginConfig, isNewInstall = false) {
+            service.savePluginConfig = async (pluginConfig) => {
                 if (!pluginConfig || !pluginConfig.id) {
-                    return $q.resolve(false);
+                    return;
                 }
-                return $q.when(
-                    backendCommunicator.fireEventAsync("plugin-manager:save-config", { pluginConfig, isNewInstall })
-                );
+
+                return await backendCommunicator.fireEventAsync("plugin-manager:save-config", { pluginConfig });
             };
 
             service.deletePlugin = function(pluginId, deletePluginFile = false) {
@@ -80,12 +83,16 @@
                 );
             };
 
-            service.cancelInstall = function(fileName) {
-                if (!fileName) {
-                    return;
-                }
+            service.searchCommunityPlugins = async (searchQuery) => {
+                return await backendCommunicator.fireEventAsync("plugin-manager:search-community-plugins", searchQuery);
+            };
 
-                backendCommunicator.send("plugin-manager:cancel-install", { fileName });
+            service.installCommunityPlugin = async (pluginDetails) => {
+                return await backendCommunicator.fireEventAsync("plugin-manager:install-community-plugin", pluginDetails);
+            };
+
+            service.updateCommunityPlugin = async (pluginId) => {
+                return await backendCommunicator.fireEventAsync("plugin-manager:update-community-plugin", pluginId);
             };
 
             service.getScriptDetails = function(fileName, expectedScriptType) {
