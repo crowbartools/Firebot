@@ -112,10 +112,11 @@ class UIExtensionManager {
                 name: page.name,
                 icon: page.icon,
                 type: page.type,
-                template: page.template,
+                template: page.type === "angularjs" ? page.template : undefined,
                 fullPage: page.fullPage,
                 disableScroll: page.disableScroll,
-                controllerRaw: this.prepareFunc(page.controller, "pageCtrl")
+                controllerRaw: page.type === "angularjs" ? this.prepareFunc(page.controller, "pageCtrl") : undefined,
+                url: page.type === "iframe" ? page.url : undefined
             })),
             providers: extension.providers
                 ? {

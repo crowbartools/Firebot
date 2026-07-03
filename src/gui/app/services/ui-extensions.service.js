@@ -33,7 +33,8 @@
                             disableScroll: page.disableScroll,
                             template: page.template,
                             // eslint-disable-next-line no-eval
-                            controller: page.controllerRaw ? eval(page.controllerRaw) : undefined
+                            controller: page.controllerRaw ? eval(page.controllerRaw) : undefined,
+                            url: page.url
                         };
                     }),
                     providers: extension.providers
