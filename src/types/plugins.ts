@@ -12,7 +12,7 @@ import type { Integration } from "./integrations";
 import type { FrontendListener, UIExtension } from "./ui-extensions";
 import type { OverlayWidgetType } from "./overlay-widgets";
 import type { PluginHttpRouteDefinition } from "./http-server";
-import type { CustomWebSocketHandler } from "./websocket";
+import type { PluginWebSocketHandler } from "./websocket";
 import type { PluginWebhooks } from "./webhooks";
 import { ConditionType } from "./conditions";
 
@@ -179,7 +179,7 @@ export interface Plugin<Params extends FirebotParams = FirebotParams> extends Pl
         uiExtensions?: DynamicArray<UIExtension>;
         overlayWidgets?: DynamicArray<OverlayWidgetType<any, any>>;
         httpRoutes?: DynamicObject<PluginHttpRouteDefinition>;
-        websocketListener?: DynamicObject<CustomWebSocketHandler>;
+        websocketListener?: DynamicObject<PluginWebSocketHandler>;
         webhooks?: DynamicObject<PluginWebhooks>;
         additionalEffectEvents?: DynamicArray<PluginAdditionalEffectEvents>;
         additionalVariableEvents?: DynamicArray<PluginAdditionalVariableEvents>;

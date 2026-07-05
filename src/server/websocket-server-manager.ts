@@ -3,19 +3,23 @@ import http from "http";
 import WebSocket from "ws";
 
 import type {
-    CustomWebSocketHandler,
+    PluginWebSocketHandler,
     EffectType,
     EventMessage,
     InvokePluginMessage,
     Message,
     OverlayConnectedData,
     ResponseMessage,
-    WidgetOverlayEvent
+    WidgetOverlayEvent,
+    OverlayRequestWebSocketHandler,
+    InvokeOverlayRequestMessage,
+    Trigger
 } from "../types";
 
 import { WebSocketClient } from "./websocket-client";
 import { EffectManager } from "../backend/effects/effect-manager";
 import { EventManager } from "../backend/events/event-manager";
+import { ReplaceVariableManager } from "../backend/variables/replace-variable-manager";
 import frontendCommunicator from "../backend/common/frontend-communicator";
 import { LoggerCache } from "../backend/logger-cache";
 
@@ -44,11 +48,22 @@ class WebSocketServerManager extends EventEmitter {
     overlayHasClients = false;
 
     private server: WebSocket.Server<typeof WebSocketClient>;
-    private customHandlers: CustomWebSocketHandler[] = [];
+    private pluginHandlers: PluginWebSocketHandler[] = [];
+    private overlayRequestHandlers: OverlayRequestWebSocketHandler[] = [];
 
     constructor() {
         super();
         this.setMaxListeners(0);
+
+        this.registerOverlayRequestHandler<{
+            text: string;
+            trigger: Trigger;
+        }, string>({
+            name: "eval-replace-vars",
+            handler: (data) => {
+                return ReplaceVariableManager.populateStringWithTriggerData(data.text, data.trigger);
+            }
+        });
     }
 
     createServer(httpServer: http.Server) {
@@ -128,7 +143,7 @@ class WebSocketServerManager extends EventEmitter {
                                         sendError(ws, message.id, "Must specify pluginName");
                                         break;
                                     }
-                                    const plugin = this.customHandlers.find(p => p.pluginName.toLowerCase() === pluginName.toLowerCase());
+                                    const plugin = this.pluginHandlers.find(p => p.pluginName.toLowerCase() === pluginName.toLowerCase());
 
                                     if (plugin != null) {
                                         plugin.handler(message.data);
@@ -136,6 +151,26 @@ class WebSocketServerManager extends EventEmitter {
                                         sendError(ws, message.id, "Unknown plugin name specified");
                                     }
 
+                                    break;
+                                }
+                                case "overlay-request": {
+                                    const requestMessage = (message as InvokeOverlayRequestMessage);
+                                    const handler = this.overlayRequestHandlers.find(h => h.name === requestMessage.data.name);
+                                    if (handler != null) {
+                                        const result = handler.handler(requestMessage.data.data);
+                                        if (result instanceof Promise) {
+                                            result.then((responseData) => {
+                                                sendResponse(ws, message.id, responseData);
+                                            }).catch((err) => {
+                                                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+                                                sendError(ws, message.id, err.message);
+                                            });
+                                        } else {
+                                            sendResponse(ws, message.id, result);
+                                        }
+                                    } else {
+                                        sendError(ws, message.id, "Unknown overlay request name specified");
+                                    }
                                     break;
                                 }
                                 default: {
@@ -293,9 +328,9 @@ class WebSocketServerManager extends EventEmitter {
         return [...this.server.clients].filter(client => client.type === "overlay").length;
     }
 
-    registerCustomWebSocketListener(pluginName: string, handler: CustomWebSocketHandler["handler"]): boolean {
-        if (this.customHandlers.findIndex(p => p.pluginName.toLowerCase() === pluginName.toLowerCase()) === -1) {
-            this.customHandlers.push({
+    registerCustomWebSocketListener(pluginName: string, handler: PluginWebSocketHandler["handler"]): boolean {
+        if (this.pluginHandlers.findIndex(p => p.pluginName.toLowerCase() === pluginName.toLowerCase()) === -1) {
+            this.pluginHandlers.push({
                 pluginName,
                 handler
             });
@@ -308,15 +343,26 @@ class WebSocketServerManager extends EventEmitter {
     }
 
     unregisterCustomWebSocketListener(pluginName: string): boolean {
-        const pluginHandlerIndex = this.customHandlers.findIndex(p => p.pluginName.toLowerCase() === pluginName.toLowerCase());
+        const pluginHandlerIndex = this.pluginHandlers.findIndex(p => p.pluginName.toLowerCase() === pluginName.toLowerCase());
 
         if (pluginHandlerIndex !== -1) {
-            this.customHandlers.splice(pluginHandlerIndex, 1);
+            this.pluginHandlers.splice(pluginHandlerIndex, 1);
             this.logger.info(`Unregistered custom WebSocket listener for plugin "${pluginName}"`);
             return true;
         }
 
         this.logger.error(`Custom WebSocket listener "${pluginName}" is not registered`);
+        return false;
+    }
+
+    registerOverlayRequestHandler<TData extends Record<string, unknown> = Record<string, unknown>, TResponse = unknown>(handler: OverlayRequestWebSocketHandler<TData, TResponse>): boolean {
+        if (this.overlayRequestHandlers.findIndex(h => h.name === handler.name) === -1) {
+            this.overlayRequestHandlers.push(handler);
+            this.logger.info(`Registered overlay request handler for "${handler.name}"`);
+            return true;
+        }
+
+        this.logger.error(`Overlay request handler "${handler.name}" already registered`);
         return false;
     }
 }

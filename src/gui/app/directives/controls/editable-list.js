@@ -10,7 +10,9 @@
             bindings: {
                 model: "=",
                 settings: "<",
-                onUpdate: '&'
+                onUpdate: '&',
+                trigger: "@?",
+                triggerMeta: "<?"
             },
             template: `
                 <div>
@@ -143,8 +145,8 @@
                                 });
                             }),
                             validationText: $ctrl.settings.validationText,
-                            trigger: $ctrl.settings.trigger,
-                            triggerMeta: $ctrl.settings.triggerMeta,
+                            trigger: $ctrl.settings.trigger ?? $ctrl.trigger,
+                            triggerMeta: $ctrl.settings.triggerMeta ?? $ctrl.triggerMeta,
                             inputPlaceholder: $ctrl.settings.inputPlaceholder
                         },
                         cb);

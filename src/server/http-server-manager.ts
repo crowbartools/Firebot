@@ -9,7 +9,7 @@ import type {
     HttpMethod,
     CustomHttpRoute,
     PluginHttpRouteDefinition,
-    CustomWebSocketHandler,
+    PluginWebSocketHandler,
     Awaitable
 } from "../types";
 
@@ -768,7 +768,7 @@ class HttpServerManager extends EventEmitter {
         }
     }
 
-    registerCustomWebSocketListener(pluginName: string, handler: CustomWebSocketHandler["handler"]): boolean {
+    registerCustomWebSocketListener(pluginName: string, handler: PluginWebSocketHandler["handler"]): boolean {
         return WebSocketServerManager.registerCustomWebSocketListener(pluginName, handler);
     }
 

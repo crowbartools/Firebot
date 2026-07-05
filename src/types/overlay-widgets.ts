@@ -306,6 +306,7 @@ export interface IOverlayWidgetEventUtils {
     stylesToString(styles: Record<string, string | number | undefined>): string;
     getFontOptionsStyles(fontOptions?: FontOptions): Record<string, string | number | undefined>;
     sendMessageToFirebot(messageName: string, messageData?: unknown): void;
+    invokeFirebotRequest<TData extends Record<string, unknown> = Record<string, unknown>, TResponse = unknown>(requestName: string, requestData?: TData): Promise<TResponse>;
 }
 
 export interface IOverlayWidgetInitUtils {

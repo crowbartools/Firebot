@@ -5,11 +5,17 @@
             schema: '<',
             value: '<',
             onInput: '&',
-            onTouched: '&'
+            onTouched: '&',
+            context: '<'
         },
         template: `
           <div>
-            <editable-list model="$ctrl.local" settings="$ctrl.schema.settings"></editable-list>
+            <editable-list
+                model="$ctrl.local"
+                settings="$ctrl.schema.settings"
+                trigger="{{$ctrl.context.trigger ? $ctrl.context.trigger : ''}}"
+                trigger-meta="$ctrl.context.triggerMeta"
+            ></editable-list>
           </div>
         `,
         controller: function($scope) {

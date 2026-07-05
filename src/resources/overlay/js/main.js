@@ -143,6 +143,40 @@ function sendWebsocketEvent(name, data) {
 	}));
 }
 
+function invokeWebsocketRequest(name, data) {
+    return new Promise((resolve, reject) => {
+        const requestId = Math.floor(Math.random() * 1000000);
+
+        const handleResponse = (event) => {
+            if(!event.data) {
+                return;
+            }
+            const message = JSON.parse(event.data);
+            console.log("handling response:", message);
+            if (message.type === "response" && message.id === requestId) {
+                ws.removeEventListener("message", handleResponse);
+                if (message.name === "error") {
+                    reject(message.data);
+                } else {
+                    resolve(message.data);
+                }
+            }
+        };
+
+        ws.addEventListener("message", handleResponse);
+
+        ws.send(JSON.stringify({
+            type: "invoke",
+            id: requestId,
+            name: "overlay-request",
+            data: {
+                name,
+                data
+            }
+        }));
+    });
+}
+
 // Error Handling & Keep Alive
 function errorHandle(ws){
   const wsState = ws.readyState;

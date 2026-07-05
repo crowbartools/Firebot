@@ -60,9 +60,22 @@ export interface InvokePluginMessage extends InvokeMessage {
     pluginName: string;
 }
 
-export interface CustomWebSocketHandler {
+export interface PluginWebSocketHandler {
     pluginName: string;
     handler: (data: unknown) => Awaitable<void>;
+}
+
+export interface InvokeOverlayRequestMessage extends InvokeMessage {
+    name: "overlay-request";
+    data: {
+        name: string;
+        data?: Record<string, unknown>;
+    };
+}
+
+export interface OverlayRequestWebSocketHandler<TData extends Record<string, unknown> = Record<string, unknown>, TResponse = unknown> {
+    name: string;
+    handler: (data: TData) => Awaitable<TResponse>;
 }
 
 export type OverlayConnectedData = {

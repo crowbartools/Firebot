@@ -231,6 +231,12 @@ class OverlayWidgetEventUtils implements IOverlayWidgetEventUtils {
             messageData
         });
     }
+    invokeFirebotRequest<TData extends Record<string, unknown> = Record<string, unknown>, TResponse = unknown>(requestName: string, requestData?: TData): Promise<TResponse> {
+        return invokeWebsocketRequest(requestName, {
+            widgetConfigId: this.widgetId,
+            ...requestData
+        });
+    }
 }
 
 const componentModuleCache = new Map<string, Promise<{ default: OverlayWidgetComponent }>>();

@@ -27,6 +27,7 @@ export type BaseParameter = {
         pattern?: string;
     };
     default?: unknown;
+    allowReplaceVariables?: boolean;
 };
 
 export type StringParameter = BaseParameter & {
