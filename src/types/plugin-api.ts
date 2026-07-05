@@ -14,6 +14,7 @@ import type { InstalledPlugin } from "./plugins";
 import type { PluginWebhook } from "./webhooks";
 import type { ReplaceVariable, VariableConfig } from "./variables";
 import type { FilterConfig, PresetFilterConfig, TextFilterConfig } from "../backend/events/filters/filter-factory";
+import type { FirebotViewer } from "./viewers";
 
 export type PluginLogMethod = (message: string, ...meta: unknown[]) => void;
 
@@ -212,6 +213,46 @@ export interface PluginWebServerApi {
     sendWebSocketEvent(name: string, data?: unknown);
 }
 
+export interface PluginViewersApi {
+    /**
+     * Retrieves a Firebot user from the viewer database via their Twitch user ID.
+     * Returns `undefined` if the viewer isn't in the database, or the viewer database is disabled.
+     * @param userId The viewer's Twitch user ID
+     */
+    getViewerByUserId(userId: string): Promise<FirebotViewer>;
+
+    /**
+     * Retrieves a Firebot user from the viewer database via their Twitch username.
+     * Returns `undefined` if the viewer isn't in the database, or the viewer database is disabled.
+     * @param username The viewer's Twitch username
+     */
+    getViewerByUsername(username: string): Promise<FirebotViewer>;
+
+    /**
+     * Gets a metadata value for a given user
+     * @param userId The viewer's Twitch user ID
+     * @param key Key of the metadata value to get
+     * @param propertyPath (Optional) Dot-notated property path
+     */
+    getViewerMetadataValue(userId: string, key: string, propertyPath: string): Promise<unknown>;
+
+    /**
+     * Sets a metadata value for a given user
+     * @param userId The viewer's Twitch user ID
+     * @param key Key of the metadata value to set
+     * @param value Data to store
+     * @param propertyPath (Optional) Dot-notated property path
+     */
+    setViewerMetadataValue(userId: string, key: string, value: string, propertyPath: string): Promise<void>;
+
+    /**
+     * Deletes a metadata value for a given user
+     * @param userId The viewer's Twitch user ID
+     * @param key Key of the metadata value to delete
+     */
+    deleteViewerMetadataValue(userId: string, key: string): Promise<void>;
+}
+
 export interface PluginVariableFactoryApi {
     createEventDataVariable(config: VariableConfig): ReplaceVariable;
 }
@@ -240,6 +281,8 @@ export interface FirebotPluginApi {
     events: PluginEventsApi;
     /** Run effect lists. */
     effects: PluginEffectsApi;
+    /** Access to the viewer database, including viewer metadata */
+    viewers: PluginViewersApi;
     /** Access to Firebot's Twitch API wrappers (Helix, chat, auth, etc). */
     twitch: PluginTwitchApi;
     /** This plugin's saved parameter values. */

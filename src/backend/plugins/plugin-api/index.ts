@@ -10,6 +10,7 @@ import { createWebhooksApi } from "./namespaces/webhooks";
 import { createStorageApi } from "./namespaces/storage";
 import { createEventsApi } from "./namespaces/events";
 import { createEffectsApi } from "./namespaces/effects";
+import { createViewersApi } from "./namespaces/viewers";
 import { createTwitchApi } from "./namespaces/twitch";
 import { createParametersApi } from "./namespaces/parameters";
 import { createFrontendCommunicatorApi } from "./namespaces/frontend-communicator";
@@ -35,6 +36,7 @@ export function buildPluginApi(ctx: PluginApiContext): FirebotPluginApi {
         storage: createStorageApi(ctx),
         events: createEventsApi(ctx),
         effects: createEffectsApi(ctx),
+        viewers: createViewersApi(ctx),
         twitch: createTwitchApi(ctx),
         parameters: createParametersApi(ctx),
         frontendCommunicator: createFrontendCommunicatorApi(ctx),
