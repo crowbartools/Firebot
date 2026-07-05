@@ -525,6 +525,21 @@ class CurrencyManager {
         }
     }
 
+    async getViewerCurrencyAmountByUserId(userId: string, currencyId: string): Promise<number> {
+        if (currencyAccess.isViewerDBOn() !== true) {
+            return 0;
+        }
+        try {
+            const viewer = await viewerDatabase.getViewerById(userId);
+            if (viewer != null && !isNaN(viewer.currency[currencyId])) {
+                return viewer.currency[currencyId];
+            }
+            return 0;
+        } catch {
+            return null;
+        }
+    }
+
     async getViewerCurrencies(usernameOrId: string, isUsername = false): Promise<Record<string, number>> {
         if (currencyAccess.isViewerDBOn() !== true) {
             return {};

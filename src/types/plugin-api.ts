@@ -15,6 +15,7 @@ import type { PluginWebhook } from "./webhooks";
 import type { ReplaceVariable, VariableConfig } from "./variables";
 import type { FilterConfig, PresetFilterConfig, TextFilterConfig } from "../backend/events/filters/filter-factory";
 import type { FirebotViewer } from "./viewers";
+import type { Currency } from "./currency";
 
 export type PluginLogMethod = (message: string, ...meta: unknown[]) => void;
 
@@ -206,7 +207,7 @@ export interface Accounts {
 
 export interface PluginWebServerApi {
     /**
-     * Sends a custom event over the internal Firebot WebSocket server
+     * Send a custom event over the internal Firebot WebSocket server
      * @param name Name of the event to send. Full event name will be `custom-event:{name}`
      * @param data Any optional data you would like to send with the event
      */
@@ -215,21 +216,21 @@ export interface PluginWebServerApi {
 
 export interface PluginViewersApi {
     /**
-     * Retrieves a Firebot user from the viewer database via their Twitch user ID.
+     * Retrieve a Firebot user from the viewer database via their Twitch user ID.
      * Returns `undefined` if the viewer isn't in the database, or the viewer database is disabled.
      * @param userId The viewer's Twitch user ID
      */
     getViewerByUserId(userId: string): Promise<FirebotViewer>;
 
     /**
-     * Retrieves a Firebot user from the viewer database via their Twitch username.
+     * Retrieve a Firebot user from the viewer database via their Twitch username.
      * Returns `undefined` if the viewer isn't in the database, or the viewer database is disabled.
      * @param username The viewer's Twitch username
      */
     getViewerByUsername(username: string): Promise<FirebotViewer>;
 
     /**
-     * Gets a metadata value for a given user
+     * Get a metadata value for a given user
      * @param userId The viewer's Twitch user ID
      * @param key Key of the metadata value to get
      * @param propertyPath (Optional) Dot-notated property path
@@ -237,7 +238,7 @@ export interface PluginViewersApi {
     getViewerMetadataValue(userId: string, key: string, propertyPath: string): Promise<unknown>;
 
     /**
-     * Sets a metadata value for a given user
+     * Set a metadata value for a given user
      * @param userId The viewer's Twitch user ID
      * @param key Key of the metadata value to set
      * @param value Data to store
@@ -246,11 +247,60 @@ export interface PluginViewersApi {
     setViewerMetadataValue(userId: string, key: string, value: string, propertyPath: string): Promise<void>;
 
     /**
-     * Deletes a metadata value for a given user
+     * Delete a metadata value for a given user
      * @param userId The viewer's Twitch user ID
      * @param key Key of the metadata value to delete
      */
     deleteViewerMetadataValue(userId: string, key: string): Promise<void>;
+}
+
+export interface PluginCurrencyApi {
+    /**
+     * Get an array of all currencies
+     */
+    getAllCurrencies(): Array<Currency>;
+
+    /**
+     * Get a specific currency by its ID
+     * @param id ID of the currency
+     */
+    getCurrencyById(id: string): Currency;
+
+    /**
+     * Get a specific currency by its name
+     * @param name Name of the currency
+     */
+    getCurrencyByName(name: string): Currency;
+
+    /**
+     * Get the amount of a viewer's currency
+     * @param userId The viewer's Twitch user ID
+     * @param currencyId The ID of the currency
+     */
+    getViewerCurrency(userId: string, currencyId: string): Promise<number>;
+
+    /**
+     * Add to or subtract from a viewer's currency
+     * @param userId The viewer's Twitch user ID
+     * @param currencyId The ID of the currency
+     * @param amount An amount to add to the specified currency for the viewer. Negative values will subtract that amount.
+     */
+    addOrSubtractViewerCurrency(userId: string, currencyId: string, amount: number): Promise<boolean>;
+
+    /**
+     * Set a viewer's currency to a specific amount
+     * @param userId The viewer's Twitch user ID
+     * @param currencyId The ID of the currency
+     * @param amount The total amount of the specified currency the viewer should have
+     */
+    setViewerCurrency(userId: string, currencyId: string, amount: number): Promise<boolean>;
+
+    /**
+     * Get an array of viewers with a specific currency, sorted by highest amount first
+     * @param currencyId The ID of the currency
+     * @param count The total number of viewers to retrieve
+     */
+    getCurrencyLeaderboard(currencyId: string, count: number): Promise<Array<FirebotViewer>>;
 }
 
 export interface PluginVariableFactoryApi {
@@ -283,6 +333,8 @@ export interface FirebotPluginApi {
     effects: PluginEffectsApi;
     /** Access to the viewer database, including viewer metadata */
     viewers: PluginViewersApi;
+    /** Access to currencies, including viewer currency amounts and leaderboards */
+    currency: PluginCurrencyApi;
     /** Access to Firebot's Twitch API wrappers (Helix, chat, auth, etc). */
     twitch: PluginTwitchApi;
     /** This plugin's saved parameter values. */
