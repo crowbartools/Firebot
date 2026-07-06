@@ -211,7 +211,17 @@ export interface PluginWebServerApi {
      * @param name Name of the event to send. Full event name will be `custom-event:{name}`
      * @param data Any optional data you would like to send with the event
      */
-    sendWebSocketEvent(name: string, data?: unknown);
+    sendWebSocketEvent(name: string, data?: unknown): void;
+
+    /**
+     * Create a resource token for a file to be retrieved via the internal HTTP server (e.g. in an overlay).
+     * The URL format for retrieval is: `http://localhost:7472/resource/{token}`
+     * @param path Full file path of the resource
+     * @param length Time (in seconds) to retain the resource token once it is retrieved the first time.
+     * Setting this to `null`/`undefined` will retain the token until Firebot exits.
+     * @returns A token representing the resource
+     */
+    createResourceToken(path: string, length?: number): string;
 }
 
 export interface PluginViewersApi {
