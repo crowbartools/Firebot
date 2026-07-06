@@ -84,6 +84,17 @@ export type EventFilterData = {
     filters: FilterSettings[];
 };
 
+export type AdditionalFilterEvent = {
+    filterId: string;
+    eventSourceId: string;
+    eventId: string;
+};
+
+export type PluginAdditionalFilterEvents = {
+    filterId: string;
+    events: Array<EventSourceAndId>;
+};
+
 export type EventSettings = {
     id: string;
     type: string;

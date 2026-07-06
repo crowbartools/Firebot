@@ -387,6 +387,23 @@ export class PluginExecutor extends IPluginExecutor {
             }
         }
 
+        if (Array.isArray(r.additionalFilterEvents)) {
+            registrations.additionalFilterEvents = [];
+            for (const entry of r.additionalFilterEvents) {
+                const def = await resolve(entry);
+                if (def?.filterId && Array.isArray(def.events)) {
+                    for (const event of def.events) {
+                        FilterManager.addEventToFilter(def.filterId, event.eventSourceId, event.eventId);
+                        registrations.additionalFilterEvents.push({
+                            filterId: def.filterId,
+                            eventSourceId: event.eventSourceId,
+                            eventId: event.eventId
+                        });
+                    }
+                }
+            }
+        }
+
         if (Array.isArray(r.uiExtensions)) {
             registrations.uiExtensionIds = [];
             for (const entry of r.uiExtensions) {
@@ -512,11 +529,19 @@ export class PluginExecutor extends IPluginExecutor {
             }
         }
 
-        for (const varEvent of registrations.additionalEffectEvents ?? []) {
+        for (const effectEvent of registrations.additionalEffectEvents ?? []) {
             try {
-                EffectManager.removeEventFromEffect(varEvent.effectId, varEvent.eventSourceId, varEvent.eventId);
+                EffectManager.removeEventFromEffect(effectEvent.effectId, effectEvent.eventSourceId, effectEvent.eventId);
             } catch (e) {
-                logger.warn(`Failed to unregister event ${varEvent.eventSourceId}:${varEvent.eventId} for effect ${varEvent.effectId}`, e);
+                logger.warn(`Failed to unregister event ${effectEvent.eventSourceId}:${effectEvent.eventId} for effect ${effectEvent.effectId}`, e);
+            }
+        }
+
+        for (const filterEvent of registrations.additionalFilterEvents ?? []) {
+            try {
+                FilterManager.removeEventFromFilter(filterEvent.filterId, filterEvent.eventSourceId, filterEvent.eventId);
+            } catch (e) {
+                logger.warn(`Failed to unregister event ${filterEvent.eventSourceId}:${filterEvent.eventId} for filter ${filterEvent.filterId}`, e);
             }
         }
 

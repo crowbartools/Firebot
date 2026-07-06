@@ -3,7 +3,7 @@ import type { EffectType, PluginAdditionalEffectEvents } from "./effects";
 import type { Trigger } from "./triggers";
 import type { Awaitable } from "./util-types";
 import type { PluginAdditionalVariableEvents, ReplaceVariable } from "./variables";
-import type { EventFilter, EventSource } from "./events";
+import type { EventFilter, EventSource, PluginAdditionalFilterEvents } from "./events";
 import type { SystemCommand } from "./commands";
 import type { RestrictionType } from "./restrictions";
 import type { FirebotParams, FirebotParameterArray } from "./parameters";
@@ -183,6 +183,7 @@ export interface Plugin<Params extends FirebotParams = FirebotParams> extends Pl
         webhooks?: DynamicObject<PluginWebhooks>;
         additionalEffectEvents?: DynamicArray<PluginAdditionalEffectEvents>;
         additionalVariableEvents?: DynamicArray<PluginAdditionalVariableEvents>;
+        additionalFilterEvents?: DynamicArray<PluginAdditionalFilterEvents>;
     };
 
     /** Called when the plugin is loaded */

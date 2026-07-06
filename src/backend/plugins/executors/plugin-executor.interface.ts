@@ -5,7 +5,8 @@ import {
     Awaitable,
     PluginDetails,
     AdditionalVariableEvent,
-    AdditionalEffectEvent
+    AdditionalEffectEvent,
+    AdditionalFilterEvent
 } from "../../../types";
 import type { PluginApiContext } from "../plugin-api";
 
@@ -34,6 +35,7 @@ export interface PluginRegistrations {
     websocketListenerName?: string;
     additionalVariableEvents?: AdditionalVariableEvent[];
     additionalEffectEvents?: AdditionalEffectEvent[];
+    additionalFilterEvents?: AdditionalFilterEvent[];
 }
 
 export type PluginExecutionResult =
