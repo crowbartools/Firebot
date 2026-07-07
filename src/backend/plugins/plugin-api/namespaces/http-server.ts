@@ -11,8 +11,8 @@ export const createWebServerApi = definePluginApiNamespace<PluginWebServerApi>((
             WebSocketServerManager.triggerEvent(`custom-event:${name}`, data);
         },
 
-        createResourceToken(path, length = null) {
-            return ResourceTokenManager.storeResourcePath(path, length);
+        createResourceToken(path, ttl = null) {
+            return ResourceTokenManager.storeResourcePath(path, ttl);
         }
     };
 });
