@@ -115,9 +115,24 @@ export interface ManifestFirebotVersion {
 }
 
 export interface Manifest {
+    /**
+     * Name of the plugin
+     */
     name: string;
+
+    /**
+     * Version of the plugin
+     */
     version: string;
+
+    /**
+     * Author of the plugin
+     */
     author: string;
+
+    /**
+     * Description of the plugin
+     */
     description: string | ManifestDescription;
 
     /**
@@ -131,17 +146,25 @@ export interface Manifest {
     repo?: string;
 
     /**
-     * A link to the plugin's website
-     * If the repo is on GitHub and the website is not specified, it will default to the GitHub repo URL.
+     * A link to the plugin's website. If the repo is on GitHub and the website
+     * is not specified, it will default to the GitHub repo URL.
      */
     website?: string;
+
     /**
      * A link to the plugin's issue tracker or support server (e.g. Discord).
      * If the repo is on GitHub and support is not specified, it will default to the GitHub issues URL.
      */
     support?: string;
 
+    /**
+     * The lowest Firebot version this plugin is compatible with
+     */
     minimumFirebotVersion?: ManifestFirebotVersion;
+
+    /**
+     * The highest Firebot version this plugin is compatible with
+     */
     maximumFirebotVersion?: ManifestFirebotVersion;
 
     /**
@@ -152,8 +175,14 @@ export interface Manifest {
 
 
 export interface PluginBase<Params extends FirebotParams = FirebotParams> {
+    /**
+     * Basic information about the plugin
+     */
     manifest: Manifest;
 
+    /**
+     * Defines the user-specified parameters for this plugin
+     */
     parametersSchema?: FirebotParameterArray<Params>;
 }
 
