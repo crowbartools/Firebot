@@ -1,7 +1,7 @@
 import { EventSubSubscription } from "@twurple/eventsub-base";
 import { EventSubWsListener } from "@twurple/eventsub-ws";
 
-import type { SavedChannelReward } from "../../../../../types";
+import type { BasicViewer, SavedChannelReward } from "../../../../../types";
 
 import { AccountAccess } from "../../../../common/account-access";
 import { FrontendChatManager } from "../../../../chat/frontend-chat-manager";
@@ -30,6 +30,18 @@ class TwitchEventSubClient {
     private _eventSubListener: EventSubWsListener;
     private _subscriptions: Array<EventSubSubscription> = [];
 
+    private async ensureViewerExists(viewer: BasicViewer): Promise<void> {
+        const firebotViewer = await viewerDatabase.getViewerById(viewer.id);
+
+        if (firebotViewer == null) {
+            if (viewer.profilePicUrl == null) {
+                viewer.profilePicUrl = await TwitchEventSubChatHelpers.getUserProfilePicUrl(viewer.id);
+            }
+
+            await viewerDatabase.addNewViewerFromChat(viewer);
+        }
+    }
+
     private createSubscriptions(): void {
         const streamer = AccountAccess.getAccounts().streamer;
 
@@ -55,13 +67,25 @@ class TwitchEventSubClient {
         this._subscriptions.push(offlineSubscription);
 
         // Follows
-        const followSubscription = this._eventSubListener.onChannelFollow(streamer.userId, streamer.userId, (event) => {
+        const followSubscription = this._eventSubListener.onChannelFollow(streamer.userId, streamer.userId, async (event) => {
+            await this.ensureViewerExists({
+                id: event.userId,
+                username: event.userName,
+                displayName: event.userDisplayName
+            });
+
             TwitchEventHandlers.follow.triggerFollow(event.userName, event.userId, event.userDisplayName);
         });
         this._subscriptions.push(followSubscription);
 
         // Bits Used
         const bitsSubscription = this._eventSubListener.onChannelBitsUse(streamer.userId, async (event) => {
+            await this.ensureViewerExists({
+                id: event.userId,
+                username: event.userName,
+                displayName: event.userDisplayName
+            });
+
             switch (event.type) {
                 case "cheer": {
                     const totalBits =
@@ -131,6 +155,12 @@ class TwitchEventSubClient {
             streamer.userId,
             streamer.userId,
             async (event) => {
+                await this.ensureViewerExists({
+                    id: event.userId,
+                    username: event.userName,
+                    displayName: event.userDisplayName
+                });
+
                 const firebotChatMessage = await chatHelpers.buildViewerFirebotChatMessageFromAutoModMessage(event);
                 FrontendChatManager.sendChatMessageToFrontend(firebotChatMessage);
             }
@@ -141,7 +171,13 @@ class TwitchEventSubClient {
         const autoModMessageUpdateSub = this._eventSubListener.onAutoModMessageUpdateV2(
             streamer.userId,
             streamer.userId,
-            (event) => {
+            async (event) => {
+                await this.ensureViewerExists({
+                    id: event.userId,
+                    username: event.userName,
+                    displayName: event.userDisplayName
+                });
+
                 FrontendChatManager.updateChatMessageAutomodStatus(
                     event.messageId,
                     event.status,
@@ -154,7 +190,13 @@ class TwitchEventSubClient {
         // Channel automatic reward
         const channelAutomaticRewardSubscription = this._eventSubListener.onChannelAutomaticRewardRedemptionAddV2(
             streamer.userId,
-            (event) => {
+            async (event) => {
+                await this.ensureViewerExists({
+                    id: event.userId,
+                    username: event.userName,
+                    displayName: event.userDisplayName
+                });
+
                 switch (event.reward.type) {
                     case "single_message_bypass_sub_mode":
                         TwitchEventHandlers.rewardRedemption.triggerRedemptionSingleMessageBypassSubMode(
@@ -241,7 +283,13 @@ class TwitchEventSubClient {
         // Channel custom reward
         const customRewardRedemptionSubscription = this._eventSubListener.onChannelRedemptionAdd(
             streamer.userId,
-            (event) => {
+            async (event) => {
+                await this.ensureViewerExists({
+                    id: event.userId,
+                    username: event.userName,
+                    displayName: event.userDisplayName
+                });
+
                 const reward = channelRewardManager.getChannelReward(event.rewardId);
                 if (!reward) {
                     this.logger.debug(
@@ -284,7 +332,13 @@ class TwitchEventSubClient {
 
         const customRewardRedemptionUpdateSubscription = this._eventSubListener.onChannelRedemptionUpdate(
             streamer.userId,
-            (event) => {
+            async (event) => {
+                await this.ensureViewerExists({
+                    id: event.userId,
+                    username: event.userName,
+                    displayName: event.userDisplayName
+                });
+
                 const reward = channelRewardManager.getChannelReward(event.rewardId);
                 if (!reward) {
                     this.logger.debug(
@@ -334,6 +388,12 @@ class TwitchEventSubClient {
                     return;
                 }
 
+                await this.ensureViewerExists({
+                    id: event.user_id,
+                    username: event.user_login,
+                    displayName: event.user_name
+                });
+
                 const powerUp = await TwitchApi.powerUps.getCustomPowerUpById(event.custom_power_up.id);
 
                 if (!powerUp) {
@@ -366,7 +426,13 @@ class TwitchEventSubClient {
         this._subscriptions.push(customPowerUpRedemptionSubscription);
 
         // Incoming Raid
-        const incomingRaidSubscription = this._eventSubListener.onChannelRaidTo(streamer.userId, (event) => {
+        const incomingRaidSubscription = this._eventSubListener.onChannelRaidTo(streamer.userId, async (event) => {
+            await this.ensureViewerExists({
+                id: event.raidingBroadcasterId,
+                username: event.raidingBroadcasterName,
+                displayName: event.raidingBroadcasterDisplayName
+            });
+
             TwitchEventHandlers.raid.triggerIncomingRaid(
                 event.raidingBroadcasterName,
                 event.raidingBroadcasterId,
@@ -428,7 +494,13 @@ class TwitchEventSubClient {
         const shoutoutSentSubscription = this._eventSubListener.onChannelShoutoutCreate(
             streamer.userId,
             streamer.userId,
-            (event) => {
+            async (event) => {
+                await this.ensureViewerExists({
+                    id: event.shoutedOutBroadcasterId,
+                    username: event.shoutedOutBroadcasterName,
+                    displayName: event.shoutedOutBroadcasterDisplayName
+                });
+
                 TwitchEventHandlers.shoutout.triggerShoutoutSent(
                     event.shoutedOutBroadcasterName,
                     event.shoutedOutBroadcasterId,
@@ -446,7 +518,13 @@ class TwitchEventSubClient {
         const shoutoutReceivedSubscription = this._eventSubListener.onChannelShoutoutReceive(
             streamer.userId,
             streamer.userId,
-            (event) => {
+            async (event) => {
+                await this.ensureViewerExists({
+                    id: event.shoutingOutBroadcasterId,
+                    username: event.shoutingOutBroadcasterName,
+                    displayName: event.shoutingOutBroadcasterDisplayName
+                });
+
                 TwitchEventHandlers.shoutout.triggerShoutoutReceived(
                     event.shoutingOutBroadcasterName,
                     event.shoutingOutBroadcasterId,
@@ -646,7 +724,13 @@ class TwitchEventSubClient {
         this._subscriptions.push(predictionEndSubscription);
 
         // Ban
-        const banSubscription = this._eventSubListener.onChannelBan(streamer.userId, (event) => {
+        const banSubscription = this._eventSubListener.onChannelBan(streamer.userId, async (event) => {
+            await this.ensureViewerExists({
+                id: event.userId,
+                username: event.userName,
+                displayName: event.userDisplayName
+            });
+
             if (event.endDate) {
                 const timeoutDuration = (event.endDate.getTime() - event.startDate.getTime()) / 1000;
                 TwitchEventHandlers.viewerTimeout.triggerTimeout(
@@ -761,7 +845,13 @@ class TwitchEventSubClient {
         // Ad break start/end
         const channelAdBreakBeginSubscription = this._eventSubListener.onChannelAdBreakBegin(
             streamer.userId,
-            (event) => {
+            async (event) => {
+                await this.ensureViewerExists({
+                    id: event.requesterId,
+                    username: event.requesterName,
+                    displayName: event.requesterDisplayName
+                });
+
                 TwitchEventHandlers.ad.triggerAdBreakStart(
                     event.requesterName,
                     event.requesterId,
@@ -791,13 +881,19 @@ class TwitchEventSubClient {
         const channelModerateSubscription = this._eventSubListener.onChannelModerate(
             streamer.userId,
             streamer.userId,
-            (event) => {
+            async (event) => {
                 switch (event.moderationAction) {
                     case "clear":
                         FrontendChatManager.clearChatFeed(event.moderatorName);
                         TwitchEventHandlers.chat.triggerChatCleared(event.moderatorName, event.moderatorId);
                         break;
                     case "mod":
+                        await this.ensureViewerExists({
+                            id: event.userId,
+                            username: event.userName,
+                            displayName: event.userDisplayName
+                        });
+
                         twitchRolesManager.addModeratorToModeratorsList({
                             id: event.userId,
                             username: event.userName,
@@ -805,9 +901,21 @@ class TwitchEventSubClient {
                         });
                         break;
                     case "unmod":
+                        await this.ensureViewerExists({
+                            id: event.userId,
+                            username: event.userName,
+                            displayName: event.userDisplayName
+                        });
+
                         twitchRolesManager.removeModeratorFromModeratorsList(event.userId);
                         break;
                     case "vip":
+                        await this.ensureViewerExists({
+                            id: event.userId,
+                            username: event.userName,
+                            displayName: event.userDisplayName
+                        });
+
                         twitchRolesManager.addVipToVipList({
                             id: event.userId,
                             username: event.userName,
@@ -815,6 +923,12 @@ class TwitchEventSubClient {
                         });
                         break;
                     case "unvip":
+                        await this.ensureViewerExists({
+                            id: event.userId,
+                            username: event.userName,
+                            displayName: event.userDisplayName
+                        });
+
                         twitchRolesManager.removeVipFromVipList(event.userId);
                         break;
 
@@ -839,6 +953,12 @@ class TwitchEventSubClient {
 
                     // Chat Message Deleted
                     case "delete":
+                        await this.ensureViewerExists({
+                            id: event.userId,
+                            username: event.userName,
+                            displayName: event.userDisplayName
+                        });
+
                         TwitchEventHandlers.chatMessage.triggerChatMessageDeleted(
                             event.userName,
                             event.userId,
@@ -851,6 +971,12 @@ class TwitchEventSubClient {
 
                     // Outbound Raid Starting
                     case "raid":
+                        await this.ensureViewerExists({
+                            id: event.userId,
+                            username: event.userName,
+                            displayName: event.userDisplayName
+                        });
+
                         TwitchEventHandlers.raid.triggerOutgoingRaidStarted(
                             event.broadcasterName,
                             event.broadcasterId,
@@ -867,6 +993,12 @@ class TwitchEventSubClient {
 
                     // Outbound Raid Canceled
                     case "unraid":
+                        await this.ensureViewerExists({
+                            id: event.userId,
+                            username: event.userName,
+                            displayName: event.userDisplayName
+                        });
+
                         TwitchEventHandlers.raid.triggerOutgoingRaidCanceled(
                             event.broadcasterName,
                             event.broadcasterId,
@@ -882,6 +1014,12 @@ class TwitchEventSubClient {
 
                     case "unban":
                     case "untimeout":
+                        await this.ensureViewerExists({
+                            id: event.userId,
+                            username: event.userName,
+                            displayName: event.userDisplayName
+                        });
+
                         TwitchEventHandlers.viewerBanned.triggerUnbanned(
                             event.userName,
                             event.userId,
@@ -917,6 +1055,12 @@ class TwitchEventSubClient {
             streamer.userId,
             streamer.userId,
             async (event) => {
+                await this.ensureViewerExists({
+                    id: event.chatterId,
+                    username: event.chatterName,
+                    displayName: event.chatterDisplayName
+                });
+
                 switch (event.type) {
                     case "bits_badge_tier":
                         TwitchEventHandlers.bits.triggerBitsBadgeUnlock(
