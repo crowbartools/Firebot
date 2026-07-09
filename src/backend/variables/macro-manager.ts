@@ -33,7 +33,7 @@ class MacroManager extends JsonDbManager<VariableMacro> {
 
     triggerUiRefresh(): void {
         this.logger.debug("Triggering UI refresh");
-        frontendCommunicator.send("macros:updated");
+        frontendCommunicator.send("macros:updated", this.getAllItems());
     }
 }
 
