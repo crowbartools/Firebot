@@ -1147,7 +1147,8 @@ class PluginManager {
                     method: "POST",
                     body: JSON.stringify({
                         author: plugin.author,
-                        name: plugin.name
+                        name: plugin.name,
+                        version: plugin.version
                     }),
                     headers: {
                         "User-Agent": `Firebot/${app.getVersion()}`,
