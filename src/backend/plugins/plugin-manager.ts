@@ -5,10 +5,13 @@ import { randomUUID, createHash } from "crypto";
 import { app } from "electron";
 
 import type {
+    CommunityPluginSearchCriteria,
+    CommunityPluginSearchResult,
     InstalledPlugin,
     InstalledPluginConfig,
     LegacyCustomScript,
     ManagedPlugin,
+    ManagedPluginBase,
     ManagedPluginExtended,
     ManagedPluginUpdateRequest,
     Manifest,
@@ -23,6 +26,7 @@ import type { PluginApiContext, PluginApiContextSource } from "./plugin-api";
 import type { DisposeBag } from "./plugin-api/internal/dispose-bag";
 
 import { PluginConfigManager } from "./plugin-config-manager";
+import { AccountAccess } from "../common/account-access";
 import { ProfileManager } from "../common/profile-manager";
 import { SettingsManager } from "../common/settings-manager";
 import webhookConfigManager from "../webhooks/webhook-config-manager";
@@ -174,8 +178,8 @@ class PluginManager {
         );
 
         frontendCommunicator.onAsync("plugin-manager:search-community-plugins",
-            async (query: string) => {
-                return await this.searchForCommunityPlugins(query);
+            async (criteria: CommunityPluginSearchCriteria) => {
+                return await this.searchForCommunityPlugins(criteria);
             }
         );
 
@@ -1071,15 +1075,15 @@ class PluginManager {
 
     // #region Managed (Community) Plugins
 
-    private async searchForCommunityPlugins(query: string): Promise<ManagedPluginExtended[]> {
+    private async searchForCommunityPlugins(criteria: CommunityPluginSearchCriteria): Promise<CommunityPluginSearchResult> {
         const plugins: ManagedPluginExtended[] = [];
+        let total = 0;
 
         try {
             const firebotVersionString = app.getVersion();
-            const firebotVersion = parseVersion(firebotVersionString);
             const body = {
-                query,
-                firebotVersion
+                ...criteria,
+                firebotVersion: parseVersion(firebotVersionString)
             };
 
             const response = await fetch(`${COMMUNITY_PLUGIN_SERVICE_ROOT_URL}search`, {
@@ -1092,9 +1096,10 @@ class PluginManager {
             });
 
             if (response.ok) {
-                const pluginSearchResults = await response.json() as ManagedPlugin[];
+                const searchResult = await response.json() as { items: ManagedPlugin[], total: number };
+                total = searchResult.total;
 
-                for (const result of pluginSearchResults) {
+                for (const result of searchResult.items) {
                     const installedPlugin = PluginConfigManager.getAllItems().find(c =>
                         c.managedPluginDetails?.author === result.author
                         && c.managedPluginDetails?.name === result.name
@@ -1109,14 +1114,14 @@ class PluginManager {
             } else {
                 const responseBody = await response.text();
 
-                this._logger.error(`Failed to search community plugins for "${query}". Response: ${responseBody}`);
+                this._logger.error(`Failed to search community plugins. Response: ${responseBody}`);
                 frontendCommunicator.send("showToast", {
                     content: "Failed to search for community plugins. Check the log for more details.",
                     className: "warning"
                 });
             }
         } catch (error) {
-            this._logger.error(`Failed to search community plugins for "${query}"`, error);
+            this._logger.error("Failed to search community plugins", error);
             frontendCommunicator.send("showToast", {
                 content: "Failed to search for community plugins. Check the log for more details.",
                 className: "warning"
@@ -1127,7 +1132,33 @@ class PluginManager {
             plugin.manifest = resolvePluginManifestLinks(plugin.manifest);
         }
 
-        return plugins;
+        return { items: plugins, total };
+    }
+
+    private trackCommunityPluginDownload(plugin: ManagedPluginBase): void {
+        void (async () => {
+            try {
+                const streamer = AccountAccess.getAccounts().streamer;
+                if (streamer?.loggedIn !== true) {
+                    return;
+                }
+
+                await fetch(`${COMMUNITY_PLUGIN_SERVICE_ROOT_URL}track-download`, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        author: plugin.author,
+                        name: plugin.name
+                    }),
+                    headers: {
+                        "User-Agent": `Firebot/${app.getVersion()}`,
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${streamer.auth.access_token}`
+                    }
+                });
+            } catch (error) {
+                this._logger.debug("Failed to track community plugin download", error);
+            }
+        })();
     }
 
     private async downloadAndSaveCommunityPlugin(
@@ -1264,6 +1295,8 @@ class PluginManager {
 
             void this.triggerUiRefresh();
 
+            this.trackCommunityPluginDownload(plugin);
+
             return {
                 success: true,
                 installedPlugin: {
@@ -1357,6 +1390,8 @@ class PluginManager {
             delete this.pendingUpdates[pluginId];
 
             void this.triggerUiRefresh();
+
+            this.trackCommunityPluginDownload(pluginUpdate);
 
             return {
                 success: true,

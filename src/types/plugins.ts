@@ -43,6 +43,15 @@ type CustomIcon = {
 
 export type PluginIcon = FontAwesomeIcon | CustomIcon;
 
+export type PluginCategory =
+    | "chat-commands"
+    | "alerts-events"
+    | "overlay-widgets"
+    | "integrations"
+    | "games-fun"
+    | "effects-variables"
+    | "utilities";
+
 export type ManagedPluginManifest = {
     name: string;
     author: string;
@@ -56,6 +65,7 @@ export type ManagedPluginManifest = {
     type: "single-file" | "zip";
 
     icon?: PluginIcon;
+    categories?: PluginCategory[];
     tags?: string[];
     repo?: string;
     website?: string;
@@ -82,6 +92,21 @@ export type ManagedPluginExtended = ManagedPlugin & {
 export type ManagedPluginUpdateRequest = {
     plugins: Array<ManagedPluginBase>;
     firebotVersion: ManifestFirebotVersion;
+};
+
+export type CommunityPluginSearchSortMode = "popular" | "recently-updated" | "name";
+
+export type CommunityPluginSearchCriteria = {
+    query?: string;
+    category?: PluginCategory;
+    sortBy: CommunityPluginSearchSortMode;
+    page: number;
+    pageSize: number;
+};
+
+export type CommunityPluginSearchResult = {
+    items: ManagedPluginExtended[];
+    total: number;
 };
 
 export type InstalledPluginConfig<Params extends GenericParameters = GenericParameters> = {

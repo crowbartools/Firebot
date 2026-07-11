@@ -406,7 +406,7 @@
 
                 $scope.showCommunityPluginModal = () => {
                     modalService.showModal({
-                        component: "installCommunityPluginModal",
+                        component: "communityPluginBrowserModal",
                         size: "lg"
                     });
                 };
