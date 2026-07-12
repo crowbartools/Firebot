@@ -83,8 +83,8 @@
                 );
             };
 
-            service.searchCommunityPlugins = async (searchQuery) => {
-                return await backendCommunicator.fireEventAsync("plugin-manager:search-community-plugins", searchQuery);
+            service.searchCommunityPlugins = async (criteria) => {
+                return await backendCommunicator.fireEventAsync("plugin-manager:search-community-plugins", criteria);
             };
 
             service.installCommunityPlugin = async (pluginDetails) => {
