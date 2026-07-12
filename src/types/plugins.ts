@@ -44,13 +44,22 @@ type CustomIcon = {
 export type PluginIcon = FontAwesomeIcon | CustomIcon;
 
 export type PluginCategory =
-    | "chat-commands"
-    | "alerts-events"
-    | "overlay-widgets"
+    | "stream-services"
+    | "social"
+    | "music-media"
+    | "games"
+    | "overlays"
+    | "tools-utilities";
+
+export type PluginFeature =
+    | "effects"
+    | "events"
+    | "variables"
     | "integrations"
-    | "games-fun"
-    | "effects-variables"
-    | "utilities";
+    | "overlay-widgets"
+    | "games"
+    | "commands"
+    | "ui-extensions";
 
 export type ManagedPluginManifest = {
     name: string;
@@ -65,7 +74,8 @@ export type ManagedPluginManifest = {
     type: "single-file" | "zip";
 
     icon?: PluginIcon;
-    categories?: PluginCategory[];
+    category?: PluginCategory;
+    features?: PluginFeature[];
     tags?: string[];
     repo?: string;
     website?: string;
@@ -99,6 +109,7 @@ export type CommunityPluginSearchSortMode = "popular" | "recently-updated" | "na
 export type CommunityPluginSearchCriteria = {
     query?: string;
     category?: PluginCategory;
+    features?: PluginFeature[];
     sortBy: CommunityPluginSearchSortMode;
     page: number;
     pageSize: number;

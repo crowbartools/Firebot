@@ -6,13 +6,12 @@
  * @enum {string}
  */
 const PluginCategory = Object.freeze({
-    CHAT_AND_COMMANDS: "chat-commands",
-    ALERTS_AND_EVENTS: "alerts-events",
-    OVERLAY_WIDGETS: "overlay-widgets",
-    INTEGRATIONS: "integrations",
-    GAMES_AND_FUN: "games-fun",
-    EFFECTS_AND_VARIABLES: "effects-variables",
-    UTILITIES: "utilities"
+    STREAM_SERVICES: "stream-services",
+    SOCIAL: "social",
+    MUSIC_AND_MEDIA: "music-media",
+    GAMES: "games",
+    OVERLAYS: "overlays",
+    TOOLS_AND_UTILITIES: "tools-utilities"
 });
 
 /**
@@ -20,14 +19,46 @@ const PluginCategory = Object.freeze({
  * @readonly
  */
 const PluginCategoryLabels = Object.freeze({
-    [PluginCategory.CHAT_AND_COMMANDS]: "Chat & Commands",
-    [PluginCategory.ALERTS_AND_EVENTS]: "Alerts & Events",
-    [PluginCategory.OVERLAY_WIDGETS]: "Overlay Widgets",
-    [PluginCategory.INTEGRATIONS]: "Integrations",
-    [PluginCategory.GAMES_AND_FUN]: "Games & Fun",
-    [PluginCategory.EFFECTS_AND_VARIABLES]: "Effects & Variables",
-    [PluginCategory.UTILITIES]: "Utilities"
+    [PluginCategory.STREAM_SERVICES]: "Stream Services",
+    [PluginCategory.SOCIAL]: "Social",
+    [PluginCategory.MUSIC_AND_MEDIA]: "Music & Media",
+    [PluginCategory.GAMES]: "Games/Gaming",
+    [PluginCategory.OVERLAYS]: "Overlays",
+    [PluginCategory.TOOLS_AND_UTILITIES]: "Tools & Utilities"
+});
+
+/**
+ * Enum for Firebot features a community plugin can provide.
+ * @readonly
+ * @enum {string}
+ */
+const PluginFeature = Object.freeze({
+    EFFECTS: "effects",
+    EVENTS: "events",
+    VARIABLES: "variables",
+    INTEGRATIONS: "integrations",
+    OVERLAY_WIDGETS: "overlay-widgets",
+    GAMES: "games",
+    COMMANDS: "commands",
+    UI_EXTENSIONS: "ui-extensions"
+});
+
+/**
+ * Display labels for community plugin features.
+ * @readonly
+ */
+const PluginFeatureLabels = Object.freeze({
+    [PluginFeature.EFFECTS]: "Effects",
+    [PluginFeature.EVENTS]: "Events",
+    [PluginFeature.VARIABLES]: "Variables",
+    [PluginFeature.INTEGRATIONS]: "Integrations",
+    [PluginFeature.OVERLAY_WIDGETS]: "Overlay Widgets",
+    [PluginFeature.GAMES]: "Games",
+    [PluginFeature.COMMANDS]: "Commands",
+    [PluginFeature.UI_EXTENSIONS]: "UI Extensions"
 });
 
 exports.PluginCategory = PluginCategory;
 exports.PluginCategoryLabels = PluginCategoryLabels;
+exports.PluginFeature = PluginFeature;
+exports.PluginFeatureLabels = PluginFeatureLabels;

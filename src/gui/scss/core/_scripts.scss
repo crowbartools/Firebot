@@ -85,3 +85,54 @@
     padding: 15px;
     background: $effect-list-bg-color;
 }
+
+.plugin-filters-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    background: $primary-button-bg;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.plugin-filters-popover {
+    min-width: 215px;
+
+    .popover-content {
+        padding: 10px 12px;
+    }
+}
+
+.plugin-filters-section-header {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+}
+
+.plugin-filters-sort-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+
+    &:hover {
+        background: $effect-category-hover-bg;
+    }
+
+    &.selected {
+        background: $effect-category-selected-bg;
+    }
+}

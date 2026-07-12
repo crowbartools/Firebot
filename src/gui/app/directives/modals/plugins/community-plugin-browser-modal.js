@@ -2,7 +2,7 @@
 
 (function() {
     const { DateTime } = require("luxon");
-    const { PluginCategory, PluginCategoryLabels } = require("../../shared/plugin-constants");
+    const { PluginCategory, PluginCategoryLabels, PluginFeature, PluginFeatureLabels } = require("../../shared/plugin-constants");
 
     const PAGE_SIZE = 20;
     const SCROLL_THRESHOLD_PX = 300;
@@ -25,14 +25,57 @@
                                 debounce="500"
                             />
                         </div>
-                        <firebot-dropdown
-                            style="width: 195px; flex-shrink: 0;"
-                            options="$ctrl.sortOptions"
-                            ng-model="$ctrl.sortBy"
-                            on-update="$ctrl.onSortChanged()"
-                            option-toggling="false"
-                            aria-label="Sort by"
-                        ></firebot-dropdown>
+                        <div
+                            style="position: relative; flex-shrink: 0;"
+                            uib-popover-template="'pluginFiltersPopover.html'"
+                            popover-is-open="$ctrl.filtersPopoverOpen"
+                            popover-placement="auto bottom-right"
+                            popover-append-to-body="true"
+                            popover-trigger="'outsideClick'"
+                            popover-class="plugin-filters-popover"
+                        >
+                            <firebot-button
+                                text="Sort & Filter"
+                                icon="fa-sliders-h"
+                                type="default"
+                            />
+                            <span
+                                ng-if="$ctrl.selectedFeatureCount() > 0"
+                                class="plugin-filters-badge"
+                            >{{$ctrl.selectedFeatureCount()}}</span>
+                        </div>
+                        <script type="text/ng-template" id="pluginFiltersPopover.html">
+                            <div class="plugin-filters-panel">
+                                <div class="plugin-filters-section-header muted">Sort By</div>
+                                <div
+                                    class="plugin-filters-sort-option"
+                                    ng-repeat="option in $ctrl.sortOptions"
+                                    ng-class="{'selected': $ctrl.sortBy === option.value}"
+                                    ng-click="$ctrl.setSortBy(option.value)"
+                                >
+                                    <i class="far fa-fw" ng-class="option.icon"></i>
+                                    <span style="flex: 1;">{{option.name}}</span>
+                                    <i class="fas fa-check" ng-if="$ctrl.sortBy === option.value"></i>
+                                </div>
+                                <hr class="divider" style="margin: 8px 0;" />
+                                <div class="plugin-filters-section-header muted" style="display: flex; align-items: center; justify-content: space-between;">
+                                    <span>Features</span>
+                                    <a
+                                        class="clickable"
+                                        style="text-transform: none; font-weight: 400;"
+                                        ng-if="$ctrl.selectedFeatureCount() > 0"
+                                        ng-click="$ctrl.clearFeatures()"
+                                    >Clear</a>
+                                </div>
+                                <firebot-checkbox
+                                    ng-repeat="feature in $ctrl.features"
+                                    label="{{$ctrl.featureLabels[feature]}}"
+                                    model="$ctrl.selectedFeatures[feature]"
+                                    on-change="$ctrl.onFeatureToggled(feature, newValue)"
+                                    style="margin-bottom: 0;"
+                                />
+                            </div>
+                        </script>
                     </div>
                     <div style="display: flex; flex-direction: row; height: 450px;">
                         <div class="plugin-browser-categories">
@@ -197,6 +240,11 @@
                     { name: "Recently Updated", value: "recently-updated", icon: "fa-clock" }
                 ];
 
+                $ctrl.features = Object.values(PluginFeature);
+                $ctrl.featureLabels = PluginFeatureLabels;
+                $ctrl.selectedFeatures = {};
+                $ctrl.filtersPopoverOpen = false;
+
                 $ctrl.plugins = [];
                 $ctrl.total = 0;
                 $ctrl.isLoading = false;
@@ -208,12 +256,19 @@
 
                 $ctrl.hasMore = () => $ctrl.plugins.length < $ctrl.total;
 
+                const getSelectedFeatures = () =>
+                    Object.keys($ctrl.selectedFeatures).filter(f => $ctrl.selectedFeatures[f] === true);
+
+                $ctrl.selectedFeatureCount = () => getSelectedFeatures().length;
+
                 const fetchPage = async (page) => {
                     const thisRequest = ++requestId;
+                    const features = getSelectedFeatures();
 
                     const result = await pluginsService.searchCommunityPlugins({
                         query: $ctrl.searchQuery?.trim() || undefined,
                         category: $ctrl.activeCategory ?? undefined,
+                        features: features.length ? features : undefined,
                         sortBy: $ctrl.sortBy,
                         page,
                         pageSize: PAGE_SIZE
@@ -270,12 +325,21 @@
                     }
                 };
 
-                let lastSort = $ctrl.sortBy;
-                $ctrl.onSortChanged = () => {
-                    if ($ctrl.sortBy !== lastSort) {
-                        lastSort = $ctrl.sortBy;
+                $ctrl.setSortBy = (sortBy) => {
+                    if ($ctrl.sortBy !== sortBy) {
+                        $ctrl.sortBy = sortBy;
                         $ctrl.reload();
                     }
+                };
+
+                $ctrl.onFeatureToggled = (feature, isSelected) => {
+                    $ctrl.selectedFeatures[feature] = isSelected === true;
+                    $ctrl.reload();
+                };
+
+                $ctrl.clearFeatures = () => {
+                    $ctrl.selectedFeatures = {};
+                    $ctrl.reload();
                 };
 
                 $scope.$watch("$ctrl.searchQuery", (newValue, oldValue) => {
