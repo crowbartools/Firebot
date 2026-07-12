@@ -110,6 +110,7 @@ export type CommunityPluginSearchCriteria = {
     query?: string;
     category?: PluginCategory;
     features?: PluginFeature[];
+    official?: boolean;
     sortBy: CommunityPluginSearchSortMode;
     page: number;
     pageSize: number;

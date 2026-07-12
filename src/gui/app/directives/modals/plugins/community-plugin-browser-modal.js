@@ -87,6 +87,11 @@
                             >All</div>
                             <div
                                 class="plugin-browser-category"
+                                ng-class="{'selected': $ctrl.activeCategory === 'official'}"
+                                ng-click="$ctrl.selectCategory('official')"
+                            >Official</div>
+                            <div
+                                class="plugin-browser-category"
                                 ng-repeat="category in $ctrl.categories"
                                 ng-class="{'selected': $ctrl.activeCategory === category}"
                                 ng-click="$ctrl.selectCategory(category)"
@@ -265,9 +270,13 @@
                     const thisRequest = ++requestId;
                     const features = getSelectedFeatures();
 
+                    // "official" is a pseudo-category treated as a filter by the api
+                    const officialSelected = $ctrl.activeCategory === "official";
+
                     const result = await pluginsService.searchCommunityPlugins({
                         query: $ctrl.searchQuery?.trim() || undefined,
-                        category: $ctrl.activeCategory ?? undefined,
+                        category: officialSelected ? undefined : ($ctrl.activeCategory ?? undefined),
+                        official: officialSelected || undefined,
                         features: features.length ? features : undefined,
                         sortBy: $ctrl.sortBy,
                         page,
