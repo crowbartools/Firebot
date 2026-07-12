@@ -15,6 +15,7 @@ import { createCurrencyApi } from "./namespaces/currency";
 import { createTwitchApi } from "./namespaces/twitch";
 import { createParametersApi } from "./namespaces/parameters";
 import { createFrontendCommunicatorApi } from "./namespaces/frontend-communicator";
+import { createOverlayApi } from "./namespaces/overlay";
 import { createMessagingApi } from "./namespaces/messaging";
 import { createNotificationsApi } from "./namespaces/notifications";
 import { createSettingsApi } from "./namespaces/settings";
@@ -42,6 +43,7 @@ export function buildPluginApi(ctx: PluginApiContext): FirebotPluginApi {
         twitch: createTwitchApi(ctx),
         parameters: createParametersApi(ctx),
         frontendCommunicator: createFrontendCommunicatorApi(ctx),
+        overlay: createOverlayApi(ctx),
         messaging: createMessagingApi(ctx),
         notifications: createNotificationsApi(ctx),
         plugins: createPluginsApi(ctx),

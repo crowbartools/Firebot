@@ -16,6 +16,7 @@ import type { ReplaceVariable, VariableConfig } from "./variables";
 import type { FilterConfig, PresetFilterConfig, TextFilterConfig } from "../backend/events/filters/filter-factory";
 import type { FirebotViewer } from "./viewers";
 import type { Currency } from "./currency";
+import type { OverlayWidgetConfig } from "./overlay-widgets";
 
 export interface Accounts {
     /** Streamer account information */
@@ -277,6 +278,36 @@ export interface PluginFrontendCommunicatorApi {
     ): Promise<ReturnPayload>;
 }
 
+export interface PluginOverlayWidgetsApi {
+    /**
+     * Get all overlay widget configs of a specified type
+     * @param typeId ID of the overlay widget type
+     * @returns An array of {@linkcode OverlayWidgetConfig} matching the given type
+     */
+    getConfigsOfType<Config extends OverlayWidgetConfig = OverlayWidgetConfig>(typeId: string): Config[];
+
+    /**
+     * Get the current state data of an overlay widget
+     * @param widgetId ID of the overlay widget to get
+     * @returns A `Record<string, unknown>` containing the overlay widget's current state
+     */
+    getWidgetState<State = Record<string, unknown>>(widgetId: string): State | null;
+
+    /**
+     * Set the state data of an overlay widget
+     * @param widgetId ID of the overlay widget to update
+     * @param state The new state data for the overlay widget
+     * @param persist (Optional) `true` to persist the new overlay widget state across
+     * Firebot sessions, or `false` to discard it when Firebot exits. Default is `true`.
+     */
+    setWidgetState<State extends Record<string, unknown>>(widgetId: string, state: State, persist: boolean): void;
+}
+
+export interface PluginOverlayApi {
+    /** Access to overlay widget configurations and state data */
+    widgets: PluginOverlayWidgetsApi;
+}
+
 export interface PluginMessageEvent<TPayload = unknown> {
     /** The pluginId of the plugin that sent the message */
     sender: string;
@@ -501,6 +532,9 @@ export interface FirebotPluginApi {
      * UI Extensions
      */
     frontendCommunicator: PluginFrontendCommunicatorApi;
+
+    /** Access to overlays, including overlay widgets */
+    overlay: PluginOverlayApi;
 
     /**
      * Plugin-to-plugin messaging. Supports both fire-and-forget (`emit`/`on`/`off`)
