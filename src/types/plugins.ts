@@ -21,22 +21,35 @@ type NoResult = Awaitable<void>;
 type GenericParameters = Record<string, unknown>;
 
 type FontAwesomeIcon = {
+    /**
+     * Indicates a Font Awesome icon
+     */
     type: "font-awesome";
+
     /**
      * A FontAwesome icon name shown in the UI (eg. "fa-cogs").
      */
     name: `fa-${string}`;
+
     /**
-     * A css color value (eg. "#FF0000") used for the icon.
+     * A CSS color value (e.g. `#FF0000`) used for the icon.
      */
     color?: string;
 };
 
 type CustomIcon = {
-    type: "custom";
-    url: string;
     /**
-     * A css color value (eg. "#FF0000") used for the background of the icon.
+     * Indicates a custom icon
+     */
+    type: "custom";
+
+    /**
+     * A URL for the icon image. This can be a data URL.
+     */
+    url: string;
+
+    /**
+     * A CSS color value (e.g. `#FF0000`) used for the background of the icon.
      */
     backgroundColor?: string;
 };
@@ -61,46 +74,119 @@ export type PluginFeature =
     | "commands"
     | "ui-extensions";
 
-export type ManagedPluginManifest = {
+export type CommunityPluginManifest = {
+    /**
+     * Display name of the plugin (e.g. `My Cool Plugin`)
+     */
     name: string;
+
+    /**
+     * The author of the plugin (e.g. `Firebot`)
+     */
     author: string;
+
+    /**
+     * A brief description of the plugin. Markdown is supported.
+     */
     description: string;
-    /** Must be a semver string */
+
+    /**
+     * Version of the plugin this manifest represents.
+     * Must be a semver string with exactly 3 period-separated components:
+     * Major, minor, and patch. (e.g. `1.0.0`)
+     */
     version: string;
+
+    /**
+     * Direct download URL for the plugin file
+     */
     downloadUrl: string;
+
+    /**
+     * SHA256 hash of the plugin file specified in `downloadUrl`.
+     * Firebot will validate this hash after downloading the plugin.
+     */
     sha256: string;
-    /** Must be an ISO-8601 string */
+
+    /**
+     * Release date of this version of the plugin.
+     * Must be an ISO-8601 formatted string.
+     */
     releaseDate: string;
+
+    /**
+     * Type of file your plugin is. Only `single-file` is supported at this time.
+     */
     type: "single-file" | "zip";
 
+    /**
+     * Optional. An icon representing the plugin. This can either be a Font Awesome icon
+     * or a custom URL.
+     */
     icon?: PluginIcon;
+
+    /**
+     * Optional. The category the plugin best fits under.
+     */
     category?: PluginCategory;
+
+    /**
+     * Optional. An array of Firebot features the plugin implements.
+     * Each implemented feature only needs to be included in the array once.
+     */
     features?: PluginFeature[];
+
+    /**
+     * Optional. An array of strings that describe or categorize the plugin.
+     */
     tags?: string[];
+
+    /**
+     * Optional. A link to the plugin's source code repository.
+     */
     repo?: string;
+
+    /**
+     * Optional. A link to the plugin's website. If the repo is on GitHub
+     * and the website is not specified, it will default to the GitHub repo URL.
+     */
     website?: string;
+
+    /**
+     * Optional. A link to the plugin's issue tracker or support server (e.g. Discord).
+     * If the repo is on GitHub and support is not specified, it will default to
+     * the GitHub issues URL.
+     */
     support?: string;
+
+    /**
+     * Optional. The lowest Firebot version this version of your plugin is compatible with.
+     */
     minimumFirebotVersion?: ManifestFirebotVersion;
+
+    /**
+     * Optional. The highest Firebot version this version of your plugin is compatible with.
+     */
     maximumFirebotVersion?: ManifestFirebotVersion;
 };
 
-export type ManagedPluginBase = {
+export type CommunityPluginBase = {
     author: string;
     name: string;
     version: string;
 };
 
-export type ManagedPlugin = ManagedPluginBase & {
-    manifest: ManagedPluginManifest;
+export type CommunityPlugin = CommunityPluginBase & {
+    manifest: CommunityPluginManifest;
 };
 
-export type ManagedPluginExtended = ManagedPlugin & {
+export type CommunityPluginExtended = CommunityPlugin & {
     installed: boolean;
     installedVersion?: string;
 };
 
-export type ManagedPluginUpdateRequest = {
-    plugins: Array<ManagedPluginBase>;
+export type CommunityPluginUpdateRequest = {
+    plugins: Array<CommunityPluginBase>;
     firebotVersion: ManifestFirebotVersion;
 };
 
@@ -117,7 +203,7 @@ export type CommunityPluginSearchCriteria = {
 };
 
 export type CommunityPluginSearchResult = {
-    items: ManagedPluginExtended[];
+    items: CommunityPluginExtended[];
     total: number;
 };
 
@@ -126,7 +212,7 @@ export type InstalledPluginConfig<Params extends GenericParameters = GenericPara
     fileName: string;
     enabled?: boolean;
     legacyImport?: boolean;
-    managedPluginDetails?: ManagedPluginBase;
+    communityPluginDetails?: CommunityPluginBase;
     parameters: Params;
 };
 

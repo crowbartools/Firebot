@@ -394,7 +394,7 @@
 
                     if (result.success === true) {
                         pluginDetails.installed = true;
-                        pluginDetails.installedVersion = result.installedPlugin.config.managedPluginDetails.version;
+                        pluginDetails.installedVersion = result.installedPlugin.config.communityPluginDetails.version;
 
                         ngToast.create({
                             className: "success",

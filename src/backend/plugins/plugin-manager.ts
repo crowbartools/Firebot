@@ -10,10 +10,10 @@ import type {
     InstalledPlugin,
     InstalledPluginConfig,
     LegacyCustomScript,
-    ManagedPlugin,
-    ManagedPluginBase,
-    ManagedPluginExtended,
-    ManagedPluginUpdateRequest,
+    CommunityPlugin,
+    CommunityPluginBase,
+    CommunityPluginExtended,
+    CommunityPluginUpdateRequest,
     Manifest,
     PluginBase,
     PluginContext,
@@ -100,7 +100,7 @@ class PluginManager {
     private activePlugins: Record<string, ActivePluginEntry> = {};
 
     private updateCheckInterval: NodeJS.Timeout;
-    private pendingUpdates: Record<string, ManagedPlugin> = {};
+    private pendingUpdates: Record<string, CommunityPlugin> = {};
 
     private pendingApiInstances: Map<string, PluginApiInstance> = new Map();
 
@@ -184,7 +184,7 @@ class PluginManager {
         );
 
         frontendCommunicator.onAsync("plugin-manager:install-community-plugin",
-            async (pluginDetails: ManagedPluginExtended) => {
+            async (pluginDetails: CommunityPluginExtended) => {
                 return await this.installCommunityPlugin(pluginDetails);
             }
         );
@@ -1073,10 +1073,10 @@ class PluginManager {
 
     // #endregion
 
-    // #region Managed (Community) Plugins
+    // #region Community Plugins
 
     private async searchForCommunityPlugins(criteria: CommunityPluginSearchCriteria): Promise<CommunityPluginSearchResult> {
-        const plugins: ManagedPluginExtended[] = [];
+        const plugins: CommunityPluginExtended[] = [];
         let total = 0;
 
         try {
@@ -1096,19 +1096,19 @@ class PluginManager {
             });
 
             if (response.ok) {
-                const searchResult = await response.json() as { items: ManagedPlugin[], total: number };
+                const searchResult = await response.json() as { items: CommunityPlugin[], total: number };
                 total = searchResult.total;
 
                 for (const result of searchResult.items) {
                     const installedPlugin = PluginConfigManager.getAllItems().find(c =>
-                        c.managedPluginDetails?.author === result.author
-                        && c.managedPluginDetails?.name === result.name
+                        c.communityPluginDetails?.author === result.author
+                        && c.communityPluginDetails?.name === result.name
                     );
 
                     plugins.push({
                         ...result,
-                        installed: installedPlugin?.managedPluginDetails?.version != null,
-                        installedVersion: installedPlugin?.managedPluginDetails?.version
+                        installed: installedPlugin?.communityPluginDetails?.version != null,
+                        installedVersion: installedPlugin?.communityPluginDetails?.version
                     });
                 }
             } else {
@@ -1135,7 +1135,7 @@ class PluginManager {
         return { items: plugins, total };
     }
 
-    private trackCommunityPluginDownload(plugin: ManagedPluginBase): void {
+    private trackCommunityPluginDownload(plugin: CommunityPluginBase): void {
         void (async () => {
             try {
                 const streamer = AccountAccess.getAccounts().streamer;
@@ -1163,7 +1163,7 @@ class PluginManager {
     }
 
     private async downloadAndSaveCommunityPlugin(
-        plugin: ManagedPlugin
+        plugin: CommunityPlugin
     ): Promise<{ success: boolean, path?: string }> {
         const result = {
             success: false,
@@ -1222,7 +1222,7 @@ class PluginManager {
     }
 
     private async installCommunityPlugin(
-        plugin: ManagedPluginExtended
+        plugin: CommunityPluginExtended
     ): Promise<PluginInstallResult> {
         // Ensure we have data
         if (plugin == null) {
@@ -1284,7 +1284,7 @@ class PluginManager {
                 enabled: true,
                 fileName: saveResult.path,
                 parameters: defaultParams,
-                managedPluginDetails: {
+                communityPluginDetails: {
                     author: plugin.author,
                     name: plugin.name,
                     version: plugin.version
@@ -1323,10 +1323,10 @@ class PluginManager {
             return { success: false, error: errorMessage };
         }
 
-        if (installedPluginConfig.managedPluginDetails == null
-            || !installedPluginConfig.managedPluginDetails.author?.length
-            || !installedPluginConfig.managedPluginDetails.name?.length
-            || !installedPluginConfig.managedPluginDetails.version?.length
+        if (installedPluginConfig.communityPluginDetails == null
+            || !installedPluginConfig.communityPluginDetails.author?.length
+            || !installedPluginConfig.communityPluginDetails.name?.length
+            || !installedPluginConfig.communityPluginDetails.version?.length
         ) {
             const errorMessage = `Plugin ${pluginId} is not a community plugin`;
             this._logger.warn(errorMessage);
@@ -1342,8 +1342,8 @@ class PluginManager {
         }
 
         // Ensure it's the same plugin
-        if (pluginUpdate.author !== installedPluginConfig.managedPluginDetails.author
-            || pluginUpdate.name !== installedPluginConfig.managedPluginDetails.name
+        if (pluginUpdate.author !== installedPluginConfig.communityPluginDetails.author
+            || pluginUpdate.name !== installedPluginConfig.communityPluginDetails.name
         ) {
             const errorMessage = "Update does not match installed plugin";
             this._logger.error(errorMessage);
@@ -1351,7 +1351,7 @@ class PluginManager {
         }
 
         // Ensure it's actually an upgrade
-        const updateType = compareVersions(pluginUpdate.version, installedPluginConfig.managedPluginDetails.version);
+        const updateType = compareVersions(pluginUpdate.version, installedPluginConfig.communityPluginDetails.version);
         if (updateType === UpdateType.NONE || updateType === UpdateType.PREVIOUS_VERSION) {
             const errorMessage = "Installed plugin version is already up-to-date";
             this._logger.error(errorMessage);
@@ -1383,7 +1383,7 @@ class PluginManager {
             await this.stopPlugin(pluginId, false);
 
             installedPluginConfig.fileName = saveResult.path;
-            installedPluginConfig.managedPluginDetails.version = pluginUpdate.version;
+            installedPluginConfig.communityPluginDetails.version = pluginUpdate.version;
             PluginConfigManager.saveItem(installedPluginConfig);
 
             await this.startPlugin(installedPluginConfig, false);
@@ -1421,14 +1421,14 @@ class PluginManager {
     private async checkForCommunityPluginUpdates(): Promise<void> {
         this._logger.info("Checking for community plugin updates");
         const communityPlugins = PluginConfigManager.getAllItems()
-            .filter(p => p.managedPluginDetails != null)
+            .filter(p => p.communityPluginDetails != null)
             .map(p => ({
                 id: p.id,
-                details: p.managedPluginDetails
+                details: p.communityPluginDetails
             }));
 
         const firebotVersionString = app.getVersion();
-        const updateRequest: ManagedPluginUpdateRequest = {
+        const updateRequest: CommunityPluginUpdateRequest = {
             firebotVersion: parseVersion(firebotVersionString),
             plugins: communityPlugins.map(p => p.details)
         };
@@ -1449,7 +1449,7 @@ class PluginManager {
                 return;
             }
 
-            const availableUpdates = await response.json() as ManagedPlugin[];
+            const availableUpdates = await response.json() as CommunityPlugin[];
 
             for (const plugin of communityPlugins) {
                 const update = availableUpdates.find(p =>

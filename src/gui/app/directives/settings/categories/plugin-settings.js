@@ -166,7 +166,7 @@
                                             ng-if="plugin.details.manifest.author"
                                         >by {{plugin.details.manifest.author}}</span>
                                         <span
-                                            ng-if="plugin.config.managedPluginDetails != null"
+                                            ng-if="plugin.config.communityPluginDetails != null"
                                             style="font-size: 11px; padding: 1px 8px; border-radius: 10px; background: rgba(0,208,255,0.18); color: #00d0ff;"
                                         >Community</span>
                                         <span
@@ -280,7 +280,7 @@
                 };
 
                 $scope.pendingUpdateDetails = (plugin) => {
-                    return plugin?.config?.managedPluginDetails != null
+                    return plugin?.config?.communityPluginDetails != null
                         ? pluginsService.pendingPluginUpdates[plugin.config.id]
                         : null;
                 };
@@ -309,7 +309,7 @@
                         keyboard: true,
                         resolveObj: {
                             pluginName: () => plugin.details.manifest.name || plugin.config.fileName,
-                            isManagedPlugin: () => plugin.config.managedPluginDetails != null
+                            isCommunityPlugin: () => plugin.config.communityPluginDetails != null
                         },
                         closeCallback: (response) => {
                             if (response && response.confirmed) {
@@ -321,7 +321,7 @@
 
                 $scope.pluginMenuOptions = function(plugin) {
                     const isEnabled = plugin.config.enabled !== false;
-                    const isCommunityPlugin = plugin.config.managedPluginDetails != null;
+                    const isCommunityPlugin = plugin.config.communityPluginDetails != null;
 
                     const options = [
                         {

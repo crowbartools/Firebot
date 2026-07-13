@@ -15,7 +15,7 @@
                 <firebot-checkbox
                     label="Also delete the plugin file from the scripts folder"
                     model="$ctrl.deletePluginFile"
-                    ng-if="$ctrl.isManagedPlugin !== true"
+                    ng-if="$ctrl.isCommunityPlugin !== true"
                 ></firebot-checkbox>
             </div>
             <div class="modal-footer">
@@ -36,7 +36,7 @@
 
                 $ctrl.$onInit = function() {
                     $ctrl.pluginName = $ctrl.resolve.pluginName;
-                    $ctrl.isManagedPlugin = $ctrl.resolve.isManagedPlugin;
+                    $ctrl.isCommunityPlugin = $ctrl.resolve.isCommunityPlugin;
                 };
 
                 $ctrl.confirm = function() {
@@ -44,7 +44,7 @@
                         $value: {
                             confirmed: true,
                             deletePluginFile: $ctrl.deletePluginFile === true
-                                || $ctrl.isManagedPlugin === true
+                                || $ctrl.isCommunityPlugin === true
                         }
                     });
                 };
