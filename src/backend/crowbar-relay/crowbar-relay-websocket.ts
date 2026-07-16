@@ -12,6 +12,7 @@ class CrowbarRelayWebSocket extends TypedEmitter<{
 }> {
     private logger = LoggerCache.getLogger("Crowbar Relay");
     private ws: ReconnectingWebSocket | null = null;
+    private pingTimeout: NodeJS.Timeout;
 
     constructor() {
         super();
@@ -29,6 +30,14 @@ class CrowbarRelayWebSocket extends TypedEmitter<{
                 this.start();
             }
         });
+    }
+
+    private setPingTimeout() {
+        clearTimeout(this.pingTimeout);
+        this.pingTimeout = setTimeout(() => {
+            this.logger.warn("Crowbar Relay WebSocket ping timeout, reconnecting...");
+            this.ws.reconnect();
+        }, 75_000);
     }
 
     private start() {
@@ -53,17 +62,7 @@ class CrowbarRelayWebSocket extends TypedEmitter<{
             }
         });
 
-        let pingTimeout: NodeJS.Timeout;
-
-        function setPingTimeout() {
-            clearTimeout(pingTimeout);
-            pingTimeout = setTimeout(() => {
-                this.logger.warn("Crowbar Relay WebSocket ping timeout, reconnecting...");
-                this.ws.reconnect();
-            }, 75_000);
-        }
-
-        setPingTimeout();
+        this.setPingTimeout();
 
         this.ws.addEventListener("open", () => {
             this.logger.info("Crowbar Relay WebSocket connected!");
@@ -71,7 +70,7 @@ class CrowbarRelayWebSocket extends TypedEmitter<{
         });
 
         this.ws.addEventListener("ping", () => {
-            setPingTimeout();
+            this.setPingTimeout();
         });
 
         this.ws.addEventListener("error", (err) => {
@@ -79,7 +78,7 @@ class CrowbarRelayWebSocket extends TypedEmitter<{
         });
 
         this.ws.addEventListener("close", (closedEvent) => {
-            clearTimeout(pingTimeout);
+            clearTimeout(this.pingTimeout);
             const unauthorized = closedEvent.target?._ws?._req?.res?.statusCode === 401;
             if (unauthorized) {
                 this.logger.error("Crowbar Relay WebSocket unauthorized!");
