@@ -194,6 +194,26 @@ class PluginManager {
                 return await this.updateCommunityPlugin(pluginId);
             }
         );
+
+        frontendCommunicator.onAsync("plugin-manager:get-plugin-hash",
+            async (pluginId: string) => {
+                const plugin = PluginConfigManager.getItem(pluginId);
+
+                try {
+                    if (!!plugin?.fileName?.length) {
+                        const filePath = this.getPluginFilePath(plugin.fileName);
+                        const fileContents = await fsp.readFile(filePath);
+
+                        const hash = createHash("sha256").update(fileContents).digest("hex");
+                        return hash;
+                    }
+                } catch (error) {
+                    this._logger.warn("Failed to get plugin hash", error);
+                }
+
+                return "";
+            }
+        );
     }
 
     async migrateLegacyStartUpScriptsToPlugins() {

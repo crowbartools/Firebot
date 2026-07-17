@@ -319,6 +319,17 @@
                     });
                 };
 
+                $scope.openGenerateCommunityManifestModal = (plugin) => {
+                    modalService.showModal({
+                        component: "generateCommunityPluginManifestModal",
+                        size: "lg",
+                        resolveObj: {
+                            plugin: () => plugin
+                        },
+                        closeCallback: () => {}
+                    });
+                };
+
                 $scope.pluginMenuOptions = function(plugin) {
                     const isEnabled = plugin.config.enabled !== false;
                     const isCommunityPlugin = plugin.config.communityPluginDetails != null;
@@ -347,6 +358,21 @@
                             $scope.removePlugin(plugin);
                         }
                     });
+
+                    if (isCommunityPlugin !== true) {
+                        options.push({
+                            text: `Developer Tools`,
+                            hasTopDivider: true,
+                            children: [
+                                {
+                                    html: `<a href><i class="far fa-brackets-curly" style="margin-right: 10px;"></i>  Generate Community Manifest</a>`,
+                                    click: () => {
+                                        $scope.openGenerateCommunityManifestModal(plugin);
+                                    }
+                                }
+                            ]
+                        });
+                    }
 
                     return options;
                 };
