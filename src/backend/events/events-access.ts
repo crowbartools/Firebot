@@ -351,7 +351,7 @@ class EventsAccess {
     }
 
     triggerUiRefresh(): void {
-        this.logger.debug("Triggering UI update");
+        this.logger.debug("Triggering event UI refresh");
         frontendCommunicator.send("events:main-events-update", {
             mainEvents: Array.isArray(this._mainEvents)
                 ? this._mainEvents

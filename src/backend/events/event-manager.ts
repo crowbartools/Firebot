@@ -121,6 +121,7 @@ class EventManager extends TypedEmitter<{
         this.logger.debug(`Registered Event Source ${eventSource.id}`);
 
         this.emit("eventSourceRegistered", eventSource);
+        this.triggerUiRefresh();
     }
 
     unregisterEventSource(id: string): void {
@@ -136,6 +137,7 @@ class EventManager extends TypedEmitter<{
         this._registeredEventSources = this._registeredEventSources.filter(s => s.id !== id);
 
         this.emit("eventSourceUnregistered", id);
+        this.triggerUiRefresh();
     }
 
     getEventSourceById(sourceId: string): RegisteredEventSource {
@@ -207,6 +209,14 @@ class EventManager extends TypedEmitter<{
         }
 
         return eventTriggeredPromise;
+    }
+
+    triggerUiRefresh(): void {
+        this.logger.debug("Triggering event source UI refresh");
+        frontendCommunicator.send(
+            "events:event-sources-updated",
+            simpleClone(this.getAllEventSources())
+        );
     }
 }
 

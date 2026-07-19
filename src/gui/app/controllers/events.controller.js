@@ -59,6 +59,10 @@
                 sources = await backendCommunicator.fireEventAsync("events:get-all-event-sources");
             };
 
+            backendCommunicator.on("events:event-sources-updated",
+                newSources => sources = newSources ?? []
+            );
+
             function friendlyEventTypeName(sourceId, eventId) {
                 const source = sources.find(s => s.id === sourceId);
                 if (source != null) {
