@@ -1,4 +1,5 @@
 import bitsBadgeTier from "./bits-badge-tier";
+import channelGoalType from "./channel-goal-type";
 import channelLive from "./channel-live";
 import chatMode from "./chat-mode";
 import chatModeDuration from "./chat-mode-duration";
@@ -26,6 +27,7 @@ import watchStreakCount from "./watch-streak-count";
 
 export default [
     bitsBadgeTier,
+    channelGoalType,
     channelLive,
     chatModeDuration,
     chatModeSetting,
