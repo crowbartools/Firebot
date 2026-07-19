@@ -17,7 +17,7 @@ const model: ReplaceVariable = {
         triggers: triggers
     },
     evaluator: (trigger) => {
-        return trigger.metadata?.eventData?.friendlyType ?? "No active goal";
+        return trigger.metadata?.eventData?.friendlyTypeName ?? "No active goal";
     }
 };
 
