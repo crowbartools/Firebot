@@ -34,6 +34,9 @@
                             <input type="text" id="urlField" class="form-control" ng-model="$ctrl.channel.webhookUrl" ng-keyup="$event.keyCode == 13 && $ctrl.save() " aria-describedby="urlHelpBlock" placeholder="Enter url">
                             <span id="urlHelpBlock" class="help-block" ng-show="$ctrl.urlError">Please provide a valid Discord Webhook URL</span>
                         </div>
+                        <div class="alert alert-warning">
+                            NOTE: This URL must be a service that accepts Discord-compatible webhook data.
+                        </div>
                         <collapsable-section show-text="Where do I get the Webhook URL?" hide-text="Where do I get the Webhook URL?"  text-color="#0b8dc6">
                             <ol style="font-weight: 100;font-size: 15px;">
                                 <li style="margin: 5px 0;">In Discord, open channel settings for the channel you want Firebot posting messages to <span class="muted">(click the Gear next to the channel name)</span></li>
@@ -88,10 +91,8 @@
                 }
 
                 function validateWebhookUrl() {
-                    const discordWebhookRegex = /^https:\/\/(?:ptb\.|canary\.)?discord(?:app)?\.com\/api\/webhooks\/[^/\s]+\/[^/\s]+$/i;
-                    const guildedWebhookRegex = /^https:\/\/media\.guilded?\.gg\/webhooks\/[^/\s]+\/[^/\s]+$/i;
                     const webhookUrl = $ctrl.channel.webhookUrl;
-                    return webhookUrl != null && webhookUrl.length > 0 && (discordWebhookRegex.test(webhookUrl) || guildedWebhookRegex.test(webhookUrl));
+                    return webhookUrl != null && webhookUrl.length > 0;
                 }
 
                 $ctrl.save = function() {
