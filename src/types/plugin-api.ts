@@ -486,6 +486,18 @@ export interface PluginEventFilterFactoryApi {
     createPresetFilter(config: PresetFilterConfig): EventFilter;
 }
 
+export interface PluginFactoriesApi {
+    /**
+     * Factory functions for creating basic replace variables
+     */
+    variables: PluginVariableFactoryApi;
+
+    /**
+     * Factory functions for creating basic event filters
+     */
+    eventFilters: PluginEventFilterFactoryApi;
+}
+
 export interface FirebotPluginApi {
     /** Running Firebot version, e.g. `"5.67.0"` */
     version: string;
@@ -555,9 +567,6 @@ export interface FirebotPluginApi {
     /** Webhooks owned by this plugin */
     webhooks: PluginWebhooksApi;
 
-    /** Factory functions for creating basic replace variables */
-    variableFactory: PluginVariableFactoryApi;
-
-    /** Factory functions for creating basic event filters */
-    eventFilterFactory: PluginEventFilterFactoryApi;
+    /** Factory functions for creating basic Firebot objects (variables, event filters, etc.) */
+    factories: PluginFactoriesApi;
 }

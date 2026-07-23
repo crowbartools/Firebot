@@ -21,8 +21,7 @@ import { createNotificationsApi } from "./namespaces/notifications";
 import { createSettingsApi } from "./namespaces/settings";
 import { createPluginsApi } from "./namespaces/plugins";
 import { createWebServerApi } from "./namespaces/http-server";
-import { createVariableFactoryApi } from "./namespaces/variable-factory";
-import { createEventFilterFactoryApi } from "./namespaces/event-filter-factory";
+import { createFactoriesApi } from "./namespaces/factories";
 
 /**
  * Composition root for the Firebot Plugin API
@@ -48,8 +47,7 @@ export function buildPluginApi(ctx: PluginApiContext): FirebotPluginApi {
         notifications: createNotificationsApi(ctx),
         plugins: createPluginsApi(ctx),
         webServer: createWebServerApi(ctx),
-        variableFactory: createVariableFactoryApi(ctx),
-        eventFilterFactory: createEventFilterFactoryApi(ctx)
+        factories: createFactoriesApi(ctx)
     };
 }
 
