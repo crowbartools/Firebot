@@ -1083,7 +1083,9 @@ class TwitchEventSubClient {
                             event.messageText ?? "",
                             event.type === "resub" ? event.streakMonths : 1,
                             event.isPrime,
-                            event.type === "resub"
+                            event.type === "resub",
+                            event.type === "resub" ? event.isGift === true : false,
+                            event.type === "resub" ? event.gifterDisplayName : undefined
                         );
                         twitchRolesManager.addSubscriberToSubscribersList(
                             event.chatterId,

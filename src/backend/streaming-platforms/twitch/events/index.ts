@@ -197,7 +197,9 @@ export const TwitchEventSource: EventSource = {
                 },
                 subMessage: "Test message",
                 totalMonths: 10,
-                streak: 8
+                streak: 8,
+                isGiftResub: false,
+                gifterUsername: "zunderscore"
             },
             activityFeed: {
                 icon: "fas fa-star",
