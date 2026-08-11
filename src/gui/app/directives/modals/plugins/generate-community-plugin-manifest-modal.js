@@ -69,14 +69,22 @@
                         <div class="form-group">
                             <h4 class="control-label">Release Date</h4>
 
-                            <input
-                                type="date"
-                                class="form-control ng-animate-disabled"
-                                placeholder="yyyy-MM-dd"
-                                ng-model="$ctrl.releaseDate"
-                                ng-change="$ctrl.generateManifest()"
-                                disable-variable-menu="true"
-                            >
+                            <div class="input-group">
+                                <input
+                                    type="text"
+                                    class="form-control ng-animate-disabled"
+                                    ng-model="$ctrl.releaseDate"
+                                    ng-change="$ctrl.generateManifest()"
+                                    disable-variable-menu="true"
+                                    uib-datepicker-popup="yyyy-MM-dd"
+                                    is-open="$ctrl.showReleaseDatePicker"
+                                    datepicker-options="$ctrl.dateOptions"
+                                    show-button-bar="false"
+                                />
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default" ng-click="$ctrl.showReleaseDatePicker = true"><i class="fas fa-calendar"></i></button>
+                                </span>
+                            </div>
                         </div>
 
                         <h3 class="mt-8">Suggested Manifest Path</h3>
@@ -162,6 +170,12 @@
                 $ctrl.category = "";
                 $ctrl.features = [];
                 $ctrl.tags = [];
+
+                $ctrl.dateOptions = {
+                    showWeeks: false
+                };
+
+                $ctrl.showReleaseDatePicker = false;
 
                 $ctrl.suggestedManifestPath = "";
 
