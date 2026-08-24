@@ -1,6 +1,8 @@
 import { TypedEmitter } from "tiny-typed-emitter";
 import { EventManager } from "../../../events/event-manager";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
+
+const logger = LoggerCache.getLogger("Integration: ExtraLife");
 
 type ExtraLifeDonation = {
     displayName: string;

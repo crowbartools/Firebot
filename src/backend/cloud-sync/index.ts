@@ -6,7 +6,9 @@ import rankManager from "../ranks/rank-manager";
 import { ReplaceVariableManager } from "../variables/replace-variable-manager";
 import { SortTagManager } from "../sort-tags/sort-tag-manager";
 import frontendCommunicator from "../common/frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
+
+const logger = LoggerCache.getLogger("Cloud Sync");
 
 interface ProfileSyncData {
     username: string;

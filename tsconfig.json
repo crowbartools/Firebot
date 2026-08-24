@@ -18,5 +18,13 @@
         },
         "target": "es2023"
     },
-    "include": ["src/**/*"]
+    "include": ["src/**/*"],
+    "exclude": [
+        "node_modules",
+        "build",
+        "dist",
+        "src/resources/control-deck",
+        "src/resources/overlay/lib",
+        "src/resources/overlay-widget-components"
+    ]
 }

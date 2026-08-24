@@ -1,6 +1,6 @@
 import { TwitchSlashCommand } from "../twitch-slash-commands";
 import { TwitchSlashCommandHelpers } from "./twitch-command-helpers";
-import frontendCommunicator from "../../../../common/frontend-communicator";
+import { FrontendChatManager } from "../../../../chat/frontend-chat-manager";
 
 export const whisperHandler: TwitchSlashCommand<[string, string]> = {
     commands: ["/whisper", "/w"],
@@ -162,10 +162,7 @@ export const shoutoutHandler: TwitchSlashCommand<[string]> = {
         }
         const result = await twitchApi.chat.sendShoutout(targetUserId);
         if (!result.success) {
-            frontendCommunicator.send("chatUpdate", {
-                fbEvent: "ChatAlert",
-                message: result.error
-            });
+            FrontendChatManager.sendAlertToDashboard(result.error);
         }
         return result.success;
     }

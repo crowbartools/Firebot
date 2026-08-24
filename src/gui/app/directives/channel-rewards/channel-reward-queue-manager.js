@@ -6,11 +6,6 @@
             bindings: {},
             template: `
             <div class="queue-manager-container">
-                <div
-                    ng-if="channelRewardsService.loadingRedemptions"
-                    class="queue-loader-overlay">
-                    <div>Loading requests...</div>
-                </div>
                 <div class="queue-manager-content">
                     <div class="queue-rewards-column">
                         <queue-reward-wrapper

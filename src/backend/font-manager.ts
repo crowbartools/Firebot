@@ -1,13 +1,11 @@
 import fsp from "fs/promises";
 import path from "path";
 
-import { FirebotSettingsDefaults } from "../types/settings";
-
+import { HttpServerManager } from "../server/http-server-manager";
 import { ProfileManager } from "./common/profile-manager";
 import { SettingsManager } from "./common/settings-manager";
-import webServer from "../server/http-server-manager";
 import frontendCommunicator from "./common/frontend-communicator";
-import logger from "./logwrapper";
+import { LoggerCache } from "./logger-cache";
 
 export enum FontFormat {
     TrueType = "truetype",
@@ -24,22 +22,23 @@ export type FirebotFont = {
 };
 
 class FontManager {
+    private logger = LoggerCache.getLogger("Fonts");
     cachedFonts: FirebotFont[] = [];
 
     constructor() {
-        frontendCommunicator.on("fonts:get-font-folder-path", () => {
+        frontendCommunicator.onAsync("fonts:get-font-folder-path", async () => {
             return this.fontsFolder;
         });
 
-        frontendCommunicator.on("fonts:get-generated-css-path", () => {
+        frontendCommunicator.onAsync("fonts:get-generated-css-path", async () => {
             return this.fontCssPath;
         });
 
-        frontendCommunicator.on("fonts:get-installed-fonts", () => {
+        frontendCommunicator.onAsync("fonts:get-installed-fonts", async () => {
             return this.cachedFonts;
         });
 
-        frontendCommunicator.on("fonts:get-font", (name: string) => {
+        frontendCommunicator.onAsync("fonts:get-font", async (name: string) => {
             return this.getFont(name);
         });
 
@@ -122,13 +121,13 @@ class FontManager {
                 name: this.stripFontFileType(filename),
                 format: this.getFontFormatFromFilename(filename)
             });
-            logger.info(`Font ${filename} installed`);
+            this.logger.info(`Font ${filename} installed`);
 
             await this.generateAppFontCssFile();
 
             return true;
         } catch (error) {
-            logger.error(`Error installing font from ${filepath}`, error);
+            this.logger.error(`Error installing font from ${filepath}`, error);
             return false;
         }
     }
@@ -138,18 +137,18 @@ class FontManager {
 
         if (font != null) {
             if (SettingsManager.getSetting("ChatCustomFontFamily") === name) {
-                SettingsManager.saveSetting("ChatCustomFontFamily", FirebotSettingsDefaults.ChatCustomFontFamily);
+                SettingsManager.deleteSetting("ChatCustomFontFamily");
                 SettingsManager.saveSetting("ChatCustomFontFamilyEnabled", false);
             }
 
             try {
                 await fsp.unlink(font.path);
                 this.cachedFonts.splice(this.cachedFonts.indexOf(font), 1);
-                logger.info(`Font ${name} removed`);
+                this.logger.info(`Font ${name} removed`);
 
                 await this.generateAppFontCssFile();
             } catch (error) {
-                logger.error(`Error removing font ${name}`, error);
+                this.logger.error(`Error removing font ${name}`, error);
             }
         }
     }
@@ -172,11 +171,11 @@ class FontManager {
             await fsp.writeFile(this.fontCssPath, cssFileRaw, { encoding: "utf8" });
 
             frontendCommunicator.send("fonts:reload-font-css");
-            webServer.sendToOverlay("OVERLAY:RELOAD_FONTS");
+            HttpServerManager.sendToOverlay("OVERLAY:RELOAD_FONTS");
 
-            logger.info("Font CSS file generated");
+            this.logger.info("Font CSS file generated");
         } catch (error) {
-            logger.error("Error generated font CSS file", error);
+            this.logger.error("Error generated font CSS file", error);
         }
     }
 }

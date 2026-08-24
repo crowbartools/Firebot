@@ -1,9 +1,13 @@
 import { JsonDB } from "node-json-db";
 
-import { RewardRedemptionMetadata, SavedChannelReward } from "../../types/channel-rewards";
-import { EffectList } from "../../types/effects";
-import { Trigger } from "../../types/triggers";
-import { CustomReward, RewardRedemption, RewardRedemptionsApprovalRequest } from "../streaming-platforms/twitch/api/resource/channel-rewards";
+import type {
+    EffectList,
+    RewardRedemptionMetadata,
+    SavedChannelReward,
+    Trigger
+} from "../../types";
+
+import type { CustomReward, RewardRedemption, RewardRedemptionsApprovalRequest } from "../streaming-platforms/twitch/api/resource/channel-rewards";
 
 import { AccountAccess } from "../common/account-access";
 import { ActiveUserHandler } from "../chat/active-user-handler";
@@ -12,21 +16,26 @@ import { RestrictionsManager } from "../restrictions/restriction-manager";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 import effectRunner from "../common/effect-runner";
 import frontendCommunicator from "../common/frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 
 class ChannelRewardManager {
+    private logger = LoggerCache.getLogger("Channel Rewards");
+
     channelRewards: Record<string, SavedChannelReward> = {};
     private _channelRewardRedemptions: Record<string, RewardRedemption[]> = {};
     private _eligible = false;
 
     constructor() {
+        frontendCommunicator.onAsync("channel-rewards:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
+
         frontendCommunicator.onAsync("get-channel-reward-count",
             TwitchApi.channelRewards.getTotalChannelRewardCount);
 
-        frontendCommunicator.on("get-channel-rewards", () => Object.values(this.channelRewards));
         frontendCommunicator.onAsync("get-channel-rewards", async () => Object.values(this.channelRewards));
 
-        frontendCommunicator.on("get-channel-rewards-eligibility", () => this._eligible);
+        frontendCommunicator.onAsync("get-channel-rewards-eligibility", async () => this._eligible);
 
         frontendCommunicator.onAsync("save-channel-reward",
             async (channelReward: SavedChannelReward) => this.saveChannelReward(channelReward));
@@ -83,7 +92,7 @@ class ChannelRewardManager {
     }
 
     async loadChannelRewards() {
-        logger.debug(`Attempting to load channel rewards...`);
+        this.logger.debug(`Attempting to load channel rewards...`);
 
         try {
             // Load existing reward data
@@ -93,11 +102,11 @@ class ChannelRewardManager {
             // Get all manageable rewards from Twitch
             const twitchManageableRewards: CustomReward[] = await TwitchApi.channelRewards.getManageableCustomChannelRewards();
             if (twitchManageableRewards == null) {
-                logger.error("Manageable Twitch channel rewards returned null!");
+                this.logger.error("Manageable Twitch channel rewards returned null!");
                 this.channelRewards = channelRewardsData;
 
                 this._eligible = false;
-                frontendCommunicator.send("channel-rewards-eligibility-changed", false);
+                frontendCommunicator.send("channel-rewards:channel-rewards-eligibility-changed", false);
 
                 return;
             }
@@ -116,11 +125,11 @@ class ChannelRewardManager {
             // Get all unmanageable rewards from Twitch
             const twitchUnmanageableRewards = await TwitchApi.channelRewards.getUnmanageableCustomChannelRewards();
             if (twitchUnmanageableRewards == null) {
-                logger.error("Unmanageable Twitch channel rewards returned null!");
+                this.logger.error("Unmanageable Twitch channel rewards returned null!");
                 this.channelRewards = channelRewardsData;
 
                 this._eligible = false;
-                frontendCommunicator.send("channel-rewards-eligibility-changed", false);
+                frontendCommunicator.send("channel-rewards:channel-rewards-eligibility-changed", false);
 
                 return;
             }
@@ -164,13 +173,11 @@ class ChannelRewardManager {
 
             this.channelRewards = syncedRewards;
 
-            logger.debug(`Loaded channel rewards.`);
+            this.logger.debug(`Loaded channel rewards.`);
 
-            frontendCommunicator.send("channel-rewards-updated", Object.values(this.channelRewards));
             this._eligible = true;
-            frontendCommunicator.send("channel-rewards-eligibility-changed", true);
         } catch (err) {
-            logger.warn(`There was an error reading channel rewards file.`, err);
+            this.logger.warn(`There was an error reading channel rewards file.`, err);
         }
     }
 
@@ -197,7 +204,7 @@ class ChannelRewardManager {
 
             channelRewardsDb.push(`/${channelReward.id}`, channelReward);
 
-            logger.debug(`Saved channel reward ${channelReward.id} to file.`);
+            this.logger.debug(`Saved channel reward ${channelReward.id} to file.`);
 
             if (emitUpdateEvent) {
                 frontendCommunicator.send("channel-reward-updated", channelReward);
@@ -205,7 +212,7 @@ class ChannelRewardManager {
 
             return channelReward;
         } catch (err) {
-            logger.warn(`There was an error saving a channel reward.`, err);
+            this.logger.warn(`There was an error saving a channel reward.`, err);
             return null;
         }
     }
@@ -239,7 +246,7 @@ class ChannelRewardManager {
 
             return channelReward;
         } catch (err) {
-            logger.warn(`There was an error saving a channel reward from Twitch data.`, err);
+            this.logger.warn(`There was an error saving a channel reward from Twitch data.`, err);
             return null;
         }
     }
@@ -263,10 +270,10 @@ class ChannelRewardManager {
 
             channelRewardsDb.push("/", this.channelRewards);
 
-            logger.debug(`Saved all channel rewards to file.`);
+            this.logger.debug(`Saved all channel rewards to file.`);
 
         } catch (err) {
-            logger.warn(`There was an error saving all channel rewards.`, err);
+            this.logger.warn(`There was an error saving all channel rewards.`, err);
         }
     }
 
@@ -291,10 +298,10 @@ class ChannelRewardManager {
                 frontendCommunicator.send("channel-reward-deleted", channelRewardId);
             }
 
-            logger.debug(`Deleted channel reward: ${channelRewardId}`);
+            this.logger.debug(`Deleted channel reward: ${channelRewardId}`);
 
         } catch (err) {
-            logger.warn(`There was an error deleting a channel reward.`, err);
+            this.logger.warn(`There was an error deleting a channel reward.`, err);
         }
     }
 
@@ -332,7 +339,7 @@ class ChannelRewardManager {
         try {
             await effectRunner.processEffects(processEffectsRequest);
         } catch (reason) {
-            logger.error(`error when running effects: ${reason}`);
+            this.logger.error(`error when running effects: ${reason}`);
         }
     }
 
@@ -353,7 +360,7 @@ class ChannelRewardManager {
 
         const restrictionData = savedReward.restrictionData;
         if (restrictionData) {
-            logger.debug("Reward has restrictions...checking them.");
+            this.logger.debug("Reward has restrictions...checking them.");
             const triggerData: Trigger = {
                 type: "channel_reward",
                 metadata
@@ -363,43 +370,28 @@ class ChannelRewardManager {
                 !savedReward.twitchData.shouldRedemptionsSkipRequestQueue &&
                 savedReward.autoApproveRedemptions;
 
-            try {
-                await RestrictionsManager.runRestrictionPredicates(triggerData, savedReward.restrictionData);
-                logger.debug("Restrictions passed!");
-                if (shouldAutoApproveOrReject) {
-                    logger.debug("auto accepting redemption");
-                    void this.approveOrRejectChannelRewardRedemptions({
-                        rewardId,
-                        redemptionIds: [metadata.redemptionId],
-                        approve: true
-                    });
-                }
-            } catch (restrictionReason) {
-                let reason: string;
-                if (Array.isArray(restrictionReason)) {
-                    reason = restrictionReason.join(", ");
-                } else {
-                    reason = restrictionReason as string;
-                }
+            const restrictionResult = await RestrictionsManager.runRestrictionPredicates(triggerData, savedReward.restrictionData);
 
-                logger.debug(`${metadata.username} could not use Reward '${savedReward.twitchData.title}' because: ${reason}`);
+            if (restrictionResult.success !== true) {
+                this.logger.debug(`${metadata.username} could not use Reward '${savedReward.twitchData.title}' because: ${restrictionResult.failureReason}`);
+
                 if (restrictionData.sendFailMessage || restrictionData.sendFailMessage == null) {
-
-                    const restrictionMessage = restrictionData.useCustomFailMessage ?
-                        restrictionData.failMessage :
-                        "Sorry @{user}, you cannot use this channel reward because: {reason}";
+                    const restrictionMessage = restrictionData.useCustomFailMessage
+                        ? restrictionData.failMessage
+                        : "Sorry @{user}, you cannot use this channel reward because: {reason}";
 
                     await TwitchApi.chat.sendChatMessage(
                         restrictionMessage
                             .replaceAll("{user}", metadata.username)
-                            .replaceAll("{reason}", reason),
+                            .replaceAll("{reason}", restrictionResult.failureReason),
                         null,
                         true
                     );
                 }
 
                 if (shouldAutoApproveOrReject) {
-                    logger.debug("auto rejecting redemption");
+                    this.logger.debug("Auto rejecting redemption");
+
                     void this.approveOrRejectChannelRewardRedemptions({
                         rewardId,
                         redemptionIds: [metadata.redemptionId],
@@ -408,6 +400,18 @@ class ChannelRewardManager {
                 }
 
                 return false;
+            }
+
+            this.logger.debug("Restrictions passed!");
+
+            if (shouldAutoApproveOrReject) {
+                this.logger.debug("Auto approving redemption");
+
+                void this.approveOrRejectChannelRewardRedemptions({
+                    rewardId,
+                    redemptionIds: [metadata.redemptionId],
+                    approve: true
+                });
             }
         }
 
@@ -435,7 +439,7 @@ class ChannelRewardManager {
     async refreshChannelRewardRedemptions(): Promise<void> {
         this._channelRewardRedemptions = await TwitchApi.channelRewards.getOpenChannelRewardRedemptions();
 
-        frontendCommunicator.send("channel-reward-redemptions-updated", this.getChannelRewardRedemptions());
+        frontendCommunicator.send("channel-rewards:channel-reward-redemptions-updated", this.getChannelRewardRedemptions());
     }
 
     addRewardRedemption(rewardId: string, redemption: RewardRedemption): void {
@@ -445,7 +449,7 @@ class ChannelRewardManager {
 
         this._channelRewardRedemptions[rewardId].push(redemption);
 
-        frontendCommunicator.send("channel-reward-redemptions-updated", this.getChannelRewardRedemptions());
+        frontendCommunicator.send("channel-rewards:channel-reward-redemptions-updated", this.getChannelRewardRedemptions());
     }
 
     removeRewardRedemption(rewardId: string, redemptionId: string): void {
@@ -453,7 +457,7 @@ class ChannelRewardManager {
         if (redemptions) {
             this._channelRewardRedemptions[rewardId] = redemptions.filter(r => r.id !== redemptionId);
 
-            frontendCommunicator.send("channel-reward-redemptions-updated", this.getChannelRewardRedemptions());
+            frontendCommunicator.send("channel-rewards:channel-reward-redemptions-updated", this.getChannelRewardRedemptions());
         }
     }
 
@@ -467,6 +471,13 @@ class ChannelRewardManager {
 
     async approveOrRejectAllRedemptionsForChannelRewards(rewardIds: string[], approve = true): Promise<void> {
         await TwitchApi.channelRewards.approveOrRejectAllRedemptionsForChannelRewards(rewardIds, approve);
+    }
+
+    triggerUiRefresh(): void {
+        this.logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("channel-rewards:channel-rewards-updated", Object.values(this.channelRewards));
+        frontendCommunicator.send("channel-rewards:channel-rewards-eligibility-changed", this._eligible);
+        frontendCommunicator.send("channel-rewards:channel-reward-redemptions-updated", this.getChannelRewardRedemptions());
     }
 }
 

@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
-import { FirebotViewer } from "../../../../types/viewers";
+
+import type { FirebotViewer } from "../../../../types";
+
 import * as customRolesApiController from "./custom-roles-api-controller";
 import viewerDatabase from "../../../../backend/viewers/viewer-database";
 import viewerMetaDataManager from "../../../../backend/viewers/viewer-metadata-manager";

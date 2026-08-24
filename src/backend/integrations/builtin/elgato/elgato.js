@@ -6,7 +6,7 @@ const tinycolor = require("tinycolor2");
 
 const { EffectManager } = require("../../../effects/effect-manager");
 const frontendCommunicator = require("../../../common/frontend-communicator");
-const logger = require("../../../logwrapper");
+const logger = require("../../../logger-cache").LoggerCache.getLogger("Integration: Elgato");
 
 const integrationDefinition = {
     id: "elgato",

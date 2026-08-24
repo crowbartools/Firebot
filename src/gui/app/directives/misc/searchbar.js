@@ -7,11 +7,12 @@
         bindings: {
             searchId: "@",
             placeholderText: "@",
-            query: "="
+            query: "=",
+            debounce: "@?"
         },
         template: `
           <div style="position: relative;">
-            <input id="{{$ctrl.searchId}}" type="text" class="form-control" placeholder="{{$ctrl.placeholderText}}" ng-model="$ctrl.query" style="padding-left: 27px;padding-right: 27px;" ng-model-options="{debounce: 250}">
+            <input id="{{$ctrl.searchId}}" type="text" class="form-control" placeholder="{{$ctrl.placeholderText}}" ng-model="$ctrl.query" style="padding-left: 27px;padding-right: 27px;" ng-model-options="$ctrl.debounceValue">
             <span class="searchbar-icon"><i class="far fa-search"></i></span>
             <span
                 ng-show="$ctrl.query && !!$ctrl.query.length"
@@ -27,6 +28,12 @@
                 if ($ctrl.searchId == null || $ctrl.searchId === "") {
                     $ctrl.searchId = randomUUID();
                 }
+
+                if ($ctrl.debounce == null) {
+                    $ctrl.debounce = 250;
+                }
+
+                $ctrl.debounceValue = { debounce: $ctrl.debounce };
             };
         }
     });

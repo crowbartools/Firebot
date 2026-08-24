@@ -1,8 +1,9 @@
-import { EffectType } from "../../../../../types/effects";
+import type { EffectType, BackendCommunicator } from "../../../../../types";
 import { setCurrentScene } from "../obs-remote";
 
 export const ChangeSceneEffectType: EffectType<{
     sceneName: string;
+    custom: boolean;
 }> = {
     definition: {
         id: "ebiggz:obs-change-scene",
@@ -31,40 +32,40 @@ export const ChangeSceneEffectType: EffectType<{
         </div>
     </eos-container>
   `,
-    optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
+    optionsController: ($scope, backendCommunicator: BackendCommunicator) => {
         $scope.isObsConfigured = false;
 
         $scope.scenes = [];
 
-        $scope.customScene = {name: "Set Custom", custom: true};
+        $scope.customScene = { name: "Set Custom", custom: true };
 
-        $scope.selectScene = (scene: {name: string, custom: boolean}) => {
+        $scope.selectScene = (scene: { name: string, custom: boolean }) => {
             $scope.effect.custom = scene.custom;
             if (!scene.custom) {
                 $scope.effect.sceneName = scene.name;
             }
         };
 
-        $scope.getScenes = () => {
-            $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
+        $scope.getScenes = async () => {
+            $scope.isObsConfigured = await backendCommunicator.fireEventAsync("obs-is-configured");
 
-            $q.when(backendCommunicator.fireEventAsync("obs-get-scene-list")).then(
-                (scenes: string[]) => {
-                    $scope.scenes = [];
-                    if (scenes != null) {
-                        scenes.forEach((scene) => {
-                            $scope.scenes.push({name: scene, custom: false});
-                        });
-                    }
-                    $scope.scenes.push($scope.customScene);
-                    if ($scope.effect.custom) {
-                        $scope.selected = $scope.customScene;
-                    } else {
-                        $scope.selected = $scope.scenes.find(scene => scene.name === $scope.effect.sceneName);
-                    }
+            try {
+                const scenes: string[] = await backendCommunicator.fireEventAsync("obs-get-scene-list");
+                $scope.scenes = [];
+                if (scenes != null) {
+                    scenes.forEach((scene) => {
+                        $scope.scenes.push({ name: scene, custom: false });
+                    });
                 }
-            );
+                $scope.scenes.push($scope.customScene);
+                if ($scope.effect.custom) {
+                    $scope.selected = $scope.customScene;
+                } else {
+                    $scope.selected = $scope.scenes.find(scene => scene.name === $scope.effect.sceneName);
+                }
+            } catch { }
         };
+
         $scope.getScenes();
     },
     optionsValidator: (effect) => {

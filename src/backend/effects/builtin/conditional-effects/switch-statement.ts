@@ -1,4 +1,5 @@
-import { EffectType } from "../../../../types/effects";
+import type { EffectType } from "../../../../types";
+
 import { runEffects } from "../../../common/effect-runner";
 
 interface SwitchCase {

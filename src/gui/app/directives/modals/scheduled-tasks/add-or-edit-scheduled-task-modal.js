@@ -157,12 +157,12 @@
                 $ctrl.parsedSchedule = scheduledTaskService.parseSchedule($ctrl.scheduledTask.schedule);
             };
 
-            $ctrl.save = function() {
+            $ctrl.save = async () => {
                 if (!scheduledTaskValid()) {
                     return;
                 }
 
-                const successful = scheduledTaskService.saveScheduledTask($ctrl.scheduledTask);
+                const successful = await scheduledTaskService.saveScheduledTask($ctrl.scheduledTask);
                 if (successful) {
                     $ctrl.close({
                         $value: {

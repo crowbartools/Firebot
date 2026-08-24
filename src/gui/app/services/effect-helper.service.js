@@ -11,19 +11,18 @@
                 return {
                     definition: effectDef.definition,
                     optionsTemplate: effectDef.optionsTemplate,
-                    optionsTemplateUrl: effectDef.optionsTemplateUrl,
                     optionsController: eval(effectDef.optionsControllerRaw), // eslint-disable-line no-eval
                     optionsValidator: eval(effectDef.optionsValidatorRaw), // eslint-disable-line no-eval
                     getDefaultLabel: effectDef.getDefaultLabelRaw ? eval(effectDef.getDefaultLabelRaw) : undefined // eslint-disable-line no-eval
                 };
             };
 
-            service.getEffectDefinition = function(id) {
+            service.getEffectDefinition = async (id) => {
                 if (id == null) {
                     return null;
                 }
 
-                const effectDef = backendCommunicator.fireEventSync("getEffectDefinition", id);
+                const effectDef = await backendCommunicator.fireEventAsync("effects:get-effect-definition", id);
 
                 if (effectDef == null) {
                     return null;

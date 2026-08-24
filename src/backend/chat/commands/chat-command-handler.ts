@@ -1,6 +1,10 @@
-import { CommandDefinition, SystemCommandDefinition, UserCommand } from "../../../types/commands";
-import { FirebotChatMessage } from "../../../types/chat";
-import { Trigger } from "../../../types/triggers";
+import type {
+    CommandDefinition,
+    FirebotChatMessage,
+    SystemCommandDefinition,
+    Trigger,
+    UserCommand
+} from "../../../types";
 
 import { AccountAccess } from "../../common/account-access";
 import { CommandManager } from "./command-manager";
@@ -10,7 +14,7 @@ import { TwitchApi } from "../../streaming-platforms/twitch/api";
 import commandCooldownManager from "./command-cooldown-manager";
 import commandRunner from "./command-runner";
 import frontendCommunicator from "../../common/frontend-communicator";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
 import { escapeRegExp, humanizeTime } from "../../utils";
 
 const DEFAULT_COOLDOWN_MESSAGE = "This command is still on cooldown for: {timeLeft}";
@@ -22,6 +26,8 @@ interface CommandMatch {
 }
 
 class CommandHandler {
+    private logger = LoggerCache.getLogger("Commands");
+
     private _handledMessageIds: string[] = [];
 
     private buildCommandRegexStr(trigger: string, scanWholeMessage: boolean): string {
@@ -116,7 +122,7 @@ class CommandHandler {
         }
 
         if (restrictionData) {
-            logger.debug("Command has restrictions...checking them.");
+            this.logger.debug("Command has restrictions...checking them.");
             const triggerData: Trigger = {
                 type: "command",
                 metadata: {
@@ -129,30 +135,22 @@ class CommandHandler {
                     chatMessage: firebotChatMessage
                 }
             };
-            try {
-                await RestrictionsManager.runRestrictionPredicates(triggerData, restrictionData, restrictionsAreInherited);
-                logger.debug("Restrictions passed!");
-                return true;
-            } catch (restrictionReason) {
-                let reason: string;
-                if (Array.isArray(restrictionReason)) {
-                    reason = restrictionReason.join(", ");
-                } else {
-                    reason = restrictionReason as string;
-                }
 
-                logger.debug(`${commandSender} could not use command '${command.trigger}' because: ${reason}`);
+            const restrictionResult = await RestrictionsManager.runRestrictionPredicates(triggerData, restrictionData, restrictionsAreInherited);
+
+            if (restrictionResult.success !== true) {
+                this.logger.debug(`${commandSender} could not use command '${command.trigger}' because: ${restrictionResult.failureReason}`);
+
                 if (restrictionData.sendFailMessage || restrictionData.sendFailMessage == null) {
-
-                    const restrictionMessage = restrictionData.useCustomFailMessage ?
-                        restrictionData.failMessage :
-                        DEFAULT_RESTRICTION_MESSAGE;
+                    const restrictionMessage = restrictionData.useCustomFailMessage
+                        ? restrictionData.failMessage
+                        : DEFAULT_RESTRICTION_MESSAGE;
 
                     if (sendFailureMessage === true) {
                         await TwitchApi.chat.sendChatMessage(
                             restrictionMessage
                                 .replaceAll("{user}", commandSender)
-                                .replaceAll("{reason}", reason),
+                                .replaceAll("{reason}", restrictionResult.failureReason),
                             restrictionData.sendAsReply === true ? firebotChatMessage.id : null,
                             true
                         );
@@ -161,7 +159,11 @@ class CommandHandler {
 
                 return false;
             }
+
+            this.logger.debug("Restrictions passed!");
+            return true;
         }
+
         return true;
     }
 
@@ -170,7 +172,7 @@ class CommandHandler {
         command?: CommandDefinition | SystemCommandDefinition;
         userCommand?: UserCommand;
     }> {
-        logger.debug("Checking for command in message...");
+        this.logger.debug("Checking for command in message...");
 
         const result = {
             ranCommand: false,
@@ -191,11 +193,11 @@ class CommandHandler {
         // throw the message id into the array. This prevents both the bot and the streamer accounts from replying
         this._handledMessageIds.push(firebotChatMessage.id);
 
-        logger.debug("Combining message segments...");
+        this.logger.debug("Combining message segments...");
         const rawMessage = firebotChatMessage.rawText;
 
         // search for and return command if found
-        logger.debug("Searching for command...");
+        this.logger.debug("Searching for command...");
         const { command, matchedTrigger } = this.checkForCommand(rawMessage);
 
         // command wasn't found
@@ -221,19 +223,19 @@ class CommandHandler {
 
         // check if chat came from the streamer and if we should ignore it.
         if (command.ignoreStreamer && firebotChatMessage.username === streamer.username) {
-            logger.debug("Message came from streamer and this command is set to ignore it");
+            this.logger.debug("Message came from streamer and this command is set to ignore it");
             return result;
         }
 
         // check if chat came from the bot and if we should ignore it.
         if (command.ignoreBot && firebotChatMessage.username === bot.username) {
-            logger.debug("Message came from bot and this command is set to ignore it");
+            this.logger.debug("Message came from bot and this command is set to ignore it");
             return result;
         }
 
         // check if chat came via whisper and if we should ignore it.
         if (command.ignoreWhispers && firebotChatMessage.whisper) {
-            logger.debug("Message came from whisper and this command is set to ignore it");
+            this.logger.debug("Message came from whisper and this command is set to ignore it");
             return result;
         }
 
@@ -248,7 +250,7 @@ class CommandHandler {
 
         // command is disabled
         if (triggeredSubcmd && triggeredSubcmd.active === false) {
-            logger.debug("This Command is disabled");
+            this.logger.debug("This Command is disabled");
             return result;
         }
 
@@ -259,7 +261,7 @@ class CommandHandler {
 
         // Can't auto delete whispers, so we ignore auto delete trigger for those
         if (firebotChatMessage.whisper !== true && command.autoDeleteTrigger || (triggeredSubcmd && triggeredSubcmd.autoDeleteTrigger)) {
-            logger.debug("Auto delete trigger is on, attempting to delete chat message");
+            this.logger.debug("Auto delete trigger is on, attempting to delete chat message");
             await TwitchApi.chat.deleteChatMessage(firebotChatMessage.id);
         }
 
@@ -271,7 +273,7 @@ class CommandHandler {
             return result;
         }
 
-        logger.debug("Checking cooldowns for command...");
+        this.logger.debug("Checking cooldowns for command...");
         // Check if the command is on cooldown
         const remainingCooldown = commandCooldownManager.getRemainingCooldown(
             command,
@@ -280,7 +282,7 @@ class CommandHandler {
         );
 
         if (remainingCooldown > 0) {
-            logger.debug("Command is still on cooldown, alerting viewer...");
+            this.logger.debug("Command is still on cooldown, alerting viewer...");
             if (command.sendCooldownMessage || command.sendCooldownMessage == null) {
 
                 const cooldownMessage = command.useCustomCooldownMessage ? command.cooldownMessage : DEFAULT_COOLDOWN_MESSAGE;
@@ -313,7 +315,7 @@ class CommandHandler {
 
         //update the count for the command
         if (command.type === "custom") {
-            logger.debug("Updating command count.");
+            this.logger.debug("Updating command count.");
             this.updateCommandCount(command);
         }
 

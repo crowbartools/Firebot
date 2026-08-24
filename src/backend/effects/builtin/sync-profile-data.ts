@@ -1,4 +1,5 @@
-import { EffectType } from "../../../types/effects";
+import type { EffectType } from "../../../types";
+
 import * as cloudSync from "../../cloud-sync";
 
 const effect: EffectType<{

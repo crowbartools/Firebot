@@ -1,13 +1,14 @@
 import { app } from "electron";
 import moment from "moment";
 
-import { SystemCommand } from "../../../../types/commands";
-import { Quote } from "../../../../types/quotes";
+import type { Quote, SystemCommand } from "../../../../types";
 import { QuoteManager } from "../../../quotes/quote-manager";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 import * as cloudSync from "../../../cloud-sync";
 import frontendCommunicator from "../../../common/frontend-communicator";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
+
+const logger = LoggerCache.getLogger("Commands");
 
 moment.locale(app.getLocale());
 

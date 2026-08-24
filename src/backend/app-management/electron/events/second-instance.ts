@@ -1,5 +1,7 @@
 import type { BrowserWindow, Event } from "electron";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
+
+const logger = LoggerCache.getLogger("Core");
 
 export async function secondInstance(event: Event, argv: string[]) {
     const { openUrl } = await import("./open-url");
@@ -10,7 +12,7 @@ export async function secondInstance(event: Event, argv: string[]) {
     try {
         logger.debug("Second instance detected, focusing main window.");
 
-        const mainWindow = globalThis.mainWindow as BrowserWindow;
+        const mainWindow = globalThis.renderWindow as BrowserWindow;
         if (mainWindow) {
             if (!mainWindow.isVisible()) {
                 mainWindow.show();

@@ -1,6 +1,6 @@
 "use strict";
 
-const logger = require("../../logwrapper");
+const logger = require("../../logger-cache").LoggerCache.getLogger("API Processor");
 const frontendCommunicator = require("../frontend-communicator");
 
 // Capitalize Name

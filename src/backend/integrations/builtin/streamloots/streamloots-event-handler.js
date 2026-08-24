@@ -1,6 +1,6 @@
 "use strict";
 
-const logger = require("../../../logwrapper");
+const logger = require("../../../logger-cache").LoggerCache.getLogger("Integration: StreamLoots");
 
 const { EventManager } = require("../../../events/event-manager");
 

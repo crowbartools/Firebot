@@ -1,12 +1,15 @@
+import type { Database } from "@tursodatabase/database";
 import Datastore from "@seald-io/nedb";
 import { TypedEmitter } from "tiny-typed-emitter";
 import fsp from "fs/promises";
+import fs from "fs";
 
-import type { Quote, QuoteAutoid } from "../../types/quotes";
+import type { Quote } from "../../types";
 
+import { TursoConnectionRegistry } from "../database/turso-connection-registry";
 import { ProfileManager } from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 
 interface QuoteEventData {
     quote: Partial<Quote>;
@@ -18,8 +21,32 @@ interface DateConfig {
     year: number;
 }
 
+interface LegacyQuoteDoc {
+    _id: number | "__autoid__";
+    seq?: number;
+    text?: string;
+    originator?: string;
+    creator?: string;
+    game?: string;
+    createdAt?: string;
+}
+
+interface QuoteRow {
+    id: number;
+    text: string;
+    originator: string;
+    creator: string;
+    game: string;
+    created_at: string | null;
+}
+
+const QUOTES_TABLE = "quotes";
+const META_TABLE = "quote_meta";
+const AUTOID_KEY = "autoid";
+
 class QuoteManager {
-    private db: Datastore<Quote | QuoteAutoid>;
+    private logger = LoggerCache.getLogger("Quotes");
+    private db: Database;
 
     events = new TypedEmitter<{
         "created-item": (data: QuoteEventData) => void;
@@ -58,22 +85,127 @@ class QuoteManager {
         return input.replace(/[$^|.*+?(){}\\[\]]/g, '\\$&');
     }
 
+    private buildSearchPattern(term: string, wholeWord = false): string {
+        const escaped = this.regExpEscape(term);
+        return wholeWord ? `(?i)\\b${escaped}\\b` : `(?i)${escaped}`;
+    }
+
+    private rowToQuote(row: QuoteRow): Quote {
+        return {
+            _id: row.id,
+            text: row.text,
+            originator: row.originator,
+            creator: row.creator,
+            game: row.game,
+            createdAt: row.created_at ?? undefined
+        };
+    }
+
     async loadQuoteDatabase(): Promise<void> {
-        const path = ProfileManager.getPathInProfile("db/quotes.db");
-        this.db = new Datastore({ filename: path });
         try {
-            await this.db.loadDatabaseAsync();
+            this.db = await TursoConnectionRegistry.getConnection("quotes");
+            await this.createSchema();
+            await this.migrateFromNeDb();
         } catch (error) {
             const err = error as Error;
-            logger.error("Error Loading Database: ", err.message);
-            logger.debug("Failed Database Path: ", path);
+            this.logger.error("Error Loading Database: ", err.message);
         }
+    }
+
+    private async createSchema(): Promise<void> {
+        await this.db.exec(`
+            CREATE TABLE IF NOT EXISTS ${QUOTES_TABLE} (
+                id INTEGER PRIMARY KEY,
+                text TEXT,
+                originator TEXT,
+                creator TEXT,
+                game TEXT,
+                created_at TEXT
+            )
+        `);
+        await this.db.exec(`
+            CREATE TABLE IF NOT EXISTS ${META_TABLE} (
+                key TEXT PRIMARY KEY,
+                seq INTEGER
+            )
+        `);
+    }
+
+    private async migrateFromNeDb(): Promise<void> {
+        // Don't migrate if the table already has data
+        if ((await this.getQuoteCount()) > 0) {
+            return;
+        }
+
+        const nedbPath = ProfileManager.getPathInProfile("db/quotes.db");
+        if (!fs.existsSync(nedbPath)) {
+            return;
+        }
+
+        this.logger.info("Migrating legacy NeDB quotes database to Turso...");
+
+        try {
+            const legacy = new Datastore({ filename: nedbPath });
+            await legacy.loadDatabaseAsync();
+
+            const docs = await legacy.findAsync({}) as LegacyQuoteDoc[];
+
+            const autoIdDoc = docs.find(d => d._id === "__autoid__");
+            const quotes = docs.filter(d => d._id !== "__autoid__") as Quote[];
+
+            const insertAll = this.db.transaction(async () => {
+                for (const quote of quotes) {
+                    await this.insertQuoteRow(quote);
+                }
+
+                // Preserve the autoincrement counter so newly added quotes don't
+                // reuse ids. Fall back to the highest existing id if there was no
+                // autoid doc for some reason
+                const highestId = quotes.reduce((max, q) => Math.max(max, q._id ?? 0), 0);
+                const seq = autoIdDoc?.seq ?? highestId;
+                await this.setQuoteIdIncrementer(seq);
+            });
+            await insertAll();
+
+            // Keep the original file around just in case
+            await fsp.rename(nedbPath, `${nedbPath}.migrated`);
+
+            this.logger.info(`Migrated ${quotes.length} quotes from NeDB to Turso.`);
+        } catch (error) {
+            const err = error as Error;
+            this.logger.error("Error migrating quotes from NeDB to Turso: ", err.message);
+        }
+    }
+
+    private async insertQuoteRow(quote: Quote): Promise<void> {
+        await this.db.run(
+            `INSERT OR REPLACE INTO ${QUOTES_TABLE} (id, text, originator, creator, game, created_at)
+             VALUES (?, ?, ?, ?, ?, ?)`,
+            [
+                quote._id,
+                quote.text ?? null,
+                quote.originator ?? null,
+                quote.creator ?? null,
+                quote.game ?? null,
+                quote.createdAt ?? null
+            ]
+        );
+    }
+
+    private async getQuoteCount(): Promise<number> {
+        const row = await this.db.get(
+            `SELECT COUNT(*) AS count FROM ${QUOTES_TABLE}`
+        ) as { count: number } | undefined;
+        return row?.count ?? 0;
     }
 
     async getCurrentQuoteId(): Promise<number> {
         try {
-            const id: QuoteAutoid = await this.db.findOneAsync({ _id: "__autoid__" });
-            return id.seq;
+            const row = await this.db.get(
+                `SELECT seq FROM ${META_TABLE} WHERE key = ?`,
+                [AUTOID_KEY]
+            ) as { seq: number } | undefined;
+            return row != null ? Number(row.seq) : null;
         } catch {
             return null;
         }
@@ -81,13 +213,17 @@ class QuoteManager {
 
     async getNextQuoteId(): Promise<number> {
         try {
-            const result = await this.db.updateAsync(
-                { _id: '__autoid__' },
-                { $inc: { seq: 1 } },
-                { upsert: true, returnUpdatedDocs: true }
+            // Ensure the counter row exists, then atomically increment it.
+            await this.db.run(
+                `INSERT INTO ${META_TABLE} (key, seq) VALUES (?, 0)
+                 ON CONFLICT(key) DO NOTHING`,
+                [AUTOID_KEY]
             );
-
-            return (result.affectedDocuments as QuoteAutoid).seq;
+            const row = await this.db.get(
+                `UPDATE ${META_TABLE} SET seq = seq + 1 WHERE key = ? RETURNING seq`,
+                [AUTOID_KEY]
+            ) as { seq: number } | undefined;
+            return row != null ? Number(row.seq) : null;
         } catch {
             return null;
         }
@@ -95,13 +231,12 @@ class QuoteManager {
 
     async setQuoteIdIncrementer(number: number): Promise<number> {
         try {
-            const result = await this.db.updateAsync(
-                { _id: '__autoid__' },
-                { seq: number },
-                { upsert: true, returnUpdatedDocs: true }
+            await this.db.run(
+                `INSERT INTO ${META_TABLE} (key, seq) VALUES (?, ?)
+                 ON CONFLICT(key) DO UPDATE SET seq = excluded.seq`,
+                [AUTOID_KEY, number]
             );
-
-            return (result.affectedDocuments as QuoteAutoid).seq;
+            return number;
         } catch {
             return null;
         }
@@ -113,7 +248,7 @@ class QuoteManager {
             if (!quote._id || isNaN(quote._id)) {
                 const newQuoteId = await this.getNextQuoteId();
                 if (newQuoteId == null) {
-                    logger.error("Unable to add quote as we could not generate a new ID");
+                    this.logger.error("Unable to add quote as we could not generate a new ID");
                     return null;
                 }
 
@@ -129,53 +264,59 @@ class QuoteManager {
                 }
             }
 
-            const newQuote = await this.db.insertAsync(quote);
+            await this.insertQuoteRow(quote);
 
-            this.events.emit("created-item", { quote: newQuote });
+            this.events.emit("created-item", { quote });
             frontendCommunicator.send("quotes-update");
-            return newQuote._id as number;
+            return quote._id;
         } catch (error) {
             const err = error as Error;
-            logger.error("QuoteDB: Error adding quote: ", err.message);
+            this.logger.error("Error adding quote: ", err.message);
             return null;
         }
     }
 
     async addQuotes(quotes: Quote[]): Promise<void> {
         try {
-            quotes.forEach(async (q) => {
+            for (const quote of quotes) {
                 const newQuoteId = await this.getNextQuoteId();
 
                 if (newQuoteId == null) {
-                    logger.error("Unable to add quote as we could not generate a new ID");
-                    return;
+                    this.logger.error("Unable to add quote as we could not generate a new ID");
+                    continue;
                 }
 
-                q._id = newQuoteId;
-            });
+                quote._id = newQuoteId;
+                await this.insertQuoteRow(quote);
 
-            const newQuotes = await this.db.insertAsync(quotes);
-
-            for (const quote of newQuotes) {
                 this.events.emit("created-item", { quote });
             }
 
             frontendCommunicator.send("quotes-update");
         } catch (error) {
             const err = error as Error;
-            logger.error("QuoteDB: Error adding quotes: ", err.message);
+            this.logger.error("Error adding quotes: ", err.message);
             throw error;
         }
     }
 
     async updateQuote(quote: Quote, dontSendUiUpdateEvent = false): Promise<Quote> {
         try {
-            const { affectedDocuments } = await this.db.updateAsync(
-                { _id: quote._id },
-                quote,
-                { returnUpdatedDocs: true }
+            await this.db.run(
+                `UPDATE ${QUOTES_TABLE}
+                 SET text = ?, originator = ?, creator = ?, game = ?, created_at = ?
+                 WHERE id = ?`,
+                [
+                    quote.text ?? null,
+                    quote.originator ?? null,
+                    quote.creator ?? null,
+                    quote.game ?? null,
+                    quote.createdAt ?? null,
+                    quote._id
+                ]
             );
-            const updatedQuote = affectedDocuments as Quote;
+
+            const updatedQuote = await this.getQuote(quote._id);
 
             this.events.emit("updated-item", { quote: updatedQuote });
 
@@ -186,14 +327,14 @@ class QuoteManager {
             return updatedQuote;
         } catch (error) {
             const err = error as Error;
-            logger.error("QuoteDB: Error updating quote: ", err.message);
+            this.logger.error("Error updating quote: ", err.message);
             return null;
         }
     }
 
     async removeQuote(quoteId: number, dontSendUiUpdateEvent = false): Promise<void> {
         try {
-            await this.db.removeAsync({ _id: quoteId }, {});
+            await this.db.run(`DELETE FROM ${QUOTES_TABLE} WHERE id = ?`, [quoteId]);
 
             this.events.emit("deleted-item", { quote: { _id: quoteId } });
 
@@ -202,41 +343,50 @@ class QuoteManager {
             }
         } catch (error) {
             const err = error as Error;
-            logger.warn("Error while removing quote", err);
+            this.logger.warn("Error while removing quote", err);
         }
     }
 
     async getQuote(quoteId: number): Promise<Quote> {
         try {
-            return await this.db.findOneAsync({ _id: quoteId }) as Quote;
+            const row = await this.db.get(
+                `SELECT * FROM ${QUOTES_TABLE} WHERE id = ?`,
+                [quoteId]
+            ) as QuoteRow | undefined;
+            return row != null ? this.rowToQuote(row) : null;
         } catch {
             return null;
         }
     }
 
+    private async getRandomQuoteWhere(whereClause: string, params: Array<string | number>): Promise<Quote> {
+        const row = await this.db.get(
+            `SELECT * FROM ${QUOTES_TABLE} WHERE ${whereClause} ORDER BY random() LIMIT 1`,
+            params
+        ) as QuoteRow | undefined;
+        return row != null ? this.rowToQuote(row) : undefined;
+    }
+
     async getRandomQuoteByDate(dateConfig: DateConfig): Promise<Quote> {
         try {
-            let regex = "^";
+            // created_at is stored as an ISO8601 string, which strftime parses
+            // natively to pull out the date parts.
+            const conditions = [
+                "CAST(strftime('%m', created_at) AS INTEGER) = ?",
+                "CAST(strftime('%d', created_at) AS INTEGER) = ?"
+            ];
+            const params: number[] = [dateConfig.month, dateConfig.day];
+
             if (dateConfig.year) {
-                regex += dateConfig.year.toString().length === 2 ?
-                    `20${dateConfig.year}-` :
-                    `${dateConfig.year}-`;
-            } else {
-                regex += '\\d{4}-';
+                // a 2-digit year is interpreted as 20YY
+                const fullYear = dateConfig.year.toString().length === 2
+                    ? 2000 + dateConfig.year
+                    : dateConfig.year;
+                conditions.push("CAST(strftime('%Y', created_at) AS INTEGER) = ?");
+                params.push(fullYear);
             }
 
-            regex += dateConfig.month < 10 ? `${dateConfig.month.toString().padStart(2, "0")}-` : `${dateConfig.month}-`;
-            regex += dateConfig.day < 10 ? `${dateConfig.day.toString().padStart(2, "0")}` : `${dateConfig.day}`;
-            regex += "T";
-
-            const datePattern = new RegExp(regex);
-            const quotes = await this.db.findAsync({ createdAt: { $regex: datePattern } });
-
-            if (!quotes.length) {
-                return;
-            }
-
-            return quotes[Math.floor(Math.random() * quotes.length)] as Quote;
+            return await this.getRandomQuoteWhere(conditions.join(" AND "), params);
         } catch {
             return null;
         }
@@ -244,19 +394,7 @@ class QuoteManager {
 
     async getRandomQuoteByAuthor(author: string): Promise<Quote> {
         try {
-            const quotes = await this.db.findAsync(
-                {
-                    originator: {
-                        $regex: new RegExp(`^${this.regExpEscape(author)}$`, 'i')
-                    }
-                }
-            );
-
-            if (!quotes.length) {
-                return;
-            }
-
-            return quotes[Math.floor(Math.random() * quotes.length)] as Quote;
+            return await this.getRandomQuoteWhere("lower(originator) = lower(?)", [author]);
         } catch {
             return null;
         }
@@ -264,14 +402,7 @@ class QuoteManager {
 
     async getRandomQuoteByGame(gameSearch: string) {
         try {
-            const gamePattern = new RegExp(`${this.regExpEscape(gameSearch)}`, 'i');
-            const quotes = await this.db.findAsync({ originator: { $regex: gamePattern } });
-
-            if (!quotes.length) {
-                return;
-            }
-
-            return quotes[Math.floor(Math.random() * quotes.length)] as Quote;
+            return await this.getRandomQuoteWhere("game REGEXP ?", [this.buildSearchPattern(gameSearch)]);
         } catch {
             return null;
         }
@@ -279,14 +410,7 @@ class QuoteManager {
 
     async getRandomQuoteContainingText(text: string): Promise<Quote> {
         try {
-            const textPattern = new RegExp(`\\b${this.regExpEscape(text)}\\b`, 'i');
-            const quotes = await this.db.findAsync({ text: { $regex: textPattern } });
-
-            if (!quotes.length) {
-                return;
-            }
-
-            return quotes[Math.floor(Math.random() * quotes.length)] as Quote;
+            return await this.getRandomQuoteWhere(`"text" REGEXP ?`, [this.buildSearchPattern(text, true)]);
         } catch {
             return null;
         }
@@ -294,22 +418,10 @@ class QuoteManager {
 
     async getRandomQuote(): Promise<Quote> {
         try {
-            const count = (await this.db.countAsync({})) - 1;
-
-            if (count > 0) {
-                const skipCount = Math.floor(Math.random() * count);
-                const quotes = await this.db.findAsync(
-                    {
-                        $where: function () {
-                            return (this as Quote | QuoteAutoid)._id !== "__autoid__";
-                        }
-                    })
-                    .skip(skipCount)
-                    .limit(1)
-                    .execAsync();
-
-                return quotes[0] as Quote;
-            }
+            const row = await this.db.get(
+                `SELECT * FROM ${QUOTES_TABLE} ORDER BY random() LIMIT 1`
+            ) as QuoteRow | undefined;
+            return row != null ? this.rowToQuote(row) : undefined;
         } catch {
             return null;
         }
@@ -317,36 +429,12 @@ class QuoteManager {
 
     async getAllQuotes(): Promise<Quote[]> {
         try {
-            const quotes = await this.db.findAsync({
-                $where: function () {
-                    return (this as Quote | QuoteAutoid)._id !== "__autoid__";
-                }
-            });
-
-            return quotes as Quote[];
+            const rows = await this.db.all(
+                `SELECT * FROM ${QUOTES_TABLE} ORDER BY id`
+            ) as QuoteRow[];
+            return rows.map(row => this.rowToQuote(row));
         } catch {
             return null;
-        }
-    }
-
-    private async updateQuoteId(quote: Quote, newId: number): Promise<boolean> {
-        try {
-            if (quote._id === newId) {
-                return true;
-            }
-
-            await this.removeQuote(quote._id, true);
-
-            quote._id = newId;
-            await this.db.insertAsync(quote);
-
-            this.events.emit("created-item", { quote });
-
-            return true;
-        } catch (error) {
-            const err = error as Error;
-            logger.error("QuoteDB: Error adding quote: ", err.message);
-            return false;
         }
     }
 
@@ -360,15 +448,26 @@ class QuoteManager {
             return;
         }
 
-        let idCounter = 1;
-        for (const quote of quotes) {
-            await this.updateQuoteId(quote, idCounter);
-            idCounter++;
+        try {
+            const renumber = this.db.transaction(async () => {
+                await this.db.run(`DELETE FROM ${QUOTES_TABLE}`);
+
+                let idCounter = 1;
+                for (const quote of quotes) {
+                    quote._id = idCounter;
+                    await this.insertQuoteRow(quote);
+                    this.events.emit("updated-item", { quote });
+                    idCounter++;
+                }
+
+                await this.setQuoteIdIncrementer(idCounter - 1);
+            });
+            await renumber();
+        } catch (error) {
+            const err = error as Error;
+            this.logger.error("Error recalculating quote ids: ", err.message);
+            return;
         }
-
-        await this.setQuoteIdIncrementer(idCounter - 1);
-
-        await this.db.compactDatafileAsync();
 
         frontendCommunicator.send("quotes-update");
     }
@@ -376,11 +475,7 @@ class QuoteManager {
     async exportQuotesToFile(filepath: string): Promise<boolean> {
         try {
             const fileLines: string[] = [];
-            const quotes = await this.db.findAsync({
-                $where: function () {
-                    return (this as Quote | QuoteAutoid)._id !== "__autoid__";
-                }
-            }) as Quote[];
+            const quotes = await this.getAllQuotes();
 
             const headers = [
                 "ID",
@@ -400,7 +495,7 @@ class QuoteManager {
             await fsp.writeFile(filepath, fileLines.join("\n"), { encoding: "utf8" });
             return true;
         } catch (error) {
-            logger.error("Error exporting quotes to file", error);
+            this.logger.error("Error exporting quotes to file", error);
         }
 
         return false;

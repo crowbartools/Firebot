@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
-
-import type { RestrictionType } from "../../../types/restrictions";
+import type { RestrictionType } from "../../../types";
 import viewerDatabase from '../../viewers/viewer-database';
 
 const model: RestrictionType<{
@@ -25,25 +23,21 @@ const model: RestrictionType<{
 
         return `${time}+ min(s)`;
     },
-    /*
-      function that resolves/rejects a promise based on if the restriction criteria is met
-    */
-    predicate: (triggerData, restrictionData) => {
-        return new Promise(async (resolve, reject) => {
-            let passed = false;
-            const viewer = await viewerDatabase.getViewerByUsername(triggerData.metadata.username);
-            const viewtime = viewer.minutesInChannel;
+    predicate: async ({ metadata }, { time }) => {
+        let passed = false;
+        const viewer = await viewerDatabase.getViewerByUsername(metadata.username);
+        const viewtime = viewer.minutesInChannel;
 
-            if (viewtime >= restrictionData.time) {
-                passed = true;
-            }
+        if (viewtime >= time) {
+            passed = true;
+        }
 
-            if (passed) {
-                resolve(true);
-            } else {
-                reject("You have not spent enough time in the channel to use this");
-            }
-        });
+        return {
+            success: passed,
+            failureReason: passed !== true
+                ? "You have not spent enough time in the channel to use this"
+                : undefined
+        };
     }
 };
 

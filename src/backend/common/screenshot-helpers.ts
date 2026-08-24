@@ -3,15 +3,17 @@ import fs from "fs/promises";
 import path from "path";
 import moment from "moment";
 
-import type { CustomEmbed, EmbedType } from "../../types/discord";
+import type { DiscordCustomEmbed, DiscordEmbedType } from "../../types";
 
+import { HttpServerManager } from "../../server/http-server-manager";
 import { SettingsManager } from "../common/settings-manager";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 import discord from "../integrations/builtin/discord/discord-message-sender";
 import discordEmbedBuilder from "../integrations/builtin/discord/discord-embed-builder";
 import mediaProcessor from "../common/handlers/mediaProcessor";
-import webServer from "../../server/http-server-manager";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
+
+const logger = LoggerCache.getLogger("Core");
 
 export async function saveScreenshotToFolder(base64ImageData: string, folderPath: string, fileName?: string) {
     try {
@@ -47,7 +49,7 @@ export async function sendScreenshotToDiscord(base64ImageData: string, message: 
     await discord.sendDiscordMessage(discordChannelId, message, screenshotEmbed, files);
 }
 
-export async function sendEmbedToDiscord(base64ImageData: string, embedType: EmbedType, message: string, embed: CustomEmbed, discordChannelId: string, color: string) {
+export async function sendEmbedToDiscord(base64ImageData: string, embedType: DiscordEmbedType, message: string, embed: DiscordCustomEmbed, discordChannelId: string, color: string) {
     const filename = "screenshot.png";
     const files = [
         {
@@ -96,7 +98,7 @@ export function sendScreenshotToOverlay(screenshotDataUrl: string, effect: Scree
         }
     }
 
-    webServer.sendToOverlay("showScreenshot", {
+    HttpServerManager.sendToOverlay("showScreenshot", {
         screenshotDataUrl: screenshotDataUrl,
         width: effect.width,
         height: effect.height,

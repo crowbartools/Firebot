@@ -1,15 +1,17 @@
-import type { SystemCommand } from "../../types/commands";
-import type { Currency } from "../../types/currency";
+import type { Currency, SystemCommand } from "../../types";
+
 import { CommandManager } from "../chat/commands/command-manager";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 import currencyAccess from "./currency-access";
 import currencyManager from "./currency-manager";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 import { commafy } from "../utils";
 
 type CurrencyCommandRefreshRequestAction = "create" | "update" | "delete";
 
 class CurrencyCommandManager {
+    private logger = LoggerCache.getLogger("Currency");
+
     constructor() {
         currencyAccess.on("currencies:currency-created", (currency: Currency) => {
             this.refreshCurrencyCommands("create", currency);
@@ -266,7 +268,7 @@ class CurrencyCommandManager {
                             await TwitchApi.chat.sendChatMessage(balanceMessage, null, true);
                         }
                     } else {
-                        logger.error('Error while trying to show currency amount to user via chat command.');
+                        this.logger.error('Error while trying to show currency amount to user via chat command.');
                     }
 
                     return;
@@ -290,7 +292,7 @@ class CurrencyCommandManager {
                             await TwitchApi.chat.sendChatMessage(addMessageTemplate, null, true);
                         } else {
                             // Error removing currency.
-                            logger.error(`Error adding currency for user (${username}) via chat command. Currency: ${currencyId}. Value: ${currencyAdjust}`);
+                            this.logger.error(`Error adding currency for user (${username}) via chat command. Currency: ${currencyId}. Value: ${currencyAdjust}`);
                             await TwitchApi.chat.sendChatMessage(`Error: Could not add currency to user.`, null, true);
                         }
 
@@ -311,7 +313,7 @@ class CurrencyCommandManager {
                             await TwitchApi.chat.sendChatMessage(removeMessageTemplate, null, true);
                         } else {
                             // Error removing currency.
-                            logger.error(`Error removing currency for user (${username}) via chat command. Currency: ${currencyId}. Value: ${currencyAdjust}`);
+                            this.logger.error(`Error removing currency for user (${username}) via chat command. Currency: ${currencyId}. Value: ${currencyAdjust}`);
                             await TwitchApi.chat.sendChatMessage(`Error: Could not remove currency from user.`, null, true);
                         }
 
@@ -333,7 +335,7 @@ class CurrencyCommandManager {
                             await TwitchApi.chat.sendChatMessage(setMessageTemplate, null, true);
                         } else {
                             // Error removing currency.
-                            logger.error(`Error setting currency for user (${username}) via chat command. Currency: ${currencyId}. Value: ${currencyAdjust}`);
+                            this.logger.error(`Error setting currency for user (${username}) via chat command. Currency: ${currencyId}. Value: ${currencyAdjust}`);
                             await TwitchApi.chat.sendChatMessage(`Error: Could not set currency for user.`, null, true);
                         }
 
@@ -348,14 +350,14 @@ class CurrencyCommandManager {
                         // Does this currency have transfer active?
                         const currencyCheck = currencyAccess.getCurrencies();
                         if (currencyCheck[currencyId].transfer === "Disallow") {
-                            logger.debug(`${event.userCommand.commandSender} tried to give currency, but transfers are turned off for it. ${currencyId}`);
+                            this.logger.debug(`${event.userCommand.commandSender} tried to give currency, but transfers are turned off for it. ${currencyId}`);
                             await TwitchApi.chat.sendChatMessage('Transfers are not allowed for this currency.', null, true);
                             return false;
                         }
 
                         // Don't allow person to give themselves currency.
                         if (event.userCommand.commandSender.toLowerCase() === username.toLowerCase()) {
-                            logger.debug(`${username} tried to give themselves currency.`);
+                            this.logger.debug(`${username} tried to give themselves currency.`);
                             await TwitchApi.chat.sendChatMessage(
                                 `${event.userCommand.commandSender}, you can't give yourself currency.`,
                                 null,
@@ -391,7 +393,7 @@ class CurrencyCommandManager {
                                 await TwitchApi.chat.sendChatMessage(`Gave ${commafy(currencyAdjust)} ${currencyName} to ${username}.`, null, true);
                             } else {
                                 // Error removing currency.
-                                logger.error(`Error removing currency during give transaction for user (${username}) via chat command. Currency: ${currencyId}. Value: ${currencyAdjust}`);
+                                this.logger.error(`Error removing currency during give transaction for user (${username}) via chat command. Currency: ${currencyId}. Value: ${currencyAdjust}`);
                                 await TwitchApi.chat.sendChatMessage(
                                     `Error: Could not remove currency to user during give transaction.`,
                                     null,
@@ -401,7 +403,7 @@ class CurrencyCommandManager {
                             }
                         } else {
                             // Error removing currency.
-                            logger.error(`Error adding currency during give transaction for user (${username}) via chat command. Currency: ${currencyId}. Value: ${currencyAdjust}`);
+                            this.logger.error(`Error adding currency during give transaction for user (${username}) via chat command. Currency: ${currencyId}. Value: ${currencyAdjust}`);
                             await TwitchApi.chat.sendChatMessage(`Error: Could not add currency to user. Was there a typo in the username?`, null, true);
                             return false;
                         }
@@ -455,7 +457,7 @@ class CurrencyCommandManager {
                                     await TwitchApi.chat.sendChatMessage(balanceMessage, null, true);
                                 }
                             } else {
-                                logger.error('Error while trying to show currency amount to user via chat command.');
+                                this.logger.error('Error while trying to show currency amount to user via chat command.');
                             }
                         } else {
                             const amount = await currencyManager.getViewerCurrencyAmount(event.userCommand.commandSender, currencyId);
@@ -472,7 +474,7 @@ class CurrencyCommandManager {
                                     await TwitchApi.chat.sendChatMessage(balanceMessage, null, true);
                                 }
                             } else {
-                                logger.error('Error while trying to show currency amount to user via chat command.');
+                                this.logger.error('Error while trying to show currency amount to user via chat command.');
                             }
                         }
                     }
@@ -492,12 +494,12 @@ class CurrencyCommandManager {
     ): void {
     // If we don't get currency stop here.
         if (currency == null) {
-            logger.error('Invalid currency passed to refresh currency commands.');
+            this.logger.error('Invalid currency passed to refresh currency commands.');
             return;
         }
 
         // Log our action for logger.
-        logger.debug(`Currency "${currency.name}" action "${action}" triggered. Updating currency system commands.`);
+        this.logger.debug(`Currency "${currency.name}" action "${action}" triggered. Updating currency system commands.`);
 
         // Decide what we want to do based on the action that was passed to us.
         switch (action) {
@@ -518,7 +520,7 @@ class CurrencyCommandManager {
                 );
                 break;
             default:
-                logger.error('Invalid action passed to refresh currency commands.');
+                this.logger.error('Invalid action passed to refresh currency commands.');
                 return;
         }
     }
@@ -528,7 +530,7 @@ class CurrencyCommandManager {
      * This lets us create all of our currency commands when the application is started.
      */
     createAllCurrencyCommands(): void {
-        logger.info('Creating all currency commands.');
+        this.logger.info('Creating all currency commands.');
         const currencyData = currencyAccess.getCurrencies();
 
         Object.values(currencyData).forEach((currency) => {

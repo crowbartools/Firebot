@@ -7,7 +7,7 @@ import { EventManager } from "../events/event-manager";
 import { ProfileManager } from "../common/profile-manager";
 import { SettingsManager } from "./settings-manager";
 import frontendCommunicator from './frontend-communicator';
-import logger from '../logwrapper';
+import { LoggerCache } from "../logger-cache";
 import { simpleClone } from '../utils';
 
 interface CustomVariableInspectorItem {
@@ -27,6 +27,8 @@ class CustomVariableManager extends TypedEmitter<{
     "updated-item": (item: { name: string, value: unknown }) => void;
     "deleted-item": (item: { name: string, value: unknown }) => void;
 }> {
+    private logger = LoggerCache.getLogger("Variables");
+
     private _cache: NodeCache;
 
     constructor() {
@@ -118,7 +120,7 @@ class CustomVariableManager extends TypedEmitter<{
         const db = this.getVariableCacheDb();
         const persistAllVars = SettingsManager.getSetting("PersistCustomVariables");
         if (persistAllVars) {
-            logger.debug("Persisting all custom variables to file");
+            this.logger.debug("Persisting all custom variables to file");
             db.push("/", this._cache.data);
         } else {
             const dataToPersist = Object.entries(this._cache.data as FirebotCacheData).reduce((acc, [key, { t, v, meta }]) => {
@@ -127,7 +129,7 @@ class CustomVariableManager extends TypedEmitter<{
                 }
                 return acc;
             }, {} as FirebotCacheData);
-            logger.debug("Persisting specified custom variables to file");
+            this.logger.debug("Persisting specified custom variables to file");
             db.push("/", dataToPersist);
         }
     }
@@ -239,7 +241,7 @@ class CustomVariableManager extends TypedEmitter<{
                     value: currentData
                 });
             } catch (error) {
-                logger.debug(`Error setting data to custom variable ${name} using property path ${propertyPath}`, error);
+                this.logger.debug(`Error setting data to custom variable ${name} using property path ${propertyPath}`, error);
             }
         }
     }
@@ -276,7 +278,7 @@ class CustomVariableManager extends TypedEmitter<{
             }
             return data != null ? data : defaultData;
         } catch (error) {
-            logger.debug(`Error getting data from custom variable ${name} using property path ${propertyPath}`, error);
+            this.logger.debug(`Error getting data from custom variable ${name} using property path ${propertyPath}`, error);
             return defaultData;
         }
     }
@@ -285,15 +287,15 @@ class CustomVariableManager extends TypedEmitter<{
         const data = this._cache.get(name);
 
         if (data == null) {
-            logger.debug(`Cannot delete custom variable ${name}: Variable does not exist.`);
+            this.logger.debug(`Cannot delete custom variable ${name}: Variable does not exist.`);
         }
 
         try {
             this._cache.del(name);
 
-            logger.debug(`Custom variable ${name} deleted`);
+            this.logger.debug(`Custom variable ${name} deleted`);
         } catch (error) {
-            logger.debug(`Error deleting custom variable ${name}: ${error}`);
+            this.logger.debug(`Error deleting custom variable ${name}: ${error}`);
         }
     }
 }

@@ -1,5 +1,7 @@
 import type { ReplaceVariable, Trigger } from "../../../../types/variables";
-import logger from '../../../logwrapper';
+import { LoggerCache } from "../../../logger-cache";
+
+const logger = LoggerCache.getLogger("Variables");
 
 const model : ReplaceVariable = {
     definition: {

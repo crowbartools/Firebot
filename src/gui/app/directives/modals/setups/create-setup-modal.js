@@ -1,6 +1,6 @@
 "use strict";
 
-/** @import { FirebotSetup } from "../../../../../types/setups" */
+/** @import { FirebotSetup } from "../../../../../types" */
 
 (function() {
     const sanitizeFileName = require("sanitize-filename");

@@ -1,9 +1,9 @@
-import { EffectType } from "../../../../../types/effects";
+import type { EffectType } from "../../../../../types";
 import { sendRawObsRequest } from "../obs-remote";
 
 export const SendRawOBSWebSocketRequestEffectType: EffectType<{
-    functionName: string,
-    payload: string
+    functionName: string;
+    payload: string;
 }> = {
     definition: {
         id: "firebot:send-raw-obs-websocket-request",
@@ -42,7 +42,7 @@ export const SendRawOBSWebSocketRequestEffectType: EffectType<{
   `,
     optionsController: ($scope) => {
         $scope.editorSettings = {
-            mode: {name: "javascript", json: true},
+            mode: { name: "javascript", json: true },
             theme: 'blackboard',
             lineNumbers: true,
             autoRefresh: true,

@@ -31,13 +31,17 @@
                     </ui-select>
                 </div>
             `,
-            controller: function() {
+            controller: function($scope) {
 
                 const $ctrl = this;
 
                 const defaultSettings = {
                     options: []
                 };
+
+                $scope.$watch("$ctrl.model", (newModel) => {
+                    $ctrl.onUpdate?.(newModel);
+                });
 
                 $ctrl.$onInit = () => {
                     if ($ctrl.settings == null) {

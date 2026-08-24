@@ -23,10 +23,6 @@
                 }
             }
 
-            service.loadPowerUps = () => {
-                service.powerUps = backendCommunicator.fireEventSync("power-ups:get-all");
-            };
-
             service.savePowerUp = (powerUp) => {
                 return $q.when(backendCommunicator.fireEventAsync("power-ups:save", powerUp))
                     .then((savedPowerUp) => {
@@ -40,7 +36,7 @@
 
             service.saveAllPowerUps = (powerUps) => {
                 service.powerUps = powerUps;
-                backendCommunicator.fireEvent("power-ups:save-all", powerUps);
+                backendCommunicator.send("power-ups:save-all", powerUps);
             };
 
             service.showEditPowerUpModal = (powerUp) => {
@@ -56,7 +52,7 @@
             };
 
             service.manuallyTriggerPowerUp = (itemId) => {
-                backendCommunicator.fireEvent("power-ups:manually-trigger", itemId);
+                backendCommunicator.send("power-ups:manually-trigger", itemId);
             };
 
             let currentlySyncing = false;
@@ -83,6 +79,8 @@
             backendCommunicator.on("power-ups:updated", (powerUp) => {
                 updatePowerUp(powerUp);
             });
+
+            backendCommunicator.send("power-ups:ui-service-ready");
 
             return service;
         });

@@ -1,5 +1,4 @@
-import type { EffectType } from "../../../types/effects";
-import type { FirebotAudioDevice } from "../../../types/settings";
+import type { EffectType, FirebotAudioDevice } from "../../../types";
 
 import { type SoundType, playSound } from "../../common/handlers/sound-handler";
 

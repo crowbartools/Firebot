@@ -2,8 +2,7 @@
 
 const currencyAccess = require("../../currency/currency-access").default;
 const currencyManager = require("../../currency/currency-manager");
-const logger = require("../../logwrapper");
-const { EffectCategory } = require('../../../shared/effect-constants');
+const logger = require("../../logger-cache").LoggerCache.getLogger("Effects");
 const { ReplaceVariableManager } = require("../../variables/replace-variable-manager");
 const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 

@@ -13,7 +13,7 @@ import { EventManager } from "../../../events/event-manager";
 import { FilterManager } from "../../../events/filters/filter-manager";
 import { ReplaceVariableManager } from "../../../variables/replace-variable-manager";
 import frontendCommunicator from "../../../common/frontend-communicator";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
 
 import { initRemote } from "./obs-remote";
 import { setupFrontendListeners } from "./communicator";
@@ -44,6 +44,7 @@ import GroupNameEventFilter from "./filters/group-name-filter";
 import SceneNameEventFilter from "./filters/scene-name-filter";
 
 import { SceneNameVariable } from "./variables/scene-name-variable";
+import { PreviousSceneNameVariable } from "./variables/previous-scene-name";
 import { SceneCollectionNameVariable } from "./variables/scene-collection-name";
 import { IsConnectedVariable } from "./variables/is-connected";
 import { IsStreamingVariable } from "./variables/is-streaming";
@@ -76,6 +77,8 @@ import { InputAudioMonitorTypeVariable } from "./variables/input-audio-monitor-t
 import { GroupItemIdVariable } from "./variables/group-item-id";
 import { GroupNameVariable } from "./variables/group-name";
 
+const logger = LoggerCache.getLogger("Integration: OBS");
+
 type ObsSettings = {
     websocketSettings: {
         ipAddress: string;
@@ -98,9 +101,9 @@ class ObsIntegration
     constructor(private readonly eventManager: typeof EventManager) {
         super();
 
-        frontendCommunicator.on(
+        frontendCommunicator.onAsync(
             "obs-is-configured",
-            () => this._isConfigured
+            async () => this._isConfigured
         );
     }
 
@@ -167,6 +170,7 @@ class ObsIntegration
         FilterManager.registerFilter(SceneNameEventFilter);
 
         ReplaceVariableManager.registerReplaceVariable(SceneNameVariable);
+        ReplaceVariableManager.registerReplaceVariable(PreviousSceneNameVariable);
         ReplaceVariableManager.registerReplaceVariable(SceneCollectionNameVariable);
         ReplaceVariableManager.registerReplaceVariable(IsConnectedVariable);
         ReplaceVariableManager.registerReplaceVariable(IsStreamingVariable);

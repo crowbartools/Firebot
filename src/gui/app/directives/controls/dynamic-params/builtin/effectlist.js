@@ -12,7 +12,7 @@
           <div>
             <effect-list
                 effects="$ctrl.local"
-                trigger="{{$ctrl.context.trigger ? $ctrl.context.trigger : 'unknown'}}"
+                trigger="{{$ctrl.context.trigger ? $ctrl.context.trigger : ''}}"
                 trigger-meta="$ctrl.context.triggerMeta"
                 update="$ctrl.effectListUpdated(effects)"
                 modalId="{{$ctrl.context.modalId}}"

@@ -2,7 +2,7 @@ import { app, dialog } from "electron";
 import os from "os";
 import path from "path";
 
-import logger from "./backend/logwrapper";
+import { LoggerCache } from "./backend/logger-cache";
 import { SecretsManager } from "./backend/secrets-manager";
 import { handleSquirrelEvents } from "./backend/app-management/squirrel-events";
 import {
@@ -17,6 +17,8 @@ import {
 // TypeScript says no top-level returns.
 // So we have a main function now.
 async function main() {
+    const logger = LoggerCache.getLogger("Init");
+
     logger.info("Starting Firebot...");
     logger.info(`Firebot v${app.getVersion()}; Platform: ${os.platform()} ${os.arch()}; Version: ${os.type()} ${os.release()}`);
 

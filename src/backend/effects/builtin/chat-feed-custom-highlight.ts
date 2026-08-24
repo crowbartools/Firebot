@@ -1,7 +1,9 @@
-import { EffectType } from "../../../types/effects";
-import { TriggersObject } from '../../../types/triggers';
-import frontendCommunicator from "../../common/frontend-communicator";
-import logger from "../../logwrapper";
+import type { EffectType, TriggersObject } from "../../../types";
+
+import { FrontendChatManager } from "../../chat/frontend-chat-manager";
+import { LoggerCache } from "../../logger-cache";
+
+const logger = LoggerCache.getLogger("Effects");
 
 const triggers: TriggersObject = {};
 triggers["command"] = true;
@@ -121,7 +123,7 @@ const effect: EffectType<{
                 customBannerIcon: effect.bannerEnabled ? effect.customBannerIcon : undefined
             };
             logger.debug("chat-feed-custom-highlight: Highlighting message in chat feed: messageId=", messageId);
-            frontendCommunicator.send("chat-feed-custom-highlight", highlightData);
+            FrontendChatManager.addCustomHighlightToDashboardChatMessage(highlightData);
         } else {
             logger.warn("chat-feed-custom-highlight: No messageId found in trigger. Cannot highlight message.");
         }

@@ -87,7 +87,7 @@
                         cancelLabel: "No, keep going"
                     }).then((confirmed) => {
                         if (confirmed) {
-                            backendCommunicator.fireEvent("rank-recalculation:cancel");
+                            backendCommunicator.send("rank-recalculation:cancel");
                             $ctrl.dismiss();
                         }
                     });
@@ -101,7 +101,7 @@
                     return;
                 }
                 $ctrl.hasStarted = true;
-                backendCommunicator.fireEvent("rank-recalculation:start", $ctrl.rankLadder.id);
+                backendCommunicator.send("rank-recalculation:start", $ctrl.rankLadder.id);
             };
         }
     });

@@ -2,7 +2,9 @@ import type { ReplaceVariable } from "../../../../types/variables";
 
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";
 import viewerDatabase from "../../../viewers/viewer-database";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
+
+const logger = LoggerCache.getLogger("Variables");
 
 const model : ReplaceVariable = {
     definition: {

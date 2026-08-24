@@ -1,5 +1,7 @@
 import frontendCommunicator from "../common/frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
+
+const logger = LoggerCache.getLogger("Core");
 
 let pendingSetupFilePath: string;
 let windowReady = false;

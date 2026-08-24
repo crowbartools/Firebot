@@ -1,12 +1,17 @@
 import { TypedEmitter } from "tiny-typed-emitter";
 
-import type { EffectDefinition, EffectType } from "../../types/effects";
-import type { TriggerMeta, TriggersObject, TriggerType } from "../../types/triggers";
+import type {
+    EffectDefinition,
+    EffectType,
+    TriggerMeta,
+    TriggersObject,
+    TriggerType
+} from "../../types";
 
 import * as cloudSync from "../cloud-sync";
 import { checkEffectDependencies } from "./effect-helpers";
 import frontendCommunicator from "../common/frontend-communicator";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 
 interface FullEventId {
     eventSourceId: string;
@@ -17,6 +22,7 @@ class EffectManager extends TypedEmitter<{
     "effectRegistered": (effect: EffectType<any>) => void;
     "effectUnregistered": (event: { effectId: string, hasOverlayEffect: boolean }) => void;
 }> {
+    private logger = LoggerCache.getLogger("Effects");
     private _registeredEffects: EffectType<any>[] = [];
     private _additionalEffectEvents: Record<string, FullEventId[]> = {};
 
@@ -24,7 +30,7 @@ class EffectManager extends TypedEmitter<{
         super();
 
         frontendCommunicator.onAsync("getEffectsShareCode", async (effectList) => {
-            logger.debug("got get effects share code request");
+            this.logger.debug("got get effects share code request");
 
             effectList = this.clearFilePaths(effectList);
 
@@ -33,16 +39,16 @@ class EffectManager extends TypedEmitter<{
         });
 
         frontendCommunicator.onAsync("getAllEffectDefinitions", async () => {
-            logger.debug("got get all effects request");
+            this.logger.debug("got get all effects request");
             const mapped = this._registeredEffects.map(this.mapEffectForFrontEnd);
             return mapped;
         });
 
-        frontendCommunicator.onAsync("getEffectDefinitions", async (triggerData: {
+        frontendCommunicator.onAsync("effects:get-effect-defintitions", async (triggerData: {
             triggerType: TriggerType;
             triggerMeta: TriggerMeta;
         }) => {
-            logger.debug("got get effects def request");
+            this.logger.debug("got get effects def request");
             const effects = this._registeredEffects;
 
             const triggerType = triggerData.triggerType,
@@ -89,8 +95,8 @@ class EffectManager extends TypedEmitter<{
             return filteredEffectDefs;
         });
 
-        frontendCommunicator.on("getEffectDefinition", (effectId) => {
-            logger.debug("got effect request", effectId);
+        frontendCommunicator.onAsync("effects:get-effect-definition", async (effectId) => {
+            this.logger.debug("got effect request", effectId);
             return this.mapEffectForFrontEnd(
                 this.getEffectById(effectId)
             );
@@ -99,13 +105,13 @@ class EffectManager extends TypedEmitter<{
 
     registerEffect<T = unknown>(effect: EffectType<T>): void {
         if (this._registeredEffects.some(e => e?.definition?.id === effect.definition.id)) {
-            logger.warn(`Attempted to register duplicate effect: ${effect.definition.id}.`);
+            this.logger.warn(`Attempted to register duplicate effect: ${effect.definition.id}.`);
             return;
         }
 
         this._registeredEffects.push(effect);
 
-        logger.debug(`Registered Effect ${effect.definition.id}`);
+        this.logger.debug(`Registered Effect ${effect.definition.id}`);
 
         this.emit("effectRegistered", effect);
     }
@@ -113,7 +119,7 @@ class EffectManager extends TypedEmitter<{
     unregisterEffect(effectId: string): void {
         const effect = this._registeredEffects.find(e => e?.definition?.id === effectId);
         if (!effect) {
-            logger.warn(`Effect ${effectId} does not exist`);
+            this.logger.warn(`Effect ${effectId} does not exist`);
             return;
         }
 
@@ -121,7 +127,7 @@ class EffectManager extends TypedEmitter<{
 
         this._registeredEffects = this._registeredEffects.filter(e => e?.definition?.id !== effectId);
 
-        logger.debug(`Unregistered Effect ${effectId}`);
+        this.logger.debug(`Unregistered Effect ${effectId}`);
 
         this.emit("effectUnregistered", { effectId, hasOverlayEffect });
     }
@@ -169,7 +175,7 @@ class EffectManager extends TypedEmitter<{
     addEventToEffect(effectId: string, eventSourceId: string, eventId: string): void {
         if (this.getEffectsForEvent(eventSourceId, eventId).some(e => e.id === effectId)
             || this._additionalEffectEvents[effectId]?.some(e => e.eventSourceId === eventSourceId && e.eventId === eventId)) {
-            logger.warn(`Effect ${effectId} already setup for event ${eventSourceId}:${eventId}`);
+            this.logger.warn(`Effect ${effectId} already setup for event ${eventSourceId}:${eventId}`);
             return;
         }
 
@@ -179,21 +185,21 @@ class EffectManager extends TypedEmitter<{
 
         this._additionalEffectEvents[effectId] = additionalEvents;
 
-        logger.debug(`Added event ${eventSourceId}:${eventId} to effect ${effectId}`);
+        this.logger.debug(`Added event ${eventSourceId}:${eventId} to effect ${effectId}`);
     }
 
     removeEventFromEffect(effectId: string, eventSourceId: string, eventId: string): void {
         let additionalEvents = this._additionalEffectEvents[effectId] ?? [];
 
         if (!additionalEvents.some(e => e.eventSourceId === eventSourceId && e.eventId === eventId)) {
-            logger.warn(`Effect ${effectId} does not have a plugin registration for event ${eventSourceId}:${eventId}`);
+            this.logger.warn(`Effect ${effectId} does not have a plugin registration for event ${eventSourceId}:${eventId}`);
             return;
         }
 
         additionalEvents = additionalEvents.filter(e => e.eventSourceId !== eventSourceId && e.eventId !== eventId);
         this._additionalEffectEvents[effectId] = additionalEvents;
 
-        logger.debug(`Removed event ${eventSourceId}:${eventId} from effect ${effectId}`);
+        this.logger.debug(`Removed event ${eventSourceId}:${eventId} from effect ${effectId}`);
     }
 
     mapEffectForFrontEnd(e: EffectType) {
@@ -223,7 +229,6 @@ class EffectManager extends TypedEmitter<{
         return {
             definition: definition,
             optionsTemplate: e.optionsTemplate,
-            optionsTemplateUrl: e.optionsTemplateUrl,
             optionsControllerRaw: e.optionsController
                 ? e.optionsController.toString()
                 : "() => {}",

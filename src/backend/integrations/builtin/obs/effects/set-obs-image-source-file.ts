@@ -1,5 +1,5 @@
-import { EffectType } from "../../../../../types/effects";
-import { OBSSource, setImageSourceSettings } from "../obs-remote";
+import type { EffectType, BackendCommunicator } from "../../../../../types";
+import { type OBSSource, setImageSourceSettings } from "../obs-remote";
 
 export const SetOBSImageSourceFileEffectType: EffectType<{
     imageSourceName: string;
@@ -37,7 +37,7 @@ export const SetOBSImageSourceFileEffectType: EffectType<{
         <file-chooser model="effect.file" options="{ filters: [ {name: 'OBS-Supported Image Files', extensions: ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'tga', 'jxr', 'psd', 'webp']}, {name: 'All Files', extensions: ['*']} ]}"></file-chooser>
     </eos-container>
   `,
-    optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
+    optionsController: ($scope, backendCommunicator: BackendCommunicator) => {
         $scope.isObsConfigured = false;
 
         $scope.imageSources = [];
@@ -46,16 +46,16 @@ export const SetOBSImageSourceFileEffectType: EffectType<{
             $scope.effect.imageSourceName = imageSourceName;
         };
 
-        $scope.getImageSources = () => {
-            $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
+        $scope.getImageSources = async () => {
+            $scope.isObsConfigured = await backendCommunicator.fireEventAsync("obs-is-configured");
 
-            $q.when(
-                backendCommunicator.fireEventAsync("obs-get-image-sources")
-            ).then((imageSources: OBSSource[]) => {
+            try {
+                const imageSources: OBSSource[] = await backendCommunicator.fireEventAsync("obs-get-image-sources");
                 $scope.imageSources = imageSources;
                 $scope.selected = $scope.imageSources?.find(source => source.name === $scope.effect.imageSourceName);
-            });
+            } catch { }
         };
+
         $scope.getImageSources();
     },
     optionsValidator: (effect) => {

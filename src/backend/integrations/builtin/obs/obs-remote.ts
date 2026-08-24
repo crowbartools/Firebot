@@ -34,7 +34,9 @@ import {
     OBS_DISCONNECTED_EVENT_ID,
     OBS_EXITING_EVENT_ID
 } from "./constants";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
+
+const logger = LoggerCache.getLogger("Integration: OBS");
 
 type CachedGroupInfo = {
     /// The name of a group.
@@ -59,6 +61,8 @@ let groupInfos: Array<CachedGroupInfo> = [];
 let previewSceneName: string | null;
 // The cached program scene name.
 let programSceneName: string;
+// The cached previous program scene name.
+let previousProgramSceneName: string;
 
 const TEXT_SOURCE_IDS = ["text_gdiplus_v2", "text_gdiplus_v3", "text_ft2_source_v2"];
 
@@ -177,6 +181,8 @@ async function setupRemoteListeners() {
     });
 
     obs.on("SceneTransitionStarted", async ({ transitionName }) => {
+        previousProgramSceneName = programSceneName || "";
+
         programSceneName = (await obs.call("GetCurrentProgramScene"))?.sceneName || "";
         eventManager?.triggerEvent(
             OBS_EVENT_SOURCE_ID,
@@ -609,8 +615,7 @@ async function maintainConnection(
             });
         } catch (error) {
             if (logging) {
-                logger.debug("Failed to connect, attempting again in 10 secs.");
-                logger.debug(error);
+                logger.debug("Failed to connect, attempting again in 10 secs.", error);
             }
             reconnectTimeout = setTimeout(
                 () => maintainConnection(ip, port, password, logging),
@@ -660,6 +665,10 @@ export async function getSceneList(): Promise<string[]> {
 
 export function getCurrentSceneName(): string {
     return programSceneName;
+}
+
+export function getPreviousSceneName(): string {
+    return previousProgramSceneName;
 }
 
 export async function setCurrentScene(sceneName: string): Promise<void> {

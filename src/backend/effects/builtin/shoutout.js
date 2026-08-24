@@ -1,11 +1,11 @@
 "use strict";
 
+const { HttpServerManager } = require("../../../server/http-server-manager");
 const { SettingsManager } = require("../../common/settings-manager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
-const webServer = require("../../../server/http-server-manager");
 const { TwitchApi } = require("../../streaming-platforms/twitch/api");
 const { EffectCategory } = require('../../../shared/effect-constants');
-const logger = require("../../logwrapper");
+const logger = require("../../logger-cache").LoggerCache.getLogger("Effects");
 const { wait } = require("../../utils");
 
 const shoutoutStyles = `
@@ -319,7 +319,7 @@ const effect = {
             }
         }
 
-        webServer.sendToOverlay("shoutout", effect);
+        HttpServerManager.sendToOverlay("shoutout", effect);
         if (effect.waitForShoutout) {
             const durationInMils = (Math.round(effect.duration + 2) || 0) * 1000;
             await wait(durationInMils);

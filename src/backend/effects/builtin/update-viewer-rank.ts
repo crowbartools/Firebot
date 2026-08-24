@@ -1,4 +1,5 @@
-import { EffectType } from "../../../types/effects";
+import type { EffectType } from "../../../types";
+
 import viewerDatabase from "../../viewers/viewer-database";
 import viewerRanksService from "../../ranks/rank-manager";
 

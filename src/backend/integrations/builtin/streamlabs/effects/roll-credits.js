@@ -1,6 +1,6 @@
 "use strict";
 
-const logger = require("../../../../logwrapper");
+const logger = require("../../../../logger-cache").LoggerCache.getLogger("Integration: Streamlabs");
 const integrationManager = require("../../../integration-manager");
 
 /**

@@ -1,13 +1,13 @@
+import { DateTime } from "luxon";
+import fsp from "fs/promises";
+
+import type { FirebotViewer } from "../../types";
+
 import frontendCommunicator from "../common/frontend-communicator";
 import currencyAccess from "../currency/currency-access";
 import rankManager from "../ranks/rank-manager";
 import viewerDatabase from "./viewer-database";
-import logger from "../logwrapper";
-
-import { DateTime } from "luxon";
-import fsp from "fs/promises";
-
-import type { FirebotViewer } from "../../types/viewers";
+import { LoggerCache } from "../logger-cache";
 
 interface ViewerExportOptions {
     viewers: boolean;
@@ -16,6 +16,8 @@ interface ViewerExportOptions {
 }
 
 class ViewerExportManager {
+    private logger = LoggerCache.getLogger("Viewers");
+
     constructor() {}
 
     setupListeners () {
@@ -41,7 +43,7 @@ class ViewerExportManager {
 
             return true;
         } catch (error) {
-            logger.error("Error exporting viewer data to file", error);
+            this.logger.error("Error exporting viewer data to file", error);
             return false;
         }
     }
@@ -77,7 +79,7 @@ class ViewerExportManager {
             await fsp.writeFile(`${folderpath}/viewers.csv`, fileLines.join("\n"), { encoding: "utf8" });
             return true;
         } catch (error) {
-            logger.error("Error exporting viewers to file", error);
+            this.logger.error("Error exporting viewers to file", error);
             return false;
         }
     }
@@ -118,7 +120,7 @@ class ViewerExportManager {
             await fsp.writeFile(`${folderpath}/currencies.csv`, fileLines.join("\n"), { encoding: "utf8" });
             return true;
         } catch (error) {
-            logger.error("Error exporting currencies to file", error);
+            this.logger.error("Error exporting currencies to file", error);
             return false;
         }
     }
@@ -167,7 +169,7 @@ class ViewerExportManager {
             await fsp.writeFile(`${folderpath}/ranks.csv`, fileLines.join("\n"), { encoding: "utf8" });
             return true;
         } catch (error) {
-            logger.error("Error exporting ranks to file", error);
+            this.logger.error("Error exporting ranks to file", error);
             return false;
         }
     }

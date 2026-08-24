@@ -1,4 +1,5 @@
-import { EffectType } from "../../../types/effects";
+import type { EffectType } from "../../../types";
+
 import frontendCommunicator from "../../common/frontend-communicator";
 
 const effect: EffectType<{
@@ -24,7 +25,7 @@ const effect: EffectType<{
         }
         return errors;
     },
-    onTriggerEvent: async ({ effect }) => {
+    onTriggerEvent: ({ effect }) => {
         frontendCommunicator.send("copy-to-clipboard", {
             text: effect.text
         });

@@ -4,12 +4,15 @@ import type {
     OverlayRotation,
     OverlayEnterExitAnimations,
     OverlayInstance,
-    FontOptions,
+    FontOptions
 } from "../../../types";
+
+import { HttpServerManager } from "../../../server/http-server-manager";
 import { SettingsManager } from "../../common/settings-manager";
 import mediaProcessor from "../../common/handlers/mediaProcessor";
-import webServer from "../../../server/http-server-manager";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
+
+const logger = LoggerCache.getLogger("Effects");
 
 type ShowTextEffectModel = {
     text: string;
@@ -57,7 +60,7 @@ type ShowTextEffectOverlayData = {
     overlayInstance: string;
     rotation: string;
     zIndex: number;
-}
+};
 
 const ShowTextEffect: EffectType<ShowTextEffectModel, ShowTextEffectOverlayData> = {
     definition: {
@@ -160,13 +163,13 @@ const ShowTextEffect: EffectType<ShowTextEffectModel, ShowTextEffectOverlayData>
     `,
     optionsController: ($scope, utilityService) => {
         $scope.justifyOptions = [
-            { value: "flex-start", label: "Left", iconClass: "fa-align-left"},
+            { value: "flex-start", label: "Left", iconClass: "fa-align-left" },
             { value: "center", label: "Center", iconClass: "fa-align-center" },
             { value: "flex-end", label: "Right", iconClass: "fa-align-right" }
         ];
 
         $scope.alignOptions = [
-            { value: "flex-start", label: "Top", iconClass: "fa-arrow-to-top"},
+            { value: "flex-start", label: "Top", iconClass: "fa-arrow-to-top" },
             { value: "center", label: "Center", iconClass: "fa-border-center-h" },
             { value: "flex-end", label: "Bottom", iconClass: "fa-arrow-to-bottom" }
         ];
@@ -177,7 +180,7 @@ const ShowTextEffect: EffectType<ShowTextEffectModel, ShowTextEffectOverlayData>
                 size: 24,
                 weight: 400,
                 italic: false
-            }
+            };
         }
 
         if ($scope.effect.height == null || $scope.effect.height < 1) {
@@ -211,7 +214,7 @@ const ShowTextEffect: EffectType<ShowTextEffectModel, ShowTextEffectOverlayData>
         }
         return errors;
     },
-    onTriggerEvent: async ({ effect }) => {
+    onTriggerEvent: ({ effect }) => {
         const dto: ShowTextEffectOverlayData = {
             text: effect.text,
             fontOptions: effect.fontOptions,
@@ -253,7 +256,7 @@ const ShowTextEffect: EffectType<ShowTextEffectModel, ShowTextEffectOverlayData>
             }
         }
 
-        webServer.sendToOverlay("show-text", dto);
+        HttpServerManager.sendToOverlay("show-text", dto);
         return true;
     },
     overlayExtension: {
@@ -343,10 +346,10 @@ const ShowTextEffect: EffectType<ShowTextEffectModel, ShowTextEffectOverlayData>
 
                 textContainer.appendChild(textElement);
 
-                showElement(textContainer.outerHTML, positionData, animationData); // eslint-disable-line no-undef
+                showElement(textContainer.outerHTML, positionData, animationData);
             }
         }
     }
-}
+};
 
 export = ShowTextEffect;

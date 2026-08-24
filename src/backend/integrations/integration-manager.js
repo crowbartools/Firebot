@@ -6,18 +6,22 @@ const { ProfileManager } = require("../common/profile-manager");
 const { SettingsManager } = require('../common/settings-manager');
 const authManager = require("../auth/auth-manager");
 const frontendCommunicator = require('../common/frontend-communicator');
-const logger = require("../logwrapper");
+const logger = require("../logger-cache").LoggerCache.getLogger("Integrations");
 const { setValuesForFrontEnd, buildSaveDataFromSettingValues } = require("../common/firebot-setting-helpers");
 
-/**@extends {NodeJS.EventEmitter} */
+/**@extends {EventEmitter} */
 class IntegrationManager extends EventEmitter {
     constructor() {
         super();
 
         this._integrations = [];
+
+        frontendCommunicator.onAsync("integrations:ui-service-ready",
+            async () => this.triggerUiRefresh()
+        );
     }
 
-    registerIntegration(integration) {
+    registerIntegration(integration, triggerUiRefresh = true) {
         integration.definition.linked = false;
 
         if (integration.definition.linkType === "auth") {
@@ -59,7 +63,9 @@ class IntegrationManager extends EventEmitter {
 
         this.emit("integrationRegistered", integration);
 
-        frontendCommunicator.send("integrationsUpdated");
+        if (triggerUiRefresh === true) {
+            this.triggerUiRefresh();
+        }
 
         integration.integration.on("connected", (id) => {
             frontendCommunicator.send("integrationConnectionUpdate", {
@@ -153,6 +159,31 @@ class IntegrationManager extends EventEmitter {
         return true;
     }
 
+    unregisterIntegration(integrationId) {
+        const existing = this._integrations.some(i => i.definition.id === integrationId);
+        if (!existing) {
+            logger.warn(`Could not unregister integration '${integrationId}'. Integration does not exist.`);
+            return;
+        }
+
+        const integration = this.getIntegrationById(integrationId);
+        try {
+            integration?.integration?.removeAllListeners?.();
+            if (typeof integration?.integration?.disconnect === "function") {
+                integration.integration.disconnect();
+            }
+        } catch (error) {
+            logger.warn(`Error while disconnecting integration '${integrationId}' during unregister.`, error);
+        }
+
+        this._integrations = this._integrations.filter(i => i.definition.id !== integrationId);
+
+        logger.debug(`Unregistered Integration ${integrationId}`);
+
+        this.emit("integrationUnregistered", integrationId);
+        this.triggerUiRefresh();
+    }
+
     getAllIntegrationDefinitions() {
         return this._integrations
             .map(i => i.definition)
@@ -235,7 +266,7 @@ class IntegrationManager extends EventEmitter {
         integrationDb.push(`/${int.definition.id}/linked`, true);
         int.definition.linked = true;
 
-        frontendCommunicator.send("integrationsUpdated");
+        this.triggerUiRefresh();
         frontendCommunicator.send("integrationLinked", {
             id: int.definition.id,
             connectionToggle: int.definition.connectionToggle
@@ -262,7 +293,7 @@ class IntegrationManager extends EventEmitter {
             logger.warn(error);
         }
 
-        frontendCommunicator.send("integrationsUpdated");
+        this.triggerUiRefresh();
         frontendCommunicator.send("integrationUnlinked", integrationId);
     }
 
@@ -355,6 +386,11 @@ class IntegrationManager extends EventEmitter {
         }
         return int.integration.linked;
     }
+
+    triggerUiRefresh() {
+        logger.debug("Triggering UI refresh");
+        frontendCommunicator.send("integrations:integrations-updated", this.getAllIntegrationDefinitions());
+    }
 }
 
 const manager = new IntegrationManager();
@@ -416,7 +452,7 @@ frontendCommunicator.on("disconnectIntegration", (integrationId) => {
     manager.disconnectIntegration(integrationId);
 });
 
-frontendCommunicator.on("getAllIntegrationDefinitions", () => {
+frontendCommunicator.onAsync("getAllIntegrationDefinitions", async () => {
     logger.info("got 'get all integrations' request");
     return manager.getAllIntegrationDefinitions();
 });

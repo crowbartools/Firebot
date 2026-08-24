@@ -2,9 +2,11 @@ import nodeProcess from "process";
 import path from "path";
 import { ChildProcess, spawn } from "child_process";
 
-import type { EffectType } from "../../../types/effects";
+import type { EffectType } from "../../../types";
 
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
+
+const logger = LoggerCache.getLogger("Effects");
 
 const splitArgumentsText = (argsString: string) => {
     const re = /^"[^"]*"$/; // Check if argument is surrounded with double-quotes

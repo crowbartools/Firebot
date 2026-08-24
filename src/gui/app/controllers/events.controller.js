@@ -54,7 +54,14 @@
                 $scope.getEventSets();
             };
 
-            const sources = backendCommunicator.fireEventSync("events:get-all-event-sources");
+            let sources = [];
+            $scope.loadEventSources = async () => {
+                sources = await backendCommunicator.fireEventAsync("events:get-all-event-sources");
+            };
+
+            backendCommunicator.on("events:event-sources-updated",
+                newSources => sources = newSources ?? []
+            );
 
             function friendlyEventTypeName(sourceId, eventId) {
                 const source = sources.find(s => s.id === sourceId);
@@ -518,7 +525,7 @@
 
             $scope.simulateEventsByType = function() {
                 utilityService.showModal({
-                    component: "simulateGroupEventsModal",
+                    component: "simulateEventModal",
                     size: "sm"
                 });
             };
@@ -544,5 +551,7 @@
                     });
                 }
             };
+
+            $scope.loadEventSources();
         });
 }());

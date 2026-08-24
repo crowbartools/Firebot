@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
-
-import type { RestrictionType } from "../../../types/restrictions";
+import type { RestrictionType } from "../../../types";
 import { ActiveUserHandler } from "../../chat/active-user-handler";
 
 const model: RestrictionType<never> = {
@@ -17,16 +15,16 @@ const model: RestrictionType<never> = {
             </div>
         </div>
     `,
-    predicate: async (triggerData) => {
-        return new Promise((resolve, reject) => {
-            const username = triggerData.metadata.username;
+    predicate: ({ metadata }) => {
+        const username = metadata.username;
+        const success = ActiveUserHandler.userIsActive(username);
 
-            if (ActiveUserHandler.userIsActive(username)) {
-                resolve(true);
-            } else {
-                reject("You haven't sent a chat message recently");
-            }
-        });
+        return {
+            success,
+            failureReason: success !== true
+                ? "You haven't sent a chat message recently"
+                : undefined
+        };
     }
 };
 

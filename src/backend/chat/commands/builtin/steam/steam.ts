@@ -1,4 +1,4 @@
-import { SystemCommand } from "../../../../../types/commands";
+import type { SystemCommand } from "../../../../../types";
 import Steam from "./steam-access";
 import { TwitchApi } from "../../../../streaming-platforms/twitch/api";
 

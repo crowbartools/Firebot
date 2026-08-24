@@ -14,17 +14,17 @@
                 <dropdown-select options="$ctrl.chatters" selected="$ctrl.model"></dropdown-select>
             </div>
             `,
-            controller: function(connectionService) {
+            controller: function(accountAccess) {
                 const $ctrl = this;
 
                 $ctrl.chatters = ['Streamer'];
-                if (connectionService.accounts.bot.loggedIn) {
+                if (accountAccess.accounts.bot.loggedIn) {
                     $ctrl.chatters.push("Bot");
                 }
 
                 $ctrl.$onInit = () => {
                     if ($ctrl.model == null) {
-                        if (connectionService.accounts.bot.loggedIn) {
+                        if (accountAccess.accounts.bot.loggedIn) {
                             $ctrl.model = "Bot";
                         } else {
                             $ctrl.model = "Streamer";

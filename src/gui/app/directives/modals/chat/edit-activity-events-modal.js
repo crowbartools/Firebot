@@ -58,8 +58,6 @@
 
                 $ctrl.allowedEvents = settingsService.getSetting("AllowedActivityEvents");
 
-                $ctrl.events = backendCommunicator.fireEventSync("activity-feed:get-activity-feed-supported-events") ?? [];
-
                 $ctrl.toggleEventChecked = function(event) {
                     const eventKey = `${event.sourceId}:${event.eventId}`;
                     if ($ctrl.eventIsChecked(event)) {
@@ -92,7 +90,9 @@
                     $ctrl.close();
                 };
 
-                $ctrl.$onInit = function() {};
+                $ctrl.$onInit = async () => {
+                    $ctrl.events = await backendCommunicator.fireEventAsync("activity-feed:get-activity-feed-supported-events") ?? [];
+                };
             }
         });
 }());

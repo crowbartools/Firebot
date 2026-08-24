@@ -1,4 +1,4 @@
-import { SystemCommand } from "../../../../types/commands";
+import type { SystemCommand } from "../../../../types";
 import * as cloudSync from '../../../cloud-sync';
 import { SortTagManager } from "../../../sort-tags/sort-tag-manager";
 import { TwitchApi } from "../../../streaming-platforms/twitch/api";

@@ -5,9 +5,11 @@ import { EventManager } from "../../events/event-manager";
 import { SettingsManager } from "../../common/settings-manager";
 import { TwitchApi } from "./api";
 import frontendCommunicator from "../../common/frontend-communicator";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
 
 class AdManager {
+    private logger = LoggerCache.getLogger("Ad Manager");
+
     private _adCheckIntervalId: NodeJS.Timeout;
     private _nextAdBreak: DateTime = null;
     private _isAdCheckRunning = false;
@@ -36,18 +38,18 @@ class AdManager {
         }
 
         if (this._isAdRunning) {
-            logger.debug("Ad break currently running. Skipping ad timer check.");
+            this.logger.debug("Ad break currently running. Skipping ad timer check.");
             return;
         }
 
         const streamer = AccountAccess.getAccounts().streamer;
         if (streamer.broadcasterType === "") {
-            logger.debug("Streamer is not affiliate/partner. Skipping ad timer check.");
+            this.logger.debug("Streamer is not affiliate/partner. Skipping ad timer check.");
             return;
         }
 
         this._isAdCheckRunning = true;
-        logger.debug("Starting ad timer check.");
+        this.logger.debug("Starting ad timer check.");
 
         const adSchedule = await TwitchApi.channels.getAdSchedule();
 
@@ -90,7 +92,7 @@ class AdManager {
             frontendCommunicator.send("ad-manager:hide-ad-break-timer");
         }
 
-        logger.debug("Ad timer check complete.");
+        this.logger.debug("Ad timer check complete.");
         this._isAdCheckRunning = false;
     }
 

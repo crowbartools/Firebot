@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
-
-import type { RestrictionType } from "../../../types/restrictions";
+import type { RestrictionType } from "../../../types";
 import { CustomVariableManager } from "../../common/custom-variable-manager";
 
 const model: RestrictionType<{
@@ -36,29 +34,27 @@ const model: RestrictionType<{
 
         return `${name} is ${value}`;
     },
-    predicate: (_, restrictionData) => {
-        return new Promise((resolve, reject) => {
-            let passed = false;
-            const cachedVariable = CustomVariableManager.getCustomVariable(restrictionData.name);
+    predicate: (_, { name, value }) => {
+        let passed = false;
+        const cachedVariable = CustomVariableManager.getCustomVariable(name);
 
-            let value = restrictionData.value;
-            try {
-                value = JSON.parse(value);
-            } catch {
-                //fail silently
-            }
+        try {
+            value = JSON.parse(value);
+        } catch {
+            //fail silently
+        }
 
-            // eslint-disable-next-line eqeqeq
-            if (cachedVariable == value) {
-                passed = true;
-            }
+        // eslint-disable-next-line eqeqeq
+        if (cachedVariable == value) {
+            passed = true;
+        }
 
-            if (passed) {
-                resolve(true);
-            } else {
-                reject("A flag is not set to the correct value");
-            }
-        });
+        return {
+            success: passed,
+            failureReason: passed !== true
+                ? "A flag is not set to the correct value"
+                : undefined
+        };
     }
 };
 

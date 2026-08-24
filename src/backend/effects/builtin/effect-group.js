@@ -1,9 +1,9 @@
 "use strict";
 
 const effectRunner = require("../../common/effect-runner");
-const { EffectCategory, EffectTrigger } = require('../../../shared/effect-constants');
+const { EffectTrigger } = require('../../../shared/effect-constants');
 const { PresetEffectListManager } = require("../preset-lists/preset-effect-list-manager");
-const logger = require("../../logwrapper");
+const logger = require("../../logger-cache").LoggerCache.getLogger("Effects");
 const { simpleClone } = require("../../utils");
 const { SettingsManager } = require("../../common/settings-manager");
 

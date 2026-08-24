@@ -1,5 +1,7 @@
 import express from "express";
-import logger from "../../../backend/logwrapper";
+import { LoggerCache } from "../../../backend/logger-cache";
+
+const logger = LoggerCache.getLogger("HTTP Server");
 
 const router = express.Router(); //eslint-disable-line new-cap
 
@@ -212,5 +214,26 @@ router.route("/queues/:queueId/toggle")
 router.route("/queues/:queueId/clear")
     .get(queues.clearQueue)
     .post(queues.clearQueue);
+
+// Plugins
+import * as plugins from "./controllers/plugins-api-controller";
+
+router.route("/plugins/restart")
+    .post(plugins.restartPlugin);
+
+// Control Deck
+import * as controlDeck from "./controllers/control-deck-api-controller";
+
+router.route("/control-deck/settings")
+    .get(controlDeck.getControlDeckSettings);
+
+router.route("/control-deck/decks")
+    .get(controlDeck.pinMiddleware, controlDeck.getDecks);
+
+router.route("/control-deck/decks/:deckId")
+    .get(controlDeck.pinMiddleware, controlDeck.getDeck);
+
+router.route("/control-deck/decks/:deckId/controls/:controlId/interact")
+    .post(controlDeck.pinMiddleware, controlDeck.interactWithControl);
 
 export = router;

@@ -41,7 +41,7 @@ import rankManager from "../../../../ranks/rank-manager";
 import roleManager from "../../../../roles/custom-roles-manager";
 import viewerDatabase from "../../../../viewers/viewer-database";
 import frontendCommunicator from "../../../../common/frontend-communicator";
-import logger from "../../../../logwrapper";
+import { LoggerCache } from "../../../../logger-cache";
 import { getUrlRegex } from "../../../../utils";
 
 import { ThirdPartyEmote, ThirdPartyEmoteProvider } from "../../../../chat/third-party/third-party-emote-provider";
@@ -63,6 +63,8 @@ interface HelixEmoteBase {
 }
 
 class TwitchEventSubChatHelpers {
+    private logger = LoggerCache.getLogger("Chat");
+
     // Thanks, IRC
     // eslint-disable-next-line no-control-regex
     private readonly CHAT_ACTION_REGEX = /^[\x01]ACTION (.*)[\x01]$/;
@@ -116,6 +118,10 @@ class TwitchEventSubChatHelpers {
                 this.setUserProfilePicUrl(userId, url);
             }
         );
+
+        frontendCommunicator.onAsync("chat:ui-service-ready",
+            async () => this.sendAllEmotesToFrontend()
+        );
     }
 
     get badges() {
@@ -135,7 +141,7 @@ class TwitchEventSubChatHelpers {
     }
 
     async cacheBadges(): Promise<void> {
-        logger.debug("Caching Twitch badges");
+        this.logger.debug("Caching Twitch badges");
         const streamer = AccountAccess.getAccounts().streamer;
         const client = TwitchApi.streamerClient;
         if (streamer.loggedIn && client) {
@@ -148,13 +154,13 @@ class TwitchEventSubChatHelpers {
                     ...globalBadges
                 ];
             } catch (error) {
-                logger.error("Failed to get channel chat badges", error);
+                this.logger.error("Failed to get channel chat badges", error);
             }
         }
     }
 
     async cacheTwitchEmotes(): Promise<void> {
-        logger.debug("Caching Twitch emotes");
+        this.logger.debug("Caching Twitch emotes");
 
         // Cache this setting so it's consistent during the chat connection
         this._getAllTwitchEmotes = SettingsManager.getSetting("ChatGetAllEmotes") === true;
@@ -170,7 +176,7 @@ class TwitchEventSubChatHelpers {
             let streamerEmotes: HelixEmoteBase[] = [];
 
             if (this._getAllTwitchEmotes) {
-                logger.debug(`Caching all available Twitch emotes for streamer ${streamer.username}`);
+                this.logger.debug(`Caching all available Twitch emotes for streamer ${streamer.username}`);
 
                 // This includes: global, streamer channel, all channels streamer is subscribed to, etc.
                 // This may take SEVERAL calls so it can take several seconds to complete
@@ -180,10 +186,10 @@ class TwitchEventSubChatHelpers {
                     return;
                 }
             } else {
-                logger.debug(`Caching Twitch channel emotes for ${streamer.username}`);
+                this.logger.debug(`Caching Twitch channel emotes for ${streamer.username}`);
                 const channelEmotes = await client.chat.getChannelEmotes(streamer.userId);
 
-                logger.debug("Caching Twitch global emotes");
+                this.logger.debug("Caching Twitch global emotes");
                 const globalEmotes = await client.chat.getGlobalEmotes();
 
                 if (!channelEmotes && !globalEmotes) {
@@ -200,30 +206,30 @@ class TwitchEventSubChatHelpers {
 
             if (this._getAllTwitchEmotes) {
                 if (bot.loggedIn) {
-                    logger.debug(`Caching all available Twitch emotes for bot ${bot.username}`);
+                    this.logger.debug(`Caching all available Twitch emotes for bot ${bot.username}`);
 
                     this._twitchEmotes.bot = await TwitchApi.chat.getAllUserEmotes("bot") ?? [];
                 } else {
-                    logger.debug("Bot account not logged in; Skipping Twitch bot emotes");
+                    this.logger.debug("Bot account not logged in; Skipping Twitch bot emotes");
                 }
             }
         } catch (err) {
-            logger.error("Failed to get Twitch chat emotes", err);
+            this.logger.error("Failed to get Twitch chat emotes", err);
             return null;
         }
     }
 
     async cacheThirdPartyEmotes(): Promise<void> {
-        logger.debug("Caching third-party emotes");
+        this.logger.debug("Caching third-party emotes");
         this._thirdPartyEmotes = [];
         for (const provider of this._thirdPartyEmoteProviders) {
-            logger.debug(`Caching ${provider.providerName} emotes`);
+            this.logger.debug(`Caching ${provider.providerName} emotes`);
             this._thirdPartyEmotes.push(...await provider.getAllEmotes());
         }
     }
 
     async cacheCheermotes(): Promise<void> {
-        logger.debug("Caching Twitch cheermotes");
+        this.logger.debug("Caching Twitch cheermotes");
         this._twitchCheermotes = await TwitchApi.bits.getChannelCheermotes();
     }
 
@@ -234,11 +240,17 @@ class TwitchEventSubChatHelpers {
         await this.cacheTwitchEmotes();
 
         // If the all emotes setting is disabled, just send the standard global/channel list for both accounts
-        frontendCommunicator.send("all-emotes", {
-            streamer: this._mapCachedEmotesForFrontend(this._twitchEmotes.streamer),
-            bot: this._mapCachedEmotesForFrontend(this._getAllTwitchEmotes ? this._twitchEmotes.bot : this._twitchEmotes.streamer),
-            thirdParty: this._thirdPartyEmotes
-        });
+        this.sendAllEmotesToFrontend();
+    }
+
+    private sendAllEmotesToFrontend(): void {
+        if (this._twitchEmotes?.streamer != null && this._thirdPartyEmotes != null) {
+            frontendCommunicator.send("chat:all-emotes", {
+                streamer: this._mapCachedEmotesForFrontend(this._twitchEmotes.streamer),
+                bot: this._mapCachedEmotesForFrontend(this._getAllTwitchEmotes ? this._twitchEmotes.bot ?? [] : this._twitchEmotes.streamer),
+                thirdParty: this._thirdPartyEmotes
+            });
+        }
     }
 
     private _mapCachedEmotesForFrontend(emoteList: HelixEmoteBase[]) {
@@ -491,7 +503,7 @@ class TwitchEventSubChatHelpers {
                     url: setVersion.getImageUrl(2)
                 });
             } catch (err) {
-                logger.debug(`Failed to find badge ${setName} v:${version}`, err);
+                this.logger.debug(`Failed to find badge ${setName} v:${version}`, err);
             }
         }
 

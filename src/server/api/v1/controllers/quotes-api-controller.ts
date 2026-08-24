@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import moment from "moment";
-import { FormattedQuote, Quote } from "../../../../types/quotes";
+
+import type { FormattedQuote, Quote } from "../../../../types";
+
 import { QuoteManager } from "../../../../backend/quotes/quote-manager";
 
 function validateQuoteId(quoteId: string, res: Response): number {

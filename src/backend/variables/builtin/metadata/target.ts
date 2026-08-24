@@ -1,9 +1,10 @@
-import type { ReplaceVariable, Trigger, TriggersObject } from "../../../../types/variables";
+import type { ReplaceVariable, TriggersObject } from "../../../../types";
 import type { UserCommand } from "../../../../types/commands";
 
 const triggers: TriggersObject = {};
 triggers["command"] = true;
 triggers["channel_reward"] = true;
+triggers["power_up"] = true;
 triggers["event"] = [
     "twitch:chat-message"
 ];
@@ -27,7 +28,7 @@ const model : ReplaceVariable = {
         categories: ["common", "trigger based"],
         possibleDataOutput: ["text"]
     },
-    evaluator: (trigger: Trigger, index: number) => {
+    evaluator: (trigger, index: number) => {
         let args = trigger.metadata.userCommand?.args
             ?? (trigger.metadata.eventData?.userCommand as UserCommand)?.args
             ?? <string[]>trigger.metadata.args;

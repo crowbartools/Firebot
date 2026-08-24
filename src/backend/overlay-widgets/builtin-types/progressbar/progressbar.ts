@@ -3,7 +3,9 @@ import { OverlayWidgetType, IOverlayWidgetEventUtils, WidgetOverlayEvent } from 
 import { FontOptions } from "../../../../types/parameters";
 import effectRunner from "../../../common/effect-runner";
 import { Trigger } from "../../../../types/triggers";
-import logger from "../../../logwrapper";
+import { LoggerCache } from "../../../logger-cache";
+
+const logger = LoggerCache.getLogger("Overlay Widgets");
 
 type Settings = {
     title?: string;

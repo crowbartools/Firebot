@@ -1,4 +1,4 @@
-import type { ReplaceVariable, Trigger } from "../../../../types/variables";
+import type { ReplaceVariable, Trigger } from "../../../../types";
 import type { UserCommand } from "../../../../types/commands";
 
 const expressionish = require('expressionish');
@@ -25,6 +25,7 @@ const model : ReplaceVariable = {
         triggers: {
             ["command"]: true,
             ["channel_reward"]: true,
+            ["power_up"]: true,
             ["event"]: [
                 "twitch:chat-message"
             ],

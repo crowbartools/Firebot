@@ -1,8 +1,8 @@
 "use strict";
 
 (function() {
-    /** @typedef {import("../../../types/ranks").RankLadder} RankLadder */
-    /** @typedef {import("../../../types/ranks").Rank} Rank */
+    /** @typedef {import("../../../types").RankLadder} RankLadder */
+    /** @typedef {import("../../../types").Rank} Rank */
 
     angular
         .module("firebotApp")
@@ -25,16 +25,8 @@
                 }
             };
 
-            service.loadRankLadders = async () => {
-                const rankLadders = await backendCommunicator.fireEventAsync("rank-ladders:get-all");
-
-                if (rankLadders) {
-                    service.rankLadders = rankLadders;
-                }
-            };
-
-            backendCommunicator.on("rank-ladders:updated", () => {
-                service.loadRankLadders();
+            backendCommunicator.onAsync("rank-ladders:updated", async (rankLadders) => {
+                service.rankLadders = rankLadders ?? [];
             });
 
             /**
@@ -70,12 +62,12 @@
 
             service.saveAllRankLadders = function(ladders) {
                 service.rankLadders = ladders;
-                backendCommunicator.fireEvent("rank-ladders:save-all", JSON.parse(angular.toJson(ladders)));
+                backendCommunicator.send("rank-ladders:save-all", JSON.parse(angular.toJson(ladders)));
             };
 
             service.deleteRankLadder = function(ladderId) {
                 service.rankLadders = service.rankLadders.filter(t => t.id !== ladderId);
-                backendCommunicator.fireEvent("rank-ladders:delete", ladderId);
+                backendCommunicator.send("rank-ladders:delete", ladderId);
             };
 
             service.duplicateRankLadder = (ladderId) => {
@@ -149,6 +141,8 @@
                     iconClass: "fa-users-cog"
                 }
             ];
+
+            backendCommunicator.send("rank-ladders:ui-service-ready");
 
             return service;
         });

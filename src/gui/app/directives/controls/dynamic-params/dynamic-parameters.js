@@ -18,6 +18,7 @@
                 trigger-meta="$ctrl.triggerMeta"
                 modal-id="{{$ctrl.modalId}}"
                 ng-if="$ctrl.shouldShowParameter(settingSchema)"
+                enable-replace-variables="settingSchema.allowReplaceVariables"
             >
             </dynamic-parameter>
         `,

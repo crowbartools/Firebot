@@ -1,5 +1,5 @@
-import { EffectType } from "../../../../../types/effects";
-import { OBSSource, setTextSourceSettings } from "../obs-remote";
+import type { BackendCommunicator, EffectType } from "../../../../../types";
+import { type OBSSource, setTextSourceSettings } from "../obs-remote";
 
 export const SetOBSSourceTextEffectType: EffectType<{
     textSourceName: string;
@@ -41,7 +41,7 @@ export const SetOBSSourceTextEffectType: EffectType<{
         <file-chooser ng-if="effect.textSource === 'file'" model="effect.file" options="{ filters: [ {name: 'Text File', extensions: ['txt']}, {name: 'All Files', extensions: ['*']} ]}" on-update="textFileUpdated(filepath)"></file-chooser>
     </eos-container>
   `,
-    optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
+    optionsController: ($scope, backendCommunicator: BackendCommunicator) => {
         $scope.isObsConfigured = false;
 
         $scope.textSources = [];
@@ -62,16 +62,16 @@ export const SetOBSSourceTextEffectType: EffectType<{
             $scope.effect.file = file;
         };
 
-        $scope.getTextSources = () => {
-            $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
+        $scope.getTextSources = async () => {
+            $scope.isObsConfigured = await backendCommunicator.fireEventAsync("obs-is-configured");
 
-            $q.when(
-                backendCommunicator.fireEventAsync("obs-get-text-sources")
-            ).then((textSources: OBSSource[]) => {
+            try {
+                const textSources: OBSSource[] = await backendCommunicator.fireEventAsync("obs-get-text-sources");
                 $scope.textSources = textSources;
                 $scope.selected = $scope.textSources?.find(source => source.name === $scope.effect.textSourceName);
-            });
+            } catch { }
         };
+
         $scope.getTextSources();
     },
     optionsValidator: (effect) => {

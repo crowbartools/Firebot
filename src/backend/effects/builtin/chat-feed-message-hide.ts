@@ -1,7 +1,9 @@
-import { EffectType } from "../../../types/effects";
-import { TriggersObject } from '../../../types/triggers';
-import frontendCommunicator from "../../common/frontend-communicator";
-import logger from "../../logwrapper";
+import type { EffectType, TriggersObject } from "../../../types";
+
+import { FrontendChatManager } from "../../chat/frontend-chat-manager";
+import { LoggerCache } from "../../logger-cache";
+
+const logger = LoggerCache.getLogger("Effects");
 
 const triggers: TriggersObject = {};
 triggers["command"] = true;
@@ -47,7 +49,7 @@ const effect: EffectType<{
             }
 
             logger.debug("chat-feed-message-hide: Hiding message in chat feed: messageId=", messageId);
-            frontendCommunicator.send("chat-feed-message-hide", { messageId: messageId });
+            FrontendChatManager.hideChatMessageFromDashboard(messageId);
         } catch (error) {
             logger.error("chat-feed-message-hide: Error hiding message in chat feed: ", error);
         }

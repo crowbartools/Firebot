@@ -1,8 +1,9 @@
-import { EffectType } from "../../../../../types/effects";
+import type { EffectType, BackendCommunicator } from "../../../../../types";
 import { setCurrentSceneCollection } from "../obs-remote";
 
 export const ChangeSceneCollectionEffectType: EffectType<{
     sceneCollectionName: string;
+    custom: boolean;
 }> = {
     definition: {
         id: "ebiggz:obs-change-scene-collection",
@@ -31,30 +32,29 @@ export const ChangeSceneCollectionEffectType: EffectType<{
         </div>
     </eos-container>
   `,
-    optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
+    optionsController: ($scope, backendCommunicator: BackendCommunicator) => {
         $scope.isObsConfigured = false;
 
         $scope.sceneCollections = [];
 
-        $scope.customCollection = {name: "Set Custom", custom: true};
+        $scope.customCollection = { name: "Set Custom", custom: true };
 
-        $scope.selectSceneCollection = (sceneCollection: {name: string, custom: boolean}) => {
+        $scope.selectSceneCollection = (sceneCollection: { name: string, custom: boolean }) => {
             $scope.effect.custom = sceneCollection.custom;
             if (!sceneCollection.custom) {
                 $scope.effect.sceneCollectionName = sceneCollection.name;
             }
         };
 
-        $scope.getSceneCollections = () => {
-            $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
+        $scope.getSceneCollections = async () => {
+            $scope.isObsConfigured = await backendCommunicator.fireEventAsync("obs-is-configured");
 
-            $q.when(
-                backendCommunicator.fireEventAsync("obs-get-scene-collection-list")
-            ).then((sceneCollections: string[]) => {
+            try {
+                const sceneCollections: string[] = await backendCommunicator.fireEventAsync("obs-get-scene-collection-list");
                 $scope.sceneCollections = [];
                 if (sceneCollections != null) {
                     sceneCollections.forEach((sceneCollection) => {
-                        $scope.sceneCollections.push({name: sceneCollection, custom: false});
+                        $scope.sceneCollections.push({ name: sceneCollection, custom: false });
                     });
                 }
                 $scope.sceneCollections.push($scope.customCollection);
@@ -64,8 +64,9 @@ export const ChangeSceneCollectionEffectType: EffectType<{
                     $scope.selected = $scope.sceneCollections.find(collection =>
                         collection.name === $scope.effect.sceneCollectionName);
                 }
-            });
+            } catch { }
         };
+
         $scope.getSceneCollections();
     },
     optionsValidator: (effect) => {

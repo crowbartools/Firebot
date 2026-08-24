@@ -1,4 +1,5 @@
-import { EventFilter, PresetValue } from "../../../../../types/events";
+import type { EventFilter, PresetValue } from "../../../../../types";
+
 import { ComparisonType } from "../../../../../shared/filter-constants";
 
 const filter: EventFilter = {

@@ -1,6 +1,8 @@
 import type { EffectType } from "../../../../types/effects";
 import { TwitchApi } from "../api";
-import logger from '../../../logwrapper';
+import { LoggerCache } from "../../../logger-cache";
+
+const logger = LoggerCache.getLogger("Effects");
 
 const model: EffectType<{
     action: "Block" | "Unblock";

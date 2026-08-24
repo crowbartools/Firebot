@@ -1,11 +1,12 @@
-import { FirebotViewer } from "../../types/viewers";
+import { TypedEmitter } from "tiny-typed-emitter";
 
-import logger from "../logwrapper";
+import type { FirebotViewer } from "../../types";
+
+import { LoggerCache } from "../logger-cache";
 import viewerDatabase from "./viewer-database";
 import jsonDataHelpers from "../common/json-data-helpers";
 import frontendCommunicator from "../common/frontend-communicator";
 import { EventManager } from "../events/event-manager";
-import { TypedEmitter } from "tiny-typed-emitter";
 
 type Events = {
     "created-item": (item: object) => void;
@@ -25,6 +26,8 @@ interface ViewerMetadataDeleteRequest {
 }
 
 class ViewerMetadataManager extends TypedEmitter<Events> {
+    private logger = LoggerCache.getLogger("Viewers");
+
     constructor() {
         super();
 
@@ -55,6 +58,22 @@ class ViewerMetadataManager extends TypedEmitter<Events> {
         return jsonDataHelpers.readData(metadata[key], propertyPath);
     }
 
+    async getViewerMetadataByUserId(userId: string, key: string, propertyPath: string = undefined): Promise<unknown> {
+        if (!userId.length || !key.length) {
+            return;
+        }
+
+        const viewer = await viewerDatabase.getViewerById(userId);
+
+        if (viewer == null) {
+            return;
+        }
+
+        const metadata = viewer.metadata || {};
+
+        return jsonDataHelpers.readData(metadata[key], propertyPath);
+    }
+
     async getTopMetadataPosition(metadataKey: string, position = 1): Promise<FirebotViewer> {
         if (viewerDatabase.isViewerDBOn() !== true) {
             return;
@@ -75,7 +94,7 @@ class ViewerMetadataManager extends TypedEmitter<Events> {
 
             return metadata[0];
         } catch (error) {
-            logger.error("Error getting top metadata request: ", error);
+            this.logger.error("Error getting top metadata request: ", error);
             return;
         }
     }
@@ -99,7 +118,7 @@ class ViewerMetadataManager extends TypedEmitter<Events> {
 
             return metadata || [];
         } catch (error) {
-            logger.error("Error getting top metadata list: ", error);
+            this.logger.error("Error getting top metadata list: ", error);
             return [];
         }
     }
@@ -119,7 +138,7 @@ class ViewerMetadataManager extends TypedEmitter<Events> {
         const eventType = !(key in metadata) ? "created-item" : "updated-item";
 
         try {
-            const dataToSet = jsonDataHelpers.parseData(value, metadata[key], propertyPath);
+            const dataToSet = jsonDataHelpers.parseData(value, metadata[key], propertyPath) as unknown;
             metadata[key] = dataToSet;
 
             viewer.metadata = metadata;
@@ -129,7 +148,9 @@ class ViewerMetadataManager extends TypedEmitter<Events> {
             await viewerDatabase.calculateAutoRanks(viewer._id, "metadata");
 
             const eventData = {
-                username,
+                username: viewer.username,
+                userId: viewer._id,
+                userDisplayName: viewer.displayName,
                 metadataKey: key,
                 metadataValue: dataToSet
             };
@@ -138,7 +159,47 @@ class ViewerMetadataManager extends TypedEmitter<Events> {
 
             this.emit(eventType, eventData);
         } catch (error) {
-            logger.error("Unable to set metadata for viewer", error);
+            this.logger.error("Unable to set metadata for viewer", error);
+        }
+    }
+
+    async setViewerMetadataByUserId(userId: string, key: string, value: string, propertyPath: string = null): Promise<void> {
+        if (!userId.length || !key.length) {
+            return;
+        }
+
+        const viewer = await viewerDatabase.getViewerById(userId);
+        if (viewer == null) {
+            return;
+        }
+
+        const metadata = viewer.metadata || {};
+
+        const eventType = !(key in metadata) ? "created-item" : "updated-item";
+
+        try {
+            const dataToSet = jsonDataHelpers.parseData(value, metadata[key], propertyPath) as unknown;
+            metadata[key] = dataToSet;
+
+            viewer.metadata = metadata;
+
+            await viewerDatabase.updateViewer(viewer);
+
+            await viewerDatabase.calculateAutoRanks(viewer._id, "metadata");
+
+            const eventData = {
+                username: viewer.username,
+                userId: viewer._id,
+                userDisplayName: viewer.displayName,
+                metadataKey: key,
+                metadataValue: dataToSet
+            };
+
+            void EventManager.triggerEvent("firebot", "viewer-metadata-updated", eventData);
+
+            this.emit(eventType, eventData);
+        } catch (error) {
+            this.logger.error("Unable to set metadata for viewer", error);
         }
     }
 
@@ -163,7 +224,42 @@ class ViewerMetadataManager extends TypedEmitter<Events> {
         await viewerDatabase.calculateAutoRanks(viewer._id, "metadata");
 
         const eventData = {
-            username,
+            username: viewer.username,
+            userId: viewer._id,
+            userDisplayName: viewer.displayName,
+            metadataKey: key,
+            metadataValue: null
+        };
+
+        void EventManager.triggerEvent("firebot", "viewer-metadata-updated", eventData);
+
+        this.emit("deleted-item", eventData);
+    }
+
+    async deleteViewerMetadataByUserId(userId: string, key: string): Promise<void> {
+        if (!userId.length || !key.length) {
+            return;
+        }
+
+        const viewer = await viewerDatabase.getViewerById(userId);
+        if (viewer == null) {
+            return;
+        }
+
+        const metadata = viewer.metadata || {};
+
+        delete metadata[key];
+
+        viewer.metadata = metadata;
+
+        await viewerDatabase.updateViewer(viewer);
+
+        await viewerDatabase.calculateAutoRanks(viewer._id, "metadata");
+
+        const eventData = {
+            username: viewer.username,
+            userId: viewer._id,
+            userDisplayName: viewer.displayName,
             metadataKey: key,
             metadataValue: null
         };

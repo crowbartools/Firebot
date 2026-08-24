@@ -1,5 +1,7 @@
 import { screen, desktopCapturer } from "electron";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
+
+const logger = LoggerCache.getLogger("Core");
 
 export function getAllDisplays(): Electron.Display[] {
     return screen.getAllDisplays();
@@ -14,8 +16,8 @@ export async function takeScreenshot(displayId: number): Promise<string> {
     const matchingScreen = screens.find(d => d.id === displayId);
 
     const resolution = matchingScreen ? {
-        width: matchingScreen.size.width * matchingScreen.scaleFactor,
-        height: matchingScreen.size.height * matchingScreen.scaleFactor
+        width: Math.round(matchingScreen.size.width * matchingScreen.scaleFactor),
+        height: Math.round(matchingScreen.size.height * matchingScreen.scaleFactor)
     } : {
         width: 1920,
         height: 1080

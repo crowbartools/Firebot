@@ -1,10 +1,10 @@
-import type { SystemCommand } from "../../types/commands";
-import type { RankLadder } from "../../types/ranks";
+import type { RankLadder, SystemCommand } from "../../types";
+
 import { CommandManager } from "../chat/commands/command-manager";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 import rankManager from "./rank-manager";
 import viewerDatabase from "../viewers/viewer-database";
-import logger from "../logwrapper";
+import { LoggerCache } from "../logger-cache";
 
 type RankCommandRefreshRequestAction = "create" | "update" | "delete";
 
@@ -19,6 +19,8 @@ type RankCommandOptions = {
 };
 
 class RankCommandManager {
+    private logger = LoggerCache.getLogger("Ranks");
+
     constructor() {
         rankManager.on("created-item", (rankLadder: RankLadder) => {
             this.refreshRankCommand('create', rankLadder);
@@ -395,11 +397,11 @@ class RankCommandManager {
         rankLadder: RankLadder = null
     ): void {
         if (rankLadder == null) {
-            logger.error('Invalid rank ladder passed to refresh rank ladder commands.');
+            this.logger.error('Invalid rank ladder passed to refresh rank ladder commands.');
             return;
         }
 
-        logger.debug(`Rank ladder "${rankLadder.name}" action "${action}" triggered. Updating rank ladder system commands.`);
+        this.logger.debug(`Rank ladder "${rankLadder.name}" action "${action}" triggered. Updating rank ladder system commands.`);
 
         switch (action) {
             case "update":
@@ -417,13 +419,13 @@ class RankCommandManager {
                 );
                 break;
             default:
-                logger.error('Invalid action passed to refresh rank ladder commands.');
+                this.logger.error('Invalid action passed to refresh rank ladder commands.');
                 return;
         }
     }
 
     createAllRankLadderCommands(): void {
-        logger.info('Creating all rank ladder commands.');
+        this.logger.info('Creating all rank ladder commands.');
 
         const rankLadders = rankManager.getAllItems();
 

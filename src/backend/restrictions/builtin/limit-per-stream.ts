@@ -1,10 +1,7 @@
-/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
-
-import type { RestrictionType } from "../../../types/restrictions";
-import type { Trigger } from "../../../types/triggers";
+import type { RestrictionType, Trigger } from "../../../types";
 
 import { AccountAccess } from "../../common/account-access";
-import connectionManager from "../../common/connection-manager";
+import { ConnectionManager } from "../../common/connection-manager";
 import frontendCommunicator from "../../common/frontend-communicator";
 
 type RestrictionData = {
@@ -20,7 +17,7 @@ type CommandUsages = {
 let usageCache: Record<string, CommandUsages> = {};
 
 // clear cache when stream changes
-connectionManager.on("streamerOnlineChange", () => {
+ConnectionManager.on("streamerOnlineChange", () => {
     usageCache = {};
 });
 
@@ -90,44 +87,56 @@ const limitPerStreamRestriction: RestrictionType<RestrictionData> = {
         }
         return limits.join(", ");
     },
-    predicate: async (triggerData, restrictionData, inherited) => {
-        return new Promise((resolve, reject) => {
-            const streamer = AccountAccess.getAccounts().streamer;
+    predicate: (triggerData, { perUserLimit, globalLimit }, inherited) => {
+        const streamer = AccountAccess.getAccounts().streamer;
 
-            if (!streamer.loggedIn) {
-                return reject("Streamer account is not logged in.");
-            }
+        if (!streamer.loggedIn) {
+            return {
+                success: false,
+                failureReason: "Streamer account is not logged in."
+            };
+        }
 
-            const username = triggerData.metadata.username;
-            if (!username) {
-                return reject("Trigger data does not have a username.");
-            }
+        const username = triggerData.metadata.username;
+        if (!username) {
+            return {
+                success: false,
+                failureReason: "Trigger data does not have a username."
+            };
+        }
 
-            const commandId = triggerData.metadata.command?.id;
-            if (!commandId) {
-                return reject("Only command triggers are supported.");
-            }
+        const commandId = triggerData.metadata.command?.id;
+        if (!commandId) {
+            return {
+                success: false,
+                failureReason: "Only command triggers are supported."
+            };
+        }
 
-            const isOnline = connectionManager.streamerIsOnline();
+        if (!ConnectionManager.streamerIsOnline) {
+            return {
+                success: false,
+                failureReason: "Streamer is not live."
+            };
+        }
 
-            if (!isOnline) {
-                return reject("Streamer is not live.");
-            }
+        const usages = getUsages(getCommandKey(triggerData, inherited));
 
-            const { perUserLimit, globalLimit } = restrictionData;
+        if (globalLimit && usages.globalUsages >= globalLimit) {
+            return {
+                success: false,
+                failureReason: "Global per-stream limit reached."
+            };
+        }
 
-            const usages = getUsages(getCommandKey(triggerData, inherited));
+        if (perUserLimit && (usages.perUserUsages[username] ?? 0) >= perUserLimit) {
+            return {
+                success: false,
+                failureReason: "You reached your per-stream limit."
+            };
+        }
 
-            if (globalLimit && usages.globalUsages >= globalLimit) {
-                return reject("Global per-stream limit reached.");
-            }
-
-            if (perUserLimit && (usages.perUserUsages[username] ?? 0) >= perUserLimit) {
-                return reject("You reached your per-stream limit.");
-            }
-
-            return resolve(true);
-        });
+        return { success: true };
     },
     onSuccessful: (triggerData, _, inherited) => {
         const commandId = triggerData.metadata.command?.id;

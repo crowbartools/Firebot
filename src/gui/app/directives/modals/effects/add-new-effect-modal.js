@@ -73,7 +73,7 @@ const { EffectCategory } = require("../../shared/effect-constants");
             $ctrl.effectDefs = [];
             $ctrl.$onInit = async function() {
                 const effectDefs = await backendCommunicator
-                    .fireEventAsync("getEffectDefinitions", {
+                    .fireEventAsync("effects:get-effect-defintitions", {
                         triggerType: $ctrl.resolve.trigger,
                         triggerMeta: $ctrl.resolve.triggerMeta
                     });

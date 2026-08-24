@@ -14,43 +14,43 @@ class FrontendCommunicator implements FrontendCommunicatorModule {
     }[]> = {};
 
     private registerEventWithElectron(eventName: string): void {
-        ipcMain.on(eventName, (event, data) => {
+        ipcMain.on(eventName, (event, ...data: unknown[]) => {
             const eventListeners = this._listeners[eventName];
             for (const listener of eventListeners) {
                 if (listener.async) {
-                    (listener.callback(data) as Promise<unknown>)
+                    (listener.callback(...data) as Promise<unknown>)
                         .then((returnValue: unknown) => {
                             this.send(`${eventName}:reply`, returnValue);
                         }, () => {});
                 } else {
-                    const returnValue = listener.callback(data);
+                    const returnValue = listener.callback(...data);
                     event.returnValue = returnValue;
                 }
             }
         });
     }
 
-    send<ExpectedArg = unknown>(eventName: string, data?: ExpectedArg): void {
+    send<ExpectedArgs extends Array<unknown> = []>(eventName: string, ...data: ExpectedArgs): void {
         if (globalThis.renderWindow?.isDestroyed() === false
             && globalThis.renderWindow?.webContents?.isDestroyed() === false) {
-            globalThis.renderWindow.webContents.send(eventName, data);
+            globalThis.renderWindow.webContents.send(eventName, ...data);
         }
     }
 
-    sendToVariableInspector(eventName: string, data?: unknown): void {
+    sendToVariableInspector(eventName: string, ...data: unknown[]): void {
         if (globalThis.variableInspectorWindow?.isDestroyed() === false
             && globalThis.variableInspectorWindow?.webContents?.isDestroyed() === false) {
-            globalThis.variableInspectorWindow.webContents.send(eventName, data);
+            globalThis.variableInspectorWindow.webContents.send(eventName, ...data);
         }
     }
 
-    fireEventAsync<ReturnPayload = void, ExpectedArg = unknown>(eventName: string, data?: ExpectedArg): Promise<ReturnPayload> {
+    fireEventAsync<ReturnPayload = void, ExpectedArgs extends Array<unknown> = []>(eventName: string, ...data: ExpectedArgs): Promise<ReturnPayload> {
         return new Promise((resolve) => {
             if (globalThis.renderWindow != null) {
                 ipcMain.once(`${eventName}:reply`, (_, eventData) => {
                     resolve(eventData as ReturnPayload);
                 });
-                globalThis.renderWindow.webContents.send(eventName, data);
+                globalThis.renderWindow.webContents.send(eventName, ...data);
             }
         });
     }

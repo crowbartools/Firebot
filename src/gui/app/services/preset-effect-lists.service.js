@@ -19,11 +19,7 @@
                 }
             }
 
-            service.loadPresetEffectLists = () => {
-                service.presetEffectLists = backendCommunicator.fireEventSync("preset-effect-lists:get-preset-effect-lists");
-            };
-
-            backendCommunicator.on("all-preset-lists", (presetEffectLists) => {
+            backendCommunicator.on("preset-effect-lists:all-preset-lists-updated", (presetEffectLists) => {
                 if (presetEffectLists != null) {
                     service.presetEffectLists = presetEffectLists;
                 }
@@ -51,7 +47,7 @@
 
             service.saveAllPresetEffectLists = (presetEffectLists) => {
                 service.presetEffectLists = presetEffectLists;
-                backendCommunicator.fireEvent("preset-effect-lists:save-all-preset-effect-lists", presetEffectLists);
+                backendCommunicator.send("preset-effect-lists:save-all-preset-effect-lists", presetEffectLists);
             };
 
             service.presetEffectListNameExists = (name) => {
@@ -123,7 +119,7 @@
 
             service.deletePresetEffectList = (presetEffectListId) => {
                 service.presetEffectLists = service.presetEffectLists.filter(pel => pel.id !== presetEffectListId);
-                backendCommunicator.fireEvent("preset-effect-lists:delete-preset-effect-list", presetEffectListId);
+                backendCommunicator.send("preset-effect-lists:delete-preset-effect-list", presetEffectListId);
             };
 
             service.showAddEditPresetEffectListModal = function(presetEffectList) {
@@ -143,6 +139,8 @@
                     });
                 });
             };
+
+            backendCommunicator.send("preset-effect-lists:ui-service-ready");
 
             return service;
         });

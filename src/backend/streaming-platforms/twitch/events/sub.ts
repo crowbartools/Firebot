@@ -9,7 +9,9 @@ export function triggerSub(
     subMessage: string,
     streak: number,
     isPrime: boolean,
-    isResub: boolean
+    isResub: boolean,
+    isGiftResub: boolean,
+    gifterDisplayName?: string
 ): void {
     void EventManager.triggerEvent("twitch", "sub", {
         username,
@@ -20,7 +22,9 @@ export function triggerSub(
         subMessage,
         streak,
         isPrime,
-        isResub
+        isResub,
+        isGiftResub,
+        gifterUsername: gifterDisplayName
     });
 }
 

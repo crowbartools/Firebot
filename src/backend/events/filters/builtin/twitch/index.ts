@@ -1,4 +1,5 @@
 import bitsBadgeTier from "./bits-badge-tier";
+import channelGoalType from "./channel-goal-type";
 import channelLive from "./channel-live";
 import chatMode from "./chat-mode";
 import chatModeDuration from "./chat-mode-duration";
@@ -8,6 +9,7 @@ import giftCount from "./gift-count";
 import giftDuration from "./gift-duration";
 import goldenKappaTrain from "./golden-kappa-train";
 import isAnonymous from "./is-anonymous";
+import isGiftResub from "./is-gift-resub";
 import lifetimeGiftCount from "./lifetime-gift-count";
 import message from "./message";
 import powerUp from "./power-up";
@@ -26,6 +28,7 @@ import watchStreakCount from "./watch-streak-count";
 
 export default [
     bitsBadgeTier,
+    channelGoalType,
     channelLive,
     chatModeDuration,
     chatModeSetting,
@@ -35,6 +38,7 @@ export default [
     giftDuration,
     goldenKappaTrain,
     isAnonymous,
+    isGiftResub,
     lifetimeGiftCount,
     message,
     powerUp,

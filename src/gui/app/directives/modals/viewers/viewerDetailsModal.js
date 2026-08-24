@@ -48,6 +48,9 @@
                         <div ng-show="$ctrl.isTwitchOrNewUser() && $ctrl.viewerDetails.twitchData && $ctrl.viewerDetails.twitchData.username.toLowerCase() !== $ctrl.viewerDetails.twitchData.displayName.toLowerCase()" style="display:flex;">
                             <div style="margin-right: 11px; font-size: 20px;" class="muted">{{$ctrl.viewerDetails.twitchData.username}}</div>
                         </div>
+                        <div ng-show="$ctrl.isTwitchOrNewUser() && $ctrl.viewerDetails.pronouns" style="display:flex;">
+                            <div style="margin-right: 11px; font-size: 20px;" class="muted">{{$ctrl.viewerDetails.pronouns}}</div>
+                        </div>
                         <div ng-show="$ctrl.isTwitchOrNewUser() && $ctrl.viewerDetails.twitchData" style="display:flex;margin-top:10px;">
                             <div style="margin-right: 11px;" uib-tooltip="Twitch Age"><i class="fas fa-user-circle"></i> {{$ctrl.getAccountAge($ctrl.viewerDetails.twitchData.creationDate)}}</div>
                         </div>
@@ -229,7 +232,7 @@
                                 value = JSON.parse(value);
                             } catch (error) { /* silently fail */ }
 
-                            backendCommunicator.fireEvent("update-viewer-metadata", {
+                            backendCommunicator.send("update-viewer-metadata", {
                                 username: $ctrl.viewerDetails.firebotData.username,
                                 key,
                                 value
@@ -249,7 +252,7 @@
                         confirmBtnType: "btn-danger"
                     }).then((confirmed) => {
                         if (confirmed) {
-                            backendCommunicator.fireEvent("delete-viewer-metadata", {
+                            backendCommunicator.send("delete-viewer-metadata", {
                                 username: $ctrl.viewerDetails.firebotData.username,
                                 key
                             });
@@ -267,12 +270,12 @@
 
                 const bannedRole = {
                     name: "Banned",
-                    style: {color: 'red'},
+                    style: { color: 'red' },
                     rank: -1
                 };
                 const modRole = {
                     name: "Moderator",
-                    style: {color: '#37ED3B'},
+                    style: { color: '#37ED3B' },
                     rank: 3
                 };
 
@@ -291,7 +294,7 @@
                         roles.push({
                             name: "Follower",
                             tooltip: followDateDisplay ? `Since ${followDateDisplay}` : undefined,
-                            style: {color: '#47AED2'},
+                            style: { color: '#47AED2' },
                             rank: 2
                         });
                     }
@@ -303,7 +306,7 @@
                             case "vip":
                                 roles.push({
                                     name: "VIP",
-                                    style: {color: '#E175FF'},
+                                    style: { color: '#E175FF' },
                                     rank: 4
                                 });
                                 continue;
@@ -313,35 +316,35 @@
                             case "sub":
                                 roles.push({
                                     name: "Subscriber",
-                                    style: {color: '#C9CCDB'},
+                                    style: { color: '#C9CCDB' },
                                     rank: 5
                                 });
                                 continue;
                             case "broadcaster":
                                 roles.push({
                                     name: "Channel Owner",
-                                    style: {color: 'white'},
+                                    style: { color: 'white' },
                                     rank: 0
                                 });
                                 continue;
                             case "tier1":
                                 roles.push({
                                     name: "Tier 1 Sub",
-                                    style: {color: '#d6d7dc'},
+                                    style: { color: '#d6d7dc' },
                                     rank: 6
                                 });
                                 continue;
                             case "tier2":
                                 roles.push({
                                     name: "Tier 2 Sub",
-                                    style: {color: '#b1c5d4'},
+                                    style: { color: '#b1c5d4' },
                                     rank: 7
                                 });
                                 continue;
                             case "tier3":
                                 roles.push({
                                     name: "Tier 3 Sub",
-                                    style: {color: '#71879a'},
+                                    style: { color: '#71879a' },
                                     rank: 8
                                 });
                                 continue;
@@ -353,7 +356,7 @@
 
                         roles.push({
                             name: teamRole.name,
-                            style: {color: '#7954b1'},
+                            style: { color: '#7954b1' },
                             rank: rank + 1
                         });
                     }
@@ -461,7 +464,7 @@
                 }
 
                 $ctrl.disableAutoStatAccuralChange = () => {
-                    backendCommunicator.fireEvent("update-firebot-viewer-data-field", {
+                    backendCommunicator.send("update-firebot-viewer-data-field", {
                         userId: $ctrl.resolve.userId,
                         field: "disableAutoStatAccrual",
                         value: $ctrl.viewerDetails.firebotData.disableAutoStatAccrual
@@ -469,7 +472,7 @@
                 };
 
                 $ctrl.disableActiveUserListChange = () => {
-                    backendCommunicator.fireEvent("update-firebot-viewer-data-field", {
+                    backendCommunicator.send("update-firebot-viewer-data-field", {
                         userId: $ctrl.resolve.userId,
                         field: "disableActiveUserList",
                         value: $ctrl.viewerDetails.firebotData.disableActiveUserList
@@ -477,7 +480,7 @@
                 };
 
                 $ctrl.disableViewerListChange = () => {
-                    backendCommunicator.fireEvent("update-firebot-viewer-data-field", {
+                    backendCommunicator.send("update-firebot-viewer-data-field", {
                         userId: $ctrl.resolve.userId,
                         field: "disableViewerList",
                         value: $ctrl.viewerDetails.firebotData.disableViewerList
@@ -825,7 +828,7 @@
                                 $ctrl.viewerDetails.firebotData = {};
                                 $ctrl.dataPoints = [];
 
-                                backendCommunicator.fireEvent("remove-viewer-from-db", $ctrl.resolve.userId);
+                                backendCommunicator.send("remove-viewer-from-db", $ctrl.resolve.userId);
                             }
                         });
                 };

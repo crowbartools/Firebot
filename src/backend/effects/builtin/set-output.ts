@@ -1,5 +1,7 @@
 import type { EffectType } from "../../../types";
-import logger from "../../logwrapper";
+import { LoggerCache } from "../../logger-cache";
+
+const logger = LoggerCache.getLogger("Effects");
 
 const resolveDataForOutput = (newData: unknown, currentData?: unknown, propertyPath?: string): unknown => {
     try {

@@ -17,18 +17,14 @@
                 customCommands: []
             };
 
+            backendCommunicator.onAsync("commands:commands-updated", async (commandCache) => {
+                service.commandsCache = commandCache;
+            });
+
             // Refresh commands cache
-            service.refreshCommands = function() {
-                service.commandsCache = backendCommunicator.fireEventSync("get-all-commands");
+            service.refreshCommands = () => {
+                backendCommunicator.send("commands:ui-service-ready");
             };
-
-            backendCommunicator.on("system-commands-updated", () => {
-                service.refreshCommands();
-            });
-
-            backendCommunicator.on("custom-commands-updated", () => {
-                service.refreshCommands();
-            });
 
             service.getSystemCommands = () => service.commandsCache.systemCommands;
 
@@ -108,7 +104,7 @@
                 service.commandsCache.customCommands = service.commandsCache.customCommands.filter(c => c.id !== id);
             });
 
-            backendCommunicator.on("command-count-update", ({commandId, count}) => {
+            backendCommunicator.on("command-count-update", ({ commandId, count }) => {
                 const command = service.getCustomCommands().find(c => c.id === commandId);
 
                 if (command != null) {
@@ -165,6 +161,8 @@
                     content: toastMessage
                 });
             });
+
+            backendCommunicator.send("commands:ui-service-ready");
 
             return service;
         });

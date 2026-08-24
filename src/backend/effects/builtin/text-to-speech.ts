@@ -1,4 +1,5 @@
-import { EffectType } from "../../../types/effects";
+import type { EffectType } from "../../../types";
+
 import frontendCommunicator from "../../common/frontend-communicator";
 
 interface TtsVoice {

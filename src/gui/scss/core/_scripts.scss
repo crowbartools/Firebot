@@ -1,0 +1,138 @@
+.plugin-link-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #cfd3da;
+    text-decoration: none;
+    transition:
+        background 0.15s ease,
+        color 0.15s ease,
+        border-color 0.15s ease;
+
+    &:hover,
+    &:focus {
+        background: rgba(83, 175, 255, 0.16);
+        border-color: rgba(83, 175, 255, 0.4);
+        color: #53afff;
+        text-decoration: none;
+    }
+
+    i {
+        font-size: 12px;
+    }
+}
+
+.plugin-browser-header {
+    background: $light-background-color;
+}
+
+.plugin-browser-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: $light-background-color;
+    border-bottom: 2px solid $light-background-border;
+    padding: 8px 13px;
+}
+
+.plugin-browser-categories {
+    background: $effect-category-bg;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    height: 100%;
+    width: 170px;
+    padding: 5px;
+    overflow-y: auto;
+}
+
+.plugin-browser-category-header {
+    font-weight: 700;
+    padding: 5px 0 5px 15px;
+    font-size: 13px;
+}
+
+.plugin-browser-category {
+    font-weight: 300;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 7px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+
+    &:hover {
+        background: $effect-category-hover-bg;
+        text-decoration: none;
+    }
+
+    &.selected {
+        font-weight: 400;
+        background: $effect-category-selected-bg;
+    }
+}
+
+.plugin-browser-list {
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    padding: 15px;
+    background: $effect-list-bg-color;
+}
+
+.plugin-filters-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    background: $primary-button-bg;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.plugin-filters-popover {
+    min-width: 215px;
+
+    .popover-content {
+        padding: 10px 12px;
+    }
+}
+
+.plugin-filters-section-header {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+}
+
+.plugin-filters-sort-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+
+    &:hover {
+        background: $effect-category-hover-bg;
+    }
+
+    &.selected {
+        background: $effect-category-selected-bg;
+    }
+}

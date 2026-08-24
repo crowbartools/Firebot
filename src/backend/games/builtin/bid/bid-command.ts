@@ -1,7 +1,7 @@
 import moment from "moment";
 import NodeCache from "node-cache";
 
-import type { SystemCommand } from "../../../../types/commands";
+import type { SystemCommand } from "../../../../types";
 
 import { CommandManager } from "../../../chat/commands/command-manager";
 import { GameManager } from "../../game-manager";

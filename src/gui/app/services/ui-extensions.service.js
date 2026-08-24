@@ -8,10 +8,6 @@
 
             service.extensions = [];
 
-            service.setAsReady = () => {
-                backendCommunicator.send("ui-extensions-ready");
-            };
-
             service.getPage = (extensionId, pageId) => {
                 const extension = service.extensions.find(e => e.id === extensionId);
                 if (!extension) {
@@ -37,7 +33,8 @@
                             disableScroll: page.disableScroll,
                             template: page.template,
                             // eslint-disable-next-line no-eval
-                            controller: page.controllerRaw ? eval(page.controllerRaw) : undefined
+                            controller: page.controllerRaw ? eval(page.controllerRaw) : undefined,
+                            url: page.url
                         };
                     }),
                     providers: extension.providers
@@ -149,13 +146,13 @@
                 }
             }
 
-            backendCommunicator.on("all-ui-extensions", (extensions) => {
+            backendCommunicator.on("ui-extensions:all-ui-extensions", (extensions) => {
                 for (const extension of extensions) {
                     installExtension(extension);
                 }
             });
 
-            backendCommunicator.on("ui-extension-registered", (extension) => {
+            backendCommunicator.on("ui-extensions:ui-extension-registered", (extension) => {
                 installExtension(extension);
             });
 

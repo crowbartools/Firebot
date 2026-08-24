@@ -70,9 +70,9 @@ dist
 build
 user-settings
 app-settings
-scripts
 *.css
 !/*/*/effect-queue-monitor/styles/*.css
+!/*/*/control-deck/assets/*.css
 *.scssc
 .env
 resources/overlay/js/port.js

@@ -1,6 +1,7 @@
 import { TypedEmitter } from "tiny-typed-emitter";
 
-import type { BasicViewer } from "../../types/viewers";
+import type { BasicViewer } from "../../types";
+
 import frontendCommunicator from "../common/frontend-communicator";
 import { TwitchApi } from "../streaming-platforms/twitch/api";
 
@@ -19,6 +20,7 @@ class TwitchRolesManager extends TypedEmitter<Events> {
     private _vips: BasicViewer[] = [];
     private _moderators: BasicViewer[] = [];
     private _subscribers: Subscriber[] = [];
+    private _subscribersLastLoadedAt: number | null = null;
 
     constructor() {
         super();
@@ -85,6 +87,11 @@ class TwitchRolesManager extends TypedEmitter<Events> {
     }
 
     async loadSubscribers(): Promise<void> {
+        // Only reload subscribers if it's been more than 30 minutes since they were last loaded
+        if (this.getMinutesSinceSubscribersLoaded() < 30) {
+            return;
+        }
+
         this._subscribers = (await TwitchApi.subscriptions.getSubscriptions())
             .map(m => ({
                 id: m.userId,
@@ -92,10 +99,46 @@ class TwitchRolesManager extends TypedEmitter<Events> {
                 displayName: m.userDisplayName,
                 subTier: this.getRoleForSubTier(m.tier)
             }));
+
+        this._subscribersLastLoadedAt = Date.now();
+    }
+
+    private getMinutesSinceSubscribersLoaded(): number {
+        if (this._subscribersLastLoadedAt == null) {
+            return Infinity;
+        }
+        return (Date.now() - this._subscribersLastLoadedAt) / 1000 / 60;
     }
 
     getSubscribers(): Subscriber[] {
         return this._subscribers;
+    }
+
+    addSubscriberToSubscribersList(userId: string, username: string, displayName: string, tier: string): void {
+        const subTier = this.getRoleForSubTier(tier);
+        const existing = this._subscribers.find(s => s.id === userId);
+
+        if (existing == null) {
+            this._subscribers.push({ id: userId, username, displayName, subTier });
+            this.emit("viewer-role-updated", userId, "sub", "added");
+            this.emit("viewer-role-updated", userId, subTier, "added");
+            return;
+        }
+
+        const previousTier = existing.subTier;
+        existing.subTier = subTier;
+
+        if (previousTier === subTier) {
+            return;
+        }
+
+        this.emit("viewer-role-updated", userId, previousTier, "removed");
+        this.emit("viewer-role-updated", userId, subTier, "added");
+    }
+
+    removeSubscriberFromSubscribersList(userId: string): void {
+        this._subscribers = this._subscribers.filter(s => s.id !== userId);
+        this.emit("viewer-role-updated", userId, "sub", "removed");
     }
 
     private getRoleForSubTier(tier: string): string {

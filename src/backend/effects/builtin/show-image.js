@@ -1,13 +1,14 @@
 "use strict";
 
-const { SettingsManager } = require("../../common/settings-manager");
-const { ResourceTokenManager } = require("../../resource-token-manager");
-const mediaProcessor = require("../../common/handlers/mediaProcessor");
-const webServer = require("../../../server/http-server-manager");
 const fs = require("fs/promises");
-const { EffectCategory } = require("../../../shared/effect-constants");
-const logger = require("../../logwrapper");
 const path = require("path");
+
+const { HttpServerManager } = require("../../../server/http-server-manager");
+const { ResourceTokenManager } = require("../../resource-token-manager");
+const { SettingsManager } = require("../../common/settings-manager");
+const mediaProcessor = require("../../common/handlers/mediaProcessor");
+const { EffectCategory } = require("../../../shared/effect-constants");
+const logger = require("../../logger-cache").LoggerCache.getLogger("Effects");
 
 /**
  * The Show Image effect
@@ -224,7 +225,7 @@ const showImage = {
             data.resourceToken = resourceToken;
         }
 
-        webServer.sendToOverlay("image", data);
+        HttpServerManager.sendToOverlay("image", data);
         return true;
     },
     /**

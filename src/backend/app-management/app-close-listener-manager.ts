@@ -1,4 +1,4 @@
-import { Awaitable } from "../../types/util-types";
+import type { Awaitable } from "../../types";
 
 type AppCloseListener = () => Awaitable<void>;
 

@@ -1,0 +1,301 @@
+// Control Deck grid editor styles
+
+.lucide-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+
+    svg {
+        display: block;
+    }
+}
+
+.emoji-glyph {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    line-height: 1;
+    width: 22px;
+}
+
+.cd-cell-missing {
+    outline: 1px dashed rgba(255, 180, 0, 0.6);
+}
+
+.cd-cell-missing-glyph {
+    color: #f0ad4e;
+    font-size: 22px;
+}
+
+.cd-page-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    .cd-page-tabs {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        min-width: 0;
+    }
+
+    .cd-page-tab {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 12px;
+        border-radius: 10px;
+        background: #68696c;
+        cursor: pointer;
+        user-select: none;
+        white-space: nowrap;
+
+        &.tab-btn {
+            gap: 0;
+            padding: 5px 0px;
+        }
+
+        &.active {
+            background: #1b9dc0;
+            color: #fff;
+        }
+
+        .cd-page-grip {
+            cursor: grab;
+            opacity: 0.5;
+            font-size: 11px;
+            padding: 0 12px;
+        }
+
+        &:hover .cd-page-grip {
+            opacity: 0.85;
+        }
+    }
+
+    .cd-page-tab-pinned {
+        flex: 0 0 auto;
+        background: rgba(27, 157, 192, 0.15);
+        border: 1px solid rgba(27, 157, 192, 0.4);
+        padding: 4px 12px;
+
+        &.active {
+            background: #1b9dc0;
+            border-color: #1b9dc0;
+            color: #fff;
+        }
+    }
+
+    .cd-page-divider {
+        width: 1px;
+        padding: 10px 0;
+        border-left: 1px solid rgba(255, 255, 255, 0.3);
+        gap: 2px;
+    }
+}
+
+.cd-breadcrumb {
+    font-size: 14px;
+    margin-bottom: 10px;
+
+    .cd-crumb {
+        color: #2c92ff;
+    }
+
+    .cd-crumb-sep {
+        opacity: 0.5;
+        padding: 0 2px;
+    }
+}
+
+.control-deck-grid {
+    display: grid;
+    gap: 8px;
+    margin-top: 10px;
+    width: 100%;
+    // max-width: 640px;
+
+    .cd-cell {
+        border-radius: 10px;
+        position: relative;
+        overflow: hidden;
+        min-height: 0;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &.cd-cell-empty {
+            border: 2px dashed rgba(150, 150, 150, 0.35);
+            cursor: pointer;
+            background: transparent;
+
+            &:hover {
+                border-color: rgba(150, 150, 150, 0.7);
+            }
+        }
+
+        &:not(.cd-cell-empty) {
+            cursor: grab;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        &.cd-cell-folder {
+            border: 2px dashed rgba(255, 255, 255, 0.25);
+        }
+
+        &.cd-cell-resizing {
+            outline: 2px solid #1b9dc0;
+            outline-offset: -2px;
+        }
+
+        &.cd-cell-pinned {
+            cursor: pointer;
+            box-shadow: none;
+            opacity: 0.4;
+            border: 1px dashed rgba(255, 255, 255, 0.3);
+
+            &:hover {
+                opacity: 0.7;
+
+                .cd-pinned-add {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
+    .cd-pinned-badge {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.85);
+    }
+
+    .cd-pinned-add {
+        position: absolute;
+        right: 3px;
+        bottom: 3px;
+        width: 18px;
+        height: 18px;
+        border-radius: 4px;
+        background: rgba(44, 146, 255, 0.85);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .cd-resize-handle {
+        position: absolute;
+        right: 2px;
+        bottom: 2px;
+        width: 16px;
+        height: 16px;
+        border-radius: 4px 0 8px 0;
+        cursor: nwse-resize;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        touch-action: none;
+        z-index: 2;
+
+        &::after {
+            content: "";
+            position: absolute;
+            right: 3px;
+            bottom: 3px;
+            width: 7px;
+            height: 7px;
+            border-right: 2px solid rgba(255, 255, 255, 0.85);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.85);
+        }
+    }
+
+    .cd-cell:not(.cd-cell-empty):hover .cd-resize-handle {
+        display: block;
+    }
+
+    .cd-cell-add {
+        font-size: 18px;
+    }
+
+    .cd-cell-content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        padding: 4px;
+        color: #fff;
+        text-align: center;
+    }
+
+    .cd-cell-icon {
+        max-width: 50px;
+        max-height: 50px;
+        object-fit: contain;
+        pointer-events: none;
+    }
+
+    .cd-cell-glyph {
+        display: inline-flex;
+        line-height: 0;
+        pointer-events: none;
+    }
+
+    .cd-cell-emoji {
+        font-size: 32px;
+        line-height: 1;
+        pointer-events: none;
+    }
+
+    .cd-cell-folder-glyph {
+        font-size: 28px;
+    }
+
+    .cd-cell-name {
+        font-size: 15px;
+        font-weight: 600;
+        word-break: break-word;
+    }
+
+    .cd-cell-actions {
+        position: absolute;
+        top: 3px;
+        right: 3px;
+        display: none;
+        gap: 4px;
+
+        .cd-action {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            cursor: pointer;
+
+            &.cd-action-danger:hover {
+                background: #e0526a;
+            }
+        }
+    }
+
+    .cd-cell:hover .cd-cell-actions {
+        display: flex;
+    }
+}

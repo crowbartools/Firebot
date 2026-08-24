@@ -113,102 +113,55 @@
 
     app.run(function initializeApplication(
         logger,
-        quickActionsService,
-        chatMessagesService,
+        backendCommunicator,
+        accountAccess,
         activityFeedService,
-        viewerRolesService,
-        viewerRanksService,
-        connectionService,
-        notificationService,
-        $timeout,
-        updatesService,
-        commandsService,
-        integrationService,
-        viewersService,
-        chatModerationService,
-        ttsService,
-        settingsService,
-        countersService,
-        hotkeyService,
-        gamesService,
-        presetEffectListsService,
-        startupScriptsService,
-        effectQueuesService,
-        timerService,
-        scheduledTaskService,
+        backupService,
         channelRewardsService,
-        sortTagsService,
+        chatMessagesService,
+        chatModerationService,
+        commandsService,
+        connectionService,
+        controlDeckService,
+        countersService,
+        currencyService,
+        effectQueuesService,
+        eventsService,
+        gamesService,
+        hotkeyService,
         iconsService,
-        videoService,
-        replaceVariableService,
-        variableMacroService,
-        uiExtensionsService,
-        webhooksService,
+        integrationService,
+        notificationService,
         overlayWidgetsService,
+        powerUpsService,
+        presetEffectListsService,
+        quickActionsService,
+        replaceVariableService,
+        scheduledTaskService,
+        settingsService,
+        sortTagsService,
+        timerService,
+        ttsService,
+        updatesService,
+        variableMacroService,
+        videoService,
+        viewerRanksService,
+        viewerRolesService,
+        webhooksService,
+        uiExtensionsService,
+        pluginsService,
         dynamicParameterRegistry,
         platformService
     ) {
-        // 'chatMessagesService' and 'videoService' are included so they're instantiated on app start
-
-        connectionService.loadProfiles();
-
-        //load viewer roles and ranks
-        viewerRolesService.loadCustomRoles();
-        viewerRanksService.loadRankLadders();
-
-        //load commands
-        commandsService.refreshCommands();
-
-        timerService.loadTimers();
-
-        scheduledTaskService.loadScheduledTasks();
-
-        //get integrations from backend
-        integrationService.updateIntegrations();
-
-        viewersService.updateViewers();
-
-        chatModerationService.loadChatModerationData();
-
-        countersService.loadCounters();
-
-        hotkeyService.loadHotkeys();
-
-        gamesService.loadGames();
-
-        presetEffectListsService.loadPresetEffectLists();
-
-        startupScriptsService.loadStartupScripts();
-
-        effectQueuesService.loadEffectQueues();
-
-        channelRewardsService.loadChannelRewards();
-        channelRewardsService.refreshChannelRewardRedemptions();
-
-        sortTagsService.loadSortTags();
-
-        iconsService.loadFontAwesomeIcons();
-
-        variableMacroService.loadMacros();
-
-        webhooksService.loadWebhookConfigs();
-
-        overlayWidgetsService.loadOverlayWidgetTypesAndConfigs();
+        /**
+         * Services are included here so they're instantiated on app start
+         * and get their initial data
+         */
 
         platformService.loadPlatform();
 
-        //start notification check
-        $timeout(() => {
-            notificationService.loadAllNotifications();
-        }, 1000);
-
-        //check for updates
-        if (!updatesService.hasCheckedForUpdates) {
-            updatesService.checkForUpdate();
-        }
-
         // Validate Twitch accounts
-        connectionService.validateAccounts();
+        accountAccess.validateAccounts();
 
         ttsService.obtainVoices().then(() => {
             if (settingsService.getSetting("DefaultTtsVoiceId") == null) {
@@ -258,10 +211,10 @@
         dynamicParameterRegistry.register("sort-tag-select", { tag: "fb-param-sort-tag-select" });
         dynamicParameterRegistry.register("animation-select", { tag: "fb-param-animation-select" });
 
-        uiExtensionsService.setAsReady();
+        backendCommunicator.send("main-window-ready");
     });
 
-    app.controller("MainController", function($scope, $rootScope, $timeout, connectionService, utilityService,
+    app.controller("MainController", function($scope, $rootScope, $timeout, accountAccess, utilityService, profileManager,
         settingsService, backupService, sidebarManager, logger, backendCommunicator, fontManager, ngToast, modalFactory) {
         $rootScope.showSpinner = true;
 
@@ -327,7 +280,7 @@
                 templateUrl: "newProfileModal.html",
                 size: 'sm',
                 // This is the controller to be used for the modal.
-                controllerFunc: ($scope, $uibModalInstance, connectionService, ngToast) => {
+                controllerFunc: ($scope, $uibModalInstance, profileManager, ngToast) => {
 
                     // Login Kickoff
                     $scope.createNewProfile = function() {
@@ -336,7 +289,7 @@
                             return;
                         }
                         $uibModalInstance.close();
-                        connectionService.createNewProfile($scope.profileName);
+                        profileManager.createNewProfile($scope.profileName);
                     };
 
                     // When they hit cancel or click outside the modal, we don't want to do anything
@@ -359,7 +312,7 @@
                     currentProfileId: () => ipcRenderer.sendSync("profiles:get-logged-in-profile")
                 },
                 // This is the controller to be used for the modal.
-                controllerFunc: ($scope, $uibModalInstance, connectionService, ngToast, currentProfileId) => {
+                controllerFunc: ($scope, $uibModalInstance, profileManager, ngToast, currentProfileId) => {
 
                     $scope.profileName = currentProfileId;
 
@@ -370,7 +323,7 @@
                             return;
                         }
                         $uibModalInstance.close();
-                        connectionService.renameProfile($scope.profileName);
+                        profileManager.renameProfile($scope.profileName);
                     };
 
                     // When they hit cancel or click outside the modal, we don't want to do anything
@@ -392,11 +345,11 @@
                 templateUrl: "deleteProfileModal.html",
                 size: 'sm',
                 // This is the controller to be used for the modal.
-                controllerFunc: ($scope, $uibModalInstance, connectionService) => {
+                controllerFunc: ($scope, $uibModalInstance, profileManager) => {
                     // Delete Profile
                     $scope.deleteProfile = function() {
                         $uibModalInstance.close();
-                        connectionService.deleteProfile();
+                        profileManager.deleteProfile();
                     };
 
                     // When they hit cancel or click outside the modal, we don't want to do anything
@@ -420,7 +373,7 @@
                     })
                     .then((confirmed) => {
                         if (confirmed) {
-                            connectionService.switchProfiles(profileId);
+                            profileManager.switchProfiles(profileId);
                         }
                     });
             }
@@ -431,14 +384,10 @@
         /**
          * Initial App Load
          */
-        $scope.cs = connectionService;
-        //$scope.accounts = connectionService.accounts;
-        //$scope.profiles = connectionService.profiles;
+        $scope.accountAccess = accountAccess;
+        $scope.profileManager = profileManager;
 
-        if (settingsService.getSetting("JustUpdated")) {
-            utilityService.showUpdatedModal();
-            settingsService.saveSetting("JustUpdated", false);
-        } else if (settingsService.getSetting("FirstTimeUse")) {
+        if (settingsService.getSetting("FirstTimeUse")) {
             utilityService.showSetupWizard();
             settingsService.saveSetting("FirstTimeUse", false);
         }
@@ -452,10 +401,13 @@
         $scope.appTitle = `Firebot v${appVersion}`;
 
         const url = require("url");
-        $scope.customFontCssPath = url.pathToFileURL(fontManager.getFontCssPath());
+        async function setCustomFontCssPath() {
+            $scope.customFontCssPath = url.pathToFileURL(await fontManager.getFontCssPath());
+        }
+        setCustomFontCssPath();
 
-        backendCommunicator.on("fonts:reload-font-css", () => {
-            $scope.customFontCssPath = `${url.pathToFileURL(fontManager.getFontCssPath())}?reload=${new Date().getTime()}`;
+        backendCommunicator.onAsync("fonts:reload-font-css", async () => {
+            $scope.customFontCssPath = `${url.pathToFileURL(await fontManager.getFontCssPath())}?reload=${new Date().getTime()}`;
         });
 
         //make sure sliders render properly
@@ -521,10 +473,6 @@
         if (settingsService.getSetting("BackupLocationReset") === true) {
             modalFactory.showInfoModal("Your previous backup location could not be found. Backup location has been reset to default. You can change it in Settings > Backups.");
             settingsService.deleteSetting("BackupLocationReset");
-        }
-
-        if (settingsService.getSetting("ConnectOnLaunch") === true) {
-            connectionService.connectSidebarControlledServices();
         }
     });
 

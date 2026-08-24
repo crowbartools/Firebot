@@ -91,6 +91,7 @@
                         const foundDuplicate = $ctrl.model.filter((_, i) => i !== index).some(i => i === newItem);
                         if (!$ctrl.settings.noDuplicates || !foundDuplicate) {
                             $ctrl.model[index] = newItem;
+                            $ctrl.onUpdate?.($ctrl.model);
                         } else {
                             ngToast.create("Cannot edit: Duplicate found");
                         }
@@ -102,6 +103,7 @@
                         const foundDuplicate = $ctrl.model.some(i => i === newItem);
                         if (!$ctrl.settings.noDuplicates || !foundDuplicate) {
                             $ctrl.model.push(newItem);
+                            $ctrl.onUpdate?.($ctrl.model);
                         } else {
                             ngToast.create("Cannot add: Duplicate found");
                         }
@@ -110,6 +112,7 @@
 
                 $ctrl.removeItem = (index) => {
                     $ctrl.model.splice(index, 1);
+                    $ctrl.onUpdate?.($ctrl.model);
                 };
 
             }
