@@ -11,7 +11,9 @@
         "lint": "grunt lint",
         "test": "jest"
     },
-    "repository": "https://github.com/crowbartools/Firebot",
+    "repository": {
+        "url": "https://github.com/crowbartools/Firebot"
+    },
     "keywords": [
         "twitch",
         "twitch.tv",
