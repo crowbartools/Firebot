@@ -44,6 +44,7 @@ import GroupNameEventFilter from "./filters/group-name-filter";
 import SceneNameEventFilter from "./filters/scene-name-filter";
 
 import { SceneNameVariable } from "./variables/scene-name-variable";
+import { PreviousSceneNameVariable } from "./variables/previous-scene-name";
 import { SceneCollectionNameVariable } from "./variables/scene-collection-name";
 import { IsConnectedVariable } from "./variables/is-connected";
 import { IsStreamingVariable } from "./variables/is-streaming";
@@ -169,6 +170,7 @@ class ObsIntegration
         FilterManager.registerFilter(SceneNameEventFilter);
 
         ReplaceVariableManager.registerReplaceVariable(SceneNameVariable);
+        ReplaceVariableManager.registerReplaceVariable(PreviousSceneNameVariable);
         ReplaceVariableManager.registerReplaceVariable(SceneCollectionNameVariable);
         ReplaceVariableManager.registerReplaceVariable(IsConnectedVariable);
         ReplaceVariableManager.registerReplaceVariable(IsStreamingVariable);

@@ -61,6 +61,8 @@ let groupInfos: Array<CachedGroupInfo> = [];
 let previewSceneName: string | null;
 // The cached program scene name.
 let programSceneName: string;
+// The cached previous program scene name.
+let previousProgramSceneName: string;
 
 const TEXT_SOURCE_IDS = ["text_gdiplus_v2", "text_gdiplus_v3", "text_ft2_source_v2"];
 
@@ -179,6 +181,8 @@ async function setupRemoteListeners() {
     });
 
     obs.on("SceneTransitionStarted", async ({ transitionName }) => {
+        previousProgramSceneName = programSceneName || "";
+
         programSceneName = (await obs.call("GetCurrentProgramScene"))?.sceneName || "";
         eventManager?.triggerEvent(
             OBS_EVENT_SOURCE_ID,
@@ -661,6 +665,10 @@ export async function getSceneList(): Promise<string[]> {
 
 export function getCurrentSceneName(): string {
     return programSceneName;
+}
+
+export function getPreviousSceneName(): string {
+    return previousProgramSceneName;
 }
 
 export async function setCurrentScene(sceneName: string): Promise<void> {
