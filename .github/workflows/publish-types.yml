@@ -16,10 +16,10 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Setup Node
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6.4.0
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24
-          registry-url: "https://registry.npmjs.org"
+          registry-url: https://registry.npmjs.org/
 
       - name: Install deps
         run: npm ci
@@ -31,5 +31,5 @@ jobs:
         run: npm run build:types
 
       - name: Publish to NPM
-        run: npm publish --access=public --tag latest
+        run: npm publish --access public --tag latest
         working-directory: ./dist/types
