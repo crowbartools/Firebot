@@ -147,7 +147,7 @@ export const TwitchEventSource: EventSource = {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
                     return `**${eventData.userDisplayName}${
                         showUserIdName ? ` (${eventData.username})` : ""
-                    }** raiding user **${eventData.raidTargetUserDisplayName}** with **${
+                    }** raided user **${eventData.raidTargetUserDisplayName}** with **${
                         eventData.viewerCount
                     }** viewer(s)`;
                 }
