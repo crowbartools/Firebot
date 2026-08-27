@@ -4,7 +4,7 @@
 
     angular
         .module("firebotApp")
-        .factory("accountAccess", function(backendCommunicator, utilityService) {
+        .factory("accountAccess", function(connectionService, backendCommunicator, utilityService) {
             const service = {};
 
             service.accounts = {
@@ -67,7 +67,7 @@
                     return;
                 }
 
-                service.disconnectFromService("chat");
+                connectionService.disconnectFromService("chat");
 
                 if (invalidAccounts.streamer) {
                     service.logout("streamer");
