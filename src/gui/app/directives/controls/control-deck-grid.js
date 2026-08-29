@@ -58,7 +58,7 @@
                             <i ng-if="cell.control._typeInfo.missing" class="fas fa-exclamation-triangle cd-cell-missing-glyph" uib-tooltip="This control's type ('{{cell.control.type}}') is not registered. It may belong to an uninstalled plugin." tooltip-append-to-body="true"></i>
                             <img ng-if="cell.control._previewIcon.kind === 'image'" class="cd-cell-icon" ng-src="{{cell.control._previewIcon.url}}" ng-style="cell.control._previewIcon.style" />
                             <lucide-icon ng-if="cell.control._typeInfo.def.id === 'firebot:switch'" class="cd-cell-glyph" name="toggle-left" color="white" size="45"></lucide-icon>
-                            <lucide-icon ng-if="cell.control._previewIcon.kind === 'glyph'" class="cd-cell-glyph" name="{{cell.control._previewIcon.name}}" color="{{cell.control._previewIcon.color}}" size="{{cell.control._previewIcon.size}}"></lucide-icon>
+                            <lucide-icon ng-if="cell.control._previewIcon.kind === 'glyph'" class="cd-cell-glyph" name="{{cell.control._previewIcon.name}}" color="{{cell.control._previewIcon.color}}" size="cell.control._previewIcon.size"></lucide-icon>
                             <span ng-if="cell.control._previewIcon.kind === 'emoji'" class="cd-cell-emoji" ng-style="cell.control._previewIcon.style">{{cell.control._previewIcon.emoji}}</span>
                             <div class="cd-cell-name" ng-style="cell.control._labelStyle">{{cell.control.label || cell.control.name}}</div>
                             <div class="cd-cell-actions">
