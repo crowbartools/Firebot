@@ -178,7 +178,7 @@
                                     {{$ctrl.message.timestampDisplay}}
                                 </span>
                             </div>
-                            <div class="chatContent" ng-class="{ gigantify: $ctrl.message.isGigantified }">
+                            <div class="chatContent" ng-class="{ gigantify: $ctrl.message.isGigantified, 'chat-gif': $ctrl.message.isGif }">
                                 <span ng-repeat="part in $ctrl.message.parts" class="chat-content-wrap">
 
                                     <span ng-if="part.type === 'text'" style="{{$ctrl.chatSizeStyle}}{{$ctrl.fontFamilyStyle}}" ng-class="{ highlightText: part.flagged }">{{part.text}}</span>
@@ -235,6 +235,15 @@
                                         <img ng-src="{{part.url}}" style="height: 100%;" alt="{{part.name || part.text || ''}}" />
                                     </span>
                                     <span ng-if="part.origin === '7TV' && !$ctrl.showSevenTvEmotes" style="{{$ctrl.chatSizeStyle}}{{$ctrl.fontFamilyStyle}}">{{part.name}}</span>
+
+                                    <span
+                                        ng-if="part.type === 'gif'"
+                                        class="gif-image"
+                                        uib-tooltip="GIF: {{part.text}}"
+                                        tooltip-append-to-body="true"
+                                    >
+                                        <img ng-src="{{part.url}}" style="height: 100%;" alt="{{part.text}}" />
+                                    </span>
                                 </span>
                             </div>
                             <div ng-show="$ctrl.message.whisper" class="muted">(Whispered to {{ $ctrl.message.whisperTarget }})</div>

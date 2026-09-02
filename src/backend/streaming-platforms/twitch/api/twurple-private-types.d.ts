@@ -44,7 +44,18 @@ export interface EventSubChatMessageMentionPart {
     mention: EventSubChatMessageMention;
 }
 
-export type EventSubChatMessagePart = EventSubChatMessageTextPart | EventSubChatMessageCheermotePart | EventSubChatMessageEmotePart | EventSubChatMessageMentionPart;
+export interface EventSubChatMessageGif {
+    gif_id: string;
+    url: string;
+}
+
+export interface EventSubChatMessageGifPart {
+    type: 'gif';
+    text: string;
+    gif: EventSubChatMessageGif;
+}
+
+export type EventSubChatMessagePart = EventSubChatMessageTextPart | EventSubChatMessageCheermotePart | EventSubChatMessageEmotePart | EventSubChatMessageMentionPart | EventSubChatMessageGifPart;
 
 export type EventSubChannelBitsUseMessagePart = EventSubChatMessageTextPart | EventSubChatMessageCheermotePart | EventSubChatMessageEmotePart;
 

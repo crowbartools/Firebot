@@ -255,6 +255,11 @@
     height: 8rem !important;
 }
 
+.chat-gif :last-child > .gif-image {
+    display: block !important;
+    height: 16rem !important;
+}
+
 .chat-username {
     display: flex;
     font-weight: bold;

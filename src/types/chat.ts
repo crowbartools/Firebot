@@ -4,7 +4,8 @@ type FirebotChatMessagePartType =
     | "emote"
     | "third-party-emote"
     | "cheermote"
-    | "mention";
+    | "mention"
+    | "gif";
 
 type FirebotChatMessagePartBase = {
     type: FirebotChatMessagePartType;
@@ -46,12 +47,18 @@ export type FirebotChatMessageMentionPart = FirebotChatMessagePartBase & {
     userDisplayName: string;
 };
 
+export type FirebotChatMessageGifPart = FirebotChatMessagePartBase & {
+    type: "gif";
+    url: string;
+};
+
 export type FirebotChatMessagePart =
     | FirebotChatMessageTextPart
     | FirebotChatMessageLinkPart
     | FirebotChatMessageEmotePart
     | FirebotChatMessageCheermotePart
-    | FirebotChatMessageMentionPart;
+    | FirebotChatMessageMentionPart
+    | FirebotChatMessageGifPart;
 
 export type FirebotParsedMessagePart = {
     type: string;
@@ -144,6 +151,7 @@ export type FirebotChatMessage = {
         imageUrl: string;
     };
     isGigantified?: boolean;
+    isGif?: boolean;
 };
 
 export type FirebotEmote = {

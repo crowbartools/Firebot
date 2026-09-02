@@ -16,6 +16,7 @@ import type {
     EventSubChatMessageCheermote,
     EventSubChatMessageCheermotePart,
     EventSubChatMessageEmotePart,
+    EventSubChatMessageGifPart,
     EventSubChatMessageMentionPart,
     EventSubChatMessagePart
 } from "../twurple-private-types";
@@ -25,6 +26,7 @@ import type {
     FirebotChatMessage,
     FirebotChatMessageCheermotePart,
     FirebotChatMessageEmotePart,
+    FirebotChatMessageGifPart,
     FirebotChatMessageMentionPart,
     FirebotChatMessagePart,
     FirebotChatMessageTextPart,
@@ -396,6 +398,14 @@ class TwitchEventSubChatHelpers {
                         (p as EventSubChatMessageMentionPart)
                     );
                     break;
+
+                case "gif":
+                    this.parseEventSubGif(
+                        part,
+                        (p as EventSubChatMessageGifPart),
+                        message.rawText
+                    );
+                    break;
             }
 
             return part;
@@ -476,6 +486,16 @@ class TwitchEventSubChatHelpers {
         part.username = mentionPart.mention.user_login;
         part.userId = mentionPart.mention.user_id;
         part.userDisplayName = mentionPart.mention.user_name;
+    }
+
+    private parseEventSubGif(
+        part: FirebotChatMessageGifPart,
+        gifPart: EventSubChatMessageGifPart,
+        text: string
+    ): void {
+        part.url = gifPart.gif.url;
+        part.id = gifPart.gif.gif_id;
+        part.text = text;
     }
 
     private parseChatBadges(badgeData: Record<string, string>): ChatBadge[] {
