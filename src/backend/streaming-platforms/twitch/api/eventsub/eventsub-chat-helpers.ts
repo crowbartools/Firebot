@@ -494,7 +494,7 @@ class TwitchEventSubChatHelpers {
         text: string
     ): void {
         part.url = gifPart.gif.url;
-        part.id = gifPart.gif.gif_id;
+        part.id = gifPart.gif.id;
         part.text = text;
     }
 

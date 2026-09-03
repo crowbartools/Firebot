@@ -558,7 +558,7 @@ export class TwitchChatApi extends ApiResourceBase {
                                     : null,
                                 gif: f.type === "gif"
                                     ? {
-                                        gifId: f.gif.gif_id,
+                                        id: f.gif.id,
                                         url: f.gif.url
                                     }
                                     : null

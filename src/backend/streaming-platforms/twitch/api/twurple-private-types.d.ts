@@ -45,7 +45,7 @@ export interface EventSubChatMessageMentionPart {
 }
 
 export interface EventSubChatMessageGif {
-    gif_id: string;
+    id: string;
     url: string;
 }
 
