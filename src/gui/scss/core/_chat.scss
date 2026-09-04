@@ -228,7 +228,8 @@
         text-decoration: none;
         color: transparent;
         background: black;
-        .chatEmoticon {
+        .chatEmoticon,
+        .gif-image {
             opacity: 0;
         }
         .chat-link,
@@ -243,7 +244,8 @@
                 color: #3e87da;
                 opacity: 0.5;
             }
-            .chatEmoticon {
+            .chatEmoticon,
+            .gif-image {
                 opacity: 0.5;
             }
         }
