@@ -1,5 +1,11 @@
 [
     {
+        "id": "twitchcon-us-2026-meetup",
+        "title": "TwitchCon San Diego Firebot User Meetup",
+        "type": "info",
+        "message": "Hey, Firebot fans! TwitchCon San Diego is just a couple weeks away and we're considering hosting a TwitchCon Firebot User Meetup. If you're attending TwitchCon San Diego AND you'd be interested in attending a Firebot user meetup, either respond to our <a href=\"https://discord.com/channels/372817064034959370/372821213443129346/1564717552989642753\">Discord poll</a> or reply to <a href=\"https://bsky.app/profile/zunderscore.tv/post/3myux6setts2b\">zunderscore on Bluesky</a>. Hope to see you there!"
+    },
+    {
         "id": "5.61-featured-streamers-reminder",
         "title": "Feature YOUR stream on the Firebot website!",
         "type": "info",
