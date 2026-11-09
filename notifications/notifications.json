@@ -1,9 +1,9 @@
 [
     {
-        "id": "twitchcon-us-2026-meetup",
-        "title": "TwitchCon San Diego Firebot User Meetup",
+        "id": "twitchcon-us-2026-meetup-2",
+        "title": "UPDATE: TwitchCon San Diego Meetup Details",
         "type": "info",
-        "message": "Hey, Firebot fans! TwitchCon San Diego is just a couple weeks away and we're considering hosting a TwitchCon Firebot User Meetup. If you're attending TwitchCon San Diego AND you'd be interested in attending a Firebot user meetup, either respond to our <a href=\"https://discord.com/channels/372817064034959370/372821213443129346/1564717552989642753\">Discord poll</a> or reply to <a href=\"https://bsky.app/profile/zunderscore.tv/post/3myux6setts2b\">zunderscore on Bluesky</a>. Hope to see you there!"
+        "message": "Hey, Firebot fans. We weren't able to get a separate venue, so we're taking over the official Chat Moderators & Software Dev Community MeetUp at TwitchCon! For more details (and to see the <strong>exclusive Firebot sticker</strong> zunder will be giving out), check out either the <a href=\"https://discord.com/channels/372817064034959370/372821213443129346/1569165190958813355\">Discord announcement</a> or <a href=\"https://bsky.app/profile/zunderscore.tv/post/3mztrnhfgrs2p\">zunder's post on Bluesky</a>. See you in San Diego!"
     },
     {
         "id": "5.61-featured-streamers-reminder",
