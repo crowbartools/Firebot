@@ -21,7 +21,6 @@ import {
     mapEventSubRewardToTwitchData,
     mapSharedChatParticipants
 } from "./eventsub-helpers";
-import { EventSubPowerUpRedemptionAddSubscription } from "./custom-subscriptions/power-up-redemption-add-subscription";
 import { logTwurpleMessage } from "../twurple-logger";
 
 class TwitchEventSubClient {
@@ -380,49 +379,43 @@ class TwitchEventSubClient {
         this._subscriptions.push(customRewardRedemptionUpdateSubscription);
 
         // Custom Power-up Redemption Add
-        // @ts-ignore
-        const customPowerUpRedemptionSubscription = this._eventSubListener._genericSubscribe(
-            EventSubPowerUpRedemptionAddSubscription,
-            async (event) => {
-                if (!event.custom_power_up.id) {
-                    return;
-                }
+        const customPowerUpRedemptionSubscription = this._eventSubListener.onChannelPowerUpRedemptionAdd(streamer.userId, async (event) => {
+            if (!event.powerUpId) {
+                return;
+            }
 
-                await this.ensureViewerExists({
-                    id: event.user_id,
-                    username: event.user_login,
-                    displayName: event.user_name
-                });
+            await this.ensureViewerExists({
+                id: event.userId,
+                username: event.userName,
+                displayName: event.userDisplayName
+            });
 
-                const powerUp = await TwitchApi.powerUps.getCustomPowerUpById(event.custom_power_up.id);
+            const powerUp = await TwitchApi.powerUps.getCustomPowerUpById(event.powerUpId);
 
-                if (!powerUp) {
-                    this.logger.debug(
-                        `Received a custom power-up redemption for an unknown power-up. Power-up ID: ${event.custom_power_up.id}`,
-                        event
-                    );
-                    return;
-                }
-
-                const imageUrl = getChannelRewardOrPowerUpImageUrl(powerUp);
-
-                TwitchEventHandlers.bits.handleCustomPowerUpRedemption(
-                    event.id,
-                    event.status,
-                    event.user_input,
-                    event.user_id,
-                    event.user_login,
-                    event.user_name,
-                    powerUp.id,
-                    powerUp.title,
-                    powerUp.prompt,
-                    powerUp.bits,
-                    imageUrl
+            if (!powerUp) {
+                this.logger.debug(
+                    `Received a custom power-up redemption for an unknown power-up. Power-up ID: ${event.powerUpId}`,
+                    event
                 );
-            },
-            this._eventSubListener,
-            streamer.userId
-        );
+                return;
+            }
+
+            const imageUrl = getChannelRewardOrPowerUpImageUrl(powerUp);
+
+            TwitchEventHandlers.bits.handleCustomPowerUpRedemption(
+                event.id,
+                event.status,
+                event.input,
+                event.userId,
+                event.userName,
+                event.userDisplayName,
+                powerUp.id,
+                powerUp.title,
+                powerUp.prompt,
+                powerUp.bits,
+                imageUrl
+            );
+        });
         this._subscriptions.push(customPowerUpRedemptionSubscription);
 
         // Incoming Raid

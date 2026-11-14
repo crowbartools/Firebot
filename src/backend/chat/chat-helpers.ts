@@ -75,8 +75,12 @@ class FirebotChatHelpers {
                     if (this.URL_REGEX.test(word)) {
                         subParts.push({
                             type: "link",
-                            text: `${word} `,
+                            text: word,
                             url: word.startsWith("http") ? word : `https://${word}`
+                        });
+                        subParts.push({
+                            type: "text",
+                            text: " "
                         });
                         continue;
                     }
@@ -246,6 +250,7 @@ class FirebotChatHelpers {
         const sharedChatRoom = SharedChatCache.participants[sharedChatRoomId];
         const isSharedChatMessage = sharedChatRoomId != null && sharedChatRoomId !== AccountAccess.getAccounts().streamer.userId;
         const isGigantified = msg.tags.get("msg-id") === "gigantified-emote-message";
+        const isGif = msg.tags.has("gifs") && !!msg.tags.get("gifs")?.length;
         const firebotChatMessage: FirebotChatMessage = {
             id: msg.tags.get("id"),
             username: msg.userInfo.userName,
@@ -258,6 +263,7 @@ class FirebotChatHelpers {
             isHiddenFromChatFeed: false,
             isReply: msg.tags.has("reply-parent-msg-id"),
             isGigantified: isGigantified,
+            isGif: isGif,
             replyParentMessageId: msg.tags.get("reply-parent-msg-id"),
             replyParentMessageText: msg.tags.get("reply-parent-msg-body"),
             replyParentMessageSenderUserId: msg.tags.get("reply-parent-user-id"),
@@ -310,8 +316,10 @@ class FirebotChatHelpers {
             msg._params[1].value = msgText;
         }
 
-        const messageParts = this._parseMessageParts(firebotChatMessage,
-            parseChatMessage(msgText, msg.emoteOffsets, TwitchEventSubChatHelpers.twitchCheermotes?.getPossibleNames()));
+        const messageParts = firebotChatMessage.isGif === true
+            ? [{ type: "gif", text: msgText, url: msg.tags.get("gifs").split("|")[2] } as FirebotParsedMessagePart]
+            : this._parseMessageParts(firebotChatMessage,
+                parseChatMessage(msgText, msg.emoteOffsets, TwitchEventSubChatHelpers.twitchCheermotes?.getPossibleNames()));
 
         firebotChatMessage.parts = messageParts;
 

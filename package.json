@@ -1,6 +1,6 @@
 {
     "name": "firebotv5",
-    "version": "5.67.0-beta1",
+    "version": "5.67.0",
     "description": "Powerful all-in-one bot for Twitch streamers.",
     "main": "build/main.js",
     "scripts": {
@@ -67,8 +67,8 @@
         "@octokit/rest": "^22.0.0",
         "@seald-io/nedb": "^4.0.4",
         "@tursodatabase/database": "^0.6.1",
-        "@twurple/chat": "^8.1.4",
-        "@twurple/eventsub-ws": "^8.1.4",
+        "@twurple/chat": "^8.2.0",
+        "@twurple/eventsub-ws": "^8.2.0",
         "@types/tinycolor2": "^1.4.6",
         "@vueuse/core": "^14.3.0",
         "@zunderscore/elgato-light-control": "^1.2.0",

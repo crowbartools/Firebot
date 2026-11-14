@@ -46,7 +46,7 @@
                             ng-repeat="page in $ctrl.deck.pages"
                             class="cd-page-tab tab-btn"
                             ng-class="{ active: page.id === $ctrl.activePageId }"
-                            ng-click="$ctrl.setActivePage(page.id)"
+                            ng-click="$ctrl.setActivePage(page.id, $event)"
                             ng-dblclick="$ctrl.renamePage(page)"
                         >
                             <span class="cd-page-grip"><i class="fas fa-grip-vertical"></i></span>
@@ -135,19 +135,19 @@
             $ctrl.pageMenuOptions = (page) => {
                 return [
                     {
-                        html: `<a href><i class="far fa-pen mr-2 text-center" style="width: 20px;"></i> Rename</a>`,
+                        html: `<a href class="menu-option"><i class="far fa-pen mr-2 text-center" style="width: 20px;"></i> Rename</a>`,
                         click: () => {
                             $ctrl.renamePage(page);
                         }
                     },
                     {
-                        html: `<a href><i class="far fa-copy mr-2 text-center" style="width: 20px;"></i> Copy</a>`,
+                        html: `<a href class="menu-option"><i class="far fa-copy mr-2 text-center" style="width: 20px;"></i> Copy</a>`,
                         click: () => {
                             $ctrl.copyPage(page);
                         }
                     },
                     {
-                        html: `<a href style="color: #fb7373;"><i class="far fa-trash-alt text-center mr-2" style="width: 20px;"></i> Delete</a>`,
+                        html: `<a href class="menu-option" style="color: #fb7373;"><i class="far fa-trash-alt text-center mr-2" style="width: 20px;"></i> Delete</a>`,
                         click: () => {
                             $ctrl.deletePage(page);
                         },
@@ -192,7 +192,11 @@
                 $ctrl.gridDeck = angular.extend({}, $ctrl.deck);
             };
 
-            $ctrl.setActivePage = (pageId) => {
+            $ctrl.setActivePage = (pageId, $event) => {
+                // if target contains class "menu-option", do not change the active page
+                if ($event?.target?.classList?.contains("menu-option")) {
+                    return;
+                }
                 if (pageId === $ctrl.activePageId) {
                     return;
                 }
@@ -252,27 +256,22 @@
                 $ctrl.setActivePage(copiedPage.id);
             };
 
-            $ctrl.deletePage = () => {
-                if ($ctrl.deck.pages.length <= 1) {
-                    return;
-                }
-                const target = $ctrl.deck.pages.find(p => p.id === $ctrl.activePageId);
-                if (target == null) {
-                    return;
-                }
+            $ctrl.deletePage = (page) => {
                 utilityService
                     .showConfirmationModal({
                         title: "Delete Page",
-                        question: `Delete the page "${target.name}" and all of its controls?`,
+                        question: `Delete the page "${page.name}" and all of its controls?`,
                         confirmLabel: "Delete",
                         confirmBtnType: "btn-danger"
                     })
                     .then((confirmed) => {
                         if (confirmed) {
-                            $ctrl.deck.pages = $ctrl.deck.pages.filter(p => p.id !== target.id);
-                            $ctrl.deck.controls = $ctrl.deck.controls.filter(c => c.pageId !== target.id);
-                            $ctrl.activePageId = $ctrl.deck.pages[0].id;
-                            $ctrl.folderStack = [];
+                            $ctrl.deck.pages = $ctrl.deck.pages.filter(p => p.id !== page.id);
+                            $ctrl.deck.controls = $ctrl.deck.controls.filter(c => c.pageId !== page.id);
+                            if ($ctrl.activePageId === page.id) {
+                                $ctrl.activePageId = $ctrl.deck.pages.length ? $ctrl.deck.pages[0].id : null;
+                                $ctrl.folderStack = [];
+                            }
                             $ctrl.refreshGrid();
                         }
                     });

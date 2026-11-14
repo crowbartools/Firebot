@@ -321,6 +321,16 @@
                         category: "Fade"
                     },
                     {
+                        name: "Flip Out X",
+                        class: "flipOutX",
+                        category: "Flip"
+                    },
+                    {
+                        name: "Flip Out Y",
+                        class: "flipOutY",
+                        category: "Flip"
+                    },
+                    {
                         name: "Rotate Out",
                         class: "rotateOut",
                         category: "Rotate"

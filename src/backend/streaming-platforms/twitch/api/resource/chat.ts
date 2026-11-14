@@ -555,6 +555,12 @@ export class TwitchChatApi extends ApiResourceBase {
                                         userLogin: f.mention.user_login,
                                         userName: f.mention.user_name
                                     }
+                                    : null,
+                                gif: f.type === "gif"
+                                    ? {
+                                        id: f.gif.id,
+                                        url: f.gif.url
+                                    }
                                     : null
                             };
                         })
