@@ -2,7 +2,6 @@ import path from "path";
 import { type BrowserWindow, Menu, Tray, app, nativeImage } from "electron";
 
 import { SettingsManager } from "../../common/settings-manager";
-import frontendCommunicator from "../../common/frontend-communicator.js";
 
 let mainTray: Tray;
 let minimizedToTray = false;
@@ -15,6 +14,28 @@ function createNativeImage() {
     return nativeImage.createFromPath(iconPath);
 };
 
+/**
+ * Reveal the main window safely on Linux Wayland.
+ *
+ * Electron 38.2+ / Chromium Ozone Wayland hits
+ * `FATAL:wayland_toplevel_window.cc … Should not be called with kMinimized state`
+ * if `show()` runs while the BrowserWindow is still minimized (electron#49253).
+ * Always restore before show.
+ */
+function revealMainWindow(mainWindow: BrowserWindow): void {
+    if (mainWindow.isDestroyed()) {
+        return;
+    }
+    if (mainWindow.isMinimized()) {
+        mainWindow.restore();
+    }
+    if (!mainWindow.isVisible()) {
+        mainWindow.show();
+    }
+    mainWindow.focus();
+    minimizedToTray = false;
+}
+
 export function createTray(mainWindow: BrowserWindow) {
     if (mainTray != null) {
         return;
@@ -25,12 +46,7 @@ export function createTray(mainWindow: BrowserWindow) {
             label: "Show",
             type: "normal",
             click: () => {
-                if (minimizedToTray) {
-                    mainWindow.show();
-                    minimizedToTray = false;
-                } else {
-                    mainWindow.focus();
-                }
+                revealMainWindow(mainWindow);
             }
         },
         {
@@ -49,18 +65,24 @@ export function createTray(mainWindow: BrowserWindow) {
     mainTray.setContextMenu(trayMenu);
 
     mainTray.on("double-click", () => {
-        if (minimizedToTray) {
-            mainWindow.show();
-            minimizedToTray = false;
-        } else {
-            mainWindow.focus();
-        }
+        revealMainWindow(mainWindow);
     });
 
     mainWindow.on("minimize", () => {
         if (SettingsManager.getSetting("MinimizeToTray") && minimizedToTray !== true) {
-            mainWindow.hide();
+            // Leaving the window minimized while hidden is what triggers the
+            // Wayland FATAL on the next show(). Clear minimized first, then hide.
+            // Defer so we don't fight the in-progress minimize.
             minimizedToTray = true;
+            setImmediate(() => {
+                if (mainWindow.isDestroyed()) {
+                    return;
+                }
+                if (mainWindow.isMinimized()) {
+                    mainWindow.restore();
+                }
+                mainWindow.hide();
+            });
         }
     });
 
@@ -83,13 +105,7 @@ export function createTray(mainWindow: BrowserWindow) {
     });
     mainWindow.on("focus", () => {
         if (minimizedToTray) {
-            if (mainWindow.isMinimized()) {
-                mainWindow.restore();
-            }
-            if (!mainWindow.isVisible()) {
-                mainWindow.show();
-            }
-            minimizedToTray = false;
+            revealMainWindow(mainWindow);
         }
     });
 };
