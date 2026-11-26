@@ -14,11 +14,13 @@ export async function secondInstance(event: Event, argv: string[]) {
 
         const mainWindow = globalThis.renderWindow as BrowserWindow;
         if (mainWindow) {
-            if (!mainWindow.isVisible()) {
-                mainWindow.show();
-            }
+            // Restore before show — Wayland Ozone FATAL if show() runs while minimized
+            // (electron/electron#49253 / Chromium wayland_toplevel_window.cc).
             if (mainWindow.isMinimized()) {
                 mainWindow.restore();
+            }
+            if (!mainWindow.isVisible()) {
+                mainWindow.show();
             }
             mainWindow.focus();
 
